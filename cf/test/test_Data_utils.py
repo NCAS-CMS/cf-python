@@ -13,8 +13,16 @@ import cf
 class DataUtilsTest(unittest.TestCase):
     def test_Data_Utils__da_ma_allclose(self):
         """TODO."""
-        # Create a range of inputs to test against
+        # Create a range of inputs to test against.
+        # Note that 'a' and 'a2' should be treated as 'allclose' for this
+        # method, the same result as np.ma.allclose would give because all
+        # of the *unmasked* elements are 'allclose', whereas in our
+        # Data.equals method that builds on this method, we go even further
+        # and insist on the mask being identical as well as the data
+        # (separately, i.e. unmasked) all being 'allclose', so inside our
+        # cf.Data objects 'a' and 'a2' would instead *not* be considered equal.
         a = np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0])
+        a2 = np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0])
         b = np.ma.array([1.0, 2.0, 3.0], mask=[0, 1, 0])
         c = np.ma.array([1.0, 2.0, 100.0], mask=[1, 0, 0])
         d = np.array([1.0, 2.0, 3.0])
@@ -28,43 +36,46 @@ class DataUtilsTest(unittest.TestCase):
         self.assertTrue(allclose(a, a).compute())
         self.assertTrue(allclose(da_, da_).compute())
 
-        self.assertTrue(allclose(a, b).compute())
-        self.assertTrue(allclose(da_, da.from_array(b)).compute())
+        self.assertTrue(allclose(a2, a).compute())
+        self.assertTrue(allclose(da.from_array(a2), da_).compute())
+
+        self.assertTrue(allclose(b, a).compute())
+        self.assertTrue(allclose(da.from_array(b), da_).compute())
         # ...including testing the 'masked_equal' parameter
-        self.assertFalse(allclose(a, b, masked_equal=False).compute())
+        self.assertFalse(allclose(b, a, masked_equal=False).compute())
         self.assertFalse(
-            allclose(da_, da.from_array(b), masked_equal=False).compute()
+            allclose(da.from_array(b), da_, masked_equal=False).compute()
         )
 
-        self.assertFalse(allclose(a, c).compute())
-        self.assertFalse(allclose(da_, da.from_array(c)).compute())
+        self.assertFalse(allclose(c, a).compute())
+        self.assertFalse(allclose(da.from_array(c), da_).compute())
 
-        self.assertTrue(allclose(a, d).compute())
-        self.assertTrue(allclose(da_, da.from_array(d)).compute())
+        self.assertTrue(allclose(d, a).compute())
+        self.assertTrue(allclose(da.from_array(d), da_).compute())
 
-        self.assertFalse(allclose(a, e).compute())
-        self.assertFalse(allclose(da_, da.from_array(e)).compute())
+        self.assertFalse(allclose(e, a).compute())
+        self.assertFalse(allclose(da.from_array(e), da_).compute())
 
-        self.assertTrue(allclose(a, f).compute())
-        self.assertTrue(allclose(da_, da.from_array(f)).compute())
+        self.assertTrue(allclose(f, a).compute())
+        self.assertTrue(allclose(da.from_array(f), da_).compute())
 
         # Test when array inputs have different chunk sizes
         da_ = da.from_array(a, chunks=(1, 2))
-        self.assertTrue(allclose(da_, da.from_array(b, chunks=(3,))).compute())
+        self.assertTrue(allclose(da.from_array(b, chunks=(3,)), da_).compute())
         self.assertFalse(
             allclose(
-                da_, da.from_array(b, chunks=(3,)), masked_equal=False
+                da.from_array(b, chunks=(3,)), da_, masked_equal=False
             ).compute()
         )
         self.assertFalse(
-            allclose(da_, da.from_array(c, chunks=(3,))).compute()
+            allclose(da.from_array(c, chunks=(3,)), da_).compute()
         )
 
         # Test the 'rtol' and 'atol' parameters:
-        self.assertFalse(allclose(a, e, rtol=1e-06).compute())
-        self.assertFalse(allclose(da_, da.from_array(e), rtol=1e-06).compute())
-        b1 = a / 10000
-        b2 = e / 10000
+        self.assertFalse(allclose(e, a, rtol=1e-06).compute())
+        self.assertFalse(allclose(da.from_array(e), da_, rtol=1e-06).compute())
+        b1 = e / 10000
+        b2 = a / 10000
         self.assertTrue(allclose(b1, b2, atol=1e-05).compute())
         self.assertTrue(
             allclose(
