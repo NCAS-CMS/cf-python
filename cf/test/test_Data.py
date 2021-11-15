@@ -212,9 +212,51 @@ class DataTest(unittest.TestCase):
             )
 
         # Test masked arrays
-        j = cf.Data(np.ma.masked_all(shape, dtype="int"), "m")
+        # 1. Example case where the masks differ only (data is identical)
+        j1 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
+        j2 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[0, 1, 0]), "m")
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(j.equals(d))
+            self.assertFalse(j1.equals(j2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # 2. Example case where the data differs only (masks are identical)
+        j3 = cf.Data(np.ma.array([1.0, 2.0, 100.0], mask=[1, 0, 0]), "m")
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(j1.equals(j3))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # 3. Trivial case of data that is fully masked
+        j4 = cf.Data(np.ma.masked_all(shape, dtype="int"), "m")
+        ### self.assertTrue(j4.equals(j4))  # check self-equality!
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(j4.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # 4. Case where all the unmasked data is 'allclose' to other data but
+        # the data is not 'allclose' to it where it is masked, i.e. the data
+        # on its own (namely without considering the mask) is not equal to the
+        # other data on its own (e.g. note the 0-th element in below examples).
+        # This differs to case (2): there data differs *only where unmasked*.
+        # Note these should *not* be considered equal inside cf.Data, whereas
+        # np.ma.allclose and indeed our own _da_ma_allclose methods do hold
+        # these to be 'allclose': Data.equals is stricter than _da_ma_allclose.
+        j5 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
+        j6 = cf.Data(np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(j5.equals(j6))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
