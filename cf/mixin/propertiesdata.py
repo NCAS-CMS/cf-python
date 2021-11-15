@@ -4825,7 +4825,7 @@ class PropertiesData(Properties):
         print(cf_inspect(self))  # pragma: no cover
 
     def iscyclic(self, axis):
-        """Whether or a not a given axis is cyclic.
+        """Whether or not a given axis is cyclic.
 
         .. versionadded:: 3.5.0
 
