@@ -892,7 +892,8 @@ def _read_a_file(
             See `cf.read` for details.
 
         ftype: `str`
-            TODO
+            The file format to interpret the file. Recognised formats are
+            ``'netCDF'``, ``'CDL'``, ``'UM'`` and ``'PP'``.
 
         aggregate_options: `dict`, optional
             See `cf.read` for details.
@@ -1019,7 +1020,7 @@ def _read_a_file(
             else:
                 raise ValueError(
                     "Unable to convert netCDF to field or domain construct "
-                    "because there is missing data. TODO"
+                    "because there is missing data."
                 )
 
     elif ftype == "UM" and extra_read_vars["fmt"] in (None, "UM"):

@@ -151,7 +151,7 @@ class UMFileArray(FileArray):
 
     @property
     def file_pointer(self):
-        """TODO."""
+        """The file pointer starting at the position of the header."""
         return (self.file, self.header_offset)
 
     def close(self):
