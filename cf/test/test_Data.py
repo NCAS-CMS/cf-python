@@ -139,9 +139,10 @@ class DataTest(unittest.TestCase):
         a = np.arange(12).reshape(*shape)
 
         d = cf.Data(a, "m")
-        self.assertTrue(d.equals(d))  # trivial check
+        self.assertTrue(d.equals(d))  # also do self-equality checks!
 
         d2 = cf.Data(a.astype(np.float32), "m")  # different datatype to d
+        self.assertTrue(d2.equals(d2))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(d2.equals(d))
             self.assertTrue(
@@ -152,6 +153,7 @@ class DataTest(unittest.TestCase):
             )
 
         e = cf.Data(a, "s")  # different units to d
+        self.assertTrue(e.equals(e))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(e.equals(d))
             self.assertTrue(
@@ -162,6 +164,7 @@ class DataTest(unittest.TestCase):
             )
 
         f = cf.Data(np.arange(12), "m")  # different shape to d
+        self.assertTrue(f.equals(f))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(f.equals(d))
             self.assertTrue(
@@ -172,6 +175,7 @@ class DataTest(unittest.TestCase):
             )
 
         g = cf.Data(np.ones(shape, dtype="int64"), "m")  # different values
+        self.assertTrue(g.equals(g))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(g.equals(d))
             self.assertTrue(
@@ -182,8 +186,11 @@ class DataTest(unittest.TestCase):
             )
 
         # Test NaN and inf values
-        h = cf.Data(np.full(shape, np.nan), "m")
         d3 = cf.Data(a.astype(np.float64), "m")
+        h = cf.Data(np.full(shape, np.nan), "m")
+        # TODODASK: is this OK given that NaN in NumPy aren't equal to e/o
+        # or should this be assertTrue to expect equality behaviour?
+        self.assertFalse(h.equals(h))
         with self.assertLogs(level=cf.log_level().value) as catch:
             # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
             self.assertFalse(h.equals(d3))
@@ -194,6 +201,7 @@ class DataTest(unittest.TestCase):
                 )
             )
         i = cf.Data(np.full(shape, np.inf), "m")
+        self.assertTrue(i.equals(i))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(i.equals(d3))  # np.inf is also of dtype float64
             self.assertTrue(
@@ -214,7 +222,11 @@ class DataTest(unittest.TestCase):
         # Test masked arrays
         # 1. Example case where the masks differ only (data is identical)
         j1 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(j1.equals(j1))
         j2 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[0, 1, 0]), "m")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(j2.equals(j2))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j1.equals(j2))
             self.assertTrue(
@@ -225,6 +237,8 @@ class DataTest(unittest.TestCase):
             )
         # 2. Example case where the data differs only (masks are identical)
         j3 = cf.Data(np.ma.array([1.0, 2.0, 100.0], mask=[1, 0, 0]), "m")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(j3.equals(j3))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j1.equals(j3))
             self.assertTrue(
@@ -236,7 +250,8 @@ class DataTest(unittest.TestCase):
 
         # 3. Trivial case of data that is fully masked
         j4 = cf.Data(np.ma.masked_all(shape, dtype="int"), "m")
-        ### self.assertTrue(j4.equals(j4))  # check self-equality!
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(j4.equals(j4))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j4.equals(d))
             self.assertTrue(
@@ -254,7 +269,11 @@ class DataTest(unittest.TestCase):
         # np.ma.allclose and indeed our own _da_ma_allclose methods do hold
         # these to be 'allclose': Data.equals is stricter than _da_ma_allclose.
         j5 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(j5.equals(j5))
         j6 = cf.Data(np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(j6.equals(j6))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j5.equals(j6))
             self.assertTrue(
@@ -264,10 +283,65 @@ class DataTest(unittest.TestCase):
                 )
             )
 
+        # Test non-numeric dtype arrays
+        sa1 = cf.Data(np.array(["one", "two", "three"], dtype="S5"), "m")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(sa1.equals(sa1))
+        sa2_data = np.array(["one", "two", "four"], dtype="S4")
+        sa2 = cf.Data(sa2_data, "m")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(sa2.equals(sa2))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(sa1.equals(sa2))
+            print(catch.output)
+            self.assertTrue(
+                any(
+                    "Data: Different data types: |S5 != |S4" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        sa3_data = sa2_data.astype("S5")
+        sa3 = cf.Data(sa3_data, "m")
+        # TODODASK: uncomment below, not working yet
+        # with self.assertLogs(level=cf.log_level().value) as catch:
+        #     self.assertFalse(sa1.equals(sa3))
+        #     print(catch.output)
+        #     self.assertTrue(
+        #         any(
+        #             "Data: Different array values" in log_msg
+        #             for log_msg in catch.output
+        #         )
+        #     )
+        # ...including masked string arrays
+        sa4 = cf.Data(np.ma.array(
+            ["one", "two", "three"], mask=[0, 0, 1], dtype="S5", ), "m")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(sa4.equals(sa4))
+        sa5 = cf.Data(np.ma.array(
+            ["one", "two", "three"], mask=[0, 1, 0], dtype="S5", ), "m")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(sa5.equals(sa5))
+
+        # Test where inputs are scalars
+        # TODODASK: uncomment below, not working yet
+        # with self.assertLogs(level=cf.log_level().value) as catch:
+        #     self.assertFalse(sa4.equals(sa5))
+        #     print(catch.output)
+        #     self.assertTrue(
+        #         any(
+        #             "Data: Different array values" in log_msg
+        #             for log_msg in catch.output
+        #         )
+        #     )
+
         # Test where inputs are scalars
         s1 = cf.Data(1)
+        self.assertTrue(s1.equals(s1))
         s2 = cf.Data(10)
+        self.assertTrue(s2.equals(s2))
         s3 = cf.Data("a_string")
+        # TODODASK: uncomment below, not working yet
+        ### self.assertTrue(s3.equals(s3))
         # 1. both are scalars
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(s1.equals(s2))
@@ -297,7 +371,9 @@ class DataTest(unittest.TestCase):
 
         # Test rtol and atol parameters
         k1 = cf.Data(np.array([10.0, 20.0]))
+        self.assertTrue(k1.equals(k1))
         k2 = cf.Data(np.array([10.01, 20.01]))
+        self.assertTrue(k2.equals(k2))
         for ks in [(k1, k2), (k2, k1)]:  # to test symmetry/commutativity
             k_1, k_2 = ks
             # Only one log check is sufficient here
@@ -316,7 +392,9 @@ class DataTest(unittest.TestCase):
 
         # Test ignore_fill_value parameter
         m1 = cf.Data(1, fill_value=1000)
+        self.assertTrue(m1.equals(m1))
         m2 = cf.Data(1, fill_value=2000)
+        self.assertTrue(m2.equals(m2))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(m1.equals(m2))
             self.assertTrue(
