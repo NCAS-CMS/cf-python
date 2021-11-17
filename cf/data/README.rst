@@ -1,8 +1,67 @@
 `cf.Data` developer notes
 =========================
 
+Masked arrays
+-------------
+
+Whether there is a mask or not
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For methods such as `equals`, we need to consider whether an array is
+a masked one, and if so, we need to consider the *masks* (e.g. whether they
+are equal), as well as the *data* (equality or otherwise).
+
+But the difficulty is that some level of inspection, i.e. computation, is
+required to know whether the object in question is masked or not! (This is
+due to, fundamentally, the underlying netCDF or PP representation.)
+And we want to avoid early computation, as again it is inefficient.
+
+Consider, for example, the case of a set of computations in which an
+array may acquire a mask, or may not: until the `compute` is run,
+we don't know whether there is a mask at the end. Note there is a
+distinction here between a standard `array` and a `masked` array
+which may have a trivial (say, all `False`) or non-trivial mask, e.g.
+for Dask array cases (similarly for `np.ma` etc.):
+
+**Masked array, non-trivial mask:**
+
+.. code-block:: python
+
+   >>> dx = da.from_array(np.ma.array([1, 2, 3], mask=[1, 0, 0]))
+   >>> dx
+   dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.MaskedArray>
+
+**Standard array, trivial i.e. all-Falsy mask:**
+
+.. code-block:: python
+
+   >>> dy = da.from_array(np.ma.array([1, 2, 3], mask=[0, 0, 0]))
+   >>> dy
+   dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.MaskedArray>
+
+**Standard array i.e. no mask:**
+
+.. code-block:: python
+
+   >>> dz = da.from_array(np.array([1, 2, 3]))
+   >>> dz
+   dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.ndarray>
+
+
+After discussion, in order to resolve this issue, we proposed
+tentatively that *we should ensure all arrays are of the masked variety*,
+i.e. `da.ma.masked_array` rather than `da.array`, so in the case of
+an array that would otherwise be a standard (unmasked) one, it would
+instead be a `da.ma.masked_array` with a fully Falsy mask.
+
+In practice this would mean that when we instantiate an object
+directly from disk, we would edit the `_meta` attribute to
+set it to masked. Though we need to evaluate the performance hit
+of this to ensure it isn't significant.
+
+
 Hardness of the mask
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 Any `cf.Data` method that changes the dask array should consider
 whether or not the mask hardness needs resetting before
@@ -117,62 +176,6 @@ laziness? How can it be done? Possible ideas include:
 
 * Using a `try/except` block whenever a custom error message is required,
   catching the corresponding Dask errors and raising our own messages.
-
-
-Masked arrays
--------------
-
-For methods such as `equals`, we need to consider whether an array is
-a masked one, and if so, we need to consider the *masks* (e.g. whether they
-are equal), as well as the *data* (equality or otherwise).
-
-But the difficulty is that some level of inspection, i.e. computation, is
-required to know whether the object in question is masked or not! (This is
-due to, fundamentally, the underlying netCDF or PP representation.)
-And we want to avoid early computation, as again it is inefficient.
-
-Consider, for example, the case of a set of computations in which an
-array may acquire a mask, or may not: until the `compute` is run,
-we don't know whether there is a mask at the end. Note there is a
-distinction here between a standard `array` and a `masked` array
-which may have a trivial (say, all `False`) or non-trivial mask, e.g.
-for Dask array cases (similarly for `np.ma` etc.):
-
-**Masked array, non-trivial mask:**
-
-.. code-block:: python
-
-   >>> dx = da.from_array(np.ma.array([1, 2, 3], mask=[1, 0, 0]))
-   >>> dx
-   dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.MaskedArray>
-
-**Standard array, trivial i.e. all-Falsy mask:**
-
-.. code-block:: python
-
-   >>> dy = da.from_array(np.ma.array([1, 2, 3], mask=[0, 0, 0]))
-   >>> dy
-   dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.MaskedArray>
-
-**Standard array i.e. no mask:**
-
-.. code-block:: python
-
-   >>> dz = da.from_array(np.array([1, 2, 3]))
-   >>> dz
-   dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.ndarray>
-
-
-After discussion, in order to resolve this issue, we proposed
-tentatively that *we should ensure all arrays are of the masked variety*,
-i.e. `da.ma.masked_array` rather than `da.array`, so in the case of
-an array that would otherwise be a standard (unmasked) one, it would
-instead be a `da.ma.masked_array` with a fully Falsy mask.
-
-In practice this would mean that when we instantiate an object
-directly from disk, we would edit the `_meta` attribute to
-set it to masked. Though we need to evaluate the performance hit
-of this to ensure it isn't significant.
 
 
 Inheritance from `cfdm`
