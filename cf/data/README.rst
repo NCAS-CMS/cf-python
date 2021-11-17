@@ -74,20 +74,34 @@ Arguments for choice (2):
     because it avoids intermediate computation meaning parallelisation can
     be optimised more comprehensively by Dask.
 
-There may be at least one other option:
+As well as choice (1) or (2) outright, there are further options for
+a mixture or a flexible choice of return object in this respect:
 
-3. Could we, temporariliy or permanently, make use of a common keyword
-   argument such as `precompute` on methods so users and under-the-hood in
+3. Make use of a common keyword argument such as `precompute`
+   on methods so users and under-the-hood in
    the code we can dictate whether or not to return the pre-computed or
    uncomputed result? That would give extra flexibility, but mean more
    boilerplate code (which can be consolidated somewhat, but at best
    will require some extra lines per method).
 
-   If so, what would the best default be, `True` or `False`?
+   If this option is chosen, what would the best default be, `True`
+   or `False`?
 
-I think we need to ensure we are consistent in our approach, so choose either
-(1), (2) or (3) (or another alternative), rather than a mixture, as that
-will be a maintenance nightmare!
+4. (DH's suggestion) Methods that return new cf.Data objects
+   (such as transpose) should be lazy and other methods should not be
+   (e.g. __repr__ and equals).
+
+**We have agreed that (4) is the most sensible approach to take, therefore
+the working plan is** that:
+
+* **any method (previously) returning a cf.Data object will,
+  post-daskification, belazy and return the uncomputed result**, i.e. a
+  Dask object that, when computed, will evaluate to the final cf.Data
+  object (e.g. if computed immediately after the method runs, the result
+  would be the same cf.Data object as that previously returned); but
+* **any method returning another object, such as a Boolean or a string
+  representation of the object, will not be lazy and
+  return the pre-computed object as before**.
 
 
 Logging and error handling
@@ -150,7 +164,7 @@ for Dask array cases (similarly for `np.ma` etc.):
 
 
 After discussion, in order to resolve this issue, we proposed
-tentatively that *we should make all arrays are of the masked variety,
+tentatively that *we should ensure all arrays are of the masked variety*,
 i.e. `da.ma.masked_array` rather than `da.array`, so in the case of
 an array that would otherwise be a standard (unmasked) one, it would
 instead be a `da.ma.masked_array` with a fully Falsy mask.
