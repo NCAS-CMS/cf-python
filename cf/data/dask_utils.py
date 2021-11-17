@@ -56,7 +56,10 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
 
     """
 
-    def allclose(a_blocks, b_blocks):
+    # Must pass rtol=rtol, atol=atol in as kwargs to allclose, rather than it
+    # using those in local scope from the outer function arguments, because
+    # Dask's internal algorithms require these to be set as parameters.
+    def allclose(a_blocks, b_blocks, rtol=rtol, atol=atol):
         """Run `ma.allclose` across multiple blocks over two arrays."""
         result = True
         # Handle scalars, including 0-d arrays, for which a_blocks and
@@ -92,6 +95,8 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
         y,
         axes,
         dtype=bool,
+        rtol=rtol,
+        atol=atol,
     )
 
 
