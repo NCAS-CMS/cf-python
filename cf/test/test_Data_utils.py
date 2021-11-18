@@ -83,6 +83,23 @@ class DataUtilsTest(unittest.TestCase):
             ).compute()
         )
 
+    def test_Data_Utils__is_numeric_dtype(self):
+        """TODO."""
+        _is_numeric_dtype = cf.data.utils._is_numeric_dtype
+        for a in [
+            np.array([0, 1, 2]),
+            np.array([False, True, True]),
+            np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]),
+            np.array(10),
+        ]:
+            self.assertTrue(_is_numeric_dtype(a))
+
+        for b in [
+            np.array(["a", "b", "c"], dtype="S1"),
+            np.empty(1, dtype=object),
+        ]:
+            self.assertFalse(_is_numeric_dtype(b))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
