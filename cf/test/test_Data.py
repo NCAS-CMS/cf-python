@@ -285,15 +285,12 @@ class DataTest(unittest.TestCase):
 
         # Test non-numeric dtype arrays
         sa1 = cf.Data(np.array(["one", "two", "three"], dtype="S5"), "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(sa1.equals(sa1))
+        self.assertTrue(sa1.equals(sa1))
         sa2_data = np.array(["one", "two", "four"], dtype="S4")
         sa2 = cf.Data(sa2_data, "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(sa2.equals(sa2))
+        self.assertTrue(sa2.equals(sa2))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(sa1.equals(sa2))
-            print(catch.output)
             self.assertTrue(
                 any(
                     "Data: Different data types: |S5 != |S4" in log_msg
@@ -302,37 +299,41 @@ class DataTest(unittest.TestCase):
             )
         sa3_data = sa2_data.astype("S5")
         sa3 = cf.Data(sa3_data, "m")
-        # TODODASK: uncomment below, not working yet
-        # with self.assertLogs(level=cf.log_level().value) as catch:
-        #     self.assertFalse(sa1.equals(sa3))
-        #     print(catch.output)
-        #     self.assertTrue(
-        #         any(
-        #             "Data: Different array values" in log_msg
-        #             for log_msg in catch.output
-        #         )
-        #     )
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(sa1.equals(sa3))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
         # ...including masked string arrays
-        sa4 = cf.Data(np.ma.array(
-            ["one", "two", "three"], mask=[0, 0, 1], dtype="S5", ), "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(sa4.equals(sa4))
-        sa5 = cf.Data(np.ma.array(
-            ["one", "two", "three"], mask=[0, 1, 0], dtype="S5", ), "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(sa5.equals(sa5))
-
-        # Test where inputs are scalars
-        # TODODASK: uncomment below, not working yet
-        # with self.assertLogs(level=cf.log_level().value) as catch:
-        #     self.assertFalse(sa4.equals(sa5))
-        #     print(catch.output)
-        #     self.assertTrue(
-        #         any(
-        #             "Data: Different array values" in log_msg
-        #             for log_msg in catch.output
-        #         )
-        #     )
+        sa4 = cf.Data(
+            np.ma.array(
+                ["one", "two", "three"],
+                mask=[0, 0, 1],
+                dtype="S5",
+            ),
+            "m",
+        )
+        self.assertTrue(sa4.equals(sa4))
+        sa5 = cf.Data(
+            np.ma.array(
+                ["one", "two", "three"],
+                mask=[0, 1, 0],
+                dtype="S5",
+            ),
+            "m",
+        )
+        self.assertTrue(sa5.equals(sa5))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(sa4.equals(sa5))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
         # Test where inputs are scalars
         s1 = cf.Data(1)
@@ -340,8 +341,7 @@ class DataTest(unittest.TestCase):
         s2 = cf.Data(10)
         self.assertTrue(s2.equals(s2))
         s3 = cf.Data("a_string")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(s3.equals(s3))
+        self.assertTrue(s3.equals(s3))
         # 1. both are scalars
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(s1.equals(s2))

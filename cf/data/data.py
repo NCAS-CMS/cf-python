@@ -112,6 +112,7 @@ from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
+    _is_numeric_dtype,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
@@ -9131,20 +9132,35 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         other_dx = other._get_dask()
 
         # Now check that corresponding elements are equal within a tolerance.
-        # We assume that all inputs are masked arrays.
+        # We assume that all inputs are masked arrays. Note we compare the
+        # data first as this may return False due to different dtype without
+        # having to wait until the compute call.
+        self_is_numeric = _is_numeric_dtype(self_dx)
+        other_is_numeric = _is_numeric_dtype(other_dx)
+        if self_is_numeric and other_is_numeric:
+            data_comparison = _da_ma_allclose(
+                self_dx,
+                other_dx,
+                masked_equal=False,
+                rtol=float(rtol),
+                atol=float(atol),
+            )
+        elif not self_is_numeric and not other_is_numeric:
+            data_comparison = (self_dx == other_dx).all()
+        else:  # one is numeric and other isn't => not equal (incompat. dtype)
+            logger.info(
+                f"{self.__class__.__name__}: Different data types:"
+                f"{self_dx.dtype} != {other_dx.dtype}"
+            )
+            return False
+
         mask_comparison = da.equal(
             da.ma.getmaskarray(self_dx), da.ma.getmaskarray(other_dx)
         )
-        data_comparison = _da_ma_allclose(
-            self_dx,
-            other_dx,
-            masked_equal=False,
-            rtol=float(rtol),
-            atol=float(atol),
-        )
+
         # Apply a (dask) logical 'and' to confirm if both the mask and the
         # data are equal for the pair of masked arrays:
-        result = da.all(da.logical_and(mask_comparison, data_comparison))
+        result = da.all(da.logical_and(data_comparison, mask_comparison))
 
         if not result.compute():
             logger.info(
