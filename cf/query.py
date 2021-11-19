@@ -348,26 +348,23 @@ class Query:
 
     @property
     def attr(self):
-        """TODO.
+        """The object attribute on which to apply the query condition.
 
         **Examples:**
 
         >>> q = cf.Query('ge', 4)
         >>> print(q.attr)
-        None
+        ()
         >>> q = cf.Query('le', 6, attr='year')
         >>> q.attr
-        'year'
-        >>> q.addattr('foo')
-        >>> q.attr
-        'year'asdasdas TODO
+        ('year',)
 
         """
         return self._attr
 
     @property
     def operator(self):
-        """TODO.
+        """The query operator.
 
         Compound conditions return `None`.
 
@@ -385,7 +382,7 @@ class Query:
 
     @property
     def value(self):
-        """TODO.
+        """The value of the condition encapsulated by the query.
 
         An exception is raised for compound conditions.
 
@@ -492,7 +489,7 @@ class Query:
     @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, traceback=False):
-        """TODO."""
+        """True if two `Query` objects are the same."""
         standard_difference_message = (
             f"{self.__class__.__name__}: Different compound components"
         )
