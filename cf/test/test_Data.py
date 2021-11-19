@@ -222,11 +222,10 @@ class DataTest(unittest.TestCase):
         # Test masked arrays
         # 1. Example case where the masks differ only (data is identical)
         j1 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(j1.equals(j1))
+        print("SELF-EQUALS J1 NOW <<<<<<<<<<<<<<<<<<<<<<<<<")
+        self.assertTrue(j1.equals(j1))
         j2 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[0, 1, 0]), "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(j2.equals(j2))
+        self.assertTrue(j2.equals(j2))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j1.equals(j2))
             self.assertTrue(
@@ -237,8 +236,7 @@ class DataTest(unittest.TestCase):
             )
         # 2. Example case where the data differs only (masks are identical)
         j3 = cf.Data(np.ma.array([1.0, 2.0, 100.0], mask=[1, 0, 0]), "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(j3.equals(j3))
+        self.assertTrue(j3.equals(j3))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j1.equals(j3))
             self.assertTrue(
@@ -250,8 +248,7 @@ class DataTest(unittest.TestCase):
 
         # 3. Trivial case of data that is fully masked
         j4 = cf.Data(np.ma.masked_all(shape, dtype="int"), "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(j4.equals(j4))
+        self.assertTrue(j4.equals(j4))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j4.equals(d))
             self.assertTrue(
@@ -269,12 +266,11 @@ class DataTest(unittest.TestCase):
         # np.ma.allclose and indeed our own _da_ma_allclose methods do hold
         # these to be 'allclose': Data.equals is stricter than _da_ma_allclose.
         j5 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(j5.equals(j5))
+        self.assertTrue(j5.equals(j5))
         j6 = cf.Data(np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
-        # TODODASK: uncomment below, not working yet
-        ### self.assertTrue(j6.equals(j6))
+        self.assertTrue(j6.equals(j6))
         with self.assertLogs(level=cf.log_level().value) as catch:
+            print("J5 EQUALS J6 NOW <<<<<<<<<<<<<<<<<<<<<<<<<")
             self.assertFalse(j5.equals(j6))
             self.assertTrue(
                 any(

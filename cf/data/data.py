@@ -9138,15 +9138,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self_is_numeric = _is_numeric_dtype(self_dx)
         other_is_numeric = _is_numeric_dtype(other_dx)
         if self_is_numeric and other_is_numeric:
+            print("DATA COMP'ING IS", self_dx.compute(), other_dx.compute())
             data_comparison = _da_ma_allclose(
                 self_dx,
                 other_dx,
-                masked_equal=False,
+                masked_equal=False,  # TODODASK: is this correct, or want True?
                 rtol=float(rtol),
                 atol=float(atol),
             )
+            print("DATA COMP RESULT IS", data_comparison.compute())
         elif not self_is_numeric and not other_is_numeric:
-            data_comparison = (self_dx == other_dx).all()
+            data_comparison = da.all(self_dx == other_dx)
         else:  # one is numeric and other isn't => not equal (incompat. dtype)
             logger.info(
                 f"{self.__class__.__name__}: Different data types:"
@@ -9154,13 +9156,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
             return False
 
-        mask_comparison = da.equal(
-            da.ma.getmaskarray(self_dx), da.ma.getmaskarray(other_dx)
+        mask_comparison = da.all(
+            da.equal(da.ma.getmaskarray(self_dx), da.ma.getmaskarray(other_dx))
         )
+        print("MASK COMP RESULT IS", mask_comparison.compute())
 
         # Apply a (dask) logical 'and' to confirm if both the mask and the
         # data are equal for the pair of masked arrays:
-        result = da.all(da.logical_and(data_comparison, mask_comparison))
+        result = da.logical_and(data_comparison, mask_comparison)
+        print("OVERALL COMP RESULT IS", result.compute())
 
         if not result.compute():
             logger.info(
