@@ -1234,7 +1234,13 @@ class bounds_combination_mode(ConstantAccess):
 
 
 def CF():
-    """TODO."""
+    """The version of the CF conventions.
+
+    This indicates which version of the CF conventions are represented
+    by this release of the cf package, and therefore the version can not
+    be changed.
+
+    """
     return cfdm.CF()
 
 
@@ -1329,7 +1335,7 @@ def min_total_memory():
 
 
 def total_memory():
-    """TODO."""
+    """The total amount of physical memory (in bytes)."""
     return CONSTANTS["TOTAL_MEMORY"]
 
 
@@ -1878,7 +1884,7 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
 def parse_indices(
     shape, indices, cyclic=False, reverse=False, envelope=False, mask=False
 ):
-    """TODO.
+    """Standardise the given indices and return as a list.
 
     :Parameters:
 
@@ -2220,7 +2226,7 @@ def parse_indices(
 
 
 def get_subspace(array, indices):
-    """TODO.
+    """Return a subspace defined by the given indices of an array.
 
     Subset the input numpy array with the given indices. Indexing is
     similar to that of a numpy array. The differences to numpy array
@@ -2234,7 +2240,7 @@ def get_subspace(array, indices):
        along each dimension (similar to the way vector subscripts work
        in Fortran).
 
-    indices must contain an index for each dimension of the input array.
+    Indices must contain an index for each dimension of the input array.
 
     :Parameters:
 
@@ -2278,7 +2284,7 @@ _equals = cfdm.Data()._equals
 
 
 def equals(x, y, rtol=None, atol=None, ignore_data_type=False, **kwargs):
-    """TODO."""
+    """True if two objects are equal within a given tolerance."""
     if rtol is None:
         rtol = _cf_rtol()
 
