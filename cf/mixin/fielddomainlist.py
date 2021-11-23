@@ -2,7 +2,7 @@ from ..functions import _DEPRECATION_ERROR_ARG
 
 
 class FieldDomainList:
-    """TODO."""
+    """A sequence of domain constructs corresponding to fields."""
 
     def select_by_construct(self, *identities, OR=False, **conditions):
         """Select elements by their metadata constructs.

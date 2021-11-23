@@ -2370,7 +2370,7 @@ class FieldDomain:
     def get_coordinate_reference(
         self, *identity, key=False, construct=None, default=ValueError()
     ):
-        """TODO.
+        """Return a coordinate reference construct.
 
         .. versionadded:: 3.0.2
 
