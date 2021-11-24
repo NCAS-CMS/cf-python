@@ -195,11 +195,11 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of cfdm
 _minimum_vn = "1.8.9.0"
-_maximum_vn = "1.8.10.0"
+# TODODASK: reinstate maximum version spec., removed for now to simplify dev.
 _cfdm_version = LooseVersion(cfdm.__version__)
-if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
+if not LooseVersion(_minimum_vn) <= _cfdm_version:
     raise RuntimeError(
-        f"Bad cfdm version: cf requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
+        f"Bad cfdm version: cf requires {_minimum_vn}. "
         f"Got {_cfdm_version} at {cfdm.__file__}"
     )
 
