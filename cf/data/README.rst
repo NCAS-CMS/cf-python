@@ -23,7 +23,7 @@ distinction here between a standard `array` and a `masked` array
 which may have a trivial (say, all `False`) or non-trivial mask, e.g.
 for Dask array cases (similarly for `np.ma` etc.):
 
-**Masked array, non-trivial mask:**
+**Masked array with a non-trivial mask:**
 
 .. code-block:: python
 
@@ -31,7 +31,7 @@ for Dask array cases (similarly for `np.ma` etc.):
    >>> dx
    dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.MaskedArray>
 
-**Standard array, trivial i.e. all-Falsy mask:**
+**Masked array with a trivial i.e. all-Falsy mask:**
 
 .. code-block:: python
 
@@ -48,16 +48,27 @@ for Dask array cases (similarly for `np.ma` etc.):
    dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.ndarray>
 
 
-After discussion, in order to resolve this issue, we proposed
-tentatively that *we should ensure all arrays are of the masked variety*,
-i.e. `da.ma.masked_array` rather than `da.array`, so in the case of
-an array that would otherwise be a standard (unmasked) one, it would
-instead be a `da.ma.masked_array` with a fully Falsy mask.
+Solution
+########
 
-In practice this would mean that when we instantiate an object
-directly from disk, we would edit the `_meta` attribute to
-set it to masked. Though we need to evaluate the performance hit
-of this to ensure it isn't significant.
+To work around the complication of not being able to know whether an array
+is a masked one or not in any cases of computation where a mask may be
+added, we will, for all these cases, use the fact that standard arrays (i.e.
+example 3 above) can also be queried with `da.ma.getmaskarray`, returning
+an all-False mask (just like a masked array with an all-False mask, i.e.
+example 2 above, would):
+
+.. code-block:: python
+
+   >>> dz = da.from_array(np.array([1, 2, 3]))  # i.e. example 3 above
+   >>> mz = da.ma.getmaskarray(dz)
+   >>> mz.compute()
+   array([False, False, False])
+
+   >>> dy = da.from_array(np.ma.array([1, 2, 3], mask=[0, 0, 0]))  # i.e. example 2
+   >>> my = da.ma.getmaskarray(dy)
+   >>> my.compute()
+   array([False, False, False])
 
 
 Hardness of the mask
