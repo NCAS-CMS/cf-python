@@ -100,12 +100,19 @@ jobs:
     - name: Notify about starting testing
       run: echo Setup complete. Now starting to run the cf-python test suite...
 
-    # Finally run test_Data.py!
+    # Finally run the relevant tests: firstly test_Data.py...
     - name: Run the test_Data test module
       shell: bash -l {0}
       run: |
         cd ${{ github.workspace }}/main/cf/test
         python test_Data.py
+
+    # ... and finally test_Data_utils.py.
+    - name: Run the test_Data test module
+      shell: bash -l {0}
+      run: |
+        cd ${{ github.workspace }}/main/cf/test
+        python test_Data_utils.py
 
     # End with a message indicating the suite has completed its run
     - name: Notify about a completed run
