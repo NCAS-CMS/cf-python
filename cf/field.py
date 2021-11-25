@@ -1916,7 +1916,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # ----------------------------------------------------
                 if other is None:
                     other = numpy_array(None, dtype=object)
-                    
+
                 other = Data(other)
                 if other.ndim > 0:
                     other.squeeze(inplace=True)

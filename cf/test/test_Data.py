@@ -1922,10 +1922,10 @@ class DataTest(unittest.TestCase):
         cf.chunksize(self.original_chunksize)
 
         # Check comparison with None (issue #281)
-        d = cf.Data([1, 2, 3]) == None
+        d = cf.Data([1, 2, 3]) == None  # noqa: E711
         self.assertEqual(d.shape, (3,))
         self.assertFalse(d.any())
-     
+
     def test_Data_BROADCASTING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

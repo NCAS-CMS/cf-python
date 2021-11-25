@@ -4658,7 +4658,7 @@ class Data(Container, cfdm.Data):
                 # Can't sensibly initialize a Data object from a bare
                 # `None` (issue #281)
                 other = numpy_array(None, dtype=object)
-   
+
             other = type(self).asdata(other)
 
         #            if other._isdt and self.Units.isreftime:
