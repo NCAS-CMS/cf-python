@@ -586,6 +586,8 @@ class PropertiesData(Properties):
 
         if isinstance(y, self.__class__):
             y = y.data
+        elif y is None:
+            y = Data(numpy_array(None, dtype=object))
 
         if not inplace:
             new = self.copy()  # data=False) TODO
