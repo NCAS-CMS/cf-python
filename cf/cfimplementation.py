@@ -33,7 +33,7 @@ from .functions import CF
 
 
 class CFImplementation(cfdm.CFDMImplementation):
-    """TODO.
+    """A container for the CF data model implementation for `cf`.
 
     .. versionadded:: 3.0.0
 
