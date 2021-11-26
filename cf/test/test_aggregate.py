@@ -255,6 +255,22 @@ class aggregateTest(unittest.TestCase):
 
         self.assertEqual(len(x), 1, x)
 
+    def test_aggregate_dimension(self):
+        """Test the promotion of property to axis."""
+        f = cf.example_field(0)
+        g = f.copy()
+
+        f.set_property("sim", "r1i1p1f1")
+        g.set_property("sim", "r2i1p1f1")
+
+        self.assertFalse(len(f.auxiliary_coordinates()))
+
+        a = cf.aggregate([f, g], dimension="sim")
+        self.assertEqual(len(a), 1)
+
+        a = a[0]
+        self.assertEqual(len(a.auxiliary_coordinates()), 1)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

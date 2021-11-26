@@ -138,6 +138,7 @@ class _Meta:
         relaxed_identities=False,
         ncvar_identities=False,
         field_identity=None,
+        copy=True,
     ):
         """**initialization**
 
@@ -163,7 +164,8 @@ class _Meta:
             dimension: (sequence of) `str`, optional
                 See the `aggregate` function for details.
 
-        **Examples:**
+            copy: `bool` optional
+                See the `aggregate` function for details.
 
         """
         self._bool = False
@@ -245,6 +247,7 @@ class _Meta:
         # Promote selected properties to 1-d, size 1 auxiliary
         # coordinates
         # ------------------------------------------------------------
+        _copy = copy
         for prop in dimension:
             value = f.get_property(prop, None)
             if value is None:
@@ -258,10 +261,19 @@ class _Meta:
             aux_coord.nc_set_variable(prop)
             aux_coord.id = prop
 
+            if _copy:
+                # Copy the field, as we're about to change it.
+                f = f.copy()
+                self.field = f
+                _copy = False
+
             axis = f.set_construct(DomainAxis(1))
             f.set_construct(aux_coord, axes=[axis], copy=False)
 
-            f.del_property(prop)  # dch COPY issue?
+            f.del_property(prop)
+
+        if dimension:
+            construct_axes = f.constructs.data_axes()
 
         self.units = self.canonical_units(
             f, self.identity, relaxed_units=relaxed_units
@@ -1725,6 +1737,7 @@ def aggregate(
             ncvar_identities=ncvar_identities,
             field_identity=field_identity,
             respect_valid=respect_valid,
+            copy=copy,
         )
 
         if not meta:
