@@ -475,7 +475,11 @@ class ConstructList(list, Container, cfdm.Container):
             {{ignore_compression: `bool`, optional}}
 
             unordered: `bool`, optional
-                TODO
+                If True then test that the lists contain equal
+                constructs in any relative order. By default, construct
+                order matters for the list comparison, such that each
+                construct is tested for equality with the construct
+                at the corresponding position in the list, pair-wise.
 
         :Returns:
 
