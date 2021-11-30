@@ -478,69 +478,68 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def identity(self, default="", strict=False, relaxed=False, nc_only=False):
         """Return the canonical identity.
 
-            By default the identity is the first found of the following:
+        By default the identity is the first found of the following:
 
-            * The "id" attribute, preceded by ``'id%'``.
-            * The "cf_role" property, preceded by ``'cf_role='``.
-            * The "long_name" property, preceded by ``'long_name='``.
-            * The netCDF variable name, preceded by ``'ncvar%'``.
-            * The value of the *default* parameter.
+        * The "id" attribute, preceded by ``'id%'``.
+        * The "cf_role" property, preceded by ``'cf_role='``.
+        * The "long_name" property, preceded by ``'long_name='``.
+        * The netCDF variable name, preceded by ``'ncvar%'``.
+        * The value of the *default* parameter.
 
-            .. versionadded:: 3.11.0
+        .. versionadded:: 3.11.0
 
-            .. seealso:: `id`, `identities`
+        .. seealso:: `id`, `identities`
 
-            :Parameters:
+        :Parameters:
 
-                default: optional
-                    If no identity can be found then return the value of the
-                    default parameter.
+            default: optional
+                If no identity can be found then return the value of the
+                default parameter.
 
-                strict: `bool`, optional
-                    If True then the identity is the first found of only the
-                    "standard_name" property or the "id" attribute.
+            strict: `bool`, optional
+                If True then the identity is the first found of only the
+                "standard_name" property or the "id" attribute.
 
-                relaxed: `bool`, optional
-                    If True then the identity is the first found of only the
-                    "standard_name" property, the "id" attribute, the
-                    "long_name" property or the netCDF variable name.
+            relaxed: `bool`, optional
+                If True then the identity is the first found of only the
+                "standard_name" property, the "id" attribute, the
+                "long_name" property or the netCDF variable name.
 
-                nc_only: `bool`, optional
-                    If True then only take the identity from the netCDF
-                    variable name.
+            nc_only: `bool`, optional
+                If True then only take the identity from the netCDF
+                variable name.
 
-            :Returns:
+        :Returns:
 
-                    The identity.
+                The identity.
 
-            **Examples:**
+        **Examples:**
 
-        TODO
-            >>> f.properties()
-            {'foo': 'bar',
-             'long_name': 'Air Temperature',
-             'standard_name': 'air_temperature'}
-            >>> f.nc_get_variable()
-            'tas'
-            >>> f.identity()
-            'air_temperature'
-            >>> f.del_property('standard_name')
-            'air_temperature'
-            >>> f.identity(default='no identity')
-            'air_temperature'
-            >>> f.identity()
-            'long_name=Air Temperature'
-            >>> f.del_property('long_name')
-            >>> f.identity()
-            'ncvar%tas'
-            >>> f.nc_del_variable()
-            'tas'
-            >>> f.identity()
-            'ncvar%tas'
-            >>> f.identity()
-            ''
-            >>> f.identity(default='no identity')
-            'no identity'
+        >>> f.properties()
+        {'foo': 'bar',
+         'long_name': 'Air Temperature',
+         'standard_name': 'air_temperature'}
+        >>> f.nc_get_variable()
+        'tas'
+        >>> f.identity()
+        'air_temperature'
+        >>> f.del_property('standard_name')
+        'air_temperature'
+        >>> f.identity(default='no identity')
+        'air_temperature'
+        >>> f.identity()
+        'long_name=Air Temperature'
+        >>> f.del_property('long_name')
+        >>> f.identity()
+        'ncvar%tas'
+        >>> f.nc_del_variable()
+        'tas'
+        >>> f.identity()
+        'ncvar%tas'
+        >>> f.identity()
+        ''
+        >>> f.identity(default='no identity')
+        'no identity'
 
         """
         if nc_only:
@@ -881,7 +880,29 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         **Examples:**
 
-            TODO
+        >>> d = cf.example_field(0).domain
+        >>> print(d)
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> d.match_by_construct("latitude")
+        True
+        >>> d.match_by_construct("air_pressure")
+        False
+        >>> d.match_by_construct("longitude", "time")
+        True
+        >>> d.match_by_construct(longitude=22.5)
+        True
+        >>> d.match_by_construct(longitude=15.5)
+        False
+        >>> d.match_by_construct(longitude=cf.gt(340))
+        False
+        >>> d.match_by_construct(longitude=cf.gt(240))
+        True
+        >>> d.match_by_construct(time=cf.dt("2019-01-01"))
+        True
+        >>> d.match_by_construct(time=cf.dt("2020-01-01"))
+        False
 
         """
         if identities:
