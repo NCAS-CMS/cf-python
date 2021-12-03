@@ -1,3 +1,13 @@
+version NEXT
+------------
+
+**????-??-??**
+
+* Fix `cf.aggregate` failures when using the ``dimension`` keyword
+  parameter (https://github.com/NCAS-CMS/cf-python/issues/283)
+
+----
+
 version 3.11.0
 --------------
 
