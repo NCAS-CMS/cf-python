@@ -1,4 +1,6 @@
 """Worker functions for regridding."""
+
+import logging
 from operator import itemgetter
 
 import numpy as np
@@ -20,6 +22,8 @@ from .regridoperator import (
     regrid_method_map,
     regridding_methods,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def regrid_compute_mass_grid(
@@ -535,8 +539,8 @@ def regrid_check_method(method):
             "Can't regrid: Must set a valid regridding method from "
             f"{regridding_methods}. Got: {method!r}"
         )
-    elif method == "bilinear":  # TODO use logging.info() once have logging
-        print(
+    elif method == "bilinear":
+        logger.info(
             "Note the 'bilinear' method argument has been renamed to "
             "'linear' at version 3.2.0. It is still supported for now "
             "but please use 'linear' in future. "
