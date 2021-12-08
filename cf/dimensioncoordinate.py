@@ -525,13 +525,18 @@ class DimensionCoordinate(
                 # ----------------------------------------------------
                 cellsize = Data.asdata(abs(cellsize))
                 if cellsize.Units:
+                    err_msg = (
+                        "Can't create bounds because the bound units "
+                        f"({cellsize.Units}) are not compatible with "
+                        f"the coordinate units ({self.Units})."
+                    )
                     if self.Units.isreftime:
                         if not cellsize.Units.istime:
-                            raise ValueError("q123423423jhgsjhbd jh ")
+                            raise ValueError(err_msg)
                         cellsize.Units = Units(self.Units._utime.units)
                     else:
                         if not cellsize.Units.equivalent(self.Units):
-                            raise ValueError("jhgsjhbd jh ")
+                            raise ValueError(err_msg)
                         cellsize.Units = self.Units
                 cellsize = cellsize.datum()
 
