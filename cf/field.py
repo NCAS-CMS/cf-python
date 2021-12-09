@@ -10135,7 +10135,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 return classification
 
         elif regroup:
-            raise ValueError("Can't return classification 2453456 ")
+            raise ValueError("There is no group classification to return.")
 
         # Still here?
         if not fl:
