@@ -1522,8 +1522,6 @@ def cellsize(value, units=None):
     <CF Query: cellsize(eq 5)>
     >>> cf.cellsize(cf.Data(5, 'km'))
     <CF Query: cellsize(eq <CF Data: 5 km>)>
-    >>> cf.cellsize(cf.Data(5, 'km'))
-    <CF Query: cellsize(eq <CF Data: 5 km>)>
     >>> cf.cellsize(5, units='km')
     <CF Query: cellsize(eq <CF Data: 5 km>)>
 
