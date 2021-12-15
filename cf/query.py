@@ -1558,7 +1558,14 @@ def cellwi(value0, value1, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellwi(cf.Data(5, 'km'), cf.Data(10, 'km'))
+    <CF Query: [lower_bounds(ge 5 km) & upper_bounds(le 10 km)]>
+    >>> cf.cellwi(5, 10, units="km")
+    <CF Query: [lower_bounds(ge 5 km) & upper_bounds(le 10 km)]>
+    >>> cf.cellwi(cf.Data(5, 'km'), cf.Data(10000, 'm'))
+    <CF Query: [lower_bounds(ge 5 km) & upper_bounds(le 10000 m)]>
+    >>> cf.cellwi(0.2, 0.3)
+    <CF Query: [lower_bounds(ge 0.2) & upper_bounds(le 0.3)]>
 
     """
     return Query("ge", value0, units=units, attr="lower_bounds") & Query(
@@ -1592,7 +1599,14 @@ def cellwo(value0, value1, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellwo(cf.Data(5, 'km'), cf.Data(10, 'km'))
+    <CF Query: [lower_bounds(lt 5 km) & upper_bounds(gt 10 km)]>
+    >>> cf.cellwo(5, 10, units="km")
+    <CF Query: [lower_bounds(lt 5 km) & upper_bounds(gt 10 km)]>
+    >>> cf.cellwo(cf.Data(5, 'km'), cf.Data(10000, 'm'))
+    <CF Query: [lower_bounds(lt 5 km) & upper_bounds(gt 10000 m)]>
+    >>> cf.cellwo(0.2, 0.3)
+    <CF Query: [lower_bounds(lt 0.2) & upper_bounds(gt 0.3)]>
 
     """
     return Query("lt", value0, units=units, attr="lower_bounds") & Query(
