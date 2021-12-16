@@ -1641,7 +1641,12 @@ def cellgt(value, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellgt(cf.Data(300, 'K'))
+    <CF Query: lower_bounds(gt 300 K)>
+    >>> cf.cellgt(300, units='K')
+    <CF Query: lower_bounds(gt 300 K)>
+    >>> cf.cellgt(300)
+    <CF Query: lower_bounds(gt 300)>
 
     """
     return Query("gt", value, units=units, attr="lower_bounds")
@@ -1675,7 +1680,12 @@ def cellge(value, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellge(cf.Data(300, 'K'))
+    <CF Query: lower_bounds(ge 300 K)>
+    >>> cf.cellge(cf.Data(300, 'K'))
+    <CF Query: lower_bounds(ge 300 K)>
+    >>> cf.cellge(300)
+    <CF Query: lower_bounds(ge 300)>
 
     """
     return Query("ge", value, units=units, attr="lower_bounds")
@@ -1708,7 +1718,12 @@ def celllt(value, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.celllt(cf.Data(300, 'K'))
+    <CF Query: upper_bounds(lt 300 K)>
+    >>> cf.celllt(300, units='K')
+    <CF Query: upper_bounds(lt 300 K)>
+    >>> cf.celllt(300)
+    <CF Query: upper_bounds(lt 300)>
 
     """
     return Query("lt", value, units=units, attr="upper_bounds")
@@ -1741,7 +1756,12 @@ def cellle(value, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellle(cf.Data(300, 'K'))
+    <CF Query: upper_bounds(le 300 K)>
+    >>> cf.cellle(300, units='K')
+    <CF Query: upper_bounds(le 300 K)>
+    >>> cf.cellle(300)
+    <CF Query: upper_bounds(le 300)>
 
     """
     return Query("le", value, units=units, attr="upper_bounds")
