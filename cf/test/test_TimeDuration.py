@@ -474,6 +474,24 @@ class TimeDurationTest(unittest.TestCase):
         self.assertEqual(cf.M(8) / 3, cf.M(8 / 3))
         self.assertEqual(cf.M(8) // 3, cf.M(2))
 
+        # Test arithmetic involving Data as well as datetimes:
+        da = cf.Data([2], units="days since 2000-01-01")
+        dt = cf.TimeDuration(14, "day")
+        t0 = da + dt
+        t1 = dt + da
+        self.assertEqual(
+            t0,
+            cf.dt(2000, 1, 17, calendar="gregorian"),
+        )
+        self.assertEqual(t0, t1)
+        t2 = dt - da
+        t3 = da - dt
+        self.assertEqual(
+            t2,
+            cf.dt(1999, 12, 20, calendar="gregorian"),
+        )
+        self.assertEqual(t2, t3)
+
     def test_Timeduration__days_in_month(self):
         self.assertEqual(cf.TimeDuration.days_in_month(1900, 2), 28)
         self.assertEqual(cf.TimeDuration.days_in_month(1999, 2), 28)

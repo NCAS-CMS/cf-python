@@ -546,6 +546,13 @@ class TimeDuration:
         if isinstance(other, (self.__class__, int, float)):
             return self._binary_operation(other, "__sub__")
 
+        if hasattr(other, "timetuple"):
+            # other is a date-time object
+            try:
+                return self._datetime_arithmetic(other, __sub__)
+            except TypeError:
+                return NotImplemented
+
         if isinstance(other, Data):
             return self._data_arithmetic(other, "__sub__")
 
@@ -717,17 +724,7 @@ class TimeDuration:
         .. versionadded:: 1.4
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__rsub__")
-
-        if hasattr(other, "timetuple"):
-            # other is a date-time object
-            try:
-                return self._datetime_arithmetic(other, __sub__)
-            except TypeError:
-                return NotImplemented
-
-        return NotImplemented
+        return -self + other
 
     def __mod__(self, other):
         """The binary arithmetic operation ``%``

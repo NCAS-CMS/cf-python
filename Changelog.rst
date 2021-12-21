@@ -5,6 +5,8 @@ version NEXT
 
 * Fix `cf.aggregate` failures when using the ``dimension`` keyword
   parameter (https://github.com/NCAS-CMS/cf-python/issues/283)
+* Fix bug that raised error with subtraction of a `cf.TimeDuration`
+  (https://github.com/NCAS-CMS/cf-python/issues/287)
 
 ----
 
