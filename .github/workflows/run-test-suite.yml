@@ -111,6 +111,16 @@ jobs:
     - name: Notify about starting testing
       run: echo Setup complete. Now starting to run the cf-python test suite...
 
+    # Create a file needed for testing. A separate step is required for this
+    # so the file can be registered and recognised first. Locally, the file
+    # is created and used on-the-fly by the 'run_tests_and_coverage' script.
+    - name: Create test_file.nc
+      shell: bash -l {0}
+      run: |
+        cd ${{ github.workspace }}/main/cf/test
+        python create_test_files.py
+        ls -la
+
     # Finally run the test suite and generate a coverage report!
     - name: Run test suite and generate a coverage report
       shell: bash -l {0}
