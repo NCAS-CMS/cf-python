@@ -77,7 +77,8 @@ jobs:
         pip install pycodestyle
 
     # Install cfdm from the cfdm development master branch, then all other
-    # dependencies, but not cf-python itself (only want to test sdist build).
+    # dependencies, where we also install cf-python itself but only in order
+    # to generate the test_file.nc file for testing, not as the cf to test.
     # We do so with conda which was setup in a previous step.
     - name: Install development cfdm.
       shell: bash -l {0}
@@ -89,6 +90,9 @@ jobs:
         # spec (next) in the conda env rather than globally to the PYTHONPATH:
         conda install pip
         pip install -r requirements.txt
+        # Installing cf now but only to be able to run setup_create_field.py
+        # next, in order to generate the test_file.nc required to test on
+        pip install -e .
 
     # Provide another notification message
     - name: Notify about starting the sdist test
