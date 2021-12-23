@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 import numpy
+import numpy as np
 
 SCIPY_AVAILABLE = False
 try:
@@ -2169,32 +2170,27 @@ class FieldTest(unittest.TestCase):
         if not SCIPY_AVAILABLE:  # needed for 'derivative' method
             raise unittest.SkipTest("SciPy must be installed for this test.")
 
-        x_min = 0.0
-        x_max = 359.0
-        dx = 1.0
+        f = cf.example_field(0)
+        f[...] = np.arange(9)[1:] * 45
 
-        x_1d = numpy.arange(x_min, x_max, dx)
+        # Check a cyclic periodic axis
+        d = f.derivative("X")
+        self.assertTrue(np.allclose(d[:, 1:-1].array, 1))
+        self.assertTrue(np.allclose(d[:, [0, -1]].array, -3))
 
-        data_1d = x_1d * 2.0 + 1.0
+        # The reversed field should contain the same gradients
+        f1 = f[:, ::-1]
+        d1 = f1.derivative("X")
+        self.assertTrue(d1.data.equals(d.data))
 
-        dim_x = cf.DimensionCoordinate(
-            data=cf.Data(x_1d, "s"), properties={"axis": "X"}
-        )
+        # Check non-cyclic
+        d = f.derivative("X", wrap=False)
+        self.assertTrue(np.allclose(d.array, 1))
+        self.assertEqual(d.array.sum(), 30)
 
-        f = cf.Field()
-        f.set_construct(cf.DomainAxis(size=x_1d.size))
-        f.set_construct(dim_x)
-        f.set_data(cf.Data(data_1d, "m"), axes="X")
-        f.cyclic("X", period=360.0)
-
-        g = f.derivative("X")
-        self.assertTrue((g.array == 2.0).all())
-
-        g = f.derivative("X", one_sided_at_boundary=True)
-        self.assertTrue((g.array == 2.0).all())
-
-        g = f.derivative("X", wrap=True)
-        self.assertTrue((g.array == 2.0).all())
+        d = f.derivative("X", wrap=False, one_sided_at_boundary=True)
+        self.assertTrue(np.allclose(d.array, 1))
+        self.assertEqual(d.array.sum(), 40)
 
     def test_Field_convert(self):
         f = self.f.copy()

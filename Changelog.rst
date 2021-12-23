@@ -7,6 +7,8 @@ version NEXT
   parameter (https://github.com/NCAS-CMS/cf-python/issues/283)
 * Fix bug that raised error with subtraction of a `cf.TimeDuration`
   (https://github.com/NCAS-CMS/cf-python/issues/287)
+* Fix bug in `cf.Field.derivative` when wrapping with periodic
+  coordinates (https://github.com/NCAS-CMS/cf-python/issues/289)
 
 ----
 
