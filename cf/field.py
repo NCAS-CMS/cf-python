@@ -16733,7 +16733,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             period = coord.period()
             if period is not None:
                 # Fix the boundary differences for cyclic periodic
-                # coordinates. Need to add extend the coordinates to
+                # coordinates. Need to extend the coordinates to
                 # include a dummy value at each end, grabbed from the
                 # other end, that maintains strict monotonicity.
                 c_data = coord.data
