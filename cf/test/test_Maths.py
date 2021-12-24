@@ -101,7 +101,7 @@ class MathTest(unittest.TestCase):
         v.set_data(cf.Data(v_2d, "m/s"), axes=("X", "Y"))
         v.cyclic("X", period=360.0)
 
-        rv = cf.relative_vorticity(u, v, wrap=True)
+        rv = cf.relative_vorticity(u, v, wrap=False)
         self.assertTrue(numpy.allclose(rv.array, rv_array))
 
 
