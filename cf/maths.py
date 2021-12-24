@@ -376,3 +376,155 @@ def histogram(*digitized):
     f.clear_properties()
 
     return f.bin("sample_size", digitized=digitized)
+
+
+def div_xy(
+    x,
+    y,
+    x_wrap=None,
+    one_sided_at_boundary=False,
+    radius="earth",
+):
+    """Calculate the divergence of an (X, Y) vector.
+
+    The divergence is calculated when the field has dimension
+    coordinates of X and Y, in either cartesian (plane projection) or
+    spherical polar coordinate systems.
+
+    The divergence is calculated using centred finite differences
+    apart from at the boundaries (see the *x_wrap* and
+    *one_sided_at_boundary* parameters). If missing values are present
+    then missing values will be returned at all points where a centred
+    finite difference could not be calculated.
+
+    .. versionadded:: 3.12.0
+
+    .. seealso:: `cf.Field.iscyclic`
+
+    :Parameters:
+
+        x, y: `Field`
+            The fields containing the X and Y vector components.
+
+        x_wrap: `bool`, optional
+            Whether the X axis is cyclic or not. By default *x_wrap*
+            is set to the result of `x.iscyclic('X')`. If the X axis
+            is cyclic then centred differences at one X boundary will
+            always use values from the other, regardless of the
+            setting of *one_sided_at_boundary*. The Y axis is never
+            considered to be cyclic.
+
+            The cyclicity of the X axis To see if the X axis is
+
+        one_sided_at_boundary: `bool`, optional
+            If True then one-sided finite differences are calculated
+            at the non-cyclic boundaries. By default missing values
+            are set at non-cyclic boundaries.
+
+        radius: optional
+            Specify the radius used for calculating the areas of cells
+            defined in spherical polar coordinates. The radius is that
+            which would be returned by this call of the field
+            construct's `~cf.Field.radius` method:
+            ``f.radius(radius)``. See the `cf.Field.radius` for
+            details.
+
+            By default *radius* is ``'earth'`` which means that if and
+            only if the radius can not found from the datums of any
+            coordinate reference constructs, then the default radius
+            is taken as 6371229 metres.
+
+    :Returns:
+
+        `Field`
+            The divergence of the (X, Y) fields.
+
+    """
+    from numpy import pi
+
+    x = x.copy()
+    y = y.copy()
+
+    identity_x = x.identity()
+    identity_y = y.identity()
+
+    x_key, x_coord = x.dimension_coordinate(
+        "X", item=True, default=(None, None)
+    )
+    y_key, y_coord = y.dimension_coordinate(
+        "Y", item=True, default=(None, None)
+    )
+
+    if x_coord is None:
+        raise ValueError(f"x field has no unique 'X' dimension coordinate")
+
+    if y_coord is None:
+        raise ValueError(f"y field has no unique 'Y' dimension coordinate")
+
+    x_units = x_coord.Units
+    y_units = y_coord.Units
+
+    # Check for latitude-longitude
+    latlon = (x_units.islongitude and y_units.islatitude) or (
+        x_units.units == "degrees" and y_units.units == "degrees"
+    )
+
+    # Check for cyclicity
+    if x_wrap is None:
+        if latlon:
+            x_wrap = x.iscyclic(x_key)
+        else:
+            x_wrap = False
+
+    if latlon:
+        # ------------------------------------------------------------
+        # Spherical polar coordiantes
+        # ------------------------------------------------------------
+       # Set latitude and longitude units to radians
+        radians = Units("radians")
+        x_coord.Units = radians
+        y_coord.Units = radians
+
+        # Get theta as a field that will broadcast to f, and adjust
+        # it's values so that theta=0 is at the north pole.
+        theta = pi / 2 - y.convert(y_key, full_domain=True)
+        sin_theta = theta.sin()
+
+        r = y.radius(radius)
+        r_sin_theta = sin_theta * r
+
+        term1 = (y * sin_theta).derivative(
+            y_key, one_sided_at_boundary=one_sided_at_boundary
+        ) / r_sin_theta
+
+        term2 = (
+            x.derivative(
+                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+            )
+            / r_sin_theta
+        )
+
+        f = term1 + term2
+
+        # Reset latitude and longitude coordinate units
+        f.dimension_coordinate("X").Units = x_units
+        f.dimension_coordinate("Y").Units = y_units
+    else:
+        # ------------------------------------------------------------
+        # Cartesian coordiantes
+        # ------------------------------------------------------------
+        term1 = y.derivative(
+            y_key, one_sided_at_boundary=one_sided_at_boundary
+        )
+
+        term2 = x.derivative(
+            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+        )
+
+        f = term1 + term2
+
+    # Set the standard name and long name
+    f.set_property("long_name", f"Divergence of ({identity_x}, {identity_y})")
+    f.del_property("standard_name", None)
+
+    return f
