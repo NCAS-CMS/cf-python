@@ -4757,7 +4757,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         radius="earth",
         inplace=False,
     ):
-        """Calculate the Laplacian in X-Y coordinates.
+        """Calculate the Laplacian in XY coordinates.
 
         The Laplacian is the divergence of the gradient of a scalar
         quantity. The Laplacian is calculated when the field has
@@ -4808,7 +4808,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field` or `None`
-                The X-Y Laplacian of the field, or `None` if the
+                The XY Laplacian of the field, or `None` if the
                 operation was in-place.
 
         """

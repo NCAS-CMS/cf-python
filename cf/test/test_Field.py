@@ -2636,14 +2636,12 @@ class FieldTest(unittest.TestCase):
     def test_Field_grad_xy(self):
         f = cf.example_field(0)
 
-     
         # Spherical polar coordinates
         r = f.radius("earth")
         for wrap in (None, True, False):
             for one_sided in (True, False):
-                (x, y) = f.grad_xy(
-                    radius=r, wrap=wrap, one_sided_at_boundary=one_sided
-                )
+                x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
+
                 del x.long_name
                 del y.long_name
 
@@ -2671,23 +2669,73 @@ class FieldTest(unittest.TestCase):
         dim_y.override_units("m", inplace=True)
         dim_x.standard_name = "projection_x_coordinate"
         dim_y.standard_name = "projection_y_coordinate"
-        f.cyclic('X', iscyclic=False)
-    
+        f.cyclic("X", iscyclic=False)
+
         for wrap in (None, True, False):
             for one_sided in (True, False):
-                (x, y) = f.grad_xy(wrap=wrap, one_sided_at_boundary=one_sided)
-                del x.long_name
-                del y.long_name
+                x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
 
                 x0 = f.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
                 )
                 y0 = f.derivative("Y", one_sided_at_boundary=one_sided)
+
+                del x.long_name
+                del y.long_name
                 del x0.long_name
                 del y0.long_name
-                
+
                 self.assertTrue(x.equals(x0))
                 self.assertTrue(y.equals(y0))
+
+    def test_Field_laplacian_xy(self):
+        f = cf.example_field(0)
+
+        # Laplacian(f) = div(grad(f))
+
+        # Spherical polar coordinates
+        for wrap in (None, True, False):
+            for one_sided in (True, False):
+                lp = f.laplacian_xy(
+                    x_wrap=wrap, one_sided_at_boundary=one_sided
+                )
+
+                lp0 = cf.div_xy(
+                    *f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided),
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
+                )
+
+                del lp.long_name
+                del lp0.long_name
+
+                self.assertTrue(lp.equals(lp0))
+
+        # Cartesian coordinates
+        dim_x = f.dimension_coordinate("X")
+        dim_y = f.dimension_coordinate("Y")
+        dim_x.override_units("m", inplace=True)
+        dim_y.override_units("m", inplace=True)
+        dim_x.standard_name = "projection_x_coordinate"
+        dim_y.standard_name = "projection_y_coordinate"
+        f.cyclic("X", iscyclic=False)
+
+        for wrap in (None, True, False):
+            for one_sided in (True, False):
+                lp = f.laplacian_xy(
+                    x_wrap=wrap, one_sided_at_boundary=one_sided
+                )
+
+                lp0 = cf.div_xy(
+                    *f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided),
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
+                )
+
+                del lp.long_name
+                del lp0.long_name
+
+                self.assertTrue(lp.equals(lp0))
 
 
 if __name__ == "__main__":

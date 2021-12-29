@@ -104,6 +104,68 @@ class MathTest(unittest.TestCase):
         rv = cf.relative_vorticity(u, v, wrap=False)
         self.assertTrue(numpy.allclose(rv.array, rv_array))
 
+    def test_div_xy(self):
+        f = cf.example_field(0)
+
+        # Spherical polar coordinates
+        r = f.radius("earth")
+        for wrap in (None, True, False):
+            for one_sided in (True, False):
+                x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
+
+                d = cf.div_xy(
+                    x, y, x_wrap=wrap, one_sided_at_boundary=one_sided
+                )
+
+                theta = 90 - f.convert("Y", full_domain=True)
+                theta.Units = cf.Units("radians")
+
+                term1 = x.derivative(
+                    "X", wrap=wrap, one_sided_at_boundary=one_sided
+                ) / (theta.sin() * r)
+                term2 = (y * theta.sin()).derivative(
+                    "Y", one_sided_at_boundary=one_sided
+                ) / (theta.sin() * r)
+
+                d0 = term1 + term2
+
+                # Check the data
+                self.assertTrue((d.data == d0.data).all())
+
+                # Check the metadata
+                del d.long_name
+                d0.set_data(d.data)
+                self.assertTrue(d.equals(d0))
+
+        # Cartesian coordinates
+        dim_x = f.dimension_coordinate("X")
+        dim_y = f.dimension_coordinate("Y")
+        dim_x.override_units("m", inplace=True)
+        dim_y.override_units("m", inplace=True)
+        dim_x.standard_name = "projection_x_coordinate"
+        dim_y.standard_name = "projection_y_coordinate"
+        f.cyclic("X", iscyclic=False)
+
+        for wrap in (None, True, False):
+            for one_sided in (True, False):
+                x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
+
+                d = cf.div_xy(
+                    x, y, x_wrap=wrap, one_sided_at_boundary=one_sided
+                )
+
+                term1 = x.derivative(
+                    "X", wrap=wrap, one_sided_at_boundary=one_sided
+                )
+                term2 = y.derivative("Y", one_sided_at_boundary=one_sided)
+
+                d0 = term1 + term2
+
+                del d.long_name
+                del d0.long_name
+
+                self.assertTrue(d.equals(d0))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

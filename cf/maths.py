@@ -489,16 +489,16 @@ def div_xy(
         r = y.radius(radius)
         r_sin_theta = sin_theta * r
 
-        term1 = (y * sin_theta).derivative(
-            y_key, one_sided_at_boundary=one_sided_at_boundary
-        ) / r_sin_theta
-
-        term2 = (
+        term1 = (
             x.derivative(
                 x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
             )
             / r_sin_theta
         )
+
+        term2 = (y * sin_theta).derivative(
+            y_key, one_sided_at_boundary=one_sided_at_boundary
+        ) / r_sin_theta
 
         f = term1 + term2
 
@@ -509,12 +509,13 @@ def div_xy(
         # ------------------------------------------------------------
         # Cartesian coordinates
         # ------------------------------------------------------------
-        term1 = y.derivative(
-            y_key, one_sided_at_boundary=one_sided_at_boundary
+
+        term1 = x.derivative(
+            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
         )
 
-        term2 = x.derivative(
-            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+        term2 = y.derivative(
+            y_key, one_sided_at_boundary=one_sided_at_boundary
         )
 
         f = term1 + term2
