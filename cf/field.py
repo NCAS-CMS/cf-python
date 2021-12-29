@@ -4817,34 +4817,37 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         f = _inplace_enabled_define_and_cleanup(self)
 
         identity = f.identity()
-        x_key, x = f.dimension_coordinate("X", item=True, default=(None, None))
-        y_key, y = f.dimension_coordinate("Y", item=True, default=(None, None))
+        x_key, x_coord = f.dimension_coordinate(
+            "X", item=True, default=(None, None)
+        )
+        y_key, y_coord = f.dimension_coordinate(
+            "Y", item=True, default=(None, None)
+        )
 
-        if x is None:
-            raise ValueError(f"Field has no unique 'X' dimension coordinate")
+        if x_coord is None:
+            raise ValueError("Field has no unique 'X' dimension coordinate")
 
-        if y is None:
-            raise ValueError(f"Field has no unique 'Y' dimension coordinate")
+        if y_coord is None:
+            raise ValueError("Field has no unique 'Y' dimension coordinate")
 
-        x_units = x.Units
-        y_units = y.Units
+        if x_wrap is None:
+            x_wrap = f.iscyclic(x_key)
 
-        # Check for latitude-longitude
+        x_units = x_coord.Units
+        y_units = y_coord.Units
+
+        # Check for spherical polar coordinates
         latlon = (x_units.islongitude and y_units.islatitude) or (
             x_units.units == "degrees" and y_units.units == "degrees"
         )
 
-        # Check for cyclicity
-        if x_wrap is None:
-            x_wrap = f.iscyclic(x_key)
-
         if latlon:
             # --------------------------------------------------------
-            # Spherical polar coordiantes
+            # Spherical polar coordinates
             # --------------------------------------------------------
-            # Set latitude and longitude units to radians
-            x.Units = _units_radians
-            y.Units = _units_radians
+            # Convert latitude and longitude units to radians
+            x_coord.Units = _units_radians
+            y_coord.Units = _units_radians
 
             # Get theta as a field that will broadcast to f, and
             # adjust it's values so that theta=0 is at the north pole.
@@ -4882,7 +4885,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f.dimension_coordinate("Y").Units = y_units
         else:
             # --------------------------------------------------------
-            # Cartesian coordiantes
+            # Cartesian coordinates
             # --------------------------------------------------------
             d2f_dx2 = f.derivative(
                 x_key,
@@ -4902,10 +4905,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 one_sided_at_boundary=one_sided_at_boundary,
             )
 
-            f = d2f_dy2 + d2f_dx2
+            f = d2f_dx2 + d2f_dy2
 
         # Set the standard name and long name
-        f.set_property("long_name", f"X-Y Laplacian of {identity}")
+        f.set_property("long_name", f"XY Laplacian of {identity}")
         f.del_property("standard_name", None)
 
         return f
@@ -13679,28 +13682,27 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
         if x_coord is None:
-            raise ValueError(f"Field has no unique 'X' dimension coordinate")
+            raise ValueError("Field has no unique 'X' dimension coordinate")
 
         if y_coord is None:
-            raise ValueError(f"Field has no unique 'Y' dimension coordinate")
+            raise ValueError("Field has no unique 'Y' dimension coordinate")
+
+        if x_wrap is None:
+            x_wrap = f.iscyclic(x_key)
 
         x_units = x_coord.Units
         y_units = y_coord.Units
 
-        # Check for latitude-longitude
+        # Check for spherical polar coordinates
         latlon = (x_units.islongitude and y_units.islatitude) or (
             x_units.units == "degrees" and y_units.units == "degrees"
         )
 
-        # Check for cyclicity
-        if x_wrap is None:
-            if latlon:
-                x_wrap = f.iscyclic(x_key)
-            else:
-                x_wrap = False
-
         if latlon:
-            # Set latitude and longitude units to radians
+            # --------------------------------------------------------
+            # Spherical polar coordinates
+            # --------------------------------------------------------
+            # Convert latitude and longitude units to radians
             x_coord.Units = _units_radians
             y_coord.Units = _units_radians
 
@@ -13727,8 +13729,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             Y.dimension_coordinate("X").Units = x_units
             Y.dimension_coordinate("Y").Units = y_units
-
         else:
+            # --------------------------------------------------------
+            # Cartesian coordinates
+            # --------------------------------------------------------
             X = f.derivative(
                 x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
             )

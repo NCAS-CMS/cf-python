@@ -456,31 +456,27 @@ def div_xy(
     )
 
     if x_coord is None:
-        raise ValueError(f"x field has no unique 'X' dimension coordinate")
+        raise ValueError("x field has no unique 'X' dimension coordinate")
 
     if y_coord is None:
-        raise ValueError(f"y field has no unique 'Y' dimension coordinate")
+        raise ValueError("y field has no unique 'Y' dimension coordinate")
+
+    if x_wrap is None:
+        x_wrap = x.iscyclic(x_key)
 
     x_units = x_coord.Units
     y_units = y_coord.Units
 
-    # Check for latitude-longitude
+    # Check for spherical polar coordinates
     latlon = (x_units.islongitude and y_units.islatitude) or (
         x_units.units == "degrees" and y_units.units == "degrees"
     )
 
-    # Check for cyclicity
-    if x_wrap is None:
-        if latlon:
-            x_wrap = x.iscyclic(x_key)
-        else:
-            x_wrap = False
-
     if latlon:
         # ------------------------------------------------------------
-        # Spherical polar coordiantes
+        # Spherical polar coordinates
         # ------------------------------------------------------------
-       # Set latitude and longitude units to radians
+        # Convert latitude and longitude units to radians
         radians = Units("radians")
         x_coord.Units = radians
         y_coord.Units = radians
@@ -511,7 +507,7 @@ def div_xy(
         f.dimension_coordinate("Y").Units = y_units
     else:
         # ------------------------------------------------------------
-        # Cartesian coordiantes
+        # Cartesian coordinates
         # ------------------------------------------------------------
         term1 = y.derivative(
             y_key, one_sided_at_boundary=one_sided_at_boundary
