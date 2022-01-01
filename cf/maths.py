@@ -383,7 +383,7 @@ def div_xy(
     y,
     x_wrap=None,
     one_sided_at_boundary=False,
-    radius="earth",
+    radius=None,
 ):
     """Calculate the divergence of an (X, Y) vector.
 
@@ -399,7 +399,8 @@ def div_xy(
 
     .. versionadded:: 3.12.0
 
-    .. seealso:: `cf.Field.iscyclic`
+    .. seealso:: `cf.Field.grad_xy`, `cf.Field.iscyclic`,
+                 `cf.Field.laplacian_xy`
 
     :Parameters:
 
@@ -407,14 +408,13 @@ def div_xy(
             The fields containing the X and Y vector components.
 
         x_wrap: `bool`, optional
+
             Whether the X axis is cyclic or not. By default *x_wrap*
-            is set to the result of `x.iscyclic('X')`. If the X axis
+            is set to the result of `f.iscyclic('X')`. If the X axis
             is cyclic then centred differences at one X boundary will
             always use values from the other, regardless of the
             setting of *one_sided_at_boundary*. The Y axis is never
             considered to be cyclic.
-
-            The cyclicity of the X axis To see if the X axis is
 
         one_sided_at_boundary: `bool`, optional
             If True then one-sided finite differences are calculated
@@ -422,17 +422,16 @@ def div_xy(
             are set at non-cyclic boundaries.
 
         radius: optional
-            Specify the radius used for calculating the areas of cells
-            defined in spherical polar coordinates. The radius is that
-            which would be returned by this call of the field
-            construct's `~cf.Field.radius` method:
-            ``f.radius(radius)``. See the `cf.Field.radius` for
-            details.
-
-            By default *radius* is ``'earth'`` which means that if and
-            only if the radius can not found from the datums of any
-            coordinate reference constructs, then the default radius
-            is taken as 6371229 metres.
+            Specify the radius of the latitude-longitude plane defined
+            in spherical polar coordinates. The radius is that which
+            would be returned by this call of the field construct's
+            `~cf.Field.radius` method:
+            ``f.radius(default=radius)``. See `cf.Field.radius` for
+            details. The radius is defined by the datum of a
+            coordinate reference construct, and if and only if no such
+            radius is found the default value given by the *radius*
+            parameter is used instead. A value of ``'earth'`` is
+            equivalent to a default value of 6371229 metres.
 
     :Returns:
 
@@ -486,7 +485,7 @@ def div_xy(
         theta = pi / 2 - y.convert(y_key, full_domain=True)
         sin_theta = theta.sin()
 
-        r = y.radius(radius)
+        r = x.radius(default=radius)
         r_sin_theta = sin_theta * r
 
         term1 = (

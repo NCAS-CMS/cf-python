@@ -4644,7 +4644,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return w
 
     def radius(self, default=None):
-        """Return the radius used for calculating cell areas in
+        """Return the radius of a latitude-longitude plane defined in
         spherical polar coordinates.
 
         The radius is taken from the datums of any coordinate
@@ -4671,11 +4671,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 coordinate reference constructs.
 
                 *Parameter example:*
-                  Five equivalent ways to set a default radius of 6371200
-                  metres: ``default=6371200``,
-                  ``default=numpy.array(6371200)``,
-                  ``default=cf.Data(6371200)``, ``default=cf.Data(6371200,
-                  'm')``, ``default=cf.Data(6371.2, 'km')``.
+                  Five equivalent ways to set a default radius of
+                  6371200 metres: ``6371200``,
+                  ``numpy.array(6371200)``, ``cf.Data(6371200)``,
+                  ``cf.Data(6371200, 'm')``, ``cf.Data(6371.2,
+                  'km')``.
 
         :Returns:
 
@@ -4754,7 +4754,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         self,
         x_wrap=None,
         one_sided_at_boundary=False,
-        radius="earth",
+        radius=None,
         inplace=False,
     ):
         """Calculate the Laplacian in XY coordinates.
@@ -4772,7 +4772,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.12.0
 
-        .. seealso:: `iscyclic`
+        .. seealso:: `grad_xy`, `iscyclic`, `cf.div_xy`
 
         :Parameters:
 
@@ -4795,13 +4795,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 cells defined in spherical polar coordinates. The
                 radius is that which would be returned by this call of
                 the field construct's `~cf.Field.radius` method:
-                ``f.radius(radius)``. See the `cf.Field.radius` for
+                ``f.radius(radius)``. See `cf.Field.radius` for
                 details.
 
                 By default *radius* is ``'earth'`` which means that if
-                and only if the radius can not found from the datums
-                of any coordinate reference constructs, then the
-                default radius is taken as 6371229 metres.
+                and only if the radius can not be found from the
+                datums of any coordinate reference constructs, then
+                the default radius is taken as 6371229 metres.
+
+            {{radius: optional}}
 
             {{inplace: `bool`, optional}}
 
@@ -4855,7 +4857,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             sin_theta = theta.sin()
 
-            r = f.radius(radius)
+            r = f.radius(default=radius)
             r2_sin_theta = sin_theta * r * r
 
             d2f_dphi2 = f.derivative(
@@ -13615,7 +13617,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         self,
         x_wrap=None,
         one_sided_at_boundary=False,
-        radius="earth",
+        radius=None,
     ):
         """Calculate the (X, Y) gradient vector.
 
@@ -13632,7 +13634,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.12.0
 
-        .. seealso:: `iscyclic`
+        .. seealso:: `iscyclic`, `laplacian_xy`, `cf.div_xy`
+
 
         :Parameters:
 
@@ -13650,18 +13653,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 calculated at the non-cyclic boundaries. By default
                 missing values are set at non-cyclic boundaries.
 
-            radius: optional
-                Specify the radius used for calculating the areas of
-                cells defined in spherical polar coordinates. The
-                radius is that which would be returned by this call of
-                the field construct's `~cf.Field.radius` method:
-                ``f.radius(radius)``. See the `cf.Field.radius` for
-                details.
-
-                By default *radius* is ``'earth'`` which means that if
-                and only if the radius can not found from the datums
-                of any coordinate reference constructs, then the
-                default radius is taken as 6371229 metres.
+            {{radius: optional}}
 
         :Returns:
 
@@ -13710,7 +13702,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # adjust it's values so that theta=0 is at the north pole.
             theta = pi / 2 - f.convert(y_key, full_domain=True)
 
-            r = f.radius(radius)
+            r = f.radius(default=radius)
 
             X = f.derivative(
                 x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
