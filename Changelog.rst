@@ -4,11 +4,11 @@ version 3.12.0
 **2022-01-??**
 
 * New method: `cf.Field.grad_xy`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/292)
 * New method: `cf.Field.laplacian_xy`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/292)
 * New function: `cf.div_xy`
-  (https://github.com/NCAS-CMS/cf-python/issues/???)
+  (https://github.com/NCAS-CMS/cf-python/issues/292)
 * Fix `cf.aggregate` failures when using the ``dimension`` keyword
   parameter (https://github.com/NCAS-CMS/cf-python/issues/283)
 * Fix bug that raised error with subtraction of a `cf.TimeDuration`

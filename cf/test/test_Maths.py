@@ -111,10 +111,18 @@ class MathTest(unittest.TestCase):
         r = f.radius("earth")
         for wrap in (None, True, False):
             for one_sided in (True, False):
-                x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
+                x, y = f.grad_xy(
+                    radius="earth",
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
+                )
 
                 d = cf.div_xy(
-                    x, y, x_wrap=wrap, one_sided_at_boundary=one_sided
+                    x,
+                    y,
+                    radius="earth",
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
                 )
 
                 theta = 90 - f.convert("Y", full_domain=True)
@@ -136,6 +144,8 @@ class MathTest(unittest.TestCase):
                 del d.long_name
                 d0.set_data(d.data)
                 self.assertTrue(d.equals(d0))
+
+                self.assertTrue(d.Units == cf.Units("m-2 rad-2"))
 
         # Cartesian coordinates
         dim_x = f.dimension_coordinate("X")
@@ -165,6 +175,8 @@ class MathTest(unittest.TestCase):
                 del d0.long_name
 
                 self.assertTrue(d.equals(d0))
+
+                self.assertTrue(d.Units == cf.Units("m-2"))
 
 
 if __name__ == "__main__":

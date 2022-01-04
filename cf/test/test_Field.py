@@ -2178,7 +2178,8 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(np.allclose(d[:, 1:-1].array, 1))
         self.assertTrue(np.allclose(d[:, [0, -1]].array, -3))
 
-        # The reversed field should contain the same gradients
+        # The reversed field should contain the same gradients in this
+        # case
         f1 = f[:, ::-1]
         d1 = f1.derivative("X")
         self.assertTrue(d1.data.equals(d.data))
@@ -2640,7 +2641,11 @@ class FieldTest(unittest.TestCase):
         r = f.radius("earth")
         for wrap in (None, True, False):
             for one_sided in (True, False):
-                x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
+                x, y = f.grad_xy(
+                    radius="earth",
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
+                )
 
                 del x.long_name
                 del y.long_name
@@ -2661,6 +2666,8 @@ class FieldTest(unittest.TestCase):
                 y0.set_data(y.data)
                 self.assertTrue(x.equals(x0))
                 self.assertTrue(y.equals(y0))
+
+                self.assertTrue(x.Units == y.Units == cf.Units("m-1 rad-1"))
 
         # Cartesian coordinates
         dim_x = f.dimension_coordinate("X")
@@ -2688,6 +2695,8 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue(x.equals(x0))
                 self.assertTrue(y.equals(y0))
 
+                self.assertTrue(x.Units == y.Units == cf.Units("m-1"))
+
     def test_Field_laplacian_xy(self):
         f = cf.example_field(0)
 
@@ -2697,11 +2706,18 @@ class FieldTest(unittest.TestCase):
         for wrap in (None, True, False):
             for one_sided in (True, False):
                 lp = f.laplacian_xy(
-                    x_wrap=wrap, one_sided_at_boundary=one_sided
+                    radius="earth",
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
                 )
 
                 lp0 = cf.div_xy(
-                    *f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided),
+                    *f.grad_xy(
+                        radius="earth",
+                        x_wrap=wrap,
+                        one_sided_at_boundary=one_sided,
+                    ),
+                    radius="earth",
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
@@ -2710,6 +2726,8 @@ class FieldTest(unittest.TestCase):
                 del lp0.long_name
 
                 self.assertTrue(lp.equals(lp0))
+
+                self.assertTrue(lp.Units == cf.Units("m-2 rad-2"))
 
         # Cartesian coordinates
         dim_x = f.dimension_coordinate("X")
@@ -2736,6 +2754,8 @@ class FieldTest(unittest.TestCase):
                 del lp0.long_name
 
                 self.assertTrue(lp.equals(lp0))
+
+                self.assertTrue(lp.Units == cf.Units("m-2"))
 
 
 if __name__ == "__main__":

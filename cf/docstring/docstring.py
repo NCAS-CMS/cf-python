@@ -184,14 +184,13 @@ _docstring_substitution_definitions = {
                 Specify the radius of the latitude-longitude plane
                 defined in spherical polar coordinates. The radius is
                 that which would be returned by this call of the field
-                construct's `~cf.Field.radius` method:
-                ``f.radius(default=radius)``. See `cf.Field.radius`
-                for details. The radius is defined by the datum of a
-                coordinate reference construct, and if and only if no
-                such radius is found the default value given by the
-                *radius* parameter is used instead. A value of
-                ``'earth'`` is equivalent to a default value of
-                6371229 metres.""",
+                construct's `radius` method:
+                ``f.radius(default=radius)``. The radius is defined by
+                the datum of a coordinate reference construct, and if
+                and only if no such radius is found then the default
+                value given by the *radius* parameter is used
+                instead. A value of ``'earth'`` is equivalent to a
+                default value of 6371229 metres.""",
     # Returns formula
     "{{Returns formula}}": """5-`tuple`
                 * The standard name of the parametric coordinates.

@@ -2351,9 +2351,10 @@ sum. Note that the window weights returned by functions of the
           latter i) can not change the window weights as the filter
           passes through the axis; and ii) does not update the cell
           method constructs.
-        
-Derivatives
-^^^^^^^^^^^
+
+	  
+General first order derivative
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The derivative along a dimension of the field construct's data can be
 calculated as a centred finite difference with the `~Field.derivative`
@@ -2370,6 +2371,107 @@ data is inserted.
 
    >>> r = q.derivative('X')
    >>> r = q.derivative('Y', one_sided_at_boundary=True)
+
+   
+Gradient vector
+^^^^^^^^^^^^^^^
+
+The horizontal gradient vector may calculated with the
+`~Field.grad_xy` method when the field has dimension coordinates of X
+and Y, in either Cartesian (e.g. plane projection) or spherical polar
+coordinate systems.
+
+The horizontal gradient vector in Cartesian coordinates is given by:
+
+.. math:: \nabla f(x, y) = \left(
+                           \frac{\partial f}{\partial x},
+                           \frac{\partial f}{\partial y}
+                           \right)
+
+The horizontal gradient vector in spherical polar coordinates is given
+by:
+
+.. math:: \nabla f(\theta, \phi) = \left(
+                                   \frac{1}{r}
+                                   \frac{\partial f}{\partial \theta},
+                                   \frac{1}{r \sin\theta}
+                                   \frac{\partial f}{\partial \phi}
+                                   \right)
+
+where *r* is radial distance to the origin, :math:`\theta` is the
+polar angle with respect to polar axis, and :math:`\phi` is the
+azimuthal angle.
+
+See `cf.Field.grad_xy` for details and examples.
+
+   
+Laplacian
+^^^^^^^^^
+
+The horizontal Laplacian may be calculated with the
+`~Field.laplacian_xy` method when the field has dimension coordinates
+of X and Y, in either Cartesian (e.g. plane projection) or spherical
+polar coordinate systems.
+
+The horizontal Laplacian in Cartesian coordinates is given by:
+
+.. math:: \nabla^2 f(x, y) = \frac{\partial^2 f}{\partial x^2}
+                             +
+                             \frac{\partial^2 f}{\partial y^2}
+
+The horizontal Laplacian in spherical polar coordinates is given by:
+
+.. math:: \nabla^2 f(\theta, \phi) =
+            \frac{1}{r^2 \sin\theta}
+            \frac{\partial}{\partial \theta}
+            \left(
+            \sin\theta
+            \frac{\partial f}{\partial \theta}
+            \right)
+            +
+            \frac{1}{r^2 \sin^2\theta}
+            \frac{\partial^2 f}{\partial \phi^2}
+
+where *r* is radial distance to the origin, :math:`\theta` is the
+polar angle with respect to polar axis, and :math:`\phi` is the
+azimuthal angle.
+
+See `cf.Field.laplacian_xy` for details and examples.
+
+
+Divergence
+^^^^^^^^^^
+
+The horizontal divergence may be calculated with the `cf.div_xy`
+function from orthogonal vector component fields which have dimension
+coordinates of X and Y, in either Cartesian (e.g. plane projection) or
+spherical polar coordinate systems.
+
+The horizontal divergence of the :math:`(f_x, f_y)` vector in
+Cartesian coordinates is given by:
+
+.. math:: \nabla \cdot (f_{x}(x,y), f_{y}(x,y)) =
+            \frac{\partial f_x}{\partial x}
+            +
+            \frac{\partial f_y}{\partial y}
+
+The horizontal divergence of the :math:`(f_\theta, f_\phi)` vector in
+spherical polar coordinates is given by:
+
+.. math:: \nabla \cdot (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+            \frac{1}{r \sin\theta}
+            \frac{\partial}{\partial \theta}
+            (f_\theta \sin\theta)
+            +
+            \frac{1}{r \sin\theta}
+            \frac{\partial f_\phi}{\partial \phi}
+
+where *r* is radial distance to the origin, :math:`\theta` is the
+polar angle with respect to polar axis, and :math:`\phi` is the
+azimuthal angle.
+
+See `cf.div_xy` for details and examples.
+
 
 Relative vorticity
 ^^^^^^^^^^^^^^^^^^

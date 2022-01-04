@@ -4585,7 +4585,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 cells defined in spherical polar coordinates. The
                 radius is that which would be returned by this call of
                 the field construct's `~cf.Field.radius` method:
-                ``f.radius(radius)``. See the `cf.Field.radius` for
+                ``f.radius(radius)``. See `cf.Field.radius` for
                 details.
 
                 By default *radius* is ``'earth'`` which means that if
@@ -4718,22 +4718,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if len(radii) > 1:
             raise ValueError(
-                "Multiple radii found in coordinate reference "
+                "Multiple radii found from coordinate reference "
                 f"constructs: {radii!r}"
             )
 
         if not radii:
             if default is None:
                 raise ValueError(
-                    "No radius found in coordinate reference constructs "
+                    "No radius found from coordinate reference constructs "
                     "and no default provided"
                 )
 
             if isinstance(default, str):
                 if default != "earth":
                     raise ValueError(
-                        "The default parameter must be numeric or the "
-                        "string 'earth'"
+                        "The default radius must be numeric, 'earth', "
+                        "or None"
                     )
 
                 return _earth_radius.copy()
@@ -4757,12 +4757,35 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         radius=None,
         inplace=False,
     ):
-        """Calculate the Laplacian in XY coordinates.
+        r"""Calculate the Laplacian in X-Y coordinates.
 
-        The Laplacian is the divergence of the gradient of a scalar
-        quantity. The Laplacian is calculated when the field has
-        dimension coordinates of X and Y, in either cartesian (plane
-        projection) or spherical polar coordinate systems.
+        The horizontal Laplacian is calculated from a field that has
+        dimension coordinates of X and Y, in either Cartesian
+        (e.g. plane projection) or spherical polar coordinate systems.
+
+        The horizontal Laplacian in Cartesian coordinates is given by:
+
+        .. math:: \nabla^2 f(x, y) = \frac{\partial^2 f}{\partial x^2}
+                                     +
+                                     \frac{\partial^2 f}{\partial y^2}
+
+        The horizontal Laplacian in spherical polar coordinates is
+        given by:
+
+        .. math:: \nabla^2 f(\theta, \phi) =
+                    \frac{1}{r^2 \sin\theta}
+                    \frac{\partial}{\partial \theta}
+                    \left(
+                    \sin\theta
+                    \frac{\partial f}{\partial \theta}
+                    \right)
+                    +
+                    \frac{1}{r^2 \sin^2\theta}
+                    \frac{\partial^2 f}{\partial \phi^2}
+
+        where *r* is radial distance to the origin, :math:`\theta` is
+        the polar angle with respect to polar axis, and :math:`\phi`
+        is the azimuthal angle.
 
         The Laplacian is calculated using centred finite differences
         apart from at the boundaries (see the *x_wrap* and
@@ -4772,16 +4795,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.12.0
 
-        .. seealso:: `grad_xy`, `iscyclic`, `cf.div_xy`
+        .. seealso:: `derivative`, `grad_xy`, `iscyclic`, `cf.div_xy`
 
         :Parameters:
 
             x_wrap: `bool`, optional
                 Whether the X axis is cyclic or not. By default
-                *x_wrap* is set to the result of `f.iscyclic('X')`. If
-                the X axis is cyclic then centred differences at one X
-                boundary will always use values from the other,
-                regardless of the setting of
+                *x_wrap* is set to the result of this call to the
+                field construct's `iscyclic` method:
+                ``f.iscyclic('X')``. If the X axis is cyclic then
+                centred differences at one X boundary will always use
+                values from the other, regardless of the setting of
                 *one_sided_at_boundary*. The Y axis is never
                 considered to be cyclic.
 
@@ -4790,19 +4814,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 calculated at the non-cyclic boundaries. By default
                 missing values are set at non-cyclic boundaries.
 
-            radius: optional
-                Specify the radius used for calculating the areas of
-                cells defined in spherical polar coordinates. The
-                radius is that which would be returned by this call of
-                the field construct's `~cf.Field.radius` method:
-                ``f.radius(radius)``. See `cf.Field.radius` for
-                details.
-
-                By default *radius* is ``'earth'`` which means that if
-                and only if the radius can not be found from the
-                datums of any coordinate reference constructs, then
-                the default radius is taken as 6371229 metres.
-
             {{radius: optional}}
 
             {{inplace: `bool`, optional}}
@@ -4810,8 +4821,41 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field` or `None`
-                The XY Laplacian of the field, or `None` if the
-                operation was in-place.
+                The horizontal Laplacian of the field, or `None` if
+                the operation was in-place.
+
+        >>> f = cf.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f[...] = 0.1
+        >>> print(f.array)
+        [[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
+        >> >lp = f.laplacian_xy(radius='earth')
+        >>> lp
+        <CF Field: long_name=X-Y Laplacian of specific_humidity(latitude(5), longitude(8)) m-2.rad-2>
+        >>> print(lp.array)
+        [[-- -- -- -- -- -- -- --]
+         [-- -- -- -- -- -- -- --]
+         [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+         [-- -- -- -- -- -- -- --]
+         [-- -- -- -- -- -- -- --]]
+        >>> lp = f.laplacian_xy(radius='earth', one_sided_at_boundary=True)
+        >>> print(lp.array)
+        [[0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]]
 
         """
         from numpy import pi
@@ -4910,7 +4954,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f = d2f_dx2 + d2f_dy2
 
         # Set the standard name and long name
-        f.set_property("long_name", f"XY Laplacian of {identity}")
+        f.set_property("long_name", f"Horizontal Laplacian of {identity}")
         f.del_property("standard_name", None)
 
         return f
@@ -13619,11 +13663,33 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         one_sided_at_boundary=False,
         radius=None,
     ):
-        """Calculate the (X, Y) gradient vector.
+        r"""Calculate the (X, Y) gradient vector.
 
-        The gradient vector is calculated when the field has dimension
-        coordinates of X and Y, in either cartesian (plane projection)
-        or spherical polar coordinate systems.
+        The horizontal gradient vector is calculated from a field that
+        has dimension coordinates of X and Y, in either Cartesian
+        (e.g. plane projection) or spherical polar coordinate systems.
+
+        The horizontal gradient vector in Cartesian coordinates is
+        given by:
+
+        .. math:: \nabla f(x, y) = \left(
+                                   \frac{\partial f}{\partial x},
+                                   \frac{\partial f}{\partial y}
+                                   \right)
+
+        The horizontal gradient vector in spherical polar coordinates
+        is given by:
+
+        .. math:: \nabla f(\theta, \phi) = \left(
+                                           \frac{1}{r}
+                                           \frac{\partial f}{\partial \theta},
+                                           \frac{1}{r \sin\theta}
+                                           \frac{\partial f}{\partial \phi}
+                                           \right)
+
+        where *r* is radial distance to the origin, :math:`\theta` is
+        the polar angle with respect to polar axis, and :math:`\phi`
+        is the azimuthal angle.
 
         The gradient vector components are calculated using centred
         finite differences apart from at the boundaries (see the
@@ -13634,17 +13700,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.12.0
 
-        .. seealso:: `iscyclic`, `laplacian_xy`, `cf.div_xy`
-
+        .. seealso:: `derivative`, `iscyclic`, `laplacian_xy`,
+                     `cf.div_xy`
 
         :Parameters:
 
             x_wrap: `bool`, optional
                 Whether the X axis is cyclic or not. By default
-                *x_wrap* is set to the result of `f.iscyclic('X')`. If
-                the X axis is cyclic then centred differences at one X
-                boundary will always use values from the other,
-                regardless of the setting of
+                *x_wrap* is set to the result of this call to the
+                field construct's `iscyclic` method:
+                ``f.iscyclic('X')``. If the X axis is cyclic then
+                centred differences at one X boundary will always use
+                values from the other, regardless of the setting of
                 *one_sided_at_boundary*. The Y axis is never
                 considered to be cyclic.
 
@@ -13658,7 +13725,49 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `FieldList`
-                The X-Y gradient vector of the field.
+                The horizontal gradient vector of the field.
+
+        **Examples**
+
+        >>> f = cf.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f[...] = 0.1
+        >>> print(f.array)
+        [[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
+        >>> fx, fy = f.grad_xy(radius='earth')
+        >>> fx, fy
+        (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>,
+         <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>)
+        >>> print(fx.array)
+        [[0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]]
+        >>> print(fy.array)
+        [[-- -- -- -- -- -- -- --]
+         [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+         [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+         [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+         [-- -- -- -- -- -- -- --]]
+        >>> fx, fy = f.grad_xy(radius='earth', one_sided_at_boundary=True)
+        >>> print(fy.array)
+        [[0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]]
 
         """
         from numpy import pi
@@ -16901,7 +17010,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         i=False,
         cyclic=None,
     ):
-        """Return the derivative along the specified axis.
+        """Calculate the derivative along the specified axis.
 
         The derivative is calculated using centred finite differences
         apart from at the boundaries (see the *one_sided_at_boundary*
