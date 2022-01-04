@@ -8,11 +8,6 @@ from json import loads as json_loads
 from numbers import Integral
 from operator import mul
 
-try:
-    from scipy.ndimage.filters import convolve1d as scipy_convolve1d
-except ImportError:
-    pass
-
 import cfdm
 import cftime
 import dask.array as da
@@ -2973,14 +2968,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 in-place.
 
         """
-        # TODODSAK - map_overlap
-
-        try:
-            scipy_convolve1d
-        except NameError:
-            raise ImportError(
-                "Must install scipy to use the convolution_filter method."
-            )
+        from .dask_utils import cf_convolve1d
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -2988,60 +2976,57 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if len(iaxis) != 1:
             raise ValueError(
                 "Must specify a unique domain axis with the 'axis' "
-                "parameter. {!r} specifies axes {!r}".format(axis, iaxis)
+                f"parameter. {axis!r} specifies axes {iaxis!r}"
             )
 
         iaxis = iaxis[0]
 
-        # Default mode to 'wrap' if the axis is cyclic
+        boundary = mode
         if mode is None:
+            # Default mode is 'wrap' if the axis is cyclic, or else
+            # 'constant'.
             if iaxis in d.cyclic():
-                mode = "wrap"
+                boundary = "periodic"
             else:
-                mode = "constant"
-        # --- End: if
-
-        # Set cval to NaN if it is currently None, so that the edges
-        # will be filled with missing data if the mode is 'constant'
-        if cval is None:
-            cval = np.nan
-
-        # Section the data into sections up to a chunk in size
-        sections = self.section([iaxis], chunks=True)
-
-        # Filter each section replacing masked points with numpy
-        # NaNs and then remasking after filtering.
-        for key, data in sections.items():
-            data.dtype = float
-            input_array = data.array
-            masked = np.ma.is_masked(input_array)
-            if masked:
-                input_array = input_array.filled(np.nan)
-
-            output_array = scipy_convolve1d(
-                input_array,
-                window,
-                axis=iaxis,
-                mode=mode,
-                cval=cval,
-                origin=origin,
+                boundary = cval
+        elif mode == "wrap":
+            boundary = "periodic"
+        elif mode == "constant":
+            boundary = cval
+        elif mode == "mirror":
+            raise ValueError(
+                "'mirror' mode is no longer available. Please raise an "
+                "issue at https://github.com/NCAS-CMS/cf-python/issues "
+                "if you would like it to be re-implmented"
             )
-            if masked or (mode == "constant" and np.isnan(cval)):
-                with np.errstate(invalid="ignore"):
-                    output_array = np.ma.masked_invalid(output_array)
-            # --- End: if
+            # This re-imlemnetation would involve getting a 'mirror'
+            # function added to dask.array.overlap, along similar
+            # lines to the existing 'reflect' function in that module.
 
-            sections[key] = type(self)(
-                output_array, units=self.Units, fill_value=self.fill_value
-            )
+        # Set the overlap depth large enough to accommodate the filter
+        size = len(window)
+        centre = int(size / 2)
+        if not origin and not size % 2:
+            centre += 1
 
-        # Glue the sections back together again
-        out = self.reconstruct_sectioned_data(sections, cyclic=self.cyclic())
+        depth = {iaxis: centre + abs(origin)}
 
-        if inplace:
-            d.__dict__ = out.__dict__
-        else:
-            d = out
+        convolve1d = partial(
+            cf_convolve1d, window=window, axis=iaxis, origin=origin
+        )
+
+        dx = d._get_dask()
+        if dx.dtype.kind == "i":
+            dx = dx.astype(float)
+
+        dx = dx.map_overlap(
+            convolve1d,
+            depth=depth,
+            boundary=boundary,
+            trim=True,
+        )
+
+        d._set_dask(dx, reset_mask_hardness=True)
 
         return d
 
