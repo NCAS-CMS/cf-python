@@ -1,6 +1,6 @@
 import logging
+import operator
 from collections import namedtuple
-from operator import __add__, __sub__
 
 import numpy
 
@@ -484,18 +484,9 @@ class TimeDuration:
         .. versionadded:: 1.4
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__add__")
-
-        if hasattr(other, "timetuple"):
-            # other is a date-time object
-            try:
-                return self._datetime_arithmetic(other, __add__)
-            except TypeError:
-                return NotImplemented
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__add__")
+        return self._apply_binary_arithmetic(
+            other, "__add__", may_be_datetime=True
+        )
 
         return NotImplemented
 
@@ -507,20 +498,9 @@ class TimeDuration:
         .. versionadded:: 1.4
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__sub__")
-
-        if hasattr(other, "timetuple"):
-            # other is a date-time object
-            try:
-                return self._datetime_arithmetic(other, __sub__)
-            except TypeError:
-                return NotImplemented
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__sub__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__sub__", may_be_datetime=True
+        )
 
     def __mul__(self, other):
         """The binary arithmetic operation ``*``
@@ -716,7 +696,7 @@ class TimeDuration:
 
         return NotImplemented
 
-    def _apply_binary_arithmetic(self, other, operator):
+    def _apply_binary_arithmetic(self, other, op, may_be_datetime=False):
         """Apply a binary arithmetic operation with general data.
 
         .. versionadded:: 3.12.0
@@ -725,14 +705,29 @@ class TimeDuration:
 
             other: the object to compare with.
 
-            operator: `str`, the binary arithmetic operator to apply.
+            op: `str`, the binary arithmetic operator to apply.
+
+            may_be_datetime: `bool`
+                Whether it is logically permissible for other to be a datetime.
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, operator)
+
+        check_simple_types = [int, float]
+        if may_be_datetime:
+            check_simple_types.append(self.__class__)
+
+        if isinstance(other, tuple(check_simple_types)):
+            return self._binary_operation(other, op)
+
+        if may_be_datetime and hasattr(other, "timetuple"):
+            # other is a date-time object
+            try:
+                return self._datetime_arithmetic(other, getattr(operator, op))
+            except TypeError:
+                return NotImplemented
 
         if isinstance(other, Data):
-            return self._data_arithmetic(other, operator)
+            return self._data_arithmetic(other, op)
 
         return NotImplemented
 
