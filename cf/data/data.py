@@ -2850,6 +2850,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self.func(np.ceil, out=True, inplace=inplace)
 
+    @daskified(1)
     @_inplace_enabled(default=False)
     def convolution_filter(
         self,
@@ -2930,6 +2931,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 ``'wrap'``      The input is extended by    ``(a b c | a b c | a b c)``
                                 wrapping around to the
                                 opposite edge.
+
+                ``'periodic'``  This is a synonym for
+                                ``'wrap'``.
                 ==============  ==========================  ============================
 
                 The position of the window relative to each value can be
@@ -2981,7 +2985,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         iaxis = iaxis[0]
 
-        boundary = mode
         if mode is None:
             # Default mode is 'wrap' if the axis is cyclic, or else
             # 'constant'.
@@ -2997,33 +3000,49 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             raise ValueError(
                 "'mirror' mode is no longer available. Please raise an "
                 "issue at https://github.com/NCAS-CMS/cf-python/issues "
-                "if you would like it to be re-implmented"
+                "if you would like it to be re-implemented."
             )
-            # This re-imlemnetation would involve getting a 'mirror'
+            # This re-implementation would involve getting a 'mirror'
             # function added to dask.array.overlap, along similar
             # lines to the existing 'reflect' function in that module.
+        else:
+            boundary = mode
 
-        # Set the overlap depth large enough to accommodate the filter
+        # Set the overlap depth large enough to accommodate the
+        # filter.
+        #
+        # For instance, for a 5-point window, the calculated value at
+        # each point requires 2 points either side if the filter is
+        # centred (i.e. origin is 0) and (up to) 3 points either side
+        # if origin is 1 or -1.
+        #
+        # It is a restriction of dask.array.map_overlap that we can't
+        # use asymmetric halos for general 'boundary' types.
         size = len(window)
-        centre = int(size / 2)
+        depth = int(size / 2)
         if not origin and not size % 2:
-            centre += 1
+            depth += 1
 
-        depth = {iaxis: centre + abs(origin)}
+        depth += abs(origin)
 
+        dx = d._get_dask()
+
+        # Cast to float to ensure that NaNs can be stored (as required
+        # by cf_convolve1d)
+        if dx.dtype != float:
+            dx = dx.astype(float, copy=False)
+
+        # Convolve each chunk
         convolve1d = partial(
             cf_convolve1d, window=window, axis=iaxis, origin=origin
         )
 
-        dx = d._get_dask()
-        if dx.dtype.kind == "i":
-            dx = dx.astype(float)
-
         dx = dx.map_overlap(
             convolve1d,
-            depth=depth,
+            depth={iaxis: depth},
             boundary=boundary,
             trim=True,
+            meta=np.array((), dtype=float),
         )
 
         d._set_dask(dx, reset_mask_hardness=True)

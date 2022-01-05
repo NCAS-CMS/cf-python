@@ -45,6 +45,8 @@ def cf_convolve1d(a, window=None, axis=-1, origin=0):
     """
     masked = np.ma.is_masked(a)
     if masked:
+        # convolve1d does not deal with masked arrays, so uses NaNs
+        # instead.
         a = a.filled(np.nan)
 
     c = convolve1d(
