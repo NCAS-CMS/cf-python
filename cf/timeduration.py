@@ -433,13 +433,7 @@ class TimeDuration:
 
         """
 
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__ge__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__ge__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__ge__")
 
     def __gt__(self, other):
         """The rich comparison operator ``>``
@@ -448,13 +442,7 @@ class TimeDuration:
 
         """
 
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__gt__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__gt__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__gt__")
 
     def __le__(self, other):
         """The rich comparison operator ``<=``
@@ -462,13 +450,7 @@ class TimeDuration:
         x.__le__(y) <==> x<=y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__le__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__le__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__le__")
 
     def __lt__(self, other):
         """The rich comparison operator ``<``
@@ -476,13 +458,7 @@ class TimeDuration:
         x.__lt__(y) <==> x<y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__lt__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__lt__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__lt__")
 
     def __eq__(self, other):
         """The rich comparison operator ``==``
@@ -490,13 +466,7 @@ class TimeDuration:
         x.__eq__(y) <==> x==y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__eq__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__eq__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__eq__")
 
     def __ne__(self, other):
         """The rich comparison operator ``!=``
@@ -504,13 +474,7 @@ class TimeDuration:
         x.__ne__(y) <==> x!=y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__ne__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__ne__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__ne__")
 
     def __add__(self, other):
         """The binary arithmetic operation ``+``
@@ -755,6 +719,27 @@ class TimeDuration:
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
+    def _apply_binary_comparison(self, other, operator):
+        """Apply a binary comparison operation on general data.
+
+        .. versionadded:: 3.12.0
+
+        :Parameters:
+
+            other: the object to compare with.
+
+            operator: `str`, the binary comparison operator to apply.
+
+        """
+
+        if isinstance(other, (self.__class__, int, float)):
+            return bool(self._binary_operation(other, operator))
+
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, operator)
+
+        return NotImplemented
+
     def _binary_operation(self, other, method, inplace=False):
         """Implement binary operations on the datetime."""
         if inplace:
