@@ -528,13 +528,7 @@ class TimeDuration:
         x.__mul__(y) <==> x*y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__mul__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__mul__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__mul__")
 
     def __div__(self, other):
         """The binary arithmetic operation ``/``
@@ -542,13 +536,7 @@ class TimeDuration:
         x.__div__(y) <==> x/y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__div__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__div__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__div__")
 
     def __floordiv__(self, other):
         """The binary arithmetic operation ``//``
@@ -556,13 +544,7 @@ class TimeDuration:
         x.__floordiv__(y) <==> x//y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__floordiv__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__floordiv__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__floordiv__")
 
     def __truediv__(self, other):
         """The binary arithmetic operation ``/`` (true division)
@@ -570,13 +552,7 @@ class TimeDuration:
         x.__truediv__(y) <==> x/y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__truediv__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__truediv__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__truediv__")
 
     def __iadd__(self, other):
         """The augmented arithmetic assignment ``+=``
@@ -737,6 +713,26 @@ class TimeDuration:
 
         if isinstance(other, Data):
             return self._data_binary_operation(other, operator)
+
+        return NotImplemented
+
+    def _apply_binary_arithmetic(self, other, operator):
+        """Apply a binary arithmetic operation with general data.
+
+        .. versionadded:: 3.12.0
+
+        :Parameters:
+
+            other: the object to compare with.
+
+            operator: `str`, the binary arithmetic operator to apply.
+
+        """
+        if isinstance(other, (int, float)):
+            return self._binary_operation(other, operator)
+
+        if isinstance(other, Data):
+            return self._data_arithmetic(other, operator)
 
         return NotImplemented
 
