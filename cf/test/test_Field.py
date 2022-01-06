@@ -2651,7 +2651,6 @@ class FieldTest(unittest.TestCase):
                 del y.long_name
 
                 theta = 90 - f.convert("Y", full_domain=True)
-                theta.Units = cf.Units("radians")
                 x0 = f.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
                 ) / (theta.sin() * r)
@@ -2665,10 +2664,14 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue((y.data == y0.data).all())
 
                 # Check the metadata
-                x0.set_data(x.data)
-                y0.set_data(y.data)
-                self.assertTrue(x.equals(x0))
-                self.assertTrue(y.equals(y0))
+                f0 = f.copy()
+                del f0.standard_name
+
+                f0.set_data(x.data)
+                self.assertTrue(x.equals(f0))
+
+                f0.set_data(y.data)
+                self.assertTrue(y.equals(f0))
 
                 self.assertTrue(x.Units == y.Units == cf.Units("m-1 rad-1"))
 
@@ -2728,7 +2731,10 @@ class FieldTest(unittest.TestCase):
                 del lp.long_name
                 del lp0.long_name
 
-                self.assertTrue(lp.equals(lp0))
+                message = (
+                    f"{wrap}, {one_sided}, {lp.data.array}, {lp0.data.array}"
+                )
+                self.assertTrue(lp.equals(lp0, verbose=-1), message)
 
                 self.assertTrue(lp.Units == cf.Units("m-2 rad-2"))
 

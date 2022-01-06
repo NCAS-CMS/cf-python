@@ -19,7 +19,6 @@ from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
 from numpy import full as numpy_full
-from numpy import nan as numpy_nan
 from numpy import ndarray as numpy_ndarray
 from numpy import pi as numpy_pi
 from numpy import prod as numpy_prod
@@ -4806,8 +4805,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ``f.iscyclic('X')``. If the X axis is cyclic then
                 centred differences at one X boundary will always use
                 values from the other, regardless of the setting of
-                *one_sided_at_boundary*. The Y axis is never
-                considered to be cyclic.
+                *one_sided_at_boundary*.
+
+                The cyclicity of the Y axis is always set to the
+                result of ``f.iscyclic('Y')``.
 
             one_sided_at_boundary: `bool`, optional
                 If True then one-sided finite differences are
@@ -4891,7 +4892,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # --------------------------------------------------------
             # Spherical polar coordinates
             # --------------------------------------------------------
-            # Convert latitude and longitude units to radians
+            # Convert latitude and longitude units to radians, so that
+            # the units of the result are nice.
             x_coord.Units = _units_radians
             y_coord.Units = _units_radians
 
@@ -4915,16 +4917,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
             df_dtheta = f.derivative(
-                y_key, one_sided_at_boundary=one_sided_at_boundary
+                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
             )
 
-            term_x = d2f_dphi2 / (r2_sin_theta * sin_theta)
+            term1 = d2f_dphi2 / (r2_sin_theta * sin_theta)
 
-            term_y = (df_dtheta * sin_theta).derivative(
-                y_key, one_sided_at_boundary=one_sided_at_boundary
+            term2 = (df_dtheta * sin_theta).derivative(
+                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
             ) / r2_sin_theta
 
-            f = term_x + term_y
+            f = term1 + term2
 
             # Reset latitude and longitude coordinate units
             f.dimension_coordinate("X").Units = x_units
@@ -4945,9 +4947,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             d2f_dy2 = f.derivative(
                 y_key,
+                wrap=None,
                 one_sided_at_boundary=one_sided_at_boundary,
             ).derivative(
                 y_key,
+                wrap=None,
                 one_sided_at_boundary=one_sided_at_boundary,
             )
 
@@ -13712,8 +13716,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ``f.iscyclic('X')``. If the X axis is cyclic then
                 centred differences at one X boundary will always use
                 values from the other, regardless of the setting of
-                *one_sided_at_boundary*. The Y axis is never
-                considered to be cyclic.
+                *one_sided_at_boundary*.
+
+                The cyclicity of the Y axis is always set to the
+                result of ``f.iscyclic('Y')``.
 
             one_sided_at_boundary: `bool`, optional
                 If True then one-sided finite differences are
@@ -13803,7 +13809,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # --------------------------------------------------------
             # Spherical polar coordinates
             # --------------------------------------------------------
-            # Convert latitude and longitude units to radians
+            # Convert latitude and longitude units to radians, so that
+            # the units of the result are nice.
             x_coord.Units = _units_radians
             y_coord.Units = _units_radians
 
@@ -13819,7 +13826,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             Y = (
                 f.derivative(
-                    y_key, one_sided_at_boundary=one_sided_at_boundary
+                    y_key,
+                    wrap=None,
+                    one_sided_at_boundary=one_sided_at_boundary,
                 )
                 / r
             )
@@ -13839,7 +13848,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
             Y = f.derivative(
-                y_key, one_sided_at_boundary=one_sided_at_boundary
+                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
             )
 
         # Set the standard name and long name
@@ -17021,11 +17030,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             axis:
-                The axis , defined by that which would be selected by
-                passing the given axis description to a call of the field
-                construct's `domain_axis` method. For example, for a value
-                of ``'X'``, the domain axis construct returned by
-                ``f.domain_axis('X')`` is selected.
+                The axis, defined by that which would be selected by
+                passing the given axis description to a call of the
+                field construct's `domain_axis` method. For example,
+                for a value of ``'X'``, the domain axis construct
+                returned by ``f.domain_axis('X')`` is selected.
 
             wrap: `bool`, optional
                 If True then the boundary is wrapped around, otherwise the
@@ -17112,8 +17121,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Automatically detect the cyclicity of the axis if cyclic is
         # None
+        cyclic = self.iscyclic(axis)
         if wrap is None:
-            wrap = self.iscyclic(axis)
+            wrap = cyclic
 
         # Set the boundary conditions
         if wrap:
@@ -17132,29 +17142,34 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Find the differences of the coordinates
         d = None
-        if wrap and f.iscyclic(axis):
+        if wrap and cyclic:
             period = coord.period()
-            if period is not None:
-                # Fix the boundary differences for cyclic periodic
-                # coordinates. Need to extend the coordinates to
-                # include a dummy value at each end, grabbed from the
-                # other end, that maintains strict monotonicity.
-                c_data = coord.data
-                d2 = self._Data.empty((c_data.size + 2,), units=c_data.Units)
-                if not coord.direction():
-                    period = -period
+            if period is None:
+                raise ValueError(
+                    "Can't calculate derivative when cyclic dimension "
+                    f"coordinate {coord!r} has no period"
+                )
 
-                d2[1:-1] = c_data
-                d2[0] = c_data[-1] - period
-                d2[-1] = c_data[0] + period
+            # Fix the boundary differences for cyclic periodic
+            # coordinates. Need to extend the coordinates to include a
+            # dummy value at each end, grabbed from the other end,
+            # that maintains strict monotonicity.
+            c_data = coord.data
+            d2 = self._Data.empty((c_data.size + 2,), units=c_data.Units)
+            if not coord.direction():
+                period = -period
 
-                d = d2.convolution_filter(
-                    window=[1, 0, -1], axis=0, mode="constant"
-                )[1:-1]
+            d2[1:-1] = c_data
+            d2[0] = c_data[-1] - period
+            d2[-1] = c_data[0] + period
+            c_data = d2
+            d = d2.convolution_filter(
+                window=[1, 0, -1], axis=0, mode="constant"
+            )[1:-1]
 
         if d is None:
             d = coord.data.convolution_filter(
-                window=[1, 0, -1], axis=0, mode=mode, cval=numpy_nan
+                window=[1, 0, -1], axis=0, mode=mode, cval=np.nan
             )
 
         # Reshape the coordinate differences so that they broadcast to

@@ -126,7 +126,7 @@ class MathTest(unittest.TestCase):
                 )
 
                 theta = 90 - f.convert("Y", full_domain=True)
-                theta.Units = cf.Units("radians")
+                #                theta.Units = cf.Units("radians")
 
                 term1 = x.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
@@ -138,7 +138,10 @@ class MathTest(unittest.TestCase):
                 d0 = term1 + term2
 
                 # Check the data
-                self.assertTrue((d.data == d0.data).all())
+                message = (
+                    f"{wrap}, {one_sided}, {d.data.array}, {d0.data.array}"
+                )
+                self.assertTrue((d.data == d0.data).all(), message)
 
                 # Check the metadata
                 del d.long_name

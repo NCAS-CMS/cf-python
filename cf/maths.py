@@ -438,8 +438,10 @@ def div_xy(
             method:``fx.iscyclic('X')``. If the X axis is cyclic then
             centred differences at one X boundary will always use
             values from the other, regardless of the setting of
-            *one_sided_at_boundary*. The Y axis is never considered to
-            be cyclic.
+            *one_sided_at_boundary*.
+
+            The cyclicity of the Y axis is always set to the result of
+            ``fy.iscyclic('Y')``.
 
         one_sided_at_boundary: `bool`, optional
             If True then one-sided finite differences are calculated
@@ -536,7 +538,8 @@ def div_xy(
         # ------------------------------------------------------------
         # Spherical polar coordinates
         # ------------------------------------------------------------
-        # Convert latitude and longitude units to radians
+        # Convert latitude and longitude units to radians, so that
+        # the units of the result are nice.
         radians = Units("radians")
         x_coord.Units = radians
         y_coord.Units = radians
@@ -557,7 +560,7 @@ def div_xy(
         )
 
         term2 = (fy * sin_theta).derivative(
-            y_key, one_sided_at_boundary=one_sided_at_boundary
+            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
         ) / r_sin_theta
 
         d = term1 + term2
@@ -574,7 +577,7 @@ def div_xy(
         )
 
         term2 = fy.derivative(
-            y_key, one_sided_at_boundary=one_sided_at_boundary
+            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
         )
 
         d = term1 + term2
