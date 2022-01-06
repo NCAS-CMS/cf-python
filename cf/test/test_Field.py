@@ -2658,7 +2658,10 @@ class FieldTest(unittest.TestCase):
                 y0 = f.derivative("Y", one_sided_at_boundary=one_sided) / r
 
                 # Check the data
-                self.assertTrue((x.data == x0.data).all())
+                message = (
+                    f"{wrap}, {one_sided}, {x.data.array}, {x0.data.array}"
+                )
+                self.assertTrue((x.data == x0.data).all(), message)
                 self.assertTrue((y.data == y0.data).all())
 
                 # Check the metadata
