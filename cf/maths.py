@@ -409,7 +409,7 @@ def curl_xy(
                 \frac{\partial (f_\phi \sin\theta)}{\partial \theta}
                 -
                 \frac{\partial f_\theta}{\partial \phi}
-                /right)
+                \right)
 
     where *r* is radial distance to the origin, :math:`\theta` is the
     polar angle with respect to polar axis, and :math:`\phi` is the
@@ -767,20 +767,21 @@ def div_xy(
         sin_theta = theta.sin()
 
         r = fx.radius(default=radius)
-        r_sin_theta = sin_theta * r
+
+        # r_sin_theta = sin_theta * r
 
         term1 = (
             fx.derivative(
                 x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
             )
-            / r_sin_theta
+            # / r_sin_theta
         )
 
         term2 = (fy * sin_theta).derivative(
             y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
-        ) / r_sin_theta
+        )  # / r_sin_theta
 
-        d = term1 + term2
+        d = (term1 + term2) / (sin_theta * r)  # r_sin_theta
 
         # Reset latitude and longitude coordinate units
         d.dimension_coordinate("X").Units = x_units

@@ -188,11 +188,12 @@ class MathTest(unittest.TestCase):
         f = cf.example_field(0)
 
         # Spherical polar coordinates
-        r = f.radius("earth")
+        radius = 2  # 'earth'
+        r = f.radius(radius)
         for wrap in (False, True, None):
-            for one_sided in (True, False):
+            for one_sided in (False, True):
                 x, y = f.grad_xy(
-                    radius="earth",
+                    radius=radius,
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
@@ -200,7 +201,7 @@ class MathTest(unittest.TestCase):
                 d = cf.div_xy(
                     x,
                     y,
-                    radius="earth",
+                    radius=radius,
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
@@ -221,12 +222,13 @@ class MathTest(unittest.TestCase):
 
                 # Check the data
                 message = (
-                    f"{wrap}, {one_sided}, "
-                    f"{d.data.array}, {d.data.Units}, "
-                    f"{d0.data.array}, {d0.data.Units}"
+                    f"{wrap}, {one_sided}, \n"
+                    f"{d.data.array}, {d.data.Units}\n"
+                    f"{d0.data.array}, {d0.data.Units}\n"
                     f"{(d.data == d0.data).array}"
                 )
-                self.assertTrue((d.data == d0.data).all(), message)
+                with cf.rtol(1e-10):
+                    self.assertTrue((d.data == d0.data).all(), message)
 
                 del d.long_name
                 d0.set_data(d.data)

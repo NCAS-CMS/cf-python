@@ -4758,9 +4758,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         r"""Calculate the Laplacian in X-Y coordinates.
 
-        The horizontal Laplacian is calculated from a field that has
-        dimension coordinates of X and Y, in either Cartesian
-        (e.g. plane projection) or spherical polar coordinate systems.
+        The horizontal Laplacian of a scalar function is calculated
+        from a field that has dimension coordinates of X and Y, in
+        either Cartesian (e.g. plane projection) or spherical polar
+        coordinate systems.
 
         The horizontal Laplacian in Cartesian coordinates is given by:
 
@@ -4822,8 +4823,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field` or `None`
-                The horizontal Laplacian of the field, or `None` if
-                the operation was in-place.
+                The horizontal Laplacian of the scalar field, or
+                `None` if the operation was in-place.
 
         >>> f = cf.example_field(0)
         >>> print(f)
@@ -13669,9 +13670,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         r"""Calculate the (X, Y) gradient vector.
 
-        The horizontal gradient vector is calculated from a field that
-        has dimension coordinates of X and Y, in either Cartesian
-        (e.g. plane projection) or spherical polar coordinate systems.
+        The horizontal gradient vector of a scalar function is
+        calculated from a field that has dimension coordinates of X
+        and Y, in either Cartesian (e.g. plane projection) or
+        spherical polar coordinate systems.
 
         The horizontal gradient vector in Cartesian coordinates is
         given by:
@@ -13731,7 +13733,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `FieldList`
-                The horizontal gradient vector of the field.
+                The horizontal gradient vector of the scalar field.
 
         **Examples**
 

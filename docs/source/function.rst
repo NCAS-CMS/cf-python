@@ -44,6 +44,7 @@ Mathematical operations
    cf.atol
    cf.rtol
    cf.default_netCDF_fillvals
+   cf.curl_xy
    cf.div_xy
    cf.histogram
    cf.relative_vorticity
