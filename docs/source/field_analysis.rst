@@ -2376,10 +2376,10 @@ data is inserted.
 Gradient vector
 ^^^^^^^^^^^^^^^
 
-The horizontal gradient vector may calculated with the
-`~Field.grad_xy` method when the field has dimension coordinates of X
-and Y, in either Cartesian (e.g. plane projection) or spherical polar
-coordinate systems.
+The horizontal gradient vector of a scalar field may calculated with
+the `~Field.grad_xy` method when the field has dimension coordinates
+of X and Y, in either Cartesian (e.g. plane projection) or spherical
+polar coordinate systems.
 
 The horizontal gradient vector in Cartesian coordinates is given by:
 
@@ -2408,7 +2408,7 @@ See `cf.Field.grad_xy` for details and examples.
 Laplacian
 ^^^^^^^^^
 
-The horizontal Laplacian may be calculated with the
+The horizontal Laplacian of a scalar field may be calculated with the
 `~Field.laplacian_xy` method when the field has dimension coordinates
 of X and Y, in either Cartesian (e.g. plane projection) or spherical
 polar coordinate systems.
@@ -2459,18 +2459,52 @@ The horizontal divergence of the :math:`(f_\theta, f_\phi)` vector in
 spherical polar coordinates is given by:
 
 .. math:: \nabla \cdot (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
-            \frac{1}{r \sin\theta}
-            \frac{\partial}{\partial \theta}
-            (f_\theta \sin\theta)
-            +
-            \frac{1}{r \sin\theta}
-            \frac{\partial f_\phi}{\partial \phi}
+                \frac{1}{r \sin\theta}
+                \left(
+                \frac{\partial (f_\theta \sin\theta)}{\partial \theta}
+                +
+                \frac{\partial f_\phi}{\partial \phi}
+                \right)
 
 where *r* is radial distance to the origin, :math:`\theta` is the
 polar angle with respect to polar axis, and :math:`\phi` is the
 azimuthal angle.
 
 See `cf.div_xy` for details and examples.
+
+
+Curl
+^^^^
+
+The horizontal curl may be calculated with the `cf.curl_xy` function
+from orthogonal vector component fields which have dimension
+coordinates of X and Y, in either Cartesian (e.g. plane projection) or
+spherical polar coordinate systems.
+
+The horizontal curl of the :math:`(f_x, f_y)` vector in Cartesian
+coordinates is given by:
+
+.. math:: \nabla \times (f_{x}(x,y), f_{y}(x,y)) =
+            \frac{\partial f_y}{\partial x}
+            -
+            \frac{\partial f_x}{\partial y}
+
+The horizontal curl of the :math:`(f_\theta, f_\phi)` vector in
+spherical polar coordinates is given by:
+
+.. math:: \nabla \times (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+            \frac{1}{r \sin\theta}
+            \left(
+            \frac{\partial (f_\phi \sin\theta)}{\partial \theta}
+            -
+            \frac{\partial f_\theta}{\partial \phi}
+            \right)
+
+where *r* is radial distance to the origin, :math:`\theta` is the
+polar angle with respect to polar axis, and :math:`\phi` is the
+azimuthal angle.
+
+See `cf.curl_xy` for details and examples.
 
 
 Relative vorticity
