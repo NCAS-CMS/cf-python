@@ -4803,9 +4803,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *x_wrap* is set to the result of this call to the
                 field construct's `iscyclic` method:
                 ``f.iscyclic('X')``. If the X axis is cyclic then
-                centred differences at one X boundary will always use
-                values from the other, regardless of the setting of
-                *one_sided_at_boundary*.
+                centred differences at one boundary will always use
+                values from the other boundary, regardless of the
+                setting of *one_sided_at_boundary*.
 
                 The cyclicity of the Y axis is always set to the
                 result of ``f.iscyclic('Y')``.
@@ -4898,13 +4898,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             y_coord.Units = _units_radians
 
             # Get theta as a field that will broadcast to f, and
-            # adjust it's values so that theta=0 is at the north pole.
+            # adjust its values so that theta=0 is at the north pole.
             theta = pi / 2 - f.convert(y_key, full_domain=True)
 
             sin_theta = theta.sin()
 
             r = f.radius(default=radius)
-            r2_sin_theta = sin_theta * r * r
+            r2_sin_theta = sin_theta * r ** 2
 
             d2f_dphi2 = f.derivative(
                 x_key,
@@ -4916,11 +4916,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 one_sided_at_boundary=one_sided_at_boundary,
             )
 
+            term1 = d2f_dphi2 / (r2_sin_theta * sin_theta)
+
             df_dtheta = f.derivative(
                 y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
             )
-
-            term1 = d2f_dphi2 / (r2_sin_theta * sin_theta)
 
             term2 = (df_dtheta * sin_theta).derivative(
                 y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
@@ -13705,7 +13705,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         .. versionadded:: 3.12.0
 
         .. seealso:: `derivative`, `iscyclic`, `laplacian_xy`,
-                     `cf.div_xy`
+                     `cf.curl_xy`, `cf.div_xy`
 
         :Parameters:
 
@@ -13714,9 +13714,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *x_wrap* is set to the result of this call to the
                 field construct's `iscyclic` method:
                 ``f.iscyclic('X')``. If the X axis is cyclic then
-                centred differences at one X boundary will always use
-                values from the other, regardless of the setting of
-                *one_sided_at_boundary*.
+                centred differences at one boundary will always use
+                values from the other boundary, regardless of the
+                setting of *one_sided_at_boundary*.
 
                 The cyclicity of the Y axis is always set to the
                 result of ``f.iscyclic('Y')``.
@@ -13815,7 +13815,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             y_coord.Units = _units_radians
 
             # Get theta as a field that will broadcast to f, and
-            # adjust it's values so that theta=0 is at the north pole.
+            # adjust its values so that theta=0 is at the north pole.
             theta = pi / 2 - f.convert(y_key, full_domain=True)
 
             r = f.radius(default=radius)
@@ -17037,10 +17037,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 returned by ``f.domain_axis('X')`` is selected.
 
             wrap: `bool`, optional
-                If True then the boundary is wrapped around, otherwise the
-                value of *one_sided_at_boundary* determines the boundary
-                condition. If `None` then the cyclicity of the axis is
-                autodetected.
+                Whether the axis is cyclic or not. By default *wrap*
+                is set to the result of this call to the field
+                construct's `iscyclic` method:
+                ``f.iscyclic(axis)``. If the axis is cyclic then
+                centred differences at one boundary will always use
+                values from the other boundary, regardless of the
+                setting of *one_sided_at_boundary*.
 
             one_sided_at_boundary: `bool`, optional
                 If True, and the field is not cyclic or *wrap* is

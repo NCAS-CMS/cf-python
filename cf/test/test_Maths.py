@@ -104,12 +104,92 @@ class MathTest(unittest.TestCase):
         rv = cf.relative_vorticity(u, v, wrap=False)
         self.assertTrue(numpy.allclose(rv.array, rv_array))
 
+    def test_curl_xy(self):
+        f = cf.example_field(0)
+
+        return True
+
+        # Spherical polar coordinates
+        r = f.radius("earth")
+        for wrap in (False, True, None):
+            for one_sided in (True, False):
+                x, y = f.grad_xy(
+                    radius="earth",
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
+                )
+
+                c = cf.curl_xy(
+                    x,
+                    y,
+                    radius="earth",
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
+                )
+
+                self.assertTrue(c.Units == cf.Units("m-2 rad-2"))
+
+                theta = 90 - f.convert("Y", full_domain=True)
+                sin_theta = theta.sin()
+
+                term1 = (x * sin_theta).derivative(
+                    "Y", one_sided_at_boundary=one_sided
+                )
+                term2 = y.derivative(
+                    "X", wrap=wrap, one_sided_at_boundary=one_sided
+                )
+
+                c0 = (term1 - term2) / (sin_theta * r)
+
+                # Check the data
+                message = (
+                    f"{wrap}, {one_sided}, {c.data.array}, {c.data.Units}, "
+                    f"{c0.data.array}, {c0.data.Units}, "
+                    f"{(c.data == c0.data).array}"
+                )
+                self.assertTrue((c.data == c0.data).all(), message)
+
+                del c.long_name
+                c0.set_data(c.data)
+                self.assertTrue(c.equals(c0))
+
+        # Cartesian coordinates
+        dim_x = f.dimension_coordinate("X")
+        dim_y = f.dimension_coordinate("Y")
+        dim_x.override_units("m", inplace=True)
+        dim_y.override_units("m", inplace=True)
+        dim_x.standard_name = "projection_x_coordinate"
+        dim_y.standard_name = "projection_y_coordinate"
+        f.cyclic("X", iscyclic=False)
+
+        for wrap in (False, True, None):
+            for one_sided in (True, False):
+                x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
+
+                d = cf.div_xy(
+                    x, y, x_wrap=wrap, one_sided_at_boundary=one_sided
+                )
+
+                self.assertTrue(d.Units == cf.Units("m-2"))
+
+                term1 = x.derivative(
+                    "X", wrap=wrap, one_sided_at_boundary=one_sided
+                )
+                term2 = y.derivative("Y", one_sided_at_boundary=one_sided)
+
+                d0 = term1 + term2
+
+                del d.long_name
+                del d0.long_name
+
+                self.assertTrue(d.equals(d0))
+
     def test_div_xy(self):
         f = cf.example_field(0)
 
         # Spherical polar coordinates
         r = f.radius("earth")
-        for wrap in (None, True, False):
+        for wrap in (False, True, None):
             for one_sided in (True, False):
                 x, y = f.grad_xy(
                     radius="earth",
@@ -125,31 +205,32 @@ class MathTest(unittest.TestCase):
                     one_sided_at_boundary=one_sided,
                 )
 
+                self.assertTrue(d.Units == cf.Units("m-2 rad-2"), d.Units)
+
                 theta = 90 - f.convert("Y", full_domain=True)
-                #                theta.Units = cf.Units("radians")
+                sin_theta = theta.sin()
 
                 term1 = x.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
-                ) / (theta.sin() * r)
-                term2 = (y * theta.sin()).derivative(
+                )
+                term2 = (y * sin_theta).derivative(
                     "Y", one_sided_at_boundary=one_sided
-                ) / (theta.sin() * r)
+                )
 
-                d0 = term1 + term2
+                d0 = (term1 + term2) / (sin_theta * r)
 
                 # Check the data
                 message = (
-                    f"{wrap}, {one_sided}, {d.data.array}, {d0.data.array}, "
+                    f"{wrap}, {one_sided}, "
+                    f"{d.data.array}, {d.data.Units}, "
+                    f"{d0.data.array}, {d0.data.Units}"
                     f"{(d.data == d0.data).array}"
                 )
                 self.assertTrue((d.data == d0.data).all(), message)
 
-                # Check the metadata
                 del d.long_name
                 d0.set_data(d.data)
                 self.assertTrue(d.equals(d0))
-
-                self.assertTrue(d.Units == cf.Units("m-2 rad-2"))
 
         # Cartesian coordinates
         dim_x = f.dimension_coordinate("X")
@@ -160,13 +241,15 @@ class MathTest(unittest.TestCase):
         dim_y.standard_name = "projection_y_coordinate"
         f.cyclic("X", iscyclic=False)
 
-        for wrap in (None, True, False):
+        for wrap in (False, True, None):
             for one_sided in (True, False):
                 x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
 
                 d = cf.div_xy(
                     x, y, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
+
+                self.assertTrue(d.Units == cf.Units("m-2"))
 
                 term1 = x.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
@@ -177,10 +260,7 @@ class MathTest(unittest.TestCase):
 
                 del d.long_name
                 del d0.long_name
-
                 self.assertTrue(d.equals(d0))
-
-                self.assertTrue(d.Units == cf.Units("m-2"))
 
 
 if __name__ == "__main__":

@@ -2639,7 +2639,7 @@ class FieldTest(unittest.TestCase):
 
         # Spherical polar coordinates
         r = f.radius("earth")
-        for wrap in (None, True, False):
+        for wrap in (False, True, None):
             for one_sided in (True, False):
                 x, y = f.grad_xy(
                     radius="earth",
@@ -2647,8 +2647,7 @@ class FieldTest(unittest.TestCase):
                     one_sided_at_boundary=one_sided,
                 )
 
-                del x.long_name
-                del y.long_name
+                self.assertTrue(x.Units == y.Units == cf.Units("m-1 rad-1"))
 
                 theta = 90 - f.convert("Y", full_domain=True)
                 x0 = f.derivative(
@@ -2658,23 +2657,25 @@ class FieldTest(unittest.TestCase):
 
                 # Check the data
                 message = (
-                    f"{wrap}, {one_sided}, {x.data.array}, {x0.data.array}, "
+                    f"{wrap}, {one_sided}, {x.data.array}, {x.data.Units}, "
+                    f"{x0.data.array}, {x0.data.Units}, "
                     f"{(x.data == x0.data).array}"
                 )
                 self.assertTrue((x.data == x0.data).all(), message)
                 self.assertTrue((y.data == y0.data).all())
 
-                # Check the metadata
+                # Check that x and y have the same metadata as f
+                # (except standard_name, long_name, and units).
                 f0 = f.copy()
                 del f0.standard_name
 
                 f0.set_data(x.data)
+                del x.long_name
                 self.assertTrue(x.equals(f0))
 
                 f0.set_data(y.data)
+                del y.long_name
                 self.assertTrue(y.equals(f0))
-
-                self.assertTrue(x.Units == y.Units == cf.Units("m-1 rad-1"))
 
         # Cartesian coordinates
         dim_x = f.dimension_coordinate("X")
@@ -2685,9 +2686,11 @@ class FieldTest(unittest.TestCase):
         dim_y.standard_name = "projection_y_coordinate"
         f.cyclic("X", iscyclic=False)
 
-        for wrap in (None, True, False):
+        for wrap in (False, True, None):
             for one_sided in (True, False):
                 x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
+
+                self.assertTrue(x.Units == y.Units == cf.Units("m-1"))
 
                 x0 = f.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
@@ -2698,11 +2701,8 @@ class FieldTest(unittest.TestCase):
                 del y.long_name
                 del x0.long_name
                 del y0.long_name
-
                 self.assertTrue(x.equals(x0))
                 self.assertTrue(y.equals(y0))
-
-                self.assertTrue(x.Units == y.Units == cf.Units("m-1"))
 
     def test_Field_laplacian_xy(self):
         f = cf.example_field(0)
@@ -2710,13 +2710,15 @@ class FieldTest(unittest.TestCase):
         # Laplacian(f) = div(grad(f))
 
         # Spherical polar coordinates
-        for wrap in (None, True, False):
+        for wrap in (False, True, None):
             for one_sided in (True, False):
                 lp = f.laplacian_xy(
                     radius="earth",
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
+
+                self.assertTrue(lp.Units == cf.Units("m-2 rad-2"))
 
                 lp0 = cf.div_xy(
                     *f.grad_xy(
@@ -2731,14 +2733,12 @@ class FieldTest(unittest.TestCase):
 
                 del lp.long_name
                 del lp0.long_name
-
-                # message = (
-                #    f"{wrap}, {one_sided}, {lp.data.array}, {lp0.data.array}, "
-                #    f"{(lp.data == lp0.data).array}"
-                # )
-                # self.assertTrue(lp.equals(lp0, verbose=-1), message)
-
-                # self.assertTrue(lp.Units == cf.Units("m-2 rad-2"))
+                message = (
+                    f"{wrap}, {one_sided}, {lp.data.array}, {lp.Units}, "
+                    f"{lp0.data.array}, {lp0.Units}"
+                    f"{(lp.data == lp0.data).array}"
+                )
+                self.assertTrue(lp.equals(lp0, verbose=-1), message)
 
         # Cartesian coordinates
         dim_x = f.dimension_coordinate("X")
@@ -2749,11 +2749,13 @@ class FieldTest(unittest.TestCase):
         dim_y.standard_name = "projection_y_coordinate"
         f.cyclic("X", iscyclic=False)
 
-        for wrap in (None, True, False):
+        for wrap in (False, True, None):
             for one_sided in (True, False):
                 lp = f.laplacian_xy(
                     x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
+
+                self.assertTrue(lp.Units == cf.Units("m-2"))
 
                 lp0 = cf.div_xy(
                     *f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided),
@@ -2763,10 +2765,7 @@ class FieldTest(unittest.TestCase):
 
                 del lp.long_name
                 del lp0.long_name
-
                 self.assertTrue(lp.equals(lp0))
-
-                self.assertTrue(lp.Units == cf.Units("m-2"))
 
 
 if __name__ == "__main__":
