@@ -540,10 +540,9 @@ class TimeDuration:
         x.__iadd__(y) <==> x+=y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__iadd__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__iadd__", aug_assignment=True, skip_data_return=True
+        )
 
     def __idiv__(self, other):
         """The augmented arithmetic assignment ``/=``
@@ -551,13 +550,9 @@ class TimeDuration:
         x.__idiv__(y) <==> x /= y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__idiv__", True)
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__idiv__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__idiv__", aug_assignment=True
+        )
 
     def __itruediv__(self, other):
         """The augmented arithmetic assignment ``/=`` (true division)
@@ -565,10 +560,9 @@ class TimeDuration:
         x.__truediv__(y) <==> x/y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__itruediv__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__itruediv__", aug_assignment=True, skip_data_return=True
+        )
 
     def __ifloordiv__(self, other):
         """The augmented arithmetic assignment ``//=``
@@ -576,10 +570,9 @@ class TimeDuration:
         x.__ifloordiv__(y) <==> x//=y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__ifloordiv__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__ifloordiv__", aug_assignment=True, skip_data_return=True
+        )
 
     def __imul__(self, other):
         """The augmented arithmetic assignment ``*=``
@@ -587,10 +580,9 @@ class TimeDuration:
         x.__imul__(y) <==> x *= y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__imul__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__imul__", aug_assignment=True, skip_data_return=True
+        )
 
     def __isub__(self, other):
         """The augmented arithmetic assignment ``-=``
@@ -598,10 +590,9 @@ class TimeDuration:
         x.__isub__(y) <==> x -= y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__isub__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__isub__", aug_assignment=True, skip_data_return=True
+        )
 
     def __imod__(self, other):
         """The augmented arithmetic assignment ``%=``
@@ -609,13 +600,9 @@ class TimeDuration:
         x.__imod__(y) <==> x%=y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__imod__", True)
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__imod__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__imod__", aug_assignment=True
+        )
 
     def __radd__(self, other):
         """The binary arithmetic operation ``+`` with reflected
@@ -652,13 +639,7 @@ class TimeDuration:
         x.__mod__(y) <==> x % y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__mod__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__mod__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__mod__")
 
     def __rmod__(self, other):
         """The binary arithmetic operation ``%`` with reflected
@@ -696,7 +677,14 @@ class TimeDuration:
 
         return NotImplemented
 
-    def _apply_binary_arithmetic(self, other, op, may_be_datetime=False):
+    def _apply_binary_arithmetic(
+        self,
+        other,
+        op,
+        aug_assignment=False,
+        may_be_datetime=False,
+        skip_data_return=False,
+    ):
         """Apply a binary arithmetic operation with general data.
 
         .. versionadded:: 3.12.0
@@ -707,17 +695,26 @@ class TimeDuration:
 
             op: `str`, the binary arithmetic operator to apply.
 
+            aug_assignment: `bool`
+                Whether the arithmetic operation is one of
+                augmented assignment. By default it is not.
+
             may_be_datetime: `bool`
-                Whether it is logically permissible for other to be a datetime.
+                Whether it is logically permissible for other to be a
+                datetime, which is False by default.
+
+            skip_data_return: `bool`
+                Whether to skip logic to apply the operation on the
+                datetime data if other has Data type. By default,
+                do not skip.
 
         """
-
         check_simple_types = [int, float]
         if may_be_datetime:
             check_simple_types.append(self.__class__)
 
         if isinstance(other, tuple(check_simple_types)):
-            return self._binary_operation(other, op)
+            return self._binary_operation(other, op, aug_assignment)
 
         if may_be_datetime and hasattr(other, "timetuple"):
             # other is a date-time object
@@ -726,8 +723,8 @@ class TimeDuration:
             except TypeError:
                 return NotImplemented
 
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, op)
+        if not skip_data_return and isinstance(other, Data):
+            return self._data_arithmetic(other, op, aug_assignment)
 
         return NotImplemented
 
