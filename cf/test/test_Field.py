@@ -2658,7 +2658,8 @@ class FieldTest(unittest.TestCase):
 
                 # Check the data
                 message = (
-                    f"{wrap}, {one_sided}, {x.data.array}, {x0.data.array}"
+                    f"{wrap}, {one_sided}, {x.data.array}, {x0.data.array}, "
+                    f"{(x.data == x0.data).array}"
                 )
                 self.assertTrue((x.data == x0.data).all(), message)
                 self.assertTrue((y.data == y0.data).all())
@@ -2732,7 +2733,8 @@ class FieldTest(unittest.TestCase):
                 del lp0.long_name
 
                 message = (
-                    f"{wrap}, {one_sided}, {lp.data.array}, {lp0.data.array}"
+                    f"{wrap}, {one_sided}, {lp.data.array}, {lp0.data.array}, "
+                    f"{(lp.data == lp0.data).array}"
                 )
                 self.assertTrue(lp.equals(lp0, verbose=-1), message)
 

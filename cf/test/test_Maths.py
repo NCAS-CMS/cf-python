@@ -139,7 +139,8 @@ class MathTest(unittest.TestCase):
 
                 # Check the data
                 message = (
-                    f"{wrap}, {one_sided}, {d.data.array}, {d0.data.array}"
+                    f"{wrap}, {one_sided}, {d.data.array}, {d0.data.array}, "
+                    f"{(d.data == d0.data).array}"
                 )
                 self.assertTrue((d.data == d0.data).all(), message)
 
