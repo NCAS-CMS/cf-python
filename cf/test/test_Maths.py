@@ -107,14 +107,17 @@ class MathTest(unittest.TestCase):
     def test_curl_xy(self):
         f = cf.example_field(0)
 
-        return True
-
         # Spherical polar coordinates
-        r = f.radius("earth")
+        theta = 90 - f.convert("Y", full_domain=True)
+        sin_theta = theta.sin()
+
+        radius = 2
+        r = f.radius(radius)
+
         for wrap in (False, True, None):
             for one_sided in (True, False):
                 x, y = f.grad_xy(
-                    radius="earth",
+                    radius=radius,
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
@@ -122,15 +125,12 @@ class MathTest(unittest.TestCase):
                 c = cf.curl_xy(
                     x,
                     y,
-                    radius="earth",
+                    radius=radius,
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
 
                 self.assertTrue(c.Units == cf.Units("m-2 rad-2"))
-
-                theta = 90 - f.convert("Y", full_domain=True)
-                sin_theta = theta.sin()
 
                 term1 = (x * sin_theta).derivative(
                     "Y", one_sided_at_boundary=one_sided
@@ -188,8 +188,12 @@ class MathTest(unittest.TestCase):
         f = cf.example_field(0)
 
         # Spherical polar coordinates
-        radius = 2  # 'earth'
+        theta = 90 - f.convert("Y", full_domain=True)
+        sin_theta = theta.sin()
+
+        radius = 2
         r = f.radius(radius)
+
         for wrap in (False, True, None):
             for one_sided in (False, True):
                 x, y = f.grad_xy(
@@ -207,9 +211,6 @@ class MathTest(unittest.TestCase):
                 )
 
                 self.assertTrue(d.Units == cf.Units("m-2 rad-2"), d.Units)
-
-                theta = 90 - f.convert("Y", full_domain=True)
-                sin_theta = theta.sin()
 
                 term1 = x.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided

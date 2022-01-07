@@ -2638,8 +2638,12 @@ class FieldTest(unittest.TestCase):
         f = cf.example_field(0)
 
         # Spherical polar coordinates
+        theta = 90 - f.convert("Y", full_domain=True)
+        sin_theta = theta.sin()
+
         radius = 2
         r = f.radius(radius)
+
         for wrap in (False, True, None):
             for one_sided in (False, False):
                 x, y = f.grad_xy(
@@ -2650,10 +2654,9 @@ class FieldTest(unittest.TestCase):
 
                 self.assertTrue(x.Units == y.Units == cf.Units("m-1 rad-1"))
 
-                theta = 90 - f.convert("Y", full_domain=True)
                 x0 = f.derivative(
                     "X", wrap=wrap, one_sided_at_boundary=one_sided
-                ) / (theta.sin() * r)
+                ) / (sin_theta * r)
                 y0 = f.derivative("Y", one_sided_at_boundary=one_sided) / r
 
                 # Check the data
@@ -2712,10 +2715,11 @@ class FieldTest(unittest.TestCase):
         # Laplacian(f) = div(grad(f))
 
         # Spherical polar coordinates
+        radius = 2
         for wrap in (False, True, None):
             for one_sided in (True, False):
                 lp = f.laplacian_xy(
-                    radius=2,  # "earth",
+                    radius=radius,
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
@@ -2724,7 +2728,7 @@ class FieldTest(unittest.TestCase):
 
                 lp0 = cf.div_xy(
                     *f.grad_xy(
-                        radius=2,  # "earth",
+                        radius=radius,
                         x_wrap=wrap,
                         one_sided_at_boundary=one_sided,
                     ),
