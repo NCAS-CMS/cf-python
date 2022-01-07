@@ -656,7 +656,7 @@ class TimeDuration:
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _apply_binary_comparison(self, other, operator):
+    def _apply_binary_comparison(self, other, op):
         """Apply a binary comparison operation on general data.
 
         .. versionadded:: 3.12.0
@@ -665,15 +665,15 @@ class TimeDuration:
 
             other: the object to compare with.
 
-            operator: `str`, the binary comparison operator to apply.
+            op: `str`, the binary comparison operator to apply.
 
         """
 
         if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, operator))
+            return bool(self._binary_operation(other, op))
 
         if isinstance(other, Data):
-            return self._data_binary_operation(other, operator)
+            return self._data_binary_operation(other, op)
 
         return NotImplemented
 
