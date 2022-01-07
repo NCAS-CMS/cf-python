@@ -1,6 +1,6 @@
 import logging
+import operator
 from collections import namedtuple
-from operator import __add__, __sub__
 
 import numpy
 
@@ -433,13 +433,7 @@ class TimeDuration:
 
         """
 
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__ge__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__ge__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__ge__")
 
     def __gt__(self, other):
         """The rich comparison operator ``>``
@@ -448,13 +442,7 @@ class TimeDuration:
 
         """
 
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__gt__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__gt__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__gt__")
 
     def __le__(self, other):
         """The rich comparison operator ``<=``
@@ -462,13 +450,7 @@ class TimeDuration:
         x.__le__(y) <==> x<=y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__le__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__le__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__le__")
 
     def __lt__(self, other):
         """The rich comparison operator ``<``
@@ -476,13 +458,7 @@ class TimeDuration:
         x.__lt__(y) <==> x<y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__lt__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__lt__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__lt__")
 
     def __eq__(self, other):
         """The rich comparison operator ``==``
@@ -490,13 +466,7 @@ class TimeDuration:
         x.__eq__(y) <==> x==y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__eq__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__eq__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__eq__")
 
     def __ne__(self, other):
         """The rich comparison operator ``!=``
@@ -504,13 +474,7 @@ class TimeDuration:
         x.__ne__(y) <==> x!=y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__ne__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__ne__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__ne__")
 
     def __add__(self, other):
         """The binary arithmetic operation ``+``
@@ -520,18 +484,9 @@ class TimeDuration:
         .. versionadded:: 1.4
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__add__")
-
-        if hasattr(other, "timetuple"):
-            # other is a date-time object
-            try:
-                return self._datetime_arithmetic(other, __add__)
-            except TypeError:
-                return NotImplemented
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__add__")
+        return self._apply_binary_arithmetic(
+            other, "__add__", may_be_datetime=True
+        )
 
         return NotImplemented
 
@@ -543,20 +498,9 @@ class TimeDuration:
         .. versionadded:: 1.4
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__sub__")
-
-        if hasattr(other, "timetuple"):
-            # other is a date-time object
-            try:
-                return self._datetime_arithmetic(other, __sub__)
-            except TypeError:
-                return NotImplemented
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__sub__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__sub__", may_be_datetime=True
+        )
 
     def __mul__(self, other):
         """The binary arithmetic operation ``*``
@@ -564,13 +508,7 @@ class TimeDuration:
         x.__mul__(y) <==> x*y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__mul__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__mul__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__mul__")
 
     def __div__(self, other):
         """The binary arithmetic operation ``/``
@@ -578,13 +516,7 @@ class TimeDuration:
         x.__div__(y) <==> x/y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__div__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__div__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__div__")
 
     def __floordiv__(self, other):
         """The binary arithmetic operation ``//``
@@ -592,13 +524,7 @@ class TimeDuration:
         x.__floordiv__(y) <==> x//y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__floordiv__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__floordiv__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__floordiv__")
 
     def __truediv__(self, other):
         """The binary arithmetic operation ``/`` (true division)
@@ -606,13 +532,7 @@ class TimeDuration:
         x.__truediv__(y) <==> x/y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__truediv__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__truediv__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__truediv__")
 
     def __iadd__(self, other):
         """The augmented arithmetic assignment ``+=``
@@ -620,10 +540,9 @@ class TimeDuration:
         x.__iadd__(y) <==> x+=y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__iadd__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__iadd__", aug_assignment=True, skip_data_return=True
+        )
 
     def __idiv__(self, other):
         """The augmented arithmetic assignment ``/=``
@@ -631,13 +550,9 @@ class TimeDuration:
         x.__idiv__(y) <==> x /= y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__idiv__", True)
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__idiv__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__idiv__", aug_assignment=True
+        )
 
     def __itruediv__(self, other):
         """The augmented arithmetic assignment ``/=`` (true division)
@@ -645,10 +560,9 @@ class TimeDuration:
         x.__truediv__(y) <==> x/y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__itruediv__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__itruediv__", aug_assignment=True, skip_data_return=True
+        )
 
     def __ifloordiv__(self, other):
         """The augmented arithmetic assignment ``//=``
@@ -656,10 +570,9 @@ class TimeDuration:
         x.__ifloordiv__(y) <==> x//=y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__ifloordiv__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__ifloordiv__", aug_assignment=True, skip_data_return=True
+        )
 
     def __imul__(self, other):
         """The augmented arithmetic assignment ``*=``
@@ -667,10 +580,9 @@ class TimeDuration:
         x.__imul__(y) <==> x *= y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__imul__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__imul__", aug_assignment=True, skip_data_return=True
+        )
 
     def __isub__(self, other):
         """The augmented arithmetic assignment ``-=``
@@ -678,10 +590,9 @@ class TimeDuration:
         x.__isub__(y) <==> x -= y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__isub__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__isub__", aug_assignment=True, skip_data_return=True
+        )
 
     def __imod__(self, other):
         """The augmented arithmetic assignment ``%=``
@@ -689,13 +600,9 @@ class TimeDuration:
         x.__imod__(y) <==> x%=y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__imod__", True)
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__imod__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__imod__", aug_assignment=True
+        )
 
     def __radd__(self, other):
         """The binary arithmetic operation ``+`` with reflected
@@ -732,13 +639,7 @@ class TimeDuration:
         x.__mod__(y) <==> x % y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__mod__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__mod__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__mod__")
 
     def __rmod__(self, other):
         """The binary arithmetic operation ``%`` with reflected
@@ -755,6 +656,78 @@ class TimeDuration:
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
+    def _apply_binary_comparison(self, other, op):
+        """Apply a binary comparison operation on general data.
+
+        .. versionadded:: 3.12.0
+
+        :Parameters:
+
+            other: the object to compare with.
+
+            op: `str`, the binary comparison operator to apply.
+
+        """
+
+        if isinstance(other, (self.__class__, int, float)):
+            return bool(self._binary_operation(other, op))
+
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, op)
+
+        return NotImplemented
+
+    def _apply_binary_arithmetic(
+        self,
+        other,
+        op,
+        aug_assignment=False,
+        may_be_datetime=False,
+        skip_data_return=False,
+    ):
+        """Apply a binary arithmetic operation with general data.
+
+        .. versionadded:: 3.12.0
+
+        :Parameters:
+
+            other: the object to compare with.
+
+            op: `str`, the binary arithmetic operator to apply.
+
+            aug_assignment: `bool`
+                Whether the arithmetic operation is one of
+                augmented assignment. By default it is not.
+
+            may_be_datetime: `bool`
+                Whether it is logically permissible for other to be a
+                datetime, which is False by default.
+
+            skip_data_return: `bool`
+                Whether to skip logic to apply the operation on the
+                datetime data if other has Data type. By default,
+                do not skip.
+
+        """
+        check_simple_types = [int, float]
+        if may_be_datetime:
+            check_simple_types.append(self.__class__)
+
+        if isinstance(other, tuple(check_simple_types)):
+            return self._binary_operation(other, op, aug_assignment)
+
+        if may_be_datetime and hasattr(other, "timetuple"):
+            # other is a date-time object
+            try:
+                return self._datetime_arithmetic(other, getattr(operator, op))
+            except TypeError:
+                return NotImplemented
+
+        if not skip_data_return and isinstance(other, Data):
+            return self._data_arithmetic(other, op, aug_assignment)
+
+        return NotImplemented
+
     def _binary_operation(self, other, method, inplace=False):
         """Implement binary operations on the datetime."""
         if inplace:
