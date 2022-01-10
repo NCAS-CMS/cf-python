@@ -49,7 +49,8 @@ version 3.11.0
   (https://github.com/NCAS-CMS/cf-python/issues/250)
 * Fix bug that sometimes caused `cf.Field.autocyclic` to fail when
   setting a construct that is cyclic and has a defined period
-  (https://github.com/NCAS-CMS/cf-python/issues/237)
+* Fix bug that sometimes caused a failure when reading PP extra data
+  (https://github.com/NCAS-CMS/cf-python/issues/241)
 * Changed dependency: ``1.9.0.0<=cfdm<1.9.1.0``
 
 ----
