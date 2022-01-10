@@ -8,8 +8,11 @@ instance, as would be passed to `dask.array.map_blocks`.
 import dask.array as da
 import numpy as np
 
+from ..functions import atol as cf_atol
+from ..functions import rtol as cf_rtol
 
-def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
+
+def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     """An effective dask.array.ma.allclose method.
 
     True if two dask arrays are element-wise equal within
@@ -41,11 +44,9 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
                 equal (True) or not (False). They are considered equal
                 by default.
 
-            rtol:
-                Relative tolerance. Default is 1e-05.
+            {{rtol: number, optional}}
 
-            atol:
-                Absolute tolerance. Default is 1e-08.
+            {{atol: number, optional}}
 
         :Returns:
 
@@ -55,6 +56,10 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=1e-05, atol=1e-08):
                 the given rtol and atol tolerance.
 
     """
+    if rtol is None:
+        rtol = cf_rtol()
+    if atol is None:
+        atol = cf_atol()
 
     # Must pass rtol=rtol, atol=atol in as kwargs to allclose, rather than it
     # using those in local scope from the outer function arguments, because
