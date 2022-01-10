@@ -2660,13 +2660,8 @@ class FieldTest(unittest.TestCase):
                 y0 = f.derivative("Y", one_sided_at_boundary=one_sided) / r
 
                 # Check the data
-                message = (
-                    f"{wrap}, {one_sided}, {x.data.array}, {x.data.Units}, "
-                    f"{x0.data.array}, {x0.data.Units}, "
-                    f"{(x.data == x0.data).array}"
-                )
                 with cf.rtol(1e-10):
-                    self.assertTrue((x.data == x0.data).all(), message)
+                    self.assertTrue((x.data == x0.data).all())
                     self.assertTrue((y.data == y0.data).all())
 
                 # Check that x and y have the same metadata as f
@@ -2706,8 +2701,8 @@ class FieldTest(unittest.TestCase):
                 del y.long_name
                 del x0.long_name
                 del y0.long_name
-                self.assertTrue(x.equals(x0))
-                self.assertTrue(y.equals(y0))
+                self.assertTrue(x.equals(x0, rtol=1e-10))
+                self.assertTrue(y.equals(y0, rtol=1e-10))
 
     def test_Field_laplacian_xy(self):
         f = cf.example_field(0)
@@ -2732,20 +2727,14 @@ class FieldTest(unittest.TestCase):
                         x_wrap=wrap,
                         one_sided_at_boundary=one_sided,
                     ),
-                    radius=2,  # "earth",
+                    radius=2,
                     x_wrap=wrap,
                     one_sided_at_boundary=one_sided,
                 )
 
                 del lp.long_name
                 del lp0.long_name
-                message = (
-                    f"{wrap}, {one_sided}, {lp.data.array}, {lp.Units}, "
-                    f"{lp0.data.array}, {lp0.Units}"
-                    f"{(lp.data == lp0.data).array}"
-                )
-                with cf.rtol(1e-10):
-                    self.assertTrue(lp.equals(lp0), message)
+                self.assertTrue(lp.equals(lp0, rtol=1e-10))
 
         # Cartesian coordinates
         dim_x = f.dimension_coordinate("X")
@@ -2772,7 +2761,7 @@ class FieldTest(unittest.TestCase):
 
                 del lp.long_name
                 del lp0.long_name
-                self.assertTrue(lp.equals(lp0))
+                self.assertTrue(lp.equals(lp0, rtol=1e-10))
 
 
 if __name__ == "__main__":

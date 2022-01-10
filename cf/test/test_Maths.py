@@ -142,12 +142,8 @@ class MathTest(unittest.TestCase):
                 c0 = (term1 - term2) / (sin_theta * r)
 
                 # Check the data
-                message = (
-                    f"{wrap}, {one_sided}, {c.data.array}, {c.data.Units}, "
-                    f"{c0.data.array}, {c0.data.Units}, "
-                    f"{(c.data == c0.data).array}"
-                )
-                self.assertTrue((c.data == c0.data).all(), message)
+                with cf.rtol(1e-10):
+                    self.assertTrue((c.data == c0.data).all())
 
                 del c.long_name
                 c0.set_data(c.data)
@@ -182,7 +178,7 @@ class MathTest(unittest.TestCase):
                 del d.long_name
                 del d0.long_name
 
-                self.assertTrue(d.equals(d0))
+                self.assertTrue(d.equals(d0, rtol=1e-10))
 
     def test_div_xy(self):
         f = cf.example_field(0)
@@ -222,14 +218,8 @@ class MathTest(unittest.TestCase):
                 d0 = (term1 + term2) / (sin_theta * r)
 
                 # Check the data
-                message = (
-                    f"{wrap}, {one_sided}, \n"
-                    f"{d.data.array}, {d.data.Units}\n"
-                    f"{d0.data.array}, {d0.data.Units}\n"
-                    f"{(d.data == d0.data).array}"
-                )
                 with cf.rtol(1e-10):
-                    self.assertTrue((d.data == d0.data).all(), message)
+                    self.assertTrue((d.data == d0.data).all())
 
                 del d.long_name
                 d0.set_data(d.data)
@@ -263,7 +253,7 @@ class MathTest(unittest.TestCase):
 
                 del d.long_name
                 del d0.long_name
-                self.assertTrue(d.equals(d0))
+                self.assertTrue(d.equals(d0, rtol=1e-10))
 
 
 if __name__ == "__main__":
