@@ -415,7 +415,7 @@ def scalar_masked_array(dtype=float):
     a = np.ma.empty((), dtype=dtype)
     a.mask = True
     return a
- 
+
 
 def conform_units(value, units):
     """Conform units.
@@ -480,4 +480,3 @@ def conform_units(value, units):
             )
 
     return value
-
