@@ -276,7 +276,7 @@ class DataTest(unittest.TestCase):
         if not SCIPY_AVAILABLE:
             raise unittest.SkipTest("SciPy must be installed for this test.")
 
-        d = cf.Data(self.ma, units="m")
+        d = cf.Data(self.ma, units="m", chunks=(2, 4, 5, 3))
 
         window = [0.1, 0.15, 0.5, 0.15, 0.1]
 
@@ -285,19 +285,45 @@ class DataTest(unittest.TestCase):
 
         d = cf.Data(self.ma, units="m")
 
-        # Test user weights in different modes
-        for mode in (
-            "reflect",
-            "constant",
-            "nearest",
-            "mirror",
-            "wrap",
-        ):
-            b = convolve1d(d.array, window, axis=-1, mode=mode)
-            e = d.convolution_filter(
-                window=window, axis=-1, mode=mode, cval=0.0
-            )
-            self.assertTrue((e.array == b).all())
+        for axis in (0, 1):
+            # Test  weights in different modes
+            for mode in (
+                "reflect",
+                "constant",
+                "nearest",
+                "wrap",
+            ):
+                b = convolve1d(self.ma, window, axis=axis, mode=mode)
+                e = d.convolution_filter(
+                    window, axis=axis, mode=mode, cval=0.0
+                )
+                self.assertTrue((e.array == b).all())
+
+        for dtype in ("int", "int32", "float", "float32"):
+            a = np.ma.array([1, 2, 3, 4, 5, 6, 7, 8, 9], dtype=dtype)
+            a[2] = np.ma.masked
+            d = cf.Data(a, chunks=(4, 4, 1))
+            a = a.astype(float).filled(np.nan)
+
+            for window in ((1, 2, 1), (1, 2, 2, 1), (1, 2, 3, 2, 1)):
+                for cval in (0, np.nan):
+                    for origin in (-1, 0, 1):
+                        b = convolve1d(
+                            a,
+                            window,
+                            axis=0,
+                            cval=cval,
+                            origin=origin,
+                            mode="constant",
+                        )
+                        e = d.convolution_filter(
+                            window,
+                            axis=0,
+                            cval=cval,
+                            origin=origin,
+                            mode="constant",
+                        )
+                        self.assertTrue((e.array == b).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_diff(self):
