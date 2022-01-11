@@ -20,7 +20,6 @@ from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
 from numpy import full as numpy_full
 from numpy import ndarray as numpy_ndarray
-from numpy import pi as numpy_pi
 from numpy import prod as numpy_prod
 from numpy import reshape as numpy_reshape
 from numpy import shape as numpy_shape
@@ -3339,9 +3338,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # that later).
             N = interior_angle.sample_size(-1, squeeze=True)
 
-            all_areas = (
-                interior_angle.sum(-1, squeeze=True) - (N - 2) * numpy_pi
-            )
+            all_areas = interior_angle.sum(-1, squeeze=True) - (N - 2) * np.pi
 
             for i, (parts_x, parts_y) in enumerate(zip(x, y)):
                 for j, (nodes_x, nodes_y) in enumerate(zip(parts_x, parts_y)):
@@ -3359,7 +3356,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             nodes_x[[0, -1]], nodes_y[[0, -1]]
                         )
 
-                        all_areas[i, j] += interior_angle + numpy_pi
+                        all_areas[i, j] += interior_angle + np.pi
 
             area_min = all_areas.min()
             if area_min < 0:
@@ -13778,8 +13775,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0. 0. 0. 0. 0. 0. 0. 0.]]
 
         """
-        from numpy import pi
-
         f = self.copy()
         identity = f.identity()
 
@@ -13818,7 +13813,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Get theta as a field that will broadcast to f, and
             # adjust its values so that theta=0 is at the north pole.
-            theta = pi / 2 - f.convert(y_key, full_domain=True)
+            theta = np.pi / 2 - f.convert(y_key, full_domain=True)
 
             r = f.radius(default=radius)
 
