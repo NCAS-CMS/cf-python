@@ -179,7 +179,7 @@ class MathTest(unittest.TestCase):
                 del d0.long_name
 
                 self.assertTrue(d.equals(d0, rtol=1e-10))
-
+                   
     def test_div_xy(self):
         f = cf.example_field(0)
 
@@ -255,6 +255,27 @@ class MathTest(unittest.TestCase):
                 del d0.long_name
                 self.assertTrue(d.equals(d0, rtol=1e-10))
 
+    def test_differential_operators(self):
+        f = cf.example_field(0)
+
+        radius = 2
+        
+        fx, fy = f.grad_xy(radius=radius, one_sided_at_boundary=True)
+        c = cf.curl_xy(fx, fy, radius=radius, one_sided_at_boundary=True)
+        d = cf.div_xy(fx, fy, radius=radius, one_sided_at_boundary=True)
+        
+        dc = cf.div_xy(c, c, radius=radius, one_sided_at_boundary=True)
+        
+        zeros = dc.copy()
+        zeros[...] = 0
+        self.assertTrue(dc.data.equals(zeros.data, rtol=0, atol=1e-15))
+    
+        cg = cf.curl_xy(fx, fy, radius=radius, one_sided_at_boundary=True)
+
+        zeros = cg.copy()
+        zeros[...] = 0
+        self.assertTrue(cg.data.equals(zeros.data, rtol=0, atol=1e-15))
+    
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
