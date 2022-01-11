@@ -2645,7 +2645,7 @@ class FieldTest(unittest.TestCase):
         r = f.radius(radius)
 
         for wrap in (False, True, None):
-            for one_sided in (False, False):
+            for one_sided in (True, False):
                 x, y = f.grad_xy(
                     radius=radius,
                     x_wrap=wrap,
