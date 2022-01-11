@@ -19,9 +19,7 @@ from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
 from numpy import full as numpy_full
-from numpy import nan as numpy_nan
 from numpy import ndarray as numpy_ndarray
-from numpy import pi as numpy_pi
 from numpy import prod as numpy_prod
 from numpy import reshape as numpy_reshape
 from numpy import shape as numpy_shape
@@ -3340,9 +3338,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # that later).
             N = interior_angle.sample_size(-1, squeeze=True)
 
-            all_areas = (
-                interior_angle.sum(-1, squeeze=True) - (N - 2) * numpy_pi
-            )
+            all_areas = interior_angle.sum(-1, squeeze=True) - (N - 2) * np.pi
 
             for i, (parts_x, parts_y) in enumerate(zip(x, y)):
                 for j, (nodes_x, nodes_y) in enumerate(zip(parts_x, parts_y)):
@@ -3360,7 +3356,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             nodes_x[[0, -1]], nodes_y[[0, -1]]
                         )
 
-                        all_areas[i, j] += interior_angle + numpy_pi
+                        all_areas[i, j] += interior_angle + np.pi
 
             area_min = all_areas.min()
             if area_min < 0:
@@ -4585,7 +4581,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 cells defined in spherical polar coordinates. The
                 radius is that which would be returned by this call of
                 the field construct's `~cf.Field.radius` method:
-                ``f.radius(radius)``. See the `cf.Field.radius` for
+                ``f.radius(radius)``. See `cf.Field.radius` for
                 details.
 
                 By default *radius* is ``'earth'`` which means that if
@@ -4644,7 +4640,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return w
 
     def radius(self, default=None):
-        """Return the radius used for calculating cell areas in
+        """Return the radius of a latitude-longitude plane defined in
         spherical polar coordinates.
 
         The radius is taken from the datums of any coordinate
@@ -4671,11 +4667,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 coordinate reference constructs.
 
                 *Parameter example:*
-                  Five equivalent ways to set a default radius of 6371200
-                  metres: ``default=6371200``,
-                  ``default=numpy.array(6371200)``,
-                  ``default=cf.Data(6371200)``, ``default=cf.Data(6371200,
-                  'm')``, ``default=cf.Data(6371.2, 'km')``.
+                  Five equivalent ways to set a default radius of
+                  6371200 metres: ``6371200``,
+                  ``numpy.array(6371200)``, ``cf.Data(6371200)``,
+                  ``cf.Data(6371200, 'm')``, ``cf.Data(6371.2,
+                  'km')``.
 
         :Returns:
 
@@ -4718,22 +4714,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if len(radii) > 1:
             raise ValueError(
-                "Multiple radii found in coordinate reference "
+                "Multiple radii found from coordinate reference "
                 f"constructs: {radii!r}"
             )
 
         if not radii:
             if default is None:
                 raise ValueError(
-                    "No radius found in coordinate reference constructs "
+                    "No radius found from coordinate reference constructs "
                     "and no default provided"
                 )
 
             if isinstance(default, str):
                 if default != "earth":
                     raise ValueError(
-                        "The default parameter must be numeric or the "
-                        "string 'earth'"
+                        "The default radius must be numeric, 'earth', "
+                        "or None"
                     )
 
                 return _earth_radius.copy()
@@ -4748,6 +4744,216 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         r.Units = Units("m")
         r.dtype = float
         return r
+
+    def laplacian_xy(
+        self,
+        x_wrap=None,
+        one_sided_at_boundary=False,
+        radius=None,
+    ):
+        r"""Calculate the Laplacian in X-Y coordinates.
+
+        The horizontal Laplacian of a scalar function is calculated
+        from a field that has dimension coordinates of X and Y, in
+        either Cartesian (e.g. plane projection) or spherical polar
+        coordinate systems.
+
+        The horizontal Laplacian in Cartesian coordinates is given by:
+
+        .. math:: \nabla^2 f(x, y) = \frac{\partial^2 f}{\partial x^2}
+                                     +
+                                     \frac{\partial^2 f}{\partial y^2}
+
+        The horizontal Laplacian in spherical polar coordinates is
+        given by:
+
+        .. math:: \nabla^2 f(\theta, \phi) =
+                    \frac{1}{r^2 \sin\theta}
+                    \frac{\partial}{\partial \theta}
+                    \left(
+                    \sin\theta
+                    \frac{\partial f}{\partial \theta}
+                    \right)
+                    +
+                    \frac{1}{r^2 \sin^2\theta}
+                    \frac{\partial^2 f}{\partial \phi^2}
+
+        where *r* is radial distance to the origin, :math:`\theta` is
+        the polar angle with respect to polar axis, and :math:`\phi`
+        is the azimuthal angle.
+
+        The Laplacian is calculated using centred finite differences
+        apart from at the boundaries (see the *x_wrap* and
+        *one_sided_at_boundary* parameters). If missing values are
+        present then missing values will be returned at all points
+        where a centred finite difference could not be calculated.
+
+        .. versionadded:: 3.12.0
+
+        .. seealso:: `derivative`, `grad_xy`, `iscyclic`, `cf.div_xy`
+
+        :Parameters:
+
+            x_wrap: `bool`, optional
+                Whether the X axis is cyclic or not. By default
+                *x_wrap* is set to the result of this call to the
+                field construct's `iscyclic` method:
+                ``f.iscyclic('X')``. If the X axis is cyclic then
+                centred differences at one boundary will always use
+                values from the other boundary, regardless of the
+                setting of *one_sided_at_boundary*.
+
+                The cyclicity of the Y axis is always set to the
+                result of ``f.iscyclic('Y')``.
+
+            one_sided_at_boundary: `bool`, optional
+                If True then one-sided finite differences are
+                calculated at the non-cyclic boundaries. By default
+                missing values are set at non-cyclic boundaries.
+
+            {{radius: optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The horizontal Laplacian of the scalar field, or
+                `None` if the operation was in-place.
+
+        >>> f = cf.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f[...] = 0.1
+        >>> print(f.array)
+        [[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
+        >>> lp = f.laplacian_xy(radius='earth')
+        >>> lp
+        <CF Field: long_name=X-Y Laplacian of specific_humidity(latitude(5), longitude(8)) m-2.rad-2>
+        >>> print(lp.array)
+        [[-- -- -- -- -- -- -- --]
+         [-- -- -- -- -- -- -- --]
+         [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+         [-- -- -- -- -- -- -- --]
+         [-- -- -- -- -- -- -- --]]
+        >>> lp = f.laplacian_xy(radius='earth', one_sided_at_boundary=True)
+        >>> print(lp.array)
+        [[0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]]
+
+        """
+        f = self.copy()
+        identity = f.identity()
+
+        x_key, x_coord = f.dimension_coordinate(
+            "X", item=True, default=(None, None)
+        )
+        y_key, y_coord = f.dimension_coordinate(
+            "Y", item=True, default=(None, None)
+        )
+
+        if x_coord is None:
+            raise ValueError("Field has no unique 'X' dimension coordinate")
+
+        if y_coord is None:
+            raise ValueError("Field has no unique 'Y' dimension coordinate")
+
+        if x_wrap is None:
+            x_wrap = f.iscyclic(x_key)
+
+        x_units = x_coord.Units
+        y_units = y_coord.Units
+
+        # Check for spherical polar coordinates
+        latlon = (x_units.islongitude and y_units.islatitude) or (
+            x_units.units == "degrees" and y_units.units == "degrees"
+        )
+
+        if latlon:
+            # --------------------------------------------------------
+            # Spherical polar coordinates
+            # --------------------------------------------------------
+            # Convert latitude and longitude units to radians, so that
+            # the units of the result are nice.
+            x_coord.Units = _units_radians
+            y_coord.Units = _units_radians
+
+            # Get theta as a field that will broadcast to f, and
+            # adjust its values so that theta=0 is at the north pole.
+            theta = np.pi / 2 - f.convert(y_key, full_domain=True)
+
+            sin_theta = theta.sin()
+
+            r = f.radius(default=radius)
+            r2_sin_theta = sin_theta * r ** 2
+
+            d2f_dphi2 = f.derivative(
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+            ).derivative(
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+            )
+
+            term1 = d2f_dphi2 / (r2_sin_theta * sin_theta)
+
+            df_dtheta = f.derivative(
+                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+            )
+
+            term2 = (df_dtheta * sin_theta).derivative(
+                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+            ) / r2_sin_theta
+
+            f = term1 + term2
+
+            # Reset latitude and longitude coordinate units
+            f.dimension_coordinate("X").Units = x_units
+            f.dimension_coordinate("Y").Units = y_units
+        else:
+            # --------------------------------------------------------
+            # Cartesian coordinates
+            # --------------------------------------------------------
+            d2f_dx2 = f.derivative(
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+            ).derivative(
+                x_key,
+                wrap=x_wrap,
+                one_sided_at_boundary=one_sided_at_boundary,
+            )
+
+            d2f_dy2 = f.derivative(
+                y_key,
+                wrap=None,
+                one_sided_at_boundary=one_sided_at_boundary,
+            ).derivative(
+                y_key,
+                wrap=None,
+                one_sided_at_boundary=one_sided_at_boundary,
+            )
+
+            f = d2f_dx2 + d2f_dy2
+
+        # Set the standard name and long name
+        f.set_property("long_name", f"Horizontal Laplacian of {identity}")
+        f.del_property("standard_name", None)
+
+        return f
 
     def map_axes(self, other):
         """Map the axis identifiers of the field to their equivalent
@@ -13447,6 +13653,203 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return axes
 
+    def grad_xy(
+        self,
+        x_wrap=None,
+        one_sided_at_boundary=False,
+        radius=None,
+    ):
+        r"""Calculate the (X, Y) gradient vector.
+
+        The horizontal gradient vector of a scalar function is
+        calculated from a field that has dimension coordinates of X
+        and Y, in either Cartesian (e.g. plane projection) or
+        spherical polar coordinate systems.
+
+        The horizontal gradient vector in Cartesian coordinates is
+        given by:
+
+        .. math:: \nabla f(x, y) = \left(
+                                   \frac{\partial f}{\partial x},
+                                   \frac{\partial f}{\partial y}
+                                   \right)
+
+        The horizontal gradient vector in spherical polar coordinates
+        is given by:
+
+        .. math:: \nabla f(\theta, \phi) = \left(
+                                           \frac{1}{r}
+                                           \frac{\partial f}{\partial \theta},
+                                           \frac{1}{r \sin\theta}
+                                           \frac{\partial f}{\partial \phi}
+                                           \right)
+
+        where *r* is radial distance to the origin, :math:`\theta` is
+        the polar angle with respect to polar axis, and :math:`\phi`
+        is the azimuthal angle.
+
+        The gradient vector components are calculated using centred
+        finite differences apart from at the boundaries (see the
+        *x_wrap* and *one_sided_at_boundary* parameters). If missing
+        values are present then missing values will be returned at all
+        points where a centred finite difference could not be
+        calculated.
+
+        .. versionadded:: 3.12.0
+
+        .. seealso:: `derivative`, `iscyclic`, `laplacian_xy`,
+                     `cf.curl_xy`, `cf.div_xy`
+
+        :Parameters:
+
+            x_wrap: `bool`, optional
+                Whether the X axis is cyclic or not. By default
+                *x_wrap* is set to the result of this call to the
+                field construct's `iscyclic` method:
+                ``f.iscyclic('X')``. If the X axis is cyclic then
+                centred differences at one boundary will always use
+                values from the other boundary, regardless of the
+                setting of *one_sided_at_boundary*.
+
+                The cyclicity of the Y axis is always set to the
+                result of ``f.iscyclic('Y')``.
+
+            one_sided_at_boundary: `bool`, optional
+                If True then one-sided finite differences are
+                calculated at the non-cyclic boundaries. By default
+                missing values are set at non-cyclic boundaries.
+
+            {{radius: optional}}
+
+        :Returns:
+
+            `FieldList`
+                The horizontal gradient vector of the scalar field.
+
+        **Examples**
+
+        >>> f = cf.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f[...] = 0.1
+        >>> print(f.array)
+        [[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+         [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
+        >>> fx, fy = f.grad_xy(radius='earth')
+        >>> fx, fy
+        (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>,
+         <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>)
+        >>> print(fx.array)
+        [[0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]]
+        >>> print(fy.array)
+        [[-- -- -- -- -- -- -- --]
+         [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+         [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+         [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+         [-- -- -- -- -- -- -- --]]
+        >>> fx, fy = f.grad_xy(radius='earth', one_sided_at_boundary=True)
+        >>> print(fy.array)
+        [[0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0. 0. 0.]]
+
+        """
+        f = self.copy()
+        identity = f.identity()
+
+        x_key, x_coord = f.dimension_coordinate(
+            "X", item=True, default=(None, None)
+        )
+        y_key, y_coord = f.dimension_coordinate(
+            "Y", item=True, default=(None, None)
+        )
+
+        if x_coord is None:
+            raise ValueError("Field has no unique 'X' dimension coordinate")
+
+        if y_coord is None:
+            raise ValueError("Field has no unique 'Y' dimension coordinate")
+
+        if x_wrap is None:
+            x_wrap = f.iscyclic(x_key)
+
+        x_units = x_coord.Units
+        y_units = y_coord.Units
+
+        # Check for spherical polar coordinates
+        latlon = (x_units.islongitude and y_units.islatitude) or (
+            x_units.units == "degrees" and y_units.units == "degrees"
+        )
+
+        if latlon:
+            # --------------------------------------------------------
+            # Spherical polar coordinates
+            # --------------------------------------------------------
+            # Convert latitude and longitude units to radians, so that
+            # the units of the result are nice.
+            x_coord.Units = _units_radians
+            y_coord.Units = _units_radians
+
+            # Get theta as a field that will broadcast to f, and
+            # adjust its values so that theta=0 is at the north pole.
+            theta = np.pi / 2 - f.convert(y_key, full_domain=True)
+
+            r = f.radius(default=radius)
+
+            X = f.derivative(
+                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+            ) / (theta.sin() * r)
+
+            Y = (
+                f.derivative(
+                    y_key,
+                    wrap=None,
+                    one_sided_at_boundary=one_sided_at_boundary,
+                )
+                / r
+            )
+
+            # Reset latitude and longitude coordinate units
+            X.dimension_coordinate("X").Units = x_units
+            X.dimension_coordinate("Y").Units = y_units
+
+            Y.dimension_coordinate("X").Units = x_units
+            Y.dimension_coordinate("Y").Units = y_units
+        else:
+            # --------------------------------------------------------
+            # Cartesian coordinates
+            # --------------------------------------------------------
+            X = f.derivative(
+                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+            )
+
+            Y = f.derivative(
+                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+            )
+
+        # Set the standard name and long name
+        X.set_property("long_name", f"X gradient of {identity}")
+        Y.set_property("long_name", f"Y gradient of {identity}")
+        X.del_property("standard_name", None)
+        Y.del_property("standard_name", None)
+
+        return FieldList((X, Y))
+
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
@@ -16607,7 +17010,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         i=False,
         cyclic=None,
     ):
-        """Return the derivative along the specified axis.
+        """Calculate the derivative along the specified axis.
 
         The derivative is calculated using centred finite differences
         apart from at the boundaries (see the *one_sided_at_boundary*
@@ -16618,17 +17021,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             axis:
-                The axis , defined by that which would be selected by
-                passing the given axis description to a call of the field
-                construct's `domain_axis` method. For example, for a value
-                of ``'X'``, the domain axis construct returned by
-                ``f.domain_axis('X')`` is selected.
+                The axis, defined by that which would be selected by
+                passing the given axis description to a call of the
+                field construct's `domain_axis` method. For example,
+                for a value of ``'X'``, the domain axis construct
+                returned by ``f.domain_axis('X')`` is selected.
 
             wrap: `bool`, optional
-                If True then the boundary is wrapped around, otherwise the
-                value of *one_sided_at_boundary* determines the boundary
-                condition. If `None` then the cyclicity of the axis is
-                autodetected.
+                Whether the axis is cyclic or not. By default *wrap*
+                is set to the result of this call to the field
+                construct's `iscyclic` method:
+                ``f.iscyclic(axis)``. If the axis is cyclic then
+                centred differences at one boundary will always use
+                values from the other boundary, regardless of the
+                setting of *one_sided_at_boundary*.
 
             one_sided_at_boundary: `bool`, optional
                 If True, and the field is not cyclic or *wrap* is
@@ -16709,8 +17115,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Automatically detect the cyclicity of the axis if cyclic is
         # None
+        cyclic = self.iscyclic(axis)
         if wrap is None:
-            wrap = self.iscyclic(axis)
+            wrap = cyclic
 
         # Set the boundary conditions
         if wrap:
@@ -16729,29 +17136,34 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Find the differences of the coordinates
         d = None
-        if wrap and f.iscyclic(axis):
+        if wrap and cyclic:
             period = coord.period()
-            if period is not None:
-                # Fix the boundary differences for cyclic periodic
-                # coordinates. Need to extend the coordinates to
-                # include a dummy value at each end, grabbed from the
-                # other end, that maintains strict monotonicity.
-                c_data = coord.data
-                d2 = self._Data.empty((c_data.size + 2,), units=c_data.Units)
-                if not coord.direction():
-                    period = -period
+            if period is None:
+                raise ValueError(
+                    "Can't calculate derivative when cyclic dimension "
+                    f"coordinate {coord!r} has no period"
+                )
 
-                d2[1:-1] = c_data
-                d2[0] = c_data[-1] - period
-                d2[-1] = c_data[0] + period
+            # Fix the boundary differences for cyclic periodic
+            # coordinates. Need to extend the coordinates to include a
+            # dummy value at each end, grabbed from the other end,
+            # that maintains strict monotonicity.
+            c_data = coord.data
+            d2 = self._Data.empty((c_data.size + 2,), units=c_data.Units)
+            if not coord.direction():
+                period = -period
 
-                d = d2.convolution_filter(
-                    window=[1, 0, -1], axis=0, mode="constant"
-                )[1:-1]
+            d2[1:-1] = c_data
+            d2[0] = c_data[-1] - period
+            d2[-1] = c_data[0] + period
+            c_data = d2
+            d = d2.convolution_filter(
+                window=[1, 0, -1], axis=0, mode="constant"
+            )[1:-1]
 
         if d is None:
             d = coord.data.convolution_filter(
-                window=[1, 0, -1], axis=0, mode=mode, cval=numpy_nan
+                window=[1, 0, -1], axis=0, mode=mode, cval=np.nan
             )
 
         # Reshape the coordinate differences so that they broadcast to

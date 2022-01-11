@@ -275,7 +275,7 @@ from .query import (
 
 from .constants import *  # noqa: F403
 from .functions import *  # noqa: F403
-from .maths import relative_vorticity, histogram
+from .maths import curl_xy, div_xy, relative_vorticity, histogram
 from .examplefield import example_field, example_fields, example_domain
 
 from .cfimplementation import CFImplementation, implementation

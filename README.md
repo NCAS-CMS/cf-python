@@ -77,11 +77,9 @@ The `cf` package can:
 
 * write and append field constructs to netCDF datasets on disk,
 
-* read, write, and create coordinates defined by geometry cells (*new
-  in version 3.2.0*),
+* read, write, and create coordinates defined by geometry cells,
 
-* read netCDF and CDL datasets containing hierarchical groups (*new in
-  version 3.6.0*),
+* read netCDF and CDL datasets containing hierarchical groups,
 
 * inspect field constructs,
 
@@ -93,8 +91,7 @@ The `cf` package can:
 
 * write field constructs to netCDF datasets on disk,
 
-* incorporate, and create, metadata stored in external files (*new in
-  version 3.0.0*),
+* incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
@@ -108,7 +105,7 @@ The `cf` package can:
 * perform statistical collapses on field constructs,
 
 * perform histogram, percentile and binning operations on field
-  constructs (*new in version 3.0.3*),
+  constructs,
 
 * regrid field constructs with (multi-)linear, nearest neighbour,
   first- and second-order conservative and higher order patch recovery
@@ -116,12 +113,11 @@ The `cf` package can:
 
 * apply convolution filters to field constructs,
 
-* create moving means from field constructs (*new in version 3.3.0*),
+* create moving means from field constructs,
 
-* calculate derivatives of field constructs,
+* apply differential operators to field constructs,
 
-* create field constructs to create derived quantities (such as
-  vorticity).
+* create derived quantities (such as relative vorticity).
 
 All of the above use LAMA functionality, which allows multiple
 fields larger than the available memory to exist and be manipulated.

@@ -68,9 +68,6 @@ _docstring_substitution_definitions = {
                 and the construct itself. By default the construct
                 itself is returned. If *key* is True then *item* is
                 ignored.""",
-    # ----------------------------------------------------------------
-    # Method description susbstitutions (4 levels of indentataion)
-    # ----------------------------------------------------------------
     # method: `str`, optional
     "{{method: `str`, optional}}": """method: `str`, optional
                 Specify the regridding method. This parameter must be
@@ -182,6 +179,18 @@ _docstring_substitution_definitions = {
                           *method* may still be set, but must have the
                           value `None` or else agree with the
                           regridding operator's method.""",
+    # radius: optional
+    "{{radius: optional}}": """radius: optional
+                Specify the radius of the latitude-longitude plane
+                defined in spherical polar coordinates. The radius is
+                that which would be returned by this call of the field
+                construct's `radius` method:
+                ``f.radius(default=radius)``. The radius is defined by
+                the datum of a coordinate reference construct, and if
+                and only if no such radius is found then the default
+                value given by the *radius* parameter is used
+                instead. A value of ``'earth'`` is equivalent to a
+                default value of 6371229 metres.""",
     # Returns formula
     "{{Returns formula}}": """5-`tuple`
                 * The standard name of the parametric coordinates.
@@ -200,6 +209,9 @@ _docstring_substitution_definitions = {
                   domain axis. If the vertical axis does not appear in
                   the computed non-parametric coodinates then this an
                   empty tuple.""",
+    # ----------------------------------------------------------------
+    # Method description susbstitutions (4 levels of indentataion)
+    # ----------------------------------------------------------------
     # Returns construct
     "{{Returns construct}}": """The selected construct, or its identifier if *key* is
                 True, or a tuple of both if *item* is True.""",
