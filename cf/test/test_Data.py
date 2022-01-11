@@ -262,16 +262,16 @@ class DataTest(unittest.TestCase):
         # on its own (namely without considering the mask) is not equal to the
         # other data on its own (e.g. note the 0-th element in below examples).
         # This differs to case (2): there data differs *only where unmasked*.
-        # Note these should *not* be considered equal inside cf.Data, whereas
-        # np.ma.allclose and indeed our own _da_ma_allclose methods do hold
-        # these to be 'allclose': Data.equals is stricter than _da_ma_allclose.
+        # Note these *should* be considered equal inside cf.Data, and indeed
+        # np.ma.allclose and our own _da_ma_allclose methods also hold
+        # these to be 'allclose'.
         j5 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
         self.assertTrue(j5.equals(j5.copy()))
         j6 = cf.Data(np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
         self.assertTrue(j6.equals(j6.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             print("J5 EQUALS J6 NOW <<<<<<<<<<<<<<<<<<<<<<<<<")
-            self.assertFalse(j5.equals(j6))
+            self.assertTrue(j5.equals(j6))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
