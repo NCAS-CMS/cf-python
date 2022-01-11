@@ -4855,7 +4855,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         f = self.copy()
         identity = f.identity()
-        
+
         x_key, x_coord = f.dimension_coordinate(
             "X", item=True, default=(None, None)
         )
