@@ -9,6 +9,8 @@ version 3.12.0
   (https://github.com/NCAS-CMS/cf-python/issues/292)
 * New function: `cf.div_xy`
   (https://github.com/NCAS-CMS/cf-python/issues/292)
+* New function: `cf.curl_xy`
+  (https://github.com/NCAS-CMS/cf-python/issues/292)
 * Fix `cf.aggregate` failures when using the ``dimension`` keyword
   parameter (https://github.com/NCAS-CMS/cf-python/issues/283)
 * Fix bug that raised error with subtraction of a `cf.TimeDuration`
