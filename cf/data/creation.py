@@ -2,33 +2,22 @@
 from functools import lru_cache
 from uuid import uuid4
 
-import numpy as np
-
 import dask.array as da
-from dask.array.core import (
-    getter,
-    normalize_chunks,
-    slices_from_chunks,
-)
-from dask.utils import SerializableLock
+import numpy as np
+from dask.array.core import getter, normalize_chunks, slices_from_chunks
 from dask.base import tokenize
 from dask.config import config
+from dask.utils import SerializableLock
 
 from ..units import Units
-
-from .utils import (
-    chunk_shapes,
-    chunk_positions,
-)
-
 from . import (
     FilledArray,
     GatheredSubarray,
     RaggedContiguousSubarray,
-    RaggedIndexedSubarray,
     RaggedIndexedContiguousSubarray,
+    RaggedIndexedSubarray,
 )
-
+from .utils import chunk_positions, chunk_shapes
 
 # Cache of axis identities
 _cached_axes = {}
@@ -152,46 +141,64 @@ def compressed_to_dask(array):
         # Find the chunk sizes and positions of the uncompressed
         # array. Each chunk will contain the data for one instance,
         # padded with missing values if required.
-        chunks = normalize_chunks(
-            (1,) + (-1,) * (uncompressed_ndim - 1),
-            shape=uncompressed_shape,
-            dtype=dtype,
-        )
-        chunk_shape = chunk_shapes(chunks)
-        chunk_position = chunk_positions(chunks)
+        #        chunks = normalize_chunks(
+        #            (1,) + (-1,) * (uncompressed_ndim - 1),
+        #            shape=uncompressed_shape,
+        #            dtype=dtype,
+        #        )
+        #        chunk_shape = chunk_shapes(chunks)
+        #        chunk_position = chunk_positions(chunks)
 
-        #        subarrays = []
-        start = 0
-        for n in count:
-            end = start + int(n)
+        compressed_dimensions = self.compressed_dimensions()
+
+        conformed_data = array.conformed_data()
+        compressed_data = conformed_data["data"]
+        # compressed_data.set_scheduler('single-threaded')
+
+        for u_indices, u_shape, c_indices, chunk_position in zip(
+            *array.subarrays()
+        ):
             subarray = RaggedContiguousSubarray(
-                array=compressed_data,
-                shape=next(chunk_shape),
-                compression={
-                    "instance_axis": 0,
-                    "instance_index": 0,
-                    "c_element_axis": 1,
-                    "c_element_indices": slice(start, end),
-                },
+                data=compressed_data,
+                indices=c_indices,
+                shape=u_shape,
+                compressed_dimensions=compressed_dimensions,
             )
 
-            dsk[name + next(chunk_position)] = (
+            dsk[name + chunk_position] = (
                 getter,
                 subarray,
                 full_slice,
                 asarray,
                 lock,
             )
-
-            start += n
-
-    #            subarrays.append(
-    #                da.from_array(subarray, chunks=-1, asarray=asarray, lock=lock)
+    #
+    #
+    #
+    #        #        subarrays = []
+    #        start = 0
+    #        for n in count:
+    #            end = start + int(n)
+    #            subarray = RaggedContiguousSubarray(
+    #                array=compressed_data,
+    #                shape=next(chunk_shape),
+    #                compression={
+    #                    "instance_axis": 0,
+    #                    "instance_index": 0,
+    #                    "c_element_axis": 1,
+    #                    "c_element_indices": slice(start, end),
+    #                },
     #            )
     #
-    #       # Concatenate along the instance axis
-    #       dx = da.concatenate(subarrays, axis=0)
-    #       return dx
+    #            dsk[name + next(chunk_position)] = (
+    #                getter,
+    #                subarray,
+    #                full_slice,
+    #                asarray,
+    #                lock,
+    #            )
+    #
+    #            start += n
 
     elif compression_type == "ragged indexed":
         # ------------------------------------------------------------
