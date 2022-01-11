@@ -46,35 +46,35 @@ class FileArray(Array):
         """
         return self._get_component("dtype")
 
-    @property
-    def ndim(self):
-        """Number of array dimensions.
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        return self._get_component("ndim")
+#    @property
+#    def ndim(self):
+#        """Number of array dimensions.
+#
+#        **Examples:**
+#
+#        >>> a.shape
+#        (73, 96)
+#        >>> a.ndim
+#        2
+#        >>> a.size
+#        7008
+#
+#        >>> a.shape
+#        (1, 1, 1)
+#        >>> a.ndim
+#        3
+#        >>> a.size
+#        1
+#
+#        >>> a.shape
+#        ()
+#        >>> a.ndim
+#        0
+#        >>> a.size
+#        1
+#
+#        """
+#        return self._get_component("ndim")
 
     @property
     def shape(self):
@@ -106,35 +106,35 @@ class FileArray(Array):
         """
         return self._get_component("shape")
 
-    @property
-    def size(self):
-        """Number of elements in the array.
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.size
-        7008
-        >>> a.ndim
-        2
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        return self._get_component("size")
+ #   @property
+ #   def size(self):
+ #       """Number of elements in the array.
+ #
+ #       **Examples:**
+ #
+ #       >>> a.shape
+ #       (73, 96)
+ #       >>> a.size
+ #       7008
+ #       >>> a.ndim
+ #       2
+ #
+ #       >>> a.shape
+ #       (1, 1, 1)
+ #       >>> a.ndim
+ #       3
+ #       >>> a.size
+ #       1
+ #
+ #       >>> a.shape
+ #       ()
+ #       >>> a.ndim
+ #       0
+ #       >>> a.size
+ #       1
+ #
+ #       """
+ #       return self._get_component("size")
 
     @property
     def filename(self):

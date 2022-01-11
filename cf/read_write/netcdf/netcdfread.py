@@ -15,8 +15,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     .. versionadded:: 3.0.0
 
     """
-
-    def _ncdimensions(self, ncvar):
+    
+    def _ncdimensions(self, ncvar, ncdimensions=None, parent_ncvar=None):
         """Return a list of the netCDF dimensions corresponding to a
         netCDF variable.
 
@@ -33,6 +33,21 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             ncvar: `str`
                 The netCDF variable name.
 
+            ncdimensions: sequence of `str`, optional
+                Use these netCDF dimensions, rather than retrieving them
+                from the netCDF variable itself. This allows the
+                dimensions of a domain variable to be parsed. Note that
+                this only parameter only needs to be used once because the
+                parsed domain dimensions are automatically stored in
+                `self.read_var['domain_ncdimensions'][ncvar]`.
+
+                .. versionadded:: 3.11.0
+
+            parent_ncvar: `str`, optional
+                TODO
+
+                .. versionadded:: TODO
+
         :Returns:
 
             `list`
@@ -42,6 +57,25 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         >>> n._ncdimensions('humidity')
         ['time', 'lat', 'lon']
+
+        For a variable compressed by gathering:
+
+           dimensions:
+             lat=73;
+             lon=96;
+             landpoint=2381;
+             depth=4;
+           variables:
+             int landpoint(landpoint);
+               landpoint:compress="lat lon";
+             float landsoilt(depth,landpoint);
+               landsoilt:long_name="soil temperature";
+               landsoilt:units="K";
+
+        we would have
+
+        >>> n._ncdimensions('landsoilt')
+        ['depth', 'lat', 'lon']
 
         """
         g = self.read_vars
@@ -54,9 +88,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         )
 
         if not cfa:
-            return super()._ncdimensions(ncvar)
+            return super()._ncdimensions(ncvar, ncdimensions=ncdimensions, parent_ncvar=parent_ncvar)
 
-        # Still here?
+        # Still here? Then we have a CFA variable.
         ncdimensions = (
             g["variable_attributes"][ncvar].get("cfa_dimensions", "").split()
         )
