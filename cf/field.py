@@ -4745,13 +4745,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         r.dtype = float
         return r
 
-    @_inplace_enabled(default=False)
     def laplacian_xy(
         self,
         x_wrap=None,
         one_sided_at_boundary=False,
         radius=None,
-        inplace=False,
     ):
         r"""Calculate the Laplacian in X-Y coordinates.
 
@@ -4815,8 +4813,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{radius: optional}}
 
-            {{inplace: `bool`, optional}}
-
         :Returns:
 
             `Field` or `None`
@@ -4839,7 +4835,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
          [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
          [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
-        >> >lp = f.laplacian_xy(radius='earth')
+        >>> lp = f.laplacian_xy(radius='earth')
         >>> lp
         <CF Field: long_name=X-Y Laplacian of specific_humidity(latitude(5), longitude(8)) m-2.rad-2>
         >>> print(lp.array)
@@ -4857,11 +4853,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0. 0. 0. 0. 0. 0. 0. 0.]]
 
         """
-        from numpy import pi
-
-        f = _inplace_enabled_define_and_cleanup(self)
-
+        f = self.copy()
         identity = f.identity()
+        
         x_key, x_coord = f.dimension_coordinate(
             "X", item=True, default=(None, None)
         )
@@ -4897,7 +4891,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Get theta as a field that will broadcast to f, and
             # adjust its values so that theta=0 is at the north pole.
-            theta = pi / 2 - f.convert(y_key, full_domain=True)
+            theta = np.pi / 2 - f.convert(y_key, full_domain=True)
 
             sin_theta = theta.sin()
 
