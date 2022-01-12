@@ -9148,7 +9148,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             data_comparison = _da_ma_allclose(
                 self_dx,
                 other_dx,
-                masked_equal=False,  # TODODASK: is this correct, or want True?
+                masked_equal=True,
                 rtol=float(rtol),
                 atol=float(atol),
             )

@@ -271,15 +271,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(j5.equals(j5.copy()))
         j6 = cf.Data(np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
         self.assertTrue(j6.equals(j6.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
-            print("J5 EQUALS J6 NOW <<<<<<<<<<<<<<<<<<<<<<<<<")
-            self.assertTrue(j5.equals(j6))
-            self.assertTrue(
-                any(
-                    "Data: Different array values" in log_msg
-                    for log_msg in catch.output
-                )
-            )
+        self.assertTrue(j5.equals(j6))
 
         # Test non-numeric dtype arrays
         sa1 = cf.Data(np.array(["one", "two", "three"], dtype="S5"), "m")
