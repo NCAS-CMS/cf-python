@@ -144,7 +144,8 @@ class DataTest(unittest.TestCase):
         # Different but equivalent datatype, so expect equality to pass
         d2 = cf.Data(a.astype(np.float32), "m")
         self.assertTrue(d2.equals(d2.copy()))
-        # TODODASK: fails due to inconsistency in cfdm Data.equals, to fix
+        # TODODASK: fails due to inconsistency in cfdm Data.equals, to be
+        # fixed (see 'LAMA->DASK WARNING' in Data.equals method).
         # with self.assertLogs(level=cf.log_level().value) as catch:
         #     self.assertTrue(d2.equals(d))
         #     self.assertTrue(
@@ -224,7 +225,6 @@ class DataTest(unittest.TestCase):
         # Test masked arrays
         # 1. Example case where the masks differ only (data is identical)
         j1 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
-        print("SELF-EQUALS J1 NOW <<<<<<<<<<<<<<<<<<<<<<<<<")
         self.assertTrue(j1.equals(j1.copy()))
         j2 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[0, 1, 0]), "m")
         self.assertTrue(j2.equals(j2.copy()))

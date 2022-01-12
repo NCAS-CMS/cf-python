@@ -9118,8 +9118,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _check_values=False,
         ):
             print(
-                "TODO DASK: using False result from cfdm Data.equals as a "
-                "short-circuit BUT at present this may actually be a False "
+                "LAMA->DASK WARNING: False result from cfdm Data.equals "
+                f"short-circuiting cf Data.equals on {self!r} and {other!r} "
+                "BUT at present this may actually be a False "
                 "negative (i.e. result may actually be True) since logic "
                 "there has not yet been made consistent with cf Data.equals."
             )  # TODODASK
@@ -9148,7 +9149,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self_is_numeric = _is_numeric_dtype(self_dx)
         other_is_numeric = _is_numeric_dtype(other_dx)
         if self_is_numeric and other_is_numeric:
-            print("DATA COMP'ING IS", self_dx.compute(), other_dx.compute())
             data_comparison = _da_ma_allclose(
                 self_dx,
                 other_dx,
@@ -9156,7 +9156,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 rtol=float(rtol),
                 atol=float(atol),
             )
-            print("DATA COMP RESULT IS", data_comparison.compute())
         elif not self_is_numeric and not other_is_numeric:
             data_comparison = da.all(self_dx == other_dx)
         else:  # one is numeric and other isn't => not equal (incompat. dtype)
@@ -9169,12 +9168,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         mask_comparison = da.all(
             da.equal(da.ma.getmaskarray(self_dx), da.ma.getmaskarray(other_dx))
         )
-        print("MASK COMP RESULT IS", mask_comparison.compute())
 
         # Apply a (dask) logical 'and' to confirm if both the mask and the
         # data are equal for the pair of masked arrays:
         result = da.logical_and(data_comparison, mask_comparison)
-        print("OVERALL COMP RESULT IS", result.compute())
 
         if not result.compute():
             logger.info(
