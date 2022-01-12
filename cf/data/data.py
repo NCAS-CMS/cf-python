@@ -9113,6 +9113,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             ignore_type=ignore_type,
             _check_values=False,
         ):
+            print(
+                "TODO DASK: using False result from cfdm Data.equals as a "
+                "short-circuit BUT at present this may actually be a False "
+                "negative (i.e. result may actually be True) since logic "
+                "there has not yet been made consistent with cf Data.equals."
+            )  # TODODASK
             return False
 
         # ------------------------------------------------------------
