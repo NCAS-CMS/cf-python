@@ -97,7 +97,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return list(map(str, ncdimensions))
 
-    def _get_domain_axes(self, ncvar, allow_external=False):
+    def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Return the domain axis identifiers that correspond to a
         netCDF variable's netCDF dimensions.
 
@@ -112,6 +112,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             allow_external: `bool`
                 If `True` and *ncvar* is an external variable then return an
                 empty list.
+
+            parent_ncvar: `str`, optional
+                TODO
+
+                .. versionadded:: TODO
 
         :Returns:
 
@@ -137,7 +142,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         if not cfa:
             return super()._get_domain_axes(
-                ncvar=ncvar, allow_external=allow_external
+                ncvar=ncvar, allow_external=allow_external, parent_ncvar=parent_ncvar
             )
 
         # Still here?
@@ -161,6 +166,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         unpacked_dtype=False,
         uncompress_override=None,
         parent_ncvar=None,
+        coord_ncvar=None,
     ):
         """TODO.
 
@@ -176,6 +182,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             unpacked_dtype: `False` or `numpy.dtype`, optional
 
             uncompress_override: `bool`, optional
+
+            parent_ncvar: `str`, optional
+
+            coord_ncvar: `str`, optional
+
+                .. versionadded:: TODO
 
         :Returns:
 
@@ -199,6 +211,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 unpacked_dtype=unpacked_dtype,
                 uncompress_override=uncompress_override,
                 parent_ncvar=parent_ncvar,
+                coord_ncvar=coord_ncvar,
             )
 
         # ------------------------------------------------------------

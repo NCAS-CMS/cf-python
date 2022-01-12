@@ -565,11 +565,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if compressed:
             # The data is compressed, so create a uncompressed dask
             # view of it.
-            if chunks != _DEFAULT_CHUNKS:
-                raise ValueError(
-                    "Can't define chunks for compressed input arrays. "
-                    "Consider rechunking after initialisation."
-                )
+            #if chunks != _DEFAULT_CHUNKS:
+            #    raise ValueError(
+            #        "Can't define chunks for compressed input arrays. "
+            #        "Consider rechunking after initialisation."
+            #    )
 
             if dask_from_array_options:
                 raise ValueError(
@@ -581,7 +581,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # extra information, such as a count or index variable.
             self._set_Array(array)
 
-            array = compressed_to_dask(array)
+            array = compressed_to_dask(array, chunks)
 
         elif not is_dask_collection(array):
             # Turn the data into a dask array

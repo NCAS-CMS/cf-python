@@ -19,7 +19,11 @@ class RaggedIndexedContiguousArray(cfdm.RaggedIndexedContiguousArray):
     .. versionadded:: 3.0.0
 
     """
-
+    def __dask_tokenize__(self):
+        return (self.__class__.__name__, self.shape,
+                self.compressed_dimensions(), self.source(),
+                self.get_count(None), self.get_index(None))
+   
     @property
     def dask_asarray(self):
         return False

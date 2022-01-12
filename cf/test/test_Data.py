@@ -9,6 +9,8 @@ from operator import mul
 
 import numpy as np
 
+import cfdm
+
 SCIPY_AVAILABLE = False
 try:
     from scipy.ndimage import convolve1d
@@ -3333,7 +3335,36 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
         self.assertTrue((e.array == a).all())
 
+    def test_Data__init__compression(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
 
+        # Ragged
+        for f in cfdm.read('DSG_timeSeries_contiguous.nc'):
+            f = f.data
+            d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+            self.assertTrue(d.equals(f))
+            
+        for f in cfdm.read('DSG_timeSeries_indexed.nc'):
+            f = f.data
+            d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
+            self.assertTrue(d.equals(f))
+            
+        for f in cfdm.read('DSG_timeSeriesProfile_indexed_contiguous.nc'):
+            f = f.data
+            d = cf.Data(cf.RaggedIndexedContiguousArray(source=f.source()))
+            self.assertTrue(d.equals(f))
+
+        # Gathered
+        for f in cfdm.read('gathered.nc'):
+            f = f.data
+            d = cf.Data(cf.GatheredArray(source=f.source()))
+            self.assertTrue(d.equals(f))
+
+        # Subsampled
+        pass
+
+            
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

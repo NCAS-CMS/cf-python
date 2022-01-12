@@ -9,27 +9,11 @@ from dask.base import tokenize
 from dask import config
 from dask.utils import SerializableLock
 
-from cfdm import GatheredSubarray, RaggedSubarray
+# from cfdm import GatheredSubarray, RaggedSubarray
 
 from ..units import Units
 
-# from . import (
-#    FilledArray,
-##    GatheredSubarray,
-##    RaggedContiguousSubarray,
-##    RaggedIndexedContiguousSubarray,
-##    RaggedIndexedSubarray,
-# )
-from .utils import chunk_positions, chunk_shapes
-
-## Cache of axis identities
-# _cached_axes = {}
-
-# _ragged_subarrays = {
-#    'ragged contiguous': RaggedContiguousSubarray,
-#    'ragged indexed': RaggedIndexedSubarray,
-#    'ragged indxed contiguous': RaggedIndexedContiguousSubarray,
-# }
+# from .utils import chunk_positions
 
 
 def convert_to_builtin_type(x):
@@ -99,7 +83,7 @@ def to_dask(array, chunks, dask_from_array_options):
     return da.from_array(array, chunks=chunks, **kwargs)
 
 
-def compressed_to_dask(array):
+def compressed_to_dask(array, chunks):
     """TODODASK Create and insert a partition matrix for a compressed
     array.
 
@@ -121,16 +105,9 @@ def compressed_to_dask(array):
 
     # Initialise a dask graph for the uncompressed array, and some
     # dask.array.core.getter arguments
-    chunks = [[] for _ in uncompressed_shape]
-    token = tokenize(uncompressed_shape, uuid4())
-    name = (array.__class__.__name__ + "-" + token,)
+    name = (array.__class__.__name__ + "-" + tokenize(array),)
     dsk = {}
     full_slice = Ellipsis
-
-    if getattr(array.source(), "dask_lock", True):
-        lock = get_lock()
-    else:
-        lock = False
 
     context = partial(config.set, scheduler="synchronous")
 
@@ -141,28 +118,60 @@ def compressed_to_dask(array):
     # ----------------------------------------------------------------
     # Set the chunk sizes for the dask array
     # ----------------------------------------------------------------
-    chunks = ["auto"] * array.ndim
-    for u_dims in compressed_dimensions.values():
-        for i in u_dims:
-            chunks[i] = (uncompressed_shape[i],)
+    print(chunks)
+    if chunks != "auto":
+        chunks = normalize_chunks(
+            chunks, shape=uncompressed_shape, dtype=uncompressed_dtype
+        )
 
     chunks = normalize_chunks(
-        chunks, shape=uncompressed_shape, dtype=uncompressed_dtype
+        array.subarray_shapes(chunks),
+        shape=uncompressed_shape,
+        dtype=uncompressed_dtype,
     )
+    print(chunks)
+
+    Subarray = array.get_Subarray()
 
     if compression_type.startswith("ragged"):
         # ------------------------------------------------------------
         # Ragged
         # ------------------------------------------------------------
         for u_indices, u_shape, c_indices, chunk_location in zip(
-            *array.subarrays(chunk=chunks)
+            *array.subarrays(shapes=chunks)
         ):
-            subarray = RaggedSubarray(
+            subarray = Subarray(
                 data=compressed_data,
                 indices=c_indices,
                 shape=u_shape,
                 compressed_dimensions=compressed_dimensions,
-                _context_manager=context,
+                context_manager=context,
+            )
+
+            dsk[name + chunk_location] = (
+                getter,
+                subarray,
+                full_slice,
+                False,
+                False,
+            )
+
+    elif compression_type == "gathered":
+        # ------------------------------------------------------------
+        # Gathered
+        # ------------------------------------------------------------
+        uncompressed_indices = conformed_data["uncompressed_indices"]
+
+        for u_indices, u_shape, c_indices, chunk_location in zip(
+            *array.subarrays(shapes=chunks)
+        ):
+            subarray = Subarray(
+                data=compressed_data,
+                indices=c_indices,
+                shape=u_shape,
+                compressed_dimensions=compressed_dimensions,
+                uncompressed_indices=uncompressed_indices,
+                context_manager=context,
             )
 
             dsk[name + chunk_location] = (
@@ -173,22 +182,31 @@ def compressed_to_dask(array):
                 lock,
             )
 
-    elif compression_type == "gathered":
+    elif compression_type == "subsampled":
         # ------------------------------------------------------------
-        # Gathered
+        # Subsampled
         # ------------------------------------------------------------
-        uncompressed_indices = conformed_data["uncompressed_indices"]
+        parameters = conformed_data["parameters"]
+        dependent_tie_points = conformed_data["dependent_tie_points"]
 
-        for u_indices, u_shape, c_indices, chunk_location in zip(
-            *array.subarrays(chunks=chunks)
-        ):
-            subarray = GatheredSubarray(
-                data=compressed_data,
+        for (
+            u_indices,
+            u_shape,
+            c_indices,
+            subarea_indices,
+            first,
+            chunk_location,
+        ) in zip(*array.subarrays(shapes=chunks)):
+            subarray = Subarray(
+                data=tie_points,
                 indices=c_indices,
                 shape=u_shape,
                 compressed_dimensions=compressed_dimensions,
-                uncompressed_indices=uncompressed_indices,
-                _context_manager=context,
+                first=first,
+                subarea_indices=subarea_indices,
+                parameters=parameters,
+                dependent_tie_points=dependent_tie_points,
+                context_manager=context,
             )
 
             dsk[name + chunk_location] = (
