@@ -105,6 +105,59 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     )
 
 
+try:
+    from scipy.ndimage.filters import convolve1d
+except ImportError:
+    pass
+
+
+def cf_convolve1d(a, window=None, axis=-1, origin=0):
+    """Calculate a 1-d convolution along the given axis.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `cf.Data.convolution_filter`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The float array to be filtered.
+
+        window: 1-d sequence of numbers
+            The window of weights to use for the filter.
+
+        axis: `int`, optional
+            The axis of input along which to calculate. Default is -1.
+
+        origin: `int`, optional
+            Controls the placement of the filter on the input array’s
+            pixels. A value of 0 (the default) centers the filter over
+            the pixel, with positive values shifting the filter to the
+            left, and negative ones to the right.
+
+    :Returns:
+
+        `numpy.ndarray`
+            Convolved float array with same shape as input.
+
+    """
+    masked = np.ma.is_masked(a)
+    if masked:
+        # convolve1d does not deal with masked arrays, so uses NaNs
+        # instead.
+        a = a.filled(np.nan)
+
+    c = convolve1d(
+        a, window, axis=axis, mode="constant", cval=0.0, origin=origin
+    )
+
+    if masked or np.isnan(c).any():
+        with np.errstate(invalid="ignore"):
+            c = np.ma.masked_invalid(c)
+
+    return c
+
+
 def cf_harden_mask(a):
     """Harden the mask of a masked `numpy` array.
 
