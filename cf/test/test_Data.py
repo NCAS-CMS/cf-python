@@ -141,19 +141,19 @@ class DataTest(unittest.TestCase):
         d = cf.Data(a, "m")
         self.assertTrue(d.equals(d.copy()))  # also do self-equality checks!
 
-        # Different but equivalent datatype, so expect equality to pass
+        # Different but equivalent datatype, which should *fail* the equality
+        # test (i.e. equals return False) because we want equals to check
+        # for strict equality, including equality of data type.
         d2 = cf.Data(a.astype(np.float32), "m")
         self.assertTrue(d2.equals(d2.copy()))
-        # TODODASK: fails due to inconsistency in cfdm Data.equals, to be
-        # fixed (see 'LAMA->DASK WARNING' in Data.equals method).
-        # with self.assertLogs(level=cf.log_level().value) as catch:
-        #     self.assertTrue(d2.equals(d))
-        #     self.assertTrue(
-        #         any(
-        #             "Data: Different data types: float32 != int64" in log_msg
-        #             for log_msg in catch.output
-        #         )
-        #     )
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(d2.equals(d))
+            self.assertTrue(
+                any(
+                    "Data: Different data types: float32 != int64" in log_msg
+                    for log_msg in catch.output
+                )
+            )
 
         e = cf.Data(a, "s")  # different units to d
         self.assertTrue(e.equals(e.copy()))
