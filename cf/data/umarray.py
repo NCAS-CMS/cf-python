@@ -190,6 +190,16 @@ class UMArray(abstract.FileArray):
         return f"{self.header_offset}{self.shape} in {self.filename}"
 
     @property
+    def _dask_lock(self):
+        """TODODASK.
+
+        Concurrent reads are supported, because __getitem__ opens its
+        own independent `File` instance.
+
+        """
+        return False
+
+    @property
     def file_pointer(self):
         """The file pointer starting at the position of the header.
 

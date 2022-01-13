@@ -12,10 +12,19 @@ class RaggedContiguousArray(cfdm.RaggedContiguousArray):
     The information needed to uncompress the data is stored in a
     "count variable" that gives the size of each block.
 
+    It is assumed that the compressed dimension is the left-most
+    dimension in the compressed array.
+
+    See CF section 9 "Discrete Sampling Geometries".
+
     .. versionadded:: 3.0.0
 
     """
 
-    @property
-    def dask_asarray(self):
-        return False
+    def __array_function__(self, func, types, args, kwargs):
+        return NotImplemented
+
+
+#    @property
+#    def dask_asarray(self):
+#        return False

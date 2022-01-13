@@ -11,6 +11,9 @@ class Array(cfdm.Array):
 
     """
 
+    def __array_function__(self, func, types, args, kwargs):
+        return NotImplemented
+
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -21,7 +24,8 @@ class Array(cfdm.Array):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
-    @property
-    def dask_asarray(self):
-        """TODODASK."""
-        return False
+
+#    @property
+#    def dask_asarray(self):
+#        """TODODASK."""
+#        return False

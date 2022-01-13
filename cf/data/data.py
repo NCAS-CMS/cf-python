@@ -126,6 +126,7 @@ from .utils import (  # is_small,; is_very_small,
 
 logger = logging.getLogger(__name__)
 
+daskified_log_level = 0
 
 def daskified(apply_temp_log_level=None):
     def decorator(method):
@@ -439,7 +440,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 By default, ``"auto"`` is used to specify the array
                 chunking.
 
-            chunk: deprecated at version 4.0.0
+            dask_from_array_options: `dict`, optional
+                 Keyword arguments to pass to `dask.array.from_array`.
+
+            chunk: deprecated at version TODODASK
                 Use the *chunks* parameter instead.
 
         **Examples:**
@@ -609,6 +613,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Override the data type
         if dtype is not None:
+            print ('HERE')
             self.dtype = dtype
 
         # Apply a mask
@@ -642,7 +647,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return ca._get_dask().copy()
 
-    @daskified(1)
+    @daskified(daskified_log_level)
     def __contains__(self, value):
         """Membership test operator ``in``
 
@@ -934,7 +939,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
-    @daskified(1)
+    @daskified(daskified_log_level)
     def __getitem__(self, indices):
         """Return a subspace of the data defined by indices.
 
@@ -1118,7 +1123,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return new
 
-    @daskified(1)
+    @daskified(daskified_log_level)
     def __setitem__(self, indices, value):
         """Implement indexed assignment.
 
@@ -1226,7 +1231,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     # Indexing behaviour attributes
     # ----------------------------------------------------------------
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def __orthogonal_indexing__(self):
         """Flag to indicate that orthogonal indexing is supported.
 
@@ -1261,7 +1266,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return True
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def __keepdims_indexing__(self):
         """Flag to indicate whether dimensions indexed with integers are
         kept.
@@ -5750,7 +5755,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         del self._custom["_HDF_chunks"]
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def _hardmask(self):
         """Storage for the mask hardness.
 
@@ -5767,7 +5772,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._custom["_hardmask"] = value
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def _axes(self):
         """Storage for the axis identifiers.
 
@@ -5812,7 +5817,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     # Attributes
     # ----------------------------------------------------------------
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def Units(self):
         """The `cf.Units` object containing the units of the data array.
 
@@ -5888,7 +5893,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return self
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def dtype(self):
         """The `numpy` data-type of the data.
 
@@ -5965,7 +5970,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self.del_fill_value(None)
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def hardmask(self):
         """Hardness of the mask.
 
@@ -6016,7 +6021,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self.soften_mask()
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def is_masked(self):
         """True if the data array has any masked values.
 
@@ -6075,7 +6080,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return not self.ndim
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def nbytes(self):
         """Total number of bytes consumed by the elements of the array.
 
@@ -6112,7 +6117,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return dx.nbytes
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def ndim(self):
         """Number of dimensions in the data array.
 
@@ -6143,7 +6148,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return dx.ndim
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def shape(self):
         """Tuple of the data array's dimension sizes.
 
@@ -6179,7 +6184,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return dx.shape
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def size(self):
         """Number of elements in the data array.
 
@@ -6221,7 +6226,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return size
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def array(self):
         """A numpy array copy the data array.
 
@@ -6264,7 +6269,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return a
 
     @property
-    @daskified(1)
+    @daskified(daskified_log_level)
     def datetime_array(self):
         """An independent numpy array of date-time objects.
 
@@ -9176,7 +9181,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    @daskified(1)
+    @daskified(daskified_log_level)
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         """Expand the shape of the data array in place.
@@ -10798,7 +10803,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
-    @daskified(1)
+    @daskified(daskified_log_level)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
@@ -11458,7 +11463,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
-    @daskified(1)
+    @daskified(daskified_log_level)
     def where(
         self, condition, x=None, y=None, inplace=False, i=False, verbose=None
     ):
@@ -11985,7 +11990,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    @daskified(1)
+    @daskified(daskified_log_level)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False, i=False):
@@ -12184,7 +12189,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self.array.tolist()
 
-    @daskified(1)
+    @daskified(daskified_log_level)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False, i=False):
@@ -12573,7 +12578,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
-    @daskified(1)
+    @daskified(daskified_log_level)
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
     def roll(self, axis, shift, inplace=False, i=False):

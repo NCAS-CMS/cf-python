@@ -244,6 +244,7 @@ from .data import (
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SubsampledArray,
 )
 
 from .aggregate import aggregate

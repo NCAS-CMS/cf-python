@@ -11,10 +11,16 @@ class GatheredArray(cfdm.GatheredArray):
     The information needed to uncompress the data is stored in a "list
     variable" that gives the indices of the required points.
 
+    See CF section 8.2. "Lossless Compression by Gathering".
+
     .. versionadded:: 3.0.0
 
     """
 
-    @property
-    def dask_asarray(self):
-        return False
+    def __array_function__(self, func, types, args, kwargs):
+        return NotImplemented
+
+
+#    @property
+#    def dask_asarray(self):
+#        return False

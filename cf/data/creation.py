@@ -67,18 +67,41 @@ def convert_to_builtin_type(x):
 def to_dask(array, chunks, dask_from_array_options):
     """TODODASK.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+        array: array_like
+
+        chunks: `int`, `tuple`, `dict` or `str`, optional
+            Specify the chunking of the returned dask array. See
+            `cf.Data.__init__` for details.
+
+        dask_from_array_options: `dict`
+            Keyword arguments to pass to `dask.array.from_array`.
+
+    :Returns:
+
+        `dask.array.Array`
+
+    **Examples**
+
+    >>> to_dask([1, 2, 3])
+    dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.ndarray>
+    >>> to_dask([1, 2, 3], chunks=2)
+    dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
+    >>> to_dask([1, 2, 3], chunks=2, {'asarray': True})
+    dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
 
     """
     if "chunks" in dask_from_array_options:
         raise TypeError(
-            "Can't define chunks in the 'dask_from_array_options' "
-            "dictionary. Use the 'chunks' parameter instead"
+            "Can't define 'chunks' in the 'dask_from_array_options' "
+            "dictionary. Use the 'chunks' parameter instead."
         )
 
     kwargs = dask_from_array_options.copy()
-    kwargs.setdefault("asarray", getattr(array, "dask_asarray", None))
-    kwargs.setdefault("lock", getattr(array, "dask_lock", False))
+    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
 
     return da.from_array(array, chunks=chunks, **kwargs)
 
@@ -93,22 +116,23 @@ def compressed_to_dask(array, chunks):
 
         array: subclass of `CompressedArray`
 
+        chunks: `int`, `tuple`, `dict` or `str`, optional
+            Specify the chunking of the returned dask array. See
+            `cf.Data.__init__` for details.
+
     :Returns:
 
         `dask.array.Array`
 
     """
-    compression_type = array.get_compression_type()
-
-    uncompressed_dtype = array.dtype
-    uncompressed_shape = array.shape
-
-    # Initialise a dask graph for the uncompressed array, and some
-    # dask.array.core.getter arguments
+    # Initialise a dask graph for the uncompressed array
     name = (array.__class__.__name__ + "-" + tokenize(array),)
     dsk = {}
     full_slice = Ellipsis
 
+    # A context manager that ensures all data accessed from within a
+    # `Subarray` instance is done so synchronously, thereby avoiding
+    # any "compute within a compute" thread proliferation.
     context = partial(config.set, scheduler="synchronous")
 
     compressed_dimensions = array.compressed_dimensions()
@@ -116,9 +140,17 @@ def compressed_to_dask(array, chunks):
     compressed_data = conformed_data["data"]
 
     # ----------------------------------------------------------------
-    # Set the chunk sizes for the dask array
+    # Set the chunk sizes for the dask array.
+    #
+    # Note: The chunk sizes implied by the input 'chunks' for a
+    #       compressed dimension are ignored in favour of those
+    #       created by 'array.subarray_shapes'. For subsampled arrays,
+    #       such chunk sizes will be incorrect and must be corrected
+    #       later.
+    #
     # ----------------------------------------------------------------
-    print(chunks)
+    uncompressed_dtype = array.dtype
+    uncompressed_shape = array.shape
     if chunks != "auto":
         chunks = normalize_chunks(
             chunks, shape=uncompressed_shape, dtype=uncompressed_dtype
@@ -129,10 +161,11 @@ def compressed_to_dask(array, chunks):
         shape=uncompressed_shape,
         dtype=uncompressed_dtype,
     )
-    print(chunks)
 
+    # Get the (cfdm) subarray class
     Subarray = array.get_Subarray()
 
+    compression_type = array.get_compression_type()
     if compression_type.startswith("ragged"):
         # ------------------------------------------------------------
         # Ragged
@@ -179,13 +212,26 @@ def compressed_to_dask(array, chunks):
                 subarray,
                 full_slice,
                 False,
-                lock,
+                False,
             )
 
     elif compression_type == "subsampled":
         # ------------------------------------------------------------
         # Subsampled
+        #
+        # Note: The chunks created above are incorrect for the
+        #       compressed dimensions, since these chunk sizes are a
+        #       function of the tie point indices which haven't yet
+        #       been accessed. Therefore, the chunks for the
+        #       compressed dimensons must be redefined here.
+        #
         # ------------------------------------------------------------
+
+        # Re-initialise the chunks
+        dims = list(compressed_dimensions)
+        chunks = [[] if i in dims else c for i, c in enumerate(chunks)]
+        previous_chunk_location = [-1] * len(chunks)
+
         parameters = conformed_data["parameters"]
         dependent_tie_points = conformed_data["dependent_tie_points"]
 
@@ -198,7 +244,7 @@ def compressed_to_dask(array, chunks):
             chunk_location,
         ) in zip(*array.subarrays(shapes=chunks)):
             subarray = Subarray(
-                data=tie_points,
+                data=compressed_data,
                 indices=c_indices,
                 shape=u_shape,
                 compressed_dimensions=compressed_dimensions,
@@ -214,12 +260,29 @@ def compressed_to_dask(array, chunks):
                 subarray,
                 full_slice,
                 False,
-                lock,
+                False,
             )
 
-    else:
-        raise ValueError("TODO 12345")
+            # Add correct chunk sizes
+            for d in dims[:]:
+                previous = previous_chunk_location[d]
+                new = chunk_location[d]
+                if new > previous:
+                    chunks[d].append(u_shape[d])
+                    previous_chunk_location[d] = new
+                elif new < previous:
+                    # No more chunk sizes required for this dimension
+                    dims.remove(d)
 
+        chunks = [tuple(c) for c in chunks]
+
+    else:
+        raise ValueError(
+            f"Can't instantiate 'Data' from {array!r} with unknown "
+            f"compression type {compression_type!r}"
+        )
+
+    # Return the dask array
     return da.Array(dsk, name[0], chunks=chunks, dtype=uncompressed_dtype)
 
 
