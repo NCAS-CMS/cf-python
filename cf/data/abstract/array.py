@@ -23,9 +23,3 @@ class Array(cfdm.Array):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
-
-
-#    @property
-#    def dask_asarray(self):
-#        """TODODASK."""
-#        return False

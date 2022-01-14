@@ -54,17 +54,11 @@ class DatetimeTest(unittest.TestCase):
         b = cf.cfdatetime.rt2dt([1, 3], Units("days since 2004-2-28"))
         self.assertTrue((a == b).all())
 
-        for a in (
-            np.ma.array(3),
-            np.ma.array([3]),
-        ):
+        for a in (np.ma.array(3), np.ma.array([3])):
             b = cf.cfdatetime.rt2dt(a, Units("days since 1970-01-01"))
             self.assertEqual(b, cf.dt(1970, 1, 4, calendar="gregorian"))
 
-        for a in (
-            np.ma.array(3, mask=True),
-            np.ma.array([3], mask=True),
-        ):
+        for a in (np.ma.array(3, mask=True), np.ma.array([3], mask=True)):
             b = cf.cfdatetime.rt2dt(a, Units("days since 1970-01-01"))
             self.assertEqual(b.mask, True)
 

@@ -116,28 +116,14 @@ class DimensionCoordinate(
             # Infer the direction from the data
             if data._size > 1:
                 data = data[0:2].array
-                return bool(
-                    data.item(
-                        0,
-                    )
-                    < data.item(
-                        1,
-                    )
-                )
+                return bool(data.item(0) < data.item(1))
 
         # Still here?
         data = self.get_bounds_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the bounds
             b = data[(0,) * (data.ndim - 1)].array
-            return bool(
-                b.item(
-                    0,
-                )
-                < b.item(
-                    1,
-                )
-            )
+            return bool(b.item(0) < b.item(1))
 
         # Still here? Then infer the direction from the units.
         return not self.Units.ispressure
@@ -584,27 +570,9 @@ class DimensionCoordinate(
                         "Can't create bounds for Voronoi cells from one value"
                     )
 
-                bounds_1d = [
-                    array.item(
-                        0,
-                    )
-                    * 1.5
-                    - array.item(
-                        1,
-                    )
-                    * 0.5
-                ]
+                bounds_1d = [array.item(0) * 1.5 - array.item(1) * 0.5]
                 bounds_1d.extend((array[0:-1] + array[1:]) * 0.5)
-                bounds_1d.append(
-                    array.item(
-                        -1,
-                    )
-                    * 1.5
-                    - array.item(
-                        -2,
-                    )
-                    * 0.5
-                )
+                bounds_1d.append(array.item(-1) * 1.5 - array.item(-2) * 0.5)
 
                 dtype = type(bounds_1d[0])
 
@@ -628,29 +596,13 @@ class DimensionCoordinate(
                     array = array[::-1]
 
                 bounds_1d = [bound]
-                if bound <= array.item(
-                    0,
-                ):
+                if bound <= array.item(0):
                     for i in range(size):
-                        bound = (
-                            2.0
-                            * array.item(
-                                i,
-                            )
-                            - bound
-                        )
+                        bound = 2.0 * array.item(i) - bound
                         bounds_1d.append(bound)
-                elif bound >= array.item(
-                    -1,
-                ):
+                elif bound >= array.item(-1):
                     for i in range(size - 1, -1, -1):
-                        bound = (
-                            2.0
-                            * array.item(
-                                i,
-                            )
-                            - bound
-                        )
+                        bound = 2.0 * array.item(i) - bound
                         bounds_1d.append(bound)
 
                     bounds_1d = bounds_1d[::-1]

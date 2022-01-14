@@ -29,10 +29,7 @@ class FilledArray(abstract.Array):
 
         """
         super().__init__(
-            dtype=dtype,
-            shape=shape,
-            size=size,
-            fill_value=fill_value,
+            dtype=dtype, shape=shape, size=size, fill_value=fill_value
         )
 
     def __getitem__(self, indices):
@@ -79,116 +76,24 @@ class FilledArray(abstract.Array):
         else:
             return np.empty(array_shape, dtype=self.dtype)
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    @property
-    def dask_lock(self):
-        """TODODASK."""
-        return False
-
     @property
     def dtype(self):
-        """Data-type of the data elements.
-
-        **Examples:**
-
-        >>> a.dtype
-        dtype('float64')
-        >>> print(type(a.dtype))
-        <type 'numpy.dtype'>
-
-        """
+        """Data-type of the data elements."""
         return self._get_component("dtype")
 
     @property
     def ndim(self):
-        """Number of array dimensions.
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
+        """Number of array dimensions."""
         return len(self.shape)
 
     @property
     def shape(self):
-        """Tuple of array dimension sizes.
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
+        """Tuple of array dimension sizes."""
         return self._get_component("shape")
 
     @property
     def size(self):
-        """Number of elements in the array.
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.size
-        7008
-        >>> a.ndim
-        2
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
+        """Number of elements in the array."""
         return self._get_component("size")
 
     def fill_value(self):
@@ -213,6 +118,3 @@ class FilledArray(abstract.Array):
     def view(self):
         """Return a view of the entire array."""
         return self[...]
-
-
-# --- End: class

@@ -85,14 +85,7 @@ __author__ = "David Hassell"
 __date__ = "2021-??-??"
 __version__ = "4.0.0"
 
-_requires = (
-    "numpy",
-    "netCDF4",
-    "cftime",
-    "cfunits",
-    "cfdm",
-    "psutil",
-)
+_requires = ("numpy", "netCDF4", "cftime", "cfunits", "cfdm", "psutil")
 
 x = ", ".join(_requires)
 _error0 = f"cf v{ __version__} requires the modules {x}. "

@@ -15,7 +15,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     .. versionadded:: 3.0.0
 
     """
-    
+
     def _ncdimensions(self, ncvar, ncdimensions=None, parent_ncvar=None):
         """Return a list of the netCDF dimensions corresponding to a
         netCDF variable.
@@ -88,7 +88,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         )
 
         if not cfa:
-            return super()._ncdimensions(ncvar, ncdimensions=ncdimensions, parent_ncvar=parent_ncvar)
+            return super()._ncdimensions(
+                ncvar, ncdimensions=ncdimensions, parent_ncvar=parent_ncvar
+            )
 
         # Still here? Then we have a CFA variable.
         ncdimensions = (
@@ -142,7 +144,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         if not cfa:
             return super()._get_domain_axes(
-                ncvar=ncvar, allow_external=allow_external, parent_ncvar=parent_ncvar
+                ncvar=ncvar,
+                allow_external=allow_external,
+                parent_ncvar=parent_ncvar,
             )
 
         # Still here?

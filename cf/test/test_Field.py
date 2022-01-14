@@ -2419,11 +2419,7 @@ class FieldTest(unittest.TestCase):
     def test_Field_dimension_coordinate(self):
         f = self.f
 
-        for identity in (
-            "grid_latitude",
-            "X",
-            "dimensioncoordinate1",
-        ):
+        for identity in ("grid_latitude", "X", "dimensioncoordinate1"):
             if identity == "X":
                 key, c = f.construct("grid_longitude", item=True)
             else:

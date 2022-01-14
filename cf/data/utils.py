@@ -367,7 +367,7 @@ def dask_compatible(a):
 
     """
     try:
-        return a.data._get_dask()
+        return a.data.get_dask(copy=False)
     except AttributeError:
         return a
 
@@ -415,7 +415,7 @@ def scalar_masked_array(dtype=float):
     a = np.ma.empty((), dtype=dtype)
     a.mask = True
     return a
- 
+
 
 def conform_units(value, units):
     """Conform units.
@@ -480,4 +480,3 @@ def conform_units(value, units):
             )
 
     return value
-

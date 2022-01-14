@@ -44,10 +44,7 @@ from ..functions import log_level, parse_indices, pathjoin
 from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
-from . import (  # GatheredSubarray,; RaggedContiguousSubarray,; RaggedIndexedContiguousSubarray,; RaggedIndexedSubarray,
-    NetCDFArray,
-    UMArray,
-)
+from . import NetCDFArray, UMArray
 from .collapse_functions import (  # max_f,; max_ffinalise,; max_fpartial,
     max_abs_f,
     max_abs_ffinalise,
@@ -104,8 +101,6 @@ from .creation import (
 from .dask_utils import cf_harden_mask, cf_soften_mask, cf_where
 from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
-from .partition import Partition
-from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
     conform_units,
     convert_to_datetime,
@@ -116,17 +111,10 @@ from .utils import (  # is_small,; is_very_small,
     scalar_masked_array,
 )
 
-# from .chunk_utils import (  # is_small,; is_very_small,
-#    harden_mask_chunk,
-#   soften_mask_chunk,
-# )
-
-# from dask.array import Array
-
-
 logger = logging.getLogger(__name__)
 
 daskified_log_level = 0
+
 
 def daskified(apply_temp_log_level=None):
     def decorator(method):
@@ -300,6 +288,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         copy=True,
         dtype=None,
         mask=None,
+        to_memory=False,
         dask_from_array_options={},
         _use_array=True,
     ):
@@ -417,31 +406,66 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 initialization. By default arguments are deep copied.
 
             chunks: `int`, `tuple`, `dict` or `str`, optional
-                Specify the chunking of the dask array. One of
+                Specify the chunking of the underlying dask array.
 
-                * A blocksize like ``1000`` to apply to all
-                  dimensions. The value ``-1`` indicates the full size of
-                  the each dimension.
-
-                * A blockshape like ``(1000, 1000)``. A value of ``-1`` or
-                  `None` indicates the full size of the corresponding
-                  dimension.
-
-                * Explicit sizes of all blocks along all dimensions like
-                  ``((1000, 1000, 500), (400, 400))``.
-
-                * A size in bytes, like ``"100 MiB"``, which will choose a
-                  uniform block-like shape. TODODASK - special syntax
-
-                * The word ``"auto"`` which acts like a size in bytes, but
-                  uses a configuration value ``array.chunk-size`` for the
-                  chunk size. TODODASK - config
+                Any value accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is allowed.
 
                 By default, ``"auto"`` is used to specify the array
-                chunking.
+                chunking, which uses a chunk size in bytes defined by
+                the configuration value
+                ``dask.config("array.chunk-size")``, prefering
+                square-like chunk shapes.
+
+                *Parameter example:*
+                  A blocksize like ``1000``.
+
+                *Parameter example:*
+                  A blockshape like ``(1000, 1000)``.
+
+                *Parameter example:*
+                  Explicit sizes of all blocks along all dimensions
+                  like ``((1000, 1000, 500), (400, 400))``.
+
+                *Parameter example:*
+                  A size in bytes, like ``"100 MiB"`` which will
+                  choose a uniform block-like shape, prefering
+                  square-like chunk shapes.
+
+                *Parameter example:*
+                  The word ``"auto"`` which acts like a size in bytes,
+                  but uses a chunk size defined by the configuration
+                  value ``dask.config("array.chunk-size")``.
+
+                *Parameter example:*
+                  ``-1`` or `None` as a blocksize indicate the size of
+                  the corresponding dimension.
+
+                *Parameter example:*
+                   Blocksizes of some or all dimensions mapped to
+                   dimension positions, like ``{1: 200}``, or ``{0:
+                   -1, 1: (400, 400)}``.
+
+                .. versionadded:: TODODASK
+
+            to_memory: `bool optional
+                If True then attempt to read the data that defines
+                *array* from disk prior to assigning it to the
+                underlying dask array. This is done by replacing
+                *array* with the output of its `!to_memory`, if it has
+                one. Reading data from disk during initialisation will
+                slow down the initialisation process, but can
+                considerably improve downstream performance by
+                avoiding the need for independent reads on every dask
+                chunk. By default, data of *array* that is on disk
+                remains there until the required.
+
+                .. versionadded:: TODODASK
 
             dask_from_array_options: `dict`, optional
                  Keyword arguments to pass to `dask.array.from_array`.
+
+                .. versionadded:: TODODASK
 
             chunk: deprecated at version TODODASK
                 Use the *chunks* parameter instead.
@@ -485,7 +509,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             if _use_array:
                 try:
-                    array = source._get_dask()
+                    array = source.get_dask(copy=False)
                 except (AttributeError, TypeError):
                     pass
                 else:
@@ -558,7 +582,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if not _use_array:
             return
 
-        # Still here? Then create a dask array adn store it.
+        # Still here? Then create a dask array and store it.
+
+        # Attempt to read data from disk
+        if to_memory:
+            try:
+                array = array.to_memory()
+            except AttributeError:
+                pass
 
         # Find out if the data is compressed
         try:
@@ -567,17 +598,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             compressed = ""
 
         if compressed:
-            # The data is compressed, so create a uncompressed dask
-            # view of it.
-            #if chunks != _DEFAULT_CHUNKS:
-            #    raise ValueError(
-            #        "Can't define chunks for compressed input arrays. "
-            #        "Consider rechunking after initialisation."
-            #    )
-
             if dask_from_array_options:
                 raise ValueError(
-                    "Can't define 'dask.array.from_array' parameters for "
+                    "Can't set 'dask_from_array_options' with "
                     "compressed input arrays"
                 )
 
@@ -586,9 +609,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self._set_Array(array)
 
             array = compressed_to_dask(array, chunks)
-
         elif not is_dask_collection(array):
-            # Turn the data into a dask array
+            # Turn the array into a dask array
             array = to_dask(array, chunks, dask_from_array_options)
 
         # Find out if we have an array of date-time objects
@@ -613,23 +635,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Override the data type
         if dtype is not None:
-            print ('HERE')
             self.dtype = dtype
 
         # Apply a mask
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
 
-    @property
-    def dask_array(self):
-        """TODODASK.
-
-        :Returns:
-
-            `dask.array.Array`
-
-        """
-        return self._get_dask().copy()
+    #    @property#
+    #    def dask_array(s#elf):
+    #        """TODODASK.##
+    #
+    #        :Returns:
+    #
+    #            `dask.array.Array`##
+    #
+    #        """
+    #        return self.get_dask(copy=True)
 
     @property
     def dask_compressed_array(self):
@@ -645,7 +666,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if ca is None or not ca.get_compression_type():
             raise ValueError("not compressed: can't get compressed dask array")
 
-        return ca._get_dask().copy()
+        return ca.get_dask(copy=False).copy()
 
     @daskified(daskified_log_level)
     def __contains__(self, value):
@@ -693,9 +714,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             elif value_units:
                 return False
 
-            value = value._get_dask()
+            value = value.get_dask(copy=False)
 
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
 
         out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
@@ -1004,10 +1025,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         keepdims = self.__keepdims_indexing__
 
         indices, roll = parse_indices(
-            shape,
-            indices,
-            cyclic=True,
-            keepdims=keepdims,
+            shape, indices, cyclic=True, keepdims=keepdims
         )
 
         axes = self._axes
@@ -1028,10 +1046,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             new = self.roll(
                 axis=tuple(roll.keys()), shift=tuple(roll.values())
             )
-            dx = new._get_dask()
+            dx = new.get_dask(copy=False)
         else:
             new = self.copy(array=False)
-            dx = self._get_dask()
+            dx = self.get_dask(copy=False)
 
         # ------------------------------------------------------------
         # Subspace the dask array
@@ -1137,9 +1155,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. note:: Currently at most one dimension's assignment index
                   may be a 1-d array of integers or booleans. This is
-                  is different to `__getitem__`, which applies
-                  'orthogonal indexing' when multiple indices of 1-d
-                  array of integers or booleans are present.
+                  is different to `__getitem__`, which by default
+                  applies 'orthogonal indexing' when multiple indices
+                  of 1-d array of integers or booleans are present.
 
         **Missing data**
 
@@ -1160,7 +1178,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         If the shape of the data is unknown then it is calculated
         immediately by executing all delayed operations.
 
-        .. seealso:: `__getitem__`, `cf.masked`, `hardmask`, `where`
+        .. seealso:: `__getitem__`, `__orthogonal_indexing__`,
+        `cf.masked`, `hardmask`, `where`
 
         **Examples:**
 
@@ -1211,7 +1230,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         value = conform_units(value, self.Units)
 
         # Do the assignment
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         dx[indices] = dask_compatible(value)
 
         # Unroll any axes that were rolled to enable a cyclic
@@ -1343,15 +1362,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    # ----------------------------------------------------------------
-    # Private dask methods
-    # ----------------------------------------------------------------
-    def _get_dask(self):
-        """Get the dask array.
+    def get_dask(self, copy=True):
+        """Get the underlying dask array.
 
         .. versionadded:: TODODASK
 
-        .. seealso:: `_set_dask`, `_del_dask`
+        :Parameters:
+
+            copy: `bool`, optional
+                If False then return the actual dask array. By default
+                a copy is returned.
 
         :Returns:
 
@@ -1359,7 +1379,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The dask array.
 
         """
-        return self._custom["dask"]
+        da = self._custom["dask"]
+        if copy:
+            da = da.copy()
+
+        return da
 
     def _set_dask(
         self, array, copy=False, delete_source=True, reset_mask_hardness=True
@@ -1368,26 +1392,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. versionadded:: TODODASK
 
-        .. seealso:: `_get_dask`, `_del_dask`, `_reset_mask_hardness`
+        .. seealso:: `_del_dask`, `get_dask`, `_reset_mask_hardness`
 
         :Parameters:
 
             array: `dask.array.Array`
-                The `dask` array to be inserted.
+                The array to be inserted.
 
             copy: `bool`, optional
-                If True then copy the dask array before setting it. By
-                default the dask array is not copied.
+                If True then copy *array* before setting it. By
+                default it is not copied.
 
             delete_source: `bool`, optional
-                If False then do not delete a compressed source array,
-                if one exists, after setting the new dask array. By
-                default a compressed source array is deleted.
+                If False then do not delete a source array, if one
+                exists, after setting the new dask array. By default a
+                source array is deleted.
 
             reset_mask_hardness: `bool`, optional
                 If False then do not reset the mask hardness after
                 setting the new dask array. By default the mask
-                hardness is re-applied.
+                hardness is re-applied, even if the mask hardness has
+                not changed.
 
         :Returns:
 
@@ -1402,13 +1427,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # function that is run on chunks (such as
             # `cf_where`). Such a function could get run at definition
             # time in order to ascertain suitability (such as data
-            # type casting, braodcasting, etc.). Note that the
-            # exception may be hard to diagnose, as dask will have
-            # silently trapped it and trapped it and returned
-            # NotImplemented (for instance, see
-            # `dask.array.core.elemwise`). Print statements in a local
-            # copy of dask is prossibly the way to go if the cause of
-            # the error is not obvious by inspection.
+            # type casting, broadcasting, etc.). Note that the
+            # exception may be difficult to diagnose, as dask will
+            # have silently trapped it and returned NotImplemented
+            # (for instance, see `dask.array.core.elemwise`). Print
+            # statements in a local copy of dask are prossibly the way
+            # to go if the cause of the error is not obvious.
 
         if copy:
             array = array.copy()
@@ -1428,7 +1452,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. versionadded:: TODODASK
 
-        .. seealso:: `_set_dask`, `_get_dask`
+        .. seealso:: `_set_dask`, `get_dask`
 
         :Parameters:
 
@@ -1439,14 +1463,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 {{default Exception}}
 
             delete_source: `bool`, optional
-                TODODASK
+                If False then do not delete a compressed source array,
+                if one exists.
 
         :Returns:
 
             `dask.array.Array`
                 The removed dask array.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([1, 2, 3])
         >>> dx = d._del_dask()
@@ -1477,16 +1502,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
-    def _map_blocks(self, func, **kwargs):
+    def _map_blocks(
+        self, func, delete_source=True, reset_mask_hardness=True, **kwargs
+    ):
         """Apply a function to the data in-place.
 
-        .. note:: This method does not reset the mask hardness. It may
-                  be necessary for a call to `_map_blocks` to be
-                  followed by a call to `_reset_mask_hardness`.
-
         .. versionadded:: TODODASK
-
-        .. seealso:: `_reset_mask_hardness`
 
         :Parameters:
 
@@ -1494,6 +1515,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The function to be applied to the data, via
                 `dask.array.map_blocks`, to each chunk of the dask
                 array.
+
+            delete_source: `bool`, optional
+                If False then do not delete a source array, if one
+                exists, after applying the function. By default a
+                source array is deleted.
+
+            reset_mask_hardness: `bool`, optional
+                If False then do not reset the mask hardness after
+                applying the function. By default the mask hardness is
+                re-applied, even if the mask hardness has not changed.
 
             kwargs: optional
                 Keyword arguments passed to the
@@ -1504,7 +1535,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `dask.array.Array`
                 The updated dask array.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([1, 2, 3])
         >>> dx = d._map_blocks(lambda x: x / 2)
@@ -1512,9 +1543,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [0.5 1.  1.5]
 
         """
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         dx = dx.map_blocks(func, **kwargs)
-        self._set_dask(dx, reset_mask_hardness=False)
+        self._set_dask(
+            dx,
+            delete_source=delete_source,
+            reset_mask_hardness=reset_mask_hardness,
+        )
 
         return dx
 
@@ -2308,7 +2343,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         dx = dx.persist()
         d._set_dask(dx, reset_mask_hardness=False)
 
@@ -2512,6 +2547,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 # ----------------------------------------------------
                 attrs["format"] = "UM"
 
+                # TODOCFA: CFA only allows for one address. Surely(?)
+                #          we only need the "header_offset", from
+                #          which the "data_offset" and "disk_length"
+                #          can be derived at read time.
+
                 subarray = {}
                 for attr in (
                     "filename",
@@ -2613,10 +2653,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         # Initialise an empty partition array
         # ------------------------------------------------------------
-        partition_matrix = PartitionMatrix(
-            np.empty(d.get("_pmshape", ()), dtype=object),
-            list(d.get("_pmaxes", ())),
-        )
+        partition_matrix = None  # PartitionMatrix(
+        #            np.empty(d.get("_pmshape", ()), dtype=object),
+        #            list(d.get("_pmaxes", ())),
+        #        )
         pmndim = partition_matrix.ndim
 
         # ------------------------------------------------------------
@@ -2648,13 +2688,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 p_units = Units(p_units)
 
-            partition = Partition(
-                location=location,
-                axes=attrs.get("axes", axes)[:],
-                flip=attrs.get("flip", [])[:],
-                Units=p_units,
-                part=attrs.get("part", [])[:],
-            )
+            partition = None  # Partition(
+            #                location=location,
+            #                axes=attrs.get("axes", axes)[:],
+            #                flip=attrs.get("flip", [])[:],
+            #                Units=p_units,
+            #                part=attrs.get("part", [])[:],
+            #            )
 
             fmt = attrs.get("format", None)
             if fmt is None:
@@ -2776,7 +2816,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # TODODASK: Always return True for now, to aid development.
         return True
 
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
 
         # TODODASK fits in memory.
 
@@ -3249,7 +3289,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d._get_dask()
+        dx = d.get_dask(copy=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
 
         d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
@@ -4515,7 +4555,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         out = self.copy(array=False)
 
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         dx = getattr(operator, operation)(dx)
 
         out._set_dask(dx, reset_mask_hardness=False)
@@ -5802,7 +5842,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @property
     def chunks(self):
         """TODODASK."""
-        return self._get_dask().chunks
+        return self.get_dask(copy=False).chunks
 
     @property
     def force_compute(self):
@@ -5842,20 +5882,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @Units.setter
     def Units(self, value):
-        old_units = self._Units
-        if not old_units.equivalent(value):
-            raise ValueError(
-                f"Can't set to Units to {value!r} that are not equivalent "
-                f"to the current units {old_units!r}. "
-                "Consider using the override_units method instead."
-            )
+        try:
+            old_units = self._Units
+        except KeyError:
+            pass
+        else:
+            if not old_units.equivalent(value):
+                raise ValueError(
+                    f"Can't set to Units to {value!r} that are not "
+                    f"equivalent to the current units {old_units!r}. "
+                    "Consider using the override_units method instead."
+                )
 
-        if not old_units:
-            self.override_units(value, inplace=True)
-            return
+            if not old_units:
+                self.override_units(value, inplace=True)
+                return
 
-        if self.Units.equals(value):
-            return
+            if self.Units.equals(value):
+                return
 
         dtype = self.dtype
         if dtype.kind in "iu":
@@ -5869,7 +5913,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 x=x, from_units=old_units, to_units=value, inplace=False
             )
 
-        self._map_blocks(cf_Units, dtype=dtype)
+        self._map_blocks(
+            cf_Units,
+            delete_source=False,
+            reset_mask_hardness=False,
+            dtype=dtype,
+        )
 
         self._Units = value
 
@@ -5926,12 +5975,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [ 0.5  1.5  2.5]
 
         """
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         return dx.dtype
 
     @dtype.setter
     def dtype(self, value):
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
 
         # Only change the datatype if it's different to that of the
         # dask array
@@ -6029,7 +6078,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         `is_masked` causes all delayed operations to be executed.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> print(d.is_masked)
@@ -6044,7 +6093,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             out = np.ma.is_masked(a)
             return np.array(out).reshape((1,) * a.ndim)
 
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
 
         out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
@@ -6107,11 +6156,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         24
 
         """
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         if math.isnan(dx.size):
-            logger.warning(
-                "Computing data nbytes: Performance may be degraded"
-            )
+            logger.warning("Computing nbytes: Performance may be degraded")
             dx.compute_chunk_sizes()
 
         return dx.nbytes
@@ -6144,7 +6191,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         0
 
         """
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         return dx.ndim
 
     @property
@@ -6176,7 +6223,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         ()
 
         """
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         if math.isnan(dx.size):
             logger.warning("Computing data shape: Performance may be degraded")
             dx.compute_chunk_sizes()
@@ -6216,7 +6263,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         1
 
         """
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         size = dx.size
         if math.isnan(size):
             logger.warning("Computing data size: Performance may be degraded")
@@ -6257,7 +6304,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         -99.0 km
 
         """
-        dx = self._get_dask()
+        dx = self.get_dask(copy=False)
         a = dx.compute()
 
         if np.ma.isMA(a):
@@ -6327,7 +6374,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             d = self
 
-        dx = d._get_dask()
+        dx = d.get_dask(copy=False)
         dx = convert_to_datetime(dx, d.Units)  # TODODASK
 
         a = dx.compute()
@@ -7606,7 +7653,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         try:
             return self.Units.calendar
-        except AttributeError:
+        except (AttributeError, KeyError):
             return super().get_calendar(default=default)
 
     def set_calendar(self, calendar):
@@ -7703,7 +7750,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         #
         # This is only here for now, in this form, to ensure that
         # cf.read works
-        return self._get_dask().max()
+        return self.get_dask(copy=False).max()
 
     #        return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
     #                              squeeze=squeeze, mtol=mtol, inplace=inplace,
@@ -9223,7 +9270,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         shape = list(d.shape)
         shape.insert(position, 1)
 
-        dx = d._get_dask()
+        dx = d.get_dask(copy=False)
         dx = dx.reshape(shape)
         d._set_dask(dx, reset_mask_hardness=False)
 
@@ -9520,13 +9567,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "Got {!r}, {!r}".format(X_axis, Y_axis)
                 )
 
-            for A, axis in zip(
-                (
-                    "X",
-                    "Y",
-                ),
-                (X_axis, Y_axis),
-            ):
+            for A, axis in zip(("X", "Y"), (X_axis, Y_axis)):
                 if axis not in axes:
                     raise ValueError(
                         "If dimensions have been identified with the "
@@ -9683,7 +9724,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [1 -- 3]
 
         """
-        self._map_blocks(cf_harden_mask, dtype=self.dtype)
+        self._map_blocks(
+            cf_harden_mask,
+            delete_source=False,
+            reset_mask_hardness=False,
+            dtype=self.dtype,
+        )
         self._hardmask = True
 
     def soften_mask(self):
@@ -9714,7 +9760,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [  1 999   3]
 
         """
-        self._map_blocks(cf_soften_mask, dtype=self.dtype)
+        self._map_blocks(
+            cf_soften_mask,
+            delete_source=False,
+            reset_mask_hardness=False,
+            dtype=self.dtype,
+        )
         self._hardmask = False
 
     @_inplace_enabled(default=False)
@@ -10856,7 +10907,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             slice(None, None, -1) if i in axes else slice(None) for i in iaxes
         ]
 
-        dx = d._get_dask()
+        dx = d.get_dask(copy=False)
         dx = dx[tuple(index)]
         d._set_dask(dx, reset_mask_hardness=False)
 
@@ -11664,7 +11715,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
 
         units = d.Units
-        dx = d._get_dask()
+        dx = d.get_dask(copy=False)
 
         # Parse condition
         if getattr(condition, "isquery", False):
@@ -11717,7 +11768,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                         f"are not equivalent to data units {units!r}"
                     )
 
-            xy.append(arg._get_dask())
+            xy.append(arg.get_dask(copy=False))
 
         x, y = xy
 
@@ -12086,7 +12137,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
-        dx = d._get_dask()
+        dx = d.get_dask(copy=False)
         dx = dx.squeeze(axis=tuple(axes))
         d._set_dask(dx, reset_mask_hardness=False)
 
@@ -12244,7 +12295,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         data_axes = d._axes
         d._axes = [data_axes[i] for i in iaxes]
 
-        dx = d._get_dask()
+        dx = d.get_dask(copy=False)
         try:
             dx = da.transpose(dx, axes=axes)
         except ValueError:
@@ -12623,7 +12674,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d._get_dask()
+        dx = d.get_dask(copy=False)
         dx = da.roll(dx, shift, axis=axis)
         d._set_dask(dx, reset_mask_hardness=False)
 

@@ -23,11 +23,7 @@ from .regridoperator import (
 
 
 def regrid_compute_mass_grid(
-    valuefield,
-    areafield,
-    dofrac=False,
-    fracfield=None,
-    uninitval=422397696.0,
+    valuefield, areafield, dofrac=False, fracfield=None, uninitval=422397696.0
 ):
     """Compute the mass of an `ESMF` Field.
 
@@ -575,9 +571,7 @@ def regrid_get_reordered_sections(
     if axis_order is not None:
         for axis in axis_order:
             axis_key = src.dimension_coordinate(
-                filter_by_axis=(axis,),
-                default=None,
-                key=True,
+                filter_by_axis=(axis,), default=None, key=True
             )
             if axis_key is not None:
                 if axis_key in regrid_axes:
@@ -1080,9 +1074,7 @@ def regrid_update_coordinates(
             dst_data_axes = dst.constructs.data_axes()
 
             for aux_key, aux in dst.auxiliary_coordinates(
-                filter_by_axis=dst_axis_keys,
-                axis_mode="subset",
-                todict=True,
+                filter_by_axis=dst_axis_keys, axis_mode="subset", todict=True
             ).items():
                 aux_axes = [
                     axis_map[key_d] for key_d in dst_data_axes[aux_key]
@@ -1124,9 +1116,7 @@ def regrid_update_coordinates(
                     f.set_construct(aux, axes=[src_axis_key])
 
             for aux_key, aux in dst.auxiliary_coordinates(
-                filter_by_axis=dst_axis_keys,
-                axis_mode="subset",
-                todict=True,
+                filter_by_axis=dst_axis_keys, axis_mode="subset", todict=True
             ).items():
                 aux_axes = dst.get_data_axes(aux_key)
                 if aux_axes == tuple(dst_axis_keys):
@@ -1218,12 +1208,7 @@ def regrid_initialize():
 
 
 def create_Regrid(
-    srcfield,
-    dstfield,
-    srcfracfield,
-    dstfracfield,
-    method,
-    ignore_degenerate,
+    srcfield, dstfield, srcfracfield, dstfracfield, method, ignore_degenerate
 ):
     """Create an `ESMF` regrid operator.
 
@@ -1491,10 +1476,7 @@ def create_Grid(
                 DimensionCoordinate(
                     data=Data(0),
                     bounds=Data(
-                        [
-                            np.finfo("float32").epsneg,
-                            np.finfo("float32").eps,
-                        ]
+                        [np.finfo("float32").epsneg, np.finfo("float32").eps]
                     ),
                 )
             ] + coords
@@ -1510,10 +1492,7 @@ def create_Grid(
         max_index = np.array(shape, dtype="int32")
         if use_bounds:
             if ndim < 3:
-                staggerLocs = [
-                    ESMF.StaggerLoc.CORNER,
-                    ESMF.StaggerLoc.CENTER,
-                ]
+                staggerLocs = [ESMF.StaggerLoc.CORNER, ESMF.StaggerLoc.CENTER]
             else:
                 staggerLocs = [
                     ESMF.StaggerLoc.CENTER_VCENTER,

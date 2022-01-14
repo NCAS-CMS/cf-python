@@ -403,10 +403,7 @@ class CInterface:
         data_type = CT.c_int()
         num_words = CT.c_size_t()
         rv = self.lib.get_type_and_num_words(
-            word_size,
-            int_hdr,
-            CT.pointer(data_type),
-            CT.pointer(num_words),
+            word_size, int_hdr, CT.pointer(data_type), CT.pointer(num_words)
         )
         if rv != 0:
             raise umfile.UMFileException(

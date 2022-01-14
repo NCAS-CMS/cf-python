@@ -323,10 +323,7 @@ class FieldDomain:
 
         for identity, value in kwargs.items():
             key, construct = self.construct(
-                identity,
-                filter_by_data=True,
-                item=True,
-                default=(None, None),
+                identity, filter_by_data=True, item=True, default=(None, None)
             )
             if construct is not None:
                 axes = self.get_data_axes(key)
@@ -729,10 +726,7 @@ class FieldDomain:
             )[0]
 
         # Include the auxiliary mask
-        indices = {
-            "indices": indices,
-            "mask": auxiliary_mask,
-        }
+        indices = {"indices": indices, "mask": auxiliary_mask}
 
         logger.debug(f"  indices      = {indices!r}")  # pragma: no cover
 
@@ -1320,8 +1314,7 @@ class FieldDomain:
                     return
 
                 return self._default(
-                    default,
-                    f"Can't identify construct from {identity!r}",
+                    default, f"Can't identify construct from {identity!r}"
                 )
 
             ref = self.del_construct(key)
@@ -2853,11 +2846,7 @@ class FieldDomain:
     ):
         """Alias for `cell_measure`."""
         return self.cell_measure(
-            *identity,
-            key=key,
-            default=default,
-            item=item,
-            **filter_kwargs,
+            *identity, key=key, default=default, item=item, **filter_kwargs
         )
 
     def measures(self, *identities, **filter_kwargs):
@@ -2874,11 +2863,7 @@ class FieldDomain:
     ):
         """Alias for `coordinate_reference`."""
         return self.coordinate_reference(
-            *identity,
-            key=key,
-            default=default,
-            item=item,
-            **filter_kwargs,
+            *identity, key=key, default=default, item=item, **filter_kwargs
         )
 
     def refs(self, *identities, **filter_kwargs):

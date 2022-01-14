@@ -35,10 +35,7 @@ class styleTest(unittest.TestCase):
         pep8_check = pycodestyle.StyleGuide()
 
         # Directories to skip in the recursive walk of the directory:
-        skip_dirs = (
-            "__pycache__",
-            "c-lib",
-        )
+        skip_dirs = ("__pycache__", "c-lib")
         # These are pycodestyle errors and warnings to explicitly ignore. For
         # descriptions for each code see:
         # https://pep8.readthedocs.io/en/latest/intro.html#error-codes

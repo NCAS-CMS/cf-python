@@ -798,14 +798,7 @@ def _make_gathered_file(filename):
     aux7 = n.createVariable("aux7", "f8", ("lat",))
     aux7[...] = numpy.arange(lat.size)
 
-    aux8 = n.createVariable(
-        "aux8",
-        "f8",
-        (
-            "lon",
-            "lat",
-        ),
-    )
+    aux8 = n.createVariable("aux8", "f8", ("lon", "lat"))
     aux8[...] = numpy.arange(lon.size * lat.size).reshape(lon.size, lat.size)
 
     aux9 = n.createVariable("aux9", "f8", ("time", "height"))

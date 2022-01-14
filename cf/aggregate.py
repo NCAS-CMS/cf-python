@@ -2510,7 +2510,7 @@ def _get_hfl(
     if d._pmsize == 1:
         partition = d.partitions.matrix.item()
         if not partition.part:
-            key = getattr(partition.subarray, "file_pointer", None)
+            key = getattr(partition.subarray, "file_address", None)
             if key is not None:
                 hash_value = hfl_cache.hash.get(key, None)
                 create_hash = hash_value is None

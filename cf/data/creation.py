@@ -1,19 +1,12 @@
 """Functions used during the creation of `Data` objects."""
 from functools import lru_cache, partial
-from uuid import uuid4
 
 import dask.array as da
 import numpy as np
-from dask.array.core import getter, normalize_chunks, slices_from_chunks
-from dask.base import tokenize
 from dask import config
+from dask.array.core import getter, normalize_chunks
+from dask.base import tokenize
 from dask.utils import SerializableLock
-
-# from cfdm import GatheredSubarray, RaggedSubarray
-
-from ..units import Units
-
-# from .utils import chunk_positions
 
 
 def convert_to_builtin_type(x):
@@ -42,7 +35,7 @@ def convert_to_builtin_type(x):
 
             TODO
 
-    **Examples:**
+    **Examples**
 
     >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
     bool
@@ -74,11 +67,13 @@ def to_dask(array, chunks, dask_from_array_options):
         array: array_like
 
         chunks: `int`, `tuple`, `dict` or `str`, optional
-            Specify the chunking of the returned dask array. See
-            `cf.Data.__init__` for details.
+            Specify the chunking of the returned dask array.
+
+            Any value accepted by the *chunks* parameter of the
+            `dask.array.from_array` function is allowed.
 
         dask_from_array_options: `dict`
-            Keyword arguments to pass to `dask.array.from_array`.
+            Keyword arguments to be passed to `dask.array.from_array`.
 
     :Returns:
 
@@ -101,7 +96,7 @@ def to_dask(array, chunks, dask_from_array_options):
         )
 
     kwargs = dask_from_array_options.copy()
-    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
+    kwargs.setdefault("lock", getattr(array, "_lock", True))
 
     return da.from_array(array, chunks=chunks, **kwargs)
 
@@ -114,11 +109,19 @@ def compressed_to_dask(array, chunks):
 
     :Parameters:
 
-        array: subclass of `CompressedArray`
+        array: subclass of `Array`
+            The compressed array.
 
         chunks: `int`, `tuple`, `dict` or `str`, optional
-            Specify the chunking of the returned dask array. See
-            `cf.Data.__init__` for details.
+            Specify the chunking of the returned dask array.
+
+            Any value accepted by the *chunks* parameter of the
+            `dask.array.from_array` function is allowed.
+
+            The chunk sizes implied by *chunks* for a dimension that
+            has been compressed are ignored and replaced with values
+            that implied by the decompression algorithm, so their
+            specification is arbitrary.
 
     :Returns:
 
@@ -130,9 +133,10 @@ def compressed_to_dask(array, chunks):
     dsk = {}
     full_slice = Ellipsis
 
-    # A context manager that ensures all data accessed from within a
-    # `Subarray` instance is done so synchronously, thereby avoiding
-    # any "compute within a compute" thread proliferation.
+    # A context manager that is used to ensure that all data accessed
+    # from within a `Subarray` instance is done so synchronously,
+    # thereby avoiding any "compute within a compute" thread
+    # proliferation.
     context = partial(config.set, scheduler="synchronous")
 
     compressed_dimensions = array.compressed_dimensions()
@@ -143,22 +147,16 @@ def compressed_to_dask(array, chunks):
     # Set the chunk sizes for the dask array.
     #
     # Note: The chunk sizes implied by the input 'chunks' for a
-    #       compressed dimension are ignored in favour of those
-    #       created by 'array.subarray_shapes'. For subsampled arrays,
-    #       such chunk sizes will be incorrect and must be corrected
-    #       later.
+    #       dimension that has been compressed are ignored in favour
+    #       of those created by 'array.subarray_shapes'. For
+    #       subsampled arrays, such chunk sizes will be incorrect and
+    #       must be corrected later.
     #
     # ----------------------------------------------------------------
     uncompressed_dtype = array.dtype
-    uncompressed_shape = array.shape
-    if chunks != "auto":
-        chunks = normalize_chunks(
-            chunks, shape=uncompressed_shape, dtype=uncompressed_dtype
-        )
-
     chunks = normalize_chunks(
         array.subarray_shapes(chunks),
-        shape=uncompressed_shape,
+        shape=array.shape,
         dtype=uncompressed_dtype,
     )
 
@@ -228,8 +226,8 @@ def compressed_to_dask(array, chunks):
         # ------------------------------------------------------------
 
         # Re-initialise the chunks
-        dims = list(compressed_dimensions)
-        chunks = [[] if i in dims else c for i, c in enumerate(chunks)]
+        u_dims = list(compressed_dimensions)
+        chunks = [[] if i in u_dims else c for i, c in enumerate(chunks)]
         previous_chunk_location = [-1] * len(chunks)
 
         parameters = conformed_data["parameters"]
@@ -264,7 +262,7 @@ def compressed_to_dask(array, chunks):
             )
 
             # Add correct chunk sizes
-            for d in dims[:]:
+            for d in u_dims[:]:
                 previous = previous_chunk_location[d]
                 new = chunk_location[d]
                 if new > previous:
@@ -272,14 +270,14 @@ def compressed_to_dask(array, chunks):
                     previous_chunk_location[d] = new
                 elif new < previous:
                     # No more chunk sizes required for this dimension
-                    dims.remove(d)
+                    u_dims.remove(d)
 
         chunks = [tuple(c) for c in chunks]
 
     else:
         raise ValueError(
-            f"Can't instantiate 'Data' from {array!r} with unknown "
-            f"compression type {compression_type!r}"
+            f"Can't initialise 'Data' from compressed {array!r} with "
+            f"unknown compression type {compression_type!r}"
         )
 
     # Return the dask array
@@ -304,7 +302,7 @@ def generate_axis_identifiers(n):
         `list`
             The new axis idenfifiers.
 
-    **Examples:**
+    **Examples**
 
     >>> generate_axis_identifiers(0)
     []

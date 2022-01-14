@@ -227,12 +227,7 @@ _collapse_weighted_methods = set(
 # --------------------------------------------------------------------
 # These Data methods may specify a number of degrees of freedom
 # --------------------------------------------------------------------
-_collapse_ddof_methods = set(
-    (
-        "sd",
-        "var",
-    )
-)
+_collapse_ddof_methods = set(("sd", "var"))
 
 _earth_radius = Data(6371229.0, "m")
 
@@ -1991,9 +1986,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 coord_type = None
 
                 key, coord = f.dimension_coordinate(
-                    item=True,
-                    default=(None, None),
-                    filter_by_axis=(axis,),
+                    item=True, default=(None, None), filter_by_axis=(axis,)
                 )
                 if coord is not None:
                     # This axis of the domain has a dimension
@@ -8620,8 +8613,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         #                            filter_by_axis=(axis,), axis_mode="and", todict=Tru#e
                         #                        ).value(None)
                         dc = f.dimension_coordinate(
-                            filter_by_axis=(axis,),
-                            default=None,
+                            filter_by_axis=(axis,), default=None
                         )
                         if dc is not None and not dc.has_bounds():
                             dc.set_bounds(dc.create_bounds(cellsize=0))
@@ -8898,11 +8890,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # which span this axis
                 #                c = auxiliary_coordinates.filter_by_naxes(gt(1), view=True)
                 c = f.auxiliary_coordinates(
-                    filter_by_naxes=(
-                        gt(
-                            1,
-                        ),
-                    ),
+                    filter_by_naxes=(gt(1),),
                     filter_by_axis=(axis,),
                     axis_mode="or",
                     todict=True,

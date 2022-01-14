@@ -638,7 +638,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 "Terms {} have no standard names. "
                 "See Appendix D: Parametric Vertical Coordinates "
                 "of the CF conventions.".format(
-                    ", ".join(repr(term) for term in kwargs),
+                    ", ".join(repr(term) for term in kwargs)
                 )
             )
 
@@ -647,7 +647,7 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 "Terms {} have incompatible standard names. "
                 "See Appendix D: Parametric Vertical Coordinates "
                 "of the CF conventions.".format(
-                    ", ".join(repr(term) for term in kwargs),
+                    ", ".join(repr(term) for term in kwargs)
                 )
             )
 

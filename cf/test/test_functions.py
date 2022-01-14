@@ -158,11 +158,7 @@ class functionTest(unittest.TestCase):
             cf.configuration(of_fraction=0.0)
         with self.assertRaises(ValueError):
             cf.configuration(free_memory_factor=0.0)
-        new_values = {
-            "tempdir": "",
-            "atol": 0.0,
-            "regrid_logging": False,
-        }
+        new_values = {"tempdir": "", "atol": 0.0, "regrid_logging": False}
         cf.configuration(**new_values)
         post_set = cf.configuration()
         for name, val in new_values.items():  # test values that should change

@@ -23,8 +23,3 @@ class RaggedContiguousArray(cfdm.RaggedContiguousArray):
 
     def __array_function__(self, func, types, args, kwargs):
         return NotImplemented
-
-
-#    @property
-#    def dask_asarray(self):
-#        return False

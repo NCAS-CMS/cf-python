@@ -537,32 +537,20 @@ formula_terms_computed_standard_names = {
         "orog": {
             "surface_altitude": "altitude",
             "surface_height_above_geopotential_datum": "height_above_geopotential_datum",
-        },
+        }
     },
     "atmosphere_sleve_coordinate": {
         "ztop": {
             "altitude_at_top_of_atmosphere_model": "altitude",
             "height_above_geopotential_datum_at_top_of_atmosphere_model": "height_above_geopotential_datum",
-        },
+        }
     },
-    "ocean_sigma_coordinate": {
-        "depth": _D1_depth_mapping,
-    },
-    "ocean_s_coordinate": {
-        "depth": _D1_depth_mapping,
-    },
-    "ocean_s_coordinate_g1": {
-        "depth": _D1_depth_mapping,
-    },
-    "ocean_s_coordinate_g2": {
-        "depth": _D1_depth_mapping,
-    },
-    "ocean_sigma_z_coordinate": {
-        "depth": _D1_depth_mapping,
-    },
-    "ocean_double_sigma_coordinate": {
-        "depth": _D1_depth_mapping,
-    },
+    "ocean_sigma_coordinate": {"depth": _D1_depth_mapping},
+    "ocean_s_coordinate": {"depth": _D1_depth_mapping},
+    "ocean_s_coordinate_g1": {"depth": _D1_depth_mapping},
+    "ocean_s_coordinate_g2": {"depth": _D1_depth_mapping},
+    "ocean_sigma_z_coordinate": {"depth": _D1_depth_mapping},
+    "ocean_double_sigma_coordinate": {"depth": _D1_depth_mapping},
 }
 
 # --------------------------------------------------------------------
@@ -570,15 +558,8 @@ formula_terms_computed_standard_names = {
 # Appendix D: Parametric Vertical Coordinates of the CF conventions.
 # --------------------------------------------------------------------
 formula_terms_units = {
-    "atmosphere_ln_pressure_coordinate": {
-        "p0": "Pa",
-        "lev": "",
-    },
-    "atmosphere_sigma_coordinate": {
-        "sigma": "",
-        "ptop": "Pa",
-        "ps": "Pa",
-    },
+    "atmosphere_ln_pressure_coordinate": {"p0": "Pa", "lev": ""},
+    "atmosphere_sigma_coordinate": {"sigma": "", "ptop": "Pa", "ps": "Pa"},
     "atmosphere_hybrid_sigma_pressure_coordinate": {
         "p0": "Pa",
         "ps": "Pa",
@@ -586,11 +567,7 @@ formula_terms_units = {
         "a": "",
         "b": "",
     },
-    "atmosphere_hybrid_height_coordinate": {
-        "a": "m",
-        "b": "",
-        "orog": "m",
-    },
+    "atmosphere_hybrid_height_coordinate": {"a": "m", "b": "", "orog": "m"},
     "atmosphere_sleve_coordinate": {
         "ztop": "m",
         "a": "",
@@ -599,11 +576,7 @@ formula_terms_units = {
         "zsurf1": "m",
         "zsurf2": "m",
     },
-    "ocean_sigma_coordinate": {
-        "eta": "m",
-        "depth": "m",
-        "sigma": "",
-    },
+    "ocean_sigma_coordinate": {"eta": "m", "depth": "m", "sigma": ""},
     "ocean_s_coordinate": {
         "eta": "m",
         "depth": "m",

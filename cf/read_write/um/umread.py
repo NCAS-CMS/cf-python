@@ -34,7 +34,6 @@ from numpy import where as numpy_where
 from ... import __Conventions__, __version__
 from ...constants import _stash2standard_name
 from ...data import UMArray
-from ...data.creation import get_lock
 from ...data.data import Data
 from ...data.functions import _close_um_file, _open_um_file
 from ...decorators import (
@@ -885,9 +884,7 @@ class UMField:
             self.z_recs = recs[:nz]
             self.t_recs = recs[::nz]
 
-            LBUSER5 = recs[0].int_hdr.item(
-                lbuser5,
-            )
+            LBUSER5 = recs[0].int_hdr.item(lbuser5)
 
             #            self.cell_method_axis_name = {'area': 'area'}
 
@@ -1758,14 +1755,7 @@ class UMField:
 
         """
         int_hdr = rec.int_hdr
-        return [
-            int_hdr.item(
-                lblev,
-            ),
-            int_hdr.item(
-                lbuser5,
-            ),
-        ]
+        return [int_hdr.item(lblev), int_hdr.item(lbuser5)]
 
     def header_z(self, rec):
         """Return the list [LBLEV, LBUSER5, BLEV, BRLEV, BHLEV, BHRLEV,
@@ -1821,12 +1811,9 @@ class UMField:
         # Initialise a dask graph for the uncompressed array, and some
         # dask.array.core.getter arguments
         token = tokenize((nt, nz) + yx_shape, uuid4())
-        name = ("UMArray-" + token,)
+        name = (UMArray.__class__.__name__ + "-" + token,)
         dsk = {}
         full_slice = Ellipsis
-        asarray = getattr(UMArray, "_dask_asarray", False)
-        if getattr(UMArray, "_dask_lock", True):
-            lock = get_lock()
 
         if len(recs) == 1:
             # --------------------------------------------------------
@@ -1837,9 +1824,7 @@ class UMField:
 
             rec = recs[0]
 
-            fill_value = rec.real_hdr.item(
-                bmdi,
-            )
+            fill_value = rec.real_hdr.item(bmdi)
             if fill_value == _BMDI_no_missing_data_value:
                 fill_value = None
 
@@ -1859,7 +1844,7 @@ class UMField:
                 byte_ordering=self.byte_ordering,
             )
 
-            dsk[name + (0,)] = (getter, subarray, full_slice, asarray, lock)
+            dsk[name + (0, 0)] = (getter, subarray, full_slice, False, False)
 
             dtype = numpy_result_type(*file_data_types)
             chunks = normalize_chunks((-1, -1), shape=data_shape, dtype=dtype)
@@ -1883,6 +1868,10 @@ class UMField:
                     pmaxes = [_axis["t"]]
                     data_shape = (nt, LBROW, LBNPT)
 
+                fmt = self.fmt
+                word_size = self.word_size
+                byte_ordering = self.byte_ordering
+
                 for i, rec in enumerate(recs):
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
@@ -1899,17 +1888,17 @@ class UMField:
                         header_offset=rec.hdr_offset,
                         data_offset=rec.data_offset,
                         disk_length=rec.disk_length,
-                        fmt=self.fmt,
-                        word_size=self.word_size,
-                        byte_ordering=self.byte_ordering,
+                        fmt=fmt,
+                        word_size=word_size,
+                        byte_ordering=byte_ordering,
                     )
 
                     dsk[name + (i, 0, 0)] = (
                         getter,
                         subarray,
                         full_slice,
-                        asarray,
-                        lock,
+                        False,
+                        False,
                     )
 
                 dtype = numpy_result_type(*file_data_types)
@@ -1922,6 +1911,10 @@ class UMField:
                 # ----------------------------------------------------
                 pmaxes = [_axis["t"], _axis[self.z_axis]]
                 data_shape = (nt, nz, LBROW, LBNPT)
+
+                fmt = self.fmt
+                word_size = self.word_size
+                byte_ordering = self.byte_ordering
 
                 for i, rec in enumerate(recs):
                     # Find T and Z axis indices
@@ -1942,31 +1935,28 @@ class UMField:
                         header_offset=rec.hdr_offset,
                         data_offset=rec.data_offset,
                         disk_length=rec.disk_length,
-                        fmt=self.fmt,
-                        word_size=self.word_size,
-                        byte_ordering=self.byte_ordering,
+                        fmt=fmt,
+                        word_size=word_size,
+                        byte_ordering=byte_ordering,
                     )
 
                     dsk[name + (t, z, 0, 0)] = (
                         getter,
                         subarray,
                         full_slice,
-                        asarray,
-                        lock,
+                        False,
+                        False,
                     )
 
                 dtype = numpy_result_type(*file_data_types)
                 chunks = normalize_chunks(
                     (1, 1, -1, -1), shape=data_shape, dtype=dtype
                 )
-        # --- End: if
 
         data_axes = pmaxes + data_axes
 
         # Set the data array
-        fill_value = recs[0].real_hdr.item(
-            bmdi,
-        )
+        fill_value = recs[0].real_hdr.item(bmdi)
         if fill_value == _BMDI_no_missing_data_value:
             fill_value = None
 
@@ -2226,14 +2216,7 @@ class UMField:
             out : `AuxiliaryCoordinate` or `DimensionCoordinate` or `None`
 
         """
-        array = tuple(
-            [
-                rec.int_hdr.item(
-                    lblev,
-                )
-                for rec in self.z_recs
-            ]
-        )
+        array = tuple([rec.int_hdr.item(lblev) for rec in self.z_recs])
 
         key = array
         c = _cached_model_level_number_coordinate.get(key, None)
@@ -2308,12 +2291,7 @@ class UMField:
 
         """
         # Find the data type
-        if (
-            rec.int_hdr.item(
-                lbuser2,
-            )
-            == 3
-        ):
+        if rec.int_hdr.item(lbuser2) == 3:
             # Boolean
             return numpy_dtype(bool)
         else:
@@ -2357,12 +2335,7 @@ class UMField:
         else:
             # 'Z' aggregation has been done along the pseudolevel axis
             array = numpy_array(
-                [
-                    rec.int_hdr.item(
-                        lbuser5,
-                    )
-                    for rec in self.z_recs
-                ],
+                [rec.int_hdr.item(lbuser5) for rec in self.z_recs],
                 dtype=self.int_hdr_dtype,
             )
             self.z_axis = "p"
@@ -2601,9 +2574,7 @@ class UMField:
 
         IB = self.lbtim_ib
 
-        if IB <= 1 or vtimes.item(0,) >= dtimes.item(
-            0,
-        ):
+        if IB <= 1 or vtimes.item(0) >= dtimes.item(0):
             array = vtimes
             bounds = None
             climatology = False
@@ -3008,14 +2979,7 @@ class UMField:
         )  # pragma: no cover
 
         z_recs = self.z_recs
-        array = tuple(
-            [
-                rec.real_hdr.item(
-                    blev,
-                )
-                for rec in z_recs
-            ]
-        )
+        array = tuple([rec.real_hdr.item(blev) for rec in z_recs])
         bounds0 = tuple(
             [rec.real_hdr[brlev] for rec in z_recs]
         )  # lower level boundary
@@ -3075,13 +3039,7 @@ class UMField:
         )  # pragma: no cover
 
         array = numpy_array(
-            [
-                rec.real_hdr.item(
-                    brlev,
-                )
-                for rec in self.z_recs
-            ],
-            dtype=float,
+            [rec.real_hdr.item(brlev) for rec in self.z_recs], dtype=float
         )
 
         LBVC = self.lbvc
@@ -3096,12 +3054,8 @@ class UMField:
             if not 128 <= LBVC <= 139:
                 bounds = []
                 for rec in self.z_recs:
-                    BRLEV = rec.real_hdr.item(
-                        brlev,
-                    )
-                    BRSVD1 = rec.real_hdr.item(
-                        brsvd1,
-                    )
+                    BRLEV = rec.real_hdr.item(brlev)
+                    BRSVD1 = rec.real_hdr.item(brsvd1)
 
                     if abs(BRSVD1 - BRLEV) >= atol:
                         bounds = None
