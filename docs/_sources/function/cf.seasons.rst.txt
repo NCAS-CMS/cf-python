@@ -1,4 +1,4 @@
-﻿cf.seasons
+cf.seasons
 ==========
 
 .. currentmodule:: cf

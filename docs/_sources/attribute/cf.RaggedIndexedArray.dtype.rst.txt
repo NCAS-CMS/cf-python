@@ -1,4 +1,4 @@
-﻿cf.RaggedIndexedArray.dtype
+cf.RaggedIndexedArray.dtype
 ===========================
 
 .. currentmodule:: cf

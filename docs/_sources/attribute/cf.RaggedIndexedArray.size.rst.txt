@@ -1,4 +1,4 @@
-﻿cf.RaggedIndexedArray.size
+cf.RaggedIndexedArray.size
 ==========================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.day
+cf.DimensionCoordinate.day
 ==========================
 
 .. currentmodule:: cf

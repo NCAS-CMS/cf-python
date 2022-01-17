@@ -1,4 +1,4 @@
-﻿cf.List.add_offset
+cf.List.add_offset
 ==================
 
 .. currentmodule:: cf

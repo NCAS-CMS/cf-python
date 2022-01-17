@@ -1,4 +1,4 @@
-﻿cf.hour
+cf.hour
 =======
 
 .. currentmodule:: cf

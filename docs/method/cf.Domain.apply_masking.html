@@ -22,8 +22,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Domain.get_filenames" href="cf.Domain.get_filenames.html" />
-    <link rel="prev" title="cf.Domain.fromconstructs" href="cf.Domain.fromconstructs.html" />
+    <link rel="next" title="cf.Domain.copy" href="cf.Domain.copy.html" />
+    <link rel="prev" title="cf.Domain.set_properties" href="cf.Domain.set_properties.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
 
 
 
@@ -87,8 +87,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Domain.html">cf.Domain</a><ul>
-      <li>Previous: <a href="cf.Domain.fromconstructs.html" title="previous chapter">cf.Domain.fromconstructs</a></li>
-      <li>Next: <a href="cf.Domain.get_filenames.html" title="next chapter">cf.Domain.get_filenames</a></li>
+      <li>Previous: <a href="cf.Domain.set_properties.html" title="previous chapter">cf.Domain.set_properties</a></li>
+      <li>Next: <a href="cf.Domain.copy.html" title="next chapter">cf.Domain.copy</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Domain.apply_masking<a class="headerlink" href="#cf-domain-apply-masking" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Domain.apply_masking">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/decorators.py#L36-L49"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.apply_masking" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.1/cfdm/decorators.py#L36-L49"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.apply_masking" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply masking as defined by the CF conventions.</p>
 <p>Masking is applied to all metadata constructs with data.</p>
 <p>Masking is applied according to any of the following criteria
@@ -174,7 +174,7 @@ properties have not been updated.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Domain.html#cf.Domain" title="cf.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>A new domain construct with masked values, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>A new domain construct with masked values, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
 if the operation was in-place.</p>
 </dd>
 </dl>
@@ -210,7 +210,7 @@ if the operation was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-10-08.
+      &copy;2022, NCAS | Page built on 2022-01-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

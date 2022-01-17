@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.AuxiliaryCoordinate.__div__
 ==============================

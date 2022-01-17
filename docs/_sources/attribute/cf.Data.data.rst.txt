@@ -1,4 +1,4 @@
-﻿cf.Data.data
+cf.Data.data
 ============
 
 .. currentmodule:: cf

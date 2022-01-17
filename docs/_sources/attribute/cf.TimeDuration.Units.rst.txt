@@ -1,4 +1,4 @@
-﻿cf.TimeDuration.Units
+cf.TimeDuration.Units
 =====================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.CellMeasure.log
 ==================

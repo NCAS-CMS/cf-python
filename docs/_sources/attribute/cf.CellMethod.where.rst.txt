@@ -1,4 +1,4 @@
-﻿cf.CellMethod.where
+cf.CellMethod.where
 ===================
 
 .. currentmodule:: cf

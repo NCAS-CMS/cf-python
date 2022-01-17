@@ -1,4 +1,4 @@
-﻿cf.Index.missing_value
+cf.Index.missing_value
 ======================
 
 .. currentmodule:: cf

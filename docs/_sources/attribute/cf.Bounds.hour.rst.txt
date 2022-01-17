@@ -1,4 +1,4 @@
-﻿cf.Bounds.hour
+cf.Bounds.hour
 ==============
 
 .. currentmodule:: cf

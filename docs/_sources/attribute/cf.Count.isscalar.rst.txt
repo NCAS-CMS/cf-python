@@ -1,4 +1,4 @@
-﻿cf.Count.isscalar
+cf.Count.isscalar
 =================
 
 .. currentmodule:: cf

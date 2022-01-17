@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.construct_type
+cf.DomainAncillary.construct_type
 =================================
 
 .. currentmodule:: cf

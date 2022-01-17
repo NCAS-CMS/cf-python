@@ -1,4 +1,4 @@
-﻿cf.Query.attr
+cf.Query.attr
 =============
 
 .. currentmodule:: cf

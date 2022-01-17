@@ -1,4 +1,4 @@
-﻿cf.Domain.domain_ancillaries
+cf.Domain.domain_ancillaries
 ============================
 
 .. currentmodule:: cf

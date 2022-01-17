@@ -1,4 +1,4 @@
-﻿cf.Index.month_lengths
+cf.Index.month_lengths
 ======================
 
 .. currentmodule:: cf

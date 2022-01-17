@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.T
+cf.DimensionCoordinate.T
 ========================
 
 .. currentmodule:: cf

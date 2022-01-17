@@ -1,4 +1,4 @@
-﻿cf.Index.mask_invalid
+cf.Index.mask_invalid
 =====================
 
 .. currentmodule:: cf

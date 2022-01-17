@@ -1,4 +1,4 @@
-﻿cf.Bounds.valid_range
+cf.Bounds.valid_range
 =====================
 
 .. currentmodule:: cf

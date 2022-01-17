@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.11.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.12.0</a></h1>
 
 
 
@@ -1947,16 +1947,16 @@ context manager:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care must be taken when combining a construct with a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
 which both of these objects allow themselves to be
 combined with other types:</p>
 <ul class="simple">
 <li><p>If the construct is on the left hand side (LHS) of the
 operation then, as expected, a construct is returned
 whose data is the combination of the original
-construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</p></li>
-<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on the
 LHS) is returned, containing the same data as in the
 first case.</p></li>
@@ -2546,8 +2546,8 @@ passes through the axis; and ii) does not update the cell
 method constructs.</p>
 </div>
 </section>
-<section id="derivatives">
-<h2>Derivatives<a class="headerlink" href="#derivatives" title="Permalink to this headline">¶</a></h2>
+<section id="general-first-order-derivative">
+<h2>General first order derivative<a class="headerlink" href="#general-first-order-derivative" title="Permalink to this headline">¶</a></h2>
 <p>The derivative along a dimension of the field construct’s data can be
 calculated as a centred finite difference with the <a class="reference internal" href="method/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>
 method. If the axis is <a class="reference internal" href="tutorial.html#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a> then the
@@ -2564,6 +2564,116 @@ one-sided finite difference at the boundary.</em></span><a class="headerlink" hr
 </pre></div>
 </div>
 </div>
+</section>
+<section id="gradient-vector">
+<h2>Gradient vector<a class="headerlink" href="#gradient-vector" title="Permalink to this headline">¶</a></h2>
+<p>The horizontal gradient vector of a scalar field may calculated with
+the <a class="reference internal" href="method/cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grad_xy</span></code></a> method when the field has dimension coordinates
+of X and Y, in either Cartesian (e.g. plane projection) or spherical
+polar coordinate systems.</p>
+<p>The horizontal gradient vector in Cartesian coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla f(x, y) = \left(
+\frac{\partial f}{\partial x},
+\frac{\partial f}{\partial y}
+\right)\]</div>
+<p>The horizontal gradient vector in spherical polar coordinates is given
+by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla f(\theta, \phi) = \left(
+\frac{1}{r}
+\frac{\partial f}{\partial \theta},
+\frac{1}{r \sin\theta}
+\frac{\partial f}{\partial \phi}
+\right)\]</div>
+<p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
+polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
+azimuthal angle.</p>
+<p>See <a class="reference internal" href="method/cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.grad_xy</span></code></a> for details and examples.</p>
+</section>
+<section id="laplacian">
+<h2>Laplacian<a class="headerlink" href="#laplacian" title="Permalink to this headline">¶</a></h2>
+<p>The horizontal Laplacian of a scalar field may be calculated with the
+<a class="reference internal" href="method/cf.Field.laplacian_xy.html#cf.Field.laplacian_xy" title="cf.Field.laplacian_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">laplacian_xy</span></code></a> method when the field has dimension coordinates
+of X and Y, in either Cartesian (e.g. plane projection) or spherical
+polar coordinate systems.</p>
+<p>The horizontal Laplacian in Cartesian coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla^2 f(x, y) = \frac{\partial^2 f}{\partial x^2}
++
+\frac{\partial^2 f}{\partial y^2}\]</div>
+<p>The horizontal Laplacian in spherical polar coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla^2 f(\theta, \phi) =
+\frac{1}{r^2 \sin\theta}
+\frac{\partial}{\partial \theta}
+\left(
+\sin\theta
+\frac{\partial f}{\partial \theta}
+\right)
++
+\frac{1}{r^2 \sin^2\theta}
+\frac{\partial^2 f}{\partial \phi^2}\]</div>
+<p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
+polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
+azimuthal angle.</p>
+<p>See <a class="reference internal" href="method/cf.Field.laplacian_xy.html#cf.Field.laplacian_xy" title="cf.Field.laplacian_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.laplacian_xy</span></code></a> for details and examples.</p>
+</section>
+<section id="divergence">
+<h2>Divergence<a class="headerlink" href="#divergence" title="Permalink to this headline">¶</a></h2>
+<p>The horizontal divergence may be calculated with the <a class="reference internal" href="function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a>
+function from orthogonal vector component fields which have dimension
+coordinates of X and Y, in either Cartesian (e.g. plane projection) or
+spherical polar coordinate systems.</p>
+<p>The horizontal divergence of the <span class="math notranslate nohighlight">\((f_x, f_y)\)</span> vector in
+Cartesian coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla \cdot (f_{x}(x,y), f_{y}(x,y)) =
+\frac{\partial f_x}{\partial x}
++
+\frac{\partial f_y}{\partial y}\]</div>
+<p>The horizontal divergence of the <span class="math notranslate nohighlight">\((f_\theta, f_\phi)\)</span> vector in
+spherical polar coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla \cdot (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+\frac{1}{r \sin\theta}
+\left(
+\frac{\partial (f_\theta \sin\theta)}{\partial \theta}
++
+\frac{\partial f_\phi}{\partial \phi}
+\right)\]</div>
+<p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
+polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
+azimuthal angle.</p>
+<p>See <a class="reference internal" href="function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a> for details and examples.</p>
+</section>
+<section id="curl">
+<h2>Curl<a class="headerlink" href="#curl" title="Permalink to this headline">¶</a></h2>
+<p>The horizontal curl may be calculated with the <a class="reference internal" href="function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> function
+from orthogonal vector component fields which have dimension
+coordinates of X and Y, in either Cartesian (e.g. plane projection) or
+spherical polar coordinate systems.</p>
+<p>The horizontal curl of the <span class="math notranslate nohighlight">\((f_x, f_y)\)</span> vector in Cartesian
+coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla \times (f_{x}(x,y), f_{y}(x,y)) =
+\frac{\partial f_y}{\partial x}
+-
+\frac{\partial f_x}{\partial y}\]</div>
+<p>The horizontal curl of the <span class="math notranslate nohighlight">\((f_\theta, f_\phi)\)</span> vector in
+spherical polar coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla \times (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+\frac{1}{r \sin\theta}
+\left(
+\frac{\partial (f_\phi \sin\theta)}{\partial \theta}
+-
+\frac{\partial f_\theta}{\partial \phi}
+\right)\]</div>
+<p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
+polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
+azimuthal angle.</p>
+<p>See <a class="reference internal" href="function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> for details and examples.</p>
 </section>
 <section id="relative-vorticity">
 <h2>Relative vorticity<a class="headerlink" href="#relative-vorticity" title="Permalink to this headline">¶</a></h2>
@@ -2638,7 +2748,7 @@ derivative wraps around by default.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-10-08.
+      &copy;2022, NCAS | Page built on 2022-01-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

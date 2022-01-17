@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.cumsum" href="cf.Field.cumsum.html" />
-    <link rel="prev" title="cf.Field.derivative" href="cf.Field.derivative.html" />
+    <link rel="prev" title="cf.Field.laplacian_xy" href="cf.Field.laplacian_xy.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
 
 
 
@@ -87,7 +87,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Field.html">cf.Field</a><ul>
-      <li>Previous: <a href="cf.Field.derivative.html" title="previous chapter">cf.Field.derivative</a></li>
+      <li>Previous: <a href="cf.Field.laplacian_xy.html" title="previous chapter">cf.Field.laplacian_xy</a></li>
       <li>Next: <a href="cf.Field.cumsum.html" title="next chapter">cf.Field.cumsum</a></li>
   </ul></li>
   </ul></li>
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.convolution_filter<a class="headerlink" href="#cf-field-convolution-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.convolution_filter">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">convolution_filter</code><span class="sig-paren">(</span><em class="sig-param">window=None</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">update_bounds=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L12035-L12369"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convolution_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">convolution_filter</code><span class="sig-paren">(</span><em class="sig-param">window=None</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">update_bounds=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/field.py#L12300-L12634"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convolution_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolve the field construct along the given axis with the
 specified filter.</p>
 <p>The magnitude of the integral of the filter (i.e. the sum of
@@ -387,7 +387,7 @@ the time dimension (note that the window weights returned by
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-10-08.
+      &copy;2022, NCAS | Page built on 2022-01-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

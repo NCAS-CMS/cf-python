@@ -1,4 +1,4 @@
-﻿cf.Index.binary_mask
+cf.Index.binary_mask
 ====================
 
 .. currentmodule:: cf

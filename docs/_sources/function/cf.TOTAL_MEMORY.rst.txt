@@ -1,4 +1,4 @@
-﻿cf.TOTAL_MEMORY
+cf.TOTAL_MEMORY
 ===============
 
 .. currentmodule:: cf

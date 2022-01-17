@@ -1,4 +1,4 @@
-﻿cf.Query.isquery
+cf.Query.isquery
 ================
 
 .. currentmodule:: cf

@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
 
 
 
@@ -126,7 +126,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L255-L17115"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/field.py#L253-L17664"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
@@ -495,7 +495,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return an element of the data array as a standard Python scalar.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Field.dtype.html#cf.Field.dtype" title="cf.Field.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Field.ndim.html#cf.Field.ndim" title="cf.Field.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
 <td><p>The number of dimensions in the data array.</p></td>
@@ -746,7 +746,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the domain axes that apply to a coordinate reference construct.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.get_coordinate_reference.html#cf.Field.get_coordinate_reference" title="cf.Field.get_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_reference</span></code></a></p></td>
-<td><p>TODO.</p></td>
+<td><p>Return a coordinate reference construct.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.set_coordinate_reference.html#cf.Field.set_coordinate_reference" title="cf.Field.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a></p></td>
 <td><p>Set a coordinate reference construct.</p></td>
@@ -857,7 +857,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the commands that would create the field construct.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></p></td>
-<td><p>Return the radius used for calculating cell areas in spherical polar coordinates.</p></td>
+<td><p>Return the radius of a latitude-longitude plane defined in spherical polar coordinates.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.uncompress.html#cf.Field.uncompress" title="cf.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
 <td><p>Uncompress the field construct.</p></td>
@@ -1105,7 +1105,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Returns True if the specified axis is cyclic.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.isperiodic.html#cf.Field.isperiodic" title="cf.Field.isperiodic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isperiodic</span></code></a></p></td>
-<td><p>TODO.</p></td>
+<td><p>True if a given axis is periodic.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.item_axes.html#cf.Field.item_axes" title="cf.Field.item_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item_axes</span></code></a></p></td>
 <td><p>Return the axes of a domain item of the field.</p></td>
@@ -1285,7 +1285,7 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Derivatives</p>
+<p class="rubric">Differential operators</p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -1293,7 +1293,13 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a></p></td>
-<td><p>Return the derivative along the specified axis.</p></td>
+<td><p>Calculate the derivative along the specified axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grad_xy</span></code></a></p></td>
+<td><p>Calculate the (X, Y) gradient vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.laplacian_xy.html#cf.Field.laplacian_xy" title="cf.Field.laplacian_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">laplacian_xy</span></code></a></p></td>
+<td><p>Calculate the Laplacian in X-Y coordinates.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1536,10 +1542,10 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">field_ancillaries</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a></p></td>
-<td><p>TODO.</p></td>
+<td><p>Return a domain item of the field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a></p></td>
-<td><p>TODO.</p></td>
+<td><p>Return domain items as (construct key, construct) pairs.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.key.html#cf.Field.key" title="cf.Field.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></p></td>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_key</span></code>.</p></td>
@@ -2014,13 +2020,13 @@ construct’s data in-place.</p>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Field._Axes.html#cf.Field._Axes" title="cf.Field._Axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_Axes</span></code></a></p></td>
-<td><p>TODO.</p></td>
+<td><p>Return domain axis constructs.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Field.CellMethods.html#cf.Field.CellMethods" title="cf.Field.CellMethods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMethods</span></code></a></p></td>
-<td><p>TODO.</p></td>
+<td><p>Return cell method constructs.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Field.CM.html#cf.Field.CM" title="cf.Field.CM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CM</span></code></a></p></td>
-<td><p>TODO.</p></td>
+<td><p>Return cell method constructs.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Field.Data.html#cf.Field.Data" title="cf.Field.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> attribute or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code> method instead.</p></td>
@@ -2035,7 +2041,7 @@ construct’s data in-place.</p>
 <td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Field.Items.html#cf.Field.Items" title="cf.Field.Items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Items</span></code></a></p></td>
-<td><p>TODO.</p></td>
+<td><p>Return domain items as (construct key, construct) pairs.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Field.unsafe_array.html#cf.Field.unsafe_array" title="cf.Field.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
@@ -2053,7 +2059,7 @@ construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-10-08.
+      &copy;2022, NCAS | Page built on 2022-01-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

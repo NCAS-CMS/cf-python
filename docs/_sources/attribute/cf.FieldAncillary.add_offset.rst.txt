@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.add_offset
+cf.FieldAncillary.add_offset
 ============================
 
 .. currentmodule:: cf

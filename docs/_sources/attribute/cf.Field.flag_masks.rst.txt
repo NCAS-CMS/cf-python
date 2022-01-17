@@ -1,4 +1,4 @@
-﻿cf.Field.flag_masks
+cf.Field.flag_masks
 ===================
 
 .. currentmodule:: cf

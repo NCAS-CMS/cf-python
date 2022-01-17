@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.leap_year
+cf.AuxiliaryCoordinate.leap_year
 ================================
 
 .. currentmodule:: cf

@@ -111,10 +111,9 @@ The cf package can:
 
 * create moving means from field constructs,
 
-* calculate derivatives of field constructs,
+* apply differential operators to field constructs,
 
-* create field constructs to create derived quantities (such as
-  vorticity).
+* create derived quantities (such as relative vorticity).
 
 All of the above use LAMA functionality, which allows multiple
 fields larger than the available memory to exist and be manipulated.

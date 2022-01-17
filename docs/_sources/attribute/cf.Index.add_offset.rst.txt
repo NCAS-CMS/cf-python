@@ -1,4 +1,4 @@
-﻿cf.Index.add_offset
+cf.Index.add_offset
 ===================
 
 .. currentmodule:: cf

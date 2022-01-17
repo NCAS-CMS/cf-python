@@ -1,4 +1,4 @@
-﻿cf.GatheredArray.compressed_array
+cf.GatheredArray.compressed_array
 =================================
 
 .. currentmodule:: cf

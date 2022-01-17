@@ -1,4 +1,4 @@
-﻿cf.Field.Flags
+cf.Field.Flags
 ==============
 
 .. currentmodule:: cf

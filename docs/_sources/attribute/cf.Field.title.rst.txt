@@ -1,4 +1,4 @@
-﻿cf.Field.title
+cf.Field.title
 ==============
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.Index.standard_name
+cf.Index.standard_name
 ======================
 
 .. currentmodule:: cf

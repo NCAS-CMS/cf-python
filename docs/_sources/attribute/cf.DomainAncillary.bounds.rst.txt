@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.bounds
+cf.DomainAncillary.bounds
 =========================
 
 .. currentmodule:: cf

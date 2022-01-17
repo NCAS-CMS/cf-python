@@ -1,4 +1,4 @@
-﻿cf.Index.hour
+cf.Index.hour
 =============
 
 .. currentmodule:: cf

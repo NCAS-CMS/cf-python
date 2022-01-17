@@ -1,4 +1,4 @@
-﻿cf.set
+cf.set
 ======
 
 .. currentmodule:: cf

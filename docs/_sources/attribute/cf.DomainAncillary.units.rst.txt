@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.units
+cf.DomainAncillary.units
 ========================
 
 .. currentmodule:: cf

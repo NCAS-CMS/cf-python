@@ -1,4 +1,4 @@
-﻿cf.Field.mask
+cf.Field.mask
 =============
 
 .. currentmodule:: cf

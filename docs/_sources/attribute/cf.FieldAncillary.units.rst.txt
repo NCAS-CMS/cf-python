@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.units
+cf.FieldAncillary.units
 =======================
 
 .. currentmodule:: cf

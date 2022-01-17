@@ -1,4 +1,4 @@
-﻿cf.Bounds.shape
+cf.Bounds.shape
 ===============
 
 .. currentmodule:: cf

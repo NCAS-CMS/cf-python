@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.standard_name
+cf.DimensionCoordinate.standard_name
 ====================================
 
 .. currentmodule:: cf

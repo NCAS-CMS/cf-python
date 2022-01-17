@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.history
+cf.DomainAncillary.history
 ==========================
 
 .. currentmodule:: cf

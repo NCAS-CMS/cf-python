@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.missing_value
+cf.AuxiliaryCoordinate.missing_value
 ====================================
 
 .. currentmodule:: cf

@@ -39,6 +39,11 @@ cd -
 # Regerenate tutorial.py field_analysis.py
 if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
   ./test_tutorial_code
+  rc=$?
+  if [[ $rc != 0 ]]; then
+    echo "test_tutorial_code failed."
+    # exit $rc
+  fi
 fi
 
 # --------------------------------------------------------------------

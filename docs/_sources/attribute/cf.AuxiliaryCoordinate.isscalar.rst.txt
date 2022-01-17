@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.isscalar
+cf.AuxiliaryCoordinate.isscalar
 ===============================
 
 .. currentmodule:: cf

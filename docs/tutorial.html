@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.11.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.12.0</a></h1>
 
 
 
@@ -120,7 +120,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.11.0 for version 1.9 of the CF conventions.</p>
+<p>Version 3.12.0 for version 1.9 of the CF conventions.</p>
 <p>All of the Python code in this tutorial is available in two executable
 scripts (<a class="reference download internal" download="" href="_downloads/tutorial.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 28kB,
 <a class="reference download internal" download="" href="_downloads/field_analysis.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 8kB).</p>
@@ -339,14 +339,18 @@ with Python 3 versions of the cf library.</p>
 <li><p><a class="reference internal" href="#rounding-and-truncation" id="id493">Rounding and truncation</a></p></li>
 <li><p><a class="reference internal" href="#moving-windows" id="id494">Moving windows</a></p></li>
 <li><p><a class="reference internal" href="#convolution-filters" id="id495">Convolution filters</a></p></li>
-<li><p><a class="reference internal" href="#derivatives" id="id496">Derivatives</a></p></li>
-<li><p><a class="reference internal" href="#relative-vorticity" id="id497">Relative vorticity</a></p></li>
+<li><p><a class="reference internal" href="#general-first-order-derivative" id="id496">General first order derivative</a></p></li>
+<li><p><a class="reference internal" href="#gradient-vector" id="id497">Gradient vector</a></p></li>
+<li><p><a class="reference internal" href="#laplacian" id="id498">Laplacian</a></p></li>
+<li><p><a class="reference internal" href="#divergence" id="id499">Divergence</a></p></li>
+<li><p><a class="reference internal" href="#curl" id="id500">Curl</a></p></li>
+<li><p><a class="reference internal" href="#relative-vorticity" id="id501">Relative vorticity</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#controlling-output-messages" id="id498"><strong>Controlling output messages</strong></a></p>
+<li><p><a class="reference internal" href="#controlling-output-messages" id="id502"><strong>Controlling output messages</strong></a></p>
 <ul>
-<li><p><a class="reference internal" href="#logging" id="id499">Logging</a></p></li>
-<li><p><a class="reference internal" href="#function-verbosity" id="id500">Function verbosity</a></p></li>
+<li><p><a class="reference internal" href="#logging" id="id503">Logging</a></p></li>
+<li><p><a class="reference internal" href="#function-verbosity" id="id504">Function verbosity</a></p></li>
 </ul>
 </li>
 </ul>
@@ -359,8 +363,8 @@ be found in the zip file <code class="docutils literal notranslate"><span class=
 164kB):</p>
 <div class="literal-block-wrapper docutils container" id="id116">
 <div class="code-block-caption"><span class="caption-text"><em>Unpack the sample datasets.</em></span><a class="headerlink" href="#id116" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>unzip -q cf_tutorial_files.zip
-<span class="gp">$ </span>ls -1
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> unzip -q cf_tutorial_files.zip
+<span class="gp">$</span> ls -1
 <span class="go">air_temperature.nc</span>
 <span class="go">cf_tutorial_files.zip</span>
 <span class="go">contiguous.nc</span>
@@ -450,9 +454,9 @@ the domain.</p></li>
 </ul>
 </div></blockquote>
 <p>A field construct or domain construct is stored in a <a class="reference internal" href="class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
-instance or <a class="reference internal" href="class/cf.Domain.html#cf.Domain" title="cf.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain</span></code></a> instance respectively. Henceforth the phrase
+instance or <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain</span></code> instance respectively. Henceforth the phrase
 “field construct” will be assumed to mean “<a class="reference internal" href="class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> instance”, and
-“domain construct” will be assumed to mean “<a class="reference internal" href="class/cf.Domain.html#cf.Domain" title="cf.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain</span></code></a> instance”.</p>
+“domain construct” will be assumed to mean “<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain</span></code> instance”.</p>
 <hr class="docutils" />
 </section>
 <section id="reading-field-constructs-from-datasets">
@@ -809,10 +813,10 @@ constructs contained in one or more datasets. The “-1”
 option treats all input files collectively as a single CF
 dataset, so that aggregation is attempted within and
 between the input files.</em></span><a class="headerlink" href="#id126" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cfa file.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa file.nc
 <span class="go">CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
 <span class="go">CF Field: specific_humidity(latitude(5), longitude(8)) 1</span>
-<span class="gp">$ </span>cfa -1 *.nc
+<span class="gp">$</span> cfa -1 *.nc
 <span class="go">CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))</span>
 <span class="go">CF Field: cell_area(ncdim%longitude(9), ncdim%latitude(10)) m2</span>
 <span class="go">CF Field: eastward_wind(latitude(10), longitude(9)) m s-1</span>
@@ -1859,7 +1863,7 @@ possible when the “hardmask” attribute is False.</em></span><a class="header
 </pre></div>
 </div>
 </div>
-<p>Note that this is the opposite behaviour to <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays, which
+<p>Note that this is the opposite behaviour to <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays, which
 assume that the mask is <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.generic.html#modifying-the-mask">soft by default</a>. The
 reason for the difference is so that land-sea masks are, by default,
 preserved through assignment operations.</p>
@@ -2702,7 +2706,7 @@ constructors.</em></span><a class="headerlink" href="#id196" title="Permalink to
 <span id="id39"></span><h2><a class="toc-backref" href="#id412"><strong>Domain</strong></a><a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">domain of the CF data model</span></a> is defined
 collectively by various other metadata constructs. It is represented
-by the <a class="reference internal" href="class/cf.Domain.html#cf.Domain" title="cf.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a> class. A domain construct may exist independently, or
+by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code> class. A domain construct may exist independently, or
 is accessed from a field construct with its <a class="reference internal" href="attribute/cf.Field.domain.html#cf.Field.domain" title="cf.Field.domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain</span></code></a> attribute,
 or <a class="reference internal" href="method/cf.Field.get_domain.html#cf.Field.get_domain" title="cf.Field.get_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain</span></code></a> method.</p>
 <div class="literal-block-wrapper docutils container" id="id197">
@@ -4614,7 +4618,7 @@ and metadata constructs.</em></span><a class="headerlink" href="#id251" title="P
 </div>
 <p>Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
-been generated with dummy values using <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
+been generated with dummy values using <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
 <div class="literal-block-wrapper docutils container" id="id252">
 <div class="code-block-caption"><span class="caption-text"><em>Create a field construct that contains at least one
 instance of each type of metadata construct.</em></span><a class="headerlink" href="#id252" title="Permalink to this code">¶</a></div>
@@ -5036,13 +5040,13 @@ variables</span></a> may be incorporated.</p>
 <div class="literal-block-wrapper docutils container" id="id261">
 <div class="code-block-caption"><span class="caption-text"><em>Use cfa to create new, single dataset that combines the
 field constructs from two files.</em></span><a class="headerlink" href="#id261" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cfa file.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa file.nc
 <span class="go">CF Field: specific_humidity(latitude(5), longitude(8)) 1</span>
 <span class="go">CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
-<span class="gp">$ </span>cfa air_temperature.nc
+<span class="gp">$</span> cfa air_temperature.nc
 <span class="go">CF Field: air_temperature(time(2), latitude(73), longitude(96)) K</span>
-<span class="gp">$ </span>cfa -o new_dataset.nc file.nc air_temperature.nc
-<span class="gp">$ </span>cfa  new_dataset.nc
+<span class="gp">$</span> cfa -o new_dataset.nc file.nc air_temperature.nc
+<span class="gp">$</span> cfa  new_dataset.nc
 <span class="go">CF Field: specific_humidity(latitude(5), longitude(8)) 1</span>
 <span class="go">CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
 <span class="go">CF Field: air_temperature(time(2), latitude(73), longitude(96)) K</span>
@@ -5685,7 +5689,7 @@ field constructs, to a new netCDF file on disk:</p>
 <div class="literal-block-wrapper docutils container" id="id272">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the new dataset with the ncdump command line
 tool.</em></span><a class="headerlink" href="#id272" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump -h q_file.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h q_file.nc
 <span class="go">netcdf q_file {</span>
 <span class="go">dimensions:</span>
 <span class="go">     lat = 5 ;</span>
@@ -5947,7 +5951,7 @@ data.</em></span><a class="headerlink" href="#id281" title="Permalink to this co
 <div class="literal-block-wrapper docutils container" id="id282">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the new dataset with the ncdump command line
 tool.</em></span><a class="headerlink" href="#id282" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump -h q2_file.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h q2_file.nc
 <span class="go">netcdf q2_file {</span>
 <span class="go">dimensions:</span>
 <span class="go">     lat = 5 ;</span>
@@ -6038,7 +6042,7 @@ sub-group:</p>
 <div class="literal-block-wrapper docutils container" id="id284">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the new grouped dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id284" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump -h grouped.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h grouped.nc
 <span class="go">netcdf grouped {</span>
 <span class="go">dimensions:</span>
 <span class="go">        lat = 5 ;</span>
@@ -6134,7 +6138,7 @@ netCDF variable and netCDF dimensions.</p>
 <div class="literal-block-wrapper docutils container" id="id287">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the flat version of the dataset with the ncdump
 command line tool.</em></span><a class="headerlink" href="#id287" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump -h flat_out.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h flat_out.nc
 <span class="go">netcdf flat {</span>
 <span class="go">dimensions:</span>
 <span class="go">        lat = 5 ;</span>
@@ -6195,7 +6199,7 @@ the external file names to the <a class="reference internal" href="function/cf.r
 <div class="literal-block-wrapper docutils container" id="id289">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the parent dataset with the ncdump command line
 tool.</em></span><a class="headerlink" href="#id289" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump -h parent.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h parent.nc
 <span class="go">netcdf parent {</span>
 <span class="go">dimensions:</span>
 <span class="go">     latitude = 10 ;</span>
@@ -6223,7 +6227,7 @@ tool.</em></span><a class="headerlink" href="#id289" title="Permalink to this co
 <div class="literal-block-wrapper docutils container" id="id290">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the external dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id290" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump -h external.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h external.nc
 <span class="go">netcdf external {</span>
 <span class="go">dimensions:</span>
 <span class="go">     latitude = 10 ;</span>
@@ -6336,7 +6340,7 @@ command line tool</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id295">
 <div class="code-block-caption"><span class="caption-text"><em>Use cfa to describe the parent file without resolving
 the external variable reference.</em></span><a class="headerlink" href="#id295" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cfa parent.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa parent.nc
 <span class="go">Field: eastward_wind (ncvar%eastward_wind)</span>
 <span class="go">------------------------------------------</span>
 <span class="go">Data            : eastward_wind(latitude(10), longitude(9)) m s-1</span>
@@ -6349,7 +6353,7 @@ the external variable reference.</em></span><a class="headerlink" href="#id295" 
 <div class="literal-block-wrapper docutils container" id="id296">
 <div class="code-block-caption"><span class="caption-text"><em>Providing an external file with the “-e” option allows
 the reference to be resolved.</em></span><a class="headerlink" href="#id296" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cfa -e external.nc parent.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa -e external.nc parent.nc
 <span class="go">Field: eastward_wind (ncvar%eastward_wind)</span>
 <span class="go">------------------------------------------</span>
 <span class="go">Data            : eastward_wind(latitude(10), longitude(9)) m s-1</span>
@@ -6533,7 +6537,7 @@ instance.</p>
 <div class="literal-block-wrapper docutils container" id="id299">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the compressed dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id299" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump -h contiguous.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h contiguous.nc
 <span class="go">dimensions:</span>
 <span class="go">     station = 4 ;</span>
 <span class="go">     obs = 24 ;</span>
@@ -6704,7 +6708,7 @@ a netCDF file:</p>
 <div class="literal-block-wrapper docutils container" id="id306">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the new compressed dataset with the ncdump
 command line tool.</em></span><a class="headerlink" href="#id306" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump T_contiguous.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump T_contiguous.nc
 <span class="go">netcdf T_contiguous {</span>
 <span class="go">dimensions:</span>
 <span class="go">     dim = 2 ;</span>
@@ -6787,7 +6791,7 @@ method of the <a class="reference internal" href="class/cf.Data.html#cf.Data" ti
 <div class="literal-block-wrapper docutils container" id="id308">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the compressed dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id308" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump -h gathered.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h gathered.nc
 <span class="go">netcdf gathered {</span>
 <span class="go">dimensions:</span>
 <span class="go">     time = 2 ;</span>
@@ -6963,7 +6967,7 @@ initialisation).</p>
 <div class="literal-block-wrapper docutils container" id="id315">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect new the compressed dataset with the ncdump
 command line tool.</em></span><a class="headerlink" href="#id315" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ncdump P_gathered.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump P_gathered.nc
 <span class="go">netcdf P_gathered {</span>
 <span class="go">dimensions:</span>
 <span class="go">     dim = 2 ;</span>
@@ -7050,10 +7054,10 @@ converts PP and UM fields files to netCDF datasets on disk.</p>
 <div class="literal-block-wrapper docutils container" id="id318">
 <div class="code-block-caption"><span class="caption-text"><em>Use the ‘cfa’ shell command to view a PP file and
 convert it to a netCDF dataset.</em></span><a class="headerlink" href="#id318" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cfa umfile.pp
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa umfile.pp
 <span class="go">CF Field: surface_air_pressure(time(3), latitude(73), longitude(96)) Pa</span>
-<span class="gp">$ </span>cfa -o umfile2.nc umfile.pp
-<span class="gp">$ </span>cfa umfile2.nc
+<span class="gp">$</span> cfa -o umfile2.nc umfile.pp
+<span class="gp">$</span> cfa umfile2.nc
 <span class="go">CF Field: surface_air_pressure(time(3), latitude(73), longitude(96)) Pa</span>
 </pre></div>
 </div>
@@ -9027,16 +9031,16 @@ context manager:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care must be taken when combining a construct with a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
 which both of these objects allow themselves to be
 combined with other types:</p>
 <ul class="simple">
 <li><p>If the construct is on the left hand side (LHS) of the
 operation then, as expected, a construct is returned
 whose data is the combination of the original
-construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</p></li>
-<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on the
 LHS) is returned, containing the same data as in the
 first case.</p></li>
@@ -9626,8 +9630,8 @@ passes through the axis; and ii) does not update the cell
 method constructs.</p>
 </div>
 </section>
-<section id="derivatives">
-<h3><a class="toc-backref" href="#id496">Derivatives</a><a class="headerlink" href="#derivatives" title="Permalink to this headline">¶</a></h3>
+<section id="general-first-order-derivative">
+<h3><a class="toc-backref" href="#id496">General first order derivative</a><a class="headerlink" href="#general-first-order-derivative" title="Permalink to this headline">¶</a></h3>
 <p>The derivative along a dimension of the field construct’s data can be
 calculated as a centred finite difference with the <a class="reference internal" href="method/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>
 method. If the axis is <a class="reference internal" href="#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a> then the
@@ -9645,8 +9649,118 @@ one-sided finite difference at the boundary.</em></span><a class="headerlink" hr
 </div>
 </div>
 </section>
+<section id="gradient-vector">
+<h3><a class="toc-backref" href="#id497">Gradient vector</a><a class="headerlink" href="#gradient-vector" title="Permalink to this headline">¶</a></h3>
+<p>The horizontal gradient vector of a scalar field may calculated with
+the <a class="reference internal" href="method/cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grad_xy</span></code></a> method when the field has dimension coordinates
+of X and Y, in either Cartesian (e.g. plane projection) or spherical
+polar coordinate systems.</p>
+<p>The horizontal gradient vector in Cartesian coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla f(x, y) = \left(
+\frac{\partial f}{\partial x},
+\frac{\partial f}{\partial y}
+\right)\]</div>
+<p>The horizontal gradient vector in spherical polar coordinates is given
+by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla f(\theta, \phi) = \left(
+\frac{1}{r}
+\frac{\partial f}{\partial \theta},
+\frac{1}{r \sin\theta}
+\frac{\partial f}{\partial \phi}
+\right)\]</div>
+<p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
+polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
+azimuthal angle.</p>
+<p>See <a class="reference internal" href="method/cf.Field.grad_xy.html#cf.Field.grad_xy" title="cf.Field.grad_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.grad_xy</span></code></a> for details and examples.</p>
+</section>
+<section id="laplacian">
+<h3><a class="toc-backref" href="#id498">Laplacian</a><a class="headerlink" href="#laplacian" title="Permalink to this headline">¶</a></h3>
+<p>The horizontal Laplacian of a scalar field may be calculated with the
+<a class="reference internal" href="method/cf.Field.laplacian_xy.html#cf.Field.laplacian_xy" title="cf.Field.laplacian_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">laplacian_xy</span></code></a> method when the field has dimension coordinates
+of X and Y, in either Cartesian (e.g. plane projection) or spherical
+polar coordinate systems.</p>
+<p>The horizontal Laplacian in Cartesian coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla^2 f(x, y) = \frac{\partial^2 f}{\partial x^2}
++
+\frac{\partial^2 f}{\partial y^2}\]</div>
+<p>The horizontal Laplacian in spherical polar coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla^2 f(\theta, \phi) =
+\frac{1}{r^2 \sin\theta}
+\frac{\partial}{\partial \theta}
+\left(
+\sin\theta
+\frac{\partial f}{\partial \theta}
+\right)
++
+\frac{1}{r^2 \sin^2\theta}
+\frac{\partial^2 f}{\partial \phi^2}\]</div>
+<p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
+polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
+azimuthal angle.</p>
+<p>See <a class="reference internal" href="method/cf.Field.laplacian_xy.html#cf.Field.laplacian_xy" title="cf.Field.laplacian_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.laplacian_xy</span></code></a> for details and examples.</p>
+</section>
+<section id="divergence">
+<h3><a class="toc-backref" href="#id499">Divergence</a><a class="headerlink" href="#divergence" title="Permalink to this headline">¶</a></h3>
+<p>The horizontal divergence may be calculated with the <a class="reference internal" href="function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a>
+function from orthogonal vector component fields which have dimension
+coordinates of X and Y, in either Cartesian (e.g. plane projection) or
+spherical polar coordinate systems.</p>
+<p>The horizontal divergence of the <span class="math notranslate nohighlight">\((f_x, f_y)\)</span> vector in
+Cartesian coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla \cdot (f_{x}(x,y), f_{y}(x,y)) =
+\frac{\partial f_x}{\partial x}
++
+\frac{\partial f_y}{\partial y}\]</div>
+<p>The horizontal divergence of the <span class="math notranslate nohighlight">\((f_\theta, f_\phi)\)</span> vector in
+spherical polar coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla \cdot (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+\frac{1}{r \sin\theta}
+\left(
+\frac{\partial (f_\theta \sin\theta)}{\partial \theta}
++
+\frac{\partial f_\phi}{\partial \phi}
+\right)\]</div>
+<p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
+polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
+azimuthal angle.</p>
+<p>See <a class="reference internal" href="function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a> for details and examples.</p>
+</section>
+<section id="curl">
+<h3><a class="toc-backref" href="#id500">Curl</a><a class="headerlink" href="#curl" title="Permalink to this headline">¶</a></h3>
+<p>The horizontal curl may be calculated with the <a class="reference internal" href="function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> function
+from orthogonal vector component fields which have dimension
+coordinates of X and Y, in either Cartesian (e.g. plane projection) or
+spherical polar coordinate systems.</p>
+<p>The horizontal curl of the <span class="math notranslate nohighlight">\((f_x, f_y)\)</span> vector in Cartesian
+coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla \times (f_{x}(x,y), f_{y}(x,y)) =
+\frac{\partial f_y}{\partial x}
+-
+\frac{\partial f_x}{\partial y}\]</div>
+<p>The horizontal curl of the <span class="math notranslate nohighlight">\((f_\theta, f_\phi)\)</span> vector in
+spherical polar coordinates is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla \times (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+\frac{1}{r \sin\theta}
+\left(
+\frac{\partial (f_\phi \sin\theta)}{\partial \theta}
+-
+\frac{\partial f_\theta}{\partial \phi}
+\right)\]</div>
+<p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is the
+polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span> is the
+azimuthal angle.</p>
+<p>See <a class="reference internal" href="function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a> for details and examples.</p>
+</section>
 <section id="relative-vorticity">
-<h3><a class="toc-backref" href="#id497">Relative vorticity</a><a class="headerlink" href="#relative-vorticity" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id501">Relative vorticity</a><a class="headerlink" href="#relative-vorticity" title="Permalink to this headline">¶</a></h3>
 <p>The relative vorticity of the wind may be calculated on a global or
 limited area domain, and in Cartesian or spherical polar coordinate
 systems.</p>
@@ -9710,7 +9824,7 @@ derivative wraps around by default.</p>
 </section>
 </section>
 <section id="controlling-output-messages">
-<span id="id110"></span><h2><a class="toc-backref" href="#id498"><strong>Controlling output messages</strong></a><a class="headerlink" href="#controlling-output-messages" title="Permalink to this headline">¶</a></h2>
+<span id="id110"></span><h2><a class="toc-backref" href="#id502"><strong>Controlling output messages</strong></a><a class="headerlink" href="#controlling-output-messages" title="Permalink to this headline">¶</a></h2>
 <p>cf will produce messages upon the execution of operations, to
 provide feedback about:</p>
 <ul class="simple">
@@ -9738,7 +9852,7 @@ global setting for the duration of the function call).</p></li>
 <p>Both possibilities use a consistent level-based cut-off system, as
 detailed below.</p>
 <section id="logging">
-<span id="id111"></span><h3><a class="toc-backref" href="#id499">Logging</a><a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h3>
+<span id="id111"></span><h3><a class="toc-backref" href="#id503">Logging</a><a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h3>
 <p>All messages from cf, excluding exceptions which are always raised
 in error cases, are incorporated into a logging system which assigns
 to each a level based on the relative seriousness and/or
@@ -9820,7 +9934,7 @@ the log level` to a higher verbosity level such as <code class="docutils literal
 insight into the internal workings of cf calls.</p>
 </section>
 <section id="function-verbosity">
-<span id="id112"></span><h3><a class="toc-backref" href="#id500">Function verbosity</a><a class="headerlink" href="#function-verbosity" title="Permalink to this headline">¶</a></h3>
+<span id="id112"></span><h3><a class="toc-backref" href="#id504">Function verbosity</a><a class="headerlink" href="#function-verbosity" title="Permalink to this headline">¶</a></h3>
 <p>Functions and methods that involve a particularly high number of steps
 or especially complex processing, for example the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> and
 <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> functions, accept a keyword argument <em>verbose</em>. This be
@@ -9866,7 +9980,7 @@ format can not reliably be detected automatically.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-10-08.
+      &copy;2022, NCAS | Page built on 2022-01-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

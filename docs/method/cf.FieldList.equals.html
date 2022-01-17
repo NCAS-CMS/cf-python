@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.FieldList.equals<a class="headerlink" href="#cf-fieldlist-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.equals">
-<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/decorators.py#L41-L65"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/decorators.py#L41-L65"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two lists are the same.</p>
 <p>Equality requires the two lists to have the same length and
 for the construct elements to be equal pair-wise, using their
@@ -220,7 +220,11 @@ well as the arrays in their uncompressed forms. By
 default only the the arrays in their uncompressed
 forms are compared.</p>
 </dd>
-<dt>unordered: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>TODO</p>
+<dt>unordered: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then test that the lists contain equal
+constructs in any relative order. By default, construct
+order matters for the list comparison, such that each
+construct is tested for equality with the construct
+at the corresponding position in the list, pair-wise.</p>
 </dd>
 </dl>
 </dd>
@@ -254,7 +258,7 @@ forms are compared.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-10-08.
+      &copy;2022, NCAS | Page built on 2022-01-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

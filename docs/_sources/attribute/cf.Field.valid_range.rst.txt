@@ -1,4 +1,4 @@
-﻿cf.Field.valid_range
+cf.Field.valid_range
 ====================
 
 .. currentmodule:: cf

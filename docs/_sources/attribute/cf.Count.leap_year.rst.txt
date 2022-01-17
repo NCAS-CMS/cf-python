@@ -1,4 +1,4 @@
-﻿cf.Count.leap_year
+cf.Count.leap_year
 ==================
 
 .. currentmodule:: cf

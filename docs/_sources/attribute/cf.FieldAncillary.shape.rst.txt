@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.shape
+cf.FieldAncillary.shape
 =======================
 
 .. currentmodule:: cf

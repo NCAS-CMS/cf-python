@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.comment
+cf.DomainAncillary.comment
 ==========================
 
 .. currentmodule:: cf

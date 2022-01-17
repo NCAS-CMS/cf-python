@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.TimeDuration.days_in_month
 =============================

@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
 
 
 
@@ -127,8 +127,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.FieldList.concatenate<a class="headerlink" href="#cf-fieldlist-concatenate" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.concatenate">
-<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">concatenate</code><span class="sig-paren">(</span><em class="sig-param">axis=0</em>, <em class="sig-param">_preserve=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/fieldlist.py#L28-L50"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.concatenate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Join the sequence of fields together.</p>
+<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">concatenate</code><span class="sig-paren">(</span><em class="sig-param">axis=0</em>, <em class="sig-param">_preserve=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/fieldlist.py#L28-L53"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.concatenate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Join the sequence of fields within the field list together.</p>
 <p>This is different to <a class="reference internal" href="../function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> because it does not
 account for all metadata. For example, it assumes that the
 axis order is the same in each field.</p>
@@ -142,13 +142,16 @@ axis order is the same in each field.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>TODO</p>
+<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The axis along which the arrays will be joined. The
+default is 0. Note that scalar arrays are treated as
+if they were one dimensional.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>TODO</p>
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>The field generated from the concatenation of all of
+the fields contained in the input field list.</p>
 </dd>
 </dl>
 </dd>
@@ -165,7 +168,7 @@ axis order is the same in each field.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-10-08.
+      &copy;2022, NCAS | Page built on 2022-01-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

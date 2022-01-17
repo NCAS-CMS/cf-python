@@ -1,4 +1,4 @@
-﻿cf.List.isscalar
+cf.List.isscalar
 ================
 
 .. currentmodule:: cf

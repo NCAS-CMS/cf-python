@@ -1,4 +1,4 @@
-﻿cf.Index.dtype
+cf.Index.dtype
 ==============
 
 .. currentmodule:: cf

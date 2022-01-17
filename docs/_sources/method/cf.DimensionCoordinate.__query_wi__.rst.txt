@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.DimensionCoordinate.__query_wi__
 ===================================

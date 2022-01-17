@@ -1,4 +1,4 @@
-﻿cf.DimensionCoordinate.add_offset
+cf.DimensionCoordinate.add_offset
 =================================
 
 .. currentmodule:: cf

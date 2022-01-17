@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.id
+cf.DomainAncillary.id
 =====================
 
 .. currentmodule:: cf

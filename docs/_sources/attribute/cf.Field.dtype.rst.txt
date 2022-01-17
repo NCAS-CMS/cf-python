@@ -1,4 +1,4 @@
-﻿cf.Field.dtype
+cf.Field.dtype
 ==============
 
 .. currentmodule:: cf

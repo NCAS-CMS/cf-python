@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.AuxiliaryCoordinate.mid_range
 ================================

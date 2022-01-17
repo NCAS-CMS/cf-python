@@ -1,4 +1,4 @@
-﻿cf.Data.inspect
+cf.Data.inspect
 ===============
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.minute
+cf.FieldAncillary.minute
 ========================
 
 .. currentmodule:: cf

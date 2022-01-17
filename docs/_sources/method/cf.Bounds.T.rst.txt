@@ -1,4 +1,4 @@
-﻿cf.Bounds.T
+cf.Bounds.T
 ===========
 
 .. currentmodule:: cf

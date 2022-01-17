@@ -1,4 +1,4 @@
-﻿cf.DomainAncillary.year
+cf.DomainAncillary.year
 =======================
 
 .. currentmodule:: cf

@@ -1,4 +1,4 @@
-﻿cf.FieldAncillary.history
+cf.FieldAncillary.history
 =========================
 
 .. currentmodule:: cf

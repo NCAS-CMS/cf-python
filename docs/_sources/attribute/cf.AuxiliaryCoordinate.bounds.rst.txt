@@ -1,4 +1,4 @@
-﻿cf.AuxiliaryCoordinate.bounds
+cf.AuxiliaryCoordinate.bounds
 =============================
 
 .. currentmodule:: cf

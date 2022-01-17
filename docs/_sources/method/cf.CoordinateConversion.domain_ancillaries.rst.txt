@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.CoordinateConversion.domain_ancillaries
 ==========================================

@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.FieldList.select_by_naxes<a class="headerlink" href="#cf-fieldlist-select-by-naxes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.select_by_naxes">
-<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">select_by_naxes</code><span class="sig-paren">(</span><em class="sig-param">*naxes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/fieldlist.py#L52-L92"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_naxes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">FieldList.</code><code class="sig-name descname">select_by_naxes</code><span class="sig-paren">(</span><em class="sig-param">*naxes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/fieldlist.py#L55-L107"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_naxes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select field constructs by property.</p>
 <p>To find the inverse of the selection, use a list comprehension
 with <a class="reference internal" href="cf.Field.match_by_naxes.html#cf.Field.match_by_naxes" title="cf.Field.match_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_naxes</span></code></a> method of the construct
@@ -150,7 +150,7 @@ have 3-dimensional data:</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>naxes: optional</dt><dd><p>Select field constructs whose data spans a particular
+<dt>naxes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Select field constructs whose data spans a particular
 number of domain axis constructs.</p>
 <p>A number of domain axis constructs is given by an
 <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
@@ -167,7 +167,21 @@ are selected.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<p>TODO</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;file.nc&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">[&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">select_by_naxes</span><span class="p">()</span>
+<span class="go">[&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
+<span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">select_by_naxes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">select_by_naxes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">select_by_naxes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -180,7 +194,7 @@ are selected.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-10-08.
+      &copy;2022, NCAS | Page built on 2022-01-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

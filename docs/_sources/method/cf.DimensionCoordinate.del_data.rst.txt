@@ -1,4 +1,4 @@
-﻿:orphan:
+:orphan:
 
 cf.DimensionCoordinate.del_data
 ===============================
