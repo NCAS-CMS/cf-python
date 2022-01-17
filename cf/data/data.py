@@ -1244,6 +1244,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # assigned missing values.
         self._reset_mask_hardness()
 
+        # Remove a source array, on the grounds that we can't
+        # guarantee its consistency with the updated dask array.
+        self._del_Array(None)
+
         return
 
     # ----------------------------------------------------------------

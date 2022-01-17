@@ -1,7 +1,9 @@
 import cfdm
 
+from .mixin import ArrayMixin
 
-class GatheredArray(cfdm.GatheredArray):
+
+class GatheredArray(ArrayMixin, cfdm.GatheredArray):
     """An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array
@@ -17,5 +19,12 @@ class GatheredArray(cfdm.GatheredArray):
 
     """
 
-    def __array_function__(self, func, types, args, kwargs):
-        return NotImplemented
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        .. versionadded:: 3.0.0
+
+        """
+        return super().__repr__().replace("<", "<CF ", 1)

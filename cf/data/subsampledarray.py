@@ -1,7 +1,9 @@
 import cfdm
 
+from .mixin import ArrayMixin
 
-class SubsampledArray(cfdm.SubsampledArray):
+
+class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
     """An underlying subsampled array.
 
     For some structured coordinate data (e.g. coordinates describing
@@ -67,5 +69,12 @@ class SubsampledArray(cfdm.SubsampledArray):
 
     """
 
-    def __array_function__(self, func, types, args, kwargs):
-        return NotImplemented
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        .. versionadded:: 3.0.0
+
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
