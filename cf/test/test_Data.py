@@ -188,11 +188,10 @@ class DataTest(unittest.TestCase):
                 )
             )
 
-        # Test NaN and inf values
+        # Test NaN values
         d3 = cf.Data(a.astype(np.float64), "m")
         h = cf.Data(np.full(shape, np.nan), "m")
-        # TODODASK: is this OK given that NaN in NumPy aren't equal to e/o
-        # or should this be assertTrue to expect equality behaviour?
+        # TODODASK: implement and test equal_nan kwarg to configure NaN eq.
         self.assertFalse(h.equals(h.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
@@ -203,6 +202,8 @@ class DataTest(unittest.TestCase):
                     for log_msg in catch.output
                 )
             )
+
+        # Test inf values
         i = cf.Data(np.full(shape, np.inf), "m")
         self.assertTrue(i.equals(i.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:

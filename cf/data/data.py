@@ -9117,13 +9117,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             ignore_type=ignore_type,
             _check_values=False,
         ):
-            print(
-                "LAMA->DASK WARNING: False result from cfdm Data.equals "
-                f"short-circuiting cf Data.equals on {self!r} and {other!r} "
-                "BUT at present this may actually be a False "
-                "negative (i.e. result may actually be True) since logic "
-                "there has not yet been made consistent with cf Data.equals."
-            )  # TODODASK
+            # TODODASK: consistency with cfdm Data.equals needs to be verified
+            # possibly via a follow-up PR to cfdm to implement any changes.
             return False
 
         # ------------------------------------------------------------
