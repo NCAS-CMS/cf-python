@@ -30,6 +30,45 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     reference, and domain ancillary constructs; as well as properties
     to describe the domain.
 
+    **NetCDF interface**
+
+    {{netCDF variable}}
+
+    {{netCDF global attributes}}
+
+    {{netCDF group attributes}}
+
+    {{netCDF geometry group}}
+
+    Some components exist within multiple constructs, but when written
+    to a netCDF dataset the netCDF names associated with such
+    components will be arbitrarily taken from one of them. The netCDF
+    variable, dimension and sample dimension names and group
+    structures for such components may be set or removed consistently
+    across all such components with the `nc_del_component_variable`,
+    `nc_set_component_variable`, `nc_set_component_variable_groups`,
+    `nc_clear_component_variable_groups`,
+    `nc_del_component_dimension`, `nc_set_component_dimension`,
+    `nc_set_component_dimension_groups`,
+    `nc_clear_component_dimension_groups`,
+    `nc_del_component_sample_dimension`,
+    `nc_set_component_sample_dimension`,
+    `nc_set_component_sample_dimension_groups`,
+    `nc_clear_component_sample_dimension_groups` methods.
+
+    A domain construct of the CF data model.
+
+    The domain represents a set of discrete "locations" in what
+    generally would be a multi-dimensional space, either in the real
+    world or in a model's simulated world. The data array elements of
+    a field construct correspond to individual location of a domain.
+
+    The domain construct is defined collectively by the following
+    constructs of the CF data model: domain axis, dimension
+    coordinate, auxiliary coordinate, cell measure, coordinate
+    reference, and domain ancillary constructs; as well as properties
+    to describe the domain.
+
     """
 
     def __new__(cls, *args, **kwargs):

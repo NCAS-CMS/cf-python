@@ -24,6 +24,7 @@ Version |release| for version |version| of the CF conventions.
 * **Construct classes**
   
   * :ref:`cf.Field <cf-Field>`
+  * :ref:`cf.Domain <cf-Domain>`
   * :ref:`cf.AuxiliaryCoordinate <cf-AuxiliaryCoordinate>`
   * :ref:`cf.CellMeasure <cf-CellMeasure>`
   * :ref:`cf.CellMethod <cf-CellMethod>`
