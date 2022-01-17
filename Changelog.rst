@@ -1,7 +1,7 @@
 version 3.12.0
 --------------
 
-**2022-01-??**
+**2022-01-18**
 
 * New method: `cf.Field.grad_xy`
   (https://github.com/NCAS-CMS/cf-python/issues/292)
@@ -11,12 +11,17 @@ version 3.12.0
   (https://github.com/NCAS-CMS/cf-python/issues/292)
 * New function: `cf.curl_xy`
   (https://github.com/NCAS-CMS/cf-python/issues/292)
+* Allow element-wise comparisons with `None` on `cf.Data` and
+  `cf.Field` objects (https://github.com/NCAS-CMS/cf-python/issues/281)
+* Add missing closing parenthesis in `cf.Query` string representations
+  (https://github.com/NCAS-CMS/cf-python/issues/279)
 * Fix `cf.aggregate` failures when using the ``dimension`` keyword
   parameter (https://github.com/NCAS-CMS/cf-python/issues/283)
 * Fix bug that raised error with subtraction of a `cf.TimeDuration`
   (https://github.com/NCAS-CMS/cf-python/issues/287)
 * Fix bug in `cf.Field.derivative` when wrapping with periodic
   coordinates (https://github.com/NCAS-CMS/cf-python/issues/289)
+* Changed dependency: ``1.9.0.1<=cfdm<1.9.1.0``
 
 ----
 
