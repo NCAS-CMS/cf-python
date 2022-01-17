@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf classes &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cf.Field" href="class/cf.Field.html" />
+    <link rel="prev" title="cf.RELAXED_IDENTITIES" href="function/cf.RELAXED_IDENTITIES.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.12.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="api_reference.html"><strong>API reference</strong></a><ul>
+      <li>Previous: <a href="function/cf.RELAXED_IDENTITIES.html" title="previous chapter">cf.RELAXED_IDENTITIES</a></li>
+      <li>Next: <a href="class/cf.Field.html" title="next chapter">cf.Field</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-classes">
+<span id="class"></span><h1><strong>cf classes</strong><a class="headerlink" href="#cf-classes" title="Permalink to this headline">¶</a></h1>
+<section id="field-construct-class">
+<h2>Field construct class<a class="headerlink" href="#field-construct-class" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a></p></td>
+<td><p>A field construct of the CF data model.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="field-list-class">
+<h2>Field list class<a class="headerlink" href="#field-list-class" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a></p></td>
+<td><p>An ordered sequence of field constructs.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="metadata-component-classes">
+<h2>Metadata component classes<a class="headerlink" href="#metadata-component-classes" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.AuxiliaryCoordinate</span></code></a></p></td>
+<td><p>An auxiliary coordinate construct of the CF data model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMeasure</span></code></a></p></td>
+<td><p>A cell measure construct of the CF data model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.CellMethod.html#cf.CellMethod" title="cf.CellMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMethod</span></code></a></p></td>
+<td><p>A cell method construct of the CF data model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateReference</span></code></a></p></td>
+<td><p>A coordinate reference construct of the CF data model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DimensionCoordinate</span></code></a></p></td>
+<td><p>A dimension coordinate construct of the CF data model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAncillary</span></code></a></p></td>
+<td><p>A domain ancillary construct of the CF data model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a></p></td>
+<td><p>A domain axis construct of the CF data model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.FieldAncillary.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a></p></td>
+<td><p>A field ancillary construct of the CF data model.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="constructs-class">
+<h2>Constructs class<a class="headerlink" href="#constructs-class" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a></p></td>
+<td><p>A container for metadata constructs.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="coordinate-component-classes">
+<h2>Coordinate component classes<a class="headerlink" href="#coordinate-component-classes" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a></p></td>
+<td><p>A cell bounds component of a coordinate or domain ancillary construct of the CF data model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.CoordinateConversion.html#cf.CoordinateConversion" title="cf.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateConversion</span></code></a></p></td>
+<td><p>A coordinate conversion component of a coordinate reference construct of the CF data model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a></p></td>
+<td><p>A datum component of a coordinate reference construct of the CF data model.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="domain-class">
+<h2>Domain class<a class="headerlink" href="#domain-class" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain</span></code></p></td>
+<td><p>A domain construct of the CF data model.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-classes">
+<h2>Data classes<a class="headerlink" href="#data-classes" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a></p></td>
+<td><p>An N-dimensional data array with units and masked values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.NetCDFArray.html#cf.NetCDFArray" title="cf.NetCDFArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.NetCDFArray</span></code></a></p></td>
+<td><p>A sub-array stored in a netCDF file.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous-classes">
+<h2>Miscellaneous classes<a class="headerlink" href="#miscellaneous-classes" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Flags.html#cf.Flags" title="cf.Flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Flags</span></code></a></p></td>
+<td><p>Self-describing CF flag values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a></p></td>
+<td><p>Encapsulate a condition for subsequent evaluation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a></p></td>
+<td><p>A duration of time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a></p></td>
+<td><p>Store, combine and compare physical units and convert numeric values to different units.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RegridOperator</span></code></a></p></td>
+<td><p>A regridding operator between two fields.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constant</span></code></a></p></td>
+<td><p>A container for a constant with context manager support.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Configuration.html#cf.Configuration" title="cf.Configuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Configuration</span></code></a></p></td>
+<td><p>Dictionary-like container for the global constants.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-compression-classes">
+<h2>Data compression classes<a class="headerlink" href="#data-compression-classes" title="Permalink to this headline">¶</a></h2>
+<p>Classes that support the creation and storage of compressed arrays.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a></p></td>
+<td><p>A count variable required to uncompress a ragged array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></p></td>
+<td><p>An index variable required to uncompress a ragged array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a></p></td>
+<td><p>A list variable required to uncompress a gathered array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.GatheredArray.html#cf.GatheredArray" title="cf.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.GatheredArray</span></code></a></p></td>
+<td><p>An underlying gathered array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.RaggedContiguousArray.html#cf.RaggedContiguousArray" title="cf.RaggedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RaggedContiguousArray</span></code></a></p></td>
+<td><p>An underlying contiguous ragged array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="class/cf.RaggedIndexedArray.html#cf.RaggedIndexedArray" title="cf.RaggedIndexedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RaggedIndexedArray</span></code></a></p></td>
+<td><p>An underlying indexed ragged array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="class/cf.RaggedIndexedContiguousArray.html#cf.RaggedIndexedContiguousArray" title="cf.RaggedIndexedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RaggedIndexedContiguousArray</span></code></a></p></td>
+<td><p>An underlying indexed contiguous ragged array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-01-17.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

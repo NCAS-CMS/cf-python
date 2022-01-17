@@ -1,0 +1,1526 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.AuxiliaryCoordinate &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.AuxiliaryCoordinate.direction" href="../method/cf.AuxiliaryCoordinate.direction.html" />
+    <link rel="prev" title="cf.FieldList.set_equals" href="../method/cf.FieldList.set_equals.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.FieldList.set_equals.html" title="previous chapter">cf.FieldList.set_equals</a></li>
+      <li>Next: <a href="../method/cf.AuxiliaryCoordinate.direction.html" title="next chapter">cf.AuxiliaryCoordinate.direction</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-auxiliarycoordinate">
+<span id="id1"></span><h1>cf.AuxiliaryCoordinate<a class="headerlink" href="#cf-auxiliarycoordinate" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.AuxiliaryCoordinate">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/auxiliarycoordinate.py#L6-L57"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.auxiliarycoordinate.AuxiliaryCoordinate</span></code></p>
+<p>An auxiliary coordinate construct of the CF data model.</p>
+<p>An auxiliary coordinate construct provides information which
+locate the cells of the domain and which depend on a subset of the
+domain axis constructs. Auxiliary coordinate constructs have to be
+used, instead of dimension coordinate constructs, when a single
+domain axis requires more then one set of coordinate values, when
+coordinate values are not numeric, strictly monotonic, or contain
+missing values, or when they vary along more than one domain axis
+construct simultaneously. CF-netCDF auxiliary coordinate variables
+and non-numeric scalar coordinate variables correspond to
+auxiliary coordinate constructs.</p>
+<p>The auxiliary coordinate construct consists of a data array of the
+coordinate values which spans a subset of the domain axis
+constructs, an optional array of cell bounds recording the extents
+of each cell (stored in a <a class="reference internal" href="cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> object), and properties to
+describe the coordinates. An array of cell bounds spans the same
+domain axes as its coordinate array, with the addition of an extra
+dimension whose size is that of the number of vertices of each
+cell. This extra dimension does not correspond to a domain axis
+construct since it does not relate to an independent axis of the
+domain. Note that, for climatological time axes, the bounds are
+interpreted in a special way indicated by the cell method
+constructs.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name may be accessed with the
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable.html#cf.AuxiliaryCoordinate.nc_set_variable" title="cf.AuxiliaryCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_get_variable.html#cf.AuxiliaryCoordinate.nc_get_variable" title="cf.AuxiliaryCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_del_variable.html#cf.AuxiliaryCoordinate.nc_del_variable" title="cf.AuxiliaryCoordinate.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_has_variable.html#cf.AuxiliaryCoordinate.nc_has_variable" title="cf.AuxiliaryCoordinate.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The netCDF variable group structure may be accessed with the
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable.html#cf.AuxiliaryCoordinate.nc_set_variable" title="cf.AuxiliaryCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_get_variable.html#cf.AuxiliaryCoordinate.nc_get_variable" title="cf.AuxiliaryCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_variable_groups.html#cf.AuxiliaryCoordinate.nc_variable_groups" title="cf.AuxiliaryCoordinate.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_clear_variable_groups.html#cf.AuxiliaryCoordinate.nc_clear_variable_groups" title="cf.AuxiliaryCoordinate.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable_groups.html#cf.AuxiliaryCoordinate.nc_set_variable_groups" title="cf.AuxiliaryCoordinate.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
+methods.</p>
+<p>The netCDF variable group structure may be accessed with the
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable.html#cf.AuxiliaryCoordinate.nc_set_variable" title="cf.AuxiliaryCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_get_variable.html#cf.AuxiliaryCoordinate.nc_get_variable" title="cf.AuxiliaryCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_variable_groups.html#cf.AuxiliaryCoordinate.nc_variable_groups" title="cf.AuxiliaryCoordinate.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_clear_variable_groups.html#cf.AuxiliaryCoordinate.nc_clear_variable_groups" title="cf.AuxiliaryCoordinate.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable_groups.html#cf.AuxiliaryCoordinate.nc_set_variable_groups" title="cf.AuxiliaryCoordinate.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a> methods.</p>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
+<div><p>Set descriptive properties. The dictionary keys are
+property names, with corresponding values. Ignored if
+the <em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_properties.html#cf.AuxiliaryCoordinate.set_properties" title="cf.AuxiliaryCoordinate.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_property.html#cf.AuxiliaryCoordinate.set_property" title="cf.AuxiliaryCoordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+</div></blockquote>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'latitude'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>data: data_like, optional</dt><dd><p>Set the data. Ignored if the <em>source</em> parameter is
+set.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
+<p>The data also may be set after initialisation with the
+<a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_data.html#cf.AuxiliaryCoordinate.set_data" title="cf.AuxiliaryCoordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>bounds: <a class="reference internal" href="cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>, optional</dt><dd><p>Set the bounds array. Ignored if the <em>source</em>
+parameter is set.</p>
+<p>The bounds array may also be set after initialisation
+with the <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_bounds.html#cf.AuxiliaryCoordinate.set_bounds" title="cf.AuxiliaryCoordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
+</dd>
+<dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the geometry type. Ignored if the <em>source</em>
+parameter is set.</p>
+<p>The geometry type may also be set after initialisation
+with the <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_geometry.html#cf.AuxiliaryCoordinate.set_geometry" title="cf.AuxiliaryCoordinate.set_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></a> method.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">geometry='polygon'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>interior_ring: <code class="xref py py-obj docutils literal notranslate"><span class="pre">InteriorRing</span></code>, optional</dt><dd><p>Set the interior ring variable. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>The interior ring variable may also be set after
+initialisation with the <a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_interior_ring.html#cf.AuxiliaryCoordinate.set_interior_ring" title="cf.AuxiliaryCoordinate.set_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interior_ring</span></code></a> method.</p>
+</dd>
+<dt>source: optional</dt><dd><p>Initialise the properties, data and bounds from those of
+<em>source</em>.</p>
+<p>Note that if <em>source</em> is a <a class="reference internal" href="#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.AuxiliaryCoordinate(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.direction.html#cf.AuxiliaryCoordinate.direction" title="cf.AuxiliaryCoordinate.direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">direction</span></code></a></p></td>
+<td><p>Return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, indicating that it is not specified whether the values are increasing or decreasing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.dump.html#cf.AuxiliaryCoordinate.dump" title="cf.AuxiliaryCoordinate.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description of the auxiliary coordinate construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.identity.html#cf.AuxiliaryCoordinate.identity" title="cf.AuxiliaryCoordinate.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
+<td><p>Return the canonical identity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.identities.html#cf.AuxiliaryCoordinate.identities" title="cf.AuxiliaryCoordinate.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p></td>
+<td><p>Return all possible identities.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.construct_type.html#cf.AuxiliaryCoordinate.construct_type" title="cf.AuxiliaryCoordinate.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<td><p>Return a description of the construct type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.id.html#cf.AuxiliaryCoordinate.id" title="cf.AuxiliaryCoordinate.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></p></td>
+<td><p>An identity for the AuxiliaryCoordinate object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.ctype.html#cf.AuxiliaryCoordinate.ctype" title="cf.AuxiliaryCoordinate.ctype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctype</span></code></a></p></td>
+<td><p>The CF coordinate type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.T.html#cf.AuxiliaryCoordinate.T" title="cf.AuxiliaryCoordinate.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
+<td><p>True if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.X.html#cf.AuxiliaryCoordinate.X" title="cf.AuxiliaryCoordinate.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
+<td><p>True if and only if the data are coordinates for a CF ‘X’ axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.Y.html#cf.AuxiliaryCoordinate.Y" title="cf.AuxiliaryCoordinate.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></p></td>
+<td><p>True if and only if the data are coordinates for a CF ‘Y’ axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.Z.html#cf.AuxiliaryCoordinate.Z" title="cf.AuxiliaryCoordinate.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></p></td>
+<td><p>True if and only if the data are coordinates for a CF ‘Z’ axis.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bounds">
+<h2>Bounds<a class="headerlink" href="#bounds" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.del_bounds.html#cf.AuxiliaryCoordinate.del_bounds" title="cf.AuxiliaryCoordinate.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></p></td>
+<td><p>Remove the bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_bounds.html#cf.AuxiliaryCoordinate.get_bounds" title="cf.AuxiliaryCoordinate.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></p></td>
+<td><p>Return the bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.has_bounds.html#cf.AuxiliaryCoordinate.has_bounds" title="cf.AuxiliaryCoordinate.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not there are bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_bounds.html#cf.AuxiliaryCoordinate.set_bounds" title="cf.AuxiliaryCoordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></p></td>
+<td><p>Set the bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_bounds_data.html#cf.AuxiliaryCoordinate.get_bounds_data" title="cf.AuxiliaryCoordinate.get_bounds_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds_data</span></code></a></p></td>
+<td><p>Return the bounds data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.contiguous.html#cf.AuxiliaryCoordinate.contiguous" title="cf.AuxiliaryCoordinate.contiguous"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contiguous</span></code></a></p></td>
+<td><p>Return True if a construct has contiguous cells.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.bounds.html#cf.AuxiliaryCoordinate.bounds" title="cf.AuxiliaryCoordinate.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></p></td>
+<td><p>Return the bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.cellsize.html#cf.AuxiliaryCoordinate.cellsize" title="cf.AuxiliaryCoordinate.cellsize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cellsize</span></code></a></p></td>
+<td><p>The cell sizes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.lower_bounds.html#cf.AuxiliaryCoordinate.lower_bounds" title="cf.AuxiliaryCoordinate.lower_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower_bounds</span></code></a></p></td>
+<td><p>The lower bounds of cells.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.upper_bounds.html#cf.AuxiliaryCoordinate.upper_bounds" title="cf.AuxiliaryCoordinate.upper_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_bounds</span></code></a></p></td>
+<td><p>The upper bounds of cells.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="geometries">
+<h3>Geometries<a class="headerlink" href="#geometries" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.del_geometry.html#cf.AuxiliaryCoordinate.del_geometry" title="cf.AuxiliaryCoordinate.del_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_geometry</span></code></a></p></td>
+<td><p>Remove the geometry type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_geometry.html#cf.AuxiliaryCoordinate.get_geometry" title="cf.AuxiliaryCoordinate.get_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geometry</span></code></a></p></td>
+<td><p>Return the geometry type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.has_geometry.html#cf.AuxiliaryCoordinate.has_geometry" title="cf.AuxiliaryCoordinate.has_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_geometry</span></code></a></p></td>
+<td><p>True if there is a geometry type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_geometry.html#cf.AuxiliaryCoordinate.set_geometry" title="cf.AuxiliaryCoordinate.set_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></a></p></td>
+<td><p>Set the geometry type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.del_interior_ring.html#cf.AuxiliaryCoordinate.del_interior_ring" title="cf.AuxiliaryCoordinate.del_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_interior_ring</span></code></a></p></td>
+<td><p>Remove the geometry type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_interior_ring.html#cf.AuxiliaryCoordinate.get_interior_ring" title="cf.AuxiliaryCoordinate.get_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interior_ring</span></code></a></p></td>
+<td><p>Return the interior ring variable for polygon geometries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.has_interior_ring.html#cf.AuxiliaryCoordinate.has_interior_ring" title="cf.AuxiliaryCoordinate.has_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_interior_ring</span></code></a></p></td>
+<td><p>Whether or not there is an interior ring variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_interior_ring.html#cf.AuxiliaryCoordinate.set_interior_ring" title="cf.AuxiliaryCoordinate.set_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_interior_ring</span></code></a></p></td>
+<td><p>Set the interior_ring.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.del_node_count.html#cf.AuxiliaryCoordinate.del_node_count" title="cf.AuxiliaryCoordinate.del_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_node_count</span></code></a></p></td>
+<td><p>Remove the node count variable for geometry bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_node_count.html#cf.AuxiliaryCoordinate.get_node_count" title="cf.AuxiliaryCoordinate.get_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_node_count</span></code></a></p></td>
+<td><p>Return the node count variable for geometry bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.has_node_count.html#cf.AuxiliaryCoordinate.has_node_count" title="cf.AuxiliaryCoordinate.has_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_node_count</span></code></a></p></td>
+<td><p>Whether geometry bounds have a node count variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_node_count.html#cf.AuxiliaryCoordinate.set_node_count" title="cf.AuxiliaryCoordinate.set_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_node_count</span></code></a></p></td>
+<td><p>Set the node count variable for geometry bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.del_part_node_count.html#cf.AuxiliaryCoordinate.del_part_node_count" title="cf.AuxiliaryCoordinate.del_part_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_part_node_count</span></code></a></p></td>
+<td><p>Remove the part node count variable for geometry bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_part_node_count.html#cf.AuxiliaryCoordinate.get_part_node_count" title="cf.AuxiliaryCoordinate.get_part_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_part_node_count</span></code></a></p></td>
+<td><p>Return the part node count variable for geometry bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.has_part_node_count.html#cf.AuxiliaryCoordinate.has_part_node_count" title="cf.AuxiliaryCoordinate.has_part_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_part_node_count</span></code></a></p></td>
+<td><p>Whether geometry bounds have a part node count variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_part_node_count.html#cf.AuxiliaryCoordinate.set_part_node_count" title="cf.AuxiliaryCoordinate.set_part_node_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_part_node_count</span></code></a></p></td>
+<td><p>Set the part node count variable for geometry bounds.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.interior_ring.html#cf.AuxiliaryCoordinate.interior_ring" title="cf.AuxiliaryCoordinate.interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interior_ring</span></code></a></p></td>
+<td><p>Return the interior ring variable for polygon geometries.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="climatology">
+<h3>Climatology<a class="headerlink" href="#climatology" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.del_climatology.html#cf.AuxiliaryCoordinate.del_climatology" title="cf.AuxiliaryCoordinate.del_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_climatology</span></code></a></p></td>
+<td><p>Remove the climatology setting.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_climatology.html#cf.AuxiliaryCoordinate.get_climatology" title="cf.AuxiliaryCoordinate.get_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_climatology</span></code></a></p></td>
+<td><p>Return the climatology setting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.is_climatology.html#cf.AuxiliaryCoordinate.is_climatology" title="cf.AuxiliaryCoordinate.is_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_climatology</span></code></a></p></td>
+<td><p>True if the coordinates are climatological.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_climatology.html#cf.AuxiliaryCoordinate.set_climatology" title="cf.AuxiliaryCoordinate.set_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_climatology</span></code></a></p></td>
+<td><p>Set whether or not coordinates are climatological.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="selection">
+<h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.match_by_identity.html#cf.AuxiliaryCoordinate.match_by_identity" title="cf.AuxiliaryCoordinate.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></p></td>
+<td><p>Determine whether or not a variable satisfies conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.match_by_naxes.html#cf.AuxiliaryCoordinate.match_by_naxes" title="cf.AuxiliaryCoordinate.match_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_naxes</span></code></a></p></td>
+<td><p>Whether or not the data has a given dimensionality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.match_by_ncvar.html#cf.AuxiliaryCoordinate.match_by_ncvar" title="cf.AuxiliaryCoordinate.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a></p></td>
+<td><p>Whether or not the netCDF variable name satisfies conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.match_by_property.html#cf.AuxiliaryCoordinate.match_by_property" title="cf.AuxiliaryCoordinate.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></p></td>
+<td><p>Determine whether or not a variable satisfies conditions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.match_by_units.html#cf.AuxiliaryCoordinate.match_by_units" title="cf.AuxiliaryCoordinate.match_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_units</span></code></a></p></td>
+<td><p>Whether or not the construct has given units.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.del_property.html#cf.AuxiliaryCoordinate.del_property" title="cf.AuxiliaryCoordinate.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_property.html#cf.AuxiliaryCoordinate.get_property" title="cf.AuxiliaryCoordinate.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Get a CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.has_property.html#cf.AuxiliaryCoordinate.has_property" title="cf.AuxiliaryCoordinate.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Whether a property has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_property.html#cf.AuxiliaryCoordinate.set_property" title="cf.AuxiliaryCoordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<td><p>Set a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.properties.html#cf.AuxiliaryCoordinate.properties" title="cf.AuxiliaryCoordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.clear_properties.html#cf.AuxiliaryCoordinate.clear_properties" title="cf.AuxiliaryCoordinate.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<td><p>Remove all properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_properties.html#cf.AuxiliaryCoordinate.set_properties" title="cf.AuxiliaryCoordinate.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set properties.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.add_offset.html#cf.AuxiliaryCoordinate.add_offset" title="cf.AuxiliaryCoordinate.add_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_offset</span></code></a></p></td>
+<td><p>The add_offset CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.axis.html#cf.AuxiliaryCoordinate.axis" title="cf.AuxiliaryCoordinate.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axis</span></code></a></p></td>
+<td><p>The axis CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.calendar.html#cf.AuxiliaryCoordinate.calendar" title="cf.AuxiliaryCoordinate.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a></p></td>
+<td><p>The calendar CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.comment.html#cf.AuxiliaryCoordinate.comment" title="cf.AuxiliaryCoordinate.comment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comment</span></code></a></p></td>
+<td><p>The comment CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate._FillValue.html#cf.AuxiliaryCoordinate._FillValue" title="cf.AuxiliaryCoordinate._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a></p></td>
+<td><p>The _FillValue CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.history.html#cf.AuxiliaryCoordinate.history" title="cf.AuxiliaryCoordinate.history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">history</span></code></a></p></td>
+<td><p>The history CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.leap_month.html#cf.AuxiliaryCoordinate.leap_month" title="cf.AuxiliaryCoordinate.leap_month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_month</span></code></a></p></td>
+<td><p>The leap_month CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.leap_year.html#cf.AuxiliaryCoordinate.leap_year" title="cf.AuxiliaryCoordinate.leap_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_year</span></code></a></p></td>
+<td><p>The leap_year CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.long_name.html#cf.AuxiliaryCoordinate.long_name" title="cf.AuxiliaryCoordinate.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a></p></td>
+<td><p>The long_name CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.missing_value.html#cf.AuxiliaryCoordinate.missing_value" title="cf.AuxiliaryCoordinate.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a></p></td>
+<td><p>The missing_value CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.month_lengths.html#cf.AuxiliaryCoordinate.month_lengths" title="cf.AuxiliaryCoordinate.month_lengths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month_lengths</span></code></a></p></td>
+<td><p>The month_lengths CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.positive.html#cf.AuxiliaryCoordinate.positive" title="cf.AuxiliaryCoordinate.positive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">positive</span></code></a></p></td>
+<td><p>The positive CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.scale_factor.html#cf.AuxiliaryCoordinate.scale_factor" title="cf.AuxiliaryCoordinate.scale_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_factor</span></code></a></p></td>
+<td><p>The scale_factor CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.standard_name.html#cf.AuxiliaryCoordinate.standard_name" title="cf.AuxiliaryCoordinate.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a></p></td>
+<td><p>The standard_name CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.units.html#cf.AuxiliaryCoordinate.units" title="cf.AuxiliaryCoordinate.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a></p></td>
+<td><p>The units CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.valid_max.html#cf.AuxiliaryCoordinate.valid_max" title="cf.AuxiliaryCoordinate.valid_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_max</span></code></a></p></td>
+<td><p>The valid_max CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.valid_min.html#cf.AuxiliaryCoordinate.valid_min" title="cf.AuxiliaryCoordinate.valid_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_min</span></code></a></p></td>
+<td><p>The valid_min CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.valid_range.html#cf.AuxiliaryCoordinate.valid_range" title="cf.AuxiliaryCoordinate.valid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_range</span></code></a></p></td>
+<td><p>The valid_range CF property.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="units">
+<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.override_units.html#cf.AuxiliaryCoordinate.override_units" title="cf.AuxiliaryCoordinate.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a></p></td>
+<td><p>Override the units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.override_calendar.html#cf.AuxiliaryCoordinate.override_calendar" title="cf.AuxiliaryCoordinate.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_calendar</span></code></a></p></td>
+<td><p>Override the calendar of date-time units.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.Units.html#cf.AuxiliaryCoordinate.Units" title="cf.AuxiliaryCoordinate.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object containing the units of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
+<td><p>A numpy array deep copy of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.data.html#cf.AuxiliaryCoordinate.data" title="cf.AuxiliaryCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.datetime_array.html#cf.AuxiliaryCoordinate.datetime_array" title="cf.AuxiliaryCoordinate.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.datum.html#cf.AuxiliaryCoordinate.datum" title="cf.AuxiliaryCoordinate.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a></p></td>
+<td><p>Return an element of the data array as a standard Python scalar.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.dtype.html#cf.AuxiliaryCoordinate.dtype" title="cf.AuxiliaryCoordinate.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.isscalar.html#cf.AuxiliaryCoordinate.isscalar" title="cf.AuxiliaryCoordinate.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
+<td><p>True if the data array is scalar.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.ndim.html#cf.AuxiliaryCoordinate.ndim" title="cf.AuxiliaryCoordinate.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>The number of dimensions in the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.shape.html#cf.AuxiliaryCoordinate.shape" title="cf.AuxiliaryCoordinate.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>A tuple of the data array’s dimension sizes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.size.html#cf.AuxiliaryCoordinate.size" title="cf.AuxiliaryCoordinate.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>The number of elements in the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.varray.html#cf.AuxiliaryCoordinate.varray" title="cf.AuxiliaryCoordinate.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p></td>
+<td><p>A numpy array view of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__getitem__.html#cf.AuxiliaryCoordinate.__getitem__" title="cf.AuxiliaryCoordinate.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Return a subspace of the field construct defined by indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.del_data.html#cf.AuxiliaryCoordinate.del_data" title="cf.AuxiliaryCoordinate.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<td><p>Remove the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_data.html#cf.AuxiliaryCoordinate.get_data" title="cf.AuxiliaryCoordinate.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<td><p>Return the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.has_data.html#cf.AuxiliaryCoordinate.has_data" title="cf.AuxiliaryCoordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.set_data.html#cf.AuxiliaryCoordinate.set_data" title="cf.AuxiliaryCoordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<td><p>Set the data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rearranging elements</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.flatten.html#cf.AuxiliaryCoordinate.flatten" title="cf.AuxiliaryCoordinate.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
+<td><p>Flatten axes of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.flip.html#cf.AuxiliaryCoordinate.flip" title="cf.AuxiliaryCoordinate.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a></p></td>
+<td><p>Flip (reverse the direction of) data dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.insert_dimension.html#cf.AuxiliaryCoordinate.insert_dimension" title="cf.AuxiliaryCoordinate.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
+<td><p>Expand the shape of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.roll.html#cf.AuxiliaryCoordinate.roll" title="cf.AuxiliaryCoordinate.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a></p></td>
+<td><p>Roll the data along an axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.squeeze.html#cf.AuxiliaryCoordinate.squeeze" title="cf.AuxiliaryCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<td><p>Remove size one axes from the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.swapaxes.html#cf.AuxiliaryCoordinate.swapaxes" title="cf.AuxiliaryCoordinate.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a></p></td>
+<td><p>Interchange two axes of an array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.transpose.html#cf.AuxiliaryCoordinate.transpose" title="cf.AuxiliaryCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<td><p>Permute the axes of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Expanding the data</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.halo.html#cf.AuxiliaryCoordinate.halo" title="cf.AuxiliaryCoordinate.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
+<td><p>Expand the data by adding a halo.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Data array mask</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.apply_masking.html#cf.AuxiliaryCoordinate.apply_masking" title="cf.AuxiliaryCoordinate.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.count.html#cf.AuxiliaryCoordinate.count" title="cf.AuxiliaryCoordinate.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
+<td><p>Count the non-masked elements of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.count_masked.html#cf.AuxiliaryCoordinate.count_masked" title="cf.AuxiliaryCoordinate.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></p></td>
+<td><p>Count the masked elements of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.fill_value.html#cf.AuxiliaryCoordinate.fill_value" title="cf.AuxiliaryCoordinate.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
+<td><p>Return the data array missing data value.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.binary_mask.html#cf.AuxiliaryCoordinate.binary_mask" title="cf.AuxiliaryCoordinate.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></p></td>
+<td><p>A binary (0 and 1) missing data mask of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.hardmask.html#cf.AuxiliaryCoordinate.hardmask" title="cf.AuxiliaryCoordinate.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p></td>
+<td><p>Whether the mask is hard (True) or soft (False).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.mask.html#cf.AuxiliaryCoordinate.mask" title="cf.AuxiliaryCoordinate.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
+<td><p>The mask of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.mask_invalid.html#cf.AuxiliaryCoordinate.mask_invalid" title="cf.AuxiliaryCoordinate.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+</tbody>
+</table>
+<p class="rubric"><em>Changing data values</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__setitem__.html#cf.AuxiliaryCoordinate.__setitem__" title="cf.AuxiliaryCoordinate.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
+<td><p>Called to implement assignment to x[indices]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.mask_invalid.html#cf.AuxiliaryCoordinate.mask_invalid" title="cf.AuxiliaryCoordinate.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.subspace.html#cf.AuxiliaryCoordinate.subspace" title="cf.AuxiliaryCoordinate.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p></td>
+<td><p>Return a new variable whose data is subspaced.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.where.html#cf.AuxiliaryCoordinate.where" title="cf.AuxiliaryCoordinate.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p></td>
+<td><p>Set data array elements depending on a condition.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="cyclicity">
+<h2>Cyclicity<a class="headerlink" href="#cyclicity" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.autoperiod.html#cf.AuxiliaryCoordinate.autoperiod" title="cf.AuxiliaryCoordinate.autoperiod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autoperiod</span></code></a></p></td>
+<td><p>Set the period of cyclicity where it can be determined.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.iscyclic.html#cf.AuxiliaryCoordinate.iscyclic" title="cf.AuxiliaryCoordinate.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a></p></td>
+<td><p>Whether or not a given axis is cyclic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.isperiodic.html#cf.AuxiliaryCoordinate.isperiodic" title="cf.AuxiliaryCoordinate.isperiodic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isperiodic</span></code></a></p></td>
+<td><p>True if a given axis is periodic.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Miscellaneous</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.chunk.html#cf.AuxiliaryCoordinate.chunk" title="cf.AuxiliaryCoordinate.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
+<td><p>Partition the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.close.html#cf.AuxiliaryCoordinate.close" title="cf.AuxiliaryCoordinate.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<td><p>Close all files referenced by the construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.convert_reference_time.html#cf.AuxiliaryCoordinate.convert_reference_time" title="cf.AuxiliaryCoordinate.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></p></td>
+<td><p>Convert reference time data values to have new units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.cyclic.html#cf.AuxiliaryCoordinate.cyclic" title="cf.AuxiliaryCoordinate.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
+<td><p>Set the cyclicity of axes of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.period.html#cf.AuxiliaryCoordinate.period" title="cf.AuxiliaryCoordinate.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a></p></td>
+<td><p>Return or set the period for cyclic values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.get_filenames.html#cf.AuxiliaryCoordinate.get_filenames" title="cf.AuxiliaryCoordinate.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the name of the file or files containing the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.concatenate.html#cf.AuxiliaryCoordinate.concatenate" title="cf.AuxiliaryCoordinate.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
+<td><p>Join a sequence of variables together.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.copy.html#cf.AuxiliaryCoordinate.copy" title="cf.AuxiliaryCoordinate.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.creation_commands.html#cf.AuxiliaryCoordinate.creation_commands" title="cf.AuxiliaryCoordinate.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.equals.html#cf.AuxiliaryCoordinate.equals" title="cf.AuxiliaryCoordinate.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.inspect.html#cf.AuxiliaryCoordinate.inspect" title="cf.AuxiliaryCoordinate.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
+<td><p>Inspect the object for debugging.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.uncompress.html#cf.AuxiliaryCoordinate.uncompress" title="cf.AuxiliaryCoordinate.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<td><p>Uncompress the construct.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mathematical-operations">
+<h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<p class="rubric"><em>Trigonometrical and hyperbolic functions</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arccos.html#cf.AuxiliaryCoordinate.arccos" title="cf.AuxiliaryCoordinate.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
+<td><p>Take the trigonometric inverse cosine of the data element- wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arccosh.html#cf.AuxiliaryCoordinate.arccosh" title="cf.AuxiliaryCoordinate.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccosh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arcsin.html#cf.AuxiliaryCoordinate.arcsin" title="cf.AuxiliaryCoordinate.arcsin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsin</span></code></a></p></td>
+<td><p>Take the trigonometric inverse sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arcsinh.html#cf.AuxiliaryCoordinate.arcsinh" title="cf.AuxiliaryCoordinate.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arctan.html#cf.AuxiliaryCoordinate.arctan" title="cf.AuxiliaryCoordinate.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
+<td><p>Take the trigonometric inverse tangent of the data element- wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arctanh.html#cf.AuxiliaryCoordinate.arctanh" title="cf.AuxiliaryCoordinate.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctanh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic tangent of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.cos.html#cf.AuxiliaryCoordinate.cos" title="cf.AuxiliaryCoordinate.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></p></td>
+<td><p>Take the trigonometric cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.cosh.html#cf.AuxiliaryCoordinate.cosh" title="cf.AuxiliaryCoordinate.cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosh</span></code></a></p></td>
+<td><p>Take the hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.sin.html#cf.AuxiliaryCoordinate.sin" title="cf.AuxiliaryCoordinate.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p></td>
+<td><p>Take the trigonometric sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.sinh.html#cf.AuxiliaryCoordinate.sinh" title="cf.AuxiliaryCoordinate.sinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sinh</span></code></a></p></td>
+<td><p>Take the hyperbolic sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.tan.html#cf.AuxiliaryCoordinate.tan" title="cf.AuxiliaryCoordinate.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p></td>
+<td><p>Take the trigonometric tangent of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.tanh.html#cf.AuxiliaryCoordinate.tanh" title="cf.AuxiliaryCoordinate.tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanh</span></code></a></p></td>
+<td><p>Take the hyperbolic tangent of the data element-wise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rounding and truncation</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.ceil.html#cf.AuxiliaryCoordinate.ceil" title="cf.AuxiliaryCoordinate.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code></a></p></td>
+<td><p>The ceiling of the data, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.clip.html#cf.AuxiliaryCoordinate.clip" title="cf.AuxiliaryCoordinate.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a></p></td>
+<td><p>Limit the values in the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.floor.html#cf.AuxiliaryCoordinate.floor" title="cf.AuxiliaryCoordinate.floor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floor</span></code></a></p></td>
+<td><p>Floor the data array, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.rint.html#cf.AuxiliaryCoordinate.rint" title="cf.AuxiliaryCoordinate.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code></a></p></td>
+<td><p>Round the data to the nearest integer, element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.round.html#cf.AuxiliaryCoordinate.round" title="cf.AuxiliaryCoordinate.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a></p></td>
+<td><p>Round the data to the given number of decimals.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.trunc.html#cf.AuxiliaryCoordinate.trunc" title="cf.AuxiliaryCoordinate.trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunc</span></code></a></p></td>
+<td><p>Truncate the data, element-wise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Statistical collapses</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.maximum.html#cf.AuxiliaryCoordinate.maximum" title="cf.AuxiliaryCoordinate.maximum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code></a></p></td>
+<td><p>The maximum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.mean.html#cf.AuxiliaryCoordinate.mean" title="cf.AuxiliaryCoordinate.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
+<td><p>The unweighted mean the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.mid_range.html#cf.AuxiliaryCoordinate.mid_range" title="cf.AuxiliaryCoordinate.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a></p></td>
+<td><p>The unweighted average of the maximum and minimum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.minimum.html#cf.AuxiliaryCoordinate.minimum" title="cf.AuxiliaryCoordinate.minimum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code></a></p></td>
+<td><p>The minimum of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.range.html#cf.AuxiliaryCoordinate.range" title="cf.AuxiliaryCoordinate.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></p></td>
+<td><p>The absolute difference between the maximum and minimum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.sample_size.html#cf.AuxiliaryCoordinate.sample_size" title="cf.AuxiliaryCoordinate.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a></p></td>
+<td><p>The number of non-missing data elements in the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.sum.html#cf.AuxiliaryCoordinate.sum" title="cf.AuxiliaryCoordinate.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p></td>
+<td><p>The sum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.standard_deviation.html#cf.AuxiliaryCoordinate.standard_deviation" title="cf.AuxiliaryCoordinate.standard_deviation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></a></p></td>
+<td><p>The unweighted sample standard deviation of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.variance.html#cf.AuxiliaryCoordinate.variance" title="cf.AuxiliaryCoordinate.variance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></a></p></td>
+<td><p>The unweighted sample variance of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Exponential and logarithmic functions</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.exp.html#cf.AuxiliaryCoordinate.exp" title="cf.AuxiliaryCoordinate.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a></p></td>
+<td><p>The exponential of the data, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.log.html#cf.AuxiliaryCoordinate.log" title="cf.AuxiliaryCoordinate.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a></p></td>
+<td><p>The logarithm of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="date-time-operations">
+<h2>Date-time operations<a class="headerlink" href="#date-time-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.day.html#cf.AuxiliaryCoordinate.day" title="cf.AuxiliaryCoordinate.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></p></td>
+<td><p>The day of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.datetime_array.html#cf.AuxiliaryCoordinate.datetime_array" title="cf.AuxiliaryCoordinate.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.hour.html#cf.AuxiliaryCoordinate.hour" title="cf.AuxiliaryCoordinate.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code></a></p></td>
+<td><p>The hour of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.minute.html#cf.AuxiliaryCoordinate.minute" title="cf.AuxiliaryCoordinate.minute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code></a></p></td>
+<td><p>The minute of each date-time data array element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.month.html#cf.AuxiliaryCoordinate.month" title="cf.AuxiliaryCoordinate.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></a></p></td>
+<td><p>The month of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.reference_datetime.html#cf.AuxiliaryCoordinate.reference_datetime" title="cf.AuxiliaryCoordinate.reference_datetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_datetime</span></code></a></p></td>
+<td><p>The reference date-time of units of elapsed time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.second.html#cf.AuxiliaryCoordinate.second" title="cf.AuxiliaryCoordinate.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></a></p></td>
+<td><p>The second of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.year.html#cf.AuxiliaryCoordinate.year" title="cf.AuxiliaryCoordinate.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code></a></p></td>
+<td><p>The year of each date-time data array element.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="logic-functions">
+<h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Truth value testing</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.all.html#cf.AuxiliaryCoordinate.all" title="cf.AuxiliaryCoordinate.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a></p></td>
+<td><p>Test whether all data elements evaluate to True.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.any.html#cf.AuxiliaryCoordinate.any" title="cf.AuxiliaryCoordinate.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a></p></td>
+<td><p>Test whether any data elements evaluate to True.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Comparison</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.allclose.html#cf.AuxiliaryCoordinate.allclose" title="cf.AuxiliaryCoordinate.allclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allclose</span></code></a></p></td>
+<td><p>Test whether all data are element-wise equal to other, broadcastable data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.equivalent.html#cf.AuxiliaryCoordinate.equivalent" title="cf.AuxiliaryCoordinate.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></p></td>
+<td><p>True if two constructs are equal, False otherwise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Set operations</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.unique.html#cf.AuxiliaryCoordinate.unique" title="cf.AuxiliaryCoordinate.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></p></td>
+<td><p>The unique elements of the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_del_variable.html#cf.AuxiliaryCoordinate.nc_del_variable" title="cf.AuxiliaryCoordinate.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_get_variable.html#cf.AuxiliaryCoordinate.nc_get_variable" title="cf.AuxiliaryCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_has_variable.html#cf.AuxiliaryCoordinate.nc_has_variable" title="cf.AuxiliaryCoordinate.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
+<td><p>Whether the netCDF variable name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable.html#cf.AuxiliaryCoordinate.nc_set_variable" title="cf.AuxiliaryCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_variable_groups.html#cf.AuxiliaryCoordinate.nc_variable_groups" title="cf.AuxiliaryCoordinate.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_set_variable_groups.html#cf.AuxiliaryCoordinate.nc_set_variable_groups" title="cf.AuxiliaryCoordinate.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.nc_clear_variable_groups.html#cf.AuxiliaryCoordinate.nc_clear_variable_groups" title="cf.AuxiliaryCoordinate.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="aliases">
+<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.match.html#cf.AuxiliaryCoordinate.match" title="cf.AuxiliaryCoordinate.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.max.html#cf.AuxiliaryCoordinate.max" title="cf.AuxiliaryCoordinate.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.min.html#cf.AuxiliaryCoordinate.min" title="cf.AuxiliaryCoordinate.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.sd.html#cf.AuxiliaryCoordinate.sd" title="cf.AuxiliaryCoordinate.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.var.html#cf.AuxiliaryCoordinate.var" title="cf.AuxiliaryCoordinate.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.dtarray.html#cf.AuxiliaryCoordinate.dtarray" title="cf.AuxiliaryCoordinate.dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="arithmetic-and-comparison-operations">
+<h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
+<p>Arithmetic, bitwise and comparison operations are defined as
+element-wise operations on the data, which yield a new construct or,
+for augmented assignments, modify the construct’s data in-place.</p>
+<p class="rubric">Comparison operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__lt__.html#cf.AuxiliaryCoordinate.__lt__" title="cf.AuxiliaryCoordinate.__lt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lt__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__le__.html#cf.AuxiliaryCoordinate.__le__" title="cf.AuxiliaryCoordinate.__le__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__le__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__eq__.html#cf.AuxiliaryCoordinate.__eq__" title="cf.AuxiliaryCoordinate.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">==</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__ne__.html#cf.AuxiliaryCoordinate.__ne__" title="cf.AuxiliaryCoordinate.__ne__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ne__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">!=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__gt__.html#cf.AuxiliaryCoordinate.__gt__" title="cf.AuxiliaryCoordinate.__gt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__gt__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__ge__.html#cf.AuxiliaryCoordinate.__ge__" title="cf.AuxiliaryCoordinate.__ge__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ge__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary arithmetic operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__add__.html#cf.AuxiliaryCoordinate.__add__" title="cf.AuxiliaryCoordinate.__add__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__add__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__sub__.html#cf.AuxiliaryCoordinate.__sub__" title="cf.AuxiliaryCoordinate.__sub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__sub__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__mul__.html#cf.AuxiliaryCoordinate.__mul__" title="cf.AuxiliaryCoordinate.__mul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__mul__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__div__.html#cf.AuxiliaryCoordinate.__div__" title="cf.AuxiliaryCoordinate.__div__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__div__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__truediv__.html#cf.AuxiliaryCoordinate.__truediv__" title="cf.AuxiliaryCoordinate.__truediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__truediv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__floordiv__.html#cf.AuxiliaryCoordinate.__floordiv__" title="cf.AuxiliaryCoordinate.__floordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__floordiv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__pow__.html#cf.AuxiliaryCoordinate.__pow__" title="cf.AuxiliaryCoordinate.__pow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__pow__</span></code></a></p></td>
+<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__mod__.html#cf.AuxiliaryCoordinate.__mod__" title="cf.AuxiliaryCoordinate.__mod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__mod__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary arithmetic operators with reflected (swapped) operands</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__radd__.html#cf.AuxiliaryCoordinate.__radd__" title="cf.AuxiliaryCoordinate.__radd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__radd__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rsub__.html#cf.AuxiliaryCoordinate.__rsub__" title="cf.AuxiliaryCoordinate.__rsub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rsub__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rmul__.html#cf.AuxiliaryCoordinate.__rmul__" title="cf.AuxiliaryCoordinate.__rmul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmul__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rdiv__.html#cf.AuxiliaryCoordinate.__rdiv__" title="cf.AuxiliaryCoordinate.__rdiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rdiv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rtruediv__.html#cf.AuxiliaryCoordinate.__rtruediv__" title="cf.AuxiliaryCoordinate.__rtruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rtruediv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division) with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rfloordiv__.html#cf.AuxiliaryCoordinate.__rfloordiv__" title="cf.AuxiliaryCoordinate.__rfloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rfloordiv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rpow__.html#cf.AuxiliaryCoordinate.__rpow__" title="cf.AuxiliaryCoordinate.__rpow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rpow__</span></code></a></p></td>
+<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rmod__.html#cf.AuxiliaryCoordinate.__rmod__" title="cf.AuxiliaryCoordinate.__rmod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmod__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code> with reflected operands.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Augmented arithmetic assignments</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__iadd__.html#cf.AuxiliaryCoordinate.__iadd__" title="cf.AuxiliaryCoordinate.__iadd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iadd__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">+=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__isub__.html#cf.AuxiliaryCoordinate.__isub__" title="cf.AuxiliaryCoordinate.__isub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__isub__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">-=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__imul__.html#cf.AuxiliaryCoordinate.__imul__" title="cf.AuxiliaryCoordinate.__imul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__imul__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">*=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__idiv__.html#cf.AuxiliaryCoordinate.__idiv__" title="cf.AuxiliaryCoordinate.__idiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__idiv__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">/=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__itruediv__.html#cf.AuxiliaryCoordinate.__itruediv__" title="cf.AuxiliaryCoordinate.__itruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__itruediv__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">/=</span></code> (true division)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__ifloordiv__.html#cf.AuxiliaryCoordinate.__ifloordiv__" title="cf.AuxiliaryCoordinate.__ifloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ifloordiv__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">//=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__ipow__.html#cf.AuxiliaryCoordinate.__ipow__" title="cf.AuxiliaryCoordinate.__ipow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ipow__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">**=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__imod__.html#cf.AuxiliaryCoordinate.__imod__" title="cf.AuxiliaryCoordinate.__imod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__imod__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%=</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Unary arithmetic operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__neg__.html#cf.AuxiliaryCoordinate.__neg__" title="cf.AuxiliaryCoordinate.__neg__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__neg__</span></code></a></p></td>
+<td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__pos__.html#cf.AuxiliaryCoordinate.__pos__" title="cf.AuxiliaryCoordinate.__pos__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__pos__</span></code></a></p></td>
+<td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__abs__.html#cf.AuxiliaryCoordinate.__abs__" title="cf.AuxiliaryCoordinate.__abs__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__abs__</span></code></a></p></td>
+<td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">abs</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary bitwise operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__and__.html#cf.AuxiliaryCoordinate.__and__" title="cf.AuxiliaryCoordinate.__and__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__and__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__or__.html#cf.AuxiliaryCoordinate.__or__" title="cf.AuxiliaryCoordinate.__or__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__or__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__xor__.html#cf.AuxiliaryCoordinate.__xor__" title="cf.AuxiliaryCoordinate.__xor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__xor__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__lshift__.html#cf.AuxiliaryCoordinate.__lshift__" title="cf.AuxiliaryCoordinate.__lshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rshift__.html#cf.AuxiliaryCoordinate.__rshift__" title="cf.AuxiliaryCoordinate.__rshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary bitwise operators with reflected (swapped) operands</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rand__.html#cf.AuxiliaryCoordinate.__rand__" title="cf.AuxiliaryCoordinate.__rand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rand__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__ror__.html#cf.AuxiliaryCoordinate.__ror__" title="cf.AuxiliaryCoordinate.__ror__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ror__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rxor__.html#cf.AuxiliaryCoordinate.__rxor__" title="cf.AuxiliaryCoordinate.__rxor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rxor__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rlshift__.html#cf.AuxiliaryCoordinate.__rlshift__" title="cf.AuxiliaryCoordinate.__rlshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rlshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__rrshift__.html#cf.AuxiliaryCoordinate.__rrshift__" title="cf.AuxiliaryCoordinate.__rrshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rrshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code> with reflected operands.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Augmented bitwise assignments</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__iand__.html#cf.AuxiliaryCoordinate.__iand__" title="cf.AuxiliaryCoordinate.__iand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iand__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&amp;=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__ior__.html#cf.AuxiliaryCoordinate.__ior__" title="cf.AuxiliaryCoordinate.__ior__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ior__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">|=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__ixor__.html#cf.AuxiliaryCoordinate.__ixor__" title="cf.AuxiliaryCoordinate.__ixor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ixor__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">^=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__ilshift__.html#cf.AuxiliaryCoordinate.__ilshift__" title="cf.AuxiliaryCoordinate.__ilshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ilshift__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&lt;&lt;=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__irshift__.html#cf.AuxiliaryCoordinate.__irshift__" title="cf.AuxiliaryCoordinate.__irshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__irshift__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&gt;&gt;=</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Unary bitwise operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__invert__.html#cf.AuxiliaryCoordinate.__invert__" title="cf.AuxiliaryCoordinate.__invert__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__invert__</span></code></a></p></td>
+<td><p>The unary bitwise operation <code class="docutils literal notranslate"><span class="pre">~</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__contains__.html#cf.AuxiliaryCoordinate.__contains__" title="cf.AuxiliaryCoordinate.__contains__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__contains__</span></code></a></p></td>
+<td><p>Called to implement membership test operators.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__deepcopy__.html#cf.AuxiliaryCoordinate.__deepcopy__" title="cf.AuxiliaryCoordinate.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__getitem__.html#cf.AuxiliaryCoordinate.__getitem__" title="cf.AuxiliaryCoordinate.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Return a subspace of the field construct defined by indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__repr__.html#cf.AuxiliaryCoordinate.__repr__" title="cf.AuxiliaryCoordinate.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__setitem__.html#cf.AuxiliaryCoordinate.__setitem__" title="cf.AuxiliaryCoordinate.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
+<td><p>Called to implement assignment to x[indices]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__str__.html#cf.AuxiliaryCoordinate.__str__" title="cf.AuxiliaryCoordinate.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__array__.html#cf.AuxiliaryCoordinate.__array__" title="cf.AuxiliaryCoordinate.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></p></td>
+<td><p>Returns a numpy array representation of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__data__.html#cf.AuxiliaryCoordinate.__data__" title="cf.AuxiliaryCoordinate.__data__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__data__</span></code></a></p></td>
+<td><p>Returns a new reference to the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__query_set__.html#cf.AuxiliaryCoordinate.__query_set__" title="cf.AuxiliaryCoordinate.__query_set__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_set__</span></code></a></p></td>
+<td><p>Implements the “member of set” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__query_wi__.html#cf.AuxiliaryCoordinate.__query_wi__" title="cf.AuxiliaryCoordinate.__query_wi__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wi__</span></code></a></p></td>
+<td><p>Implements the “within a range” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.__query_wo__.html#cf.AuxiliaryCoordinate.__query_wo__" title="cf.AuxiliaryCoordinate.__query_wo__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wo__</span></code></a></p></td>
+<td><p>Implements the “without a range” condition.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.asdatetime.html#cf.AuxiliaryCoordinate.asdatetime" title="cf.AuxiliaryCoordinate.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.asreftime.html#cf.AuxiliaryCoordinate.asreftime" title="cf.AuxiliaryCoordinate.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.delprop.html#cf.AuxiliaryCoordinate.delprop" title="cf.AuxiliaryCoordinate.delprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.expand_dims.html#cf.AuxiliaryCoordinate.expand_dims" title="cf.AuxiliaryCoordinate.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.files.html#cf.AuxiliaryCoordinate.files" title="cf.AuxiliaryCoordinate.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
+<td><p>Deprecated at version 3.4.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.getprop.html#cf.AuxiliaryCoordinate.getprop" title="cf.AuxiliaryCoordinate.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.hasprop.html#cf.AuxiliaryCoordinate.hasprop" title="cf.AuxiliaryCoordinate.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.insert_data.html#cf.AuxiliaryCoordinate.insert_data" title="cf.AuxiliaryCoordinate.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.name.html#cf.AuxiliaryCoordinate.name" title="cf.AuxiliaryCoordinate.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method ‘identity’ instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.remove_data.html#cf.AuxiliaryCoordinate.remove_data" title="cf.AuxiliaryCoordinate.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.select.html#cf.AuxiliaryCoordinate.select" title="cf.AuxiliaryCoordinate.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.setprop.html#cf.AuxiliaryCoordinate.setprop" title="cf.AuxiliaryCoordinate.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.attributes.html#cf.AuxiliaryCoordinate.attributes" title="cf.AuxiliaryCoordinate.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.Data.html#cf.AuxiliaryCoordinate.Data" title="cf.AuxiliaryCoordinate.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> attribute or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.dtvarray.html#cf.AuxiliaryCoordinate.dtvarray" title="cf.AuxiliaryCoordinate.dtvarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.hasbounds.html#cf.AuxiliaryCoordinate.hasbounds" title="cf.AuxiliaryCoordinate.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.hasdata.html#cf.AuxiliaryCoordinate.hasdata" title="cf.AuxiliaryCoordinate.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.isauxiliary.html#cf.AuxiliaryCoordinate.isauxiliary" title="cf.AuxiliaryCoordinate.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.isdimension.html#cf.AuxiliaryCoordinate.isdimension" title="cf.AuxiliaryCoordinate.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.isdomainancillary.html#cf.AuxiliaryCoordinate.isdomainancillary" title="cf.AuxiliaryCoordinate.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.isfieldancillary.html#cf.AuxiliaryCoordinate.isfieldancillary" title="cf.AuxiliaryCoordinate.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.ismeasure.html#cf.AuxiliaryCoordinate.ismeasure" title="cf.AuxiliaryCoordinate.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.AuxiliaryCoordinate.unsafe_array.html#cf.AuxiliaryCoordinate.unsafe_array" title="cf.AuxiliaryCoordinate.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-01-17.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Field.grad_xy &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.laplacian_xy" href="cf.Field.laplacian_xy.html" />
+    <link rel="prev" title="cf.Field.derivative" href="cf.Field.derivative.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.derivative.html" title="previous chapter">cf.Field.derivative</a></li>
+      <li>Next: <a href="cf.Field.laplacian_xy.html" title="next chapter">cf.Field.laplacian_xy</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-field-grad-xy">
+<h1>cf.Field.grad_xy<a class="headerlink" href="#cf-field-grad-xy" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.grad_xy">
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">grad_xy</code><span class="sig-paren">(</span><em class="sig-param">x_wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">radius=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/field.py#L13656-L13851"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.grad_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the (X, Y) gradient vector.</p>
+<p>The horizontal gradient vector of a scalar function is
+calculated from a field that has dimension coordinates of X
+and Y, in either Cartesian (e.g. plane projection) or
+spherical polar coordinate systems.</p>
+<p>The horizontal gradient vector in Cartesian coordinates is
+given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla f(x, y) = \left(
+\frac{\partial f}{\partial x},
+\frac{\partial f}{\partial y}
+\right)\]</div>
+<p>The horizontal gradient vector in spherical polar coordinates
+is given by:</p>
+<div class="math notranslate nohighlight">
+\[\nabla f(\theta, \phi) = \left(
+\frac{1}{r}
+\frac{\partial f}{\partial \theta},
+\frac{1}{r \sin\theta}
+\frac{\partial f}{\partial \phi}
+\right)\]</div>
+<p>where <em>r</em> is radial distance to the origin, <span class="math notranslate nohighlight">\(\theta\)</span> is
+the polar angle with respect to polar axis, and <span class="math notranslate nohighlight">\(\phi\)</span>
+is the azimuthal angle.</p>
+<p>The gradient vector components are calculated using centred
+finite differences apart from at the boundaries (see the
+<em>x_wrap</em> and <em>one_sided_at_boundary</em> parameters). If missing
+values are present then missing values will be returned at all
+points where a centred finite difference could not be
+calculated.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.12.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>, <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>, <a class="reference internal" href="cf.Field.laplacian_xy.html#cf.Field.laplacian_xy" title="cf.Field.laplacian_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">laplacian_xy</span></code></a>,
+<a class="reference internal" href="../function/cf.curl_xy.html#cf.curl_xy" title="cf.curl_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.curl_xy</span></code></a>, <a class="reference internal" href="../function/cf.div_xy.html#cf.div_xy" title="cf.div_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.div_xy</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>x_wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether the X axis is cyclic or not. By default
+<em>x_wrap</em> is set to the result of this call to the
+field construct’s <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a> method:
+<code class="docutils literal notranslate"><span class="pre">f.iscyclic('X')</span></code>. If the X axis is cyclic then
+centred differences at one boundary will always use
+values from the other boundary, regardless of the
+setting of <em>one_sided_at_boundary</em>.</p>
+<p>The cyclicity of the Y axis is always set to the
+result of <code class="docutils literal notranslate"><span class="pre">f.iscyclic('Y')</span></code>.</p>
+</dd>
+<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then one-sided finite differences are
+calculated at the non-cyclic boundaries. By default
+missing values are set at non-cyclic boundaries.</p>
+</dd>
+<dt>radius: optional</dt><dd><p>Specify the radius of the latitude-longitude plane
+defined in spherical polar coordinates. The radius is
+that which would be returned by this call of the field
+construct’s <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a> method:
+<code class="docutils literal notranslate"><span class="pre">f.radius(default=radius)</span></code>. The radius is defined by
+the datum of a coordinate reference construct, and if
+and only if no such radius is found then the default
+value given by the <em>radius</em> parameter is used
+instead. A value of <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> is equivalent to a
+default value of 6371229 metres.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a></dt><dd><p>The horizontal gradient vector of the scalar field.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]</span>
+<span class="go"> [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]</span>
+<span class="go"> [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]</span>
+<span class="go"> [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]</span>
+<span class="go"> [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fx</span><span class="p">,</span> <span class="n">fy</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">grad_xy</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="s1">&#39;earth&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fx</span><span class="p">,</span> <span class="n">fy</span>
+<span class="go">(&lt;CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1&gt;,</span>
+<span class="go"> &lt;CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1&gt;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">fx</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0. 0. 0. 0. 0. 0. 0. 0.]</span>
+<span class="go"> [0. 0. 0. 0. 0. 0. 0. 0.]</span>
+<span class="go"> [0. 0. 0. 0. 0. 0. 0. 0.]</span>
+<span class="go"> [0. 0. 0. 0. 0. 0. 0. 0.]</span>
+<span class="go"> [0. 0. 0. 0. 0. 0. 0. 0.]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">fy</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-- -- -- -- -- -- -- --]</span>
+<span class="go"> [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]</span>
+<span class="go"> [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]</span>
+<span class="go"> [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]</span>
+<span class="go"> [-- -- -- -- -- -- -- --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fx</span><span class="p">,</span> <span class="n">fy</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">grad_xy</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="s1">&#39;earth&#39;</span><span class="p">,</span> <span class="n">one_sided_at_boundary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">fy</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0. 0. 0. 0. 0. 0. 0. 0.]</span>
+<span class="go"> [0. 0. 0. 0. 0. 0. 0. 0.]</span>
+<span class="go"> [0. 0. 0. 0. 0. 0. 0. 0.]</span>
+<span class="go"> [0. 0. 0. 0. 0. 0. 0. 0.]</span>
+<span class="go"> [0. 0. 0. 0. 0. 0. 0. 0.]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-01-17.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

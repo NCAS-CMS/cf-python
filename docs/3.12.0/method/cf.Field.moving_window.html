@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Field.moving_window &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.cell_area" href="cf.Field.cell_area.html" />
+    <link rel="prev" title="cf.Field.collapse" href="cf.Field.collapse.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.collapse.html" title="previous chapter">cf.Field.collapse</a></li>
+      <li>Next: <a href="cf.Field.cell_area.html" title="next chapter">cf.Field.cell_area</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-field-moving-window">
+<h1>cf.Field.moving_window<a class="headerlink" href="#cf-field-moving-window" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.moving_window">
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">moving_window</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">window_size=None</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/field.py#L11884-L12298"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.moving_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform moving window calculations along an axis.</p>
+<p>Moving mean, sum, and integral calculations are possible.</p>
+<p>By default moving means are unweighted, but weights based on
+the axis cell sizes (or custom weights) may applied to the
+calculation via the <em>weights</em> parameter.</p>
+<p>By default moving integrals must be weighted.</p>
+<p>When appropriate, a new cell method construct is created to
+describe the calculation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <a class="reference internal" href="#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method can not, in general, be
+emulated by the <a class="reference internal" href="cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a> method, as the
+latter i) can not change the window weights as the
+filter passes through the axis; and ii) does not
+update the cell method constructs.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.3.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>, <a class="reference internal" href="cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>, <a class="reference internal" href="cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a>, <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a>,
+<a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Define the moving window method. The method is given
+by one of the following strings (see
+<a class="reference external" href="https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods">https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods</a>
+for precise definitions):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 52%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><em>method</em></p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Weighted</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></p></td>
+<td><p>The sum of the values.</p></td>
+<td><p>Never</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></p></td>
+<td><p>The weighted or unweighted
+mean of the values.</p></td>
+<td><p>May be</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></p></td>
+<td><p>The integral of values.</p></td>
+<td><p>Always</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Methods that are “Never” weighted ignore the
+<em>weights</em> parameter, even if it is set.</p></li>
+<li><p>Methods that “May be” weighted will only be weighted
+if the <em>weights</em> parameter is set.</p></li>
+<li><p>Methods that are “Always” weighted require the
+<em>weights</em> parameter to be set.</p></li>
+</ul>
+</dd>
+<dt>window_size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Specify the size of the window used to calculate the
+moving window.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>A 5-point moving window is set with
+<code class="docutils literal notranslate"><span class="pre">window_size=5</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Select the domain axis over which the filter is to be
+applied, defined by that which would be selected by
+passing the given axis description to a call of the
+field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example,
+for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
+returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X')</span></code> is selected.</p>
+</dd>
+<dt>weights: optional</dt><dd><p>Specify the weights for the moving window. The weights
+are, those that would be returned by this call of the
+field construct’s <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method:
+<code class="docutils literal notranslate"><span class="pre">f.weights(weights,</span> <span class="pre">axes=axis,</span> <span class="pre">radius=radius,</span>
+<span class="pre">great_circle=great_circle,</span> <span class="pre">data=True)</span></code>. See the
+<em>axis</em>, <em>radius</em> and <em>great_circle</em> parameters and
+<a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a> for details.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, resulting in
+<strong>unweighted calculations</strong>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Setting <em>weights</em> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is generally a
+good way to ensure that the moving window
+calculations are appropriately weighted
+according to the field construct’s
+metadata. In this case, if it is not
+possible to create weights for the selected
+<em>axis</em> then an exception will be raised.</p>
+</div>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>To specify weights on the cell sizes of the selected
+axis: <code class="docutils literal notranslate"><span class="pre">weights=True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The <em>mode</em> parameter determines how the input array is
+extended when the filter overlaps an array border. The
+default value is <code class="docutils literal notranslate"><span class="pre">'constant'</span></code> or, if the dimension
+being convolved is cyclic (as ascertained by the
+<a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a> method), <code class="docutils literal notranslate"><span class="pre">'wrap'</span></code>. The valid values and
+their behaviours are as follows:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 39%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><em>mode</em></p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Behaviour</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'reflect'</span></code></p></td>
+<td><p>The input is extended by
+reflecting about the edge</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(c</span> <span class="pre">b</span> <span class="pre">a</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">|</span> <span class="pre">c</span> <span class="pre">b</span> <span class="pre">a)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'constant'</span></code></p></td>
+<td><p>The input is extended by
+filling all values beyond
+the edge with the same
+constant value (<code class="docutils literal notranslate"><span class="pre">k</span></code>),
+defined by the <em>cval</em>
+parameter.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(k</span> <span class="pre">k</span> <span class="pre">k</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">|</span> <span class="pre">k</span> <span class="pre">k</span> <span class="pre">k)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'nearest'</span></code></p></td>
+<td><p>The input is extended by
+replicating the last point</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(a</span> <span class="pre">a</span> <span class="pre">a</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">|</span> <span class="pre">c</span> <span class="pre">c</span> <span class="pre">c)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'mirror'</span></code></p></td>
+<td><p>The input is extended by
+reflecting about the
+centre of the last point.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(c</span> <span class="pre">b</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">|</span> <span class="pre">b</span> <span class="pre">a)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'wrap'</span></code></p></td>
+<td><p>The input is extended by
+wrapping around to the
+opposite edge.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The position of the window relative to each value can
+be changed by using the <em>origin</em> parameter.</p>
+</dd>
+<dt>cval: scalar, optional</dt><dd><p>Value to fill past the edges of the array if <em>mode</em> is
+<code class="docutils literal notranslate"><span class="pre">'constant'</span></code>. Ignored for other modes. Defaults to
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, in which case the edges of the array will be
+filled with missing data. The only other valid value
+is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>To extend the input by filling all values beyond
+the edge with zero: <code class="docutils literal notranslate"><span class="pre">cval=0</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>origin: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Controls the placement of the filter. Defaults to 0,
+which is the centre of the window. If the window size,
+defined by the <em>window_size</em> parameter, is even then
+then a value of 0 defines the index defined by
+<code class="docutils literal notranslate"><span class="pre">window_size/2</span> <span class="pre">-1</span></code>.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>For a window size of 5, if <code class="docutils literal notranslate"><span class="pre">origin=0</span></code> then the
+window is centred on each point. If <code class="docutils literal notranslate"><span class="pre">origin=-2</span></code>
+then the window is shifted to include the previous
+four points. If <code class="docutils literal notranslate"><span class="pre">origin=1</span></code> then the window is
+shifted to include the previous point and the and
+the next three points.</p>
+</dd>
+</dl>
+</dd>
+<dt>radius: optional</dt><dd><p>Specify the radius used for calculating the areas of
+cells defined in spherical polar coordinates. The
+radius is that which would be returned by this call of
+the field construct’s <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a> method:
+<code class="docutils literal notranslate"><span class="pre">f.radius(radius)</span></code>. See the <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.radius</span></code></a> for
+details.</p>
+<p>By default <em>radius</em> is <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> which means that if
+and only if the radius can not found from the datums
+of any coordinate reference constructs, then the
+default radius taken as 6371229 metres.</p>
+</dd>
+<dt>great_circle: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow, if required, the derivation of i)
+area weights from polygon geometry cells by assuming
+that each cell part is a spherical polygon composed of
+great circle segments; and ii) and the derivation of
+line-length weights from line geometry cells by
+assuming that each line part is composed of great
+circle segments.</p>
+</dd>
+<dt>scale: number, optional</dt><dd><p>If set to a positive number then scale the weights so
+that they are less than or equal to that number. By
+default the weights are scaled to lie between 0 and 1
+(i.e.  <em>scale</em> is 1).</p>
+<p>Ignored if the moving window method is not
+weighted. The <em>scale</em> parameter can not be set for
+moving integrals.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>To scale all weights so that they lie between 0 and
+0.5: <code class="docutils literal notranslate"><span class="pre">scale=0.5</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The field construct of moving window values, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
+if the operation was in-place.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[  0.  45.]</span>
+<span class="go"> [ 45.  90.]</span>
+<span class="go"> [ 90. 135.]</span>
+<span class="go"> [135. 180.]</span>
+<span class="go"> [180. 225.]</span>
+<span class="go"> [225. 270.]</span>
+<span class="go"> [270. 315.]</span>
+<span class="go"> [315. 360.]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">iscyclic</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">iscyclic</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Create a weighted 3-point running mean for the cyclic ‘X’
+axis:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">moving_window</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean longitude(8): mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.02333 0.01467 0.017   0.01167 0.023   0.02633 0.03    0.02   ]</span>
+<span class="go"> [0.04167 0.03467 0.04767 0.051   0.06033 0.04167 0.04833 0.03167]</span>
+<span class="go"> [0.084   0.12167 0.13367 0.119   0.112   0.08233 0.057   0.05933]</span>
+<span class="go"> [0.035   0.04233 0.056   0.05567 0.06667 0.04633 0.03267 0.01833]</span>
+<span class="go"> [0.01833 0.02033 0.03    0.024   0.03    0.02967 0.028   0.01767]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-45.  90.]</span>
+<span class="go"> [  0. 135.]</span>
+<span class="go"> [ 45. 180.]</span>
+<span class="go"> [ 90. 225.]</span>
+<span class="go"> [135. 270.]</span>
+<span class="go"> [180. 315.]</span>
+<span class="go"> [225. 360.]</span>
+<span class="go"> [270. 405.]]</span>
+</pre></div>
+</div>
+<p>Create an unweighted 3-point running mean for the cyclic ‘X’
+axis:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">moving_window</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Create an weighted 4-point running integral for the non-cyclic
+‘Y’ axis:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">moving_window</span><span class="p">(</span><span class="s1">&#39;integral&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;Units: 0.0174532925199433 rad&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[   --    --    --    --   --    --   --   --]</span>
+<span class="go"> [ 8.37 11.73 10.05 13.14 8.88 11.64 4.59 4.02]</span>
+<span class="go"> [ 8.34 11.79 10.53 13.77 8.88 11.64 4.89 3.54]</span>
+<span class="go"> [   --    --    --    --   --    --   --   --]</span>
+<span class="go"> [   --    --    --    --   --    --   --   --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-90.  30.]</span>
+<span class="go"> [-90.  60.]</span>
+<span class="go"> [-60.  90.]</span>
+<span class="go"> [-30.  90.]</span>
+<span class="go"> [ 30.  90.]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">moving_window</span><span class="p">(</span><span class="s1">&#39;integral&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ 7.5   9.96  8.88 11.04  7.14  9.48  4.32  3.51]</span>
+<span class="go"> [ 8.37 11.73 10.05 13.14  8.88 11.64  4.59  4.02]</span>
+<span class="go"> [ 8.34 11.79 10.53 13.77  8.88 11.64  4.89  3.54]</span>
+<span class="go"> [ 7.65 10.71  9.18 11.91  7.5   9.45  4.71  1.56]</span>
+<span class="go"> [ 1.05  2.85  1.74  3.15  2.28  3.27  1.29  0.9 ]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-01-17.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
