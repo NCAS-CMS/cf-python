@@ -22,6 +22,7 @@ version 3.12.0
 * Fix bug in `cf.Field.derivative` when wrapping with periodic
   coordinates (https://github.com/NCAS-CMS/cf-python/issues/289)
 * Changed dependency: ``1.9.0.1<=cfdm<1.9.1.0``
+* Changed dependency: ``cfunits>=3.3.4``
 
 ----
 

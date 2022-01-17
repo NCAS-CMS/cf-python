@@ -74,8 +74,8 @@ installation and source code.
 
 """
 __Conventions__ = "CF-1.9"
-__date__ = "2021-10-08"
-__version__ = "3.11.0"
+__date__ = "2022-01-18"
+__version__ = "3.12.0"
 
 _requires = (
     "numpy",
@@ -172,7 +172,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = "3.3.3"
+_minimum_vn = "3.3.4"
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
