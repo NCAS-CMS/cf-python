@@ -159,6 +159,8 @@ fromconstructs
 fromkeys
 fullname
 func
+fx
+fy
 GatheredArray
 ge
 Geosci
@@ -227,6 +229,7 @@ kB
 Kinoshita
 Kristian
 kwargs
+laplacian
 lat
 lbproc
 lbtim
@@ -305,6 +308,7 @@ regridded
 regridding
 Regridding
 RegridOperator
+regridoperator
 regrids
 relpath
 repr
@@ -403,6 +407,7 @@ vorticity
 wi
 wo
 xor
+xy
 Zimmermann
 δu
 δv
