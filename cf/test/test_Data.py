@@ -367,21 +367,19 @@ class DataTest(unittest.TestCase):
         self.assertTrue(k1.equals(k1.copy()))
         k2 = cf.Data(np.array([10.01, 20.01]))
         self.assertTrue(k2.equals(k2.copy()))
-        for ks in [(k1, k2), (k2, k1)]:  # to test symmetry/commutativity
-            k_1, k_2 = ks
-            # Only one log check is sufficient here
-            with self.assertLogs(level=cf.log_level().value) as catch:
-                self.assertFalse(k_1.equals(k_2, atol=0.005, rtol=0))
-                self.assertTrue(
-                    any(
-                        "Data: Different array values (atol=0.005, rtol=0)"
-                        in log_msg
-                        for log_msg in catch.output
-                    )
+        # Only one log check is sufficient here
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(k1.equals(k2, atol=0.005, rtol=0))
+            self.assertTrue(
+                any(
+                    "Data: Different array values (atol=0.005, rtol=0)"
+                    in log_msg
+                    for log_msg in catch.output
                 )
-            self.assertTrue(k_1.equals(k_2, atol=0.02, rtol=0))
-            self.assertFalse(k_1.equals(k_2, atol=0, rtol=0.0005))
-            self.assertTrue(k_1.equals(k_2, atol=0, rtol=0.002))
+            )
+        self.assertTrue(k1.equals(k2, atol=0.02, rtol=0))
+        self.assertFalse(k1.equals(k2, atol=0, rtol=0.0005))
+        self.assertTrue(k1.equals(k2, atol=0, rtol=0.002))
 
         # Test ignore_fill_value parameter
         m1 = cf.Data(1, fill_value=1000)
