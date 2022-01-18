@@ -79,7 +79,7 @@ class styleTest(unittest.TestCase):
         self.assertEqual(
             pep8_issues,
             0,
-            "Detected {!s} PEP8 errors or warnings:".format(pep8_issues),
+            f"Detected {pep8_issues!s} PEP8 errors or warnings:",
         )
 
 

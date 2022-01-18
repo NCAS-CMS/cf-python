@@ -45,7 +45,7 @@ class Datetime(cftime.datetime):
         dayofyr=1,
         calendar=None,
     ):
-        """TODO."""
+        """**Initialization**"""
         _DEPRECATION_ERROR_CLASS(
             "Datetime",
             "Use function 'cf.dt' to create date-time objects instead.",
@@ -153,6 +153,7 @@ def dt(
             return datetime_cls(
                 year, month, day, hour, minute, second, microsecond
             )
+
     raise ValueError(
         f"Can't create date-time object with unknown calendar {calendar!r}"
     )
@@ -440,6 +441,7 @@ def dt2Dt(x, calendar=None):
     """Convert a datetime.datetime object to a cf.Datetime object."""
     if not x:
         return False
+
     return dt(x, calendar=calendar)
 
 

@@ -83,22 +83,37 @@ Note, however, that datasets of different CF versions may be
 
 ----
 
-**Field construct**
--------------------
+.. _Field-and-domain-constructs:
 
-The central construct (i.e. element) to CF is the :term:`field
-construct`. The field construct, that corresponds to a CF-netCDF data
-variable, includes all of the metadata to describe it:
+**Field and domain constructs**
+-------------------------------
+
+The central constructs of CF are the :term:`field construct` and
+:term:`domain construct`.
+
+The field construct, that corresponds to a CF-netCDF data variable,
+includes all of the metadata to describe it:
 
     * descriptive properties that apply to field construct as a whole
       (e.g. the standard name),
     * a data array, and
     * "metadata constructs" that describe the locations of each cell
-      of the data array, and the physical nature of each cell's datum.
+      (i.e. the "domain") of the data array, and the physical nature
+      of each cell's datum.
 
-A field construct is stored in a `cf.Field` instance, and henceforth
-the phrase "field construct" will be assumed to mean "`cf.Field`
-instance".
+Likewise, the domain construct, that corresponds to a CF-netCDF domain
+variable or to the domain of a field construct, includes all of the
+metadata to describe it:
+
+    * descriptive properties that apply to field construct as a whole
+      (e.g. the long name), and
+    * metadata constructs that describe the locations of each cell of
+      the domain.
+
+A field construct or domain construct is stored in a `cf.Field`
+instance or `cf.Domain` instance respectively. Henceforth the phrase
+"field construct" will be assumed to mean "`cf.Field` instance", and
+"domain construct" will be assumed to mean "`cf.Domain` instance".
 
 ----
 
@@ -212,6 +227,9 @@ The `cf.read` function has optional parameters to
   netCDF variables <Creation-by-reading>`, i.e. those that are
   referenced from CF-netCDF data variables, but which are not regarded
   by default as data variables in their own right;
+
+* return only domain constructs derived from CF-netCDF domain
+  variables;
 
 * request that masking is *not* applied by convention to data elements
   (see :ref:`data masking <Data-mask>`); 
@@ -2346,12 +2364,11 @@ Constructor  Description
 **Domain**
 ----------
 
-The :ref:`domain of the CF data model <CF-data-model>` is *not* a
-construct, but is defined collectively by various other metadata
-constructs included in the field construct. It is represented by the
-`cf.Domain` class. The domain instance may be accessed with the
-`~Field.domain` attribute, or `~Field.get_domain` method, of the field
-construct.
+The :ref:`domain of the CF data model <CF-data-model>` is defined
+collectively by various other metadata constructs. It is represented
+by the `Domain` class. A domain construct may exist independently, or
+is accessed from a field construct with its `~Field.domain` attribute,
+or `~Field.get_domain` method.
 
 .. code-block:: python
    :caption: *Get the domain, and inspect it.*
@@ -2378,10 +2395,6 @@ construct.
 Changes to domain instance are seen by the field construct, and vice
 versa. This is because the domain instance is merely a "view" of the
 relevant metadata constructs contained in the field construct.
-
-.. The field construct also has a `~Field.domain` attribute that is an
-   alias for the `~Field.get_domain` method, which makes it easier to
-   access attributes and methods of the domain instance.
 
 .. code-block:: python
    :caption: *Change a property of a metadata construct of the domain
@@ -2789,31 +2802,29 @@ cell method constructs to be recorded.
              the use of construct keys instead of netCDF variable
              names for cell method axes identification.*
 	     
-   >>> print(t.cell_methods)
+   >>> print(t.cell_methods())
    Constructs:
    {'cellmethod0': <CF CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
     'cellmethod1': <CF CellMethod: domainaxis3: maximum>}
 
 The application of cell methods is not commutative (e.g. a mean of
-variances is generally not the same as a variance of means), so a
-`cf.Constructs` instance has an `~Constructs.ordered` method to retrieve
-the cell method constructs in the same order that they were were added
-to the field construct during :ref:`field construct creation
-<Field-creation>`.
+variances is generally not the same as a variance of means), and the
+cell methods are assumed to have been applied in the order in which
+they were added to the field construct during :ref:`field construct
+creation <Field-creation>`.
 
 .. code-block:: python
    :caption: *Retrieve the cell method constructs in the same order
              that they were applied.*
 	     
-   >>> t.cell_methods().ordered()
-   OrderedDict([('cellmethod0', <CF CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                ('cellmethod1', <CF CellMethod: domainaxis3: maximum>)])
+   >>> t.cell_methods()
+   {'cellmethod0', <CF CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+    'cellmethod1', <CF CellMethod: domainaxis3: maximum>)}
 
 The axes to which the method applies, the method itself, and any
-qualifying properties are accessed with the
-`~cf.CellMethod.get_axes`, `~cf.CellMethod.get_method`, ,
-`~cf.CellMethod.get_qualifier` and `~cf.CellMethod.qualifiers`
-methods of the cell method construct.
+qualifying properties are accessed with the `~cf.CellMethod.get_axes`,
+`~cf.CellMethod.get_method`, , `~cf.CellMethod.get_qualifier` and
+`~cf.CellMethod.qualifiers` methods of the cell method construct.
 
 .. code-block:: python
    :caption: *Get the domain axes constructs to which the cell method
@@ -6569,6 +6580,17 @@ The content of the new file is:
    }
 
 ----
+   
+.. _Coordinate-subampling:
+
+Coordinate subsampling
+^^^^^^^^^^^^^^^^^^^^^^
+
+`Lossy compression by coordinate subsampling`_ was introduced into the
+CF conventions at CF-1.9, but is not yet available in cfdm. It will be
+ready in a future 3.x.0 release.
+
+----
 
 .. _PP-and-UM-fields-files:
 
@@ -6900,12 +6922,13 @@ if any, are filtered out.
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    
-.. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#external-variables
-.. _Discrete sampling geometry (DSG): http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#discrete-sampling-geometries
-.. _incomplete multidimensional form: http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_incomplete_multidimensional_array_representation
-.. _Compression by gathering:         http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#compression-by-gathering
-.. _contiguous:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_contiguous_ragged_array_representation
-.. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_indexed_ragged_array_representation
-.. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
-.. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
-.. _Hierarchical groups:              http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
+.. _External variables:               http://cfconventions.org/cf-conventions/cf-conventions.html#external-variables
+.. _Discrete sampling geometry (DSG): http://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries
+.. _incomplete multidimensional form: http://cfconventions.org/cf-conventions/cf-conventions.html#_incomplete_multidimensional_array_representation
+.. _Compression by gathering:         http://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-gathering
+.. _contiguous:                       http://cfconventions.org/cf-conventions/cf-conventions.html#_contiguous_ragged_array_representation
+.. _indexed:                          http://cfconventions.org/cf-conventions/cf-conventions.html#_indexed_ragged_array_representation
+.. _indexed contiguous:               http://cfconventions.org/cf-conventions/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
+.. _geometries:                       http://cfconventions.org/cf-conventions/cf-conventions.html#geometries
+.. _Hierarchical groups:              http://cfconventions.org/cf-conventions/cf-conventions.html#groups
+.. _Lossy compression by coordinate subsampling: http://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-coordinate-subsampling

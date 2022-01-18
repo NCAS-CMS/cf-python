@@ -356,7 +356,6 @@ class DataTest(unittest.TestCase):
                 x = e.diff(n=n, axis=axis, inplace=True)
                 self.assertIsNone(x)
                 self.assertTrue(e.equals(d_diff))
-        # --- End: for
 
         d = cf.Data(self.ma, "km")
         for n in (0, 1, 2):
@@ -2435,7 +2434,6 @@ class DataTest(unittest.TestCase):
                         "{}, axis={}, unweighted, unmasked "
                         "\ne={}, \nb={}".format(h, axes, e.array, b),
                     )
-            # --- End: for
 
             # unweighted, masked
             d = cf.Data(self.ma)
@@ -2496,7 +2494,6 @@ class DataTest(unittest.TestCase):
                         axes, e.array, b
                     ),
                 )
-            # --- End: for
 
             # masked
             d = cf.Data(self.ma)

@@ -10,13 +10,13 @@ from ...units import Units
 
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
-    """TODO.
+    """A container for instantiating Fields from a netCDF dataset.
 
     .. versionadded:: 3.0.0
 
     """
 
-    def _ncdimensions(self, ncvar):
+    def _ncdimensions(self, ncvar, ncdimensions=None):
         """Return a list of the netCDF dimensions corresponding to a
         netCDF variable.
 
@@ -32,6 +32,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             ncvar: `str`
                 The netCDF variable name.
+
+            ncdimensions: sequence of `str`, optional
+                Use these netCDF dimensions, rather than retrieving them
+                from the netCDF variable itself. This allows the
+                dimensions of a domain variable to be parsed. Note that
+                this only parameter only needs to be used once because the
+                parsed domain dimensions are automatically stored in
+                `self.read_var['domain_ncdimensions'][ncvar]`.
+
+                .. versionadded:: 3.11.0
 
         :Returns:
 
@@ -54,9 +64,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         )
 
         if not cfa:
-            return super()._ncdimensions(ncvar)
+            return super()._ncdimensions(ncvar, ncdimensions=ncdimensions)
 
-        # Still here?
+        # Still here? Then we have a CFA variable.
         ncdimensions = (
             g["variable_attributes"][ncvar].get("cfa_dimensions", "").split()
         )
@@ -128,7 +138,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         uncompress_override=None,
         parent_ncvar=None,
     ):
-        """TODO.
+        """Create data for a netCDF or CFA-netCDF variable.
 
         .. versionadded:: 3.0.0
 
@@ -177,7 +187,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         except ValueError as error:
             raise ValueError(
                 "Error during JSON-decoding of netCDF attribute 'cfa_array': "
-                "{}".format(error)
+                f"{error}"
             )
 
         variable = g["variables"][ncvar]
@@ -206,7 +216,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             strlen = g["nc"].dimensions[ncdimensions[-1]].size
             if strlen > 1:
                 ncdimensions.pop()
-                dtype = numpy_dtype("S{0}".format(strlen))
+                dtype = numpy_dtype(f"S{strlen}")
 
         cfa_data["dtype"] = dtype
         cfa_data["_axes"] = ncdimensions
@@ -279,9 +289,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         calendar=None,
         ncvar=None,
         loadd=None,
-        **kwargs
+        **kwargs,
     ):
-        """TODO.
+        """Create a Data object.
 
         .. versionadded:: 3.0.0
 
@@ -305,11 +315,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             ncvar=ncvar,
             loadd=loadd,
             chunks=chunks,
-            **kwargs
+            **kwargs,
         )
 
     def _customize_read_vars(self):
-        """TODO.
+        """Customize the read parameters.
 
         .. versionadded:: 3.0.0
 

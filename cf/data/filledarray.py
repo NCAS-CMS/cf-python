@@ -213,6 +213,3 @@ class FilledArray(abstract.Array):
     def view(self):
         """Return a view of the entire array."""
         return self[...]
-
-
-# --- End: class

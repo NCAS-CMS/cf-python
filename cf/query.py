@@ -220,10 +220,9 @@ class Query:
                 value = Data(value, units)
             elif not value_units.equivalent(Units(units)):
                 raise ValueError(
-                    "'{}' and '{}' are not equivalent units therefore the "
-                    "query does not make physical sense.".format(
-                        value_units, Units(units)
-                    )
+                    f"'{value_units}' and '{Units(units)}' are not equivalent "
+                    f"units therefore the query does not make physical "
+                    "sense."
                 )
 
         self._operator = operator
@@ -322,7 +321,7 @@ class Query:
         x.__repr__() <==> repr(x)
 
         """
-        return "<CF {}: {}>".format(self.__class__.__name__, self)
+        return f"<CF {self.__class__.__name__}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -333,7 +332,7 @@ class Query:
         attr = ".".join(self._attr)
 
         if not self._compound:
-            out = f"{attr}({self._operator} {self._value})"
+            out = f"{attr}({self._operator} {self._value!s})"
         else:
             bitwise_operator = repr(self._bitwise_operator)
             if "and_" in bitwise_operator:
@@ -341,34 +340,32 @@ class Query:
             elif "or_" in bitwise_operator:
                 bitwise_operator = "|"
 
-            out = "{}[{} {} {}]".format(
-                attr, self._compound[0], bitwise_operator, self._compound[1]
+            out = (
+                f"{attr}[{self._compound[0]} {bitwise_operator} "
+                f"{self._compound[1]}]"
             )
 
         return out
 
     @property
     def attr(self):
-        """TODO.
+        """The object attribute on which to apply the query condition.
 
         **Examples:**
 
         >>> q = cf.Query('ge', 4)
         >>> print(q.attr)
-        None
+        ()
         >>> q = cf.Query('le', 6, attr='year')
         >>> q.attr
-        'year'
-        >>> q.addattr('foo')
-        >>> q.attr
-        'year'asdasdas TODO
+        ('year',)
 
         """
         return self._attr
 
     @property
     def operator(self):
-        """TODO.
+        """The query operator.
 
         Compound conditions return `None`.
 
@@ -386,7 +383,7 @@ class Query:
 
     @property
     def value(self):
-        """TODO.
+        """The value of the condition encapsulated by the query.
 
         An exception is raised for compound conditions.
 
@@ -504,55 +501,40 @@ class Query:
     @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, traceback=False):
-        """TODO."""
+        """True if two `Query` objects are the same."""
+        standard_difference_message = (
+            f"{self.__class__.__name__}: Different compound components"
+        )
         if self._compound:
             if not other._compound:
-                logger.info(
-                    "{}: Different compound components".format(
-                        self.__class__.__name__
-                    )
-                )  # pragma: no cover
+                logger.info(standard_difference_message)  # pragma: no cover
                 return False
 
             if self._bitwise_operator != other._bitwise_operator:
                 logger.info(
-                    "{}: Different compound operators: {!r}, {!r}".format(
-                        self.__class__.__name__,
-                        self._bitwise_operator,
-                        other._bitwise_operator,
-                    )
+                    f"{self.__class__.__name__}: Different compound "
+                    f"operators: {self._bitwise_operator!r}, "
+                    f"{other._bitwise_operator!r}"
                 )  # pragma: no cover
                 return False
 
             if not self._compound[0].equals(other._compound[0]):
                 if not self._compound[0].equals(other._compound[1]):
                     logger.info(
-                        "{}: Different compound components".format(
-                            self.__class__.__name__
-                        )
+                        standard_difference_message
                     )  # pragma: no cover
                     return False
                 if not self._compound[1].equals(other._compound[0]):
                     logger.info(
-                        "{}: Different compound components".format(
-                            self.__class__.__name__
-                        )
+                        standard_difference_message
                     )  # pragma: no cover
                     return False
             elif not self._compound[1].equals(other._compound[1]):
-                logger.info(
-                    "{}: Different compound components".format(
-                        self.__class__.__name__
-                    )
-                )  # pragma: no cover
+                logger.info(standard_difference_message)  # pragma: no cover
                 return False
 
         elif other._compound:
-            logger.info(
-                "{}: Different compound components".format(
-                    self.__class__.__name__
-                )
-            )  # pragma: no cover
+            logger.info(standard_difference_message)  # pragma: no cover
             return False
 
         for attr in (
@@ -567,12 +549,9 @@ class Query:
                 verbose=verbose,
             ):
                 logger.info(
-                    "{}: Different {!r} attributes: {!r}, {!r}".format(
-                        self.__class__.__name__,
-                        attr,
-                        getattr(self, attr, None),
-                        getattr(other, attr, None),
-                    )
+                    f"{self.__class__.__name__}: Different {attr!r} "
+                    f"attributes: {getattr(self, attr, None)!r}, "
+                    f"{getattr(other, attr, None)!r}"
                 )  # pragma: no cover
                 return False
 
@@ -650,16 +629,16 @@ class Query:
         operator = self._operator
         value = self._value
 
+        standard_regex_error_msg = (
+            f"Can't perform regular expression search on a non-string: {x!r}"
+        )
         if operator == "eq":
             try:
                 return bool(value.search(x))
             except AttributeError:
                 return x == value
             except TypeError:
-                raise ValueError(
-                    "Can't perform regular expression search on a "
-                    "non-string: {!r}".format(x)
-                )
+                raise ValueError(standard_regex_error_msg)
 
         if operator == "ne":
             try:
@@ -667,10 +646,7 @@ class Query:
             except AttributeError:
                 return x != value
             except TypeError:
-                raise ValueError(
-                    "Can't perform regular expression search on a "
-                    "non-string: {!r}".format(x)
-                )
+                raise ValueError(standard_regex_error_msg)
 
         if operator == "lt":
             _lt = getattr(x, "__query_lt__", None)
@@ -1635,8 +1611,6 @@ def cellsize(value, units=None):
     <CF Query: cellsize(eq 5)>
     >>> cf.cellsize(cf.Data(5, 'km'))
     <CF Query: cellsize(eq <CF Data: 5 km>)>
-    >>> cf.cellsize(cf.Data(5, 'km'))
-    <CF Query: cellsize(eq <CF Data: 5 km>)>
     >>> cf.cellsize(5, units='km')
     <CF Query: cellsize(eq <CF Data: 5 km>)>
 
@@ -1673,7 +1647,14 @@ def cellwi(value0, value1, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellwi(cf.Data(5, 'km'), cf.Data(10, 'km'))
+    <CF Query: [lower_bounds(ge 5 km) & upper_bounds(le 10 km)]>
+    >>> cf.cellwi(5, 10, units="km")
+    <CF Query: [lower_bounds(ge 5 km) & upper_bounds(le 10 km)]>
+    >>> cf.cellwi(cf.Data(5, 'km'), cf.Data(10000, 'm'))
+    <CF Query: [lower_bounds(ge 5 km) & upper_bounds(le 10000 m)]>
+    >>> cf.cellwi(0.2, 0.3)
+    <CF Query: [lower_bounds(ge 0.2) & upper_bounds(le 0.3)]>
 
     """
     return Query("ge", value0, units=units, attr="lower_bounds") & Query(
@@ -1707,7 +1688,14 @@ def cellwo(value0, value1, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellwo(cf.Data(5, 'km'), cf.Data(10, 'km'))
+    <CF Query: [lower_bounds(lt 5 km) & upper_bounds(gt 10 km)]>
+    >>> cf.cellwo(5, 10, units="km")
+    <CF Query: [lower_bounds(lt 5 km) & upper_bounds(gt 10 km)]>
+    >>> cf.cellwo(cf.Data(5, 'km'), cf.Data(10000, 'm'))
+    <CF Query: [lower_bounds(lt 5 km) & upper_bounds(gt 10000 m)]>
+    >>> cf.cellwo(0.2, 0.3)
+    <CF Query: [lower_bounds(lt 0.2) & upper_bounds(gt 0.3)]>
 
     """
     return Query("lt", value0, units=units, attr="lower_bounds") & Query(
@@ -1742,7 +1730,12 @@ def cellgt(value, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellgt(cf.Data(300, 'K'))
+    <CF Query: lower_bounds(gt 300 K)>
+    >>> cf.cellgt(300, units='K')
+    <CF Query: lower_bounds(gt 300 K)>
+    >>> cf.cellgt(300)
+    <CF Query: lower_bounds(gt 300)>
 
     """
     return Query("gt", value, units=units, attr="lower_bounds")
@@ -1776,7 +1769,12 @@ def cellge(value, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellge(cf.Data(300, 'K'))
+    <CF Query: lower_bounds(ge 300 K)>
+    >>> cf.cellge(cf.Data(300, 'K'))
+    <CF Query: lower_bounds(ge 300 K)>
+    >>> cf.cellge(300)
+    <CF Query: lower_bounds(ge 300)>
 
     """
     return Query("ge", value, units=units, attr="lower_bounds")
@@ -1809,7 +1807,12 @@ def celllt(value, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.celllt(cf.Data(300, 'K'))
+    <CF Query: upper_bounds(lt 300 K)>
+    >>> cf.celllt(300, units='K')
+    <CF Query: upper_bounds(lt 300 K)>
+    >>> cf.celllt(300)
+    <CF Query: upper_bounds(lt 300)>
 
     """
     return Query("lt", value, units=units, attr="upper_bounds")
@@ -1842,7 +1845,12 @@ def cellle(value, units=None):
 
     **Examples:**
 
-    TODO
+    >>> cf.cellle(cf.Data(300, 'K'))
+    <CF Query: upper_bounds(le 300 K)>
+    >>> cf.cellle(300, units='K')
+    <CF Query: upper_bounds(le 300 K)>
+    >>> cf.cellle(300)
+    <CF Query: upper_bounds(le 300)>
 
     """
     return Query("le", value, units=units, attr="upper_bounds")

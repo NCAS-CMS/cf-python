@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.histogram &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.relative_vorticity" href="cf.relative_vorticity.html" />
+    <link rel="prev" title="cf.default_netCDF_fillvals" href="cf.default_netCDF_fillvals.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../function.html"><strong>cf functions</strong></a><ul>
+      <li>Previous: <a href="cf.default_netCDF_fillvals.html" title="previous chapter">cf.default_netCDF_fillvals</a></li>
+      <li>Next: <a href="cf.relative_vorticity.html" title="next chapter">cf.relative_vorticity</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-histogram">
+<h1>cf.histogram<a class="headerlink" href="#cf-histogram" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="cf.histogram">
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">histogram</code><span class="sig-paren">(</span><em class="sig-param">*digitized</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/maths.py#L206-L378"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the distribution of a set of variables in the form of an
+N-dimensional histogram.</p>
+<p>The number of dimensions of the histogram is equal to the number
+of field constructs provided by the <em>digitized</em> argument. Each
+such field construct defines a sequence of bins and provides
+indices to the bins that each value of one of the variables
+belongs. There is no upper limit to the number of dimensions of
+the histogram.</p>
+<p>The output histogram bins are defined by the exterior product of
+the one-dimensional bins of each digitized field construct. For
+example, if only one digitized field construct is provided then
+the histogram bins simply comprise its one-dimensional bins; if
+there are two digitized field constructs then the histogram bins
+comprise the two-dimensional matrix formed by all possible
+combinations of the two sets of one-dimensional bins; etc.</p>
+<p>An output value for an histogram bin is formed by counting the
+number cells for which the digitized field constructs, taken
+together, index that bin. Note that it may be the case that not
+all output bins are indexed by the digitized field constructs, and
+for these bins missing data is returned.</p>
+<p>The returned field construct will have a domain axis construct for
+each dimension of the histogram, with a corresponding dimension
+coordinate construct that defines the bin boundaries.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.0.2.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.bin</span></code></a>, <a class="reference internal" href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a>,
+<a class="reference internal" href="../method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>, <a class="reference internal" href="../method/cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.percentile</span></code></a>,
+<a class="reference internal" href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.where</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>digitized: one or more <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>One or more field constructs that contain digitized data
+with corresponding metadata, as would be output by
+<a class="reference internal" href="../method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>. Each field construct contains indices
+to the one-dimensional bins to which each value of an
+original field construct belongs; and there must be
+<code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> properties as defined by
+the <a class="reference internal" href="../method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a> method (and any of the extra
+properties defined by that method are also recommended).</p>
+<p>The bins defined by the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code>
+properties are used to create a dimension coordinate
+construct for the output field construct.</p>
+<p>Each digitized field construct must be transformable so
+that its data is broadcastable to any other digitized
+field contruct’s data. This is done by using the metadata
+constructs of the to create a mapping of physically
+compatible dimensions between the fields, and then
+manipulating the dimensions of the digitized field
+construct’s data to ensure that broadcasting can occur.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>The field construct containing the histogram.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<p>Create a one-dimensional histogram based on 10 equally-sized bins
+that exactly span the data range:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+<span class="go">Field: long_name=Bin index to which each &#39;specific_humidity&#39; value belongs (ncvar%q)</span>
+<span class="go">------------------------------------------------------------------------------------</span>
+<span class="go">Data            : long_name=Bin index to which each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.003  0.0173]</span>
+<span class="go"> [0.0173 0.0316]</span>
+<span class="go"> [0.0316 0.0459]</span>
+<span class="go"> [0.0459 0.0602]</span>
+<span class="go"> [0.0602 0.0745]</span>
+<span class="go"> [0.0745 0.0888]</span>
+<span class="go"> [0.0888 0.1031]</span>
+<span class="go"> [0.1031 0.1174]</span>
+<span class="go"> [0.1174 0.1317]</span>
+<span class="go"> [0.1317 0.146 ]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rint</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="go">Field: number_of_observations</span>
+<span class="go">-----------------------------</span>
+<span class="go">Data            : number_of_observations(specific_humidity(10)) 1</span>
+<span class="go">Cell methods    : latitude: longitude: point</span>
+<span class="go">Dimension coords: specific_humidity(10) = [0.01015, ..., 0.13885] 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[9 7 9 4 5 1 1 1 2 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.003  0.0173]</span>
+<span class="go"> [0.0173 0.0316]</span>
+<span class="go"> [0.0316 0.0459]</span>
+<span class="go"> [0.0459 0.0602]</span>
+<span class="go"> [0.0602 0.0745]</span>
+<span class="go"> [0.0745 0.0888]</span>
+<span class="go"> [0.0888 0.1031]</span>
+<span class="go"> [0.1031 0.1174]</span>
+<span class="go"> [0.1174 0.1317]</span>
+<span class="go"> [0.1317 0.146 ]]</span>
+</pre></div>
+</div>
+<p>Create a two-dimensional histogram based on specific humidity and
+temperature bins. The temperature bins in this example are derived
+from a dummy temperature field construct with the same shape as
+the specific humidity field construct already in use:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">290</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">override_units</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="go">Field: air_temperature (ncvar%q)</span>
+<span class="go">--------------------------------</span>
+<span class="go">Data            : air_temperature(latitude(5), longitude(8)) K</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">indices_t</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">indices_t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="go">Field: number_of_observations</span>
+<span class="go">-----------------------------</span>
+<span class="go">Data            : number_of_observations(air_temperature(5), specific_humidity(10)) 1</span>
+<span class="go">Cell methods    : latitude: longitude: point</span>
+<span class="go">Dimension coords: air_temperature(5) = [281.1054839143287, ..., 313.9741786365939] K</span>
+<span class="go">                : specific_humidity(10) = [0.01015, ..., 0.13885] 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[2  1  5  3  2 -- -- -- -- --]</span>
+<span class="go"> [1  1  2 --  1 --  1  1 -- --]</span>
+<span class="go"> [4  4  2  1  1  1 -- --  1  1]</span>
+<span class="go"> [1  1 -- --  1 -- -- --  1 --]</span>
+<span class="go"> [1 -- -- -- -- -- -- -- -- --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 40 1&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2021, NCAS | Page built on 2021-10-08.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

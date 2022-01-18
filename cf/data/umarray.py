@@ -313,12 +313,3 @@ class UMArray(abstract.FileArray):
             raise Exception(error)
         else:
             return f
-
-
-#        return _open_um_file(self.filename,
-#                             fmt=self.fmt,
-#                             word_size=self.word_size,
-#                             byte_ordering=self.byte_ordering)
-
-
-# --- End: class

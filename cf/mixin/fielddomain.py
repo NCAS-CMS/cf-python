@@ -28,6 +28,8 @@ logger = logging.getLogger(__name__)
 
 _units_degrees = Units("degrees")
 
+_empty_set = set()
+
 
 class FieldDomain:
     """Mixin class for methods common to both field and domain
@@ -36,6 +38,28 @@ class FieldDomain:
     .. versionadded:: 3.9.0
 
     """
+
+    @property
+    def _cyclic(self):
+        """Storage for axis cyclicity.
+
+        Do not change in-place.
+
+        """
+        return self._custom.get("_cyclic", _empty_set)
+
+    @_cyclic.setter
+    def _cyclic(self, value):
+        """value must be a set.
+
+        Do not change in-place.
+
+        """
+        self._custom["_cyclic"] = value
+
+    @_cyclic.deleter
+    def _cyclic(self):
+        self._custom["_cyclic"] = _empty_set
 
     def _coordinate_reference_axes(self, key):
         """Returns the set of coordinate reference axes for a key.
@@ -647,7 +671,10 @@ class FieldDomain:
                         )
 
                     if 0 < len(bounds) < n_items:
-                        raise ValueError("bounds alskdaskds TODO")
+                        raise ValueError(
+                            "Cell to derive index from must have unique "
+                            f"bounds, but got {bounds}"
+                        )
 
                     # Remove grid cells if, upon closer inspection,
                     # they do actually contain the point.
@@ -929,9 +956,17 @@ class FieldDomain:
 
         return axes
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
+    @property
+    def rank(self):
+        """The number of axes in the domain.
+
+        **Examples:**
+
+        TODO
+
+        """
+        return len(self.domain_axes(todict=True))
+
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def anchor(
@@ -1207,13 +1242,17 @@ class FieldDomain:
             bounds_units = bounds.Units
 
         period = coord.period()
+
         if period is not None:
             has_period = True
         else:
             period = config.get("period")
-            has_period = False
+            if period is None:
+                has_period = False
+            else:
+                has_period = True
 
-        if period is None:
+        if not has_period:
             if bounds_units.islongitude:
                 period = Data(360.0, units="degrees_east")
             elif bounds_units.equivalent(_units_degrees):
@@ -1231,9 +1270,6 @@ class FieldDomain:
             if not noop:
                 self.cyclic(key, iscyclic=False, config=config)
             return False
-
-        if has_period:
-            period = None
 
         config = config.copy()
         config["axis"] = self.get_data_axes(key, default=(None,))[0]
@@ -1312,7 +1348,10 @@ class FieldDomain:
         """
         if construct is None:
             if identity is None:
-                raise ValueError("TODO")
+                raise ValueError(
+                    "An identity or construct must be provided in order to "
+                    "determine the coordinate reference to select."
+                )
 
             key = self.coordinate_reference(identity, key=True, default=None)
             if key is None:
@@ -1333,7 +1372,10 @@ class FieldDomain:
 
             return ref
         elif identity is not None:
-            raise ValueError("TODO")
+            raise ValueError(
+                "Provide only one of the identity and construct parameters "
+                "to select a coordinate reference."
+            )
 
         out = []
 
@@ -1768,14 +1810,15 @@ class FieldDomain:
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
-                     `cell_method`, `coordinate`, `coordinate_references`,
-                     `dimension_coordinate`, `domain_ancillary`,
-                     `domain_axis`, `field_ancillary`
+        .. seealso:: `construct`, `auxiliary_coordinate`,
+                     `cell_measure`, `cell_method`, `coordinate`,
+                     `coordinate_references`, `dimension_coordinate`,
+                     `domain_ancillary`, `domain_axis`,
+                     `field_ancillary`
 
         :Parameters:
 
-            identities: optional
+            identity: optional
                 Select coordinate reference constructs that have an
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
@@ -1896,6 +1939,124 @@ class FieldDomain:
             axes.extend(data_axes.get(key, ()))
 
         return set(axes)
+
+    def cyclic(
+        self, *identity, iscyclic=True, period=None, config={}, **filter_kwargs
+    ):
+        """Set the cyclicity of an axis.
+
+        .. versionadded:: 1.0
+
+        .. seealso:: `autocyclic`, `iscyclic`, `period`, `domain_axis`
+
+        :Parameters:
+
+            identity, filter_kwargs: optional
+                Select the unique domain axis construct returned by
+                ``f.domain_axis(*identity, **filter_kwargs)``. See
+                `domain_axis` for details.
+
+            iscyclic: `bool`, optional
+                If False then the axis is set to be non-cyclic. By
+                default the selected axis is set to be cyclic.
+
+            period: optional
+                The period for a dimension coordinate construct which
+                spans the selected axis. May be any numeric scalar
+                object that can be converted to a `Data` object (which
+                includes numpy array and `Data` objects). The absolute
+                value of *period* is used. If *period* has units then
+                they must be compatible with those of the dimension
+                coordinates, otherwise it is assumed to have the same
+                units as the dimension coordinates.
+
+            config: `dict`
+                Additional parameters for optimizing the
+                operation. See the code for details.
+
+                .. versionadded:: 3.9.0
+
+            axes: deprecated at version 3.0.0
+                Use the *identity* and **filter_kwargs* parameters
+                instead.
+
+        :Returns:
+
+            `set`
+                The construct keys of the domain axes which were
+                cyclic prior to the new setting, or the current cyclic
+                domain axes if no axis was specified.
+
+        **Examples:**
+
+        >>> f.cyclic()
+        set()
+        >>> f.cyclic('X', period=360)
+        set()
+        >>> f.cyclic()
+        {'domainaxis2'}
+        >>> f.cyclic('X', iscyclic=False)
+        {'domainaxis2'}
+        >>> f.cyclic()
+        set()
+
+        """
+        if not iscyclic and config.get("no-op"):
+            return self._cyclic.copy()
+
+        old = None
+        cyclic = self._cyclic
+
+        if not identity and not filter_kwargs:
+            return cyclic.copy()
+
+        axis = config.get("axis")
+        if axis is None:
+            axis = self.domain_axis(*identity, key=True, **filter_kwargs)
+
+        data = self.get_data(None, _fill_value=False)
+        if data is not None:
+            try:
+                data_axes = self.get_data_axes()
+                data.cyclic(data_axes.index(axis), iscyclic)
+            except ValueError:
+                pass
+
+        if iscyclic:
+            dim = config.get("coord")
+            if dim is None:
+                dim = self.dimension_coordinate(
+                    filter_by_axis=(axis,), default=None
+                )
+
+            if dim is not None:
+                if config.get("period") is not None:
+                    dim.period(**config)
+                elif period is not None:
+                    dim.period(period, **config)
+                elif dim.period() is None:
+                    raise ValueError(
+                        "A cyclic dimension coordinate must have a period"
+                    )
+
+            if axis not in cyclic:
+                # Never change _cyclic in-place
+                old = cyclic.copy()
+                cyclic = cyclic.copy()
+                cyclic.add(axis)
+                self._cyclic = cyclic
+
+        elif axis in cyclic:
+            # Never change _cyclic in-place
+            old = cyclic.copy()
+            cyclic = cyclic.copy()
+            cyclic.discard(axis)
+            self._cyclic = cyclic
+
+        if old is None:
+            old = cyclic.copy()
+
+        return old
 
     def dimension_coordinate(
         self,
@@ -2209,7 +2370,7 @@ class FieldDomain:
     def get_coordinate_reference(
         self, *identity, key=False, construct=None, default=ValueError()
     ):
-        """TODO.
+        """Return a coordinate reference construct.
 
         .. versionadded:: 3.0.2
 
@@ -2307,6 +2468,49 @@ class FieldDomain:
                 continue
 
         return out
+
+    def has_construct(self, *identity, **filter_kwargs):
+        """Whether a metadata construct exists.
+
+        .. versionadded:: 3.4.0
+
+        .. seealso:: `construct`, `del_construct`, `get_construct`,
+                     `set_construct`
+        :Parameters:
+
+            identity, filter_kwargs: optional
+                Select the unique construct returned by
+                ``f.construct(*identity, **filter_kwargs)``. See
+                `construct` for details.
+
+        :Returns:
+
+            `bool`
+                `True` if the construct exists, otherwise `False`.
+
+        **Examples:**
+
+        >>> f = cf.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f.has_construct('T')
+        True
+        >>> f.has_construct('longitude')
+        True
+        >>> f.has_construct('Z')
+        False
+
+        """
+        return (
+            self.construct(*identity, default=None, **filter_kwargs)
+            is not None
+        )
 
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the given axis is cyclic.
@@ -2499,7 +2703,11 @@ class FieldDomain:
             shape0 = getattr(c, "shape", None)
             shape1 = getattr(new, "shape", None)
             if shape0 != shape1:
-                raise ValueError("TODO bb")
+                raise ValueError(
+                    f"Can't replace {c.__class__.__name__} construct "
+                    f"with a {new.__class__.__name__} object of different "
+                    "shape."
+                )
 
         self.set_construct(new, key=key, axes=axes, copy=copy)
 

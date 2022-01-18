@@ -333,9 +333,7 @@ class TimeDurationTest(unittest.TestCase):
                 if direction is False:
                     y = y[::-1]
 
-                self.assertEqual(
-                    x, y, "{}!={} direction={}".format(x, y, direction)
-                )
+                self.assertEqual(x, y, f"{x}!={y} direction={direction}")
 
             for x, y in zip(
                 [
@@ -388,7 +386,7 @@ class TimeDurationTest(unittest.TestCase):
             ):
                 if direction is False:
                     y = y[::-1]
-                self.assertEqual(x, y, "{}!={}".format(x, y))
+                self.assertEqual(x, y, f"{x}!={y}")
 
             for x, y in zip(
                 [
@@ -437,7 +435,7 @@ class TimeDurationTest(unittest.TestCase):
                 if direction is False:
                     y = y[::-1]
 
-                self.assertEqual(x, y, "{}!={}".format(x, y))
+                self.assertEqual(x, y, f"{x}!={y}")
 
     def test_TimeDuration_arithmetic(self):
         self.assertEqual(cf.M() + cf.dt(2000, 1, 1), cf.dt(2000, 2, 1))
@@ -475,6 +473,24 @@ class TimeDurationTest(unittest.TestCase):
         self.assertEqual(cf.M() / 2.0, cf.M(0.5))
         self.assertEqual(cf.M(8) / 3, cf.M(8 / 3))
         self.assertEqual(cf.M(8) // 3, cf.M(2))
+
+        # Test arithmetic involving Data as well as datetimes:
+        da = cf.Data([2], units="days since 2000-01-01")
+        dt = cf.TimeDuration(14, "day")
+        t0 = da + dt
+        t1 = dt + da
+        self.assertEqual(
+            t0,
+            cf.dt(2000, 1, 17, calendar="gregorian"),
+        )
+        self.assertEqual(t0, t1)
+        t2 = dt - da
+        t3 = da - dt
+        self.assertEqual(
+            t2,
+            cf.dt(1999, 12, 20, calendar="gregorian"),
+        )
+        self.assertEqual(t2, t3)
 
     def test_Timeduration__days_in_month(self):
         self.assertEqual(cf.TimeDuration.days_in_month(1900, 2), 28)

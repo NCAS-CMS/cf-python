@@ -3832,6 +3832,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     # .timetuple()[0:6], microsecond=other.microsecond,
                     calendar=getattr(self.Units, "calendar", "standard"),
                 )
+            elif other is None:
+                # Can't sensibly initialize a Data object from a bare
+                # `None` (issue #281)
+                other = numpy_array(None, dtype=object)
 
             other = type(self).asdata(other)
 
@@ -8133,7 +8137,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 Note that the units of the weights matter for an integral
                 collapse, which differs from a weighted sum in that the units
                 of the weights are incorporated into the result.
-
 
                 *Parameter example:*
                   If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
