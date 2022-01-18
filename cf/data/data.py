@@ -994,10 +994,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         keepdims = self.__keepdims_indexing__
 
         indices, roll = parse_indices(
-            shape,
-            indices,
-            cyclic=True,
-            keepdims=keepdims,
+            shape, indices, cyclic=True, keepdims=keepdims
         )
 
         axes = self._axes
@@ -9522,13 +9519,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "Got {!r}, {!r}".format(X_axis, Y_axis)
                 )
 
-            for A, axis in zip(
-                (
-                    "X",
-                    "Y",
-                ),
-                (X_axis, Y_axis),
-            ):
+            for A, axis in zip(("X", "Y"), (X_axis, Y_axis)):
                 if axis not in axes:
                     raise ValueError(
                         "If dimensions have been identified with the "

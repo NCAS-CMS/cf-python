@@ -302,9 +302,7 @@ _coord_standard_name = {
 # --------------------------------------------------------------------
 # Map PP axis codes to CF long names
 # --------------------------------------------------------------------
-_coord_long_name = {
-    13: "site",
-}
+_coord_long_name = {13: "site"}
 
 # --------------------------------------------------------------------
 # Map PP axis codes to UDUNITS strings
@@ -869,9 +867,7 @@ class UMField:
             self.z_recs = recs[:nz]
             self.t_recs = recs[::nz]
 
-            LBUSER5 = recs[0].int_hdr.item(
-                lbuser5,
-            )
+            LBUSER5 = recs[0].int_hdr.item(lbuser5)
 
             #            self.cell_method_axis_name = {'area': 'area'}
 
@@ -1780,14 +1776,7 @@ class UMField:
 
         """
         int_hdr = rec.int_hdr
-        return [
-            int_hdr.item(
-                lblev,
-            ),
-            int_hdr.item(
-                lbuser5,
-            ),
-        ]
+        return [int_hdr.item(lblev), int_hdr.item(lbuser5)]
 
     def header_z(self, rec):
         """Return the list [LBLEV, LBUSER5, BLEV, BRLEV, BHLEV, BHRLEV,
@@ -1859,9 +1848,7 @@ class UMField:
 
             rec = recs[0]
 
-            fill_value = rec.real_hdr.item(
-                bmdi,
-            )
+            fill_value = rec.real_hdr.item(bmdi)
             if fill_value == _BMDI_no_missing_data_value:
                 fill_value = None
 
@@ -1985,9 +1972,7 @@ class UMField:
         data_axes = pmaxes + data_axes
 
         # Set the data array
-        fill_value = recs[0].real_hdr.item(
-            bmdi,
-        )
+        fill_value = recs[0].real_hdr.item(bmdi)
         if fill_value == _BMDI_no_missing_data_value:
             fill_value = None
 
@@ -2246,14 +2231,7 @@ class UMField:
             out : `AuxiliaryCoordinate` or `DimensionCoordinate` or `None`
 
         """
-        array = tuple(
-            [
-                rec.int_hdr.item(
-                    lblev,
-                )
-                for rec in self.z_recs
-            ]
-        )
+        array = tuple([rec.int_hdr.item(lblev) for rec in self.z_recs])
 
         key = array
         c = _cached_model_level_number_coordinate.get(key, None)
@@ -2328,12 +2306,7 @@ class UMField:
 
         """
         # Find the data type
-        if (
-            rec.int_hdr.item(
-                lbuser2,
-            )
-            == 3
-        ):
+        if rec.int_hdr.item(lbuser2) == 3:
             # Boolean
             return np.dtype(bool)
         else:
@@ -2377,12 +2350,7 @@ class UMField:
         else:
             # 'Z' aggregation has been done along the pseudolevel axis
             array = np.array(
-                [
-                    rec.int_hdr.item(
-                        lbuser5,
-                    )
-                    for rec in self.z_recs
-                ],
+                [rec.int_hdr.item(lbuser5) for rec in self.z_recs],
                 dtype=self.int_hdr_dtype,
             )
             self.z_axis = "p"
@@ -2621,9 +2589,7 @@ class UMField:
 
         IB = self.lbtim_ib
 
-        if IB <= 1 or vtimes.item(0,) >= dtimes.item(
-            0,
-        ):
+        if IB <= 1 or vtimes.item(0) >= dtimes.item(0):
             array = vtimes
             bounds = None
             climatology = False
@@ -3105,14 +3071,7 @@ class UMField:
         )  # pragma: no cover
 
         z_recs = self.z_recs
-        array = tuple(
-            [
-                rec.real_hdr.item(
-                    blev,
-                )
-                for rec in z_recs
-            ]
-        )
+        array = tuple([rec.real_hdr.item(blev) for rec in z_recs])
         bounds0 = tuple(
             [rec.real_hdr[brlev] for rec in z_recs]
         )  # lower level boundary
@@ -3172,13 +3131,7 @@ class UMField:
         )  # pragma: no cover
 
         array = np.array(
-            [
-                rec.real_hdr.item(
-                    brlev,
-                )
-                for rec in self.z_recs
-            ],
-            dtype=float,
+            [rec.real_hdr.item(brlev) for rec in self.z_recs], dtype=float
         )
 
         LBVC = self.lbvc
@@ -3193,12 +3146,8 @@ class UMField:
             if not 128 <= LBVC <= 139:
                 bounds = []
                 for rec in self.z_recs:
-                    BRLEV = rec.real_hdr.item(
-                        brlev,
-                    )
-                    BRSVD1 = rec.real_hdr.item(
-                        brsvd1,
-                    )
+                    BRLEV = rec.real_hdr.item(brlev)
+                    BRSVD1 = rec.real_hdr.item(brsvd1)
 
                     if abs(BRSVD1 - BRLEV) >= atol:
                         bounds = None

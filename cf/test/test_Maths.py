@@ -117,9 +117,7 @@ class MathTest(unittest.TestCase):
         for wrap in (False, True, None):
             for one_sided in (True, False):
                 x, y = f.grad_xy(
-                    radius=radius,
-                    x_wrap=wrap,
-                    one_sided_at_boundary=one_sided,
+                    radius=radius, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
                 c = cf.curl_xy(
@@ -193,9 +191,7 @@ class MathTest(unittest.TestCase):
         for wrap in (False, True, None):
             for one_sided in (False, True):
                 x, y = f.grad_xy(
-                    radius=radius,
-                    x_wrap=wrap,
-                    one_sided_at_boundary=one_sided,
+                    radius=radius, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
                 d = cf.div_xy(

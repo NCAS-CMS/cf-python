@@ -29,10 +29,7 @@ class FilledArray(abstract.Array):
 
         """
         super().__init__(
-            dtype=dtype,
-            shape=shape,
-            size=size,
-            fill_value=fill_value,
+            dtype=dtype, shape=shape, size=size, fill_value=fill_value
         )
 
     def __getitem__(self, indices):

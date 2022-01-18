@@ -225,12 +225,7 @@ _collapse_weighted_methods = set(
 # --------------------------------------------------------------------
 # These Data methods may specify a number of degrees of freedom
 # --------------------------------------------------------------------
-_collapse_ddof_methods = set(
-    (
-        "sd",
-        "var",
-    )
-)
+_collapse_ddof_methods = set(("sd", "var"))
 
 _earth_radius = Data(6371229.0, "m")
 
@@ -1958,9 +1953,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 coord_type = None
 
                 key, coord = f.dimension_coordinate(
-                    item=True,
-                    default=(None, None),
-                    filter_by_axis=(axis,),
+                    item=True, default=(None, None), filter_by_axis=(axis,)
                 )
                 if coord is not None:
                     # This axis of the domain has a dimension
@@ -4742,10 +4735,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return r
 
     def laplacian_xy(
-        self,
-        x_wrap=None,
-        one_sided_at_boundary=False,
-        radius=None,
+        self, x_wrap=None, one_sided_at_boundary=False, radius=None
     ):
         r"""Calculate the Laplacian in X-Y coordinates.
 
@@ -4895,13 +4885,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             r2_sin_theta = sin_theta * r ** 2
 
             d2f_dphi2 = f.derivative(
-                x_key,
-                wrap=x_wrap,
-                one_sided_at_boundary=one_sided_at_boundary,
+                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
             ).derivative(
-                x_key,
-                wrap=x_wrap,
-                one_sided_at_boundary=one_sided_at_boundary,
+                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
             )
 
             term1 = d2f_dphi2 / (r2_sin_theta * sin_theta)
@@ -4924,23 +4910,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Cartesian coordinates
             # --------------------------------------------------------
             d2f_dx2 = f.derivative(
-                x_key,
-                wrap=x_wrap,
-                one_sided_at_boundary=one_sided_at_boundary,
+                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
             ).derivative(
-                x_key,
-                wrap=x_wrap,
-                one_sided_at_boundary=one_sided_at_boundary,
+                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
             )
 
             d2f_dy2 = f.derivative(
-                y_key,
-                wrap=None,
-                one_sided_at_boundary=one_sided_at_boundary,
+                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
             ).derivative(
-                y_key,
-                wrap=None,
-                one_sided_at_boundary=one_sided_at_boundary,
+                y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
             )
 
             f = d2f_dx2 + d2f_dy2
@@ -8640,8 +8618,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         #                            filter_by_axis=(axis,), axis_mode="and", todict=Tru#e
                         #                        ).value(None)
                         dc = f.dimension_coordinate(
-                            filter_by_axis=(axis,),
-                            default=None,
+                            filter_by_axis=(axis,), default=None
                         )
                         if dc is not None and not dc.has_bounds():
                             dc.set_bounds(dc.create_bounds(cellsize=0))
@@ -8926,11 +8903,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # which span this axis
                 #                c = auxiliary_coordinates.filter_by_naxes(gt(1), view=True)
                 c = f.auxiliary_coordinates(
-                    filter_by_naxes=(
-                        gt(
-                            1,
-                        ),
-                    ),
+                    filter_by_naxes=(gt(1),),
                     filter_by_axis=(axis,),
                     axis_mode="or",
                     todict=True,
@@ -13649,12 +13622,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return axes
 
-    def grad_xy(
-        self,
-        x_wrap=None,
-        one_sided_at_boundary=False,
-        radius=None,
-    ):
+    def grad_xy(self, x_wrap=None, one_sided_at_boundary=False, radius=None):
         r"""Calculate the (X, Y) gradient vector.
 
         The horizontal gradient vector of a scalar function is

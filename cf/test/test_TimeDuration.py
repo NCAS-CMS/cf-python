@@ -479,17 +479,11 @@ class TimeDurationTest(unittest.TestCase):
         dt = cf.TimeDuration(14, "day")
         t0 = da + dt
         t1 = dt + da
-        self.assertEqual(
-            t0,
-            cf.dt(2000, 1, 17, calendar="gregorian"),
-        )
+        self.assertEqual(t0, cf.dt(2000, 1, 17, calendar="gregorian"))
         self.assertEqual(t0, t1)
         t2 = dt - da
         t3 = da - dt
-        self.assertEqual(
-            t2,
-            cf.dt(1999, 12, 20, calendar="gregorian"),
-        )
+        self.assertEqual(t2, cf.dt(1999, 12, 20, calendar="gregorian"))
         self.assertEqual(t2, t3)
 
     def test_Timeduration__days_in_month(self):

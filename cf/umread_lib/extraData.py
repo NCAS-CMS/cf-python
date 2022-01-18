@@ -37,10 +37,7 @@ class ExtraData(dict):
         k.sort()
         return k
 
-    _tolerances = {
-        np.dtype(np.float32): 1e-5,
-        np.dtype(np.float64): 1e-13,
-    }
+    _tolerances = {np.dtype(np.float32): 1e-5, np.dtype(np.float64): 1e-13}
 
     def _cmp_floats(self, a, b, tolerance):
         if a == b:

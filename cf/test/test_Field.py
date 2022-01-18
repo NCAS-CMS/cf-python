@@ -2409,11 +2409,7 @@ class FieldTest(unittest.TestCase):
     def test_Field_dimension_coordinate(self):
         f = self.f
 
-        for identity in (
-            "grid_latitude",
-            "X",
-            "dimensioncoordinate1",
-        ):
+        for identity in ("grid_latitude", "X", "dimensioncoordinate1"):
             if identity == "X":
                 key, c = f.construct("grid_longitude", item=True)
             else:
@@ -2647,9 +2643,7 @@ class FieldTest(unittest.TestCase):
         for wrap in (False, True, None):
             for one_sided in (True, False):
                 x, y = f.grad_xy(
-                    radius=radius,
-                    x_wrap=wrap,
-                    one_sided_at_boundary=one_sided,
+                    radius=radius, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
                 self.assertTrue(x.Units == y.Units == cf.Units("m-1 rad-1"))
@@ -2714,9 +2708,7 @@ class FieldTest(unittest.TestCase):
         for wrap in (False, True, None):
             for one_sided in (True, False):
                 lp = f.laplacian_xy(
-                    radius=radius,
-                    x_wrap=wrap,
-                    one_sided_at_boundary=one_sided,
+                    radius=radius, x_wrap=wrap, one_sided_at_boundary=one_sided
                 )
 
                 self.assertTrue(lp.Units == cf.Units("m-2 rad-2"))

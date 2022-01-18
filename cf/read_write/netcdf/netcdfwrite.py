@@ -477,10 +477,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     for size in array.shape
                 ]
 
-                for (
-                    ncdim,
-                    size,
-                ) in zip(cfa_dimensions, array.shape):
+                for (ncdim, size) in zip(cfa_dimensions, array.shape):
                     if ncdim not in g["ncdim_to_size"]:
                         # This cfa private dimension needs creating
                         g["ncdim_to_size"][ncdim] = size

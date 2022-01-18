@@ -385,9 +385,7 @@ class PartitionMatrix:
             indices[index] = slice(i, i + 1)
             sub_matrix = matrix[tuple(indices)]
             #            (r0, r1) = next(sub_matrix.flat).location[master_index]
-            (r0, r1) = sub_matrix.item(
-                0,
-            ).location[master_index]
+            (r0, r1) = sub_matrix.item(0).location[master_index]
 
             # Could do better, perhaps, by assigning in blocks
             if not r0 < x < r1:

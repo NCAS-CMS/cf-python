@@ -378,13 +378,7 @@ def histogram(*digitized):
     return f.bin("sample_size", digitized=digitized)
 
 
-def curl_xy(
-    fx,
-    fy,
-    x_wrap=None,
-    one_sided_at_boundary=False,
-    radius=None,
-):
+def curl_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
     r"""Calculate the horizontal curl of an (X, Y) vector.
 
     The horizontal curl is calculated from orthogonal vector component
@@ -553,9 +547,7 @@ def curl_xy(
         r = fx.radius(default=radius)
 
         term1 = (fx * sin_theta).derivative(
-            y_key,
-            wrap=None,
-            one_sided_at_boundary=one_sided_at_boundary,
+            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
         )
 
         term2 = fy.derivative(
@@ -572,15 +564,11 @@ def curl_xy(
         # Cartesian coordinates
         # --------------------------------------------------------
         dfy_dx = fy.derivative(
-            x_key,
-            wrap=x_wrap,
-            one_sided_at_boundary=one_sided_at_boundary,
+            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
         )
 
         dfx_dy = fx.derivative(
-            y_key,
-            wrap=None,
-            one_sided_at_boundary=one_sided_at_boundary,
+            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
         )
 
         c = dfy_dx - dfx_dy
@@ -594,13 +582,7 @@ def curl_xy(
     return c
 
 
-def div_xy(
-    fx,
-    fy,
-    x_wrap=None,
-    one_sided_at_boundary=False,
-    radius=None,
-):
+def div_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
     r"""Calculate the horizontal divergence of an (X, Y) vector.
 
     The horizontal divergence is calculated from orthogonal vector

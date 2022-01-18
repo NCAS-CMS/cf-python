@@ -96,14 +96,7 @@ class ConstructList(list, Container, cfdm.Container):
         See `_docstring_method_exclusions` for details.
 
         """
-        return (
-            "append",
-            "extend",
-            "insert",
-            "pop",
-            "reverse",
-            "clear",
-        )
+        return ("append", "extend", "insert", "pop", "reverse", "clear")
 
     # ----------------------------------------------------------------
     # Overloaded list methods

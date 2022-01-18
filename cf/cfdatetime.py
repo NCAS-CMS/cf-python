@@ -386,15 +386,7 @@ def st2elements(date_string):
     if utc_offset:
         raise ValueError("Can't specify a time offset from UTC")
 
-    return (
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        microsecond,
-    )
+    return (year, month, day, hour, minute, second, microsecond)
 
 
 def rt2dt(array, units_in, units_out=None, dummy1=None):

@@ -67,10 +67,7 @@ class read_writeTest(unittest.TestCase):
         "NETCDF3_64BIT_OFFSET",
         "NETCDF3_64BIT_DATA",
     ]
-    netcdf4_fmts = [
-        "NETCDF4",
-        "NETCDF4_CLASSIC",
-    ]
+    netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
     netcdf_fmts = netcdf3_fmts + netcdf4_fmts
 
     def test_write_filename(self):
@@ -553,13 +550,7 @@ class read_writeTest(unittest.TestCase):
             with cf.chunksize(chunksize):
                 f = cf.read(self.filename)[0]
                 for fmt in ("NETCDF4", "NETCDF4_CLASSIC", "CFA4"):
-                    cf.write(
-                        f,
-                        tmpfile,
-                        fmt=fmt,
-                        compress=1,
-                        shuffle=True,
-                    )
+                    cf.write(f, tmpfile, fmt=fmt, compress=1, shuffle=True)
                     g = cf.read(tmpfile)[0]
                     self.assertTrue(
                         f.equals(g, verbose=2),
@@ -750,11 +741,7 @@ class read_writeTest(unittest.TestCase):
             command_to_run = ["ncdump", self.filename, ">", tempf]
             if option:
                 command_to_run.insert(1, option)
-            subprocess.run(
-                " ".join(command_to_run),
-                shell=True,
-                check=True,
-            )
+            subprocess.run(" ".join(command_to_run), shell=True, check=True)
             with open(tempf, "r") as file:
                 cdl_string_1 = file.read()
 
@@ -797,12 +784,10 @@ class read_writeTest(unittest.TestCase):
         for i in range(n):
             j = i + n
             self.assertTrue(
-                f[i].data.equals(f[j].data, verbose=1),
-                f"{f[i]!r} {f[j]!r}",
+                f[i].data.equals(f[j].data, verbose=1), f"{f[i]!r} {f[j]!r}"
             )
             self.assertTrue(
-                f[j].data.equals(f[i].data, verbose=1),
-                f"{f[j]!r} {f[i]!r}",
+                f[j].data.equals(f[i].data, verbose=1), f"{f[j]!r} {f[i]!r}"
             )
 
         # Note: Don't loop round all netCDF formats for better
