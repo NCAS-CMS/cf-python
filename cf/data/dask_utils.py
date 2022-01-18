@@ -39,7 +39,7 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
 
             y: a dask array to compare with x
 
-            masked_equal:
+            masked_equal: `bool`, optional
                 Whether masked values in a and b are considered
                 equal (True) or not (False). They are considered equal
                 by default.
