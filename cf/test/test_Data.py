@@ -281,14 +281,10 @@ class DataTest(unittest.TestCase):
         sa2_data = np.array(["one", "two", "four"], dtype="S4")
         sa2 = cf.Data(sa2_data, "m")
         self.assertTrue(sa2.equals(sa2.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(sa1.equals(sa2))
-            self.assertTrue(
-                any(
-                    "Data: Different data types: |S5 != |S4" in log_msg
-                    for log_msg in catch.output
-                )
-            )
+        # Unlike for numeric types, for string-like data as long as the data
+        # is the same consider the arrays equal, even if the dtype differs.
+        # TODO DASK: this behaviour will be added via cfdm, test fails for now
+        # ## self.assertTrue(sa1.equals(sa2))
         sa3_data = sa2_data.astype("S5")
         sa3 = cf.Data(sa3_data, "m")
         self.assertTrue(sa3.equals(sa3.copy()))
