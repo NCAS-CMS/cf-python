@@ -53,7 +53,7 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
             Boolean
                 A Boolean value indicating whether or not the
                 two dask arrays are element-wise equal to
-                the given rtol and atol tolerance.
+                the given *rtol* and *atol* tolerance.
 
     """
     if rtol is None:
