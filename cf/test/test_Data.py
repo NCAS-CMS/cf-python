@@ -139,6 +139,7 @@ class DataTest(unittest.TestCase):
         a = np.arange(12).reshape(*shape)
 
         d = cf.Data(a, "m")
+        self.assertTrue(d.equals(d))  # check equal to self
         self.assertTrue(d.equals(d.copy()))  # also do self-equality checks!
 
         # Different but equivalent datatype, which should *fail* the equality
