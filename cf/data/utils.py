@@ -11,7 +11,7 @@ from ..units import Units
 
 
 def _is_numeric_dtype(array):
-    """True if the given array is of a numeric dtype.
+    """True if the given array is of a numeric or boolean data type.
 
     .. versionadded:: 4.0.0
 
