@@ -607,7 +607,7 @@ def _make_indexed_contiguous_file(filename):
 
 
 def _make_external_files():
-    """TODO."""
+    """Make netCDF files with external variables."""
 
     def _pp(
         filename,
@@ -616,7 +616,7 @@ def _make_external_files():
         combined=False,
         external_missing=False,
     ):
-        """TODO."""
+        """Make a netCDF file with some external variables."""
         nc = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
         nc.createDimension("grid_latitude", 10)
@@ -716,7 +716,7 @@ def _make_external_files():
 
 
 def _make_gathered_file(filename):
-    """TODO."""
+    """Make a netCDF file with a gathered array."""
 
     def _jj(shape, list_values):
         array = numpy.ma.masked_all(shape)
@@ -798,14 +798,7 @@ def _make_gathered_file(filename):
     aux7 = n.createVariable("aux7", "f8", ("lat",))
     aux7[...] = numpy.arange(lat.size)
 
-    aux8 = n.createVariable(
-        "aux8",
-        "f8",
-        (
-            "lon",
-            "lat",
-        ),
-    )
+    aux8 = n.createVariable("aux8", "f8", ("lon", "lat"))
     aux8[...] = numpy.arange(lon.size * lat.size).reshape(lon.size, lat.size)
 
     aux9 = n.createVariable("aux9", "f8", ("time", "height"))

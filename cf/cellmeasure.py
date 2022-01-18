@@ -44,7 +44,7 @@ class CellMeasure(mixin.PropertiesData, cfdm.CellMeasure):
     # ----------------------------------------------------------------
     @property
     def measure(self):
-        """TODO."""
+        """Measure which indicates the metric of space supplied."""
         return self.get_measure(default=AttributeError())
 
     @measure.setter

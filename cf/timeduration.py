@@ -1,6 +1,6 @@
 import logging
+import operator
 from collections import namedtuple
-from operator import __add__, __sub__
 
 import numpy
 
@@ -332,13 +332,11 @@ class TimeDuration:
             self.duration = abs(Data.asdata(duration))
             units = self.duration.Units
             if not units.istime:
-                raise ValueError("Bad units: {!r}".format(units))
+                raise ValueError(f"Bad units: {units!r}")
 
         if not (units.iscalendartime or units.istime):
             raise ValueError(
-                "Can't create {0} of {1}".format(
-                    self.__class__.__name__, self.duration
-                )
+                f"Can't create {self.__class__.__name__} of {self.duration}"
             )
 
         duration = self.duration
@@ -382,7 +380,7 @@ class TimeDuration:
         return out
 
     def __array__(self, *dtype):
-        """TODO."""
+        """Returns a `numpy` array representing the time duration."""
         return self.duration.__array__(*dtype)
 
     def __data__(self):
@@ -417,12 +415,12 @@ class TimeDuration:
 
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
-        return "<CF {0}: {1}>".format(self.__class__.__name__, str(self))
+        return f"<CF {self.__class__.__name__}: {str(self)}>"
 
     def __str__(self):
         """x.__str__() <==> str(x)"""
         yyy = [
-            x if y is None else "{0:0>2}".format(y)
+            x if y is None else f"{y:0>2}"
             for x, y in zip(("Y", "M", "D", "h", "m", "s"), self.offset)
         ]
 
@@ -435,13 +433,7 @@ class TimeDuration:
 
         """
 
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__ge__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__ge__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__ge__")
 
     def __gt__(self, other):
         """The rich comparison operator ``>``
@@ -450,13 +442,7 @@ class TimeDuration:
 
         """
 
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__gt__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__gt__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__gt__")
 
     def __le__(self, other):
         """The rich comparison operator ``<=``
@@ -464,13 +450,7 @@ class TimeDuration:
         x.__le__(y) <==> x<=y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__le__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__le__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__le__")
 
     def __lt__(self, other):
         """The rich comparison operator ``<``
@@ -478,13 +458,7 @@ class TimeDuration:
         x.__lt__(y) <==> x<y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__lt__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__lt__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__lt__")
 
     def __eq__(self, other):
         """The rich comparison operator ``==``
@@ -492,13 +466,7 @@ class TimeDuration:
         x.__eq__(y) <==> x==y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__eq__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__eq__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__eq__")
 
     def __ne__(self, other):
         """The rich comparison operator ``!=``
@@ -506,13 +474,7 @@ class TimeDuration:
         x.__ne__(y) <==> x!=y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return bool(self._binary_operation(other, "__ne__"))
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__ne__")
-
-        return NotImplemented
+        return self._apply_binary_comparison(other, "__ne__")
 
     def __add__(self, other):
         """The binary arithmetic operation ``+``
@@ -522,18 +484,9 @@ class TimeDuration:
         .. versionadded:: 1.4
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__add__")
-
-        if hasattr(other, "timetuple"):
-            # other is a date-time object
-            try:
-                return self._datetime_arithmetic(other, __add__)
-            except TypeError:
-                return NotImplemented
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__add__")
+        return self._apply_binary_arithmetic(
+            other, "__add__", may_be_datetime=True
+        )
 
         return NotImplemented
 
@@ -545,13 +498,9 @@ class TimeDuration:
         .. versionadded:: 1.4
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__sub__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__sub__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__sub__", may_be_datetime=True
+        )
 
     def __mul__(self, other):
         """The binary arithmetic operation ``*``
@@ -559,13 +508,7 @@ class TimeDuration:
         x.__mul__(y) <==> x*y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__mul__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__mul__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__mul__")
 
     def __div__(self, other):
         """The binary arithmetic operation ``/``
@@ -573,13 +516,7 @@ class TimeDuration:
         x.__div__(y) <==> x/y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__div__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__div__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__div__")
 
     def __floordiv__(self, other):
         """The binary arithmetic operation ``//``
@@ -587,13 +524,7 @@ class TimeDuration:
         x.__floordiv__(y) <==> x//y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__floordiv__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__floordiv__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__floordiv__")
 
     def __truediv__(self, other):
         """The binary arithmetic operation ``/`` (true division)
@@ -601,13 +532,7 @@ class TimeDuration:
         x.__truediv__(y) <==> x/y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__truediv__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__truediv__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__truediv__")
 
     def __iadd__(self, other):
         """The augmented arithmetic assignment ``+=``
@@ -615,10 +540,9 @@ class TimeDuration:
         x.__iadd__(y) <==> x+=y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__iadd__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__iadd__", aug_assignment=True, skip_data_return=True
+        )
 
     def __idiv__(self, other):
         """The augmented arithmetic assignment ``/=``
@@ -626,13 +550,9 @@ class TimeDuration:
         x.__idiv__(y) <==> x /= y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__idiv__", True)
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__idiv__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__idiv__", aug_assignment=True
+        )
 
     def __itruediv__(self, other):
         """The augmented arithmetic assignment ``/=`` (true division)
@@ -640,10 +560,9 @@ class TimeDuration:
         x.__truediv__(y) <==> x/y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__itruediv__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__itruediv__", aug_assignment=True, skip_data_return=True
+        )
 
     def __ifloordiv__(self, other):
         """The augmented arithmetic assignment ``//=``
@@ -651,10 +570,9 @@ class TimeDuration:
         x.__ifloordiv__(y) <==> x//=y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__ifloordiv__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__ifloordiv__", aug_assignment=True, skip_data_return=True
+        )
 
     def __imul__(self, other):
         """The augmented arithmetic assignment ``*=``
@@ -662,10 +580,9 @@ class TimeDuration:
         x.__imul__(y) <==> x *= y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__imul__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__imul__", aug_assignment=True, skip_data_return=True
+        )
 
     def __isub__(self, other):
         """The augmented arithmetic assignment ``-=``
@@ -673,10 +590,9 @@ class TimeDuration:
         x.__isub__(y) <==> x -= y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__isub__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__isub__", aug_assignment=True, skip_data_return=True
+        )
 
     def __imod__(self, other):
         """The augmented arithmetic assignment ``%=``
@@ -684,13 +600,9 @@ class TimeDuration:
         x.__imod__(y) <==> x%=y
 
         """
-        if isinstance(other, (int, float)):
-            return self._binary_operation(other, "__imod__", True)
-
-        if isinstance(other, Data):
-            return self._data_binary_operation(other, "__imod__", True)
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(
+            other, "__imod__", aug_assignment=True
+        )
 
     def __radd__(self, other):
         """The binary arithmetic operation ``+`` with reflected
@@ -719,17 +631,7 @@ class TimeDuration:
         .. versionadded:: 1.4
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__rsub__")
-
-        if hasattr(other, "timetuple"):
-            # other is a date-time object
-            try:
-                return self._datetime_arithmetic(other, __sub__)
-            except TypeError:
-                return NotImplemented
-
-        return NotImplemented
+        return -self + other
 
     def __mod__(self, other):
         """The binary arithmetic operation ``%``
@@ -737,13 +639,7 @@ class TimeDuration:
         x.__mod__(y) <==> x % y
 
         """
-        if isinstance(other, (self.__class__, int, float)):
-            return self._binary_operation(other, "__mod__")
-
-        if isinstance(other, Data):
-            return self._data_arithmetic(other, "__mod__")
-
-        return NotImplemented
+        return self._apply_binary_arithmetic(other, "__mod__")
 
     def __rmod__(self, other):
         """The binary arithmetic operation ``%`` with reflected
@@ -760,8 +656,80 @@ class TimeDuration:
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
+    def _apply_binary_comparison(self, other, op):
+        """Apply a binary comparison operation on general data.
+
+        .. versionadded:: 3.12.0
+
+        :Parameters:
+
+            other: the object to compare with.
+
+            op: `str`, the binary comparison operator to apply.
+
+        """
+
+        if isinstance(other, (self.__class__, int, float)):
+            return bool(self._binary_operation(other, op))
+
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, op)
+
+        return NotImplemented
+
+    def _apply_binary_arithmetic(
+        self,
+        other,
+        op,
+        aug_assignment=False,
+        may_be_datetime=False,
+        skip_data_return=False,
+    ):
+        """Apply a binary arithmetic operation with general data.
+
+        .. versionadded:: 3.12.0
+
+        :Parameters:
+
+            other: the object to compare with.
+
+            op: `str`, the binary arithmetic operator to apply.
+
+            aug_assignment: `bool`
+                Whether the arithmetic operation is one of
+                augmented assignment. By default it is not.
+
+            may_be_datetime: `bool`
+                Whether it is logically permissible for other to be a
+                datetime, which is False by default.
+
+            skip_data_return: `bool`
+                Whether to skip logic to apply the operation on the
+                datetime data if other has Data type. By default,
+                do not skip.
+
+        """
+        check_simple_types = [int, float]
+        if may_be_datetime:
+            check_simple_types.append(self.__class__)
+
+        if isinstance(other, tuple(check_simple_types)):
+            return self._binary_operation(other, op, aug_assignment)
+
+        if may_be_datetime and hasattr(other, "timetuple"):
+            # other is a date-time object
+            try:
+                return self._datetime_arithmetic(other, getattr(operator, op))
+            except TypeError:
+                return NotImplemented
+
+        if not skip_data_return and isinstance(other, Data):
+            return self._data_arithmetic(other, op, aug_assignment)
+
+        return NotImplemented
+
     def _binary_operation(self, other, method, inplace=False):
-        """TODO."""
+        """Implement binary operations on the datetime."""
         if inplace:
             new = self
         else:
@@ -777,16 +745,14 @@ class TimeDuration:
 
         if duration.size != 1:
             raise ValueError(
-                "Can't create {} with more than one value: {!r}".format(
-                    self.__class__.__name__, duration
-                )
+                f"Can't create {self.__class__.__name__} with more than one "
+                f"value: {duration!r}"
             )
 
         if duration < 0:
             raise ValueError(
-                "Can't create {} with with negative duration {!r}".format(
-                    self.__class__.__name__, duration
-                )
+                f"Can't create {self.__class__.__name__} with with negative "
+                f"duration {duration!r}"
             )
 
         if (
@@ -795,9 +761,7 @@ class TimeDuration:
         ):
             # Operator is not one of ==, !=, >=, >, <=, <
             raise ValueError(
-                "Can't create {} of {!r}".format(
-                    self.__class__.__name__, duration.Units
-                )
+                f"Can't create {self.__class__.__name__} of {duration.Units!r}"
             )
 
         if method not in _relational_methods:
@@ -809,7 +773,7 @@ class TimeDuration:
         return new
 
     def _data_binary_operation(self, other, method, inplace=False):
-        """TODO."""
+        """Implement binary operations on the datetime data."""
         if inplace:
             new = self
         else:
@@ -818,7 +782,7 @@ class TimeDuration:
         return getattr(new.duration, method)(other)
 
     def _datetime_arithmetic(self, other, op):
-        """TODO.
+        """Apply binary arithmetic operations on the datetime.
 
         .. versionadded:: 1.4
 
@@ -833,9 +797,7 @@ class TimeDuration:
         """
 
         def _dHMS(duration, other, calendar, op):
-            units = Units(
-                "{0} since {1}".format(duration.Units.units, other), calendar
-            )
+            units = Units(f"{duration.Units.units} since {other}", calendar)
             d = op(Data(0.0, units), duration)
             return d.datetime_array.item(())
 
@@ -848,7 +810,7 @@ class TimeDuration:
             if months != months0:
                 raise ValueError(
                     "Fractional months are not supported for  "
-                    "date calculations: {}".format(months0)
+                    f"date calculations: {months0}"
                 )
         elif units == _calendar_months:
             months0 = duration.datum()
@@ -856,7 +818,7 @@ class TimeDuration:
             if months != months0:
                 raise ValueError(
                     "Fractional months are not supported for "
-                    "date calculations: {}".format(months0)
+                    f"date calculations: {months0}"
                 )
         else:
             months = None
@@ -879,21 +841,12 @@ class TimeDuration:
                 if d > max_days:
                     d = max_days
 
-            # TODO When cftime==1.1.4 is ready use this one line:
-            #            return other.replace(year=y, month=m, day=d)
-            # Instead of these try ... except ... lines:
-            try:
-                return other.replace(year=y, month=m, day=d, calendar=calendar)
-            except (ValueError, TypeError):
-                # If we are here, then 'other' is a datetime.datetime
-                # object, which doesn't have a 'calendar' keyword to
-                # its 'replace' method.
-                return other.replace(year=y, month=m, day=d)
+            return other.replace(year=y, month=m, day=d)
         else:
             return _dHMS(duration, other, calendar, op)
 
     def _data_arithmetic(self, other, method, inplace=False):
-        """TODO."""
+        """Apply binary arithmetic operations on the datetime data."""
         try:
             dt = other.datetime_array
         except ValueError:
@@ -911,17 +864,22 @@ class TimeDuration:
             return Data(dt, units=other.Units)
 
     def _offset(self, dt):
-        """TODO.
+        """Calculate the time duration offset.
 
         .. versionadded:: 1.4
 
         :Parameters:
 
-            dt: `cf.Datetime` TODO
+            dt: `cf.Datetime`
+                The date-time from which to calculate the offset.
+                *dt* may be any date-time-like object, such as
+                `cf.Datetime`, `datetime.datetime`,
+                `netCDF4.netcdftime.datetime`, etc.
 
         :Returns:
 
-            `Datetime` TODO
+            `Datetime`
+                The date-time object representing the offset.
 
         """
         return cf_dt(
@@ -929,7 +887,7 @@ class TimeDuration:
                 (i if j is None else j)
                 for i, j in zip(elements(dt), self.offset)
             ],
-            calendar=getattr(dt, "calendar", None)
+            calendar=getattr(dt, "calendar", None),
         )
 
     # ----------------------------------------------------------------
@@ -957,22 +915,23 @@ class TimeDuration:
         duration = self.duration
         units = duration.Units
 
+        date_prefix = f"P{duration.datum()}"
         if units.equals(_calendar_months):
-            return "P{0}M".format(duration.datum())
+            return f"{date_prefix}M"
         if units.equals(_calendar_years):
-            return "P{0}Y".format(duration.datum())
+            return f"{date_prefix}Y"
         if units.equals(_days):
-            return "P{0}D".format(duration.datum())
-        if units.equals(_hours):
-            return "PT{0}H".format(duration.datum())
-        if units.equals(_minutes):
-            return "PT{0}M".format(duration.datum())
-        if units.equals(_seconds):
-            return "PT{0}S".format(duration.datum())
+            return f"{date_prefix}D"
 
-        raise ValueError(
-            "Bad {0} units: {1!r}".format(self.__class__.__name__, units)
-        )
+        time_prefix = f"PT{duration.datum()}"
+        if units.equals(_hours):
+            return f"{time_prefix}H"
+        if units.equals(_minutes):
+            return f"{time_prefix}M"
+        if units.equals(_seconds):
+            return f"{time_prefix}S"
+
+        raise ValueError(f"Bad {self.__class__.__name__} units: {units!r}")
 
     @property
     def isint(self):
@@ -1067,10 +1026,12 @@ class TimeDuration:
         :Parameters:
 
             year: `int`
-                TODO
+                The calendar year to query.
 
             month: `int`
-                TODO
+                The one- or two-digit integer representing the calendar
+                month to query (numbered by order in the calendar year,
+                for example 2 for February, 10 for October).
 
             calendar: `str`, optional
                 By default, calendar is the mixed Gregorian/Julian
@@ -1460,9 +1421,7 @@ class TimeDuration:
             if not calendar:
                 calendar = None
 
-            units = Units(
-                "{0} since {1}".format(duration.Units.units, dt), calendar
-            )
+            units = Units(f"{duration.Units.units} since {dt}", calendar)
             dt1 = Data(0.0, units)
 
             if not end:
@@ -1492,7 +1451,7 @@ class TimeDuration:
             if int_months != months:
                 raise ValueError(
                     "Can't create a time interval of a non-integer number "
-                    "of calendar months: {0}".format(months)
+                    f"of calendar months: {months}"
                 )
         elif units == _calendar_months:
             months = duration.datum()
@@ -1500,7 +1459,7 @@ class TimeDuration:
             if int_months != months:
                 raise ValueError(
                     "Can't create a time interval of a non-integer number "
-                    "of calendar months: {0}".format(months)
+                    f"of calendar months: {months}"
                 )
         else:
             int_months = None
@@ -1546,11 +1505,11 @@ class TimeDuration:
             return dt0, dt1
 
         if iso == "start and end":
-            return "{0}/{1}".format(dt0, dt1)
+            return f"{dt0}/{dt1}"
         if iso == "start and duration":
-            return "{0}/{1}".format(dt0, self.iso)
+            return f"{dt0}/{self.iso}"
         if iso == "duration and end":
-            return "{0}/{1}".format(self.iso, dt1)
+            return f"{self.iso}/{dt1}"
 
     def bounds(self, dt, direction=True):
         """Return a time interval containing a date-time.
@@ -1562,7 +1521,7 @@ class TimeDuration:
 
         .. versionadded:: 1.2.3
 
-        .. seealso:: `cf.dt`, `cf.Datetime`, `interval` TODO
+        .. seealso:: `cf.dt`, `cf.Datetime`, `interval`, `offset`
 
         :Parameters:
 
@@ -1590,27 +1549,25 @@ class TimeDuration:
 
         **Examples:**
 
-        TODO
-
         >>> t = cf.M()
         >>> t.bounds(cf.dt(2000, 1, 1))
-        (cftime.DatetimeGregorian(2000-01-01 00:00:00),
-         cftime.DatetimeGregorian(2000-02-01 00:00:00))
+        (cftime.DatetimeGregorian(2000, 1, 1, 0, 0, 0, 0, has_year_zero=False),
+         cftime.DatetimeGregorian(2000, 2, 1, 0, 0, 0, 0, has_year_zero=False))
 
         >>> t = cf.M(1)
         >>> t.bounds(cf.dt(2000, 3, 1))
-        (cftime.DatetimeGregorian(2000-03-01 00:00:00),
-         cftime.DatetimeGregorian(2000-04-01 00:00:00))
+        (cftime.DatetimeGregorian(2000, 3, 1, 0, 0, 0, 0, has_year_zero=False),
+         cftime.DatetimeGregorian(2000, 4, 1, 0, 0, 0, 0, has_year_zero=False))
 
         >>> t = cf.M(1, day=15)
         >>> t.bounds(cf.dt(2000, 3, 1))
-        (cftime.DatetimeGregorian(2000-02-15 00:00:00),
-         cftime.DatetimeGregorian(2000-03-15 00:00:00))
+        (cftime.DatetimeGregorian(2000, 2, 15, 0, 0, 0, 0, has_year_zero=False),
+         cftime.DatetimeGregorian(2000, 3, 15, 0, 0, 0, 0, has_year_zero=False))
 
         >>> t = cf.M(2, day=15)
         >>> t.bounds(cf.dt(2000, 3, 1), direction=False)
-        (cftime.DatetimeGregorian(2000-03-15 00:00:00),
-         cftime.DatetimeGregorian(2000-01-15 00:00:00))
+        (cftime.DatetimeGregorian(2000, 3, 15, 0, 0, 0, 0, has_year_zero=False),
+         cftime.DatetimeGregorian(2000, 1, 15, 0, 0, 0, 0, has_year_zero=False))
 
         """
         abs_self = abs(self)

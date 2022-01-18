@@ -8,6 +8,8 @@
 
 * Make sure that `README.md` is up to date.
 
+* Make sure that the `long_description` in `setup.py` is up to date.
+
 * Make sure that `Changelog.rst` is up to date.
 
 * Check that the documentation API coverage is complete:
@@ -143,3 +145,8 @@
   ```bash
   ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 3.3.0
   ```
+
+* Update the GitHub releases page for the new version:
+  https://github.com/NCAS-CMS/cf-python/releases
+  
+* Upload the new release to Zenodo: https://zenodo.org/record/3961353

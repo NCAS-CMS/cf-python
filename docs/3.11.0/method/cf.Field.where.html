@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Field.where &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.mask_invalid" href="cf.Field.mask_invalid.html" />
+    <link rel="prev" title="cf.Field.indices" href="cf.Field.indices.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.11.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.indices.html" title="previous chapter">cf.Field.indices</a></li>
+      <li>Next: <a href="cf.Field.mask_invalid.html" title="next chapter">cf.Field.mask_invalid</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-field-where">
+<h1>cf.Field.where<a class="headerlink" href="#cf-field-where" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.where">
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">where</code><span class="sig-paren">(</span><em class="sig-param">condition</em>, <em class="sig-param">x=None</em>, <em class="sig-param">y=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">construct=None</em>, <em class="sig-param">i=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">item=None</em>, <em class="sig-param">**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.11.0/cf/field.py#L14410-L14742"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign to data elements depending on a condition.</p>
+<p>Data can be changed by assigning to elements that are selected by
+a condition based on the data values of the field construct or on
+its metadata constructs.</p>
+<p>Different values can be assigned to where the conditions are, and
+are not, met.</p>
+<p><strong>Missing data</strong></p>
+<p>Data array elements may be set to missing values by assigning them
+to the <a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a> constant, or by assignment missing data
+elements of array-valued <em>x</em> and <em>y</em> parameters.</p>
+<p>By default the data mask is “hard”, meaning that masked values can
+not be changed by assigning them to another value. This behaviour
+may be changed by setting the <a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute of the field
+construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft” and
+allowing masked elements to be set to non-masked values.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>,
+<a class="reference internal" href="../attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a>, <a class="reference internal" href="cf.Field.__setitem__.html#cf.Field.__setitem__" title="cf.Field.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>condition:</dt><dd><p>The condition which determines how to assign values to the
+data.</p>
+<p>In general it may be any scalar or array-like object (such
+as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>, <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is
+broadcastable to the shape of the data. Assignment from
+the <em>x</em> and <em>y</em> parameters will be done where elements of
+the condition evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> respectively.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">f.where(f.data&lt;0,</span> <span class="pre">x=-999)</span></code> will set all data values
+that are less than zero to -999.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">f.where(True,</span> <span class="pre">x=-999)</span></code> will set all data values to
+-999. This is equivalent to <code class="docutils literal notranslate"><span class="pre">f[...]</span> <span class="pre">=</span> <span class="pre">-999</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">f.where(False,</span> <span class="pre">y=-999)</span></code> will set all data values to
+-999. This is equivalent to <code class="docutils literal notranslate"><span class="pre">f[...]</span> <span class="pre">=</span> <span class="pre">-999</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>If field construct <code class="docutils literal notranslate"><span class="pre">f</span></code> has shape <code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">3)</span></code> then
+<code class="docutils literal notranslate"><span class="pre">f.where([True,</span> <span class="pre">False,</span> <span class="pre">True],</span> <span class="pre">x=-999,</span> <span class="pre">y=cf.masked)</span></code>
+will set data values in columns 0 and 2 to -999, and
+data values in column 1 to missing data. This works
+because the condition has shape <code class="docutils literal notranslate"><span class="pre">(3,)</span></code> which
+broadcasts to the field construct’s shape.</p>
+</dd>
+</dl>
+<p>If, however, <em>condition</em> is a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object then this
+implies a condition defined by applying the query to the
+field construct’s data (or a metadata construct’s data if
+the <em>construct</em> parameter is set).</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">f.where(cf.lt(0),</span> <span class="pre">x=-999)</span></code> will set all data values
+that are less than zero to -999. This is equivalent to
+<code class="docutils literal notranslate"><span class="pre">f.where(f.data&lt;0,</span> <span class="pre">x=-999)</span></code>.</p>
+</dd>
+</dl>
+<p>If <em>condition</em> is another field construct then it is first
+transformed so that it is broadcastable to the data being
+assigned to. This is done by using the metadata constructs
+of the two field constructs to create a mapping of
+physically identical dimensions between the fields, and
+then manipulating the dimensions of other field
+construct’s data to ensure that they are broadcastable. If
+either of the field constructs does not have sufficient
+metadata to create such a mapping then an exception will
+be raised. In this case, any manipulation of the
+dimensions must be done manually, and the <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance
+of <em>construct</em> (rather than the field construct itself)
+may be used for the condition.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>If field construct <code class="docutils literal notranslate"><span class="pre">f</span></code> has shape <code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">3)</span></code> and <code class="docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span>
+<span class="pre">f.transpose()</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> then <code class="docutils literal notranslate"><span class="pre">f.where(g,</span> <span class="pre">x=-999)</span></code> will set
+all data values that are less than zero to -999,
+provided there are sufficient metadata for the data
+dimensions to be mapped. However, <code class="docutils literal notranslate"><span class="pre">f.where(g.data,</span>
+<span class="pre">x=-999)</span></code> will always fail in this example, because the
+shape of the condition is <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">5)</span></code>, which does not
+broadcast to the shape of the <code class="docutils literal notranslate"><span class="pre">f</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>x, y: <em>optional</em></dt><dd><p>Specify the assignment values. Where the condition
+evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, assign to the field construct’s data
+from <em>x</em>, and where the condition evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>,
+assign to the field construct’s data from <em>y</em>. The <em>x</em> and
+<em>y</em> parameters are each one of:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. The appropriate data elements array are
+unchanged. This the default.</p></li>
+<li><p>Any scalar or array-like object (such as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>,
+<a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is broadcastable to the
+shape of the data.</p></li>
+</ul>
+</dd>
+</dl>
+<blockquote>
+<div><dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">f.where(condition)</span></code>, for any <code class="docutils literal notranslate"><span class="pre">condition</span></code>, returns a
+field construct with identical data values.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">f.where(cf.lt(0),</span> <span class="pre">x=-f.data,</span> <span class="pre">y=cf.masked)</span></code> will
+change the sign of all negative data values, and set all
+other data values to missing data.</p>
+</dd>
+</dl>
+<p>If <em>x</em> or <em>y</em> is another field construct then it is first
+transformed so that its data is broadcastable to the data
+being assigned to. This is done by using the metadata
+constructs of the two field constructs to create a mapping
+of physically identical dimensions between the fields, and
+then manipulating the dimensions of other field
+construct’s data to ensure that they are broadcastable. If
+either of the field constructs does not have sufficient
+metadata to create such a mapping then an exception will
+be raised. In this case, any manipulation of the
+dimensions must be done manually, and the <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance
+of <em>x</em> or <em>y</em> (rather than the field construct itself) may
+be used for the condition.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>If field construct <code class="docutils literal notranslate"><span class="pre">f</span></code> has shape <code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">3)</span></code> and <code class="docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span>
+<span class="pre">f.transpose()</span> <span class="pre">*</span> <span class="pre">10</span></code> then <code class="docutils literal notranslate"><span class="pre">f.where(cf.lt(0),</span> <span class="pre">x=g)</span></code>
+will set all data values that are less than zero to the
+equivalent elements of field construct <code class="docutils literal notranslate"><span class="pre">g</span></code>, provided
+there are sufficient metadata for the data dimensions to
+be mapped. However, <code class="docutils literal notranslate"><span class="pre">f.where(cf.lt(0),</span> <span class="pre">x=g.data)</span></code> will
+always fail in this example, because the shape of the
+condition is <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">5)</span></code>, which does not broadcast to the
+shape of the <code class="docutils literal notranslate"><span class="pre">f</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>construct: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Define the condition by applying the <em>construct</em> parameter
+to the given metadata construct’s data, rather then the
+data of the field construct. Must be</p>
+<ul class="simple">
+<li><p>The identity or key of a metadata coordinate construct
+that has data.</p></li>
+</ul>
+</dd>
+</dl>
+<blockquote>
+<div><p>The <em>construct</em> parameter selects the metadata construct
+that is returned by this call of the field construct’s
+<a class="reference internal" href="cf.Field.construct.html#cf.Field.construct" title="cf.Field.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a> method: <code class="docutils literal notranslate"><span class="pre">f.construct(construct)</span></code>. See
+<a class="reference internal" href="cf.Field.construct.html#cf.Field.construct" title="cf.Field.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.construct</span></code></a> for details.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">f.where(cf.wi(-30,</span> <span class="pre">30),</span> <span class="pre">x=cf.masked,</span>
+<span class="pre">construct='latitude')</span></code> will set all data values within
+30 degrees of the equator to missing data.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+<dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
+</dd>
+<dt>item: deprecated at version 3.0.0</dt><dd><p>Use the <em>construct</em> parameter instead.</p>
+</dd>
+</dl>
+<p>item_options: deprecated at version 3.0.0</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>A new field construct with an updated data array, or
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<p>Set data array values to 15 everywhere:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This example could also be done with subspace assignment:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span>
+</pre></div>
+</div>
+<p>Set all negative data array values to zero and leave all other
+elements unchanged:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">f</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Multiply all positive data array elements by -1 and set other data
+array elements to 3.14:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">f</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">f</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Set all values less than 280 and greater than 290 to missing data:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">f</span> <span class="o">&lt;</span> <span class="mi">280</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">f</span> <span class="o">&gt;</span> <span class="mi">290</span><span class="p">),</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This example could also be done with a <a class="reference internal" href="../class/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">wo</span><span class="p">(</span><span class="mi">280</span><span class="p">,</span> <span class="mi">290</span><span class="p">),</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or equivalently:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">f</span><span class="o">==</span><span class="n">cf</span><span class="o">.</span><span class="n">wo</span><span class="p">(</span><span class="mi">280</span><span class="p">,</span> <span class="mi">290</span><span class="p">),</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Set data array elements in the northern hemisphere to missing data
+in-place:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">condition</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">domain_mask</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Missing data can only be changed if the mask is “soft”:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[--]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">hardmask</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[99]</span>
+</pre></div>
+</div>
+<p>This in-place example could also be done with subspace assignment
+by indices:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">northern_hemisphere</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="n">northern_hemisphere</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>
+</pre></div>
+</div>
+<p>Set a polar rows to their zonal-mean values:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">condition</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">domain_mask</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">set</span><span class="p">([</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;longitude: mean&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2021, NCAS | Page built on 2021-10-08.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

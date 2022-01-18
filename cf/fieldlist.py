@@ -3,17 +3,14 @@ from .functions import _DEPRECATION_ERROR_METHOD
 
 
 class FieldList(mixin.FieldDomainList, ConstructList):
-    """An ordered sequence of fields.
-
-    Each element of a field list is a field construct.
+    """An ordered sequence of field constructs.
 
     A field list supports the python list-like operations (such as
     indexing and methods like `!append`). These methods provide
-    functionality similar to that of a :ref:`built-in list
-    <python:tut-morelists>`. The main difference is that when a field
-    construct element needs to be assessed for equality its
-    `~cf.Field.equals` method is used, rather than the ``==``
-    operator.
+    functionality similar to that of a built-in list. The main
+    difference is that when a field construct element needs to be
+    assessed for equality its `~cf.Field.equals` method is used, rather
+    than the ``==`` operator.
 
     """
 
@@ -28,11 +25,8 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """
         super().__init__(constructs=fields)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def concatenate(self, axis=0, _preserve=True):
-        """Join the sequence of fields together.
+        """Join the sequence of fields within the field list together.
 
         This is different to `cf.aggregate` because it does not
         account for all metadata. For example, it assumes that the
@@ -45,12 +39,15 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         :Parameters:
 
             axis: `int`, optional
-                TODO
+                The axis along which the arrays will be joined. The
+                default is 0. Note that scalar arrays are treated as
+                if they were one dimensional.
 
         :Returns:
 
             `Field`
-                TODO
+                The field generated from the concatenation of all of
+                the fields contained in the input field list.
 
         """
         return self[0].concatenate(self, axis=axis, _preserve=_preserve)
@@ -75,7 +72,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
 
         :Parameters:
 
-            naxes: optional
+            naxes: `int`, optional
                 Select field constructs whose data spans a particular
                 number of domain axis constructs.
 
@@ -92,7 +89,19 @@ class FieldList(mixin.FieldDomainList, ConstructList):
 
         **Examples:**
 
-        TODO
+        >>> f = cf.read("file.nc")
+        >>> f
+        [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
+         <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+        >>> f.select_by_naxes()
+        [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
+        <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+        >>> f.select_by_naxes(1)
+        []
+        >>> f.select_by_naxes(2)
+        [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>]
+        >>> f.select_by_naxes(3)
+        [<CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
 
         """
         return type(self)(f for f in self if f.match_by_naxes(*naxes))

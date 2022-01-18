@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 import numpy
+import numpy as np
 
 SCIPY_AVAILABLE = False
 try:
@@ -31,7 +32,7 @@ tmpfiles = [
 
 
 def _remove_tmpfiles():
-    """TODO."""
+    """Try to remove defined temporary files by deleting their paths."""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -83,8 +84,7 @@ class FieldTest(unittest.TestCase):
     f1 = cf.example_field(1)
 
     def test_Field_creation_commands(self):
-        for i in range(7):
-            f = cf.example_field(i)
+        for f in cf.example_fields():
             f.creation_commands()
 
         f = self.f1
@@ -489,9 +489,8 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes)
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        "{} weights={}, axes={}, {!r}, {!r}".format(
-                            method, weights, axes, a, b
-                        ),
+                        f"{method} weights={weights}, axes={axes}, {a!r}, "
+                        f"{b!r}",
                     )
 
             for method in (
@@ -510,9 +509,8 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        "{} weights={}, axes={}, {!r}, {!r}".format(
-                            method, weights, axes, a, b
-                        ),
+                        f"{method} weights={weights}, axes={axes}, {a!r}, "
+                        f"{b!r}",
                     )
 
             for method in ("integral",):
@@ -524,9 +522,7 @@ class FieldTest(unittest.TestCase):
                 b = getattr(f.data, method)(axes=axes, weights=d_weights)
                 self.assertTrue(
                     a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                    "{} weighted axes={}, {!r}, {!r}".format(
-                        method, axes, a, b
-                    ),
+                    f"{method} weighted axes={axes}, {a!r}, {b!r}",
                 )
 
         for axes in axes_combinations(f):
@@ -546,9 +542,8 @@ class FieldTest(unittest.TestCase):
                     )
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        "{} weights={}, axes={}, {!r}, {!r}".format(
-                            method, weights, axes, a, b
-                        ),
+                        f"{method} weights={weights}, axes={axes}, {a!r}, "
+                        f"{b!r}",
                     )
 
             for method in ("mean_of_upper_decile",):
@@ -562,9 +557,8 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        "{} weights={}, axes={}, {!r}, {!r}".format(
-                            method, weights, axes, a, b
-                        ),
+                        f"{method} weights={weights}, axes={axes}, {a!r}, "
+                        f"{b!r}",
                     )
 
     def test_Field_all(self):
@@ -665,7 +659,7 @@ class FieldTest(unittest.TestCase):
                 [ac.shape, ae.shape, af.shape],
                 [ac, ae, af],
             ):
-                message = "method={!r}".format(method)
+                message = f"method={method!r}"
 
                 f.indices(method, time=query1)
 
@@ -717,7 +711,7 @@ class FieldTest(unittest.TestCase):
                 [ac2, ae2, af2],
             ):
 
-                message = "method={!r}".format(method)
+                message = f"method={method!r}"
 
                 h = f.subspace("full", time=query1)
                 g = h.subspace(method, time=query2)
@@ -768,7 +762,7 @@ class FieldTest(unittest.TestCase):
                 [ac3, ae3, af3],
             ):
 
-                message = "method={!r}".format(method)
+                message = f"method={method!r}"
 
                 g = f.subspace(method, time=query3)
                 t = g.coordinate("time")
@@ -967,7 +961,10 @@ class FieldTest(unittest.TestCase):
     def test_Field_flip(self):
         f = self.f.copy()
 
-        g = f[(slice(None, None, -1),) * f.ndim]
+        kwargs = {
+            axis: slice(None, None, -1) for axis in f.domain_axes(todict=True)
+        }
+        g = f.subspace(**kwargs)
 
         h = f.flip()
         self.assertTrue(h.equals(g, verbose=1))
@@ -1031,9 +1028,8 @@ class FieldTest(unittest.TestCase):
                 x0 = g.coordinate("grid_longitude").datum(0)
                 self.assertTrue(
                     x1 > anchor >= x0,
-                    "DECREASING period={}, x0={}, anchor={}, x1={}".format(
-                        period, x1, anchor, x0
-                    ),
+                    f"DECREASING period={period}, x0={x0}, anchor={anchor}, "
+                    f"x1={x1}",
                 )
 
     def test_Field_cell_area(self):
@@ -2174,32 +2170,28 @@ class FieldTest(unittest.TestCase):
         if not SCIPY_AVAILABLE:  # needed for 'derivative' method
             raise unittest.SkipTest("SciPy must be installed for this test.")
 
-        x_min = 0.0
-        x_max = 359.0
-        dx = 1.0
+        f = cf.example_field(0)
+        f[...] = np.arange(9)[1:] * 45
 
-        x_1d = numpy.arange(x_min, x_max, dx)
+        # Check a cyclic periodic axis
+        d = f.derivative("X")
+        self.assertTrue(np.allclose(d[:, 1:-1].array, 1))
+        self.assertTrue(np.allclose(d[:, [0, -1]].array, -3))
 
-        data_1d = x_1d * 2.0 + 1.0
+        # The reversed field should contain the same gradients in this
+        # case
+        f1 = f[:, ::-1]
+        d1 = f1.derivative("X")
+        self.assertTrue(d1.data.equals(d.data))
 
-        dim_x = cf.DimensionCoordinate(
-            data=cf.Data(x_1d, "s"), properties={"axis": "X"}
-        )
+        # Check non-cyclic
+        d = f.derivative("X", wrap=False)
+        self.assertTrue(np.allclose(d.array, 1))
+        self.assertEqual(d.array.sum(), 30)
 
-        f = cf.Field()
-        f.set_construct(cf.DomainAxis(size=x_1d.size))
-        f.set_construct(dim_x)
-        f.set_data(cf.Data(data_1d, "m"), axes="X")
-        f.cyclic("X", period=360.0)
-
-        g = f.derivative("X")
-        self.assertTrue((g.array == 2.0).all())
-
-        g = f.derivative("X", one_sided_at_boundary=True)
-        self.assertTrue((g.array == 2.0).all())
-
-        g = f.derivative("X", wrap=True)
-        self.assertTrue((g.array == 2.0).all())
+        d = f.derivative("X", wrap=False, one_sided_at_boundary=True)
+        self.assertTrue(np.allclose(d.array, 1))
+        self.assertEqual(d.array.sum(), 40)
 
     def test_Field_convert(self):
         f = self.f.copy()
@@ -2235,18 +2227,16 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.convert("qwerty")
 
-        print("Don't forget to reinstate commented tests at 3.11.0")
-        # Reinstate at 3.11.0
-        #        # Test some constructs which can never have data
-        #        with self.assertRaises(ValueError):
-        #            f.convert("cellmethod0")
-        #        with self.assertRaises(ValueError):
-        #            f.convert("domainaxis0")
+        # Test some constructs which can never have data
+        with self.assertRaises(ValueError):
+            f.convert("cellmethod0")
+        with self.assertRaises(ValueError):
+            f.convert("domainaxis0")
 
     def test_Field_section(self):
         f = cf.read(self.filename2)[0][0:10]
         g = f.section(("X", "Y"))
-        self.assertEqual(len(g), 10, "len(g)={}".format(len(g)))
+        self.assertEqual(len(g), 10, f"len(g)={len(g)}")
 
     def test_Field_squeeze(self):
         f = self.f.copy()
@@ -2419,11 +2409,7 @@ class FieldTest(unittest.TestCase):
     def test_Field_dimension_coordinate(self):
         f = self.f
 
-        for identity in (
-            "grid_latitude",
-            "X",
-            "dimensioncoordinate1",
-        ):
+        for identity in ("grid_latitude", "X", "dimensioncoordinate1"):
             if identity == "X":
                 key, c = f.construct("grid_longitude", item=True)
             else:
@@ -2643,6 +2629,131 @@ class FieldTest(unittest.TestCase):
 
         # TODO: add loop to check get same shape and close enough data
         # for every possible axis combo (see also test_Data_percentile).
+
+    def test_Field_grad_xy(self):
+        f = cf.example_field(0)
+
+        # Spherical polar coordinates
+        theta = 90 - f.convert("Y", full_domain=True)
+        sin_theta = theta.sin()
+
+        radius = 2
+        r = f.radius(radius)
+
+        for wrap in (False, True, None):
+            for one_sided in (True, False):
+                x, y = f.grad_xy(
+                    radius=radius, x_wrap=wrap, one_sided_at_boundary=one_sided
+                )
+
+                self.assertTrue(x.Units == y.Units == cf.Units("m-1 rad-1"))
+
+                x0 = f.derivative(
+                    "X", wrap=wrap, one_sided_at_boundary=one_sided
+                ) / (sin_theta * r)
+                y0 = f.derivative("Y", one_sided_at_boundary=one_sided) / r
+
+                # Check the data
+                with cf.rtol(1e-10):
+                    self.assertTrue((x.data == x0.data).all())
+                    self.assertTrue((y.data == y0.data).all())
+
+                # Check that x and y have the same metadata as f
+                # (except standard_name, long_name, and units).
+                f0 = f.copy()
+                del f0.standard_name
+
+                f0.set_data(x.data)
+                del x.long_name
+                self.assertTrue(x.equals(f0))
+
+                f0.set_data(y.data)
+                del y.long_name
+                self.assertTrue(y.equals(f0))
+
+        # Cartesian coordinates
+        dim_x = f.dimension_coordinate("X")
+        dim_y = f.dimension_coordinate("Y")
+        dim_x.override_units("m", inplace=True)
+        dim_y.override_units("m", inplace=True)
+        dim_x.standard_name = "projection_x_coordinate"
+        dim_y.standard_name = "projection_y_coordinate"
+        f.cyclic("X", iscyclic=False)
+
+        for wrap in (False, True, None):
+            for one_sided in (True, False):
+                x, y = f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided)
+
+                self.assertTrue(x.Units == y.Units == cf.Units("m-1"))
+
+                x0 = f.derivative(
+                    "X", wrap=wrap, one_sided_at_boundary=one_sided
+                )
+                y0 = f.derivative("Y", one_sided_at_boundary=one_sided)
+
+                del x.long_name
+                del y.long_name
+                del x0.long_name
+                del y0.long_name
+                self.assertTrue(x.equals(x0, rtol=1e-10))
+                self.assertTrue(y.equals(y0, rtol=1e-10))
+
+    def test_Field_laplacian_xy(self):
+        f = cf.example_field(0)
+
+        # Laplacian(f) = div(grad(f))
+
+        # Spherical polar coordinates
+        radius = 2
+        for wrap in (False, True, None):
+            for one_sided in (True, False):
+                lp = f.laplacian_xy(
+                    radius=radius, x_wrap=wrap, one_sided_at_boundary=one_sided
+                )
+
+                self.assertTrue(lp.Units == cf.Units("m-2 rad-2"))
+
+                lp0 = cf.div_xy(
+                    *f.grad_xy(
+                        radius=radius,
+                        x_wrap=wrap,
+                        one_sided_at_boundary=one_sided,
+                    ),
+                    radius=2,
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
+                )
+
+                del lp.long_name
+                del lp0.long_name
+                self.assertTrue(lp.equals(lp0, rtol=1e-10))
+
+        # Cartesian coordinates
+        dim_x = f.dimension_coordinate("X")
+        dim_y = f.dimension_coordinate("Y")
+        dim_x.override_units("m", inplace=True)
+        dim_y.override_units("m", inplace=True)
+        dim_x.standard_name = "projection_x_coordinate"
+        dim_y.standard_name = "projection_y_coordinate"
+        f.cyclic("X", iscyclic=False)
+
+        for wrap in (False, True, None):
+            for one_sided in (True, False):
+                lp = f.laplacian_xy(
+                    x_wrap=wrap, one_sided_at_boundary=one_sided
+                )
+
+                self.assertTrue(lp.Units == cf.Units("m-2"))
+
+                lp0 = cf.div_xy(
+                    *f.grad_xy(x_wrap=wrap, one_sided_at_boundary=one_sided),
+                    x_wrap=wrap,
+                    one_sided_at_boundary=one_sided,
+                )
+
+                del lp.long_name
+                del lp0.long_name
+                self.assertTrue(lp.equals(lp0, rtol=1e-10))
 
 
 if __name__ == "__main__":

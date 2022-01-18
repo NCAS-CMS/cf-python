@@ -1000,10 +1000,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         keepdims = self.__keepdims_indexing__
 
         indices, roll = parse_indices(
-            shape,
-            indices,
-            cyclic=True,
-            keepdims=keepdims,
+            shape, indices, cyclic=True, keepdims=keepdims
         )
 
         axes = self._axes
@@ -3838,6 +3835,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     # .timetuple()[0:6], microsecond=other.microsecond,
                     calendar=getattr(self.Units, "calendar", "standard"),
                 )
+            elif other is None:
+                # Can't sensibly initialize a Data object from a bare
+                # `None` (issue #281)
+                other = numpy_array(None, dtype=object)
 
             other = type(self).asdata(other)
 
@@ -8140,7 +8141,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 collapse, which differs from a weighted sum in that the units
                 of the weights are incorporated into the result.
 
-
                 *Parameter example:*
                   If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
                   1-dimensional weights for axis 1 and ``x`` must contain
@@ -9550,13 +9550,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "Got {!r}, {!r}".format(X_axis, Y_axis)
                 )
 
-            for A, axis in zip(
-                (
-                    "X",
-                    "Y",
-                ),
-                (X_axis, Y_axis),
-            ):
+            for A, axis in zip(("X", "Y"), (X_axis, Y_axis)):
                 if axis not in axes:
                     raise ValueError(
                         "If dimensions have been identified with the "

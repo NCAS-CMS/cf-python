@@ -15,12 +15,10 @@ class functionTest(unittest.TestCase):
         self.test_only = ()
 
     def test_example_field(self):
-        for n in range(8):
-            f = cf.example_field(n)
-            f.array
+        for f in cf.example_fields():
             f.dump(display=False)
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             cf.example_field(-999)
 
     def test_keyword_deprecation(self):
@@ -158,11 +156,7 @@ class functionTest(unittest.TestCase):
             cf.configuration(of_fraction=0.0)
         with self.assertRaises(ValueError):
             cf.configuration(free_memory_factor=0.0)
-        new_values = {
-            "tempdir": "",
-            "atol": 0.0,
-            "regrid_logging": False,
-        }
+        new_values = {"tempdir": "", "atol": 0.0, "regrid_logging": False}
         cf.configuration(**new_values)
         post_set = cf.configuration()
         for name, val in new_values.items():  # test values that should change
@@ -307,14 +301,14 @@ class functionTest(unittest.TestCase):
             self.assertIn(component, e)
             self.assertIn(component, ep)
         for component in [
-            "cf: {} {}".format(cf.__version__, os.path.abspath(cf.__file__)),
-            "Python: {} {}".format(platform.python_version(), sys.executable),
+            f"cf: {cf.__version__} {os.path.abspath(cf.__file__)}",
+            f"Python: {platform.python_version()} {sys.executable}",
         ]:
             self.assertIn(component, e)
             self.assertNotIn(component, ep)  # paths shouldn't be present here
         for component in [
-            "cf: {}".format(cf.__version__),
-            "Python: {}".format(platform.python_version()),
+            f"cf: {cf.__version__}",
+            f"Python: {platform.python_version()}",
         ]:
             self.assertIn(component, ep)
 

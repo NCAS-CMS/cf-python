@@ -5,21 +5,14 @@ from uuid import uuid4
 import numpy as np
 
 import dask.array as da
-from dask.array.core import (
-    getter,
-    normalize_chunks,
-    slices_from_chunks,
-)
+from dask.array.core import getter, normalize_chunks, slices_from_chunks
 from dask.utils import SerializableLock
 from dask.base import tokenize
 from dask.config import config
 
 from ..units import Units
 
-from .utils import (
-    chunk_shapes,
-    chunk_positions,
-)
+from .utils import chunk_shapes, chunk_positions
 
 from . import (
     FilledArray,

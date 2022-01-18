@@ -1,4 +1,6 @@
 """Worker functions for regridding."""
+
+import logging
 from operator import itemgetter
 
 import numpy as np
@@ -11,8 +13,8 @@ from ..functions import regrid_logging
 if _found_ESMF:
     try:
         import ESMF
-    except Exception as error:
-        print(f"WARNING: Can not import ESMF for regridding: {error}")
+    except Exception:
+        _found_ESMF = False
 
 from .regridoperator import (
     RegridOperator,
@@ -21,13 +23,11 @@ from .regridoperator import (
     regridding_methods,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def regrid_compute_mass_grid(
-    valuefield,
-    areafield,
-    dofrac=False,
-    fracfield=None,
-    uninitval=422397696.0,
+    valuefield, areafield, dofrac=False, fracfield=None, uninitval=422397696.0
 ):
     """Compute the mass of an `ESMF` Field.
 
@@ -71,20 +71,26 @@ def regrid_compute_mass_grid(
     return mass
 
 
-def regrid_get_latlon(f, name, axes=None):
-    """Retrieve the latitude and longitude coordinates of this field and
-    associated information. If 1-d lat/long coordinates are found then
-    these are returned. Otherwise, 2-d lat/long coordinates are searched
-    for and if found returned.
+def regrid_get_latlon(f, name, method, axes=None):
+    """Get latitude and longitude coordinate information.
+
+    Retrieve the latitude and longitude coordinates of a field, as
+    well as some associated information. If 1-d lat/lon coordinates
+    are found then these are returned. Otherwise if 2-d lat/lon
+    coordinates found then these are returned.
 
     :Parameters:
 
         f: `Field`
-            The source or destination field.
+            The source or destination field from which to get the
+            information.
 
         name: `str`
             A name to identify the field in error messages. Either
             ``'source'`` or ``'destination'``.
+
+        method: `str`
+            The regridding method.
 
         axes: `dict`, optional
             A dictionary specifying the X and Y axes, with keys
@@ -99,19 +105,19 @@ def regrid_get_latlon(f, name, axes=None):
     :Returns:
 
         `list`, `list`, `list`, `list`, `bool`
-            * The keys of the x and y dimension coordinates.
+            * The keys of the X and Y dimension coordinates.
 
-            * The sizes of the x and y dimension coordinates.
+            * The sizes of the X and Y dimension coordinates.
 
-            * The keys of the x and y coordinate (1-d dimension
+            * The keys of the X and Y coordinate (1-d dimension
               coordinate, or 2-d auxilliary coordinates).
 
-            * The x and y coordinates (1-d dimension coordinates or
+            * The X and Y coordinates (1-d dimension coordinates or
               2-d auxilliary coordinates).
 
             * True if 2-d auxiliary coordinates are returned or if 1-d
               X and Y coordinates are returned, which are not
-              long/lat.
+              lon/lat.
 
     """
     data_axes = f.constructs.data_axes()
@@ -124,7 +130,7 @@ def regrid_get_latlon(f, name, axes=None):
             item=True,
             default=ValueError(
                 f"No unique X dimension coordinate found for the {name} "
-                "field. If none is present you "
+                f"field {f!r}. If none is present you "
                 "may need to specify the axes keyword."
             ),
         )
@@ -133,7 +139,7 @@ def regrid_get_latlon(f, name, axes=None):
             item=True,
             default=ValueError(
                 f"No unique Y dimension coordinate found for the {name} "
-                "field. If none is present you "
+                f"field {f!r}. If none is present you "
                 "may need to specify the axes keyword."
             ),
         )
@@ -151,14 +157,17 @@ def regrid_get_latlon(f, name, axes=None):
             if key not in axes:
                 raise ValueError(
                     f"Key {key!r} must be specified for axes of {name} "
-                    "field."
+                    f"field {f!r}."
                 )
 
         if axes["X"] in (1, 0) and axes["Y"] in (0, 1):
             # Axes specified by integer position in dimensions of
             # lat and lon 2-d auxiliary coordinates
             if axes["X"] == axes["Y"]:
-                raise ValueError("TODO 0")
+                raise ValueError(
+                    "The X and Y axes must be distinct, but they are the same "
+                    "for {name} field {f!r}."
+                )
 
             lon_key, lon = f.auxiliary_coordinate(
                 "X", item=True, filter_by_naxes=(2,), default=(None, None)
@@ -167,17 +176,30 @@ def regrid_get_latlon(f, name, axes=None):
                 "Y", item=True, filter_by_naxes=(2,), default=(None, None)
             )
             if lon is None:
-                raise ValueError("TODO x")
+                raise ValueError(
+                    "The X axis does not correspond to a longitude coordinate "
+                    f"for {name} field {f!r}."
+                )
             if lat is None:
-                raise ValueError("TODO y")
+                raise ValueError(
+                    "The Y axis does not correspond to a latitude coordinate "
+                    f"for {name} field {f!r}."
+                )
 
             if lat.shape != lon.shape:
-                raise ValueError("TODO 222222")
+                raise ValueError(
+                    "The shape of the latitude and longitude coordinates "
+                    "must be equal but they differ for {name} field {f!r}."
+                )
 
             lon_axes = data_axes[lon_key]
             lat_axes = data_axes[lat_key]
             if lat_axes != lon_axes:
-                raise ValueError("TODO 3333333")
+                raise ValueError(
+                    "The domain axis constructs spanned by the latitude and "
+                    "longitude coordinates should be the same, but they "
+                    "differ for {name} field {f!r}."
+                )
 
             x_axis = lon_axes[axes["X"]]
             y_axis = lat_axes[axes["Y"]]
@@ -186,7 +208,7 @@ def regrid_get_latlon(f, name, axes=None):
                 axes["X"],
                 key=True,
                 default=ValueError(
-                    f"'X' axis specified for {name} field not found."
+                    f"'X' axis specified for {name} {f!r} field not found."
                 ),
             )
 
@@ -194,7 +216,7 @@ def regrid_get_latlon(f, name, axes=None):
                 axes["Y"],
                 key=True,
                 default=ValueError(
-                    f"'Y' axis specified for {name} field not found."
+                    f"'Y' axis specified for {name} field {f!r} not found."
                 ),
             )
 
@@ -218,7 +240,7 @@ def regrid_get_latlon(f, name, axes=None):
                 if lon_found:
                     raise ValueError(
                         "The 2-d auxiliary longitude coordinate "
-                        f"of the {name} field is not unique."
+                        f"of the {name} field {f!r} is not unique."
                     )
                 else:
                     lon_found = True
@@ -229,7 +251,7 @@ def regrid_get_latlon(f, name, axes=None):
                 if lat_found:
                     raise ValueError(
                         "The 2-d auxiliary latitude coordinate "
-                        f"of the {name} field is not unique."
+                        f"of the {name} field {f!r} is not unique."
                     )
                 else:
                     lat_found = True
@@ -239,31 +261,37 @@ def regrid_get_latlon(f, name, axes=None):
         if not lon_found or not lat_found:
             raise ValueError(
                 "Both longitude and latitude coordinates "
-                f"were not found for the {name} field."
+                f"were not found for the {name} field {f!r}."
             )
 
         if axes is not None:
             if set(axis_keys) != set(data_axes[x_key]):
                 raise ValueError(
                     "Axes of longitude do not match "
-                    f"those specified for {name} field."
+                    f"those specified for {name} field {f!r}."
                 )
 
             if set(axis_keys) != set(data_axes[y_key]):
                 raise ValueError(
                     "Axes of latitude do not match "
-                    f"those specified for {name} field."
+                    f"those specified for {name} field {f!r}."
                 )
 
         coords_2D = True
     else:
         coords_2D = False
-        # Check for size 1 latitude or longitude dimensions
-        if x_size == 1 or y_size == 1:
-            raise ValueError(
-                "Neither the longitude nor latitude dimension coordinates "
-                f"of the {name} field can be of size 1."
-            )
+
+    # Check for size 1 latitude or longitude dimensions if source grid
+    # (a size 1 dimension is only problematic for the source grid in ESMF)
+    if (
+        name == "source"
+        and method in ("linear", "bilinear", "patch")
+        and (x_size == 1 or y_size == 1)
+    ):
+        raise ValueError(
+            f"Neither the longitude nor latitude dimensions of the {name}"
+            f"field {f!r} can be of size 1 for {method!r} regridding."
+        )
 
     coord_keys = [x_key, y_key]
     coords = [x, y]
@@ -323,13 +351,17 @@ def regrid_get_axis_indices(f, axis_keys):
             size-1 dimensions inserted into its data in-place.
 
         axis_keys: sequence
-            A sequence of axis specifiers.
+            A sequence of domain axis identifiers for the axes being
+            regridded.
 
     :Returns:
 
-        `list`, `numpy.ndarray`
-            A list of the indices of the specified axes; and the rank
-            order of the axes.
+        `list`, `list`, `numpy.ndarray`
+            * The indices of the specified axes.
+
+            * The indices of the non-specified field data axes .
+
+            * The rank order of the axes.
 
     """
     data_axes = f.get_data_axes()
@@ -341,7 +373,7 @@ def regrid_get_axis_indices(f, axis_keys):
             axis_index = data_axes.index(axis_key)
         except ValueError:
             f.insert_dimension(axis_key, position=0, inplace=True)
-            axis_index = data_axes.index(axis_key)
+            axis_index = 0
 
         axis_indices.append(axis_index)
 
@@ -352,7 +384,11 @@ def regrid_get_axis_indices(f, axis_keys):
     order = np.empty((n,), dtype=int)
     order[tmp] = np.arange(n)
 
-    return axis_indices, order
+    non_regridding_axis_indices = [
+        i for i in range(f.ndim) if i not in axis_indices
+    ]
+
+    return axis_indices, non_regridding_axis_indices, order
 
 
 def regrid_get_coord_order(f, axis_keys, coord_keys):
@@ -499,8 +535,8 @@ def regrid_check_method(method):
             "Can't regrid: Must set a valid regridding method from "
             f"{regridding_methods}. Got: {method!r}"
         )
-    elif method == "bilinear":  # TODO use logging.info() once have logging
-        print(
+    elif method == "bilinear":
+        logger.info(
             "Note the 'bilinear' method argument has been renamed to "
             "'linear' at version 3.2.0. It is still supported for now "
             "but please use 'linear' in future. "
@@ -575,9 +611,7 @@ def regrid_get_reordered_sections(
     if axis_order is not None:
         for axis in axis_order:
             axis_key = src.dimension_coordinate(
-                filter_by_axis=(axis,),
-                default=None,
-                key=True,
+                filter_by_axis=(axis,), default=None, key=True
             )
             if axis_key is not None:
                 if axis_key in regrid_axes:
@@ -1080,9 +1114,7 @@ def regrid_update_coordinates(
             dst_data_axes = dst.constructs.data_axes()
 
             for aux_key, aux in dst.auxiliary_coordinates(
-                filter_by_axis=dst_axis_keys,
-                axis_mode="subset",
-                todict=True,
+                filter_by_axis=dst_axis_keys, axis_mode="subset", todict=True
             ).items():
                 aux_axes = [
                     axis_map[key_d] for key_d in dst_data_axes[aux_key]
@@ -1124,9 +1156,7 @@ def regrid_update_coordinates(
                     f.set_construct(aux, axes=[src_axis_key])
 
             for aux_key, aux in dst.auxiliary_coordinates(
-                filter_by_axis=dst_axis_keys,
-                axis_mode="subset",
-                todict=True,
+                filter_by_axis=dst_axis_keys, axis_mode="subset", todict=True
             ).items():
                 aux_axes = dst.get_data_axes(aux_key)
                 if aux_axes == tuple(dst_axis_keys):
@@ -1214,16 +1244,17 @@ def regrid_initialize():
             A singleton instance of the `ESMF` manager.
 
     """
+    if not _found_ESMF:
+        raise RuntimeError(
+            "Regridding methods will not work unless "
+            "the ESMF library is installed"
+        )
+
     return ESMF.Manager(debug=bool(regrid_logging()))
 
 
 def create_Regrid(
-    srcfield,
-    dstfield,
-    srcfracfield,
-    dstfracfield,
-    method,
-    ignore_degenerate,
+    srcfield, dstfield, srcfracfield, dstfracfield, method, ignore_degenerate
 ):
     """Create an `ESMF` regrid operator.
 
@@ -1491,10 +1522,7 @@ def create_Grid(
                 DimensionCoordinate(
                     data=Data(0),
                     bounds=Data(
-                        [
-                            np.finfo("float32").epsneg,
-                            np.finfo("float32").eps,
-                        ]
+                        [np.finfo("float32").epsneg, np.finfo("float32").eps]
                     ),
                 )
             ] + coords
@@ -1510,10 +1538,7 @@ def create_Grid(
         max_index = np.array(shape, dtype="int32")
         if use_bounds:
             if ndim < 3:
-                staggerLocs = [
-                    ESMF.StaggerLoc.CORNER,
-                    ESMF.StaggerLoc.CENTER,
-                ]
+                staggerLocs = [ESMF.StaggerLoc.CORNER, ESMF.StaggerLoc.CENTER]
             else:
                 staggerLocs = [
                     ESMF.StaggerLoc.CENTER_VCENTER,

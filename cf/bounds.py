@@ -212,9 +212,7 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
         else:
             if direction is None:
                 b = data[(0,) * ndim].array
-                direction = b.item(0,) < b.item(
-                    1,
-                )
+                direction = b.item(0) < b.item(1)
 
             if direction:
                 return (data[1:, 0] <= data[:-1, 1]).all()

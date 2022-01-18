@@ -132,13 +132,3 @@ class CompressedSubarray(abc.ABC):
 
         """
         return not hasattr(self.array, "__array_interface__")
-
-
-#    def unique(self):
-#        '''TODO
-#
-#        '''
-#        return getrefcount(self.array) <= 2
-
-
-# --- End: class

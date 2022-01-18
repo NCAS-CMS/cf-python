@@ -27,8 +27,8 @@ class Properties(Container):
         """Store component classes.
 
         .. note:: If a child class requires a different component
-        classes than the ones defined here, then they must           be
-        redefined in the child class.
+        classes than the ones defined here, then they must be redefined
+        in the child class.
 
         """
         instance = super().__new__(cls)
@@ -135,9 +135,7 @@ class Properties(Container):
             return self._custom["id"]
         except KeyError:
             raise AttributeError(
-                "{} doesn't have attribute 'id'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__} doesn't have attribute 'id'"
             )
 
     @id.setter
@@ -150,9 +148,7 @@ class Properties(Container):
             del self._custom["id"]
         except KeyError:
             raise AttributeError(
-                "{} doesn't have attribute 'id'".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__} doesn't have attribute 'id'"
             )
 
     # ----------------------------------------------------------------
@@ -736,31 +732,37 @@ class Properties(Container):
         :Parameters:
 
             identities: optional
-                Define one or more conditions on the identities.
+                Define conditions on the construct identities by one or
+                more of
 
-                A construct identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time',
-                ``'ncvar%lat'``, etc.); a `Query` object
-                (e.g. ``cf.eq('longitude')``); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``) that
-                is compared with the construct's identities via
-                `re.search`.
+                * A construct identity. TODO
 
-                A construct has a number of identities, and the
-                condition is satisfied if any of the construct's
-                identities, as returned by the `identities` method,
-                equals the condition value. A construct's identities
-                are those returned by its `!identities` method. In the
-                following example, the construct ``x`` has six
-                identities:
+                  {{construct selection identity}}
 
-                   >>> x.identities()
-                   ['time',
-                    'long_name=Time',
-                    'foo=bar',
-                    'standard_name=time',
-                    'ncvar%t',
-                    'T']
+                *Parameter example:*
+                  ``'latitude'``
+
+                *Parameter example:*
+                  ``'T'
+
+                *Parameter example:*
+                  ``'long_name=Cell Area'``
+
+                *Parameter example:*
+                  ``'cellmeasure1'``
+
+                *Parameter example:*
+                  ``'measure:area'``
+
+                *Parameter example:*
+                  ``cf.eq('time')'``
+
+                *Parameter example:*
+                  ``re.compile('^lat')``
+
+                *Parameter example:*
+                  To match identities of "T", or any that start with
+                  "lat": ``'T', re.compile('^lat')``
 
         :Returns:
 
@@ -1122,10 +1124,9 @@ class Properties(Container):
 
         if identities and isinstance(identities[0], (list, tuple, set)):
             _DEPRECATION_ERROR(
-                "Use of a {!r} for identities has been deprecated. Use the "
-                "* operator to unpack the arguments instead.".format(
-                    identities[0].__class__.__name__
-                )
+                f"Use of a {identities[0].__class__.__name__!r} for "
+                "identities has been deprecated. Use the "
+                "* operator to unpack the arguments instead."
             )  # pragma: no cover
 
         for i in identities:

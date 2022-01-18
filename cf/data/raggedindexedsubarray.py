@@ -44,6 +44,3 @@ class RaggedIndexedSubarray(abstract.CompressedSubarray):
         indices = parse_indices(self.shape, indices)
 
         return get_subspace(uarray, indices)
-
-
-# --- End: class

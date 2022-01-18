@@ -571,12 +571,7 @@ class DataTest(unittest.TestCase):
 
         for axis in (0, 1):
             # Test  weights in different modes
-            for mode in (
-                "reflect",
-                "constant",
-                "nearest",
-                "wrap",
-            ):
+            for mode in ("reflect", "constant", "nearest", "wrap"):
                 b = convolve1d(self.ma, window, axis=axis, mode=mode)
                 e = d.convolution_filter(
                     window, axis=axis, mode=mode, cval=0.0
@@ -640,7 +635,6 @@ class DataTest(unittest.TestCase):
                 x = e.diff(n=n, axis=axis, inplace=True)
                 self.assertIsNone(x)
                 self.assertTrue(e.equals(d_diff))
-        # --- End: for
 
         d = cf.Data(self.ma, "km")
         for n in (0, 1, 2):
@@ -1105,13 +1099,7 @@ class DataTest(unittest.TestCase):
         e = d.squeeze()
         self.assertEqual(e.shape, (1000,))
         e = d.squeeze(-1)
-        self.assertEqual(
-            e.shape,
-            (
-                1,
-                1000,
-            ),
-        )
+        self.assertEqual(e.shape, (1, 1000))
         self.assertIsNone(e.squeeze(0, inplace=True))
         self.assertEqual(e.shape, (1000,))
 
@@ -1811,8 +1799,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.maximum(_preserve_partitions=pp), 5)
             self.assertEqual(d.maximum(_preserve_partitions=pp).datum(), 5)
             self.assertEqual(
-                d.maximum(_preserve_partitions=pp),
-                cf.Data(0.005, "km"),
+                d.maximum(_preserve_partitions=pp), cf.Data(0.005, "km")
             )
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
@@ -1830,8 +1817,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.minimum(_preserve_partitions=pp), 2)
             self.assertEqual(d.minimum(_preserve_partitions=pp).datum(), 2)
             self.assertEqual(
-                d.minimum(_preserve_partitions=pp),
-                cf.Data(0.002, "km"),
+                d.minimum(_preserve_partitions=pp), cf.Data(0.002, "km")
             )
 
     def test_Data_ndindex(self):
@@ -1996,28 +1982,23 @@ class DataTest(unittest.TestCase):
 
                 message = "Failed in {!r}+{!r}".format(d, x)
                 self.assertTrue(
-                    (d + x).equals(cf.Data(a0 + a1, "m"), verbose=1),
-                    message,
+                    (d + x).equals(cf.Data(a0 + a1, "m"), verbose=1), message
                 )
                 message = "Failed in {!r}*{!r}".format(d, x)
                 self.assertTrue(
-                    (d * x).equals(cf.Data(a0 * a1, "m2"), verbose=1),
-                    message,
+                    (d * x).equals(cf.Data(a0 * a1, "m2"), verbose=1), message
                 )
                 message = "Failed in {!r}/{!r}".format(d, x)
                 self.assertTrue(
-                    (d / x).equals(cf.Data(a0 / a1, "1"), verbose=1),
-                    message,
+                    (d / x).equals(cf.Data(a0 / a1, "1"), verbose=1), message
                 )
                 message = "Failed in {!r}-{!r}".format(d, x)
                 self.assertTrue(
-                    (d - x).equals(cf.Data(a0 - a1, "m"), verbose=1),
-                    message,
+                    (d - x).equals(cf.Data(a0 - a1, "m"), verbose=1), message
                 )
                 message = "Failed in {!r}//{!r}".format(d, x)
                 self.assertTrue(
-                    (d // x).equals(cf.Data(a0 // a1, "1"), verbose=1),
-                    message,
+                    (d // x).equals(cf.Data(a0 // a1, "1"), verbose=1), message
                 )
 
                 message = "Failed in {!r}.__truediv__//{!r}".format(d, x)
@@ -2047,39 +2028,30 @@ class DataTest(unittest.TestCase):
 
         for a0 in arrays:
             d = cf.Data(a0, "metre")
-            for x in (
-                2,
-                2.0,
-            ):
+            for x in (2, 2.0):
                 message = "Failed in {!r}+{}".format(d, x)
                 self.assertTrue(
-                    (d + x).equals(cf.Data(a0 + x, "m"), verbose=1),
-                    message,
+                    (d + x).equals(cf.Data(a0 + x, "m"), verbose=1), message
                 )
                 message = "Failed in {!r}*{}".format(d, x)
                 self.assertTrue(
-                    (d * x).equals(cf.Data(a0 * x, "m"), verbose=1),
-                    message,
+                    (d * x).equals(cf.Data(a0 * x, "m"), verbose=1), message
                 )
                 message = "Failed in {!r}/{}".format(d, x)
                 self.assertTrue(
-                    (d / x).equals(cf.Data(a0 / x, "m"), verbose=1),
-                    message,
+                    (d / x).equals(cf.Data(a0 / x, "m"), verbose=1), message
                 )
                 message = "Failed in {!r}-{}".format(d, x)
                 self.assertTrue(
-                    (d - x).equals(cf.Data(a0 - x, "m"), verbose=1),
-                    message,
+                    (d - x).equals(cf.Data(a0 - x, "m"), verbose=1), message
                 )
                 message = "Failed in {!r}//{}".format(d, x)
                 self.assertTrue(
-                    (d // x).equals(cf.Data(a0 // x, "m"), verbose=1),
-                    message,
+                    (d // x).equals(cf.Data(a0 // x, "m"), verbose=1), message
                 )
                 message = "Failed in {!r}**{}".format(d, x)
                 self.assertTrue(
-                    (d ** x).equals(cf.Data(a0 ** x, "m2"), verbose=1),
-                    message,
+                    (d ** x).equals(cf.Data(a0 ** x, "m2"), verbose=1), message
                 )
                 message = "Failed in {!r}.__truediv__{}".format(d, x)
                 self.assertTrue(
@@ -2098,23 +2070,19 @@ class DataTest(unittest.TestCase):
 
                 message = "Failed in {}+{!r}".format(x, d)
                 self.assertTrue(
-                    (x + d).equals(cf.Data(x + a0, "m"), verbose=1),
-                    message,
+                    (x + d).equals(cf.Data(x + a0, "m"), verbose=1), message
                 )
                 message = "Failed in {}*{!r}".format(x, d)
                 self.assertTrue(
-                    (x * d).equals(cf.Data(x * a0, "m"), verbose=1),
-                    message,
+                    (x * d).equals(cf.Data(x * a0, "m"), verbose=1), message
                 )
                 message = "Failed in {}/{!r}".format(x, d)
                 self.assertTrue(
-                    (x / d).equals(cf.Data(x / a0, "m-1"), verbose=1),
-                    message,
+                    (x / d).equals(cf.Data(x / a0, "m-1"), verbose=1), message
                 )
                 message = "Failed in {}-{!r}".format(x, d)
                 self.assertTrue(
-                    (x - d).equals(cf.Data(x - a0, "m"), verbose=1),
-                    message,
+                    (x - d).equals(cf.Data(x - a0, "m"), verbose=1), message
                 )
                 message = "Failed in {}//{!r}\n{!r}\n{!r}".format(
                     x, d, x // d, x // a0
@@ -2575,8 +2543,7 @@ class DataTest(unittest.TestCase):
                 b = np.ma.filled(b, np.nan)
                 with np.testing.suppress_warnings() as sup:
                     sup.filter(
-                        RuntimeWarning,
-                        message=".*All-NaN slice encountered",
+                        RuntimeWarning, message=".*All-NaN slice encountered"
                     )
                     b = np.nanpercentile(b, 50, axis=-1)
 
@@ -2656,8 +2623,7 @@ class DataTest(unittest.TestCase):
                 b = np.ma.filled(b, np.nan)
                 with np.testing.suppress_warnings() as sup:
                     sup.filter(
-                        RuntimeWarning,
-                        message=".*All-NaN slice encountered",
+                        RuntimeWarning, message=".*All-NaN slice encountered"
                     )
                     p = np.nanpercentile(b, 90, axis=-1, keepdims=True)
 
@@ -2710,16 +2676,13 @@ class DataTest(unittest.TestCase):
                         b = (mx + mn) * 0.5
 
                     e = getattr(d, h)(
-                        axes=axes,
-                        squeeze=True,
-                        _preserve_partitions=pp,
+                        axes=axes, squeeze=True, _preserve_partitions=pp
                     )
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         "{}, axis={}, unweighted, unmasked "
                         "\ne={}, \nb={}".format(h, axes, e.array, b),
                     )
-            # --- End: for
 
             # unweighted, masked
             d = cf.Data(self.ma)
@@ -2736,9 +2699,7 @@ class DataTest(unittest.TestCase):
                     b = np.ma.asanyarray(b)
 
                     e = getattr(d, h)(
-                        axes=axes,
-                        squeeze=True,
-                        _preserve_partitions=pp,
+                        axes=axes, squeeze=True, _preserve_partitions=pp
                     )
 
                     self.assertTrue(
@@ -2768,10 +2729,7 @@ class DataTest(unittest.TestCase):
                 b = np.sum(b * v, axis=-1)
 
                 e = d.integral(
-                    axes=axes,
-                    squeeze=True,
-                    weights=x,
-                    _preserve_partitions=pp,
+                    axes=axes, squeeze=True, weights=x, _preserve_partitions=pp
                 )
 
                 self.assertTrue(
@@ -2780,7 +2738,6 @@ class DataTest(unittest.TestCase):
                         axes, e.array, b
                     ),
                 )
-            # --- End: for
 
             # masked
             d = cf.Data(self.ma)
@@ -2791,10 +2748,7 @@ class DataTest(unittest.TestCase):
                 b = np.ma.asanyarray(b)
 
                 e = d.integral(
-                    axes=axes,
-                    squeeze=True,
-                    weights=x,
-                    _preserve_partitions=pp,
+                    axes=axes, squeeze=True, weights=x, _preserve_partitions=pp
                 )
 
                 self.assertTrue(
@@ -2821,9 +2775,7 @@ class DataTest(unittest.TestCase):
                     b = reshape_array(self.ones, axes)
                     b = b.sum(axis=-1)
                     e = getattr(d, h)(
-                        axes=axes,
-                        squeeze=True,
-                        _preserve_partitions=pp,
+                        axes=axes, squeeze=True, _preserve_partitions=pp
                     )
 
                     self.assertTrue(
@@ -2836,16 +2788,13 @@ class DataTest(unittest.TestCase):
             # unweighted, masked
             d = cf.Data(self.ma)
             for a, h in zip(
-                (self.mones, self.mones),
-                ("sum_of_weights", "sum_of_weights2"),
+                (self.mones, self.mones), ("sum_of_weights", "sum_of_weights2")
             ):
                 for axes in self.axes_combinations:
                     b = reshape_array(a, axes)
                     b = np.ma.asanyarray(b.sum(axis=-1))
                     e = getattr(d, h)(
-                        axes=axes,
-                        squeeze=True,
-                        _preserve_partitions=pp,
+                        axes=axes, squeeze=True, _preserve_partitions=pp
                     )
 
                     self.assertTrue(
@@ -2883,12 +2832,7 @@ class DataTest(unittest.TestCase):
                     self.assertTrue(
                         (e.mask.array == b.mask).all(),
                         "{}, axis={}, \ne.mask={}, "
-                        "\nb.mask={}".format(
-                            h,
-                            axes,
-                            e.mask.array,
-                            b.mask,
-                        ),
+                        "\nb.mask={}".format(h, axes, e.mask.array, b.mask),
                     )
 
                     self.assertTrue(
@@ -3176,10 +3120,7 @@ class DataTest(unittest.TestCase):
                             avg = np.expand_dims(avg, -1)
 
                         b, V1 = np.average(
-                            (b - avg) ** 2,
-                            axis=-1,
-                            weights=v,
-                            returned=True,
+                            (b - avg) ** 2, axis=-1, weights=v, returned=True
                         )
 
                         if ddof == 1:
@@ -3230,10 +3171,7 @@ class DataTest(unittest.TestCase):
                             avg = np.expand_dims(avg, -1)
 
                         b, V1 = np.ma.average(
-                            (b - avg) ** 2,
-                            axis=-1,
-                            weights=v,
-                            returned=True,
+                            (b - avg) ** 2, axis=-1, weights=v, returned=True
                         )
 
                         b = np.ma.where(not_enough_data, np.ma.masked, b)
@@ -3459,44 +3397,13 @@ class DataTest(unittest.TestCase):
 
         d[0, 0] = cf.masked
         self.assertTrue(
-            (
-                d.filled().array
-                == [
-                    [
-                        -9223372036854775806,
-                        2,
-                        3,
-                    ]
-                ]
-            ).all()
+            (d.filled().array == [[-9223372036854775806, 2, 3]]).all()
         )
 
         d.set_fill_value(-99)
-        self.assertTrue(
-            (
-                d.filled().array
-                == [
-                    [
-                        -99,
-                        2,
-                        3,
-                    ]
-                ]
-            ).all()
-        )
+        self.assertTrue((d.filled().array == [[-99, 2, 3]]).all())
 
-        self.assertTrue(
-            (
-                d.filled(1e10).array
-                == [
-                    [
-                        1e10,
-                        2,
-                        3,
-                    ]
-                ]
-            ).all()
-        )
+        self.assertTrue((d.filled(1e10).array == [[1e10, 2, 3]]).all())
 
         d = cf.Data(["a", "b", "c"], mask=[1, 0, 0])
         self.assertTrue((d.filled().array == ["", "b", "c"]).all())
@@ -3576,15 +3483,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.shape == b.shape)
         self.assertTrue((e.array == b).all())
 
-        a = np.array(
-            [
-                [
-                    1,
-                    2,
-                ],
-                [3, 4],
-            ]
-        )
+        a = np.array([[1, 2], [3, 4]])
         d = cf.Data(a)
         b = np.where([[True, False], [True, True]], a, [[9, 8], [7, 6]])
         e = d.where([[True, False], [True, True]], d, [[9, 8], [7, 6]])

@@ -2,7 +2,7 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    = -j 3
+SPHINXOPTS    = -j 2
 SPHINXBUILD   = sphinx-build
 PAPER         =
 #BUILDDIR      = build

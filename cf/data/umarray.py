@@ -119,9 +119,7 @@ class UMArray(abstract.FileArray):
             indices = parse_indices(array.shape, indices)
             array = get_subspace(array, indices)
 
-        LBUSER2 = int_hdr.item(
-            38,
-        )
+        LBUSER2 = int_hdr.item(38)
 
         if LBUSER2 == 3:
             # Return the numpy array now if it is a boolean array
@@ -133,9 +131,7 @@ class UMArray(abstract.FileArray):
         # Convert to a masked array
         # ------------------------------------------------------------
         # Set the fill_value from BMDI
-        fill_value = real_hdr.item(
-            17,
-        )
+        fill_value = real_hdr.item(17)
         if fill_value != -1.0e30:
             # -1.0e30 is the flag for no missing data
             if integer_array:
@@ -154,9 +150,7 @@ class UMArray(abstract.FileArray):
         # either is available
         # ------------------------------------------------------------
         # Treat BMKS as a scale_factor if it is neither 0 nor 1
-        scale_factor = real_hdr.item(
-            18,
-        )
+        scale_factor = real_hdr.item(18)
         if scale_factor != 1.0 and scale_factor != 0.0:
             if integer_array:
                 scale_factor = int(scale_factor)
@@ -164,9 +158,7 @@ class UMArray(abstract.FileArray):
             array *= scale_factor
 
         # Treat BDATUM as an add_offset if it is not 0
-        add_offset = real_hdr.item(
-            4,
-        )
+        add_offset = real_hdr.item(4)
         if add_offset != 0.0:
             if integer_array:
                 add_offset = int(add_offset)
@@ -313,12 +305,3 @@ class UMArray(abstract.FileArray):
             raise Exception(error)
         else:
             return f
-
-
-#        return _open_um_file(self.filename,
-#                             fmt=self.fmt,
-#                             word_size=self.word_size,
-#                             byte_ordering=self.byte_ordering)
-
-
-# --- End: class

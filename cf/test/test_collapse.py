@@ -330,14 +330,12 @@ class Field_collapseTest(unittest.TestCase):
             self.assertEqual(
                 bound.month,
                 group.offset.month,
-                "{}!={}, group={}".format(
-                    bound.month, group.offset.month, group
-                ),
+                f"{bound.month}!={group.offset.month}, group={group}",
             )
             self.assertEqual(
                 bound.day,
                 group.offset.day,
-                "{}!={}, group={}".format(bound.day, group.offset.day, group),
+                f"{bound.day}!={group.offset.day}, group={group}",
             )
 
     #            for group in (cf.D(30),

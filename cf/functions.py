@@ -9,7 +9,7 @@ import resource
 import sys
 import urllib.parse
 import warnings
-from collections.abc import Iterable  # just 'from collections' in Python <3.4
+from collections.abc import Iterable
 from hashlib import md5 as hashlib_md5
 from marshal import dumps as marshal_dumps
 from math import ceil as math_ceil
@@ -734,7 +734,7 @@ class collapse_parallel_mode(ConstantAccess):
         if arg not in allowed_values:
             raise ValueError(
                 "Invalid collapse parallel mode. Valid values are "
-                "{}".format(allowed_values)
+                f"{allowed_values}"
             )
 
         return arg
@@ -858,11 +858,11 @@ class chunksize(ConstantAccess):
         arg = float(arg)
         if arg > upper_chunksize and mpi_size > 1:
             raise ValueError(
-                "Specified chunk size ({}) is too large for the given "
-                "free memory factor ({})".format(arg, upper_chunksize)
+                f"Specified chunk size ({arg}) is too large for the given "
+                f"free memory factor ({upper_chunksize})"
             )
         elif arg <= 0:
-            raise ValueError("Chunk size ({}) must be positive".format(arg))
+            raise ValueError(f"Chunk size ({arg}) must be positive")
 
         return arg
 
@@ -1006,12 +1006,12 @@ class of_fraction(ConstantAccess):
         try:
             arg = float(arg)
         except (ValueError, TypeError):
-            raise ValueError("Fraction must be a float. Got {!r}".format(arg))
+            raise ValueError(f"Fraction must be a float. Got {arg!r}")
 
         if arg <= 0.0 or arg >= 1.0:
             raise ValueError(
                 "Fraction must be between 0.0 and 1.0 not inclusive. "
-                "Got {!r}".format(arg)
+                f"Got {arg!r}"
             )
 
         return arg
@@ -1064,7 +1064,7 @@ class free_memory_factor(ConstantAccess):
             arg = float(arg)
         except (ValueError, TypeError):
             raise ValueError(
-                "Free memory factor must be a float. Got {!r}".format(arg)
+                f"Free memory factor must be a float. Got {arg!r}"
             )
 
         if not (0 < arg < 1):
@@ -1219,20 +1219,24 @@ class bounds_combination_mode(ConstantAccess):
             valid = False
 
         if not valid:
+            valid_vals = ", ".join(
+                [repr(val.name) for val in OperandBoundsCombination]
+            )
             raise ValueError(
-                "{!r} is not one of the valid values: {}".format(
-                    arg,
-                    ", ".join(
-                        [repr(val.name) for val in OperandBoundsCombination]
-                    ),
-                )
+                f"{arg!r} is not one of the valid values: {valid_vals}"
             )
 
         return arg
 
 
 def CF():
-    """TODO."""
+    """The version of the CF conventions.
+
+    This indicates which version of the CF conventions are represented
+    by this release of the cf package, and therefore the version can not
+    be changed.
+
+    """
     return cfdm.CF()
 
 
@@ -1327,7 +1331,7 @@ def min_total_memory():
 
 
 def total_memory():
-    """TODO."""
+    """The total amount of physical memory (in bytes)."""
     return CONSTANTS["TOTAL_MEMORY"]
 
 
@@ -2023,7 +2027,7 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
 
 
 def get_subspace(array, indices):
-    """TODO.
+    """Return a subspace defined by the given indices of an array.
 
     Subset the input numpy array with the given indices. Indexing is
     similar to that of a numpy array. The differences to numpy array
@@ -2037,7 +2041,7 @@ def get_subspace(array, indices):
        along each dimension (similar to the way vector subscripts work
        in Fortran).
 
-    indices must contain an index for each dimension of the input array.
+    Indices must contain an index for each dimension of the input array.
 
     :Parameters:
 
@@ -2081,7 +2085,7 @@ _equals = cfdm.Data()._equals
 
 
 def equals(x, y, rtol=None, atol=None, ignore_data_type=False, **kwargs):
-    """TODO."""
+    """True if two objects are equal within a given tolerance."""
     if rtol is None:
         rtol = _cf_rtol()
 
@@ -2699,7 +2703,7 @@ def inspect(self):
 
     if hasattr(self, "__dict__"):
         for key, value in sorted(self.__dict__.items()):
-            out.append("{}: {!r}".format(key, value))
+            out.append(f"{key}: {value!r}")
 
     print("\n".join(out))
 
@@ -3154,16 +3158,30 @@ def default_netCDF_fillvals():
     return netCDF4.default_fillvals
 
 
+def unique_constructs(constructs, copy=True):
+    return cfdm.unique_constructs(constructs, copy=copy)
+
+
+unique_constructs.__doc__ = cfdm.unique_constructs.__doc__.replace(
+    "cfdm.", "cf."
+)
+unique_constructs.__doc__ = unique_constructs.__doc__.replace(
+    "<Field:", "<CF Field:"
+)
+unique_constructs.__doc__ = unique_constructs.__doc__.replace(
+    "<Domain:", "<CF Domain:"
+)
+
+
 def _DEPRECATION_ERROR(message="", version="3.0.0"):
-    raise DeprecationError("{}".format(message))
+    raise DeprecationError(f"{message}")
 
 
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message="", version="3.0.0"):
     raise DeprecationError(
-        "Argument {2!r} of method '{0}.{1}' has been deprecated at version "
-        "{4} and is no longer available and will be removed at version 4.0.0. {3}".format(
-            instance.__class__.__name__, method, arg, message, version
-        )
+        f"Argument {arg!r} of method '{instance.__class__.__name__}.{method}' "
+        f"has been deprecated at version {version} and is no longer available "
+        f"and will be removed at version 4.0.0. {message}"
     )
 
 
@@ -3188,10 +3206,9 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
 
     for key in kwargs.keys():
         raise DeprecationError(
-            "Keyword {1!r} of function '{0}' has been deprecated at version "
-            "{3} and is no longer available and will be removed at version 4.0.0. {2}".format(
-                func, key, message, version
-            )
+            f"Keyword {key!r} of function '{func}' has been deprecated at "
+            f"version {version} and is no longer available and will be "
+            f"removed at version 4.0.0. {message}"
         )
 
 
@@ -3219,10 +3236,10 @@ def _DEPRECATION_ERROR_KWARGS(
 
     for key in kwargs.keys():
         raise DeprecationError(
-            "Keyword {2!r} of method '{0}.{1}' has been deprecated at "
-            "version {4} and is no longer available and will be removed at version 4.0.0. {3}".format(
-                instance.__class__.__name__, method, key, message, version
-            )
+            f"Keyword {key!r} of method "
+            f"'{instance.__class__.__name__}.{method}' has been deprecated "
+            f"at version {version} and is no longer available and will be "
+            f"removed at version 4.0.0. {message}"
         )
 
 
@@ -3230,19 +3247,18 @@ def _DEPRECATION_ERROR_KWARG_VALUE(
     instance, method, kwarg, value, message="", version="3.0.0"
 ):
     raise DeprecationError(
-        "Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at "
-        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
-            value, kwarg, method, instance.__class__.__name__, version, message
-        )
+        f"Value {value!r} of keyword {kwarg!r} of method "
+        f"'{instance.__class__.__name__}.{method}' has been deprecated at "
+        f"version {version} and is no longer available and will be removed "
+        f"at version 4.0.0. {message}"
     )
 
 
 def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
     raise DeprecationError(
-        "{} method {!r} has been deprecated at version {} and is no longer "
-        "available and will be removed at version 4.0.0. {}".format(
-            instance.__class__.__name__, method, version, message
-        )
+        f"{instance.__class__.__name__} method {method!r} has been deprecated "
+        f"at version {version} and is no longer available and will be "
+        f"removed at version 4.0.0. {message}"
     )
 
 
@@ -3250,29 +3266,24 @@ def _DEPRECATION_ERROR_ATTRIBUTE(
     instance, attribute, message="", version="3.0.0"
 ):
     warnings.warn(
-        "{} attribute {!r} has been deprecated at version {} and will be "
-        "removed at version 4.0.0. {}".format(
-            instance.__class__.__name__, attribute, version, message
-        ),
+        f"{instance.__class__.__name__} attribute {attribute!r} has been "
+        f"deprecated at version {version} and will be removed at version "
+        f"4.0.0. {message}",
         DeprecationWarning,
     )
 
 
 def _DEPRECATION_ERROR_FUNCTION(func, message="", version="3.0.0"):
     raise DeprecationError(
-        "Function {!r} has been deprecated at version {} and is no longer "
-        "available and will be removed at version 4.0.0. {}".format(
-            func, version, message
-        )
+        f"Function {func!r} has been deprecated at version {version} and is "
+        f"no longer available and will be removed at version 4.0.0. {message}"
     )
 
 
 def _DEPRECATION_ERROR_CLASS(cls, message="", version="3.0.0"):
     raise DeprecationError(
-        "Class {!r} has been deprecated at version {} and is no longer "
-        "available and will be removed at version 4.0.0. {}".format(
-            cls, version, message
-        )
+        f"Class {cls!r} has been deprecated at version {version} and is no "
+        f"longer available and will be removed at version 4.0.0. {message}"
     )
 
 
@@ -3280,10 +3291,9 @@ def _DEPRECATION_WARNING_METHOD(
     instance, method, message="", new=None, version="3.0.0"
 ):
     warnings.warn(
-        "{} method {!r} has been deprecated at version {} and will be "
-        "removed at version 4.0.0. {}".format(
-            instance.__class__.__name__, method, version, message
-        ),
+        f"{instance.__class__.__name__} method {method!r} has been deprecated "
+        f"at version {version} and will be removed at version 4.0.0. "
+        f"{message}",
         DeprecationWarning,
     )
 
@@ -3291,17 +3301,17 @@ def _DEPRECATION_WARNING_METHOD(
 def _DEPRECATION_ERROR_DICT(message="", version="3.0.0"):
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
-        "version {} and is no longer available and will be removed at version 4.0.0. {}".format(
-            version, message
-        )
+        f"version {version} and is no longer available and will be removed "
+        f"at version 4.0.0. {message}"
     )
 
 
 def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0"):
     raise DeprecationError(
-        "Use of a {!r} to identify constructs has been deprecated at version "
-        "{} and is no longer available and will be removed at version 4.0.0. Use the * operator to unpack the "
-        "arguments instead.".format(instance.__class__.__name__, version)
+        f"Use of a {instance.__class__.__name__!r} to identify constructs "
+        f"has been deprecated at version {version} and is no longer available "
+        "and will be removed at version 4.0.0. Use the * operator to unpack "
+        "the arguments instead."
     )
 
 
