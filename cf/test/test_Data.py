@@ -136,16 +136,17 @@ class DataTest(unittest.TestCase):
             return
 
         shape = 3, 4
+        chunksize = 2, 6
         a = np.arange(12).reshape(*shape)
 
-        d = cf.Data(a, "m")
+        d = cf.Data(a, "m", chunks=chunksize)
         self.assertTrue(d.equals(d))  # check equal to self
         self.assertTrue(d.equals(d.copy()))  # also do self-equality checks!
 
         # Different but equivalent datatype, which should *fail* the equality
         # test (i.e. equals return False) because we want equals to check
         # for strict equality, including equality of data type.
-        d2 = cf.Data(a.astype(np.float32), "m")
+        d2 = cf.Data(a.astype(np.float32), "m", chunks=chunksize)
         self.assertTrue(d2.equals(d2.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(d2.equals(d))
@@ -156,7 +157,7 @@ class DataTest(unittest.TestCase):
                 )
             )
 
-        e = cf.Data(a, "s")  # different units to d
+        e = cf.Data(a, "s", chunks=chunksize)  # different units to d
         self.assertTrue(e.equals(e.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(e.equals(d))
@@ -167,7 +168,7 @@ class DataTest(unittest.TestCase):
                 )
             )
 
-        f = cf.Data(np.arange(12), "m")  # different shape to d
+        f = cf.Data(np.arange(12), "m", chunks=(6,))  # different shape to d
         self.assertTrue(f.equals(f.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(f.equals(d))
@@ -178,7 +179,9 @@ class DataTest(unittest.TestCase):
                 )
             )
 
-        g = cf.Data(np.ones(shape, dtype="int64"), "m")  # different values
+        g = cf.Data(
+            np.ones(shape, dtype="int64"), "m", chunks=chunksize
+        )  # different values
         self.assertTrue(g.equals(g.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(g.equals(d))
@@ -190,8 +193,8 @@ class DataTest(unittest.TestCase):
             )
 
         # Test NaN values
-        d3 = cf.Data(a.astype(np.float64), "m")
-        h = cf.Data(np.full(shape, np.nan), "m")
+        d3 = cf.Data(a.astype(np.float64), "m", chunks=chunksize)
+        h = cf.Data(np.full(shape, np.nan), "m", chunks=chunksize)
         # TODODASK: implement and test equal_nan kwarg to configure NaN eq.
         self.assertFalse(h.equals(h.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
@@ -205,7 +208,7 @@ class DataTest(unittest.TestCase):
             )
 
         # Test inf values
-        i = cf.Data(np.full(shape, np.inf), "m")
+        i = cf.Data(np.full(shape, np.inf), "m", chunks=chunksize)
         self.assertTrue(i.equals(i.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(i.equals(d3))  # np.inf is also of dtype float64
@@ -226,9 +229,18 @@ class DataTest(unittest.TestCase):
 
         # Test masked arrays
         # 1. Example case where the masks differ only (data is identical)
-        j1 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
+        mask_test_chunksize = (2, 1)
+        j1 = cf.Data(
+            np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
         self.assertTrue(j1.equals(j1.copy()))
-        j2 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[0, 1, 0]), "m")
+        j2 = cf.Data(
+            np.ma.array([1.0, 2.0, 3.0], mask=[0, 1, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
         self.assertTrue(j2.equals(j2.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j1.equals(j2))
@@ -239,7 +251,11 @@ class DataTest(unittest.TestCase):
                 )
             )
         # 2. Example case where the data differs only (masks are identical)
-        j3 = cf.Data(np.ma.array([1.0, 2.0, 100.0], mask=[1, 0, 0]), "m")
+        j3 = cf.Data(
+            np.ma.array([1.0, 2.0, 100.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
         self.assertTrue(j3.equals(j3.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j1.equals(j3))
@@ -251,7 +267,9 @@ class DataTest(unittest.TestCase):
             )
 
         # 3. Trivial case of data that is fully masked
-        j4 = cf.Data(np.ma.masked_all(shape, dtype="int"), "m")
+        j4 = cf.Data(
+            np.ma.masked_all(shape, dtype="int"), "m", chunks=chunksize
+        )
         self.assertTrue(j4.equals(j4.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(j4.equals(d))
@@ -269,24 +287,34 @@ class DataTest(unittest.TestCase):
         # Note these *should* be considered equal inside cf.Data, and indeed
         # np.ma.allclose and our own _da_ma_allclose methods also hold
         # these to be 'allclose'.
-        j5 = cf.Data(np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
+        j5 = cf.Data(
+            np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
         self.assertTrue(j5.equals(j5.copy()))
-        j6 = cf.Data(np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]), "m")
+        j6 = cf.Data(
+            np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
         self.assertTrue(j6.equals(j6.copy()))
         self.assertTrue(j5.equals(j6))
 
         # Test non-numeric dtype arrays
-        sa1 = cf.Data(np.array(["one", "two", "three"], dtype="S5"), "m")
+        sa1 = cf.Data(
+            np.array(["one", "two", "three"], dtype="S5"), "m", chunks=(3,)
+        )
         self.assertTrue(sa1.equals(sa1.copy()))
         sa2_data = np.array(["one", "two", "four"], dtype="S4")
-        sa2 = cf.Data(sa2_data, "m")
+        sa2 = cf.Data(sa2_data, "m", chunks=(3,))
         self.assertTrue(sa2.equals(sa2.copy()))
         # Unlike for numeric types, for string-like data as long as the data
         # is the same consider the arrays equal, even if the dtype differs.
         # TODO DASK: this behaviour will be added via cfdm, test fails for now
         # ## self.assertTrue(sa1.equals(sa2))
         sa3_data = sa2_data.astype("S5")
-        sa3 = cf.Data(sa3_data, "m")
+        sa3 = cf.Data(sa3_data, "m", chunks=mask_test_chunksize)
         self.assertTrue(sa3.equals(sa3.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(sa1.equals(sa3))
@@ -304,6 +332,7 @@ class DataTest(unittest.TestCase):
                 dtype="S5",
             ),
             "m",
+            chunks=mask_test_chunksize,
         )
         self.assertTrue(sa4.equals(sa4.copy()))
         sa5 = cf.Data(
@@ -313,6 +342,7 @@ class DataTest(unittest.TestCase):
                 dtype="S5",
             ),
             "m",
+            chunks=mask_test_chunksize,
         )
         self.assertTrue(sa5.equals(sa5.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
@@ -325,11 +355,12 @@ class DataTest(unittest.TestCase):
             )
 
         # Test where inputs are scalars
-        s1 = cf.Data(1)
+        scalar_test_chunksize = (10,)
+        s1 = cf.Data(1, chunks=scalar_test_chunksize)
         self.assertTrue(s1.equals(s1.copy()))
-        s2 = cf.Data(10)
+        s2 = cf.Data(10, chunks=scalar_test_chunksize)
         self.assertTrue(s2.equals(s2.copy()))
-        s3 = cf.Data("a_string")
+        s3 = cf.Data("a_string", chunks=scalar_test_chunksize)
         self.assertTrue(s3.equals(s3.copy()))
         # 1. both are scalars
         with self.assertLogs(level=cf.log_level().value) as catch:
@@ -359,9 +390,10 @@ class DataTest(unittest.TestCase):
             )
 
         # Test rtol and atol parameters
-        k1 = cf.Data(np.array([10.0, 20.0]))
+        tol_check_chunksize = 1, 1
+        k1 = cf.Data(np.array([10.0, 20.0]), chunks=tol_check_chunksize)
         self.assertTrue(k1.equals(k1.copy()))
-        k2 = cf.Data(np.array([10.01, 20.01]))
+        k2 = cf.Data(np.array([10.01, 20.01]), chunks=tol_check_chunksize)
         self.assertTrue(k2.equals(k2.copy()))
         # Only one log check is sufficient here
         with self.assertLogs(level=cf.log_level().value) as catch:
@@ -378,9 +410,9 @@ class DataTest(unittest.TestCase):
         self.assertTrue(k1.equals(k2, atol=0, rtol=0.002))
 
         # Test ignore_fill_value parameter
-        m1 = cf.Data(1, fill_value=1000)
+        m1 = cf.Data(1, fill_value=1000, chunks=scalar_test_chunksize)
         self.assertTrue(m1.equals(m1.copy()))
-        m2 = cf.Data(1, fill_value=2000)
+        m2 = cf.Data(1, fill_value=2000, chunks=scalar_test_chunksize)
         self.assertTrue(m2.equals(m2.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             self.assertFalse(m1.equals(m2))
