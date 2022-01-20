@@ -2116,8 +2116,10 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
                 then a `None` is returned for all of the tuple elements.
 
         """
-        standard_name = coordinate_reference.coordinate_conversion.get_parameter(
-            "standard_name", None
+        standard_name = (
+            coordinate_reference.coordinate_conversion.get_parameter(
+                "standard_name", None
+            )
         )
 
         if standard_name is not None:
