@@ -22,6 +22,10 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
+# To facilitate the testing of logging outputs (see comment tag 'Logging note')
+logger = cf.logging.getLogger(__name__)
+
+
 # Variables for _collapse
 a = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
 
@@ -148,8 +152,8 @@ class DataTest(unittest.TestCase):
         # for strict equality, including equality of data type.
         d2 = cf.Data(a.astype(np.float32), "m", chunks=chunksize)
         self.assertTrue(d2.equals(d2.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(d2.equals(d))
+        with self.assertLogs(level=30) as catch:
+            self.assertFalse(d2.equals(d, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different data types: float32 != int64" in log_msg
@@ -160,7 +164,7 @@ class DataTest(unittest.TestCase):
         e = cf.Data(a, "s", chunks=chunksize)  # different units to d
         self.assertTrue(e.equals(e.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(e.equals(d))
+            self.assertFalse(e.equals(d, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different Units (<Units: s>, <Units: m>)" in log_msg
@@ -171,7 +175,7 @@ class DataTest(unittest.TestCase):
         f = cf.Data(np.arange(12), "m", chunks=(6,))  # different shape to d
         self.assertTrue(f.equals(f.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(f.equals(d))
+            self.assertFalse(f.equals(d, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different shapes: (12,) != (3, 4)" in log_msg
@@ -184,7 +188,7 @@ class DataTest(unittest.TestCase):
         )  # different values
         self.assertTrue(g.equals(g.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(g.equals(d))
+            self.assertFalse(g.equals(d, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -199,7 +203,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse(h.equals(h.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
             # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
-            self.assertFalse(h.equals(d3))
+            self.assertFalse(h.equals(d3, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -211,7 +215,8 @@ class DataTest(unittest.TestCase):
         i = cf.Data(np.full(shape, np.inf), "m", chunks=chunksize)
         self.assertTrue(i.equals(i.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(i.equals(d3))  # np.inf is also of dtype float64
+            # np.inf is also of dtype float64 (see comment on NaN tests above)
+            self.assertFalse(i.equals(d3, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -219,7 +224,7 @@ class DataTest(unittest.TestCase):
                 )
             )
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(h.equals(i))
+            self.assertFalse(h.equals(i, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -243,7 +248,7 @@ class DataTest(unittest.TestCase):
         )
         self.assertTrue(j2.equals(j2.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(j1.equals(j2))
+            self.assertFalse(j1.equals(j2, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -258,7 +263,7 @@ class DataTest(unittest.TestCase):
         )
         self.assertTrue(j3.equals(j3.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(j1.equals(j3))
+            self.assertFalse(j1.equals(j3, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -272,7 +277,7 @@ class DataTest(unittest.TestCase):
         )
         self.assertTrue(j4.equals(j4.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(j4.equals(d))
+            self.assertFalse(j4.equals(d, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -317,7 +322,7 @@ class DataTest(unittest.TestCase):
         sa3 = cf.Data(sa3_data, "m", chunks=mask_test_chunksize)
         self.assertTrue(sa3.equals(sa3.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(sa1.equals(sa3))
+            self.assertFalse(sa1.equals(sa3, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -346,7 +351,7 @@ class DataTest(unittest.TestCase):
         )
         self.assertTrue(sa5.equals(sa5.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(sa4.equals(sa5))
+            self.assertFalse(sa4.equals(sa5, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -364,7 +369,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(s3.equals(s3.copy()))
         # 1. both are scalars
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(s1.equals(s2))
+            self.assertFalse(s1.equals(s2, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values" in log_msg
@@ -372,7 +377,7 @@ class DataTest(unittest.TestCase):
                 )
             )
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(s1.equals(s3))
+            self.assertFalse(s1.equals(s3, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different data types: int64 != <U8" in log_msg
@@ -381,7 +386,7 @@ class DataTest(unittest.TestCase):
             )
         # 2. only one is a scalar
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(s1.equals(d))
+            self.assertFalse(s1.equals(d, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different shapes: () != (3, 4)" in log_msg
@@ -397,7 +402,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(k2.equals(k2.copy()))
         # Only one log check is sufficient here
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(k1.equals(k2, atol=0.005, rtol=0))
+            self.assertFalse(k1.equals(k2, atol=0.005, rtol=0, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different array values (atol=0.005, rtol=0)"
@@ -415,7 +420,7 @@ class DataTest(unittest.TestCase):
         m2 = cf.Data(1, fill_value=2000, chunks=scalar_test_chunksize)
         self.assertTrue(m2.equals(m2.copy()))
         with self.assertLogs(level=cf.log_level().value) as catch:
-            self.assertFalse(m1.equals(m2))
+            self.assertFalse(m1.equals(m2, verbose=2))
             self.assertTrue(
                 any(
                     "Data: Different fill value: 1000 != 2000" in log_msg
@@ -428,6 +433,12 @@ class DataTest(unittest.TestCase):
         for checks in [(1, False), (2, True)]:
             verbosity_level, expect_to_see_msg = checks
             with self.assertLogs(level=cf.log_level().value) as catch:
+                # Logging note: want to assert in the former case (verbosity=1)
+                # that nothing is logged, but need to use workaround to prevent
+                # AssertionError on fact that nothing is logged here. When at
+                # Python =>3.10 this can be replaced by 'assertNoLogs' method.
+                logger.warn("Log warning to prevent test error on empty log.")
+
                 self.assertFalse(d2.equals(d, verbose=verbosity_level))
                 self.assertIs(
                     any(
