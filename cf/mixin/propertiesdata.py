@@ -2443,7 +2443,7 @@ class PropertiesData(Properties):
         <CF Data(5): [999, ... 4] kg m-1 s-2>
 
         """
-        raise DeprecatedError("TODODASK")
+        raise ValueError("TODODASK - deprecated?")
 
     #        data = self.get_data(None)
     #        if data is None:

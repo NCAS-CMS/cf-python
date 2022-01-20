@@ -9,7 +9,6 @@ from dask.base import tokenize
 from dask.config import config
 from dask.utils import SerializableLock
 
-from ..units import Units
 from . import (
     FilledArray,
     GatheredSubarray,

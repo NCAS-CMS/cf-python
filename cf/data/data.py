@@ -3841,7 +3841,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             elif other is None:
                 # Can't sensibly initialize a Data object from a bare
                 # `None` (issue #281)
-                other = numpy_array(None, dtype=object)
+                other = np.array(None, dtype=object)
 
             other = type(self).asdata(other)
 
