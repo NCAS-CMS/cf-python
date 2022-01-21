@@ -134,8 +134,9 @@ def compressed_to_dask(array):
 
         count = array.get_count().dask_array(copy=False)
 
-        if is_small(count):
-            count = count.compute()
+        # TODODASK: remove with #297 merge
+        # if is_small(count):
+        #     count = count.compute()
 
         # Find the chunk sizes and positions of the uncompressed
         # array. Each chunk will contain the data for one instance,
@@ -193,8 +194,9 @@ def compressed_to_dask(array):
 
         _, inverse = da.unique(index, return_inverse=True)
 
-        if is_very_small(index):
-            inverse = inverse.compute()
+        # TODODASK: remove with #297 merge
+        # if is_very_small(index):
+        #     inverse = inverse.compute()
 
         chunks = normalize_chunks(
             (1,) + (-1,) * (uncompressed_ndim - 1),
@@ -231,14 +233,16 @@ def compressed_to_dask(array):
         index = array.get_index().dask_array(copy=False)
         count = array.get_count().dask_array(copy=False)
 
-        if is_small(index):
-            index = index.compute()
-            index_is_dask = False
-        else:
-            index_is_dask = True
+        # TODODASK: remove with #297 merge
+        # if is_small(index):
+        #     index = index.compute()
+        #     index_is_dask = False
+        # else:
+        index_is_dask = True
 
-        if is_small(count):
-            count = count.compute()
+        # TODODASK: remove with #297 merge
+        # if is_small(count):
+        #     count = count.compute()
 
         cumlative_count = count.cumsum(axis=0)
 
@@ -263,8 +267,9 @@ def compressed_to_dask(array):
             xprofile_indices = np.where(index == i)[0]
             if index_is_dask:
                 xprofile_indices.compute_chunk_sizes()
-                if is_small(xprofile_indices):
-                    xprofile_indices = xprofile_indices.compute()
+                # TODODASK: remove with #297 merge
+                # if is_small(xprofile_indices):
+                #     xprofile_indices = xprofile_indices.compute()
             # --- End: if
 
             # Find the number of actual profiles in this instance
