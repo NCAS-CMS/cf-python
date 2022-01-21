@@ -104,8 +104,8 @@ class CellMethod(cfdm.CellMethod):
         #
         #   ['lat:', 'mean', '(', 'interval:', '1', 'hour', ')']
         # ------------------------------------------------------------
-        cell_methods = re.sub("\((?=[^\s])", "( ", cell_methods_string)
-        cell_methods = re.sub("(?<=[^\s])\)", " )", cell_methods).split()
+        cell_methods = re.sub(r"\((?=[^\s])", "( ", cell_methods_string)
+        cell_methods = re.sub(r"(?<=[^\s])\)", " )", cell_methods).split()
 
         while cell_methods:
             cm = cls()
@@ -156,7 +156,7 @@ class CellMethod(cfdm.CellMethod):
                 if not (re.search("^(interval|comment):$", cell_methods[0])):
                     cell_methods.insert(0, "comment:")
 
-                while not re.search("^\)$", cell_methods[0]):
+                while not re.search(r"^\)$", cell_methods[0]):
                     term = cell_methods.pop(0)[:-1]
 
                     if term == "interval":

@@ -22,6 +22,10 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
+# To facilitate the testing of logging outputs (see comment tag 'Logging note')
+logger = cf.logging.getLogger(__name__)
+
+
 # Variables for _collapse
 a = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
 
@@ -130,6 +134,323 @@ class DataTest(unittest.TestCase):
     #    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
     #    test_only = ['test_Data_clip']
     #    test_only = ['test_Data__init__dtype_mask']
+
+    def test_Data_equals(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        shape = 3, 4
+        chunksize = 2, 6
+        a = np.arange(12).reshape(*shape)
+
+        d = cf.Data(a, "m", chunks=chunksize)
+        self.assertTrue(d.equals(d))  # check equal to self
+        self.assertTrue(d.equals(d.copy()))  # also do self-equality checks!
+
+        # Different but equivalent datatype, which should *fail* the equality
+        # test (i.e. equals return False) because we want equals to check
+        # for strict equality, including equality of data type.
+        d2 = cf.Data(a.astype(np.float32), "m", chunks=chunksize)
+        self.assertTrue(d2.equals(d2.copy()))
+        with self.assertLogs(level=30) as catch:
+            self.assertFalse(d2.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different data types: float32 != int64" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        e = cf.Data(a, "s", chunks=chunksize)  # different units to d
+        self.assertTrue(e.equals(e.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(e.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different Units (<Units: s>, <Units: m>)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        f = cf.Data(np.arange(12), "m", chunks=(6,))  # different shape to d
+        self.assertTrue(f.equals(f.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(f.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different shapes: (12,) != (3, 4)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        g = cf.Data(
+            np.ones(shape, dtype="int64"), "m", chunks=chunksize
+        )  # different values
+        self.assertTrue(g.equals(g.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(g.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test NaN values
+        d3 = cf.Data(a.astype(np.float64), "m", chunks=chunksize)
+        h = cf.Data(np.full(shape, np.nan), "m", chunks=chunksize)
+        # TODODASK: implement and test equal_nan kwarg to configure NaN eq.
+        self.assertFalse(h.equals(h.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
+            self.assertFalse(h.equals(d3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test inf values
+        i = cf.Data(np.full(shape, np.inf), "m", chunks=chunksize)
+        self.assertTrue(i.equals(i.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            # np.inf is also of dtype float64 (see comment on NaN tests above)
+            self.assertFalse(i.equals(d3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(h.equals(i, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test masked arrays
+        # 1. Example case where the masks differ only (data is identical)
+        mask_test_chunksize = (2, 1)
+        j1 = cf.Data(
+            np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j1.equals(j1.copy()))
+        j2 = cf.Data(
+            np.ma.array([1.0, 2.0, 3.0], mask=[0, 1, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j2.equals(j2.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(j1.equals(j2, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # 2. Example case where the data differs only (masks are identical)
+        j3 = cf.Data(
+            np.ma.array([1.0, 2.0, 100.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j3.equals(j3.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(j1.equals(j3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # 3. Trivial case of data that is fully masked
+        j4 = cf.Data(
+            np.ma.masked_all(shape, dtype="int"), "m", chunks=chunksize
+        )
+        self.assertTrue(j4.equals(j4.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(j4.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # 4. Case where all the unmasked data is 'allclose' to other data but
+        # the data is not 'allclose' to it where it is masked, i.e. the data
+        # on its own (namely without considering the mask) is not equal to the
+        # other data on its own (e.g. note the 0-th element in below examples).
+        # This differs to case (2): there data differs *only where unmasked*.
+        # Note these *should* be considered equal inside cf.Data, and indeed
+        # np.ma.allclose and our own _da_ma_allclose methods also hold
+        # these to be 'allclose'.
+        j5 = cf.Data(
+            np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j5.equals(j5.copy()))
+        j6 = cf.Data(
+            np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j6.equals(j6.copy()))
+        self.assertTrue(j5.equals(j6))
+
+        # Test non-numeric dtype arrays
+        sa1 = cf.Data(
+            np.array(["one", "two", "three"], dtype="S5"), "m", chunks=(3,)
+        )
+        self.assertTrue(sa1.equals(sa1.copy()))
+        sa2_data = np.array(["one", "two", "four"], dtype="S4")
+        sa2 = cf.Data(sa2_data, "m", chunks=(3,))
+        self.assertTrue(sa2.equals(sa2.copy()))
+        # Unlike for numeric types, for string-like data as long as the data
+        # is the same consider the arrays equal, even if the dtype differs.
+        # TODO DASK: this behaviour will be added via cfdm, test fails for now
+        # ## self.assertTrue(sa1.equals(sa2))
+        sa3_data = sa2_data.astype("S5")
+        sa3 = cf.Data(sa3_data, "m", chunks=mask_test_chunksize)
+        self.assertTrue(sa3.equals(sa3.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(sa1.equals(sa3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # ...including masked string arrays
+        sa4 = cf.Data(
+            np.ma.array(
+                ["one", "two", "three"],
+                mask=[0, 0, 1],
+                dtype="S5",
+            ),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(sa4.equals(sa4.copy()))
+        sa5 = cf.Data(
+            np.ma.array(
+                ["one", "two", "three"],
+                mask=[0, 1, 0],
+                dtype="S5",
+            ),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(sa5.equals(sa5.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(sa4.equals(sa5, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test where inputs are scalars
+        scalar_test_chunksize = (10,)
+        s1 = cf.Data(1, chunks=scalar_test_chunksize)
+        self.assertTrue(s1.equals(s1.copy()))
+        s2 = cf.Data(10, chunks=scalar_test_chunksize)
+        self.assertTrue(s2.equals(s2.copy()))
+        s3 = cf.Data("a_string", chunks=scalar_test_chunksize)
+        self.assertTrue(s3.equals(s3.copy()))
+        # 1. both are scalars
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(s1.equals(s2, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(s1.equals(s3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different data types: int64 != <U8" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # 2. only one is a scalar
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(s1.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different shapes: () != (3, 4)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test rtol and atol parameters
+        tol_check_chunksize = 1, 1
+        k1 = cf.Data(np.array([10.0, 20.0]), chunks=tol_check_chunksize)
+        self.assertTrue(k1.equals(k1.copy()))
+        k2 = cf.Data(np.array([10.01, 20.01]), chunks=tol_check_chunksize)
+        self.assertTrue(k2.equals(k2.copy()))
+        # Only one log check is sufficient here
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(k1.equals(k2, atol=0.005, rtol=0, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values (atol=0.005, rtol=0)"
+                    in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        self.assertTrue(k1.equals(k2, atol=0.02, rtol=0))
+        self.assertFalse(k1.equals(k2, atol=0, rtol=0.0005))
+        self.assertTrue(k1.equals(k2, atol=0, rtol=0.002))
+
+        # Test ignore_fill_value parameter
+        m1 = cf.Data(1, fill_value=1000, chunks=scalar_test_chunksize)
+        self.assertTrue(m1.equals(m1.copy()))
+        m2 = cf.Data(1, fill_value=2000, chunks=scalar_test_chunksize)
+        self.assertTrue(m2.equals(m2.copy()))
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            self.assertFalse(m1.equals(m2, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different fill value: 1000 != 2000" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+            self.assertTrue(m1.equals(m2, ignore_fill_value=True))
+
+        # Test verbose parameter: 1/'INFO' level is behaviour change boundary
+        for checks in [(1, False), (2, True)]:
+            verbosity_level, expect_to_see_msg = checks
+            with self.assertLogs(level=cf.log_level().value) as catch:
+                # Logging note: want to assert in the former case (verbosity=1)
+                # that nothing is logged, but need to use workaround to prevent
+                # AssertionError on fact that nothing is logged here. When at
+                # Python =>3.10 this can be replaced by 'assertNoLogs' method.
+                logger.warn("Log warning to prevent test error on empty log.")
+
+                self.assertFalse(d2.equals(d, verbose=verbosity_level))
+                self.assertIs(
+                    any(
+                        "Data: Different data types: float32 != int64"
+                        in log_msg
+                        for log_msg in catch.output
+                    ),
+                    expect_to_see_msg,
+                )
+
+        # Test ignore_data_type parameter
+        self.assertTrue(d2.equals(d, ignore_data_type=True))
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'ndim'")
     def test_Data_halo(self):

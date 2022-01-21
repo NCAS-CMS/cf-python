@@ -1055,7 +1055,7 @@ def _read_a_file(
             fmt=fmt,
             word_size=word_size,
             endian=endian,
-            chunk=chunk,
+            chunk=chunks,
             select=select,
         )
 

@@ -27,7 +27,7 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _numpy_allclose, _numpy_isclose, _section, abspath
+from ..functions import _numpy_isclose, _section, abspath
 from ..functions import atol as cf_atol
 from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
@@ -96,12 +96,18 @@ from .creation import (
     generate_axis_identifiers,
     to_dask,
 )
-from .dask_utils import cf_harden_mask, cf_soften_mask, cf_where
+from .dask_utils import (
+    _da_ma_allclose,
+    cf_harden_mask,
+    cf_soften_mask,
+    cf_where,
+)
 from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
+    _is_numeric_dtype,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
@@ -117,6 +123,9 @@ from .utils import (  # is_small,; is_very_small,
 # )
 
 # from dask.array import Array
+
+
+_DASKIFIED_VERBOSE = None  # see below for valid levels, adapt as useful
 
 
 logger = logging.getLogger(__name__)
@@ -637,7 +646,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return ca._get_dask().copy()
 
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def __contains__(self, value):
         """Membership test operator ``in``
 
@@ -929,7 +938,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def __getitem__(self, indices):
         """Return a subspace of the data defined by indices.
 
@@ -1110,7 +1119,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return new
 
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def __setitem__(self, indices, value):
         """Implement indexed assignment.
 
@@ -1218,7 +1227,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     # Indexing behaviour attributes
     # ----------------------------------------------------------------
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def __orthogonal_indexing__(self):
         """Flag to indicate that orthogonal indexing is supported.
 
@@ -1253,7 +1262,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return True
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def __keepdims_indexing__(self):
         """Flag to indicate whether dimensions indexed with integers are
         kept.
@@ -2847,7 +2856,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self.func(np.ceil, out=True, inplace=inplace)
 
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def convolution_filter(
         self,
@@ -3832,7 +3841,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             elif other is None:
                 # Can't sensibly initialize a Data object from a bare
                 # `None` (issue #281)
-                other = numpy_array(None, dtype=object)
+                other = np.array(None, dtype=object)
 
             other = type(self).asdata(other)
 
@@ -5755,7 +5764,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         del self._custom["_HDF_chunks"]
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def _hardmask(self):
         """Storage for the mask hardness.
 
@@ -5772,7 +5781,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._custom["_hardmask"] = value
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def _axes(self):
         """Storage for the axis identifiers.
 
@@ -5817,7 +5826,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     # Attributes
     # ----------------------------------------------------------------
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def Units(self):
         """The `cf.Units` object containing the units of the data array.
 
@@ -5893,7 +5902,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return self
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def dtype(self):
         """The `numpy` data-type of the data.
 
@@ -5970,7 +5979,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self.del_fill_value(None)
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def hardmask(self):
         """Hardness of the mask.
 
@@ -6021,7 +6030,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self.soften_mask()
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def is_masked(self):
         """True if the data array has any masked values.
 
@@ -6080,7 +6089,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return not self.ndim
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def nbytes(self):
         """Total number of bytes consumed by the elements of the array.
 
@@ -6117,7 +6126,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return dx.nbytes
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def ndim(self):
         """Number of dimensions in the data array.
 
@@ -6148,7 +6157,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return dx.ndim
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def shape(self):
         """Tuple of the data array's dimension sizes.
 
@@ -6184,7 +6193,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return dx.shape
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def size(self):
         """Number of elements in the data array.
 
@@ -6226,7 +6235,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return size
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def array(self):
         """A numpy array copy the data array.
 
@@ -6269,7 +6278,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return a
 
     @property
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def datetime_array(self):
         """An independent numpy array of date-time objects.
 
@@ -9038,6 +9047,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return product(*[range(0, r) for r in self.shape])
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("traceback")
     @_manage_log_level_via_verbosity
     def equals(
@@ -9061,18 +9071,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             other:
                 The object to compare for equality.
 
-            {{atol: number, optional}}
-
             {{rtol: number, optional}}
+
+            {{atol: number, optional}}
 
             ignore_fill_value: `bool`, optional
                 If True then data arrays with different fill values are
                 considered equal. By default they are considered unequal.
 
+            {{ignore_data_type: `bool`, optional}}
+
+            {{ignore_type: `bool`, optional}}
+
             {{verbose: `int` or `str` or `None`, optional}}
 
             traceback: deprecated at version 3.0.0
                 Use the *verbose* parameter instead.
+
+            {{ignore_compression: `bool`, optional}}
 
         :Returns:
 
@@ -9104,6 +9120,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             ignore_type=ignore_type,
             _check_values=False,
         ):
+            # TODODASK: consistency with cfdm Data.equals needs to be verified
+            # possibly via a follow-up PR to cfdm to implement any changes.
             return False
 
         # ------------------------------------------------------------
@@ -9114,37 +9132,53 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         other_Units = other.Units
         if self_Units != other_Units:
             logger.info(
-                "{}: Different Units ({!r}, {!r}".format(
-                    self.__class__.__name__, self.Units, other.Units
-                )
+                f"{self.__class__.__name__}: Different Units "
+                f"({self.Units!r}, {other.Units!r})"
             )
             return False
 
-        config = self.partition_configuration(readonly=True)
+        self_dx = self._get_dask()
+        other_dx = other._get_dask()
 
-        other.to_memory()
+        # Now check that corresponding elements are equal within a tolerance.
+        # We assume that all inputs are masked arrays. Note we compare the
+        # data first as this may return False due to different dtype without
+        # having to wait until the compute call.
+        self_is_numeric = _is_numeric_dtype(self_dx)
+        other_is_numeric = _is_numeric_dtype(other_dx)
+        if self_is_numeric and other_is_numeric:
+            data_comparison = _da_ma_allclose(
+                self_dx,
+                other_dx,
+                masked_equal=True,
+                rtol=float(rtol),
+                atol=float(atol),
+            )
+        elif not self_is_numeric and not other_is_numeric:
+            data_comparison = da.all(self_dx == other_dx)
+        else:  # one is numeric and other isn't => not equal (incompat. dtype)
+            logger.info(
+                f"{self.__class__.__name__}: Different data types:"
+                f"{self_dx.dtype} != {other_dx.dtype}"
+            )
+            return False
 
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            array0 = partition.array
-            array1 = other[partition.indices].varray
-            partition.close()
+        mask_comparison = da.all(
+            da.equal(da.ma.getmaskarray(self_dx), da.ma.getmaskarray(other_dx))
+        )
 
-            if not _numpy_allclose(
-                array0, array1, rtol=float(rtol), atol=float(atol)
-            ):
-                logger.info(
-                    "{0}: Different array values (atol={1}, "
-                    "rtol={2})".format(self.__class__.__name__, atol, rtol)
-                )
+        # Apply a (dask) logical 'and' to confirm if both the mask and the
+        # data are equal for the pair of masked arrays:
+        result = da.logical_and(data_comparison, mask_comparison)
 
-                return False
-        # --- End: for
-
-        # ------------------------------------------------------------
-        # Still here? Then the two instances are equal.
-        # ------------------------------------------------------------
-        return True
+        if not result.compute():
+            logger.info(
+                f"{self.__class__.__name__}: Different array values ("
+                f"atol={atol}, rtol={rtol})"
+            )
+            return False
+        else:
+            return True
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
@@ -9180,7 +9214,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         """Expand the shape of the data array in place.
@@ -10796,7 +10830,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
@@ -11456,7 +11490,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     def where(
         self, condition, x=None, y=None, inplace=False, i=False, verbose=None
     ):
@@ -11983,7 +12017,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False, i=False):
@@ -12182,7 +12216,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self.array.tolist()
 
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False, i=False):
@@ -12571,7 +12605,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
-    @daskified(1)
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
     def roll(self, axis, shift, inplace=False, i=False):

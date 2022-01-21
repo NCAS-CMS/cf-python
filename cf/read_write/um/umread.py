@@ -1870,7 +1870,7 @@ class UMField:
 
             dsk[name + (0,)] = (getter, subarray, full_slice, asarray, lock)
 
-            dtype = numpy_result_type(*file_data_types)
+            dtype = np.result_type(*file_data_types)
             chunks = normalize_chunks((-1, -1), shape=data_shape, dtype=dtype)
         else:
             # --------------------------------------------------------
@@ -1921,7 +1921,7 @@ class UMField:
                         lock,
                     )
 
-                dtype = numpy_result_type(*file_data_types)
+                dtype = np.result_type(*file_data_types)
                 chunks = normalize_chunks(
                     (1, -1, -1), shape=data_shape, dtype=dtype
                 )
@@ -1964,7 +1964,7 @@ class UMField:
                         lock,
                     )
 
-                dtype = numpy_result_type(*file_data_types)
+                dtype = np.result_type(*file_data_types)
                 chunks = normalize_chunks(
                     (1, 1, -1, -1), shape=data_shape, dtype=dtype
                 )

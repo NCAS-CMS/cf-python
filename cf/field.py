@@ -3672,7 +3672,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return True
 
     def _weights_interior_angle(self, data_lambda, data_phi):
-        """Find the interior angle between each adjacent pair of
+        r"""Find the interior angle between each adjacent pair of
         geometry nodes defined on a sphere.
 
         The interior angle of two points on the sphere is calculated with
