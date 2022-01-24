@@ -12516,44 +12516,29 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
 
-        config = d.partition_configuration(readonly=False)
+        # TODODASK: Steps to preserve invalid values shown, taking same
+        # approach as pre-daskification, but maybe we can now change approach
+        # to avoid finding mask and data, which requires early compute...
+        # Step 1. extract the non-masked data and the mask separately
+        if preserve_invalid:
+            # Assume all inputs are masked, as checking for a mask to confirm
+            # is expensive. If unmasked, effective mask will be all False.
+            dx_mask = da.ma.getmaskarray(dx)  # store original mask
+            dx = da.ma.getdata(dx)
 
-        datatype = d.dtype
+        if out:
+            f(dx, out=dx, **kwargs)
+        else:
+            # Step 2: apply operation to data alone
+            dx = f(dx, **kwargs)
 
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
+        if preserve_invalid:
+            # Step 3: reattach original mask onto the output data
+            dx = da.ma.masked_array(dx, mask=dx_mask)
 
-            # Steps for masked data when want to preserve invalid values:
-            # Step 1. extract the non-masked data and the mask separately
-            detach_mask = preserve_invalid and np.ma.isMA(array)
-            if detach_mask:
-                mask = array.mask  # must store mask before detach it below
-                array = array.data  # mask detached
-
-            if out:
-                f(array, out=array, **kwargs)
-            else:
-                # Step 2: apply operation to data alone
-                array = f(array, **kwargs)
-
-            p_datatype = array.dtype
-            if datatype != p_datatype:
-                datatype = np.result_type(p_datatype, datatype)
-
-            if detach_mask:
-                # Step 3: reattach original mask onto the output data
-                array = np.ma_array(array, mask=mask)
-
-            partition.subarray = array
-
-            if units is not None:
-                partition.Units = units
-
-            partition.close()
-
-        d.dtype = datatype
+        d._set_dask(dx, reset_mask_hardness=True)
 
         if units is not None:
             d._Units = units
