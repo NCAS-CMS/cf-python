@@ -2822,6 +2822,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             ]
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def ceil(self, inplace=False, i=False):
         """The ceiling of the data, element-wise.
@@ -2854,7 +2855,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         """
-        return self.func(np.ceil, out=True, inplace=inplace)
+        # TODODASK: do we need 'out' specification to 'func'? Was out=True
+        return self.func(np.ceil, inplace=inplace)
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -9180,6 +9182,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             return True
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def exp(self, inplace=False, i=False):
@@ -10126,6 +10129,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def floor(self, inplace=False, i=False):
         """Return the floor of the data array.
@@ -10153,7 +10157,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(np.floor, out=True, inplace=inplace)
+        # TODODASK: do we need 'out' specification to 'func'? Was out=True
+        return self.func(np.floor, inplace=inplace)
 
     @_deprecated_kwarg_check("i")
     def outerproduct(self, e, inplace=False, i=False):
@@ -11010,6 +11015,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         except (TypeError, NotImplementedError, IndexError):
             return self == y
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def rint(self, inplace=False, i=False):
         """Round the data to the nearest integer, element-wise.
@@ -11039,7 +11045,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         """
-        return self.func(np.rint, out=True, inplace=inplace)
+        # TODODASK: do we need 'out' specification to 'func'? Was out=True
+        return self.func(np.rint, inplace=inplace)
 
     def root_mean_square(
         self,
@@ -11120,6 +11127,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def round(self, decimals=0, inplace=False, i=False):
         """Evenly round elements of the data array to the given number
@@ -11164,9 +11172,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         """
-        return self.func(
-            np.round, out=True, inplace=inplace, decimals=decimals
-        )
+        # TODODASK: do we need 'out' specification to 'func'? Was out=True
+        return self.func(np.round, inplace=inplace, decimals=decimals)
 
     def stats(
         self,
@@ -11985,6 +11992,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    # TODODASK: should be done, but need unit test to confirm
+    # @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
@@ -12282,6 +12291,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def trunc(self, inplace=False, i=False):
         """Return the truncated values of the data array.
@@ -12313,7 +12323,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(np.trunc, out=True, inplace=inplace)
+        # TODODASK: do we need 'out' specification to 'func'? Was out=True
+        return self.func(np.trunc, inplace=inplace)
 
     @classmethod
     def empty(
@@ -12447,6 +12458,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             shape, 0, dtype=dtype, units=units, calendar=calendar, chunk=chunk
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def func(

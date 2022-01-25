@@ -1646,7 +1646,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.dtype, np.dtype(float))
         self.assertFalse(d._isdatetime())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_ceil(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1662,7 +1661,6 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.shape, c.shape)
             self.assertTrue((d.array == c).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_floor(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1678,7 +1676,6 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.shape, c.shape)
             self.assertTrue((d.array == c).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_trunc(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1694,7 +1691,6 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.shape, c.shape)
             self.assertTrue((d.array == c).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_rint(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1715,7 +1711,6 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.shape, c.shape)
             self.assertTrue((d.array == c).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_round(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -3298,7 +3293,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.count(), d.size)
         self.assertEqual(d.count_masked(), 0)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_exp(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
