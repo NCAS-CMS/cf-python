@@ -12528,11 +12528,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             dx_mask = da.ma.getmaskarray(dx)  # store original mask
             dx = da.ma.getdata(dx)
 
+        # Step 2: apply operation to data alone
         if out:
-            f(dx, out=dx, **kwargs)
-        else:
-            # Step 2: apply operation to data alone
-            dx = f(dx, **kwargs)
+            kwargs["out"] = out
+        axes = tuple(range(dx.ndim))
+        dx = da.blockwise(f, axes, dx, axes, **kwargs)
 
         if preserve_invalid:
             # Step 3: reattach original mask onto the output data
