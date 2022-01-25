@@ -6351,9 +6351,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @property
     def mask(self):
-        """The boolean missing data mask of the data array.
+        """The Boolean missing data mask of the data array.
 
-        The boolean mask has True where the data array has missing data
+        The Boolean mask has True where the data array has missing data
         and False otherwise.
 
         :Returns:
@@ -6368,7 +6368,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> m.dtype
         dtype('bool')
         >>> m.shape
-        (12, 73, 96])
+        (12, 73, 96)
 
         """
         mask = self.copy()
