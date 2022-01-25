@@ -11992,7 +11992,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    # TODODASK: should be done, but need unit test to confirm
+    # TODOASK: daskified except in the case of arbitrary base (not e, 2 or 10)
+    # which requires `__itruediv__` to be daskified.
     # @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)

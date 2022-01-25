@@ -3317,6 +3317,51 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = d.exp()
 
+    def test_Data_log(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # Test natural log, base e
+        a = np.array([[np.e, np.e ** 2, np.e ** 3.5], [0, 1, np.e ** -1]])
+        b = np.log(a)
+        c = cf.Data(a, "s")
+        d = c.log()
+        self.assertTrue((d.array == b).all())
+        self.assertEqual(d.shape, b.shape)
+
+        # Test in-place kwarg
+        d = c.log(inplace=True)
+        self.assertIsNone(d)
+        self.assertTrue((c.array == b).all())
+        self.assertEqual(c.shape, b.shape)
+
+        # Test another base, using 10 as an example (special managed case)
+        a = np.array([[10, 100, 10 ** 3.5], [0, 1, 0.1]])
+        b = np.log10(a)
+        c = cf.Data(a, "s")
+        d = c.log(base=10)
+        self.assertTrue((d.array == b).all())
+        self.assertEqual(d.shape, b.shape)
+
+        # Test an arbitrary base, using 4 (not a special managed case like 10)
+        # TODODASK: reinstate this assertion once mask property is
+        # daskified.
+        # a = np.array([[4, 16, 4**3.5], [0, 1, 0.25]])
+        # b = np.log(a) / np.log(4)  # the numpy way, using log rules from school
+        # c = cf.Data(a, "s")
+        # d = c.log(base=4)
+        # self.assertTrue((d.array == b).all())
+        # self.assertEqual(d.shape, b.shape)
+
+        # Text values outside of the restricted domain for a log
+        a = np.array([0, -1, -2])
+        b = np.log(a)
+        c = cf.Data(a)
+        d = c.log()
+        # Requires assertion form below to test on expected NaN and inf's
+        np.testing.assert_equal(d.array, b)
+        self.assertEqual(d.shape, b.shape)
+
     def test_Data_trigonometric_hyperbolic(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
