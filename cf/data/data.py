@@ -6366,41 +6366,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         (12, 73, 96)
         >>> m = d.mask
         >>> m.dtype
-        dtype('bool')
+        bool
         >>> m.shape
         (12, 73, 96)
 
         """
-        mask = self.copy()
-
-        config = mask.partition_configuration(readonly=False)
-
-        for partition in mask.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-
-            if partition.masked:
-                # Array is masked
-                partition.subarray = array.mask.copy()
-            else:
-                # Array is not masked
-                partition.subarray = FilledArray(
-                    shape=array.shape,
-                    size=array.size,
-                    ndim=array.ndim,
-                    dtype=_dtype_bool,
-                    fill_value=0,
-                )
-
-            partition.Units = _units_None
-
-            partition.close()
+        dx = self._get_dask().copy()
+        mask = da.ma.getmaskarray(dx)
 
         mask._Units = _units_None
-        mask.dtype = _dtype_bool
-
         mask._hardmask = True
 
+        # Note pre-daskification this would return a mask object where would
+        # need to apply 'array' prop. to get the array itself, but now, as
+        # consistent with NumPy, will instead return the mask array directly.
+        # Therefore in test suite, previous `x.mask.array` becomes `x.mask`.
         return mask
 
     @staticmethod
