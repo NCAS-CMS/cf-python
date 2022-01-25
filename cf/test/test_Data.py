@@ -3367,6 +3367,8 @@ class DataTest(unittest.TestCase):
                         (d.array == c).all(),
                         "{}, {}, {}, {}".format(method, units, d.array, c),
                     )
+                    # TODODASK: reinstate this assertion once mask property is
+                    # daskified.
                     # self.assertTrue(
                     #    (d.mask.array == c.mask).all(),
                     #    "{}, {}, {}, {}".format(method, units, d.array, c),
@@ -3386,6 +3388,8 @@ class DataTest(unittest.TestCase):
         for method in inverse_methods:
             with np.errstate(invalid="ignore", divide="ignore"):
                 e = getattr(d, method)()
+            # TODODASK: reinstate this assertion once mask property is
+            # daskified.
             # self.assertTrue(
             #    (e.mask.array == d.mask.array).all(),
             #    "{}, {}, {}".format(method, e.array, d),
