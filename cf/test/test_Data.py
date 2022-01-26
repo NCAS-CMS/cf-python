@@ -3317,6 +3317,53 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = d.exp()
 
+    def test_Data_func(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        a = np.array([[np.e, np.e ** 2, np.e ** 3.5], [0, 1, np.e ** -1]])
+
+        # Using sine as an example function to apply
+        b = np.sin(a)
+        c = cf.Data(a, "s")
+        d = c.func(np.sin)
+        self.assertTrue((d.array == b).all())
+        self.assertEqual(d.shape, b.shape)
+        e = c.func(np.cos)
+        self.assertFalse((e.array == b).all())
+
+        # Using log2 as an example function to apply
+        b = np.log2(a)
+        c = cf.Data(a, "s")
+        d = c.func(np.log2)
+        self.assertTrue((d.array == b).all())
+        self.assertEqual(d.shape, b.shape)
+        e = c.func(np.log10)
+        self.assertFalse((e.array == b).all())
+
+        # Test in-place operation via inplace kwarg
+        d = c.func(np.log2, inplace=True)
+        self.assertIsNone(d)
+        self.assertTrue((c.array == b).all())
+        self.assertEqual(c.shape, b.shape)
+
+        # Test the preserve_invalid keyword with function that has a
+        # restricted domain and an input that lies outside of the domain.
+        a = np.ma.array(
+            [0, 0.5, 1, 1.5],  # note arcsin has domain [1, -1]
+            mask=[1, 0, 0, 0],
+        )
+        b = np.arcsin(a)
+        c = cf.Data(a, "s")
+        d = c.func(np.arcsin)
+        self.assertIs(d.array[3], np.ma.masked)
+        self.assertTrue((d.array == b).all())
+        self.assertEqual(d.shape, b.shape)
+        e = c.func(np.arcsin, preserve_invalid=True)
+        self.assertIsNot(e.array[3], np.ma.masked)
+        self.assertTrue(np.isnan(e[3]))
+        self.assertIs(e.array[0], np.ma.masked)
+
     def test_Data_log(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -3329,7 +3376,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == b).all())
         self.assertEqual(d.shape, b.shape)
 
-        # Test in-place kwarg
+        # Test in-place operation via inplace kwarg
         d = c.log(inplace=True)
         self.assertIsNone(d)
         self.assertTrue((c.array == b).all())
