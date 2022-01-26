@@ -2855,7 +2855,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         """
-        # TODODASK: do we need 'out' specification to 'func'? Was out=True
         return self.func(np.ceil, inplace=inplace)
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -10164,7 +10163,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         """
-        # TODODASK: do we need 'out' specification to 'func'? Was out=True
         return self.func(np.floor, inplace=inplace)
 
     @_deprecated_kwarg_check("i")
@@ -11052,7 +11050,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         """
-        # TODODASK: do we need 'out' specification to 'func'? Was out=True
         return self.func(np.rint, inplace=inplace)
 
     def root_mean_square(
@@ -11179,7 +11176,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         """
-        # TODODASK: do we need 'out' specification to 'func'? Was out=True
         return self.func(np.round, inplace=inplace, decimals=decimals)
 
     def stats(
@@ -12336,7 +12332,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         """
-        # TODODASK: do we need 'out' specification to 'func'? Was out=True
         return self.func(np.trunc, inplace=inplace)
 
     @classmethod
@@ -12472,6 +12467,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
 
     @daskified(_DASKIFIED_VERBOSE)
+    @_deprecated_kwarg_check("out")
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def func(
@@ -12493,7 +12489,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             units: `Units`, optional
 
-            out: `bool`, optional
+            out: deprecated at version 4.0.0
 
             {{inplace: `bool`, optional}}
 
@@ -12554,8 +12550,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             dx = da.ma.getdata(dx)
 
         # Step 2: apply operation to data alone
-        if out:
-            kwargs["out"] = out
         axes = tuple(range(dx.ndim))
         dx = da.blockwise(f, axes, dx, axes, **kwargs)
 
