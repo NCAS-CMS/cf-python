@@ -2822,6 +2822,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             ]
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def ceil(self, inplace=False, i=False):
         """The ceiling of the data, element-wise.
@@ -2854,7 +2855,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         """
-        return self.func(np.ceil, out=True, inplace=inplace)
+        return self.func(np.ceil, inplace=inplace)
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -6649,6 +6650,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return old
 
     # `arctan2`, AT2 seealso
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
         """Take the trigonometric inverse tangent of the data element-
@@ -6735,6 +6737,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     #        '''
     #        return cls(numpy_arctan2(y, x), units=_units_radians)
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):
         """Take the inverse hyperbolic tangent of the data element-wise.
@@ -6787,6 +6790,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arcsin(self, inplace=False):
         """Take the trigonometric inverse sine of the data element-wise.
@@ -6839,6 +6843,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arcsinh(self, inplace=False):
         """Take the inverse hyperbolic sine of the data element-wise.
@@ -6883,6 +6888,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
         """Take the trigonometric inverse cosine of the data element-
@@ -6936,6 +6942,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arccosh(self, inplace=False):
         """Take the inverse hyperbolic cosine of the data element-wise.
@@ -8521,6 +8528,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def cos(self, inplace=False, i=False):
@@ -9180,6 +9188,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             return True
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def exp(self, inplace=False, i=False):
@@ -10126,6 +10135,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def floor(self, inplace=False, i=False):
         """Return the floor of the data array.
@@ -10153,7 +10163,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(np.floor, out=True, inplace=inplace)
+        return self.func(np.floor, inplace=inplace)
 
     @_deprecated_kwarg_check("i")
     def outerproduct(self, e, inplace=False, i=False):
@@ -11010,6 +11020,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         except (TypeError, NotImplementedError, IndexError):
             return self == y
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def rint(self, inplace=False, i=False):
         """Round the data to the nearest integer, element-wise.
@@ -11039,7 +11050,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         """
-        return self.func(np.rint, out=True, inplace=inplace)
+        return self.func(np.rint, inplace=inplace)
 
     def root_mean_square(
         self,
@@ -11120,6 +11131,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def round(self, decimals=0, inplace=False, i=False):
         """Evenly round elements of the data array to the given number
@@ -11164,9 +11176,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         """
-        return self.func(
-            np.round, out=True, inplace=inplace, decimals=decimals
-        )
+        return self.func(np.round, inplace=inplace, decimals=decimals)
 
     def stats(
         self,
@@ -11760,6 +11770,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def sin(self, inplace=False, i=False):
@@ -11816,6 +11827,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def sinh(self, inplace=False):
@@ -11872,6 +11884,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d.func(np.sinh, units=_units_1, inplace=True)
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def cosh(self, inplace=False):
         """Take the hyperbolic cosine of the data element-wise.
@@ -11927,6 +11940,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def tanh(self, inplace=False):
@@ -11985,6 +11999,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    # TODOASK: daskified except in the case of arbitrary base (not e, 2 or 10)
+    # which requires `__itruediv__` to be daskified.
+    # @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
@@ -12130,6 +12147,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return d
 
     # `arctan2`, AT2 seealso
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def tan(self, inplace=False, i=False):
@@ -12282,6 +12300,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     def trunc(self, inplace=False, i=False):
         """Return the truncated values of the data array.
@@ -12313,7 +12332,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(np.trunc, out=True, inplace=inplace)
+        return self.func(np.trunc, inplace=inplace)
 
     @classmethod
     def empty(
@@ -12447,6 +12466,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             shape, 0, dtype=dtype, units=units, calendar=calendar, chunk=chunk
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_deprecated_kwarg_check("out")
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def func(
@@ -12468,7 +12489,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             units: `Units`, optional
 
-            out: `bool`, optional
+            out: deprecated at version 4.0.0
 
             {{inplace: `bool`, optional}}
 
@@ -12516,44 +12537,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
 
-        config = d.partition_configuration(readonly=False)
+        # TODODASK: Steps to preserve invalid values shown, taking same
+        # approach as pre-daskification, but maybe we can now change approach
+        # to avoid finding mask and data, which requires early compute...
+        # Step 1. extract the non-masked data and the mask separately
+        if preserve_invalid:
+            # Assume all inputs are masked, as checking for a mask to confirm
+            # is expensive. If unmasked, effective mask will be all False.
+            dx_mask = da.ma.getmaskarray(dx)  # store original mask
+            dx = da.ma.getdata(dx)
 
-        datatype = d.dtype
+        # Step 2: apply operation to data alone
+        axes = tuple(range(dx.ndim))
+        dx = da.blockwise(f, axes, dx, axes, **kwargs)
 
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
+        if preserve_invalid:
+            # Step 3: reattach original mask onto the output data
+            dx = da.ma.masked_array(dx, mask=dx_mask)
 
-            # Steps for masked data when want to preserve invalid values:
-            # Step 1. extract the non-masked data and the mask separately
-            detach_mask = preserve_invalid and np.ma.isMA(array)
-            if detach_mask:
-                mask = array.mask  # must store mask before detach it below
-                array = array.data  # mask detached
-
-            if out:
-                f(array, out=array, **kwargs)
-            else:
-                # Step 2: apply operation to data alone
-                array = f(array, **kwargs)
-
-            p_datatype = array.dtype
-            if datatype != p_datatype:
-                datatype = np.result_type(p_datatype, datatype)
-
-            if detach_mask:
-                # Step 3: reattach original mask onto the output data
-                array = np.ma_array(array, mask=mask)
-
-            partition.subarray = array
-
-            if units is not None:
-                partition.Units = units
-
-            partition.close()
-
-        d.dtype = datatype
+        d._set_dask(dx, reset_mask_hardness=True)
 
         if units is not None:
             d._Units = units
