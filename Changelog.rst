@@ -94,8 +94,8 @@ version 3.9.0
   https://github.com/NCAS-CMS/cf-python/issues/203,
   https://github.com/NCAS-CMS/cf-python/issues/204)
 * Performance enhancements
-  (https://github.com/NCAS-CMS/cfdm/issues/201,
-  https://github.com/NCAS-CMS/cfdm/issues/202)
+  (https://github.com/NCAS-CMS/cf-python/issues/201,
+  https://github.com/NCAS-CMS/cf-python/issues/202)
 * New write mode ``mode='a'`` for appending to, rather than over-writing,
   a netCDF file on disk (https://github.com/NCAS-CMS/cf-python/issues/30)
 * Temporarily removed the experimental ability to parallelize the
