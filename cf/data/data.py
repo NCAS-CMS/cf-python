@@ -6371,17 +6371,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         (12, 73, 96)
 
         """
+        mask_data_obj = self.copy()
+
         dx = self._get_dask().copy()
         mask = da.ma.getmaskarray(dx)
+        mask_data_obj[...] = mask
 
-        mask._Units = _units_None
-        mask._hardmask = True
+        mask_data_obj.dtype = _dtype_bool
+        mask_data_obj._Units = _units_None
+        mask_data_obj._hardmask = True
 
-        # Note pre-daskification this would return a mask object where would
-        # need to apply 'array' prop. to get the array itself, but now, as
-        # consistent with NumPy, will instead return the mask array directly.
-        # Therefore in test suite, previous `x.mask.array` becomes `x.mask`.
-        return mask
+        return mask_data_obj
 
     @staticmethod
     def mask_fpe(*arg):
