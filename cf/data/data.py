@@ -12016,9 +12016,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    # TODOASK: daskified except in the case of arbitrary base (not e, 2 or 10)
-    # which requires `__itruediv__` to be daskified.
-    # @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
@@ -12038,16 +12036,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
 
         if base is None:
-            d.func(np.log, units=_units_1, inplace=True)
+            dx = da.log(dx)
         elif base == 10:
-            d.func(np.log10, units=_units_1, inplace=True)
+            dx = da.log10(dx)
         elif base == 2:
-            d.func(np.log2, units=_units_1, inplace=True)
+            dx = da.log2(dx)
         else:
-            d.func(np.log, units=_units_1, inplace=True)
-            d /= np.log(base)
+            dx = da.log(dx)
+            dx /= da.log(base)
+
+        d._set_dask(dx, reset_mask_hardness=False)
+
+        d._Units = _units_1  # all logarithm outputs are unitless
 
         return d
 
