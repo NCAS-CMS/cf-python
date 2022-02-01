@@ -11142,6 +11142,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def round(self, decimals=0, inplace=False, i=False):
         """Evenly round elements of the data array to the given number
         of decimals.
@@ -11185,7 +11186,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         """
-        return self.func(np.round, inplace=inplace, decimals=decimals)
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        d._set_dask(da.round(dx, decimals=decimals), reset_mask_hardness=False)
+        return d
 
     def stats(
         self,
