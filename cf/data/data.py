@@ -2824,6 +2824,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def ceil(self, inplace=False, i=False):
         """The ceiling of the data, element-wise.
 
@@ -2855,7 +2856,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         """
-        return self.func(np.ceil, inplace=inplace)
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        d._set_dask(da.ceil(dx), reset_mask_hardness=False)
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
