@@ -3391,14 +3391,12 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.shape, b.shape)
 
         # Test an arbitrary base, using 4 (not a special managed case like 10)
-        # TODODASK: reinstate this assertion once mask property is
-        # daskified.
-        # a = np.array([[4, 16, 4**3.5], [0, 1, 0.25]])
-        # b = np.log(a) / np.log(4)  # the numpy way, using log rules from school
-        # c = cf.Data(a, "s")
-        # d = c.log(base=4)
-        # self.assertTrue((d.array == b).all())
-        # self.assertEqual(d.shape, b.shape)
+        a = np.array([[4, 16, 4 ** 3.5], [0, 1, 0.25]])
+        b = np.log(a) / np.log(4)  # the numpy way, using log rules from school
+        c = cf.Data(a, "s")
+        d = c.log(base=4)
+        self.assertTrue((d.array == b).all())
+        self.assertEqual(d.shape, b.shape)
 
         # Text values outside of the restricted domain for a log
         a = np.array([0, -1, -2])
