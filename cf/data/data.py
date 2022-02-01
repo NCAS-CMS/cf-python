@@ -12315,6 +12315,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def trunc(self, inplace=False, i=False):
         """Return the truncated values of the data array.
 
@@ -12345,7 +12346,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(np.trunc, inplace=inplace)
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        d._set_dask(da.trunc(dx), reset_mask_hardness=False)
+        return d
 
     @classmethod
     def empty(
