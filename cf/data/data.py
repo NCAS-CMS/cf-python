@@ -10138,6 +10138,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def floor(self, inplace=False, i=False):
         """Return the floor of the data array.
 
@@ -10164,7 +10165,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(np.floor, inplace=inplace)
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        d._set_dask(da.floor(dx), reset_mask_hardness=False)
+        return d
 
     @_deprecated_kwarg_check("i")
     def outerproduct(self, e, inplace=False, i=False):
