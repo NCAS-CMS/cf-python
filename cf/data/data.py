@@ -9219,7 +9219,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units:
             d.Units = _units_1
 
-        d.func(np.exp, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.exp(dx), reset_mask_hardness=False)
 
         return d
 
