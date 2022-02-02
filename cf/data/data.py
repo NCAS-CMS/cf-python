@@ -2824,6 +2824,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def ceil(self, inplace=False, i=False):
         """The ceiling of the data, element-wise.
 
@@ -2855,7 +2856,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         """
-        return self.func(np.ceil, inplace=inplace)
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        d._set_dask(da.ceil(dx), reset_mask_hardness=False)
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -9213,13 +9217,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if units and not units.isdimensionless:
             raise ValueError(
                 "Can't take exponential of dimensional "
-                "quantities: {!r}".format(units)
+                f"quantities: {units!r}"
             )
 
         if d.Units:
             d.Units = _units_1
 
-        d.func(np.exp, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.exp(dx), reset_mask_hardness=False)
 
         return d
 
@@ -10137,6 +10142,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def floor(self, inplace=False, i=False):
         """Return the floor of the data array.
 
@@ -10163,7 +10169,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(np.floor, inplace=inplace)
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        d._set_dask(da.floor(dx), reset_mask_hardness=False)
+        return d
 
     @_deprecated_kwarg_check("i")
     def outerproduct(self, e, inplace=False, i=False):
@@ -11022,6 +11031,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def rint(self, inplace=False, i=False):
         """Round the data to the nearest integer, element-wise.
 
@@ -11050,7 +11060,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         """
-        return self.func(np.rint, inplace=inplace)
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        d._set_dask(da.rint(dx), reset_mask_hardness=False)
+        return d
 
     def root_mean_square(
         self,
@@ -11133,6 +11146,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def round(self, decimals=0, inplace=False, i=False):
         """Evenly round elements of the data array to the given number
         of decimals.
@@ -11176,7 +11190,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         """
-        return self.func(np.round, inplace=inplace, decimals=decimals)
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        d._set_dask(da.round(dx, decimals=decimals), reset_mask_hardness=False)
+        return d
 
     def stats(
         self,
@@ -11999,9 +12016,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    # TODOASK: daskified except in the case of arbitrary base (not e, 2 or 10)
-    # which requires `__itruediv__` to be daskified.
-    # @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
@@ -12021,16 +12036,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
 
         if base is None:
-            d.func(np.log, units=_units_1, inplace=True)
+            dx = da.log(dx)
         elif base == 10:
-            d.func(np.log10, units=_units_1, inplace=True)
+            dx = da.log10(dx)
         elif base == 2:
-            d.func(np.log2, units=_units_1, inplace=True)
+            dx = da.log2(dx)
         else:
-            d.func(np.log, units=_units_1, inplace=True)
-            d /= np.log(base)
+            dx = da.log(dx)
+            dx /= da.log(base)
+
+        d._set_dask(dx, reset_mask_hardness=False)
+
+        d.override_units(
+            _units_1, inplace=True
+        )  # all logarithm outputs are unitless
 
         return d
 
@@ -12302,6 +12324,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def trunc(self, inplace=False, i=False):
         """Return the truncated values of the data array.
 
@@ -12332,7 +12355,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         """
-        return self.func(np.trunc, inplace=inplace)
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        d._set_dask(da.trunc(dx), reset_mask_hardness=False)
+        return d
 
     @classmethod
     def empty(
