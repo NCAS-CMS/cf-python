@@ -804,7 +804,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == a).all())
         self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_digitize(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -830,14 +829,33 @@ class DataTest(unittest.TestCase):
 
                     self.assertTrue((e.array == b).all())
 
-                    e.where(
-                        cf.set([e.minimum(), e.maximum()]),
-                        cf.masked,
-                        e - 1,
-                        inplace=True,
-                    )
-                    f = d.digitize(bins, upper=upper)
-                    self.assertTrue(e.equals(f, verbose=2))
+                    # TODODASK: Reinstate the following test when
+                    #           __sub__, minimum, and maximum have
+                    #           been daskified
+
+        #                    e.where(
+        #                        cf.set([e.minimum(), e.maximum()]),
+        #                        cf.masked,
+        #                        e - 1,
+        #                        inplace=True,
+        #                    )
+        #                    f = d.digitize(bins, upper=upper)
+        #                    self.assertTrue(e.equals(f, verbose=2))
+
+        # Check returned bins
+        bins = [2, 6, 10, 50, 100]
+        e, b = d.digitize(bins, return_bins=True)
+        self.assertTrue(
+            (b.array == [[2, 6], [6, 10], [10, 50], [50, 100]]).all()
+        )
+        self.assertTrue(b.Units == d.Units)
+
+        # Check digitized units
+        self.assertTrue(e.Units == cf.Units(None))
+
+        # Check inplace
+        self.assertIsNone(d.digitize(bins, inplace=True))
+        self.assertTrue(d.equals(e))
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_cumsum(self):
