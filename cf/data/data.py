@@ -6891,7 +6891,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.func(np.arcsinh, units=_units_radians, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.arcsinh(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_radians, inplace=True)
 
         return d
 
