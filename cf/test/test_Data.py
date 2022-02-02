@@ -3397,6 +3397,7 @@ class DataTest(unittest.TestCase):
         d = c.log(base=4)
         self.assertTrue((d.array == b).all())
         self.assertEqual(d.shape, b.shape)
+        self.assertEqual(d.Units, cf.Units("1"))
 
         # Text values outside of the restricted domain for a log
         a = np.array([0, -1, -2])
