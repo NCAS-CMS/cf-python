@@ -9217,7 +9217,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if units and not units.isdimensionless:
             raise ValueError(
                 "Can't take exponential of dimensional "
-                "quantities: {!r}".format(units)
+                f"quantities: {units!r}"
             )
 
         if d.Units:
@@ -12050,7 +12050,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         d._set_dask(dx, reset_mask_hardness=False)
 
-        d.override_units(_units_1, inplace=True)  # all logarithm outputs are unitless
+        d.override_units(
+            _units_1, inplace=True
+        )  # all logarithm outputs are unitless
 
         return d
 
