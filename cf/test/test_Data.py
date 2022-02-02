@@ -3397,9 +3397,11 @@ class DataTest(unittest.TestCase):
         d = c.log(base=4)
         self.assertTrue((d.array == b).all())
         self.assertEqual(d.shape, b.shape)
+
+        # Check units for general case
         self.assertEqual(d.Units, cf.Units("1"))
 
-        # Text values outside of the restricted domain for a log
+        # Text values outside of the restricted domain for a logarithm
         a = np.array([0, -1, -2])
         b = np.log(a)
         c = cf.Data(a)
