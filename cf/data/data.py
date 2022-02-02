@@ -12050,7 +12050,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         d._set_dask(dx, reset_mask_hardness=False)
 
-        d._Units = _units_1  # all logarithm outputs are unitless
+        d.override_units(_units_1, inplace=True)  # all logarithm outputs are unitless
 
         return d
 
