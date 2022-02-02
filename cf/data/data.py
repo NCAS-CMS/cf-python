@@ -12025,7 +12025,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(np.tanh, units=_units_1, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.tanh(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_1, inplace=True)
 
         return d
 
