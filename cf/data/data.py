@@ -6787,7 +6787,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # preserve_invalid necessary because arctanh has a restricted domain
+        # Data.func is used instead of the Dask built-in in this case because
+        # arctanh has a restricted domain therefore it is necessary to use our
+        # custom logic implemented via the `preserve_invalid` keyword to func.
         d.func(
             np.arctanh,
             units=_units_radians,
@@ -6840,7 +6842,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # preserve_invalid necessary because arcsin has a restricted domain
+        # Data.func is used instead of the Dask built-in in this case because
+        # arcsin has a restricted domain therefore it is necessary to use our
+        # custom logic implemented via the `preserve_invalid` keyword to func.
         d.func(
             np.arcsin,
             units=_units_radians,
@@ -6942,7 +6946,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # preserve_invalid necessary because arccos has a restricted domain
+        # Data.func is used instead of the Dask built-in in this case because
+        # arccos has a restricted domain therefore it is necessary to use our
+        # custom logic implemented via the `preserve_invalid` keyword to func.
         d.func(
             np.arccos,
             units=_units_radians,
@@ -6995,7 +7001,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # preserve_invalid necessary because arccosh has a restricted domain
+        # Data.func is used instead of the Dask built-in in this case because
+        # arccosh has a restricted domain therefore it is necessary to use our
+        # custom logic implemented via the `preserve_invalid` keyword to func.
         d.func(
             np.arccosh,
             units=_units_radians,
