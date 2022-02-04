@@ -1656,6 +1656,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return json_dumps(d, default=convert_to_builtin_type)
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def digitize(
         self,
