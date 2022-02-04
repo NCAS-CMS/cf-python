@@ -828,6 +828,9 @@ class DataTest(unittest.TestCase):
                     b = np.digitize(a, [2, 6, 10, 50, 100], right=upper)
 
                     self.assertTrue((e.array == b).all())
+                    self.assertTrue(
+                        (np.ma.getmask(e.array) == np.ma.getmask(b)).all()
+                    )
 
                     # TODODASK: Reinstate the following test when
                     #           __sub__, minimum, and maximum have
