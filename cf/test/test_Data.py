@@ -2596,33 +2596,58 @@ class DataTest(unittest.TestCase):
                     "\ne={}, \nb={}".format(axes, e.array, b),
                 )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_pmndim'")
     def test_Data_percentile(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data(self.a)
+        d = cf.Data(self.a, chunks=(2, 2, 3, 5))
 
         # Percentiles taken across *all axes*
-        ranks = [[30, 60, 90], [20], 80]  # include valid singular form
+        ranks = ([30, 60, 90], [90, 30], [20], 80)
+        print(d.array)
+        for keepdims in (True, False):
+            for rank in ranks:
+                # Note: in cf the default is squeeze=False, but
+                # numpy has an inverse parameter called keepdims
+                # which is by default False also, one must be set
+                # to the non-default for equivalents.  So first
+                # cases (n1, n1) are both squeezed, (n2, n2) are
+                # not:
+                a1 = np.percentile(d, rank, keepdims=keepdims)
+                b1 = d.percentile(rank, squeeze=not keepdims)
+                self.assertEqual(b1.shape, a1.shape)
+                self.assertTrue((b1.array == a1).all())
 
-        for rank in ranks:
-            # Note: in cf the default is squeeze=False, but
-            # numpy has an inverse parameter called keepdims
-            # which is by default False also, one must be set
-            # to the non-default for equivalents.  So first
-            # cases (n1, n1) are both squeezed, (n2, n2) are
-            # not:
-            a1 = np.percentile(d, rank)  # keepdims=False default
-            b1 = d.percentile(rank, squeeze=True)
-            self.assertTrue(b1.allclose(a1, rtol=1e-05, atol=1e-08))
-            a2 = np.percentile(d, rank, keepdims=True)
-            b2 = d.percentile(rank)  # squeeze=False default
-            self.assertTrue(b2.shape, a2.shape)
-            self.assertTrue(b2.allclose(a2, rtol=1e-05, atol=1e-08))
+        # Masked data
+        d = cf.Data(self.ma, chunks=(2, 2, 3, 5))
+
+        for keepdims in (True, False):
+            for rank in ranks:
+                # Note: in cf the default is squeeze=False, but
+                # numpy has an inverse parameter called keepdims
+                # which is by default False also, one must be set
+                # to the non-default for equivalents.  So first
+                # cases (n1, n1) are both squeezed, (n2, n2) are
+                # not:
+                a1 = np.nanpercentile(d, rank, keepdims=keepdims)
+                b1 = d.percentile(rank, squeeze=not keepdims)
+                self.assertEqual(b1.shape, a1.shape)
+                self.assertTrue(
+                    (b1.array == a1).all(),
+                    f"keepdims={keepdims}, rank={rank} {b1.array}, {a1}",
+                )
+                self.assertTrue(
+                    np.allclose(b1.array, a1, rtol=1e-05, atol=1e-08),
+                    f"keepdims={keepdims}, rank={rank} {b1.array}, {a1}",
+                )
 
         # TODO: add loop to check get same shape and close enough data
         # for every possible axes combo (as with test_Data_median above).
+
+        # Check invalid ranks (those not in [0, 100])
+        for ranks in (-9, [999], [50, 999], [999, 50]):
+            with self.assertRaises(ValueError):
+                d.percentile(ranks)
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_mean_of_upper_decile(self):

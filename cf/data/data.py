@@ -12,9 +12,11 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
-
-# from dask.array.core import slices_from_chunks
-from dask.base import is_dask_collection
+from dask.array import Array
+from dask.array.core import normalize_chunks
+from dask.base import is_dask_collection, tokenize
+from dask.core import flatten
+from dask.highlevelgraph import HighLevelGraph
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
 from ..cfdatetime import dt as cf_dt
@@ -99,6 +101,7 @@ from .creation import (
 from .dask_utils import (
     _da_ma_allclose,
     cf_harden_mask,
+    cf_percentile,
     cf_soften_mask,
     cf_where,
 )
@@ -2043,6 +2046,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @_deprecated_kwarg_check("_preserve_partitions")
+    @_inplace_enabled(default=False)
     def percentile(
         self,
         ranks,
@@ -2051,6 +2056,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         squeeze=False,
         mtol=1,
         inplace=False,
+        chunks=None,
         _preserve_partitions=False,
     ):
         """Compute percentiles of the data along the specified axes.
@@ -2129,6 +2135,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{inplace: `bool`, optional}}
 
+            _preserve_partitions: deprecated at version 4.0.0
+
         :Returns:
 
             `Data` or `None`
@@ -2196,99 +2204,131 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [2 2 3 3]]
 
         """
-        ranks = np.array(ranks).flatten()
-        ranks.sort()
+        d = _inplace_enabled_define_and_cleanup(self)
 
-        if ranks[0] < 0 or ranks[-1] > 100:
+        # Parse percentile ranks
+        q = np.array(ranks)
+        if q.ndim > 1:
+            q = q.flatten()
+
+        if q.max() > 100 or q.min() < 0:
             raise ValueError(
                 "Each percentile rank must be in the range [0, 100]. "
-                "Got {!r}".format(ranks)
+                f"Got: {q!r}"
             )
 
-        n_ranks = ranks.size
-        if n_ranks == 1:
-            ranks = ranks.squeeze()
+        if not np.issubdtype(d.dtype, np.number):
+            interpolation = "nearest"
 
         if axes is None:
-            axes = list(range(self.ndim))
+            axes = list(range(d.ndim))
         else:
-            axes = sorted(self._parse_axes(axes))
+            axes = sorted(d._parse_axes(axes))
 
-        # If the input data array 'fits' in one chunk of memory, then
-        # make sure that it has only one partition
-        if (
-            not _preserve_partitions
-            and self._pmndim
-            and self.fits_in_one_chunk_in_memory(self.dtype.itemsize)
-        ):
-            self.varray
+        dx = d._get_dask()
+        dtype = dx.dtype
+        shape = dx.shape
 
-        org_chunksize = cf_chunksize(cf_chunksize() / n_ranks)
-        sections = self.section(axes, chunks=True)
-        cf_chunksize(org_chunksize)
+        # Rechunk the data so that the dimensions over which
+        # percentiles are being calculated all have one chunk
+        org_chunks = dx.chunks
+        if chunks is None:
+            tmp_chunks = [
+                -1 if i in axes else c for i, c in enumerate(org_chunks)
+            ]
+            new_chunks = normalize_chunks(tmp_chunks, shape=shape, dtype=dtype)
+        else:
+            # User-preferred chunking
+            tmp_chunks = normalize_chunks(chunks, shape=shape, dtype=dtype)
+            tmp_chunks = [
+                -1 if i in axes else c for i, c in enumerate(tmp_chunks)
+            ]
+            new_chunks = normalize_chunks(tmp_chunks, shape=shape, dtype=dtype)
 
-        for key, data in sections.items():
-            array = data.array
-
-            masked = np.ma.is_masked(array)
-            if masked:
-                if array.dtype != _dtype_float:
-                    # Can't assign NaNs to integer arrays
-                    array = array.astype(float, copy=True)
-
-                array = np.ma.filled(array, np.nan)
-                func = np.nanpercentile
-
-                with numpy_testing_suppress_warnings() as sup:
-                    sup.filter(
-                        RuntimeWarning, message=".*All-NaN slice encountered"
-                    )
-                    p = func(
-                        array,
-                        ranks,
-                        axis=axes,
-                        interpolation=interpolation,
-                        keepdims=True,
-                        overwrite_input=False,
-                    )
-
-                # Replace NaNs with missing data
-                p = np.ma.masked_where(np.isnan(p), p, copy=False)
-            else:
-                func = np.percentile
-                p = func(
-                    array,
-                    ranks,
-                    axis=axes,
-                    interpolation=interpolation,
-                    keepdims=True,
-                    overwrite_input=False,
+            # Make an effort at least as many chunks in the rechunked
+            # array as in the input array (in some simple, not very
+            # extensive, tests this gives fastest compute).
+            org_n_chunks = reduce(mul, map(len, org_chunks), 1)
+            new_n_chunks = reduce(mul, map(len, new_chunks), 1)
+            if org_n_chunks > new_n_chunks:
+                # Define an upper limit to the new chunk sizes, which
+                # is the size of the current largest chunk.
+                #
+                # Note that this is a soft limit that we're assuming
+                # is OK to get exceeded if the collapsed axes have a
+                # large enough size when flattened.
+                largest_chunk_size = reduce(mul, map(max, org_chunks), 1)
+                limit = int(
+                    dtype.itemsize
+                    * largest_chunk_size
+                    * new_n_chunks
+                    / org_n_chunks
                 )
 
-            sections[key] = type(self)(
-                p, units=self.Units, fill_value=self.fill_value
+                tmp_chunks = [
+                    -1 if i in axes else "auto" for i in range(dx.ndim)
+                ]
+
+                new_chunks = normalize_chunks(
+                    tmp_chunks, shape=shape, limit=limit, dtype=dtype
+                )
+
+        dx = dx.rechunk(new_chunks)
+
+        # Initialise the indices of each chunk of the result
+        #
+        # E.g. [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1)]
+        keys = [key[1:] for key in flatten(dx.__dask_keys__())]
+
+        keepdims = not squeeze
+        if not keepdims:
+            # Remove axes that will be dropped in the result
+            indices = [i for i in range(len(keys[0])) if i not in axes]
+            keys = [tuple([k[i] for i in indices]) for k in keys]
+
+        if q.ndim:
+            # Insert a leading rank dimension for non-scalar input
+            # percentile ranks
+            keys = [(0,) + k for k in keys]
+
+        # Create a new dask dictionary for the result
+        name = "cf-percentile-" + tokenize(dx, axes, q, interpolation)
+        name = (name,)
+        dsk = {
+            name
+            + chunk_index: (
+                cf_percentile,
+                dask_key,
+                q,
+                axes,
+                interpolation,
+                keepdims,
+                mtol,
             )
-        # --- End: for
+            for chunk_index, dask_key in zip(keys, flatten(dx.__dask_keys__()))
+        }
 
-        # Glue the sections back together again
-        out = self.reconstruct_sectioned_data(sections)
+        # Define the chunks for the result
+        if q.ndim:
+            out_chunks = [(q.size,)]
+        else:
+            out_chunks = []
 
-        if mtol < 1:
-            mask = self.sample_size(axes, mtol=mtol) == 0
-            mask.filled(True, inplace=True)
-            if out.ndim == self.ndim + 1:
-                mask.insert_dimension(0, inplace=True)
+        for i, c in enumerate(dx.chunks):
+            if i in axes:
+                if keepdims:
+                    out_chunks.append((1,))
+            else:
+                out_chunks.append(c)
 
-            out.where(mask, cf_masked, inplace=True)
+        name = name[0]
+        graph = HighLevelGraph.from_collections(name, dsk, dependencies=[dx])
+        dx = Array(graph, name, chunks=out_chunks, dtype=float)
 
-        if squeeze:
-            out.squeeze(inplace=True)
+        # Note: cf_percentile sets the mask hardness for each chunk
+        d._set_dask(dx, reset_mask_hardness=True)
 
-        if inplace:
-            self.__dict__ = out.__dict__
-            return
-
-        return out
+        return d
 
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):

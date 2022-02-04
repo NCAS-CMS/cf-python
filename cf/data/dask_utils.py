@@ -4,6 +4,8 @@ These will typically be functions that operate on dask chunks. For
 instance, as would be passed to `dask.array.map_blocks`.
 
 """
+from functools import reduce
+from operator import mul
 
 import dask.array as da
 import numpy as np
@@ -182,6 +184,126 @@ def cf_harden_mask(a):
         a.harden_mask()
 
     return a
+
+
+def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
+    """Compute the q-th percentile of the data along the specified axis.
+
+    See `cf.Data.percentile` for further details.
+
+    .. note:: This function correctly sets the mask hardness of the
+              output array.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `cf.Data.percentile`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            Input array,
+
+        q: `numpy.ndarray`
+            Percentile or sequence of percentiles to compute, which
+            must be between 0 and 100 inclusive.
+
+        axis: `tuple` of `int`
+            Axes along which the percentiles are computed.
+
+        interpolation: {'linear', 'lower', 'higher', 'midpoint', 'nearest'}
+            Specifies the interpolation method to use when the desired
+            percentile lies between two data points ``i < j``:
+
+        keepdims: `bool`, optional
+            If this is set to True, the axes which are reduced are
+            left in the result as dimensions with size one. With this
+            option, the result will broadcast correctly against the
+            original array *a*.
+
+        mtol: number, optional
+            Set the fraction (between 0 and 1 inclusive) of input data
+            elements which is allowed to contain missing data when
+            contributing to an individual output data element. The
+            default is 1, meaning that a missing datum in the output
+            array occurs when all of its contributing input array
+            elements are missing data. A value of 0 means that a
+            missing datum in the output array occurs whenever any of
+            its contributing input array elements are missing data.
+
+    :Returns:
+
+        `numpy.ndarray`
+
+    """
+    if not len(a):
+        return None
+
+    if np.ma.is_masked(a):
+        # ------------------------------------------------------------
+        # Input array is masked
+        # ------------------------------------------------------------
+        if a.dtype != float:
+            # Can't assign NaNs to integer arrays
+            a = a.astype(float, copy=True)
+
+        if mtol < 1:
+            # Count the number of missing values that contribute to
+            # each output percentile value
+            n_missing = np.ma.count(a, axis=axis)
+            if q.ndim:
+                n_missing = np.expand_dims(n_missing, 0)
+
+        a = np.ma.filled(a, np.nan)
+
+        with np.testing.suppress_warnings() as sup:
+            sup.filter(
+                category=RuntimeWarning, message=".*All-NaN slice encountered"
+            )
+            p = np.nanpercentile(
+                a,
+                q,
+                axis=axis,
+                interpolation=interpolation,
+                keepdims=keepdims,
+                overwrite_input=True,
+            )
+
+        # Replace NaNs with missing data
+        mask = np.isnan(p)
+        if not mask.any():
+            mask = None
+
+        # Mask any percentiles which are the result of too few input
+        # values
+        if mtol < 1:
+            full_size = reduce(
+                mul, [size for i, size in enumerate(a.shape) if i in axis], 1
+            )
+            mtol_mask = np.where(n_missing < mtol * full_size, 1, 0)
+
+            if mask is None:
+                mask = mtol_mask
+            else:
+                mask |= mtol_mask
+
+        if mask is not None:
+            print(9999)
+            p = np.ma.masked_where(mask, p, copy=False)
+
+    else:
+        # ------------------------------------------------------------
+        # Input array is not masked
+        # ------------------------------------------------------------
+        p = np.percentile(
+            a,
+            q,
+            axis=axis,
+            interpolation=interpolation,
+            keepdims=keepdims,
+            overwrite_input=False,
+        )
+
+    return p
 
 
 def cf_soften_mask(a):
