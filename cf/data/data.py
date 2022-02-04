@@ -1974,6 +1974,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @_deprecated_kwarg_check("_preserve_partitions")
     def median(
         self,
         axes=None,
@@ -1983,14 +1984,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         _preserve_partitions=False,
     ):
         """Compute the median of the values."""
-
         return self.percentile(
             50,
             axes=axes,
             squeeze=squeeze,
             mtol=mtol,
             inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
 
     @_inplace_enabled(default=False)
@@ -2221,9 +2220,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             interpolation = "nearest"
 
         if axes is None:
-            axes = list(range(d.ndim))
+            axes = tuple(range(d.ndim))
         else:
-            axes = sorted(d._parse_axes(axes))
+            axes = tuple(sorted(d._parse_axes(axes)))
 
         dx = d._get_dask()
         dtype = dx.dtype

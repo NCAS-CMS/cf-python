@@ -240,18 +240,27 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
 
     if np.ma.is_masked(a):
         # ------------------------------------------------------------
-        # Input array is masked
+        # Input array is masked: Replace missing values with NaNs and
+        # remask later.
         # ------------------------------------------------------------
         if a.dtype != float:
             # Can't assign NaNs to integer arrays
             a = a.astype(float, copy=True)
-
+        mask = None
         if mtol < 1:
             # Count the number of missing values that contribute to
-            # each output percentile value
-            n_missing = np.ma.count(a, axis=axis)
+            # each output percentile value and make a corresponding
+            # mask
+            full_size = reduce(
+                mul, [size for i, size in enumerate(a.shape) if i in axis], 1
+            )
+            n_missing = full_size - np.ma.count(
+                a, axis=axis, keepdims=keepdims
+            )
+            mask = np.where(n_missing >= mtol * full_size, 1, 0)
+
             if q.ndim:
-                n_missing = np.expand_dims(n_missing, 0)
+                mask = np.expand_dims(mask, 0)
 
         a = np.ma.filled(a, np.nan)
 
@@ -268,27 +277,17 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
                 overwrite_input=True,
             )
 
-        # Replace NaNs with missing data
-        mask = np.isnan(p)
-        if not mask.any():
-            mask = None
-
-        # Mask any percentiles which are the result of too few input
-        # values
-        if mtol < 1:
-            full_size = reduce(
-                mul, [size for i, size in enumerate(a.shape) if i in axis], 1
-            )
-            mtol_mask = np.where(n_missing < mtol * full_size, 1, 0)
-
+        # Update the mask for NaN points
+        nan_mask = np.isnan(p)
+        if not nan_mask.any():
             if mask is None:
-                mask = mtol_mask
+                mask = nan_mask
             else:
-                mask |= mtol_mask
+                mask = np.ma.where(nan_mask, 1, mask)
 
+        # Mask any NaNs or elements below the mtol threshold
         if mask is not None:
-            print(9999)
-            p = np.ma.masked_where(mask, p, copy=False)
+            p = np.ma.where(mask, np.ma.masked, p)
 
     else:
         # ------------------------------------------------------------

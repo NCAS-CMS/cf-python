@@ -2549,105 +2549,53 @@ class DataTest(unittest.TestCase):
                         "\ne={}, \nb={}".format(h, axes, e.array, b),
                     )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_median(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for pp in (True, False):
-            # unweighted, unmasked
-            d = cf.Data(self.a)
-            for axes in self.axes_combinations:
-                b = reshape_array(self.a, axes)
-                b = np.median(b, axis=-1)
+        self.test_Data_percentile(ranks=[50])
 
-                e = d.median(axes=axes, squeeze=True, _preserve_partitions=pp)
-                self.assertTrue(
-                    e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "median, axis={}, unweighted, unmasked "
-                    "\ne={}, \nb={}".format(axes, e.array, b),
-                )
-
-            # unweighted, masked
-            d = cf.Data(self.ma)
-            for axes in self.axes_combinations:
-                b = reshape_array(self.ma, axes)
-                b = np.ma.filled(b, np.nan)
-                with np.testing.suppress_warnings() as sup:
-                    sup.filter(
-                        RuntimeWarning, message=".*All-NaN slice encountered"
-                    )
-                    b = np.nanpercentile(b, 50, axis=-1)
-
-                b = np.ma.masked_where(np.isnan(b), b, copy=False)
-                b = np.ma.asanyarray(b)
-
-                e = d.median(axes=axes, squeeze=True, _preserve_partitions=pp)
-
-                self.assertTrue(
-                    (e.mask.array == b.mask).all(),
-                    "median, axis={}, \ne.mask={}, "
-                    "\nb.mask={}".format(axes, e.mask.array, b.mask),
-                )
-
-                self.assertTrue(
-                    e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "median, axis={}, unweighted, masked "
-                    "\ne={}, \nb={}".format(axes, e.array, b),
-                )
-
-    def test_Data_percentile(self):
+    def test_Data_percentile(self, ranks=([30, 60, 90], [90, 30], [20], 80)):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         d = cf.Data(self.a, chunks=(2, 2, 3, 5))
 
-        # Percentiles taken across *all axes*
-        ranks = ([30, 60, 90], [90, 30], [20], 80)
-        print(d.array)
-        for keepdims in (True, False):
-            for rank in ranks:
-                # Note: in cf the default is squeeze=False, but
-                # numpy has an inverse parameter called keepdims
-                # which is by default False also, one must be set
-                # to the non-default for equivalents.  So first
-                # cases (n1, n1) are both squeezed, (n2, n2) are
-                # not:
-                a1 = np.percentile(d, rank, keepdims=keepdims)
-                b1 = d.percentile(rank, squeeze=not keepdims)
-                self.assertEqual(b1.shape, a1.shape)
-                self.assertTrue((b1.array == a1).all())
+        for axis in [None] + self.axes_combinations:
+            for keepdims in (True, False):
+                for q in ranks:
+                    a1 = np.percentile(d, q, axis=axis, keepdims=keepdims)
+                    b1 = d.percentile(q, axes=axis, squeeze=not keepdims)
+                    self.assertEqual(b1.shape, a1.shape)
+                    self.assertTrue((b1.array == a1).all())
 
         # Masked data
+        a = self.ma
+        filled = np.ma.filled(a, np.nan)
         d = cf.Data(self.ma, chunks=(2, 2, 3, 5))
 
-        for keepdims in (True, False):
-            for rank in ranks:
-                # Note: in cf the default is squeeze=False, but
-                # numpy has an inverse parameter called keepdims
-                # which is by default False also, one must be set
-                # to the non-default for equivalents.  So first
-                # cases (n1, n1) are both squeezed, (n2, n2) are
-                # not:
-                a1 = np.nanpercentile(d, rank, keepdims=keepdims)
-                b1 = d.percentile(rank, squeeze=not keepdims)
-                self.assertEqual(b1.shape, a1.shape)
-                self.assertTrue(
-                    (b1.array == a1).all(),
-                    f"keepdims={keepdims}, rank={rank} {b1.array}, {a1}",
-                )
-                self.assertTrue(
-                    np.allclose(b1.array, a1, rtol=1e-05, atol=1e-08),
-                    f"keepdims={keepdims}, rank={rank} {b1.array}, {a1}",
-                )
+        with np.testing.suppress_warnings() as sup:
+            sup.filter(
+                category=RuntimeWarning, message=".*All-NaN slice encountered"
+            )
+            for axis in [None] + self.axes_combinations:
+                for keepdims in (True, False):
+                    for q in ranks:
+                        a1 = np.nanpercentile(
+                            filled, q, axis=axis, keepdims=keepdims
+                        )
+                        mask = np.isnan(a1)
+                        if mask.any():
+                            a1 = np.ma.masked_where(mask, a1, copy=False)
 
-        # TODO: add loop to check get same shape and close enough data
-        # for every possible axes combo (as with test_Data_median above).
+                        b1 = d.percentile(q, axes=axis, squeeze=not keepdims)
+                        self.assertEqual(b1.shape, a1.shape)
+                        self.assertTrue((b1.array == a1).all())
 
         # Check invalid ranks (those not in [0, 100])
-        for ranks in (-9, [999], [50, 999], [999, 50]):
+        for q in (-9, [999], [50, 999], [999, 50]):
             with self.assertRaises(ValueError):
-                d.percentile(ranks)
+                d.percentile(q)
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_mean_of_upper_decile(self):
