@@ -1816,8 +1816,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [ 1  1  1 --]]
 
         """
-        from dask.array import digitize
-
         d = _inplace_enabled_define_and_cleanup(self)
 
         org_units = d.Units
@@ -1845,8 +1843,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         if bins.ndim > 2:
             raise ValueError(
-                "The 'bins' parameter must be scalar, 1-d or 2-d"
-                f" Got: {bins!r}"
+                "The 'bins' parameter must be scalar, 1-d or 2-d. "
+                f"Got: {bins!r}"
             )
 
         two_d_bins = None
@@ -1940,7 +1938,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Digitise the array
         dx = d._get_dask()
-        dx = digitize(dx, bins, right=upper)
+        dx = da.digitize(dx, bins, right=upper)
         d._set_dask(dx, reset_mask_hardness=True)
         d.override_units(_units_None, inplace=True)
 
