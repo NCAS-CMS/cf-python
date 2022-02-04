@@ -6696,7 +6696,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.func(np.arctan, units=_units_radians, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.arctan(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_radians, inplace=True)
 
         return d
 
@@ -6784,7 +6787,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # preserve_invalid necessary because arctanh has a restricted domain
+        # Data.func is used instead of the Dask built-in in this case because
+        # arctanh has a restricted domain therefore it is necessary to use our
+        # custom logic implemented via the `preserve_invalid` keyword to func.
         d.func(
             np.arctanh,
             units=_units_radians,
@@ -6837,7 +6842,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # preserve_invalid necessary because arcsin has a restricted domain
+        # Data.func is used instead of the Dask built-in in this case because
+        # arcsin has a restricted domain therefore it is necessary to use our
+        # custom logic implemented via the `preserve_invalid` keyword to func.
         d.func(
             np.arcsin,
             units=_units_radians,
@@ -6888,7 +6895,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.func(np.arcsinh, units=_units_radians, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.arcsinh(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_radians, inplace=True)
 
         return d
 
@@ -6936,7 +6946,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # preserve_invalid necessary because arccos has a restricted domain
+        # Data.func is used instead of the Dask built-in in this case because
+        # arccos has a restricted domain therefore it is necessary to use our
+        # custom logic implemented via the `preserve_invalid` keyword to func.
         d.func(
             np.arccos,
             units=_units_radians,
@@ -6989,7 +7001,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # preserve_invalid necessary because arccosh has a restricted domain
+        # Data.func is used instead of the Dask built-in in this case because
+        # arccosh has a restricted domain therefore it is necessary to use our
+        # custom logic implemented via the `preserve_invalid` keyword to func.
         d.func(
             np.arccosh,
             units=_units_radians,
@@ -8585,7 +8599,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(np.cos, units=_units_1, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.cos(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_1, inplace=True)
 
         return d
 
@@ -11840,7 +11857,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(np.sin, units=_units_1, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.sin(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_1, inplace=True)
 
         return d
 
@@ -11898,7 +11918,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(np.sinh, units=_units_1, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.sinh(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_1, inplace=True)
+
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -11953,7 +11977,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(np.cosh, units=_units_1, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.cosh(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_1, inplace=True)
 
         return d
 
@@ -12012,7 +12039,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(np.tanh, units=_units_1, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.tanh(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_1, inplace=True)
 
         return d
 
@@ -12223,7 +12253,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        d.func(np.tan, units=_units_1, inplace=True)
+        dx = d._get_dask()
+        d._set_dask(da.tan(dx), reset_mask_hardness=False)
+
+        d.override_units(_units_1, inplace=True)
 
         return d
 
