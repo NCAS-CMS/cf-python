@@ -1846,7 +1846,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if bins.ndim > 2:
             raise ValueError(
                 "The 'bins' parameter must be scalar, 1-d or 2-d"
-                f"Got: {bins!r}"
+                f" Got: {bins!r}"
             )
 
         two_d_bins = None
