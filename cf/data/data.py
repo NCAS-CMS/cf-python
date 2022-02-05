@@ -2074,7 +2074,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. versionadded:: 3.0.4
 
-        .. seealso:: `digitize`, `median`, `mean_of_upper_decile`, `where`
+        .. seealso:: `digitize`, `median`, `mean_of_upper_decile`,
+                     `where`
 
         :Parameters:
 
@@ -2325,7 +2326,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         graph = HighLevelGraph.from_collections(name, dsk, dependencies=[dx])
         dx = Array(graph, name, chunks=out_chunks, dtype=float)
 
-        # Note: cf_percentile sets the mask hardness for each chunk
         d._set_dask(dx, reset_mask_hardness=True)
 
         return d

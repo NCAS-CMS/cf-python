@@ -187,8 +187,7 @@ def cf_harden_mask(a):
 
 
 def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
-    """Compute the q-th percentiles of the data along the specified
-    axis.
+    """Compute percentiles of the data along the specified axes.
 
     See `cf.Data.percentile` for further details.
 
