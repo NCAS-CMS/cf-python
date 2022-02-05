@@ -2553,11 +2553,17 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        self.test_Data_percentile(ranks=[50])
+        # Already tested by test_Data_percentile with rank=50
+        pass
 
-    def test_Data_percentile(self, ranks=([30, 60, 90], [90, 30], [20], 80)):
+    def test_Data_percentile(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
+
+        # ranks: a sequnce of percentile rank inputs. NOTE: must
+        # include 50 as the last input so that cf.Data.median is also
+        # tested correctly.
+        ranks = ([30, 60, 90], [90, 30], [20], 50)
 
         d = cf.Data(self.a, chunks=(2, 2, 3, 5))
 
@@ -2591,6 +2597,39 @@ class DataTest(unittest.TestCase):
                         b1 = d.percentile(q, axes=axis, squeeze=not keepdims)
                         self.assertEqual(b1.shape, a1.shape)
                         self.assertTrue((b1.array == a1).all())
+
+        # Test mtol=1
+        d = cf.Data(self.a)
+        d[...] = cf.masked  # All masked
+        for axis in [None] + self.axes_combinations:
+            for q in ranks:
+                e = d.percentile(q, axes=axis, mtol=1)
+                self.assertFalse(np.ma.count(e.array, keepdims=True).any())
+
+        a = np.ma.arange(12).reshape(3, 4)
+        d = cf.Data(a)
+        d[1, -1] = cf.masked  # 1 value masked
+        for q in ranks:
+            e = d.percentile(q, mtol=1)
+            self.assertTrue(np.ma.count(e.array, keepdims=True).all())
+
+        # Test mtol=0
+        for q in ranks:
+            e = d.percentile(q, mtol=0)
+            self.assertFalse(np.ma.count(e.array, keepdims=True).any())
+
+        # Test mtol=0.1
+        for q in ranks:
+            e = d.percentile(q, axes=0, mtol=0.1)
+            self.assertEqual(np.ma.count(e.array), 3 * e.shape[0])
+
+        for q in ranks[:-1]:  # axis=1: exclude the non-sequence rank
+            e = d.percentile(q, axes=1, mtol=0.1)
+            self.assertEqual(np.ma.count(e.array), 2 * e.shape[0])
+
+        q = ranks[-1]  # axis=1: test the the non-sequence rank
+        e = d.percentile(q, axes=1, mtol=0.1)
+        self.assertEqual(np.ma.count(e.array), e.shape[0] - 1)
 
         # Check invalid ranks (those not in [0, 100])
         for q in (-9, [999], [50, 999], [999, 50]):

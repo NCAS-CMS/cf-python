@@ -187,7 +187,8 @@ def cf_harden_mask(a):
 
 
 def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
-    """Compute the q-th percentile of the data along the specified axis.
+    """Compute the q-th percentiles of the data along the specified
+    axis.
 
     See `cf.Data.percentile` for further details.
 
@@ -210,9 +211,11 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
         axis: `tuple` of `int`
             Axes along which the percentiles are computed.
 
-        interpolation: {'linear', 'lower', 'higher', 'midpoint', 'nearest'}
+        interpolation: `str`
             Specifies the interpolation method to use when the desired
-            percentile lies between two data points ``i < j``:
+            percentile lies between two data points ``i < j``. Must be
+            one of ``'linear'``, ``'lower'``, ``'higher'``,
+            ``'midpoint'``, or ``'nearest'``.
 
         keepdims: `bool`, optional
             If this is set to True, the axes which are reduced are
@@ -221,14 +224,16 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
             original array *a*.
 
         mtol: number, optional
-            Set the fraction (between 0 and 1 inclusive) of input data
-            elements which is allowed to contain missing data when
-            contributing to an individual output data element. The
-            default is 1, meaning that a missing datum in the output
-            array occurs when all of its contributing input array
-            elements are missing data. A value of 0 means that a
-            missing datum in the output array occurs whenever any of
-            its contributing input array elements are missing data.
+            Set an upper limit of the amount input data values which
+            are allowed to be missing data when contributing to
+            individual output percentile values. It is defined as a
+            fraction (between 0 and 1 inclusive) of the contributing
+            input data values. The default is 1, meaning that a
+            missing datum in the output array only occurs when all of
+            its contributing input array elements are missing data. A
+            value of 0 means that a missing datum in the output array
+            occurs whenever any of its contributing input array
+            elements are missing data.
 
     :Returns:
 
@@ -246,6 +251,7 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
         if a.dtype != float:
             # Can't assign NaNs to integer arrays
             a = a.astype(float, copy=True)
+
         mask = None
         if mtol < 1:
             # Count the number of missing values that contribute to
@@ -257,10 +263,10 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
             n_missing = full_size - np.ma.count(
                 a, axis=axis, keepdims=keepdims
             )
-            mask = np.where(n_missing >= mtol * full_size, 1, 0)
-
-            if q.ndim:
-                mask = np.expand_dims(mask, 0)
+            if n_missing.any():
+                mask = np.where(n_missing >= mtol * full_size, True, False)
+                if q.ndim:
+                    mask = np.expand_dims(mask, 0)
 
         a = np.ma.filled(a, np.nan)
 
@@ -279,13 +285,13 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
 
         # Update the mask for NaN points
         nan_mask = np.isnan(p)
-        if not nan_mask.any():
+        if nan_mask.any():
             if mask is None:
                 mask = nan_mask
             else:
-                mask = np.ma.where(nan_mask, 1, mask)
+                mask = np.ma.where(nan_mask, True, mask)
 
-        # Mask any NaNs or elements below the mtol threshold
+        # Mask any NaNs and elements below the mtol threshold
         if mask is not None:
             p = np.ma.where(mask, np.ma.masked, p)
 

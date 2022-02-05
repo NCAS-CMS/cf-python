@@ -2116,21 +2116,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 data.
 
             mtol: number, optional
-                Set the fraction of input data elements which is allowed
-                to contain missing data when contributing to an individual
-                output data element. Where this fraction exceeds *mtol*,
-                missing data is returned. The default is 1, meaning that a
-                missing datum in the output array occurs when its
-                contributing input array elements are all missing data. A
-                value of 0 means that a missing datum in the output array
-                occurs whenever any of its contributing input array
-                elements are missing data. Any intermediate value is
-                permitted.
+                Set an upper limit of the amount input data values
+                which are allowed to be missing data when contributing
+                to individual output percentile values. It is defined
+                as a fraction (between 0 and 1 inclusive) of the
+                contributing input data values. The default is 1,
+                meaning that a missing datum in the output array only
+                occurs when all of its contributing input array
+                elements are missing data. A value of 0 means that a
+                missing datum in the output array occurs whenever any
+                of its contributing input array elements are missing
+                data.
 
                 *Parameter example:*
                   To ensure that an output array element is a missing
-                  datum if more than 25% of its input array elements are
-                  missing data: ``mtol=0.25``.
+                  value if more than 25% of its input array elements
+                  are missing data: ``mtol=0.25``.
 
             {{inplace: `bool`, optional}}
 
@@ -2142,7 +2143,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The percentiles of the original data, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
         >>> print(d.array)
