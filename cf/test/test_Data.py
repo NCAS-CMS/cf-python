@@ -2563,7 +2563,8 @@ class DataTest(unittest.TestCase):
         # ranks: a sequnce of percentile rank inputs. NOTE: must
         # include 50 as the last input so that cf.Data.median is also
         # tested correctly.
-        ranks = ([30, 60, 90], [90, 30], [20], 50)
+        ranks = ([30, 60, 90], [90, 30], [20])
+        ranks = ranks + (50,)
 
         d = cf.Data(self.a, chunks=(2, 2, 3, 5))
 
