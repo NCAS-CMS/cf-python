@@ -191,6 +191,43 @@ _docstring_substitution_definitions = {
                 value given by the *radius* parameter is used
                 instead. A value of ``'earth'`` is equivalent to a
                 default value of 6371229 metres.""",
+    # chunks
+    "{{chunks: `int`, `tuple`, `dict` or `str`, optional}}": """chunks: `int`, `tuple`, `dict` or `str`, optional
+                Specify the chunking of the underlying dask array.
+
+                Any value accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is allowed.
+
+                By default, ``"auto"`` is used to specify the array
+                chunking, which uses a chunk size in bytes defined by
+                the configuration value defined by the configuration
+                value ``dask.config.get("array.chunk-size")``,
+                prefering square-like chunk shapes.
+
+                *Parameter example:*
+                  A blocksize like ``1000``.
+
+                *Parameter example:*
+                  A blockshape like ``(1000, 1000)``.
+
+                *Parameter example:*
+                  Explicit sizes of all blocks along all dimensions
+                  like ``((1000, 1000, 500), (400, 400))``.
+
+                *Parameter example:*
+                  A size in bytes, like ``"100MiB"`` which will choose
+                  a uniform block-like shape, prefering square-like
+                  chunk shapes.
+
+                *Parameter example:*
+                  A blocksize of ``-1`` or `None` in a tuple or
+                  dictionary indicates the size of the corresponding
+                  dimension.
+
+                *Parameter example:*
+                   Blocksizes of some or all dimensions mapped to
+                   dimension positions, like ``{1: 200}``, or ``{0:
+                   -1, 1: (400, 400)}``.""",
     # Returns formula
     "{{Returns formula}}": """5-`tuple`
                 * The standard name of the parametric coordinates.
