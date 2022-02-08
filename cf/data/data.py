@@ -2046,6 +2046,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("_preserve_partitions")
     @_inplace_enabled(default=False)
     def percentile(
