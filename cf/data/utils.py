@@ -2,10 +2,16 @@
 from functools import lru_cache, partial
 from itertools import product
 
-import dask.array as da
 import numpy as np
 
-from ..cfdatetime import _default_calendar, dt, dt2rt, rt2dt, st2rt
+from ..cfdatetime import (
+    canonical_calendar,
+    default_calendar,
+    dt,
+    dt2rt,
+    rt2dt,
+    st2rt,
+)
 from ..units import Units
 
 
@@ -85,8 +91,8 @@ def convert_to_datetime(array, units):
     >>> import dask.array as da
     >>> d = da.from_array(2.5)
     >>> e = convert_to_datetime(d, cf.Units("days since 2000-12-01"))
-    >>> e.compute()
-    cftime.DatetimeGregorian(2000, 12, 3, 12, 0, 0, 0, has_year_zero=False)
+    >>> print(e.compute())
+    2000-12-03 12:00:00
 
     """
     return array.map_blocks(
@@ -110,14 +116,15 @@ def convert_to_reftime(array, units=None, first_value=None):
 
         units: `Units`, optional
              Specify the units for the output reference time
-             values. By default the the units are inferred from
-             *first_value*, if possible, otherwise they are set to
-             ``<Units: days since 1970-01-01 gregorian>``.
+             values. By default the the units are inferred from first
+             non-missing value in the array, or set to ``<Units: days
+             since 1970-01-01 gregorian>`` if all values are missing.
 
         first_value: optional
             If set, then assumed to be equal to the first non-missing
-            value of the array. By default the first non-missing value
-            is found by inspection.
+            value of the array, thereby removing the need to find it
+            by inspection of *array*, which may be expensive. By
+            default the first non-missing value is found from *array*.
 
     :Returns:
 
@@ -127,17 +134,18 @@ def convert_to_reftime(array, units=None, first_value=None):
     >>> import dask.array as da
     >>> d = da.from_array(2.5)
     >>> e = convert_to_datetime(d, cf.Units("days since 2000-12-01"))
+
     >>> f, u = convert_to_reftime(e)
     >>> f.compute()
-    array(11294.5)
+    0.5
     >>> u
-    <Units: days since 1970-01-01 gregorian>
+    <Units: days since 2000-12-3 standard>
 
-    >>> f, u = convert_to_reftime(e, cf.Units("days since 2000-12-01"))
+    >>> f, u = convert_to_reftime(e, cf.Units("days since 1999-12-01"))
     >>> f.compute()
-    array(2.5))
+    368.5
     >>> u
-    <Units: days since 2000-12-01 gregorian>
+    <Units: days since 1999-12-01 standard>
 
     """
     kind = array.dtype.kind
@@ -150,7 +158,7 @@ def convert_to_reftime(array, units=None, first_value=None):
             else:
                 YMD = "1970-01-01"
 
-            units = Units("days since " + YMD, _default_calendar)
+            units = Units("days since " + YMD, default_calendar)
 
         array = array.map_blocks(
             partial(st2rt, units_in=units, units_out=units), dtype=float
@@ -162,23 +170,22 @@ def convert_to_reftime(array, units=None, first_value=None):
         if first_value is not None:
             x = first_value
         else:
-            x = dt(1970, 1, 1, calendar=_default_calendar)
+            x = dt(1970, 1, 1, calendar=default_calendar)
 
         x_since = "days since " + "-".join(map(str, (x.year, x.month, x.day)))
-        x_calendar = getattr(x, "calendar", _default_calendar)
+        x_calendar = getattr(x, "calendar", default_calendar)
 
         d_calendar = getattr(units, "calendar", None)
         d_units = getattr(units, "units", None)
 
         if x_calendar != "":
-            if d_calendar is not None:
-                if not units.equivalent(Units(x_since, x_calendar)):
-                    raise ValueError(
-                        "Incompatible units: "
-                        f"{units!r}, {Units(x_since, x_calendar)!r}"
-                    )
-            else:
+            if units is None:
                 d_calendar = x_calendar
+            elif not units.equivalent(Units(x_since, x_calendar)):
+                raise ValueError(
+                    "Incompatible units: "
+                    f"{units!r}, {Units(x_since, x_calendar)!r}"
+                )
 
         if not units:
             # Set the units to something that is (hopefully) close to
@@ -190,27 +197,28 @@ def convert_to_reftime(array, units=None, first_value=None):
 
         # Check that all date-time objects have correct and equivalent
         # calendars
-        calendars = unique_calendars(array)
-        if len(calendars) > 1:
-            raise ValueError(
-                "Not all date-time objects have equivalent "
-                f"calendars: {tuple(calendars)}"
-            )
+        #        calendars = unique_calendars(array)
+        #        if len(calendars) > 1:
+        #            raise ValueError(
+        #                "Not all date-time objects have equivalent "
+        #                f"calendars: {tuple(calendars)}"
+        #            )
 
         # If the date-times are calendar-agnostic, assign the given
         # calendar, defaulting to Gregorian.
-        if calendars.pop() == "":
-
-            def set_calendar(x, calendar=_default_calendar):
-                np.vectorize(
-                    partial(dt, calendar=calendar), otypes=[np.dtype(object)]
-                )
-
-            array = array.map_blocks(
-                set_calendar,
-                calendar=getattr(units, "calendar", _default_calendar),
-                dtype=object,
-            )
+        #        if calendars.pop() == "":
+        #        if first_value.calendar == "":
+        #
+        #            def set_calendar(x, calendar=default_calendar):
+        #                np.vectorize(
+        #                    partial(dt, calendar=calendar), otypes=[np.dtype(object)]
+        #                )
+        #
+        #            array = array.map_blocks(
+        #                set_calendar,
+        #                calendar=getattr(units, "calendar", default_calendar),
+        #                dtype=object,
+        #            )
 
         # Convert the date-time objects to reference times
         array = array.map_blocks(
@@ -283,7 +291,7 @@ def unique_calendars(array):
     """
 
     def _get_calendar(x):
-        return getattr(x, "calendar", _default_calendar)
+        return getattr(x, "calendar", default_calendar)
 
     _calendars = np.vectorize(_get_calendar, otypes=[np.dtype(str)])
 
@@ -301,11 +309,10 @@ def unique_calendars(array):
     if np.ma.isMA(calendars):
         calendars = calendars.compressed()
 
-    # TODODASK - need to allow different but equivalent calendars,
-    #            such as "gregorian" and "standard". Or perhaps this
-    #            should be done by the caller?
+    # Replace each calendar with its canonical name
+    out = [canonical_calendar[cal] for cal in calendars.tolist()]
 
-    return set(calendars.tolist())
+    return set(out)
 
 
 @lru_cache(maxsize=32)

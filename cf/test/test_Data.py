@@ -1460,6 +1460,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((a2 == b).all())
         self.assertFalse((a2 == a).all())
 
+        # Fill value
         d[0, 0, 0, 0] = cf.masked
         self.assertEqual(d.array.fill_value, d.fill_value)
 
@@ -1585,7 +1586,6 @@ class DataTest(unittest.TestCase):
         )
         d *= 31
 
-    #    @unittest.skipIf(TEST_DASKIFIED_ONLY, "'NoneType' object is not callable")
     def test_Data_datetime_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

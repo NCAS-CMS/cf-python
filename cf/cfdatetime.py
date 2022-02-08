@@ -6,7 +6,7 @@ import numpy as np
 
 from .functions import _DEPRECATION_ERROR_CLASS
 
-_default_calendar = "gregorian"
+default_calendar = "gregorian"
 
 # --------------------------------------------------------------------
 # Mapping of CF calendars to cftime date-time objects
@@ -20,6 +20,21 @@ _datetime_object = {
     ("all_leap", "366_day"): cftime.DatetimeAllLeap,
     ("julian",): cftime.DatetimeJulian,
 }
+
+canonical_calendar = {
+    None: "standard",
+    "gregorian": "standard",
+    "standard": "standard",
+    "proleptic_gregorian": "proleptic_gregorian",
+    "julian": "julian",
+    "noleap": "noleap",
+    "365_day": "noleap",
+    "all_366_day": "all_leap",
+    "all_leap": "all_leap",
+    "": "",
+    "none": "",
+}
+
 
 _calendar_map = {None: "gregorian"}
 
@@ -138,7 +153,7 @@ def dt(
         (year, month, day, hour, minute, second) = arg.timetuple()[:6]
         microsecond = arg.microsecond
         if calendar == "":
-            calendar = _default_calendar
+            calendar = default_calendar
 
     else:
         year = arg

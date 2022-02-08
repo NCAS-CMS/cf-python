@@ -592,6 +592,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             array = to_dask(array, chunks, dask_from_array_options)
 
         # Find out if we have an array of date-time objects
+        if units.isreftime:
+            dt = True
+
         first_value = None
         if not dt and array.dtype.kind == "O":
             first_value = first_non_missing_value(array)
@@ -600,7 +603,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Convert string or object date-times to floating point
         # reference times, if appropriate.
-        if array.dtype.kind in "USO" and (dt or units.isreftime):
+        if dt and array.dtype.kind in "USO":
             array, units = convert_to_reftime(array, units, first_value)
             # Reset the units
             self._Units = units
@@ -6224,14 +6227,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @property
     @daskified(_DASKIFIED_VERBOSE)
     def array(self):
-        """A numpy array copy the data array.
-
-        .. note:: If the data array is stored as date-time objects
-                  then a numpy array of numeric reference times will
-                  be returned. A numpy array of date-time objects may
-                  be returned by the `datetime_array` attribute.
-
-
+        """A numpy array copy the data.
 
         **Performance**
 
@@ -6253,6 +6249,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> a[0] = 88
         >>> print(d[0])
         -99.0 km
+
+        >>> d = cf.Data('2000-12-1', units='days since 1999-12-1')
+        >>> print(d.array)
+        366
+        >>> print(d.datetime_array)
+        2000-12-01 00:00:00
 
         """
         dx = self._get_dask()
@@ -6328,7 +6330,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d = self
 
         dx = d._get_dask()
-        dx = convert_to_datetime(dx, d.Units)  # TODODASK
+        dx = convert_to_datetime(dx, d.Units)
 
         a = dx.compute()
 

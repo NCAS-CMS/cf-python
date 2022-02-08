@@ -175,6 +175,16 @@ class DataUtilsTest(unittest.TestCase):
         c = cf.data.utils.unique_calendars(d)
         self.assertEqual(c, set())
 
+        a = [
+            cftime.DatetimeGregorian(2000, 12, 1),
+            cftime.DatetimeAllLeap(2000, 12, 2),
+            cftime.DatetimeGregorian(2000, 12, 3),
+        ]
+        d = da.from_array(np.ma.array(a, mask=[1, 0, 0]), chunks=2)
+        c = cf.data.utils.unique_calendars(d)
+        print(c)
+        self.assertEqual(c, set(["all_leap", "standard"]))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
