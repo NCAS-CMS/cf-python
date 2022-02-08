@@ -2667,7 +2667,7 @@ class DataTest(unittest.TestCase):
         # Check invalid ranks (those not in [0, 100])
         for q in (-9, [999], [50, 999], [999, 50]):
             with self.assertRaises(ValueError):
-                d.percentile(q)
+                d.percentile(q).array
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_mean_of_upper_decile(self):

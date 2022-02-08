@@ -2210,15 +2210,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Parse percentile ranks
-        q = np.array(ranks)
+        q = ranks
+        if not (isinstance(q, np.ndarray) or is_dask_collection(q)):
+            q = np.array(ranks)
+
         if q.ndim > 1:
             q = q.flatten()
-
-        if q.max() > 100 or q.min() < 0:
-            raise ValueError(
-                "Each percentile rank must be in the range [0, 100]. "
-                f"Got: {q!r}"
-            )
 
         if not np.issubdtype(d.dtype, np.number):
             interpolation = "nearest"
