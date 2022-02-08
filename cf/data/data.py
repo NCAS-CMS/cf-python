@@ -29,7 +29,12 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _numpy_isclose, _section, abspath
+from ..functions import (
+    _DEPRECATION_ERROR_KWARGS,
+    _numpy_isclose,
+    _section,
+    abspath,
+)
 from ..functions import atol as cf_atol
 from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
@@ -2053,11 +2058,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self,
         ranks,
         axes=None,
-        interpolation="linear",
+        method="linear",
         squeeze=False,
         mtol=1,
         inplace=False,
         _preserve_partitions=False,
+        interpolation=None,
     ):
         """Compute percentiles of the data along the specified axes.
 
@@ -2072,6 +2078,28 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         If multiple percentile ranks are given then a new, leading data
         dimension is created so that percentiles can be stored for each
         percentile rank.
+
+        **Accuracy**
+
+        The `percentile` method returns results that are consistent
+        with `numpy.percentile`, which may be different to those
+        created by `dask.percentile`. The dask method uses an
+        algorithm that calculates approximate percentiles which are
+        likely to be different from the correct values when there are
+        two or more dask chunks.
+
+        >>> import numpy as np
+        >>> import dask.array as da
+        >>> import cf
+        >>> a = np.arange(101)
+        >>> dx = da.from_array(a, chunks=10)
+        >>> da.percentile(dx, [40, 60]).compute()
+        array([40.36])
+        >>> np.percentile(a, 40)
+        array([40.])
+        >>> d = cf.Data(a, chunks=10)
+        >>> d.percentile(40).array
+        array([40.])
 
         .. versionadded:: 3.0.4
 
@@ -2091,23 +2119,36 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 By default, of *axes* is `None`, all axes are selected.
 
-            interpolation: `str`, optional
-                Specify the interpolation method to use when the desired
-                percentile lies between two data values ``i < j``:
+            method: `str`, optional
+                Specify the interpolation method to use when the
+                desired percentile lies between two data values. The
+                methods are listed here, but their definitions must be
+                referenced from the documentation for
+                `numpy.precentile`.
 
-                ===============  =========================================
-                *interpolation*  Description
-                ===============  =========================================
-                ``'linear'``     ``i+(j-i)*fraction``, where ``fraction``
-                                 is the fractional part of the index
-                                 surrounded by ``i`` and ``j``
-                ``'lower'``      ``i``
-                ``'higher'``     ``j``
-                ``'nearest'``    ``i`` or ``j``, whichever is nearest
-                ``'midpoint'``   ``(i+j)/2``
-                ===============  =========================================
+                For the default ``'linear'`` method, if the percetile
+                lies between two adjacent data values ``i < j`` then
+                the percentile is calculated as ``i+(j-i)*fraction``,
+                where ``fraction`` is the fractional part of the index
+                surrounded by ``i`` and ``j``.
 
-                By default ``'linear'`` interpolation is used.
+                ===============================
+                *method*
+                ===============================
+                ``'inverted_cdf'``
+                ``'averaged_inverted_cdf'``
+                ``'closest_observation'``
+                ``'interpolated_inverted_cdf'``
+                ``'hazen'``
+                ``'weibull'``
+                ``'linear'`` (default)
+                ``'median_unbiased'``
+                ``'normal_unbiased'``
+                ``'lower'``
+                ``'higher'``
+                ``'nearest'``
+                ``'midpoint'``
+                ===============================
 
             squeeze: `bool`, optional
                 If True then all axes over which percentiles are
@@ -2136,6 +2177,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                   are missing data: ``mtol=0.25``.
 
             {{inplace: `bool`, optional}}
+
+            interpolation: deprecated at version 4.0.0
+                Use the *method* parameter instead.
 
             _preserve_partitions: deprecated at version 4.0.0
 
@@ -2206,6 +2250,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [2 2 3 3]]
 
         """
+        if interpolation is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "interpolation",
+                {"interpolation": None},
+                message="Use the 'method' parameter instead.",
+                version="4.0.0",
+            )  # pragma: no cover
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Parse percentile ranks
@@ -2217,7 +2270,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             q = q.flatten()
 
         if not np.issubdtype(d.dtype, np.number):
-            interpolation = "nearest"
+            method = "nearest"
 
         if axes is None:
             axes = tuple(range(d.ndim))
@@ -2258,7 +2311,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             keys = [(0,) + k for k in keys]
 
         # Create a new dask dictionary for the result
-        name = "cf-percentile-" + tokenize(dx, axes, q, interpolation)
+        name = "cf-percentile-" + tokenize(dx, axes, q, method)
         name = (name,)
         dsk = {
             name
@@ -2267,7 +2320,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 dask_key,
                 q,
                 axes,
-                interpolation,
+                method,
                 keepdims,
                 mtol,
             )

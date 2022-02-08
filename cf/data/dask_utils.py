@@ -191,7 +191,7 @@ def cf_harden_mask(a):
     return a
 
 
-def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
+def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     """Compute percentiles of the data along the specified axes.
 
     See `cf.Data.percentile` for further details.
@@ -215,11 +215,9 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
         axis: `tuple` of `int`
             Axes along which the percentiles are computed.
 
-        interpolation: `str`
+        method: `str`
             Specifies the interpolation method to use when the desired
-            percentile lies between two data points ``i < j``. Must be
-            one of ``'linear'``, ``'lower'``, ``'higher'``,
-            ``'midpoint'``, or ``'nearest'``.
+            percentile lies between two data points ``i < j``.
 
         keepdims: `bool`, optional
             If this is set to True, the axes which are reduced are
@@ -273,13 +271,18 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
 
         with np.testing.suppress_warnings() as sup:
             sup.filter(
-                category=RuntimeWarning, message=".*All-NaN slice encountered"
+                category=RuntimeWarning,
+                message=".*All-NaN slice encountered.*",
+            )
+            sup.filter(
+                category=UserWarning,
+                message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
             )
             p = np.nanpercentile(
                 a,
                 q,
                 axis=axis,
-                interpolation=interpolation,
+                method=method,
                 keepdims=keepdims,
                 overwrite_input=True,
             )
@@ -304,7 +307,7 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
             a,
             q,
             axis=axis,
-            interpolation=interpolation,
+            method=method,
             keepdims=keepdims,
             overwrite_input=False,
         )

@@ -158,7 +158,7 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of numpy
-_minimum_vn = "1.15"
+_minimum_vn = "1.22"
 if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         f"Bad numpy version: cf requires numpy>={_minimum_vn}. "

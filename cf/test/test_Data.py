@@ -2583,7 +2583,12 @@ class DataTest(unittest.TestCase):
 
         with np.testing.suppress_warnings() as sup:
             sup.filter(
-                category=RuntimeWarning, message=".*All-NaN slice encountered"
+                category=RuntimeWarning,
+                message=".*All-NaN slice encountered.*",
+            )
+            sup.filter(
+                category=UserWarning,
+                message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
             )
             for axis in [None] + self.axes_combinations:
                 for keepdims in (True, False):
@@ -2616,7 +2621,12 @@ class DataTest(unittest.TestCase):
 
         with np.testing.suppress_warnings() as sup:
             sup.filter(
-                category=RuntimeWarning, message=".*All-NaN slice encountered"
+                category=RuntimeWarning,
+                message=".*All-NaN slice encountered.*",
+            )
+            sup.filter(
+                category=UserWarning,
+                message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
             )
             for keepdims in (True, False):
                 for q in ranks:
