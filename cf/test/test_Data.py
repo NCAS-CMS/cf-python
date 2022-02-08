@@ -2549,14 +2549,7 @@ class DataTest(unittest.TestCase):
                         "\ne={}, \nb={}".format(h, axes, e.array, b),
                     )
 
-    def test_Data_median(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # Already tested by test_Data_percentile with rank=50
-        pass
-
-    def test_Data_percentile(self):
+    def test_Data_percentile_median(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
