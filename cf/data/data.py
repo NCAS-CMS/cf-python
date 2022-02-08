@@ -2057,7 +2057,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         squeeze=False,
         mtol=1,
         inplace=False,
-        chunks=None,
         _preserve_partitions=False,
     ):
         """Compute percentiles of the data along the specified axes.
@@ -2230,49 +2229,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         shape = dx.shape
 
         # Rechunk the data so that the dimensions over which
-        # percentiles are being calculated all have one chunk
-        org_chunks = dx.chunks
-        if chunks is None:
-            tmp_chunks = [
-                -1 if i in axes else c for i, c in enumerate(org_chunks)
-            ]
-            new_chunks = normalize_chunks(tmp_chunks, shape=shape, dtype=dtype)
-        else:
-            # User-preferred chunking
-            tmp_chunks = normalize_chunks(chunks, shape=shape, dtype=dtype)
-            tmp_chunks = [
-                -1 if i in axes else c for i, c in enumerate(tmp_chunks)
-            ]
-            new_chunks = normalize_chunks(tmp_chunks, shape=shape, dtype=dtype)
-
-            # Make an effort at least as many chunks in the rechunked
-            # array as in the input array (in some simple, not very
-            # extensive, tests this gives fastest compute).
-            org_n_chunks = reduce(mul, map(len, org_chunks), 1)
-            new_n_chunks = reduce(mul, map(len, new_chunks), 1)
-            if org_n_chunks > new_n_chunks:
-                # Define an upper limit to the new chunk sizes, which
-                # is the size of the current largest chunk.
-                #
-                # Note that this is a soft limit that we're assuming
-                # is OK to get exceeded if the collapsed axes have a
-                # large enough size when flattened.
-                largest_chunk_size = reduce(mul, map(max, org_chunks), 1)
-                limit = int(
-                    dtype.itemsize
-                    * largest_chunk_size
-                    * new_n_chunks
-                    / org_n_chunks
-                )
-
-                tmp_chunks = [
-                    -1 if i in axes else "auto" for i in range(dx.ndim)
-                ]
-
-                new_chunks = normalize_chunks(
-                    tmp_chunks, shape=shape, limit=limit, dtype=dtype
-                )
-
+        # percentiles are being calculated all have one chunk.
+        #
+        # Make sure that no new chunks are larger (in bytes) than any
+        # original chunk.
+        new_chunks = normalize_chunks(
+            [-1 if i in axes else "auto" for i in range(dx.ndim)],
+            shape=shape,
+            dtype=dtype,
+            limit=dtype.itemsize * reduce(mul, map(max, dx.chunks), 1),
+        )
         dx = dx.rechunk(new_chunks)
 
         # Initialise the indices of each chunk of the result
