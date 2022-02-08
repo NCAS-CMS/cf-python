@@ -5,8 +5,7 @@ from itertools import product
 import dask.array as da
 import numpy as np
 
-from ..cfdatetime import dt as cf_dt
-from ..cfdatetime import dt2rt, rt2dt, st2rt
+from ..cfdatetime import _default_calendar, dt, dt2rt, rt2dt, st2rt
 from ..units import Units
 
 
@@ -61,58 +60,97 @@ def _is_numeric_dtype(array):
 
 
 def convert_to_datetime(array, units):
-    """Convert a daskarray to.
+    """Convert a dask array of numbers to one of date-time objects.
 
     .. versionadded:: 4.0.0
 
-        :Parameters:
+    .. seealso `convert_to_reftime`
 
-            array: dask array
+    :Parameters:
 
-            units : `Units`
+        array: `dask.array.Array`
+            The input reference time values.
 
-        :Returns:
+        units: `Units`
+            The reference time units that define the output
+            date-time objects.
 
-            dask array
-                A new dask array containing datetime objects.
+    :Returns:
+
+        `dask.array.Array`
+            A new dask array containing date-time objects.
+
+    **Examples**
+
+    >>> import dask.array as da
+    >>> d = da.from_array(2.5)
+    >>> e = convert_to_datetime(d, cf.Units("days since 2000-12-01"))
+    >>> e.compute()
+    cftime.DatetimeGregorian(2000, 12, 3, 12, 0, 0, 0, has_year_zero=False)
 
     """
-    dx = array.map_blocks(partial(rt2dt, units_in=units), dtype=object)
-    return dx
+    return array.map_blocks(
+        partial(rt2dt, units_in=units),
+        dtype=object,
+        meta=np.array((), dtype=object),
+    )
 
 
-def convert_to_reftime(array, units, first_value=None):
+def convert_to_reftime(array, units=None, first_value=None):
     """Convert a dask array of string or object date-times to floating
     point reference times.
 
     .. versionadded:: 4.0.0
 
-        :Parameters:
+    .. seealso `convert_to_datetime`
 
-            array: dask array
+    :Parameters:
 
-            units : `Units`
+        array: `dask.array.Array`
 
-            first_value : scalar, optional
+        units: `Units`, optional
+             Specify the units for the output reference time
+             values. By default the the units are inferred from
+             *first_value*, if possible, otherwise they are set to
+             ``<Units: days since 1970-01-01 gregorian>``.
 
-        :Returns:
+        first_value: optional
+            If set, then assumed to be equal to the first non-missing
+            value of the array. By default the first non-missing value
+            is found by inspection.
 
-            dask array, `Units`
-                A new dask array containing reference times, and its
-                units.
+    :Returns:
+
+        `dask.array.Array`, `Units`
+            The reference times, and their units.
+
+    >>> import dask.array as da
+    >>> d = da.from_array(2.5)
+    >>> e = convert_to_datetime(d, cf.Units("days since 2000-12-01"))
+    >>> f, u = convert_to_reftime(e)
+    >>> f.compute()
+    array(11294.5)
+    >>> u
+    <Units: days since 1970-01-01 gregorian>
+
+    >>> f, u = convert_to_reftime(e, cf.Units("days since 2000-12-01"))
+    >>> f.compute()
+    array(2.5))
+    >>> u
+    <Units: days since 2000-12-01 gregorian>
 
     """
     kind = array.dtype.kind
     if kind in "US":
         # Convert date-time strings to reference time floats
         if not units:
-            value = first_value(array, first_value)
-            if value is not None:
-                YMD = str(value).partition("T")[0]
+            first_value = first_non_missing_value(array, cached=first_value)
+            if first_value is not None:
+                YMD = str(first_value).partition("T")[0]
             else:
                 YMD = "1970-01-01"
 
-            units = Units("days since " + YMD, units._calendar)
+            units = Units("days since " + YMD, _default_calendar)
 
         array = array.map_blocks(
             partial(st2rt, units_in=units, units_out=units), dtype=float
@@ -120,14 +158,14 @@ def convert_to_reftime(array, units, first_value=None):
 
     elif kind == "O":
         # Convert date-time objects to reference time floats
-        value = first_value(array, first_value)
-        if value is not None:
-            x = value
+        first_value = first_non_missing_value(array, cached=first_value)
+        if first_value is not None:
+            x = first_value
         else:
-            x = cf_dt(1970, 1, 1, calendar="gregorian")
+            x = dt(1970, 1, 1, calendar=_default_calendar)
 
         x_since = "days since " + "-".join(map(str, (x.year, x.month, x.day)))
-        x_calendar = getattr(x, "calendar", "gregorian")
+        x_calendar = getattr(x, "calendar", _default_calendar)
 
         d_calendar = getattr(units, "calendar", None)
         d_units = getattr(units, "units", None)
@@ -136,23 +174,22 @@ def convert_to_reftime(array, units, first_value=None):
             if d_calendar is not None:
                 if not units.equivalent(Units(x_since, x_calendar)):
                     raise ValueError(
-                        f"Incompatible units: "
+                        "Incompatible units: "
                         f"{units!r}, {Units(x_since, x_calendar)!r}"
                     )
             else:
                 d_calendar = x_calendar
 
         if not units:
-            # Set the units to something that is (hopefully)
-            # close to all of the datetimes, in an attempt to
-            # reduce errors arising from the conversion to
-            # reference times
+            # Set the units to something that is (hopefully) close to
+            # all of the datetimes, in an attempt to reduce errors
+            # arising from the conversion to reference times
             units = Units(x_since, calendar=d_calendar)
         else:
             units = Units(d_units, calendar=d_calendar)
 
-        # Check that all date-time objects have correct and
-        # equivalent calendars
+        # Check that all date-time objects have correct and equivalent
+        # calendars
         calendars = unique_calendars(array)
         if len(calendars) > 1:
             raise ValueError(
@@ -160,20 +197,25 @@ def convert_to_reftime(array, units, first_value=None):
                 f"calendars: {tuple(calendars)}"
             )
 
-        # If the date-times are calendar-agnostic, assign the
-        # given calendar, defaulting to Gregorian.
+        # If the date-times are calendar-agnostic, assign the given
+        # calendar, defaulting to Gregorian.
         if calendars.pop() == "":
-            calendar = getattr(units, "calendar", "gregorian")
 
-            # TODODASK: can map_blocks this, I think
-            new_array = da.empty_like(array, dtype=object)
-            for i in np.ndindex(new_array.shape):
-                new_array[i] = cf_dt(array[i], calendar=calendar)
+            def set_calendar(x, calendar=_default_calendar):
+                np.vectorize(
+                    partial(dt, calendar=calendar), otypes=[np.dtype(object)]
+                )
 
-            array = new_array
+            array = array.map_blocks(
+                set_calendar,
+                calendar=getattr(units, "calendar", _default_calendar),
+                dtype=object,
+            )
 
         # Convert the date-time objects to reference times
-        array = array.map_blocks(dt2rt, units_out=units, dtype=float)
+        array = array.map_blocks(
+            dt2rt, units_in=None, units_out=units, dtype=float
+        )
 
     if not units.isreftime:
         raise ValueError(
@@ -186,27 +228,22 @@ def convert_to_reftime(array, units, first_value=None):
 def first_non_missing_value(array, cached=None):
     """Return the first non-missing value of an array.
 
-    If the array contains only missing data then `None` is returned.
-
-    If a cached value is provided then that is returned without
-    looking for the actual first non-missing value.
-
     .. versionadded:: 4.0.0
 
     :Parameters:
 
-    array: dask array
-        The array to be inspected.
+        array: `dask.array.Array`
+            The array to be inspected.
 
-    cached: scalar, optional
-        If set to a value other than `Ǹone`, then return this value
-        instead of inspecting the array.
+        cached: scalar, optional
+            If set to a value other than `None`, then return this
+            value instead of inspecting the array.
 
     :Returns:
 
-            If the *cached* parameter is set then its value is
-            returned. Otherwise return the first non-missing value, or
-            `None` if there isn't one.
+            If set, then *cached* is returned. Otherwise returns the
+            first non-missing value of *array*, or `None` if there
+            isn't one.
 
     """
     if cached is not None:
@@ -219,10 +256,11 @@ def first_non_missing_value(array, cached=None):
     for i in range(array.size):
         index = np.unravel_index(i, shape)
         x = array[index].compute()
-        if x is np.ma.masked:
-            continue
-
-        return x.item()
+        if x is not np.ma.masked:
+            try:
+                return x.item()
+            except AttributeError:
+                return x
 
     return None
 
@@ -232,6 +270,11 @@ def unique_calendars(array):
 
     .. versionadded:: 4.0.0
 
+    :Parameters:
+
+        array: `dask.array.Array`
+            A dask array of data-time objects.
+
     :Returns:
 
         `set`
@@ -240,21 +283,29 @@ def unique_calendars(array):
     """
 
     def _get_calendar(x):
-        getattr(x, "calendar", "gregorian")
+        return getattr(x, "calendar", _default_calendar)
 
     _calendars = np.vectorize(_get_calendar, otypes=[np.dtype(str)])
 
-    array = array.map_blocks(_calendars, dtype=str)
+    # TODO
+    #
+    # da.unique doesn't work well with masked data (2022-02-07), so do
+    # move to numpy-space for now. When da.unique is better we can
+    # replace the next two lines of code with:
+    #
+    #   array = array.map_blocks(_calendars, dtype=str)
+    #   calendars = da.unique(array).compute()
+    array = _calendars(array.compute())
+    calendars = np.unique(array)
 
-    cals = da.unique(array).compute()
-    if np.ma.isMA(cals):
-        cals = cals.compressed()
+    if np.ma.isMA(calendars):
+        calendars = calendars.compressed()
 
-    # TODODASK - need to allow differetn bu equivalent calendars, such
-    # as "gregorian" and 'standard'. Or perhaps this should by the
-    # caller?
+    # TODODASK - need to allow different but equivalent calendars,
+    #            such as "gregorian" and "standard". Or perhaps this
+    #            should be done by the caller?
 
-    return set(cals.tolist())
+    return set(calendars.tolist())
 
 
 @lru_cache(maxsize=32)

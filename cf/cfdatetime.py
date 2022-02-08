@@ -426,6 +426,9 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         array, units, calendar, only_use_cftime_datetimes=True
     )
 
+    if not isinstance(array, np.ndarray):
+        array = np.array(array, dtype=object)
+
     return array
 
 
@@ -462,15 +465,17 @@ def dt2rt(array, units_in, units_out, dummy1=None):
             An array of numbers with the same shape as *array*.
 
     """
-    ndim = np.ndim(array)
+    isscalar = np.ndim(array)
 
-    #    array = units_out._utime.date2num(array)
     array = cftime.date2num(
         array, units=units_out.units, calendar=units_out._utime.calendar
     )
 
-    if not ndim:
-        array = np.asanyarray(array)
+    if isscalar:
+        if array is np.ma.masked:
+            array = np.ma.masked_all(())
+        else:
+            array = np.asanyarray(array)
 
     return array
 

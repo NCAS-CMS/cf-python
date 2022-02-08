@@ -1437,7 +1437,6 @@ class DataTest(unittest.TestCase):
         d[...] = cf.masked
         self.assertFalse(d.any())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "AssertionError: -999 != 0")
     def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1453,19 +1452,20 @@ class DataTest(unittest.TestCase):
         self.assertIs(a[()], np.ma.masked)
 
         # Non-scalar numeric array
-        b = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-        d = cf.Data(b, "km")
+        b = np.arange(24).reshape(2, 1, 3, 4)
+        d = cf.Data(b, "km", fill_value=-123)
         a = d.array
         a[0, 0, 0, 0] = -999
         a2 = d.array
-        self.assertEqual(a2[0, 0, 0, 0], 0)
-        self.assertEqual(a2.shape, b.shape)
         self.assertTrue((a2 == b).all())
         self.assertFalse((a2 == a).all())
 
+        d[0, 0, 0, 0] = cf.masked
+        self.assertEqual(d.array.fill_value, d.fill_value)
+
+        # Date-time array
         d = cf.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
-        a = d.array
-        self.assertTrue((a == np.array([[2.5]])).all())
+        self.assertEqual(d.array, 2.5)
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_binary_mask(self):
@@ -1585,7 +1585,7 @@ class DataTest(unittest.TestCase):
         )
         d *= 31
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "'NoneType' object is not callable")
+    #    @unittest.skipIf(TEST_DASKIFIED_ONLY, "'NoneType' object is not callable")
     def test_Data_datetime_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

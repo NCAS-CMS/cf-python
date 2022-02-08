@@ -6226,18 +6226,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def array(self):
         """A numpy array copy the data array.
 
-            .. note:: If the data array is stored as date-time objects then a
-                      numpy array of numeric reference times will be
-                      returned. A numpy array of date-time objects may be
-                      returned by the `datetime_array` attribute.
+        .. note:: If the data array is stored as date-time objects
+                  then a numpy array of numeric reference times will
+                  be returned. A numpy array of date-time objects may
+                  be returned by the `datetime_array` attribute.
 
-            **Performance**
 
-            `array` causes all delayed operations to be computed.
 
-            .. seealso:: `datetime_array`, `varray`
+        **Performance**
 
-            **Examples:**
+        `array` causes all delayed operations to be computed.
+
+        .. seealso:: `datetime_array`, `varray`
+
+        **Examples**
 
         >>> d = cf.Data([1, 2, 3.0], 'km')
         >>> a = d.array
@@ -6254,13 +6256,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         dx = self._get_dask()
-        a = dx.compute()
+        a = dx.compute().copy()
 
         if np.ma.isMA(a):
             if self.hardmask:
                 a.harden_mask()
             else:
                 a.soften_mask()
+
+            a.set_fill_value(self.fill_value)
 
         return a
 
@@ -6269,20 +6273,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def datetime_array(self):
         """An independent numpy array of date-time objects.
 
-            Only applicable to data arrays with reference time units.
+        Only applicable to data arrays with reference time units.
 
-            If the calendar has not been set then the CF default calendar will
-            be used and the units will be updated accordingly.
+        If the calendar has not been set then the CF default calendar will
+        be used and the units will be updated accordingly.
 
-            The data-type of the data array is unchanged.
+        The data-type of the data array is unchanged.
 
         .. seealso:: `array`
 
-            **Examples:**
+        **Performance**
 
-            **Performance**
+        `datetime_array` causes all delayed operations to be computed.
 
-            `datetime_array` causes all delayed operations to be computed.
+        **Examples**
 
         """
         units = self.Units
@@ -6334,7 +6338,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 a.soften_mask()
 
+            a.set_fill_value(self.fill_value)
+
         return a
+
+    @property
+    def varray(self):
+        """A numpy array view the data array.
+
+        Deprecated at version 4.0.0.
+
+        .. seealso:: `array`, `datetime_array`
+
+        """
+        raise NotImplementedError(
+            "The varray method was deprecated at version 4.0.0"
+        )
 
     @property
     def mask(self):
