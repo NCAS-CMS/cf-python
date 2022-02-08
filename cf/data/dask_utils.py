@@ -181,7 +181,12 @@ def cf_harden_mask(a):
 
     """
     if np.ma.isMA(a):
-        a.harden_mask()
+        try:
+            a.harden_mask()
+        except AttributeError:
+            # Trap cases when the input array is not a numpy array
+            # (e.g. it might be numpy.ma.masked).
+            pass
 
     return a
 
@@ -239,9 +244,6 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
         `numpy.ndarray`
 
     """
-    if not len(a):
-        return None
-
     if np.ma.is_masked(a):
         # ------------------------------------------------------------
         # Input array is masked: Replace missing values with NaNs and
@@ -331,7 +333,12 @@ def cf_soften_mask(a):
 
     """
     if np.ma.isMA(a):
-        a.soften_mask()
+        try:
+            a.soften_mask()
+        except AttributeError:
+            # Trap cases when the input array is not a numpy array
+            # (e.g. it might be numpy.ma.masked).
+            pass
 
     return a
 

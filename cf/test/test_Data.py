@@ -2599,6 +2599,38 @@ class DataTest(unittest.TestCase):
                         self.assertEqual(b1.shape, a1.shape)
                         self.assertTrue((b1.array == a1).all())
 
+        # Test scalar input (not masked)
+        a = np.array(9)
+        d = cf.Data(a)
+        for keepdims in (True, False):
+            for q in ranks:
+                a1 = np.nanpercentile(a, q, keepdims=keepdims)
+                b1 = d.percentile(q, squeeze=not keepdims)
+                self.assertEqual(b1.shape, a1.shape)
+                self.assertTrue((b1.array == a1).all())
+
+        # Test scalar input (masked)
+        a = np.ma.array(9, mask=True)
+        filled = np.ma.filled(a.astype(float), np.nan)
+        d = cf.Data(a)
+
+        with np.testing.suppress_warnings() as sup:
+            sup.filter(
+                category=RuntimeWarning, message=".*All-NaN slice encountered"
+            )
+            for keepdims in (True, False):
+                for q in ranks:
+                    a1 = np.nanpercentile(filled, q, keepdims=keepdims)
+                    mask = np.isnan(a1)
+                    if mask.any():
+                        a1 = np.ma.masked_where(mask, a1, copy=False)
+
+                    b1 = d.percentile(q, squeeze=not keepdims)
+                    self.assertEqual(b1.shape, a1.shape)
+                    self.assertTrue(
+                        (b1.array == a1).all() in (True, np.ma.masked)
+                    )
+
         # Test mtol=1
         d = cf.Data(self.a)
         d[...] = cf.masked  # All masked
