@@ -201,7 +201,7 @@ def cf_percentile(a, q, axis, interpolation, keepdims=False, mtol=1):
     :Parameters:
 
         a: `numpy.ndarray`
-            Input array,
+            Input array.
 
         q: `numpy.ndarray`
             Percentile or sequence of percentiles to compute, which
