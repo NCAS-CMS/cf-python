@@ -2126,7 +2126,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 referenced from the documentation for
                 `numpy.precentile`.
 
-                For the default ``'linear'`` method, if the percetile
+                For the default ``'linear'`` method, if the percentile
                 lies between two adjacent data values ``i < j`` then
                 the percentile is calculated as ``i+(j-i)*fraction``,
                 where ``fraction`` is the fractional part of the index
