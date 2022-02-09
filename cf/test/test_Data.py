@@ -2663,7 +2663,7 @@ class DataTest(unittest.TestCase):
             e = d.percentile(q, axes=1, mtol=0.1)
             self.assertEqual(np.ma.count(e.array), 2 * e.shape[0])
 
-        q = ranks[-1]  # axis=1: test the the non-sequence rank
+        q = ranks[-1]  # axis=1: test the non-sequence rank
         e = d.percentile(q, axes=1, mtol=0.1)
         self.assertEqual(np.ma.count(e.array), e.shape[0] - 1)
 
