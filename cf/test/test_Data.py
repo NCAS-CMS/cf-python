@@ -3738,6 +3738,44 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
         self.assertTrue((e.array == a).all())
 
+    def test_Data_empty(self):
+        for shape, dtype_in, dtype_out in zip(
+            [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
+        ):
+            d = cf.Data.empty(shape, dtype=dtype_in, chunks=-1)
+            self.assertEqual(d.shape, shape)
+            self.assertEqual(d.dtype, dtype_out)
+
+    def test_Data_full(self):
+        fill_value = 999
+        for shape, dtype_in, dtype_out in zip(
+            [(), (2,), (4, 5)], [None, float, bool], [int, float, bool]
+        ):
+            d = cf.Data.full(shape, fill_value, dtype=dtype_in, chunks=-1)
+            self.assertEqual(d.shape, shape)
+            self.assertEqual(d.dtype, dtype_out)
+            self.assertTrue(
+                (d.array == np.full(shape, fill_value, dtype=dtype_in)).all()
+            )
+
+    def test_Data_ones(self):
+        for shape, dtype_in, dtype_out in zip(
+            [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
+        ):
+            d = cf.Data.ones(shape, dtype=dtype_in, chunks=-1)
+            self.assertEqual(d.shape, shape)
+            self.assertEqual(d.dtype, dtype_out)
+            self.assertTrue((d.array == np.ones(shape, dtype=dtype_in)).all())
+
+    def test_Data_zeros(self):
+        for shape, dtype_in, dtype_out in zip(
+            [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
+        ):
+            d = cf.Data.zeros(shape, dtype=dtype_in, chunks=-1)
+            self.assertEqual(d.shape, shape)
+            self.assertEqual(d.dtype, dtype_out)
+            self.assertTrue((d.array == np.zeros(shape, dtype=dtype_in)).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

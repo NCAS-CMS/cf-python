@@ -427,29 +427,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 If False then do not deep copy input parameters prior to
                 initialization. By default arguments are deep copied.
 
-            chunks: `int`, `tuple`, `dict` or `str`, optional
-                Specify the chunking of the dask array. One of
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                * A blocksize like ``1000`` to apply to all
-                  dimensions. The value ``-1`` indicates the full size of
-                  the each dimension.
-
-                * A blockshape like ``(1000, 1000)``. A value of ``-1`` or
-                  `None` indicates the full size of the corresponding
-                  dimension.
-
-                * Explicit sizes of all blocks along all dimensions like
-                  ``((1000, 1000, 500), (400, 400))``.
-
-                * A size in bytes, like ``"100 MiB"``, which will choose a
-                  uniform block-like shape. TODODASK - special syntax
-
-                * The word ``"auto"`` which acts like a size in bytes, but
-                  uses a configuration value ``array.chunk-size`` for the
-                  chunk size. TODODASK - config
-
-                By default, ``"auto"`` is used to specify the array
-                chunking.
+                .. versionadded:: 4.0.0
 
             chunk: deprecated at version 4.0.0
                 Use the *chunks* parameter instead.
@@ -598,6 +578,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         elif not is_dask_collection(array):
             # Turn the data into a dask array
             array = to_dask(array, chunks, dask_from_array_options)
+
+        elif chunks != _DEFAULT_CHUNKS:
+            # The data is already a dask array
+            raise ValueError(
+                "Can't define chunks for dask input arrays. Consider "
+                "rechunking the dask array before initialisation, or "
+                "rechunking the Data after initialisation."
+            )
 
         # Find out if we have an array of date-time objects
         first_value = None
@@ -3237,28 +3225,29 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
-        chunks:  `int`, `tuple`, `dict` or `str`, optional
-            The new block dimensions to create. ``-1`` indicates the full
-            size of the corresponding dimension. Default is ``"auto"``
-            which automatically determines chunk sizes.
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-        threshold: `int`, optional
-            The graph growth factor under which we don't bother introducing an
-            intermediate step.
+                .. versionadded:: 4.0.0
 
-        block_size_limit: `int`, optional
-            The maximum block size (in bytes) we want to produce Defaults
-            to the configuration value ``dask.array.chunk-size``
+            threshold: `int`, optional
+                The graph growth factor under which we don't bother
+                introducing an intermediate step.
 
-            TODODASK - how to use/import dask config items??
+            block_size_limit: `int`, optional
+                The maximum block size (in bytes) we want to produce
+                Defaults to the configuration value
+                ``dask.array.chunk-size``
 
-        balance: `bool`, optional
-            If True, try to make each chunk to be the same size. By
-            default this is not attempted.
+                TODODASK - how to use/import dask config items??
 
-            This means ``balance=True`` will remove any small leftover
-            chunks, so using ``x.rechunk(chunks=len(x) // N,
-            balance=True)`` will almost certainly result in ``N`` chunks.
+            balance: `bool`, optional
+                If True, try to make each chunk the same
+                size. By default this is not attempted.
+
+                This means ``balance=True`` will remove any small
+                leftover chunks, so using ``x.rechunk(chunks=len(x) //
+                N, balance=True)`` will almost certainly result in
+                ``N`` chunks.
 
         :Returns:
 
@@ -12441,22 +12430,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         units=None,
         calendar=None,
         fill_value=None,
-        chunk=True,
+        chunks=_DEFAULT_CHUNKS,
     ):
-        """Create a new data array without initializing the elements.
+        """Return a new array of given shape and type, without
+        initializing entries.
 
-        Note that the mask of the returned empty data is hard.
-
-        .. seealso:: `full`, `hardmask`, `ones`, `zeros`
+        .. seealso:: `full`, `ones`, `zeros`
 
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array.
+                The shape of the new array. e.g. `(2, 3)`` or ``2``.
 
-            dtype: `numpy.dtype` or any object convertible to `numpy.dtype`
-                The data-type of the new array. By default the data-type
-                is ``float``.
+            dtype: data-type
+                The desired output data-type for the array, e.g.
+                `numpy.int8`. The default is `numpy.float64`.
 
             units: `str` or `Units`
                 The units for the new data array.
@@ -12464,38 +12452,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             calendar: `str`, optional
                 The calendar for reference time units.
 
-            fill_value: optional
-                The fill value of the data. By default, or if set to
-                `None`, the `numpy` fill value appropriate to the array's
-                data-type will be used (see
-                `numpy.ma.default_fill_value`). Ignored if the *source*
-                parameter is set.
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                The fill value may also be set after initialisation with
-                the `set_fill_value` method.
+                .. versionadded:: 4.0.0
 
-                *Parameter example:*
-                  ``fill_value=-999.``
+            fill_value: deprecated at version 4.0.0
+                Use `set_fill_value` instead.
 
         :Returns:
 
             `Data`
+                Array of uninitialized (arbitrary) data of the given
+                shape and dtype.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data.empty((96, 73))
+        >>> d = cf.Data.empty((2, 2))
+        >>> print(d.array)
+        [[ -9.74499359e+001  6.69583040e-309],
+         [  2.13182611e-314  3.06959433e-309]]         #uninitialized
+
+        >>> d = cf.Data.empty((2,), dtype=bool)
+        >>> print(d.array)
+        [ False  True]                                 #uninitialized
 
         """
-        out = cls.full(
-            shape,
-            fill_value=None,
-            dtype=dtype,
-            units=units,
-            calendar=calendar,
-            chunk=chunk,
-        )
-        out.fill_value = fill_value
-        return out
+        dx = da.empty(shape, dtype=dtype, chunks=chunks)
+        return cls(dx, units=units, calendar=calendar)
 
     @classmethod
     def full(
@@ -12505,24 +12488,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dtype=None,
         units=None,
         calendar=None,
-        chunk=True,
+        chunks=_DEFAULT_CHUNKS,
     ):
-        """Returns a new data array of given shape and type, filled with
-        the given value.
+        """Return a new array of given shape and type, filled with a
+        fill value.
 
         .. seealso:: `empty`, `ones`, `zeros`
 
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array.
+                The shape of the new array. e.g. `(2, 3)`` or ``2``.
 
             fill_value: scalar
                 The fill value.
 
             dtype: data-type
-                The data-type of the new array. By default the data-type
-                is ``float``.
+                The desired data-type for the array. The default, `None`,
+                means ``np.array(fill_value).dtype``.
 
             units: `str` or `Units`
                 The units for the new data array.
@@ -12530,40 +12513,143 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             calendar: `str`, optional
                 The calendar for reference time units.
 
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+                .. versionadded:: 4.0.0
+
         :Returns:
 
             `Data`
+                Array of *fill_value* with the given shape and data
+                type.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data.full((96, 73), -99)
+        >>> d = cf.Data.full((2, 3), -99)
+        [[-99 -99 -99]
+         [-99 -99 -99]]
+
+        >>> d = cf.Data.full(2, 0.0)
+        [0. 0.]
+
+        >>> d = cf.Data.full((2,), 0, dtype=bool)
+        >>> print(d.array)
+        [False False]
 
         """
-        array = FilledArray(
-            shape=tuple(shape),
-            size=reduce(mul, shape, 1),
-            ndim=len(shape),
-            dtype=np.dtype(dtype),
-            fill_value=fill_value,
-        )
+        if dtype is None:
+            # Need to explicitly set the default because dtype is not
+            # a named keyword of da.full
+            dtype = getattr(fill_value, "dtype", None)
+            if dtype is None:
+                dtype = np.array(fill_value).dtype
 
-        return cls(array, units=units, calendar=calendar, chunk=chunk)
-
-    @classmethod
-    def ones(cls, shape, dtype=None, units=None, calendar=None, chunk=True):
-        """Returns a new array filled with ones of set shape and
-        type."""
-        return cls.full(
-            shape, 1, dtype=dtype, units=units, calendar=calendar, chunk=chunk
-        )
+        dx = da.full(shape, fill_value, dtype=dtype, chunks=chunks)
+        return cls(dx, units=units, calendar=calendar)
 
     @classmethod
-    def zeros(cls, shape, dtype=None, units=None, calendar=None, chunk=True):
-        """Returns a new array filled with zeros of set shape and
-        type."""
-        return cls.full(
-            shape, 0, dtype=dtype, units=units, calendar=calendar, chunk=chunk
-        )
+    def ones(
+        cls,
+        shape,
+        dtype=None,
+        units=None,
+        calendar=None,
+        chunks=_DEFAULT_CHUNKS,
+    ):
+        """Returns a new array filled with ones of set shape and type.
+
+        .. seealso:: `empty`, `full`, `zeros`
+
+        :Parameters:
+
+            shape: `int` or `tuple` of `int`
+                The shape of the new array. e.g. `(2, 3)`` or ``2``.
+
+            dtype: data-type
+                The desired data-type for the array, e.g.
+                `numpy.int8`. The default is `numpy.float64`.
+
+            units: `str` or `Units`
+                The units for the new data array.
+
+            calendar: `str`, optional
+                The calendar for reference time units.
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+                .. versionadded:: 4.0.0
+
+        :Returns:
+
+            `Data`
+                Array of ones with the given shape and data type.
+
+        **Examples**
+
+        >>> d = cf.Data.ones((2, 3))
+        >>> print(d.array)
+        [[1. 1. 1.]
+         [1. 1. 1.]]
+
+        >>> d = cf.Data.ones((2,), dtype=bool)
+        >>> print(d.array)
+        [ True  True]
+
+        """
+        dx = da.ones(shape, dtype=dtype, chunks=chunks)
+        return cls(dx, units=units, calendar=calendar)
+
+    @classmethod
+    def zeros(
+        cls,
+        shape,
+        dtype=None,
+        units=None,
+        calendar=None,
+        chunks=_DEFAULT_CHUNKS,
+    ):
+        """Returns a new array filled with zeros of set shape and type.
+
+        .. seealso:: `empty`, `full`, `ones`
+
+        :Parameters:
+
+            shape: `int` or `tuple` of `int`
+                The shape of the new array.
+
+            dtype: data-type
+                The data-type of the new array. By default the
+                data-type is ``float``.
+
+            units: `str` or `Units`
+                The units for the new data array.
+
+            calendar: `str`, optional
+                The calendar for reference time units.
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+                .. versionadded:: 4.0.0
+
+        :Returns:
+
+            `Data`
+                Array of zeros with the given shape and data type.
+
+        **Examples**
+
+        >>> d = cf.Data.zeros((2, 3))
+        >>> print(d.array)
+        [[0. 0. 0.]
+         [0. 0. 0.]]
+
+        >>> d = cf.Data.zeros((2,), dtype=bool)
+        >>> print(d.array)
+        [False False]
+
+        """
+        dx = da.zeros(shape, dtype=dtype, chunks=chunks)
+        return cls(dx, units=units, calendar=calendar)
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("out")
