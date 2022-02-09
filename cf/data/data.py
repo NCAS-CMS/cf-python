@@ -2124,7 +2124,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 desired percentile lies between two data values. The
                 methods are listed here, but their definitions must be
                 referenced from the documentation for
-                `numpy.precentile`.
+                `numpy.percentile`.
 
                 For the default ``'linear'`` method, if the percentile
                 lies between two adjacent data values ``i < j`` then
