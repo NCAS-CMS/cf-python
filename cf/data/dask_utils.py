@@ -4,6 +4,8 @@ These will typically be functions that operate on dask chunks. For
 instance, as would be passed to `dask.array.map_blocks`.
 
 """
+from functools import reduce
+from operator import mul
 
 import dask.array as da
 import numpy as np
@@ -179,9 +181,138 @@ def cf_harden_mask(a):
 
     """
     if np.ma.isMA(a):
-        a.harden_mask()
+        try:
+            a.harden_mask()
+        except AttributeError:
+            # Trap cases when the input array is not a numpy array
+            # (e.g. it might be numpy.ma.masked).
+            pass
 
     return a
+
+
+def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
+    """Compute percentiles of the data along the specified axes.
+
+    See `cf.Data.percentile` for further details.
+
+    .. note:: This function correctly sets the mask hardness of the
+              output array.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `cf.Data.percentile`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            Input array.
+
+        q: `numpy.ndarray`
+            Percentile or sequence of percentiles to compute, which
+            must be between 0 and 100 inclusive.
+
+        axis: `tuple` of `int`
+            Axes along which the percentiles are computed.
+
+        method: `str`
+            Specifies the interpolation method to use when the desired
+            percentile lies between two data points ``i < j``.
+
+        keepdims: `bool`, optional
+            If this is set to True, the axes which are reduced are
+            left in the result as dimensions with size one. With this
+            option, the result will broadcast correctly against the
+            original array *a*.
+
+        mtol: number, optional
+            Set an upper limit of the amount input data values which
+            are allowed to be missing data when contributing to
+            individual output percentile values. It is defined as a
+            fraction (between 0 and 1 inclusive) of the contributing
+            input data values. The default is 1, meaning that a
+            missing datum in the output array only occurs when all of
+            its contributing input array elements are missing data. A
+            value of 0 means that a missing datum in the output array
+            occurs whenever any of its contributing input array
+            elements are missing data.
+
+    :Returns:
+
+        `numpy.ndarray`
+
+    """
+    if np.ma.is_masked(a):
+        # ------------------------------------------------------------
+        # Input array is masked: Replace missing values with NaNs and
+        # remask later.
+        # ------------------------------------------------------------
+        if a.dtype != float:
+            # Can't assign NaNs to integer arrays
+            a = a.astype(float, copy=True)
+
+        mask = None
+        if mtol < 1:
+            # Count the number of missing values that contribute to
+            # each output percentile value and make a corresponding
+            # mask
+            full_size = reduce(
+                mul, [size for i, size in enumerate(a.shape) if i in axis], 1
+            )
+            n_missing = full_size - np.ma.count(
+                a, axis=axis, keepdims=keepdims
+            )
+            if n_missing.any():
+                mask = np.where(n_missing >= mtol * full_size, True, False)
+                if q.ndim:
+                    mask = np.expand_dims(mask, 0)
+
+        a = np.ma.filled(a, np.nan)
+
+        with np.testing.suppress_warnings() as sup:
+            sup.filter(
+                category=RuntimeWarning,
+                message=".*All-NaN slice encountered.*",
+            )
+            sup.filter(
+                category=UserWarning,
+                message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
+            )
+            p = np.nanpercentile(
+                a,
+                q,
+                axis=axis,
+                method=method,
+                keepdims=keepdims,
+                overwrite_input=True,
+            )
+
+        # Update the mask for NaN points
+        nan_mask = np.isnan(p)
+        if nan_mask.any():
+            if mask is None:
+                mask = nan_mask
+            else:
+                mask = np.ma.where(nan_mask, True, mask)
+
+        # Mask any NaNs and elements below the mtol threshold
+        if mask is not None:
+            p = np.ma.where(mask, np.ma.masked, p)
+
+    else:
+        # ------------------------------------------------------------
+        # Input array is not masked
+        # ------------------------------------------------------------
+        p = np.percentile(
+            a,
+            q,
+            axis=axis,
+            method=method,
+            keepdims=keepdims,
+            overwrite_input=False,
+        )
+
+    return p
 
 
 def cf_soften_mask(a):
@@ -205,7 +336,12 @@ def cf_soften_mask(a):
 
     """
     if np.ma.isMA(a):
-        a.soften_mask()
+        try:
+            a.soften_mask()
+        except AttributeError:
+            # Trap cases when the input array is not a numpy array
+            # (e.g. it might be numpy.ma.masked).
+            pass
 
     return a
 

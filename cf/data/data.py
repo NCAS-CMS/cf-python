@@ -12,9 +12,11 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
-
-# from dask.array.core import slices_from_chunks
-from dask.base import is_dask_collection
+from dask.array import Array
+from dask.array.core import normalize_chunks
+from dask.base import is_dask_collection, tokenize
+from dask.core import flatten
+from dask.highlevelgraph import HighLevelGraph
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
 from ..cfdatetime import dt as cf_dt
@@ -27,7 +29,12 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _numpy_isclose, _section, abspath
+from ..functions import (
+    _DEPRECATION_ERROR_KWARGS,
+    _numpy_isclose,
+    _section,
+    abspath,
+)
 from ..functions import atol as cf_atol
 from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
@@ -99,6 +106,7 @@ from .creation import (
 from .dask_utils import (
     _da_ma_allclose,
     cf_harden_mask,
+    cf_percentile,
     cf_soften_mask,
     cf_where,
 )
@@ -1953,6 +1961,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_deprecated_kwarg_check("_preserve_partitions")
     def median(
         self,
         axes=None,
@@ -1962,14 +1972,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         _preserve_partitions=False,
     ):
         """Compute the median of the values."""
-
         return self.percentile(
             50,
             axes=axes,
             squeeze=squeeze,
             mtol=mtol,
             inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
 
     @_inplace_enabled(default=False)
@@ -2025,15 +2033,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_deprecated_kwarg_check("_preserve_partitions")
+    @_inplace_enabled(default=False)
     def percentile(
         self,
         ranks,
         axes=None,
-        interpolation="linear",
+        method="linear",
         squeeze=False,
         mtol=1,
         inplace=False,
         _preserve_partitions=False,
+        interpolation=None,
     ):
         """Compute percentiles of the data along the specified axes.
 
@@ -2049,9 +2061,32 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dimension is created so that percentiles can be stored for each
         percentile rank.
 
+        **Accuracy**
+
+        The `percentile` method returns results that are consistent
+        with `numpy.percentile`, which may be different to those
+        created by `dask.percentile`. The dask method uses an
+        algorithm that calculates approximate percentiles which are
+        likely to be different from the correct values when there are
+        two or more dask chunks.
+
+        >>> import numpy as np
+        >>> import dask.array as da
+        >>> import cf
+        >>> a = np.arange(101)
+        >>> dx = da.from_array(a, chunks=10)
+        >>> da.percentile(dx, [40, 60]).compute()
+        array([40.36])
+        >>> np.percentile(a, 40)
+        array([40.])
+        >>> d = cf.Data(a, chunks=10)
+        >>> d.percentile(40).array
+        array([40.])
+
         .. versionadded:: 3.0.4
 
-        .. seealso:: `digitize`, `median`, `mean_of_upper_decile`, `where`
+        .. seealso:: `digitize`, `median`, `mean_of_upper_decile`,
+                     `where`
 
         :Parameters:
 
@@ -2066,23 +2101,36 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 By default, of *axes* is `None`, all axes are selected.
 
-            interpolation: `str`, optional
-                Specify the interpolation method to use when the desired
-                percentile lies between two data values ``i < j``:
+            method: `str`, optional
+                Specify the interpolation method to use when the
+                desired percentile lies between two data values. The
+                methods are listed here, but their definitions must be
+                referenced from the documentation for
+                `numpy.percentile`.
 
-                ===============  =========================================
-                *interpolation*  Description
-                ===============  =========================================
-                ``'linear'``     ``i+(j-i)*fraction``, where ``fraction``
-                                 is the fractional part of the index
-                                 surrounded by ``i`` and ``j``
-                ``'lower'``      ``i``
-                ``'higher'``     ``j``
-                ``'nearest'``    ``i`` or ``j``, whichever is nearest
-                ``'midpoint'``   ``(i+j)/2``
-                ===============  =========================================
+                For the default ``'linear'`` method, if the percentile
+                lies between two adjacent data values ``i < j`` then
+                the percentile is calculated as ``i+(j-i)*fraction``,
+                where ``fraction`` is the fractional part of the index
+                surrounded by ``i`` and ``j``.
 
-                By default ``'linear'`` interpolation is used.
+                ===============================
+                *method*
+                ===============================
+                ``'inverted_cdf'``
+                ``'averaged_inverted_cdf'``
+                ``'closest_observation'``
+                ``'interpolated_inverted_cdf'``
+                ``'hazen'``
+                ``'weibull'``
+                ``'linear'`` (default)
+                ``'median_unbiased'``
+                ``'normal_unbiased'``
+                ``'lower'``
+                ``'higher'``
+                ``'nearest'``
+                ``'midpoint'``
+                ===============================
 
             squeeze: `bool`, optional
                 If True then all axes over which percentiles are
@@ -2093,23 +2141,29 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 data.
 
             mtol: number, optional
-                Set the fraction of input data elements which is allowed
-                to contain missing data when contributing to an individual
-                output data element. Where this fraction exceeds *mtol*,
-                missing data is returned. The default is 1, meaning that a
-                missing datum in the output array occurs when its
-                contributing input array elements are all missing data. A
-                value of 0 means that a missing datum in the output array
-                occurs whenever any of its contributing input array
-                elements are missing data. Any intermediate value is
-                permitted.
+                Set an upper limit of the amount input data values
+                which are allowed to be missing data when contributing
+                to individual output percentile values. It is defined
+                as a fraction (between 0 and 1 inclusive) of the
+                contributing input data values. The default is 1,
+                meaning that a missing datum in the output array only
+                occurs when all of its contributing input array
+                elements are missing data. A value of 0 means that a
+                missing datum in the output array occurs whenever any
+                of its contributing input array elements are missing
+                data.
 
                 *Parameter example:*
                   To ensure that an output array element is a missing
-                  datum if more than 25% of its input array elements are
-                  missing data: ``mtol=0.25``.
+                  value if more than 25% of its input array elements
+                  are missing data: ``mtol=0.25``.
 
             {{inplace: `bool`, optional}}
+
+            interpolation: deprecated at version 4.0.0
+                Use the *method* parameter instead.
+
+            _preserve_partitions: deprecated at version 4.0.0
 
         :Returns:
 
@@ -2117,7 +2171,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The percentiles of the original data, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
         >>> print(d.array)
@@ -2178,99 +2232,103 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [2 2 3 3]]
 
         """
-        ranks = np.array(ranks).flatten()
-        ranks.sort()
+        if interpolation is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "interpolation",
+                {"interpolation": None},
+                message="Use the 'method' parameter instead.",
+                version="4.0.0",
+            )  # pragma: no cover
 
-        if ranks[0] < 0 or ranks[-1] > 100:
-            raise ValueError(
-                "Each percentile rank must be in the range [0, 100]. "
-                "Got {!r}".format(ranks)
-            )
+        d = _inplace_enabled_define_and_cleanup(self)
 
-        n_ranks = ranks.size
-        if n_ranks == 1:
-            ranks = ranks.squeeze()
+        # Parse percentile ranks
+        q = ranks
+        if not (isinstance(q, np.ndarray) or is_dask_collection(q)):
+            q = np.array(ranks)
+
+        if q.ndim > 1:
+            q = q.flatten()
+
+        if not np.issubdtype(d.dtype, np.number):
+            method = "nearest"
 
         if axes is None:
-            axes = list(range(self.ndim))
+            axes = tuple(range(d.ndim))
         else:
-            axes = sorted(self._parse_axes(axes))
+            axes = tuple(sorted(d._parse_axes(axes)))
 
-        # If the input data array 'fits' in one chunk of memory, then
-        # make sure that it has only one partition
-        if (
-            not _preserve_partitions
-            and self._pmndim
-            and self.fits_in_one_chunk_in_memory(self.dtype.itemsize)
-        ):
-            self.varray
+        dx = d._get_dask()
+        dtype = dx.dtype
+        shape = dx.shape
 
-        org_chunksize = cf_chunksize(cf_chunksize() / n_ranks)
-        sections = self.section(axes, chunks=True)
-        cf_chunksize(org_chunksize)
+        # Rechunk the data so that the dimensions over which
+        # percentiles are being calculated all have one chunk.
+        #
+        # Make sure that no new chunks are larger (in bytes) than any
+        # original chunk.
+        new_chunks = normalize_chunks(
+            [-1 if i in axes else "auto" for i in range(dx.ndim)],
+            shape=shape,
+            dtype=dtype,
+            limit=dtype.itemsize * reduce(mul, map(max, dx.chunks), 1),
+        )
+        dx = dx.rechunk(new_chunks)
 
-        for key, data in sections.items():
-            array = data.array
+        # Initialise the indices of each chunk of the result
+        #
+        # E.g. [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1)]
+        keys = [key[1:] for key in flatten(dx.__dask_keys__())]
 
-            masked = np.ma.is_masked(array)
-            if masked:
-                if array.dtype != _dtype_float:
-                    # Can't assign NaNs to integer arrays
-                    array = array.astype(float, copy=True)
+        keepdims = not squeeze
+        if not keepdims:
+            # Remove axes that will be dropped in the result
+            indices = [i for i in range(len(keys[0])) if i not in axes]
+            keys = [tuple([k[i] for i in indices]) for k in keys]
 
-                array = np.ma.filled(array, np.nan)
-                func = np.nanpercentile
+        if q.ndim:
+            # Insert a leading rank dimension for non-scalar input
+            # percentile ranks
+            keys = [(0,) + k for k in keys]
 
-                with numpy_testing_suppress_warnings() as sup:
-                    sup.filter(
-                        RuntimeWarning, message=".*All-NaN slice encountered"
-                    )
-                    p = func(
-                        array,
-                        ranks,
-                        axis=axes,
-                        interpolation=interpolation,
-                        keepdims=True,
-                        overwrite_input=False,
-                    )
-
-                # Replace NaNs with missing data
-                p = np.ma.masked_where(np.isnan(p), p, copy=False)
-            else:
-                func = np.percentile
-                p = func(
-                    array,
-                    ranks,
-                    axis=axes,
-                    interpolation=interpolation,
-                    keepdims=True,
-                    overwrite_input=False,
-                )
-
-            sections[key] = type(self)(
-                p, units=self.Units, fill_value=self.fill_value
+        # Create a new dask dictionary for the result
+        name = "cf-percentile-" + tokenize(dx, axes, q, method)
+        name = (name,)
+        dsk = {
+            name
+            + chunk_index: (
+                cf_percentile,
+                dask_key,
+                q,
+                axes,
+                method,
+                keepdims,
+                mtol,
             )
-        # --- End: for
+            for chunk_index, dask_key in zip(keys, flatten(dx.__dask_keys__()))
+        }
 
-        # Glue the sections back together again
-        out = self.reconstruct_sectioned_data(sections)
+        # Define the chunks for the result
+        if q.ndim:
+            out_chunks = [(q.size,)]
+        else:
+            out_chunks = []
 
-        if mtol < 1:
-            mask = self.sample_size(axes, mtol=mtol) == 0
-            mask.filled(True, inplace=True)
-            if out.ndim == self.ndim + 1:
-                mask.insert_dimension(0, inplace=True)
+        for i, c in enumerate(dx.chunks):
+            if i in axes:
+                if keepdims:
+                    out_chunks.append((1,))
+            else:
+                out_chunks.append(c)
 
-            out.where(mask, cf_masked, inplace=True)
+        name = name[0]
+        graph = HighLevelGraph.from_collections(name, dsk, dependencies=[dx])
+        dx = Array(graph, name, chunks=out_chunks, dtype=float)
 
-        if squeeze:
-            out.squeeze(inplace=True)
+        d._set_dask(dx, reset_mask_hardness=True)
 
-        if inplace:
-            self.__dict__ = out.__dict__
-            return
-
-        return out
+        return d
 
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):
