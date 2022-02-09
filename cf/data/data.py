@@ -12440,7 +12440,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array. e.g. `(2, 3)`` or ``2``.
+                The shape of the new array. e.g. ``(2, 3)`` or ``2``.
 
             dtype: data-type
                 The desired output data-type for the array, e.g.
@@ -12498,7 +12498,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array. e.g. `(2, 3)`` or ``2``.
+                The shape of the new array. e.g. ``(2, 3)`` or ``2``.
 
             fill_value: scalar
                 The fill value.
@@ -12526,10 +12526,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples**
 
         >>> d = cf.Data.full((2, 3), -99)
+        >>> print(d.array)
         [[-99 -99 -99]
          [-99 -99 -99]]
 
         >>> d = cf.Data.full(2, 0.0)
+        >>> print(d.array)
         [0. 0.]
 
         >>> d = cf.Data.full((2,), 0, dtype=bool)
@@ -12563,7 +12565,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array. e.g. `(2, 3)`` or ``2``.
+                The shape of the new array. e.g. ``(2, 3)`` or ``2``.
 
             dtype: data-type
                 The desired data-type for the array, e.g.
