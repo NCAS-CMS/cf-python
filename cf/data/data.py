@@ -5696,7 +5696,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     # ----------------------------------------------------------------
     @property
     def _Units(self):
-        """Storage for the units."""
+        """Storage for the units.
+
+        The units are stored in a `Units` object, and reflect the
+        units of the (yet to be computed) elements of the underlying
+        data.
+
+        .. warning:: Assigning to `_Units` does *not* trigger a units
+                     conversion of the underlying data
+                     values. Therefore assigning to `_Units` should
+                     only be done in cases when it is known that the
+                     intrinsic units represented by the data values
+                     are inconsistent with the value existing value of
+                     `_Units`. Before assigning to `_Units`, first
+                     consider if assigning to `Units`, or calling the
+                     `override_units` or `override_calendar` method is
+                     a more approriate course of action, and use one
+                     of those if possible.
+
+        """
         return self._custom["_Units"]
 
     @_Units.setter
@@ -5757,6 +5775,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         Contains a `bool`, where `True` denotes a hard mask and
         `False` denotes a soft mask.
+
+        .. warning:: Assigning to `_hardmask` does *not* trigger a
+                     hardening orsoftening of the mask of the
+                     underlying data values. Therefore assigning to
+                     `_hardmask` should only be done in cases when it
+                     is known that the intrinsic mask hardness of the
+                     data values is inconsistent with the value
+                     existing value of `_hardmask`. Before assigning
+                     to `_hardmask`, first consider if assigning to
+                     `hardmask`, or calling the `harden_mask` or
+                     `soften_mask` method is a more approriate course
+                     of action, and use one of those if possible.
 
         See `hardmask` for details.
 
@@ -12601,7 +12631,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._set_dask(dx, reset_mask_hardness=True)
 
         if units is not None:
-            d._Units = units
+            d.override_units(units, inplace=True)
 
         return d
 
