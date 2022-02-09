@@ -576,7 +576,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             raise ValueError(
                 "Can't define chunks for dask input arrays. Consider "
                 "rechunking the dask array before initialisation, or "
-                "rechunking the Data after initialization."
+                "rechunking the Data after initialisation."
             )
 
         # Find out if we have an array of date-time objects
