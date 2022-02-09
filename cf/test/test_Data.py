@@ -2553,7 +2553,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        # ranks: a sequnce of percentile rank inputs. NOTE: must
+        # ranks: a sequence of percentile rank inputs. NOTE: must
         # include 50 as the last input so that cf.Data.median is also
         # tested correctly.
         ranks = ([30, 60, 90], [90, 30], [20])
