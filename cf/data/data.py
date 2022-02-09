@@ -12405,7 +12405,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data`
                 Array of uninitialized (arbitrary) data of the given
-                shape and dtype, and order.
+                shape and dtype.
 
         **Examples**
 
