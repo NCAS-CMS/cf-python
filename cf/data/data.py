@@ -6366,7 +6366,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         (12, 73, 96)
         >>> m = d.mask
         >>> m.dtype
-        bool
+        dtype('bool')
         >>> m.shape
         (12, 73, 96)
 
