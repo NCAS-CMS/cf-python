@@ -12382,11 +12382,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array.
+                The shape of the new array. e.g. `(2, 3)`` or ``2``.
 
             dtype: data-type
-                The data-type of the new array. By default the
-                data-type is ``float``.
+                The desired output data-type for the array, e.g.
+                `numpy.int8`. The default is `numpy.float64`.
 
             units: `str` or `Units`
                 The units for the new data array.
@@ -12440,14 +12440,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array.
+                The shape of the new array. e.g. `(2, 3)`` or ``2``.
 
             fill_value: scalar
                 The fill value.
 
             dtype: data-type
-                The data-type of the new array. By default the
-                data-type is ``float``.
+                The desired data-type for the array. The default, `None`,
+                means ``np.array(fill_value).dtype``.
 
             units: `str` or `Units`
                 The units for the new data array.
@@ -12468,15 +12468,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples**
 
         >>> d = cf.Data.full((2, 3), -99)
-        >>> print(d.array)
-        [[-99. -99. -99.]
-         [-99. -99. -99.]]
+        [[-99 -99 -99]
+         [-99 -99 -99]]
+
+        >>> d = cf.Data.full(2, 0.0)
+        [0. 0.]
 
         >>> d = cf.Data.full((2,), 0, dtype=bool)
         >>> print(d.array)
         [False False]
 
         """
+        if dtype is None:
+            # Need to explicitly set the default because dtype is not
+            # a named keyword of da.full
+            dtype = getattr(fill_value, "dtype", None)
+            if dtype is None:
+                dtype = np.array(fill_value).dtype
+
         dx = da.full(shape, fill_value, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
@@ -12496,11 +12505,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array.
+                The shape of the new array. e.g. `(2, 3)`` or ``2``.
 
             dtype: data-type
-                The data-type of the new array. By default the
-                data-type is ``float``.
+                The desired data-type for the array, e.g.
+                `numpy.int8`. The default is `numpy.float64`.
 
             units: `str` or `Units`
                 The units for the new data array.
