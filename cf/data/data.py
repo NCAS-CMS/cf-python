@@ -3183,7 +3183,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 TODODASK - how to use/import dask config items??
 
             balance: `bool`, optional
-                If True, try to make each chunk to be the same
+                If True, try to make each chunk the same
                 size. By default this is not attempted.
 
                 This means ``balance=True`` will remove any small
