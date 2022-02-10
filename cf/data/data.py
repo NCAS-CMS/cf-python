@@ -830,78 +830,75 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         x.__iter__() <==> iter(x)
 
-        **Examples:**
+        **Performance**
+
+        If the shape of the data is unknown then it is calculated
+        immediately by executing all delayed operations.
+
+        **Examples**
 
         >>> d = cf.Data([1, 2, 3], 'metres')
         >>> for e in d:
-        ...    print(repr(e))
+        ...     print(repr(e))
         ...
-        1
-        2
-        3
+        <CF Data(1): [1] metres>
+        <CF Data(1): [2] metres>
+        <CF Data(1): [3] metres>
 
-        >>> d = cf.Data([[1, 2], [4, 5]], 'metres')
-        >>> for e in d:
-        ...    print(repr(e))
-        ...
-        <CF Data: [1, 2] metres>
-        <CF Data: [4, 5] metres>
-
-        >>> d = cf.Data(34, 'metres')
+        >>> d = cf.Data([[1, 2], [3, 4]], 'metres')
         >>> for e in d:
         ...     print(repr(e))
-        ..
+        ...
+        <CF Data: [1, 2] metres>
+        <CF Data: [3, 4] metres>
+
+        >>> d = cf.Data(99, 'metres')
+        >>> for e in d:
+        ...     print(repr(e))
+        ...
+        Traceback (most recent call last):
+            ...
         TypeError: iteration over a 0-d Data
 
         """
-        ndim = self._ndim
+        try:
+            n = len(self)
+        except TypeError:
+            raise TypeError(f"iteration over a 0-d {self.__class__.__name__}")
 
-        if not ndim:
-            raise TypeError(
-                "Iteration over 0-d {}".format(self.__class__.__name__)
-            )
-
-        elif ndim == 1:
-            if self.fits_in_memory(self.dtype.itemsize):
-                i = iter(self.array)
-                while 1:
-                    try:
-                        yield next(i)
-                    except StopIteration:
-                        return
-            else:
-                for n in range(self._size):
-                    yield self[n].array[0]
-
-        else:
-            # ndim > 1
-            for n in range(self._shape[0]):
-                out = self[n, ...]
-                out.squeeze(0, inplace=True)
-                yield out
+        for i in range(n):
+            yield self[i]
 
     def __len__(self):
-        """The built-in function `len`
+        """Called to implement the built-in function `len`.
 
         x.__len__() <==> len(x)
 
-        **Examples:**
+        **Performance**
 
-        >>> len(Data([1, 2, 3]))
+        If the shape of the data is unknown then it is calculated
+        immediately by executing all delayed operations.
+
+        **Examples**
+
+        >>> len(cf.Data([1, 2, 3]))
         3
-        >>> len(Data([[1, 2, 3]]))
+        >>> len(cf.Data([[1, 2, 3]]))
         1
-        >>> len(Data([[1, 2, 3], [4, 5, 6]]))
+        >>> len(cf.Data([[1, 2, 3], [4, 5, 6]]))
         2
-        >>> len(Data(1))
-        TypeError: len() of scalar Data
+        >>> len(cf.Data(1))
+        Traceback (most recent call last):
+            ...
+        TypeError: len() of unsized object
 
         """
-        shape = self._shape
-        if shape:
-            return shape[0]
+        dx = self._get_dask()
+        if math.isnan(dx.size):
+            logger.warning("Computing data len: Performance may be degraded")
+            dx.compute_chunk_sizes()
 
-        raise TypeError("len() of scalar {}".format(self.__class__.__name__))
+        return len(dx)
 
     def __bool__(self):
         """Truth value testing and the built-in operation `bool`
