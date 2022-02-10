@@ -5785,7 +5785,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                      existing value of `_hardmask`. Before assigning
                      to `_hardmask`, first consider if assigning to
                      `hardmask`, or calling the `harden_mask` or
-                     `soften_mask` method is a more approriate course
+                     `soften_mask` method is a more appropriate course
                      of action, and use one of those if possible.
 
         See `hardmask` for details.
