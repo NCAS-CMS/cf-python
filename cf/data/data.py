@@ -5711,7 +5711,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                      `_Units`. Before assigning to `_Units`, first
                      consider if assigning to `Units`, or calling the
                      `override_units` or `override_calendar` method is
-                     a more approriate course of action, and use one
+                     a more appropriate course of action, and use one
                      of those if possible.
 
         """
