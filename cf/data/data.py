@@ -5777,7 +5777,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         `False` denotes a soft mask.
 
         .. warning:: Assigning to `_hardmask` does *not* trigger a
-                     hardening orsoftening of the mask of the
+                     hardening or softening of the mask of the
                      underlying data values. Therefore assigning to
                      `_hardmask` should only be done in cases when it
                      is known that the intrinsic mask hardness of the
