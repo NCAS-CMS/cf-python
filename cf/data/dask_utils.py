@@ -107,6 +107,32 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     )
 
 
+def cf_contains(a, value=None):
+    """Whether or not an array contains a value.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `cf.Data.__contains__`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array.
+
+        value: array_like
+            The value.
+
+    :Returns:
+
+        `numpy.ndarray`
+            A size 1 Boolean array, with the same number of dimensions
+            as *a*, that indicates whether or not *a* contains the
+            value.
+
+    """
+    return np.array(value in a).reshape((1,) * a.ndim)
+
+
 try:
     from scipy.ndimage.filters import convolve1d
 except ImportError:

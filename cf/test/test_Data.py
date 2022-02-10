@@ -1083,21 +1083,22 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, fm.shape)
         self.assertTrue((f._auxiliary_mask_return().array == fm).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "TypeError: 'int' is not iterable")
-    def test_Data___contains__(self):
+    def test_Data__contains__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data([[0.0, 1, 2], [3, 4, 5]], units="m")
+        d = cf.Data([[0, 1, 2], [3, 4, 5]], units="m", chunks=2)
         self.assertIn(4, d)
-        self.assertNotIn(40, d)
+        self.assertIn(4.0, d)
         self.assertIn(cf.Data(3), d)
         self.assertIn(cf.Data([[[[3]]]]), d)
-        value = d[1, 2]
-        value.Units *= 2
-        value.squeeze(0)
-        self.assertIn(value, d)
+        self.assertIn(cf.Data([0.005], "km"), d)
         self.assertIn(np.array([[[2]]]), d)
+
+        self.assertNotIn(99, d)
+        self.assertNotIn([1, 2], d)
+        self.assertNotIn(np.array([1, 2]), d)
+        self.assertNotIn(cf.Data(2, "seconds"), d)
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_asdata(self):

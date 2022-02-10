@@ -105,6 +105,7 @@ from .creation import (
 )
 from .dask_utils import (
     _da_ma_allclose,
+    cf_contains,
     cf_harden_mask,
     cf_percentile,
     cf_soften_mask,
@@ -648,37 +649,56 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         x.__contains__(y) <==> y in x
 
-        Returns True if the value is contained anywhere in the data
-        array. The value may be a `cf.Data` object.
+        Returns True if the *value* is contained anywhere in the
+        data.
 
         **Performance**
 
-        All delayed operations are exectued, and there is no
-        short-circuit once the first occurrence is found.
+        `__contains__` causes all delayed operations to be computed,
+        unless either *value* has more than one element, or *value* is
+        a `Data` object with incompatible units. In both cases `False`
+        is returned without checking the data.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([[0.0, 1,  2], [3, 4, 5]], 'm')
+        >>> d = cf.Data([[0, 1,  2], [3, 4, 5]], 'm')
         >>> 4 in d
         True
-        >>> cf.Data(3) in d
+        >>> 4.0 in d
         True
-        >>> cf.Data([2.5], units='2 m') in d
+        >>> cf.Data(5) in d
+        True
+        >>> cf.Data(5, 'm') in d
+        True
+        >>> cf.Data([0.005], 'km') in d
         True
         >>> [[2]] in d
         True
-        >>> numpy.array([[[2]]]) in d
+        >>> np.array([[[2]]]) in d
         True
-        >>> Data(2, 'seconds') in d
+        >>> 99 in d
+        False
+        >>> [1, 2] in d
+        False
+        >>> cf.Data(2, 'seconds') in d
         False
 
         """
+        # No need to check the dask array if the size of value is
+        # greater than 1
+        size = getattr(value, "size", None)
+        if size is None:
+            try:
+                size = len(value)
+            except TypeError:
+                # value has no len()
+                pass
 
-        def contains_chunk(a, value):
-            out = value in a
-            return np.array(out).reshape((1,) * a.ndim)
+        if size is not None and size > 1:
+            return False
 
-        if isinstance(value, self.__class__):  # TODDASK chek aother type stoo
+        # If value is a Data object then conform its units
+        if isinstance(value, self.__class__):
             self_units = self.Units
             value_units = value.Units
             if value_units.equivalent(self_units):
@@ -686,6 +706,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     value = value.copy()
                     value.Units = self_units
             elif value_units:
+                # No need to check the dask array if the value uits
+                # are incompatible
                 return False
 
             value = value._get_dask()
@@ -696,7 +718,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx_ind = out_ind
 
         dx = da.blockwise(
-            partial(contains_chunk, value=value),
+            partial(cf_contains, value=value),
             out_ind,
             dx,
             dx_ind,
