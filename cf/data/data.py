@@ -5707,7 +5707,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                      values. Therefore assigning to `_Units` should
                      only be done in cases when it is known that the
                      intrinsic units represented by the data values
-                     are inconsistent with the value existing value of
+                     are inconsistent with the existing value of
                      `_Units`. Before assigning to `_Units`, first
                      consider if assigning to `Units`, or calling the
                      `override_units` or `override_calendar` method is
