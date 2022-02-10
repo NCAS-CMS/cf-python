@@ -908,23 +908,26 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         x.__bool__() <==> bool(x)
 
-        **Examples:**
+        **Performance**
 
-        >>> bool(Data(1))
+        `__bool__` causes all delayed operations to be computed.
+
+        **Examples**
+
+        >>> bool(cf.Data(1.5))
         True
-        >>> bool(Data([[False]]))
+        >>> bool(cf.Data([[False]]))
         False
-        >>> bool(Data([1, 2]))
-        ValueError: The truth value of Data with more than one element is ambiguous. Use d.any() or d.all()
 
         """
-        if self._size == 1:
-            return bool(self.array)
+        size = self.size
+        if size != 1:
+            raise ValueError(
+                f"The truth value of a {self.__class__.__name__} with {size} "
+                "elements is ambiguous. Use d.any() or d.all()"
+            )
 
-        raise ValueError(
-            "The truth value of Data with more than one element is "
-            "ambiguous. Use d.any() or d.all()"
-        )
+        return bool(self.array)
 
     def __repr__(self):
         """Called by the `repr` built-in function.

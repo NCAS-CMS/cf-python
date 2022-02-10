@@ -3776,6 +3776,21 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.dtype, dtype_out)
             self.assertTrue((d.array == np.zeros(shape, dtype=dtype_in)).all())
 
+    def test_Data__bool__(self):
+        for x in (1, 1.5, True, "x"):
+            self.assertTrue(bool(cf.Data(x)))
+            self.assertTrue(bool(cf.Data([[x]])))
+
+        for x in (0, 0.0, False, ""):
+            self.assertFalse(bool(cf.Data(x)))
+            self.assertFalse(bool(cf.Data([[x]])))
+
+        with self.assertRaises(ValueError):
+            bool(cf.Data([]))
+
+        with self.assertRaises(ValueError):
+            bool(cf.Data([1, 2]))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
