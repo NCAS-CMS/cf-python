@@ -5781,7 +5781,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                      underlying data values. Therefore assigning to
                      `_hardmask` should only be done in cases when it
                      is known that the intrinsic mask hardness of the
-                     data values is inconsistent with the value
+                     data values is inconsistent with the
                      existing value of `_hardmask`. Before assigning
                      to `_hardmask`, first consider if assigning to
                      `hardmask`, or calling the `harden_mask` or
