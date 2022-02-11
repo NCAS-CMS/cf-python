@@ -10,6 +10,7 @@ from operator import mul
 import dask.array as da
 import numpy as np
 
+from ..cfdatetime import dt2rt, rt2dt
 from ..functions import atol as cf_atol
 from ..functions import rtol as cf_rtol
 
@@ -439,3 +440,116 @@ def cf_where(array, condition, x, y, hardmask):
         array.harden_mask()
 
     return array
+
+
+def _getattr(x, attr):
+    return getattr(x, attr, False)
+
+
+_array_getattr = np.vectorize(_getattr, excluded="attr")
+
+
+def cf_YMDhms(a, attr):
+    """Return a date-time component from an array of date-time objects.
+
+    Only applicable for data with reference time units. The returned
+    array will have the same mask hardness as the original array.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
+                 `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array from which to extract date-time component.
+
+        attr: `str`
+            The name of the date-time component, one of ``'year'``,
+            ``'month'``, ``'day'``, ``'hour'``, ``'minute'``,
+            ``'second'``.
+
+    :Returns:
+
+        `numpy.ndarray`
+            The date-time component.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> a = np.array([
+    ...  cftime.DatetimeGregorian(2000, 1, 1, 0, 0, 0, 0, has_year_zero=False)
+    ...  cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)
+    ... ])
+    >>> cf_YMDmhs(a, 'day')
+    array([1, 2])
+
+    """
+    return _array_getattr(a, attr=attr)
+
+
+def cf_rt2dt(a, units):
+    """Convert an array of reference times to date-time objects.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `cf._dt2rt`, `cf.Data._asdatetime`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            An array of numeric reference times.
+
+        units: `Units`
+            The units for the reference times
+
+
+    :Returns:
+
+        `numpy.ndarray`
+            A array containing date-time objects.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> print(cf_rt2dt(np.array([0, 1]), cf.Units('days since 2000-01-01')))
+    [cftime.DatetimeGregorian(2000, 1, 1, 0, 0, 0, 0, has_year_zero=False)
+     cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)]
+
+    """
+    return rt2dt(a, units_in=units)
+
+
+def cf_dt2rt(a, units):
+    """Convert an array of date-time objects to reference times.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `cf._rt2dt`, `cf.Data._asreftime`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            An array of date-time objects.
+
+        units: `Units`
+            The units for the reference times
+
+    :Returns:
+
+        `numpy.ndarray`
+            An array containing numeric reference times
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> a = np.array([
+    ...  cftime.DatetimeGregorian(2000, 1, 1, 0, 0, 0, 0, has_year_zero=False)
+    ...  cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)
+    ... ])
+    >>> print(cf_dt2rt(a, cf.Units('days since 1999-01-01')))
+    [365 366]
+
+    """
+    return dt2rt(a, units_out=units, units_in=None)

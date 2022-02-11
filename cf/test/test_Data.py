@@ -1642,30 +1642,24 @@ class DataTest(unittest.TestCase):
                 ).all()
             )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
-    def test_Data__asdatetime__asreftime__isdatetime(self):
+    def test_Data_asdatetime_asreftime_isdatetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
-        self.assertEqual(d.dtype, np.dtype(float))
         self.assertFalse(d._isdatetime())
-
         self.assertIsNone(d._asreftime(inplace=True))
-        self.assertEqual(d.dtype, np.dtype(float))
         self.assertFalse(d._isdatetime())
 
-        self.assertIsNone(d._asdatetime(inplace=True))
-        self.assertEqual(d.dtype, np.dtype(object))
-        self.assertTrue(d._isdatetime())
+        e = d._asdatetime()
+        self.assertTrue(e._isdatetime())
+        self.assertEqual(e.dtype, np.dtype(object))
+        self.assertIsNone(e._asdatetime(inplace=True))
+        self.assertTrue(e._isdatetime())
 
-        self.assertIsNone(d._asdatetime(inplace=True))
-        self.assertEqual(d.dtype, np.dtype(object))
-        self.assertTrue(d._isdatetime())
-
-        self.assertIsNone(d._asreftime(inplace=True))
-        self.assertEqual(d.dtype, np.dtype(float))
-        self.assertFalse(d._isdatetime())
+        # Round trip
+        f = e._asreftime()
+        self.assertTrue(f.equals(d))
 
     def test_Data_ceil(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1992,7 +1986,6 @@ class DataTest(unittest.TestCase):
         v[0, 0, 0, 0] = 0
         self.assertTrue((v == b).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_year_month_day_hour_minute_second(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2014,6 +2007,10 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.hour.equals(cf.Data([[21, 2]])))
         self.assertTrue(d.minute.equals(cf.Data([[37, 25]])))
         self.assertTrue(d.second.equals(cf.Data([[26, 26]])))
+
+        # Can't get year from with non-reference time units
+        with self.assertRaises(ValueError):
+            cf.Data([[1, 2]], units="m").year
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "'NoneType' is not iterable")
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
