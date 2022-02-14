@@ -4,6 +4,7 @@ import inspect
 import itertools
 import os
 import unittest
+import warnings
 from functools import reduce
 from operator import mul
 
@@ -134,6 +135,23 @@ class DataTest(unittest.TestCase):
     #    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
     #    test_only = ['test_Data_clip']
     #    test_only = ['test_Data__init__dtype_mask']
+
+    def setUp(self):
+        # Suppress the warning output for some specific warnings which are
+        # expected due to the nature of the tests being performed.
+        expexted_warning_msgs = [
+            "divide by zero encountered in arctanh",
+            "invalid value encountered in arctanh",
+            "divide by zero encountered in log",
+            "invalid value encountered in log",
+            "invalid value encountered in arcsin",
+        ]
+        for expected_warning in expexted_warning_msgs:
+            warnings.filterwarnings(
+                "ignore",
+                category=RuntimeWarning,
+                message=expected_warning,
+            )
 
     def test_Data_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
