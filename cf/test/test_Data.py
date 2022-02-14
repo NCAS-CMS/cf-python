@@ -437,7 +437,9 @@ class DataTest(unittest.TestCase):
                 # that nothing is logged, but need to use workaround to prevent
                 # AssertionError on fact that nothing is logged here. When at
                 # Python =>3.10 this can be replaced by 'assertNoLogs' method.
-                logger.warn("Log warning to prevent test error on empty log.")
+                logger.warning(
+                    "Log warning to prevent test error on empty log."
+                )
 
                 self.assertFalse(d2.equals(d, verbose=verbosity_level))
                 self.assertIs(
