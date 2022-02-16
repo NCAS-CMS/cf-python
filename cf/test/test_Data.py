@@ -35,7 +35,6 @@ w /= w.min()
 
 ones = np.ones(a.shape, dtype=float)
 
-# TODODASK: these can be moved into the lone tests that use them now
 ma = np.ma.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
 ma[:, 1, 4, 4] = np.ma.masked
 ma[0, :, 2, 3] = np.ma.masked
@@ -77,7 +76,6 @@ class DataTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), "test_file2.nc"
     )
 
-    # TODODASK: these can be moved into the lone tests that use them now
     a = a
     w = w
     ma = ma
@@ -535,17 +533,41 @@ class DataTest(unittest.TestCase):
     #     [ 8  8  9 10 -- --]
     #     [ 8  8  9 10 -- --]]
 
+    def test_Data_mask(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # TODODASK: once test_Data_apply_masking is passing after daskification
+        # of apply_masking, might make sense to combine this test with that?
+
+        # Test mask for a masked Data object (having some masked points)
+        a = self.ma
+        d = cf.Data(a, units="m")
+        self.assertTrue((a == d.array).all())
+        self.assertTrue((a.mask == d.mask.array).all())
+        self.assertEqual(d.mask.shape, d.shape)
+        self.assertEqual(d.mask.dtype, bool)
+        self.assertEqual(d.mask.Units, cf.Units(None))
+        self.assertTrue(d.mask.hardmask)
+        self.assertIn(True, d.mask.array)
+
+        # Test mask for a non-masked Data object
+        a2 = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
+        d2 = cf.Data(a2, units="m")
+        self.assertTrue((a2 == d2.array).all())
+        self.assertEqual(d2.shape, d2.mask.shape)
+        self.assertEqual(d2.mask.dtype, bool)
+        self.assertEqual(d2.mask.Units, cf.Units(None))
+        self.assertTrue(d2.mask.hardmask)
+        self.assertNotIn(True, d2.mask.array)
+
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_apply_masking(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         a = self.ma
-
         d = cf.Data(a, units="m")
-
-        self.assertTrue((a == d.array).all())
-        self.assertTrue((a.mask == d.mask.array).all())
 
         b = a.copy()
         e = d.apply_masking()
