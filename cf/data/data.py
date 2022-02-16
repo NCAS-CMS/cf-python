@@ -6373,13 +6373,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         mask_data_obj = self.copy()
 
-        dx = self._get_dask().copy()
+        dx = self._get_dask()
         mask = da.ma.getmaskarray(dx)
-        mask_data_obj[...] = mask
 
-        mask_data_obj.dtype = _dtype_bool
-        mask_data_obj._Units = _units_None
-        mask_data_obj._hardmask = True
+        mask_data_obj._set_dask(mask, reset_mask_hardness=True)
+        mask_data_obj.override_units(_units_None, inplace=True)
+        mask_data_obj.hardmask = True
 
         return mask_data_obj
 
