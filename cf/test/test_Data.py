@@ -540,7 +540,7 @@ class DataTest(unittest.TestCase):
         # TODODASK: once test_Data_apply_masking is passing after daskification
         # of apply_masking, might make sense to combine this test with that?
 
-        # Test mask for a masked Data object (having some masked points)
+        # Test for a masked Data object (having some masked points)
         a = self.ma
         d = cf.Data(a, units="m")
         self.assertTrue((a == d.array).all())
@@ -551,15 +551,27 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.mask.hardmask)
         self.assertIn(True, d.mask.array)
 
-        # Test mask for a non-masked Data object
+        # Test for a non-masked Data object
         a2 = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
         d2 = cf.Data(a2, units="m")
+        d2[...] = a2
         self.assertTrue((a2 == d2.array).all())
         self.assertEqual(d2.shape, d2.mask.shape)
         self.assertEqual(d2.mask.dtype, bool)
         self.assertEqual(d2.mask.Units, cf.Units(None))
         self.assertTrue(d2.mask.hardmask)
         self.assertNotIn(True, d2.mask.array)
+
+        # Test for a masked Data object of string type, including chunking
+        a3 = np.ma.array(["one", "two", "four"], dtype="S4")
+        a3[1] = np.ma.masked
+        d3 = cf.Data(a3, "m", chunks=(3,))
+        self.assertTrue((a3 == d3.array).all())
+        self.assertEqual(d3.shape, d3.mask.shape)
+        self.assertEqual(d3.mask.dtype, bool)
+        self.assertEqual(d3.mask.Units, cf.Units(None))
+        self.assertTrue(d3.mask.hardmask)
+        self.assertTrue(d3.mask.array[1], True)
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_apply_masking(self):
