@@ -661,7 +661,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
-        >>> d = cf.Data([[0, 1,  2], [3, 4, 5]], 'm')
+        >>> d = cf.Data([[0, 1, 2], [3, 4, 5]], 'm')
         >>> 4 in d
         True
         >>> 4.0 in d
