@@ -6418,9 +6418,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @property
     def mask(self):
-        """The boolean missing data mask of the data array.
+        """The Boolean missing data mask of the data array.
 
-        The boolean mask has True where the data array has missing data
+        The Boolean mask has True where the data array has missing data
         and False otherwise.
 
         :Returns:
@@ -6435,40 +6435,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> m.dtype
         dtype('bool')
         >>> m.shape
-        (12, 73, 96])
+        (12, 73, 96)
 
         """
-        mask = self.copy()
+        mask_data_obj = self.copy()
 
-        config = mask.partition_configuration(readonly=False)
+        dx = self._get_dask()
+        mask = da.ma.getmaskarray(dx)
 
-        for partition in mask.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
+        mask_data_obj._set_dask(mask, reset_mask_hardness=True)
+        mask_data_obj.override_units(_units_None, inplace=True)
+        mask_data_obj.hardmask = True
 
-            if partition.masked:
-                # Array is masked
-                partition.subarray = array.mask.copy()
-            else:
-                # Array is not masked
-                partition.subarray = FilledArray(
-                    shape=array.shape,
-                    size=array.size,
-                    ndim=array.ndim,
-                    dtype=_dtype_bool,
-                    fill_value=0,
-                )
-
-            partition.Units = _units_None
-
-            partition.close()
-
-        mask._Units = _units_None
-        mask.dtype = _dtype_bool
-
-        mask._hardmask = True
-
-        return mask
+        return mask_data_obj
 
     @staticmethod
     def mask_fpe(*arg):
