@@ -108,7 +108,7 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
 
 
 try:
-    from scipy.ndimage.filters import convolve1d
+    from scipy.ndimage import convolve1d
 except ImportError:
     pass
 
