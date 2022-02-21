@@ -3527,12 +3527,10 @@ class DataTest(unittest.TestCase):
                         (d.array == c).all(),
                         "{}, {}, {}, {}".format(method, units, d.array, c),
                     )
-                    # TODODASK: reinstate this assertion once mask property is
-                    # daskified.
-                    # self.assertTrue(
-                    #    (d.mask.array == c.mask).all(),
-                    #    "{}, {}, {}, {}".format(method, units, d.array, c),
-                    # )
+                    self.assertTrue(
+                        (d.mask.array == c.mask).all(),
+                        "{}, {}, {}, {}".format(method, units, d.array, c),
+                    )
         # --- End: for
 
         # Also test masking behaviour: masking of invalid data occurs for
@@ -3548,12 +3546,10 @@ class DataTest(unittest.TestCase):
         for method in inverse_methods:
             with np.errstate(invalid="ignore", divide="ignore"):
                 e = getattr(d, method)()
-            # TODODASK: reinstate this assertion once mask property is
-            # daskified.
-            # self.assertTrue(
-            #    (e.mask.array == d.mask.array).all(),
-            #    "{}, {}, {}".format(method, e.array, d),
-            # )
+            self.assertTrue(
+                (e.mask.array == d.mask.array).all(),
+                "{}, {}, {}".format(method, e.array, d),
+            )
 
         # In addition, test that 'nan', inf' and '-inf' emerge distinctly
         f = cf.Data([-2, -1, 1, 2], mask=[0, 0, 0, 1])
