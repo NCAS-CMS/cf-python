@@ -1794,7 +1794,6 @@ class DataTest(unittest.TestCase):
         self.assertIs(d.datum([0, -1]), cf.masked)
         self.assertIs(d.datum(-1, -1), cf.masked)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "TypeError: 'int' is not iterable")
     def test_Data_flip(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1816,10 +1815,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == array).all())
 
         array = np.arange(3 * 4 * 5).reshape(3, 4, 5) + 1
-        d = cf.Data(array.copy(), "metre", chunk=False)
-        d.chunk(total=[0], omit_axes=[1, 2])
+        d = cf.Data(array.copy(), "metre", chunks=-1)
 
-        self.assertEqual(d._pmshape, (3,))
         self.assertEqual(d[0].shape, (1, 4, 5))
         self.assertEqual(d[-1].shape, (1, 4, 5))
         self.assertEqual(d[0].maximum(), 4 * 5)
@@ -1827,7 +1824,6 @@ class DataTest(unittest.TestCase):
 
         for i in (2, 1):
             e = d.flip(i)
-            self.assertEqual(e._pmshape, (3,))
             self.assertEqual(e[0].shape, (1, 4, 5))
             self.assertEqual(e[-1].shape, (1, 4, 5))
             self.assertEqual(e[0].maximum(), 4 * 5)
@@ -1835,7 +1831,6 @@ class DataTest(unittest.TestCase):
 
         i = 0
         e = d.flip(i)
-        self.assertEqual(e._pmshape, (3,))
         self.assertEqual(e[0].shape, (1, 4, 5))
         self.assertEqual(e[-1].shape, (1, 4, 5))
         self.assertEqual(e[0].maximum(), 3 * 4 * 5)
