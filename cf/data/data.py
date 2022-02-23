@@ -10945,7 +10945,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if axes is not None and not axes and axes != 0:
+        if axes is not None and not axes and axes != 0:  # i.e. empty sequence
             return d
 
         if axes is None:
@@ -10957,7 +10957,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             return d
 
         index = [
-            slice(None, None, -1) if i in iaxes else slice(None) for i in iaxes
+            slice(None, None, -1) if i in iaxes else slice(None)
+            for i in range(len(d._axes))
         ]
 
         dx = d._get_dask()
