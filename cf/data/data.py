@@ -10957,7 +10957,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             return d
 
         index = [
-            slice(None, None, -1) if i in axes else slice(None) for i in iaxes
+            slice(None, None, -1) if i in iaxes else slice(None) for i in iaxes
         ]
 
         dx = d._get_dask()
