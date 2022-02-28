@@ -2008,7 +2008,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.minute.equals(cf.Data([[37, 25]])))
         self.assertTrue(d.second.equals(cf.Data([[26, 26]])))
 
-        # Can't get year from with non-reference time units
+        # Can't get year from data with non-reference time units
         with self.assertRaises(ValueError):
             cf.Data([[1, 2]], units="m").year
 
