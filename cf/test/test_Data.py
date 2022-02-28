@@ -4,6 +4,7 @@ import inspect
 import itertools
 import os
 import unittest
+import warnings
 from functools import reduce
 from operator import mul
 
@@ -35,7 +36,6 @@ w /= w.min()
 
 ones = np.ones(a.shape, dtype=float)
 
-# TODODASK: these can be moved into the lone tests that use them now
 ma = np.ma.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
 ma[:, 1, 4, 4] = np.ma.masked
 ma[0, :, 2, 3] = np.ma.masked
@@ -77,63 +77,29 @@ class DataTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), "test_file2.nc"
     )
 
-    # TODODASK: these can be moved into the lone tests that use them now
     a = a
     w = w
     ma = ma
     ones = ones
 
     test_only = []
-    #    test_only = ['NOTHING!!!!!']
-    # test_only = [
-    #    "test_Data___setitem__",
-    # ]
-    #        'test_Data_trigonometric_hyperbolic'
-    #        'test_Data_AUXILIARY_MASK',
-    #        'test_Data_datum',
-    #        'test_Data_ERROR',
-    #        'test_Data_array',
-    #        'test_Data_varray',
-    #        'test_Data_stats',
-    #        'test_Data_datetime_array',
-    #        'test_Data_cumsum',
-    #        'test_Data_dumpd_loadd_dumps',
-    #        'test_Data_root_mean_square',
-    #        'test_Data_mean_mean_absolute_value',
-    #        'test_Data_squeeze_insert_dimension',
-    #        'test_Data_months_years',
-    #        'test_Data_binary_mask',
-    #        'test_Data_CachedArray',
-    #        'test_Data_digitize',
-    #        'test_Data_outerproduct',
-    #        'test_Data_flatten',
-    #        'test_Data_transpose',
-    #        'test_Data__collapse_SHAPE',
-    #        'test_Data_range_mid_range',
-    #        'test_Data_median',
-    #        'test_Data_mean_of_upper_decile',
-    #        'test_Data__init__dtype_mask',
-    #    ]
 
-    #    test_only = ['test_Data_mean_mean_absolute_value']
-    #    test_only = ['test_Data_AUXILIARY_MASK']
-    #    test_only = ['test_Data_mean_of_upper_decile']
-    #    test_only = ['test_Data__collapse_SHAPE']
-    #    test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
-    #    test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
-    #    test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
-    #    test_only = ['test_Data__collapse_WEIGHTED_MASKED']
-    #    test_only = ['test_Data_ERROR']
-    #    test_only = ['test_Data_diff', 'test_Data_compressed']
-    #    test_only = ['test_Data__init__dtype_mask']
-    #    test_only = ['test_Data_section']
-    #    test_only = ['test_Data_sum_of_weights_sum_of_weights2']
-    #    test_only = ['test_Data_max_min_sum_sum_of_squares']
-    #    test_only = ['test_Data___setitem__']
-    #    test_only = ['test_Data_year_month_day_hour_minute_second']
-    #    test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
-    #    test_only = ['test_Data_clip']
-    #    test_only = ['test_Data__init__dtype_mask']
+    def setUp(self):
+        # Suppress the warning output for some specific warnings which are
+        # expected due to the nature of the tests being performed.
+        expexted_warning_msgs = [
+            "divide by zero encountered in arctanh",
+            "invalid value encountered in arctanh",
+            "divide by zero encountered in log",
+            "invalid value encountered in log",
+            "invalid value encountered in arcsin",
+        ]
+        for expected_warning in expexted_warning_msgs:
+            warnings.filterwarnings(
+                "ignore",
+                category=RuntimeWarning,
+                message=expected_warning,
+            )
 
     def test_Data_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -437,7 +403,9 @@ class DataTest(unittest.TestCase):
                 # that nothing is logged, but need to use workaround to prevent
                 # AssertionError on fact that nothing is logged here. When at
                 # Python =>3.10 this can be replaced by 'assertNoLogs' method.
-                logger.warn("Log warning to prevent test error on empty log.")
+                logger.warning(
+                    "Log warning to prevent test error on empty log."
+                )
 
                 self.assertFalse(d2.equals(d, verbose=verbosity_level))
                 self.assertIs(
@@ -535,17 +503,53 @@ class DataTest(unittest.TestCase):
     #     [ 8  8  9 10 -- --]
     #     [ 8  8  9 10 -- --]]
 
+    def test_Data_mask(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # TODODASK: once test_Data_apply_masking is passing after daskification
+        # of apply_masking, might make sense to combine this test with that?
+
+        # Test for a masked Data object (having some masked points)
+        a = self.ma
+        d = cf.Data(a, units="m")
+        self.assertTrue((a == d.array).all())
+        self.assertTrue((a.mask == d.mask.array).all())
+        self.assertEqual(d.mask.shape, d.shape)
+        self.assertEqual(d.mask.dtype, bool)
+        self.assertEqual(d.mask.Units, cf.Units(None))
+        self.assertTrue(d.mask.hardmask)
+        self.assertIn(True, d.mask.array)
+
+        # Test for a non-masked Data object
+        a2 = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
+        d2 = cf.Data(a2, units="m")
+        d2[...] = a2
+        self.assertTrue((a2 == d2.array).all())
+        self.assertEqual(d2.shape, d2.mask.shape)
+        self.assertEqual(d2.mask.dtype, bool)
+        self.assertEqual(d2.mask.Units, cf.Units(None))
+        self.assertTrue(d2.mask.hardmask)
+        self.assertNotIn(True, d2.mask.array)
+
+        # Test for a masked Data object of string type, including chunking
+        a3 = np.ma.array(["one", "two", "four"], dtype="S4")
+        a3[1] = np.ma.masked
+        d3 = cf.Data(a3, "m", chunks=(3,))
+        self.assertTrue((a3 == d3.array).all())
+        self.assertEqual(d3.shape, d3.mask.shape)
+        self.assertEqual(d3.mask.dtype, bool)
+        self.assertEqual(d3.mask.Units, cf.Units(None))
+        self.assertTrue(d3.mask.hardmask)
+        self.assertTrue(d3.mask.array[1], True)
+
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_apply_masking(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         a = self.ma
-
         d = cf.Data(a, units="m")
-
-        self.assertTrue((a == d.array).all())
-        self.assertTrue((a.mask == d.mask.array).all())
 
         b = a.copy()
         e = d.apply_masking()
@@ -1642,30 +1646,24 @@ class DataTest(unittest.TestCase):
                 ).all()
             )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
-    def test_Data__asdatetime__asreftime__isdatetime(self):
+    def test_Data_asdatetime_asreftime_isdatetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
-        self.assertEqual(d.dtype, np.dtype(float))
         self.assertFalse(d._isdatetime())
-
         self.assertIsNone(d._asreftime(inplace=True))
-        self.assertEqual(d.dtype, np.dtype(float))
         self.assertFalse(d._isdatetime())
 
-        self.assertIsNone(d._asdatetime(inplace=True))
-        self.assertEqual(d.dtype, np.dtype(object))
-        self.assertTrue(d._isdatetime())
+        e = d._asdatetime()
+        self.assertTrue(e._isdatetime())
+        self.assertEqual(e.dtype, np.dtype(object))
+        self.assertIsNone(e._asdatetime(inplace=True))
+        self.assertTrue(e._isdatetime())
 
-        self.assertIsNone(d._asdatetime(inplace=True))
-        self.assertEqual(d.dtype, np.dtype(object))
-        self.assertTrue(d._isdatetime())
-
-        self.assertIsNone(d._asreftime(inplace=True))
-        self.assertEqual(d.dtype, np.dtype(float))
-        self.assertFalse(d._isdatetime())
+        # Round trip
+        f = e._asreftime()
+        self.assertTrue(f.equals(d))
 
     def test_Data_ceil(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1790,7 +1788,6 @@ class DataTest(unittest.TestCase):
         self.assertIs(d.datum([0, -1]), cf.masked)
         self.assertIs(d.datum(-1, -1), cf.masked)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "TypeError: 'int' is not iterable")
     def test_Data_flip(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1812,10 +1809,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == array).all())
 
         array = np.arange(3 * 4 * 5).reshape(3, 4, 5) + 1
-        d = cf.Data(array.copy(), "metre", chunk=False)
-        d.chunk(total=[0], omit_axes=[1, 2])
+        d = cf.Data(array.copy(), "metre", chunks=-1)
 
-        self.assertEqual(d._pmshape, (3,))
         self.assertEqual(d[0].shape, (1, 4, 5))
         self.assertEqual(d[-1].shape, (1, 4, 5))
         self.assertEqual(d[0].maximum(), 4 * 5)
@@ -1823,7 +1818,6 @@ class DataTest(unittest.TestCase):
 
         for i in (2, 1):
             e = d.flip(i)
-            self.assertEqual(e._pmshape, (3,))
             self.assertEqual(e[0].shape, (1, 4, 5))
             self.assertEqual(e[-1].shape, (1, 4, 5))
             self.assertEqual(e[0].maximum(), 4 * 5)
@@ -1831,7 +1825,6 @@ class DataTest(unittest.TestCase):
 
         i = 0
         e = d.flip(i)
-        self.assertEqual(e._pmshape, (3,))
         self.assertEqual(e[0].shape, (1, 4, 5))
         self.assertEqual(e[-1].shape, (1, 4, 5))
         self.assertEqual(e[0].maximum(), 3 * 4 * 5)
@@ -1992,7 +1985,6 @@ class DataTest(unittest.TestCase):
         v[0, 0, 0, 0] = 0
         self.assertTrue((v == b).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_year_month_day_hour_minute_second(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2014,6 +2006,10 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.hour.equals(cf.Data([[21, 2]])))
         self.assertTrue(d.minute.equals(cf.Data([[37, 25]])))
         self.assertTrue(d.second.equals(cf.Data([[26, 26]])))
+
+        # Can't get year from data with non-reference time units
+        with self.assertRaises(ValueError):
+            cf.Data([[1, 2]], units="m").year
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "'NoneType' is not iterable")
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
@@ -3523,12 +3519,10 @@ class DataTest(unittest.TestCase):
                         (d.array == c).all(),
                         "{}, {}, {}, {}".format(method, units, d.array, c),
                     )
-                    # TODODASK: reinstate this assertion once mask property is
-                    # daskified.
-                    # self.assertTrue(
-                    #    (d.mask.array == c.mask).all(),
-                    #    "{}, {}, {}, {}".format(method, units, d.array, c),
-                    # )
+                    self.assertTrue(
+                        (d.mask.array == c.mask).all(),
+                        "{}, {}, {}, {}".format(method, units, d.array, c),
+                    )
         # --- End: for
 
         # Also test masking behaviour: masking of invalid data occurs for
@@ -3544,12 +3538,10 @@ class DataTest(unittest.TestCase):
         for method in inverse_methods:
             with np.errstate(invalid="ignore", divide="ignore"):
                 e = getattr(d, method)()
-            # TODODASK: reinstate this assertion once mask property is
-            # daskified.
-            # self.assertTrue(
-            #    (e.mask.array == d.mask.array).all(),
-            #    "{}, {}, {}".format(method, e.array, d),
-            # )
+            self.assertTrue(
+                (e.mask.array == d.mask.array).all(),
+                "{}, {}, {}".format(method, e.array, d),
+            )
 
         # In addition, test that 'nan', inf' and '-inf' emerge distinctly
         f = cf.Data([-2, -1, 1, 2], mask=[0, 0, 0, 1])
@@ -3787,6 +3779,21 @@ class DataTest(unittest.TestCase):
         # iteration over a 0-d Data
         with self.assertRaises(TypeError):
             list(cf.Data(99, "metres"))
+
+    def test_Data__bool__(self):
+        for x in (1, 1.5, True, "x"):
+            self.assertTrue(bool(cf.Data(x)))
+            self.assertTrue(bool(cf.Data([[x]])))
+
+        for x in (0, 0.0, False, ""):
+            self.assertFalse(bool(cf.Data(x)))
+            self.assertFalse(bool(cf.Data([[x]])))
+
+        with self.assertRaises(ValueError):
+            bool(cf.Data([]))
+
+        with self.assertRaises(ValueError):
+            bool(cf.Data([1, 2]))
 
 
 if __name__ == "__main__":
