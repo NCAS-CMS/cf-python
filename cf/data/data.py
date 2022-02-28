@@ -10324,31 +10324,35 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def change_calendar(self, calendar, inplace=False, i=False):
         """Change the calendar of the data array elements.
 
-        Changing the calendar could result in a change of reference time
-        data array values.
+        .. note:: Changing the calendar could result in a change of
+                  reference time data array values.
 
-        Not to be confused with using the `override_calendar` method or
-        resetting `d.Units`. `override_calendar` is different because the
-        new calendar need not be equivalent to the original ones and the
-        data array elements will not be changed to reflect the new
-        units. Resetting `d.Units` will
+                  Not to be confused with using the
+                  `override_calendar` method or resetting the `Units`
+                  attribute. `override_calendar` is different because
+                  the new calendar need not be equivalent to the
+                  original ones and the data array elements will not
+                  be changed to reflect the new units. Resetting
+                  `d.Units` will
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if not self.Units.isreftime:
+        units = self.Units
+        if not units.isreftime:
             raise ValueError(
                 "Can't change calendar of non-reference time "
-                "units: {!r}".format(self.Units)
+                "units: {!r}".format(units)
             )
 
         d._asdatetime(inplace=True)
-        d.override_units(Units(self.Units.units, calendar), inplace=True)
+        d.override_calendar(calendar, inplace=True)
         d._asreftime(inplace=True)
 
         return d

@@ -3791,6 +3791,11 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             bool(cf.Data([1, 2]))
 
+    def test_Data_change_calendar(self):
+        d = cf.Data([27, 28, 29, 30, 31], 'days since 2004-02-01')
+        e = d.change_calendar('360_day')
+
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
