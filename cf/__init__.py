@@ -96,13 +96,13 @@ except ImportError as error1:
 
 __cf_version__ = cfdm.core.__cf_version__
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 import importlib.util
 import platform
 
 # Check the version of Python
 _minimum_vn = "3.7.0"
-if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
+if Version(platform.python_version()) < Version(_minimum_vn):
     raise ValueError(
         f"Bad python version: cf requires python version {_minimum_vn} "
         f"or later. Got {platform.python_version()}"
@@ -141,7 +141,7 @@ except ImportError as error1:
 
 # Check the version of psutil
 _minimum_vn = "0.6.0"
-if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
+if Version(psutil.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad psutil version: cf requires psutil>={_minimum_vn}. "
         f"Got {psutil.__version__} at {psutil.__file__}"
@@ -149,7 +149,7 @@ if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of netCDF4
 _minimum_vn = "1.5.4"
-if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
+if Version(netCDF4.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad netCDF4 version: cf requires netCDF4>={_minimum_vn}. "
         f"Got {netCDF4.__version__} at {netCDF4.__file__}"
@@ -157,7 +157,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of cftime
 _minimum_vn = "1.5.0"
-if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
+if Version(cftime.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
         f"Got {cftime.__version__} at {cftime.__file__}"
@@ -165,7 +165,7 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of numpy
 _minimum_vn = "1.15"
-if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
+if Version(numpy.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad numpy version: cf requires numpy>={_minimum_vn}. "
         f"Got {numpy.__version__} at {numpy.__file__}"
@@ -173,7 +173,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of cfunits
 _minimum_vn = "3.3.4"
-if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
+if Version(cfunits.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
         f"Got {cfunits.__version__} at {cfunits.__file__}"
@@ -182,8 +182,8 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
 # Check the version of cfdm
 _minimum_vn = "1.9.0.2"
 _maximum_vn = "1.9.1.0"
-_cfdm_version = LooseVersion(cfdm.__version__)
-if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
+_cfdm_version = Version(cfdm.__version__)
+if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     raise RuntimeError(
         f"Bad cfdm version: cf requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
         f"Got {_cfdm_version} at {cfdm.__file__}"

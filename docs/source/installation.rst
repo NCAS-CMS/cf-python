@@ -197,6 +197,8 @@ Required
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
+* `packaging <https://pypi.org/project/packaging/>`_, version 20.0 or newer.
+
 .. _UNIDATA-UDUNITS-2-library:
 
 * `UNIDATA UDUNITS-2 library
