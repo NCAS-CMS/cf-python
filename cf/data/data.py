@@ -8753,6 +8753,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return old
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def year(self):
         """The year of each date-time value.
 
@@ -8775,6 +8776,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "year")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def month(self):
         """The month of each date-time value.
 
@@ -8797,6 +8799,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "month")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def day(self):
         """The day of each date-time value.
 
@@ -8819,6 +8822,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "day")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def hour(self):
         """The hour of each date-time value.
 
@@ -8841,6 +8845,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "hour")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def minute(self):
         """The minute of each date-time value.
 
@@ -8863,6 +8868,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "minute")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def second(self):
         """The second of each date-time value.
 
