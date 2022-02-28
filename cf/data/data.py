@@ -20,7 +20,6 @@ from dask.highlevelgraph import HighLevelGraph
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
 from ..cfdatetime import dt as cf_dt
-from ..cfdatetime import dt2rt, rt2dt  # , st2rt
 from ..constants import masked as cf_masked
 from ..decorators import (
     _deprecated_kwarg_check,
@@ -105,8 +104,10 @@ from .creation import (
 )
 from .dask_utils import (
     _da_ma_allclose,
+    cf_dt2rt,
     cf_harden_mask,
     cf_percentile,
+    cf_rt2dt,
     cf_soften_mask,
     cf_where,
 )
@@ -115,6 +116,7 @@ from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
+    YMDhms,
     _is_numeric_dtype,
     conform_units,
     convert_to_datetime,
@@ -1475,9 +1477,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def _map_blocks(self, func, **kwargs):
         """Apply a function to the data in-place.
 
-        .. note:: This method does not reset the mask hardness. It may
-                  be necessary for a call to `_map_blocks` to be
-                  followed by a call to `_reset_mask_hardness`.
+        .. warning:: **This method **does not reset the mask
+                     hardness**. It may be necessary for a call to
+                     `_map_blocks` to be followed by a call to
+                     `_reset_mask_hardness` (or equivalent).
 
         .. versionadded:: TODODASK
 
@@ -3298,6 +3301,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def _asdatetime(self, inplace=False):
         """Change the internal representation of data array elements
@@ -3324,46 +3328,37 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples:**
+        **Examples**
 
-        >>> d._asdatetime()
+        >>> d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
+        >>> e = d._asdatetime()
+        >>> print(e.array)
+        [[cftime.DatetimeGregorian(2000, 12, 30, 22, 19, 12, 0, has_year_zero=False)
+          cftime.DatetimeGregorian(2001, 1, 3, 4, 4, 48, 0, has_year_zero=False)]]
+        >>> f = e._asreftime()
+        >>> print(f.array)
+        [[1.93 5.17]]
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        units = self.Units
 
+        units = d.Units
         if not units.isreftime:
             raise ValueError(
-                "Can't convert {!r} data to date-time objects".format(units)
+                f"Can't convert {units!r} values to date-time objects"
             )
 
-        if d._isdatetime():
-            if inplace:
-                d = None
-            return d
-
-        config = d.partition_configuration(
-            readonly=False, func=rt2dt, dtype=None
-        )
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            p_units = partition.Units
-            partition.Units = Units(p_units.units, p_units._utime.calendar)
-            partition.close()
-
-        d.Units = Units(units.units, units._utime.calendar)
-
-        d._dtype = array.dtype
+        if not d._isdatetime():
+            d._map_blocks(cf_rt2dt, units=units, dtype=object)
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def _isdatetime(self):
-        """True if the internal representation is a datetime-like
-        object."""
+        """True if the internal representation is a datetime object."""
         return self.dtype.kind == "O" and self.Units.isreftime
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def _asreftime(self, inplace=False):
         """Change the internal representation of data array elements
@@ -3388,40 +3383,28 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples:**
+        **Examples**
 
-        >>> d._asreftime()
+        >>> d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
+        >>> e = d._asdatetime()
+        >>> print(e.array)
+        [[cftime.DatetimeGregorian(2000, 12, 30, 22, 19, 12, 0, has_year_zero=False)
+          cftime.DatetimeGregorian(2001, 1, 3, 4, 4, 48, 0, has_year_zero=False)]]
+        >>> f = e._asreftime()
+        >>> print(f.array)
+        [[1.93 5.17]]
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+
         units = d.Units
+        if not units.isreftime:
+            raise ValueError(
+                f"Can't convert {units!r} values to numeric reference times"
+            )
 
-        if not d._isdatetime():
-            if units.isreftime:
-                if inplace:
-                    d = None
-                return d
-            else:
-                raise ValueError(
-                    "Can't convert {!r} data to numeric reference "
-                    "times".format(units)
-                )
-        # --- End: if
-
-        config = d.partition_configuration(
-            readonly=False, func=dt2rt, dtype=None
-        )
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            p_units = partition.Units
-            partition.Units = Units(p_units.units, p_units._utime.calendar)
-            partition.close()
-
-        d.Units = Units(units.units, units._utime.calendar)
-
-        d._dtype = array.dtype
+        if d._isdatetime():
+            d._map_blocks(cf_dt2rt, units=units, dtype=float)
 
         return d
 
@@ -8772,181 +8755,137 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return old
 
-    def _YMDhms(self, attr):
-        """Provides datetime components of the data array elements.
-
-        .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
-        `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
-
-        """
-
-        def _func(array, units_in, dummy0, dummy1):
-            """The returned array is always independent.
-
-            :Parameters:
-
-                array: numpy array
-
-                units_in: `Units`
-
-                dummy0:
-                    Ignored.
-
-                dummy1:
-                    Ignored.
-
-            :Returns:
-
-                numpy array
-
-            """
-            if not self._isdatetime():
-                array = rt2dt(array, units_in)
-
-            return _array_getattr(array, attr)
-
-        # --- End: def
-
-        if not self.Units.isreftime:
-            raise ValueError(
-                "Can't get {}s from data with {!r}".format(attr, self.Units)
-            )
-
-        new = self.copy()
-
-        new._Units = _units_None
-
-        config = new.partition_configuration(
-            readonly=False, func=_func, dtype=None
-        )
-
-        for partition in new.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            new_dtype = array.dtype
-            partition.close()
-
-        new._dtype = new_dtype
-
-        return new
-
     @property
     def year(self):
-        """The year of each data array element.
+        """The year of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.month`, `~cf.Data.day`, `~cf.Data.hour`,
                      `~cf.Data.minute`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.year
-        <CF Data: [[2000, 2001]] >
+        <CF Data(1, 2): [[2000, 2001]] >
 
         """
-        return self._YMDhms("year")
+        return YMDhms(self, "year")
 
     @property
     def month(self):
-        """The month of each data array element.
+        """The month of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.day`, `~cf.Data.hour`,
                      `~cf.Data.minute`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.month
-        <CF Data: [[12, 1]] >
+        <CF Data(1, 2): [[12, 1]] >
 
         """
-        return self._YMDhms("month")
+        return YMDhms(self, "month")
 
     @property
     def day(self):
-        """The day of each data array element.
+        """The day of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.month`, `~cf.Data.hour`,
                      `~cf.Data.minute`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.day
-        <CF Data: [[30, 3]] >
+        <CF Data(1, 2): [[30, 3]] >
 
         """
-        return self._YMDhms("day")
+        return YMDhms(self, "day")
 
     @property
     def hour(self):
-        """The hour of each data array element.
+        """The hour of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.month`, `~cf.Data.day`,
                      `~cf.Data.minute`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.hour
-        <CF Data: [[22, 4]] >
+        <CF Data(1, 2): [[22, 4]] >
 
         """
-        return self._YMDhms("hour")
+        return YMDhms(self, "hour")
 
     @property
     def minute(self):
-        """The minute of each data array element.
+        """The minute of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.month`, `~cf.Data.day`,
                      `~cf.Data.hour`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.minute
-        <CF Data: [[19, 4]] >
+        <CF Data(1, 2): [[19, 4]] >
 
         """
-        return self._YMDhms("minute")
+        return YMDhms(self, "minute")
 
     @property
     def second(self):
-        """The second of each data array element.
+        """The second of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.month`, `~cf.Data.day`,
                      `~cf.Data.hour`, `~cf.Data.minute`
 
+        **Examples**
+
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.second
-        <CF Data: [[12, 48]] >
+        <CF Data(1, 2): [[12, 48]] >
 
         """
-        return self._YMDhms("second")
+        return YMDhms(self, "second")
 
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
@@ -13604,18 +13543,6 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
     new_partition_matrix.resize(new_shape)
 
     return new_partition_matrix
-
-
-# --------------------------------------------------------------------
-# ???
-# --------------------------------------------------------------------
-def _getattr(x, attr):
-    if not x:
-        return False
-    return getattr(x, attr)
-
-
-_array_getattr = np.vectorize(_getattr)
 
 
 def _broadcast(a, shape):
