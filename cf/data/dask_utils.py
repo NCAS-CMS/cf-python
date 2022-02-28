@@ -9,6 +9,7 @@ from operator import mul
 
 import dask.array as da
 import numpy as np
+from dask.core import flatten
 
 from ..cfdatetime import dt2rt, rt2dt
 from ..functions import atol as cf_atol
@@ -83,7 +84,13 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
         if not isinstance(b_blocks, list):
             b_blocks = (b_blocks,)
 
-        for a, b in zip(a_blocks, b_blocks):
+        # Note: If a_blocks or b_blocks has more than one chunk in
+        #       more than one dimension they will comprise a nested
+        #       sequence of sequences, that needs to be flatten so
+        #       that we can safely iterate through the actual numpy
+        #       array elements.
+
+        for a, b in zip(flatten(a_blocks), flatten(b_blocks)):
             result &= np.ma.allclose(
                 a,
                 b,

@@ -420,6 +420,13 @@ class DataTest(unittest.TestCase):
         # Test ignore_data_type parameter
         self.assertTrue(d2.equals(d, ignore_data_type=True))
 
+        # Test all possible chunk combinations
+        for j, i in itertools.product([1, 2], [1, 2, 3]):
+            d = cf.Data(np.arange(6).reshape(2, 3), "m", chunks=(j, i))
+            for j, i in itertools.product([1, 2], [1, 2, 3]):
+                e = cf.Data(np.arange(6).reshape(2, 3), "m", chunks=(j, i))
+                self.assertTrue(d.equals(e))
+
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'ndim'")
     def test_Data_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
