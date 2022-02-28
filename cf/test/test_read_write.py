@@ -32,7 +32,7 @@ tmpfiles = [
 
 
 def _remove_tmpfiles():
-    """TODO."""
+    """Try to remove defined temporary files by deleting their paths."""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -67,10 +67,7 @@ class read_writeTest(unittest.TestCase):
         "NETCDF3_64BIT_OFFSET",
         "NETCDF3_64BIT_DATA",
     ]
-    netcdf4_fmts = [
-        "NETCDF4",
-        "NETCDF4_CLASSIC",
-    ]
+    netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
     netcdf_fmts = netcdf3_fmts + netcdf4_fmts
 
     def test_write_filename(self):
@@ -344,12 +341,6 @@ class read_writeTest(unittest.TestCase):
                 if fmt == "NETCDF4_CLASSIC" and ex_field_n in (6, 7):
                     continue
 
-                # Skip since "Can't write int64 data from <Count: (2) > to a
-                # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible.
-                # Note: can remove this when Issue #140 is closed.
-                if fmt in self.netcdf3_fmts and ex_field_n == 6:
-                    continue
-
                 cf.write(ex_field, tmpfile, fmt=fmt, mode="a")
                 f = cf.read(tmpfile)
 
@@ -420,9 +411,6 @@ class read_writeTest(unittest.TestCase):
             cf.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
             append_ex_fields = cf.example_fields()
             del append_ex_fields[1]  # note: can remove after Issue #141 closed
-            # Note: can remove this del when Issue #140 is closed:
-            if fmt in self.netcdf3_fmts:
-                del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
             if fmt in "NETCDF4_CLASSIC":
                 # Remove n=6 and =7 for reasons as given above (del => minus 1)
                 append_ex_fields = append_ex_fields[:5]
@@ -562,13 +550,7 @@ class read_writeTest(unittest.TestCase):
             with cf.chunksize(chunksize):
                 f = cf.read(self.filename)[0]
                 for fmt in ("NETCDF4", "NETCDF4_CLASSIC", "CFA4"):
-                    cf.write(
-                        f,
-                        tmpfile,
-                        fmt=fmt,
-                        compress=1,
-                        shuffle=True,
-                    )
+                    cf.write(f, tmpfile, fmt=fmt, compress=1, shuffle=True)
                     g = cf.read(tmpfile)[0]
                     self.assertTrue(
                         f.equals(g, verbose=2),
@@ -759,11 +741,7 @@ class read_writeTest(unittest.TestCase):
             command_to_run = ["ncdump", self.filename, ">", tempf]
             if option:
                 command_to_run.insert(1, option)
-            subprocess.run(
-                " ".join(command_to_run),
-                shell=True,
-                check=True,
-            )
+            subprocess.run(" ".join(command_to_run), shell=True, check=True)
             with open(tempf, "r") as file:
                 cdl_string_1 = file.read()
 
@@ -806,12 +784,10 @@ class read_writeTest(unittest.TestCase):
         for i in range(n):
             j = i + n
             self.assertTrue(
-                f[i].data.equals(f[j].data, verbose=1),
-                "{!r} {!r}".format(f[i], f[j]),
+                f[i].data.equals(f[j].data, verbose=1), f"{f[i]!r} {f[j]!r}"
             )
             self.assertTrue(
-                f[j].data.equals(f[i].data, verbose=1),
-                "{!r} {!r}".format(f[j], f[i]),
+                f[j].data.equals(f[i].data, verbose=1), f"{f[j]!r} {f[i]!r}"
             )
 
         # Note: Don't loop round all netCDF formats for better
@@ -832,6 +808,61 @@ class read_writeTest(unittest.TestCase):
     def test_read_broken_bounds(self):
         f = cf.read(self.broken_bounds, verbose=0)
         self.assertEqual(len(f), 2)
+
+    def test_write_coordinates(self):
+        f = cf.example_field(0)
+
+        cf.write(f, tmpfile, coordinates=True)
+        g = cf.read(tmpfile)
+
+        self.assertEqual(len(g), 1)
+        self.assertTrue(g[0].equals(f))
+
+    def test_read_write_domain(self):
+        f = cf.read(self.filename)[0]
+        d = f.domain
+
+        # 1 domain
+        cf.write(d, tmpfile)
+        e = cf.read(tmpfile)
+        self.assertIsInstance(e, cf.FieldList)
+        self.assertTrue(len(e), 10)
+
+        e = cf.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 1)
+        self.assertIsInstance(e, cf.DomainList)
+        e = e[0]
+        self.assertIsInstance(e, cf.Domain)
+        self.assertTrue(e.equals(e.copy(), verbose=3))
+        self.assertTrue(d.equals(e, verbose=3))
+        self.assertTrue(e.equals(d, verbose=3))
+
+        # 1 field and 1 domain
+        cf.write([f, d], tmpfile)
+        g = cf.read(tmpfile)
+        self.assertTrue(len(g), 1)
+        g = g[0]
+        self.assertIsInstance(g, cf.Field)
+        self.assertTrue(g.equals(f, verbose=3))
+
+        e = cf.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 1)
+        e = e[0]
+        self.assertIsInstance(e, cf.Domain)
+
+        # 1 field and 2 domains
+        cf.write([f, d, d], tmpfile)
+        g = cf.read(tmpfile)
+        self.assertTrue(len(g), 1)
+        g = g[0]
+        self.assertIsInstance(g, cf.Field)
+        self.assertTrue(g.equals(f, verbose=3))
+
+        e = cf.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 2)
+        self.assertIsInstance(e[0], cf.Domain)
+        self.assertIsInstance(e[1], cf.Domain)
+        self.assertTrue(e[0].equals(e[1]))
 
 
 if __name__ == "__main__":

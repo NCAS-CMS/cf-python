@@ -1,7 +1,6 @@
 import cfdm
 
 from . import abstract
-from .functions import _close_netcdf_file, _open_netcdf_file
 
 
 class NetCDFArray(cfdm.NetCDFArray, abstract.FileArray):

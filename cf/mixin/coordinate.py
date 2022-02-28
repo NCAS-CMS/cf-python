@@ -378,7 +378,7 @@ class Coordinate:
     # ----------------------------------------------------------------
     @_inplace_enabled(default=False)
     def autoperiod(self, inplace=False, config={}):
-        """TODO Set dimensions to be cyclic.
+        """Set the period of cyclicity where it can be determined.
 
         TODO A dimension is set to be cyclic if it has a unique
         longitude (or grid longitude) dimension coordinate construct

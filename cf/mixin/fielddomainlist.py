@@ -2,7 +2,7 @@ from ..functions import _DEPRECATION_ERROR_ARG
 
 
 class FieldDomainList:
-    """TODO."""
+    """A sequence of domain constructs corresponding to fields."""
 
     def select_by_construct(self, *identities, OR=False, **conditions):
         """Select elements by their metadata constructs.
@@ -190,6 +190,7 @@ class FieldDomainList:
 
                 A netCDF variable name is specified by a string (e.g.
                 ``'tas'``, etc.); a `Query` object
+
                 (e.g. ``cf.eq('tas')``); or a compiled regular
                 expression (e.g. ``re.compile('^air_')``) that selects
                 the constructs whose netCDF variable names match via

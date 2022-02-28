@@ -1,6 +1,10 @@
+import logging
+
 import cfdm
 
 from .query import Query
+
+logger = logging.getLogger(__name__)
 
 
 class Constructs(cfdm.Constructs):
@@ -80,80 +84,57 @@ class Constructs(cfdm.Constructs):
 
         return super()._matching_values(value0, construct, value1, basic=basic)
 
-    #     def domain_axis_key(self, identity, default=ValueError()):
-    #         '''Return the key of the domain axis construct that is spanned by 1-d
-    # coordinate constructs.
-    #
-    # .. versionadded:: 3.0.0
-    #
-    # :Parameters:
-    #
-    #     identity:
-    #
-    #         Select the 1-d coordinate constructs that have the given
-    #         identity.
-    #
-    #         An identity is specified by a string (e.g. ``'latitude'``,
-    #         ``'long_name=time'``, etc.); or a compiled regular expression
-    #         (e.g. ``re.compile('^atmosphere')``), for which all constructs
-    #         whose identities match (via `re.search`) are selected.
-    #
-    #         Each coordinate construct has a number of identities, and is
-    #         selected if any of them match any of those provided. A
-    #         construct's identities are those returned by its `!identities`
-    #         method. In the following example, the construct ``x`` has four
-    #         identities:
-    #
-    #            >>> x.identities()
-    #            ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-    #
-    #         In addition, each construct also has an identity based its
-    #         construct key (e.g. ``'key%dimensioncoordinate2'``)
-    #
-    #         Note that in the output of a `print` call or `!dump` method, a
-    #         construct is always described by one of its identities, and so
-    #         this description may always be used as an *identity* argument.
-    #
-    #     default: optional
-    #         Return the value of the *default* parameter if a domain axis
-    #         construct can not be found. If set to an `Exception` instance
-    #         then it will be raised instead.
-    #
-    # :Returns:
-    #
-    #     `str`
-    #         The key of the domain axis construct that is spanned by the
-    #         data of the selected 1-d coordinate constructs.
-    #
-    # **Examples:**
-    #
-    # TODO
-    #
-    #         '''
-    #         # Try for index
-    #         try:
-    #             da_key = self.get_data_axes(default=None)[identity]
-    #         except TypeError:
-    #             pass
-    #         except IndexError:
-    #             return self._default(
-    #                 default,
-    #                 "Index does not exist for field construct data dimenions")
-    #         else:
-    #             identity = da_key
-    #
-    #         domain_axes = self.domain_axes(identity)
-    #         if len(domain_axes) == 1:
-    #             # identity is a unique domain axis construct identity
-    #             da_key = domain_axes.key()
-    #         else:
-    #             # identity is not a unique domain axis construct identity
-    #             da_key = self.domain_axis_key(identity, default=default)
-    #
-    #         if key:
-    #             return da_key
-    #
-    #         return self.constructs[da_key]
+    def _flip(self, axes):
+        """Flip (reverse the direction of) axes of the constructs in-
+        place.
+
+        .. versionadded:: 3.11.0
+
+        :Parameters:
+
+            axes: sequence of `str`
+                Select the domain axes to flip, defined by the domain axis
+                identifiers. The sequence may be empty.
+
+        :Returns:
+
+            `None`
+
+        """
+        data_axes = self.data_axes()
+
+        # Flip any constructs which span the given axes
+        for key, construct in self.filter_by_data().items():
+            construct_axes = data_axes[key]
+            construct_flip_axes = axes.intersection(construct_axes)
+            if construct_flip_axes:
+                iaxes = [
+                    construct_axes.index(axis) for axis in construct_flip_axes
+                ]
+                construct.flip(iaxes, inplace=True)
+
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
+    def close(self):
+        """Close all files referenced by the metadata constructs.
+
+        Note that a closed file will be automatically reopened if its
+        contents are subsequently required.
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> c.close()
+
+        """
+        # TODODASK - is this method still needed?
+
+        for construct in self.filter_by_data().values():
+            construct.close()
 
     def _filter_by_identity(self, arg, identities, todict, _config):
         """Worker function for `filter_by_identity` and `filter`.

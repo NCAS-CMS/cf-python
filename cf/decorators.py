@@ -107,20 +107,15 @@ def _manage_log_level_via_verbose_attr(method_using_verbose_attr, calls=[0]):
         # Increment indicates that one decorated function has started execution
         calls[0] += 1
 
+        lvls = ", ".join(
+            [val.name + " = " + str(val.value) for val in ValidLogLevels]
+        )
         invalid_attr_msg = (
-            "Invalid value '{}' for the 'self.verbose' attribute. "
-            "Accepted values are integers corresponding in positive"
-            "cases to increasing verbosity (namely {}), or None, "
-            "to configure the verbosity according to the global "
-            "log_level setting.".format(
-                self.verbose,
-                ", ".join(
-                    [
-                        val.name + " = " + str(val.value)
-                        for val in ValidLogLevels
-                    ]
-                ),
-            )
+            f"Invalid value '{self.verbose}' for the 'self.verbose' "
+            "attribute. Accepted values are integers corresponding in "
+            f"positive cases to increasing verbosity (namely {lvls}), or "
+            "None, to configure the verbosity according to the global "
+            "log_level setting."
         )
         # Convert Boolean cases for backwards compatibility. Need 'is' identity
         # rather than '==' (value) equivalency test, since 1 == True, etc.

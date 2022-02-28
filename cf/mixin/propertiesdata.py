@@ -586,6 +586,8 @@ class PropertiesData(Properties):
 
         if isinstance(y, self.__class__):
             y = y.data
+        elif y is None:
+            y = Data(numpy_array(None, dtype=object))
 
         if not inplace:
             new = self.copy()  # data=False) TODO
@@ -692,12 +694,12 @@ class PropertiesData(Properties):
     #            data.change_axis_names(dim_name_map)
 
     def _conform_for_assignment(self, other):
-        """TODO."""
+        """Conform *other* for assignment broadcasting across *self*."""
         return other
 
     @_manage_log_level_via_verbosity
     def _equivalent_data(self, other, atol=None, rtol=None, verbose=None):
-        """TODO.
+        """True if data is equivalent to other data, units considered.
 
         Two real numbers ``x`` and ``y`` are considered equal if
         ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -738,25 +740,22 @@ class PropertiesData(Properties):
 
         if data0.shape != data1.shape:
             logger.info(
-                "{}: Data have different shapes: {}, {}".format(
-                    self.__class__.__name__, data0.shape, data1.shape
-                )
+                f"{self.__class__.__name__}: Data have different shapes: "
+                f"{data0.shape}, {data1.shape}"
             )
             return False
 
         if not data0.Units.equivalent(data1.Units):
             logger.info(
-                "{}: Data have non-equivalent units: {!r}, {!r}".format(
-                    self.__class__.__name__, data0.Units, data1.Units
-                )
+                f"{self.__class__.__name__}: Data have non-equivalent units: "
+                f"{data0.Units!r}, {data1.Units!r}"
             )
             return False
 
         if not data0.allclose(data1, rtol=rtol, atol=atol):
             logger.info(
-                "{}: Data have non-equivalent values: {!r}, {!r}".format(
-                    self.__class__.__name__, data0, data1
-                )
+                f"{self.__class__.__name__}: Data have non-equivalent values: "
+                f"{data0!r}, {data1!r}"
             )
             return False
 
@@ -822,7 +821,7 @@ class PropertiesData(Properties):
     #        return matches
 
     def __query_set__(self, values):
-        """TODO."""
+        """Implements the “member of set” condition."""
         new = self.copy()
         new.set_data(self.data.__query_set__(values), copy=False)
         return new
@@ -844,13 +843,13 @@ class PropertiesData(Properties):
     #        return new
 
     def __query_wi__(self, value):
-        """TODO."""
+        """Implements the “within a range” condition."""
         new = self.copy()
         new.set_data(self.data.__query_wi__(value), copy=False)
         return new
 
     def __query_wo__(self, value):
-        """TODO."""
+        """Implements the “without a range” condition."""
         new = self.copy()
         new.set_data(self.data.__query_wo__(value), copy=False)
         return new
@@ -902,7 +901,7 @@ class PropertiesData(Properties):
         return new
 
     def _YMDhms(self, attr):
-        """TODO."""
+        """Return some datetime component of the data array elements."""
         data = self.get_data(None, _fill_value=False)
         if data is None:
             raise ValueError(
@@ -1086,7 +1085,7 @@ class PropertiesData(Properties):
 
     @property
     def isperiodic(self):
-        """TODO.
+        """True if a given axis is periodic.
 
         .. versionadded:: 2.0
 
@@ -1666,7 +1665,6 @@ class PropertiesData(Properties):
         [ 0.  1.]
         >>> print(g.array)
         [ 1.  2.]
-
         >>> old = cf.Data.seterr('ignore')
         >>> h = g/f
         >>> print(h.array)
@@ -2445,7 +2443,7 @@ class PropertiesData(Properties):
         <CF Data(5): [999, ... 4] kg m-1 s-2>
 
         """
-        raise DeprecatedError("TODODASK")
+        raise ValueError("TODODASK - deprecated?")
 
     #        data = self.get_data(None)
     #        if data is None:
@@ -4850,7 +4848,7 @@ class PropertiesData(Properties):
         print(cf_inspect(self))  # pragma: no cover
 
     def iscyclic(self, axis):
-        """Whether or a not a given axis is cyclic.
+        """Whether or not a given axis is cyclic.
 
         .. versionadded:: 3.5.0
 
@@ -4883,7 +4881,10 @@ class PropertiesData(Properties):
         """
         axis = self._parse_axes(axis)
         if len(axis) != 1:
-            raise ValueError("TODO")
+            raise ValueError(
+                "Only one axis can be checked for cyclicity at once, but "
+                f"multiple were selected: {axis}"
+            )
 
         return axis[0] in self.cyclic()
 
@@ -5055,8 +5056,8 @@ class PropertiesData(Properties):
             TODO
 
         """
-        _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-        _ = "{}.halo(".format(self.__class__.__name__)
+        _kwargs = [f"{k}={v!r}" for k, v in locals().items()]
+        _ = f"{self.__class__.__name__}.halo("
         logger.info("{}{}".format(_, (",\n" + " " * len(_)).join(_kwargs)))
 
         v = _inplace_enabled_define_and_cleanup(self)
@@ -5644,7 +5645,7 @@ class PropertiesData(Properties):
 
 
 class Subspace:
-    """TODO."""
+    """Define a subspace of a field construct."""
 
     __slots__ = ("variable",)
 

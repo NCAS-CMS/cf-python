@@ -29,10 +29,7 @@ class FilledArray(abstract.Array):
 
         """
         super().__init__(
-            dtype=dtype,
-            shape=shape,
-            size=size,
-            fill_value=fill_value,
+            dtype=dtype, shape=shape, size=size, fill_value=fill_value
         )
 
     def __getitem__(self, indices):
@@ -213,6 +210,3 @@ class FilledArray(abstract.Array):
     def view(self):
         """Return a view of the entire array."""
         return self[...]
-
-
-# --- End: class

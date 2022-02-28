@@ -84,6 +84,7 @@ Miscellaneous
    ~cf.Constructs.domain_axis_identity
    ~cf.Constructs.new_identifier
    ~cf.Constructs.replace
+   ~cf.Constructs.close
  
 Dictionary-access methods
 -------------------------

@@ -51,7 +51,7 @@ class DimensionCoordinate(
     """
 
     def __new__(cls, *args, **kwargs):
-        """TODO."""
+        """Store component classes."""
         instance = super().__new__(cls)
         instance._Bounds = Bounds
         return instance
@@ -116,28 +116,14 @@ class DimensionCoordinate(
             # Infer the direction from the data
             if data._size > 1:
                 data = data[0:2].array
-                return bool(
-                    data.item(
-                        0,
-                    )
-                    < data.item(
-                        1,
-                    )
-                )
+                return bool(data.item(0) < data.item(1))
 
         # Still here?
         data = self.get_bounds_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the bounds
             b = data[(0,) * (data.ndim - 1)].array
-            return bool(
-                b.item(
-                    0,
-                )
-                < b.item(
-                    1,
-                )
-            )
+            return bool(b.item(0) < b.item(1))
 
         # Still here? Then infer the direction from the units.
         return not self.Units.ispressure
@@ -525,13 +511,18 @@ class DimensionCoordinate(
                 # ----------------------------------------------------
                 cellsize = Data.asdata(abs(cellsize))
                 if cellsize.Units:
+                    err_msg = (
+                        "Can't create bounds because the bound units "
+                        f"({cellsize.Units}) are not compatible with "
+                        f"the coordinate units ({self.Units})."
+                    )
                     if self.Units.isreftime:
                         if not cellsize.Units.istime:
-                            raise ValueError("q123423423jhgsjhbd jh ")
+                            raise ValueError(err_msg)
                         cellsize.Units = Units(self.Units._utime.units)
                     else:
                         if not cellsize.Units.equivalent(self.Units):
-                            raise ValueError("jhgsjhbd jh ")
+                            raise ValueError(err_msg)
                         cellsize.Units = self.Units
                 cellsize = cellsize.datum()
 
@@ -562,9 +553,7 @@ class DimensionCoordinate(
                 if not self.Units.isreftime:
                     raise ValueError(
                         "Can't create reference time bounds for "
-                        "non-reference time coordinates: {0!r}".format(
-                            self.Units
-                        )
+                        f"non-reference time coordinates: {self.Units!r}"
                     )
 
                 bounds = numpy_empty((size, 2), dtype=object)
@@ -584,27 +573,9 @@ class DimensionCoordinate(
                         "Can't create bounds for Voronoi cells from one value"
                     )
 
-                bounds_1d = [
-                    array.item(
-                        0,
-                    )
-                    * 1.5
-                    - array.item(
-                        1,
-                    )
-                    * 0.5
-                ]
+                bounds_1d = [array.item(0) * 1.5 - array.item(1) * 0.5]
                 bounds_1d.extend((array[0:-1] + array[1:]) * 0.5)
-                bounds_1d.append(
-                    array.item(
-                        -1,
-                    )
-                    * 1.5
-                    - array.item(
-                        -2,
-                    )
-                    * 0.5
-                )
+                bounds_1d.append(array.item(-1) * 1.5 - array.item(-2) * 0.5)
 
                 dtype = type(bounds_1d[0])
 
@@ -628,29 +599,13 @@ class DimensionCoordinate(
                     array = array[::-1]
 
                 bounds_1d = [bound]
-                if bound <= array.item(
-                    0,
-                ):
+                if bound <= array.item(0):
                     for i in range(size):
-                        bound = (
-                            2.0
-                            * array.item(
-                                i,
-                            )
-                            - bound
-                        )
+                        bound = 2.0 * array.item(i) - bound
                         bounds_1d.append(bound)
-                elif bound >= array.item(
-                    -1,
-                ):
+                elif bound >= array.item(-1):
                     for i in range(size - 1, -1, -1):
-                        bound = (
-                            2.0
-                            * array.item(
-                                i,
-                            )
-                            - bound
-                        )
+                        bound = 2.0 * array.item(i) - bound
                         bounds_1d.append(bound)
 
                     bounds_1d = bounds_1d[::-1]
@@ -802,40 +757,35 @@ class DimensionCoordinate(
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False):
         """Rolls the dimension coordinate along a cyclic axis."""
-        if self.size <= 1:
-            if inplace:
-                return
-            else:
-                return self.copy()
+        c = _inplace_enabled_define_and_cleanup(self)
 
-        shift %= self.size
+        size = c.size
+        if size <= 1:
+            return c
 
-        #        period = self._custom.get('period')
-        period = self.period()
-
+        shift %= size
         if not shift:
             # Null roll
-            if inplace:
-                return
-            else:
-                return self.copy()
-        elif period is None:
+            return c
+
+        #        period = self._custom.get('period')
+        period = c.period()
+
+        if period is None:
             raise ValueError(
-                "Can't roll {} when no period has been set".format(
-                    self.__class__.__name__
-                )
+                f"Can't roll {self.__class__.__name__} when no period has "
+                "been set"
             )
 
-        direction = self.direction()
+        direction = c.direction()
 
-        centre = self._centre(period)
+        centre = c._centre(period)
 
         if axis not in [0, -1]:
             raise ValueError(
-                "Can't roll axis {} when there is only one axis".format(axis)
+                f"Can't roll axis {axis} when there is only one axis"
             )
 
-        c = _inplace_enabled_define_and_cleanup(self)
         super(DimensionCoordinate, c).roll(axis, shift, inplace=True)
 
         c.dtype = numpy_result_type(c.dtype, period.dtype)

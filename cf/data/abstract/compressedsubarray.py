@@ -2,6 +2,8 @@ import abc
 from functools import reduce
 from operator import mul
 
+from ...functions import inspect as cf_inspect
+
 
 class CompressedSubarray(abc.ABC):
     """Abstract base class for a compressed sub-array container."""
@@ -132,13 +134,3 @@ class CompressedSubarray(abc.ABC):
 
         """
         return not hasattr(self.array, "__array_interface__")
-
-
-#    def unique(self):
-#        '''TODO
-#
-#        '''
-#        return getrefcount(self.array) <= 2
-
-
-# --- End: class

@@ -4,6 +4,8 @@
 **Change log**
 ==============
 
-----
+.. contents::
+   :local:
+   :backlinks: entry
 
 .. include:: ../../Changelog.rst

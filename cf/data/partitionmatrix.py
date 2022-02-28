@@ -24,6 +24,10 @@ class PartitionMatrix:
     rather than a partition matrix is returned if the output array has
     size 1.
 
+    Normal numpy basic and advanced indexing is supported, but size 1
+    dimensions are always removed from the output array, i.e. a partition
+    rather than a partition matrix is returned if the output array has
+    size 1.
 
     **Attributes**
 
@@ -381,9 +385,7 @@ class PartitionMatrix:
             indices[index] = slice(i, i + 1)
             sub_matrix = matrix[tuple(indices)]
             #            (r0, r1) = next(sub_matrix.flat).location[master_index]
-            (r0, r1) = sub_matrix.item(
-                0,
-            ).location[master_index]
+            (r0, r1) = sub_matrix.item(0).location[master_index]
 
             # Could do better, perhaps, by assigning in blocks
             if not r0 < x < r1:

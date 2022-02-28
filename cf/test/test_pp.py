@@ -5,6 +5,8 @@ import os
 import tempfile
 import unittest
 
+import numpy as np
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -18,7 +20,7 @@ tmpfiles = [
 
 
 def _remove_tmpfiles():
-    """TODO."""
+    """Try to remove defined temporary files by deleting their paths."""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -32,6 +34,10 @@ atexit.register(_remove_tmpfiles)
 class ppTest(unittest.TestCase):
     ppfile = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "wgdos_packed.pp"
+    )
+
+    ppextradata = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "extra_data.pp"
     )
 
     new_table = os.path.join(
@@ -69,7 +75,7 @@ class ppTest(unittest.TestCase):
         e = cf.stash2standard_name()
         self.assertNotEqual(d, e)
 
-    def test_PP_select(self):
+    def test_PP_read_select(self):
         f = cf.read(self.ppfile, select="lbproc=0")
         self.assertEqual(len(f), 1)
 
@@ -97,6 +103,26 @@ class ppTest(unittest.TestCase):
                         f.equals(g, verbose=2),
                         "Bad writing/reading. fmt=" + fmt,
                     )
+
+    def test_PP_extra_data(self):
+        f = cf.read(self.ppextradata)[0]
+
+        self.assertEqual(len(f.dimension_coordinates()), 3)
+        self.assertEqual(len(f.auxiliary_coordinates()), 3)
+
+        sites = f.dimension_coordinate("long_name=site")
+        self.assertTrue(np.allclose(sites, [1, 2, 3]))
+
+        regions = f.auxiliary_coordinate("region").array
+        self.assertTrue(
+            regions.tolist()
+            == ["Northern Hemisphere", "Southern Hemisphere", "Global"]
+        )
+
+        self.assertTrue(f.dimension_coordinate("height", default=False))
+        self.assertTrue(f.dimension_coordinate("time", default=False))
+        self.assertTrue(f.auxiliary_coordinate("longitude", default=False))
+        self.assertTrue(f.auxiliary_coordinate("longitude", default=False))
 
 
 if __name__ == "__main__":

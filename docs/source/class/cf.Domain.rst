@@ -1,14 +1,18 @@
 .. currentmodule:: cf
 .. default-role:: obj
 
+.. _cf-Domain:
+ 
 cf.Domain
 =========
 
 ----
 
-.. autoclass:: cf.Domain
+.. autoclass:: cfdm.Domain
    :no-members:
    :no-inherited-members:
+
+.. rubric:: Methods
 
 Inspection
 ----------
@@ -21,6 +25,50 @@ Inspection
    :template: method.rst
 
    ~cf.Domain.dump
+   ~cf.Domain.identity  
+   ~cf.Domain.identities
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Domain.construct_type
+   ~cf.Domain.size
+   ~cf.Domain.rank
+   
+Selection
+---------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.match_by_identity
+   ~cf.Domain.match_by_ncvar
+   ~cf.Domain.match_by_property
+   ~cf.Domain.match_by_rank
+   ~cf.Domain.match_by_construct
+ 
+Rearranging
+-----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.anchor
+   ~cf.Domain.roll
+   ~cf.Domain.flip
+   ~cf.Domain.transpose
 
 Metadata constructs
 -------------------
@@ -46,11 +94,24 @@ Metadata constructs
    ~cf.Domain.get_construct
    ~cf.Domain.has_construct
    ~cf.Domain.set_construct
+   ~cf.Domain.replace_construct
    ~cf.Domain.del_data_axes
    ~cf.Domain.get_data_axes
    ~cf.Domain.has_data_axes
    ~cf.Domain.set_data_axes
+   ~cf.Domain.auxiliary_coordinate
+   ~cf.Domain.cell_measure
+   ~cf.Domain.coordinate
+   ~cf.Domain.coordinate_reference
+   ~cf.Domain.coordinate_reference_domain_axes
+   ~cf.Domain.get_coordinate_reference
+   ~cf.Domain.set_coordinate_reference
+   ~cf.Domain.del_coordinate_reference
+   ~cf.Domain.dimension_coordinate
+   ~cf.Domain.domain_ancillary
+   ~cf.Domain.domain_axis
    ~cf.Domain.domain_axis_key
+   ~cf.Domain.del_domain_axis
    ~cf.Domain.climatological_time_axes
 
 .. rubric:: Attributes
@@ -61,6 +122,24 @@ Metadata constructs
    :template: attribute.rst
 
    ~cf.Domain.constructs
+ 
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.del_property
+   ~cf.Domain.get_property
+   ~cf.Domain.has_property
+   ~cf.Domain.set_property
+   ~cf.Domain.properties
+   ~cf.Domain.clear_properties
+   ~cf.Domain.set_properties
 
 Miscellaneous
 -------------
@@ -72,20 +151,178 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Domain.apply_masking
+   ~cf.Domain.climatological_time_axes
    ~cf.Domain.copy
+   ~cf.Domain.creation_commands
    ~cf.Domain.equals
    ~cf.Domain.fromconstructs
+   ~cf.Domain.get_filenames
+   ~cf.Domain.has_bounds
+   ~cf.Domain.has_data
+   ~cf.Domain.has_geometry
    ~cf.Domain.apply_masking   
    ~cf.Domain.get_filenames
-   
-.. rubric:: Attributes
-	    
+   ~cf.Domain.close
+
+Domain axes
+-----------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.autocyclic
+   ~cf.Domain.axes
+   ~cf.Domain.axis
+   ~cf.Domain.cyclic
+   ~cf.Domain.direction
+   ~cf.Domain.directions
+   ~cf.Domain.iscyclic
+
+Subspacing
+----------
+
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cf.Domain.has_geometry
+   ~cf.Domain.subspace
+   ~cf.Domain.indices
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.nc_del_variable
+   ~cf.Domain.nc_get_variable
+   ~cf.Domain.nc_has_variable
+   ~cf.Domain.nc_set_variable 
+   ~cf.Domain.nc_global_attributes
+   ~cf.Domain.nc_clear_global_attributes
+   ~cf.Domain.nc_set_global_attribute
+   ~cf.Domain.nc_set_global_attributes
+
+Groups
+^^^^^^
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.nc_variable_groups
+   ~cf.Domain.nc_set_variable_groups
+   ~cf.Domain.nc_clear_variable_groups
+   ~cf.Domain.nc_group_attributes
+   ~cf.Domain.nc_clear_group_attributes
+   ~cf.Domain.nc_set_group_attribute
+   ~cf.Domain.nc_set_group_attributes
+  
+Geometries
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.Domain.nc_del_geometry_variable
+   ~cf.Domain.nc_get_geometry_variable
+   ~cf.Domain.nc_has_geometry_variable
+   ~cf.Domain.nc_set_geometry_variable 
+   ~cf.Domain.nc_geometry_variable_groups
+   ~cf.Domain.nc_set_geometry_variable_groups
+   ~cf.Domain.nc_clear_geometry_variable_groups
+
+Components
+^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.Domain.nc_del_component_variable
+   ~cf.Domain.nc_set_component_variable
+   ~cf.Domain.nc_set_component_variable_groups
+   ~cf.Domain.nc_clear_component_variable_groups      
+   ~cf.Domain.nc_del_component_dimension
+   ~cf.Domain.nc_set_component_dimension
+   ~cf.Domain.nc_set_component_dimension_groups
+   ~cf.Domain.nc_clear_component_dimension_groups
+   ~cf.Domain.nc_del_component_sample_dimension
+   ~cf.Domain.nc_set_component_sample_dimension   
+   ~cf.Domain.nc_set_component_sample_dimension_groups
+   ~cf.Domain.nc_clear_component_sample_dimension_groups
+
+Dataset compliance
+^^^^^^^^^^^^^^^^^^
+
+.. rubric:: Methods
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.dataset_compliance
+   
+Aliases
+-------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst  
+
+   ~cf.Domain.aux
+   ~cf.Domain.auxs
+   ~cf.Domain.axis
+   ~cf.Domain.coord
+   ~cf.Domain.coords
+   ~cf.Domain.dim
+   ~cf.Domain.dims
+   ~cf.Domain.domain_anc
+   ~cf.Domain.domain_ancs
+   ~cf.Domain.key
+   ~cf.Domain.match
+   ~cf.Domain.measure
+   ~cf.Domain.measures
+   ~cf.Domain.ref
+   ~cf.Domain.refs
+
+Deprecated
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.delprop
+   ~cf.Domain.getprop
+   ~cf.Domain.hasprop
+   ~cf.Domain.setprop
 
 Special
 -------
@@ -101,7 +338,17 @@ Special
    ~cf.Domain.__repr__
    ~cf.Domain.__str__
 
-
-   
-   
-   
+Docstring substitutions
+-----------------------                   
+                                          
+.. rubric:: Methods                       
+                                          
+.. autosummary::                          
+   :nosignatures:                         
+   :toctree: ../method/                   
+   :template: method.rst                  
+                                          
+   ~cf.Domain._docstring_special_substitutions
+   ~cf.Domain._docstring_substitutions        
+   ~cf.Domain._docstring_package_depth        
+   ~cf.Domain._docstring_method_exclusions    

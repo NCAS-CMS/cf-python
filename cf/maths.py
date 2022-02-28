@@ -376,3 +376,417 @@ def histogram(*digitized):
     f.clear_properties()
 
     return f.bin("sample_size", digitized=digitized)
+
+
+def curl_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
+    r"""Calculate the horizontal curl of an (X, Y) vector.
+
+    The horizontal curl is calculated from orthogonal vector component
+    fields which have dimension coordinates of X and Y, in either
+    Cartesian (e.g. plane projection) or spherical polar coordinate
+    systems.
+
+    The horizontal curl of the :math:`(f_x, f_y)` vector in Cartesian
+    coordinates is given by:
+
+    .. math:: \nabla \times (f_{x}(x,y), f_{y}(x,y)) =
+                \frac{\partial f_y}{\partial x}
+                -
+                \frac{\partial f_x}{\partial y}
+
+    The horizontal curl of the :math:`(f_\theta, f_\phi)` vector in
+    spherical polar coordinates is given by:
+
+    .. math:: \nabla \times (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+                \frac{1}{r \sin\theta}
+                \left(
+                \frac{\partial (f_\phi \sin\theta)}{\partial \theta}
+                -
+                \frac{\partial f_\theta}{\partial \phi}
+                \right)
+
+    where *r* is radial distance to the origin, :math:`\theta` is the
+    polar angle with respect to polar axis, and :math:`\phi` is the
+    azimuthal angle.
+
+    The curl is calculated using centred finite differences apart from
+    at the boundaries (see the *x_wrap* and *one_sided_at_boundary*
+    parameters). If missing values are present then missing values
+    will be returned at all points where a centred finite difference
+    could not be calculated.
+
+    .. versionadded:: 3.12.0
+
+    .. seealso:: `cf.div_xy`, `cf.Field.derivative`,
+                 `cf.Field.grad_xy`, `cf.Field.iscyclic`,
+                 `cf.Field.laplacian_xy`
+
+    :Parameters:
+
+        fx, fy: `Field`
+            The fields containing the X and Y vector components.
+
+        x_wrap: `bool`, optional
+            Whether the X axis is cyclic or not. By default *x_wrap*
+            is set to the result of this call to the *fx* field
+            construct's `~cf.Field.iscyclic`
+            method:``fy.iscyclic('X')``. If the X axis is cyclic then
+            centred differences at one X boundary will always use
+            values from the other, regardless of the setting of
+            *one_sided_at_boundary*.
+
+            The cyclicity of the Y axis is always set to the result of
+            ``fx.iscyclic('Y')``.
+
+        one_sided_at_boundary: `bool`, optional
+            If True then one-sided finite differences are calculated
+            at the non-cyclic boundaries. By default missing values
+            are set at non-cyclic boundaries.
+
+        radius: optional
+            Specify the radius of the latitude-longitude plane defined
+            in spherical polar coordinates. The radius is that which
+            would be returned by this call of the *fx* field
+            construct's `cf.Field.radius` method:
+            ``fx.radius(default=radius)``. The radius is defined by
+            the datum of a coordinate reference construct, and if and
+            only if no such radius is found then the default value
+            given by the *radius* parameter is used instead. A value
+            of ``'earth'`` is equivalent to a default value of 6371229
+            metres.
+
+    :Returns:
+
+        `Field`
+            The horizontal curl of the (X, Y) fields.
+
+    **Examples**
+
+    >>> f = cf.example_field(0)
+    >>> print(f)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> f[...] = 0.1
+    >>> print(f.array)
+    [[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+     [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+     [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+     [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+     [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
+    >>> fx, fy = f.grad_xy(radius='earth', one_sided_at_boundary=True)
+    >>> fx, fy
+    (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>,
+     <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>)
+    >>> c = cf.curl_xy(fx, fy, radius='earth')
+    >>> c
+    <CF Field: long_name=Divergence of (long_name=X gradient of specific_humidity, long_name=Y gradient of specific_humidity)(latitude(5), longitude(8)) m-2.rad-2>
+    >>> print(c.array)
+    [[-- -- -- -- -- -- -- --]
+     [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+     [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+     [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+     [-- -- -- -- -- -- -- --]]
+    >>> c = cf.curl_xy(fx, fy, radius='earth', one_sided_at_boundary=True)
+    >>> print(c.array)
+    [[0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0.]]
+
+    """
+    from numpy import pi
+
+    fx = fx.copy()
+    fy = fy.copy()
+
+    x_key, x_coord = fy.dimension_coordinate(
+        "X", item=True, default=(None, None)
+    )
+    y_key, y_coord = fx.dimension_coordinate(
+        "Y", item=True, default=(None, None)
+    )
+
+    if x_coord is None:
+        raise ValueError("'fy' field has no unique 'X' dimension coordinate")
+
+    if y_coord is None:
+        raise ValueError("'fx' field has no unique 'Y' dimension coordinate")
+
+    if x_wrap is None:
+        x_wrap = fx.iscyclic(x_key)
+
+    x_units = x_coord.Units
+    y_units = y_coord.Units
+
+    # Check for spherical polar coordinates
+    latlon = (x_units.islongitude and y_units.islatitude) or (
+        x_units.units == "degrees" and y_units.units == "degrees"
+    )
+
+    if latlon:
+        # --------------------------------------------------------
+        # Spherical polar coordinates
+        # --------------------------------------------------------
+        # Convert latitude and longitude units to radians, so that the
+        # units of the result are nice.
+        radians = Units("radians")
+        x_coord.Units = radians
+        y_coord.Units = radians
+
+        # Get theta as a field that will broadcast to f, and adjust
+        # its values so that theta=0 is at the north pole.
+        theta = pi / 2 - fx.convert(y_key, full_domain=True)
+        sin_theta = theta.sin()
+
+        r = fx.radius(default=radius)
+
+        term1 = (fx * sin_theta).derivative(
+            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+        )
+
+        term2 = fy.derivative(
+            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+        )
+
+        c = (term1 - term2) / (sin_theta * r)
+
+        # Reset latitude and longitude coordinate units
+        c.dimension_coordinate("X").Units = x_units
+        c.dimension_coordinate("Y").Units = y_units
+    else:
+        # --------------------------------------------------------
+        # Cartesian coordinates
+        # --------------------------------------------------------
+        dfy_dx = fy.derivative(
+            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+        )
+
+        dfx_dy = fx.derivative(
+            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+        )
+
+        c = dfy_dx - dfx_dy
+
+    # Set the standard name and long name
+    c.set_property(
+        "long_name", f"Horizontal curl of ({fx.identity()}, {fy.identity()})"
+    )
+    c.del_property("standard_name", None)
+
+    return c
+
+
+def div_xy(fx, fy, x_wrap=None, one_sided_at_boundary=False, radius=None):
+    r"""Calculate the horizontal divergence of an (X, Y) vector.
+
+    The horizontal divergence is calculated from orthogonal vector
+    component fields which have dimension coordinates of X and Y, in
+    either Cartesian (e.g. plane projection) or spherical polar
+    coordinate systems.
+
+    The horizontal divergence of the :math:`(f_x, f_y)` vector in
+    Cartesian coordinates is given by:
+
+    .. math:: \nabla \cdot (f_{x}(x,y), f_{y}(x,y)) =
+                \frac{\partial f_x}{\partial x}
+                +
+                \frac{\partial f_y}{\partial y}
+
+    The horizontal divergence of the :math:`(f_\theta, f_\phi)` vector
+    in spherical polar coordinates is given by:
+
+    .. math:: \nabla \cdot (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+                \frac{1}{r \sin\theta}
+                \left(
+                \frac{\partial (f_\theta \sin\theta)}{\partial \theta}
+                +
+                \frac{\partial f_\phi}{\partial \phi}
+                \right)
+
+    where *r* is radial distance to the origin, :math:`\theta` is the
+    polar angle with respect to polar axis, and :math:`\phi` is the
+    azimuthal angle.
+
+    The divergence is calculated using centred finite differences
+    apart from at the boundaries (see the *x_wrap* and
+    *one_sided_at_boundary* parameters). If missing values are present
+    then missing values will be returned at all points where a centred
+    finite difference could not be calculated.
+
+    .. versionadded:: 3.12.0
+
+    .. seealso:: `cf.curl_xy`, `cf.Field.derivative`,
+                 `cf.Field.grad_xy`, `cf.Field.iscyclic`,
+                 `cf.Field.laplacian_xy`
+
+    :Parameters:
+
+        fx, fy: `Field`
+            The fields containing the X and Y vector components.
+
+        x_wrap: `bool`, optional
+            Whether the X axis is cyclic or not. By default *x_wrap*
+            is set to the result of this call to the *fx* field
+            construct's `~cf.Field.iscyclic`
+            method:``fx.iscyclic('X')``. If the X axis is cyclic then
+            centred differences at one X boundary will always use
+            values from the other, regardless of the setting of
+            *one_sided_at_boundary*.
+
+            The cyclicity of the Y axis is always set to the result of
+            ``fy.iscyclic('Y')``.
+
+        one_sided_at_boundary: `bool`, optional
+            If True then one-sided finite differences are calculated
+            at the non-cyclic boundaries. By default missing values
+            are set at non-cyclic boundaries.
+
+        radius: optional
+            Specify the radius of the latitude-longitude plane defined
+            in spherical polar coordinates. The radius is that which
+            would be returned by this call of the *fx* field
+            construct's `cf.Field.radius` method:
+            ``fx.radius(default=radius)``. The radius is defined by
+            the datum of a coordinate reference construct, and if and
+            only if no such radius is found then the default value
+            given by the *radius* parameter is used instead. A value
+            of ``'earth'`` is equivalent to a default value of 6371229
+            metres.
+
+    :Returns:
+
+        `Field`
+            The horizontal curl of the (X, Y) fields.
+
+    **Examples**
+
+    >>> f = cf.example_field(0)
+    >>> print(f)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> f[...] = 0.1
+    >>> print(f.array)
+    [[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+     [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+     [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+     [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]
+     [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]]
+    >>> fx, fy = f.grad_xy(radius='earth', one_sided_at_boundary=True)
+    >>> fx, fy
+    (<CF Field: long_name=X gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>,
+     <CF Field: long_name=Y gradient of specific_humidity(latitude(5), longitude(8)) m-1.rad-1>)
+    >>> d = cf.div_xy(fx, fy, radius='earth')
+    >>> d
+    <CF Field: long_name=Divergence of (long_name=X gradient of specific_humidity, long_name=Y gradient of specific_humidity)(latitude(5), longitude(8)) m-2.rad-2>
+    >>> print(d.array)
+    [[-- -- -- -- -- -- -- --]
+     [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+     [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+     [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0]
+     [-- -- -- -- -- -- -- --]]
+    >>> d = cf.div_xy(fx, fy, radius='earth', one_sided_at_boundary=True)
+    >>> print(d.array)
+    [[0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 0. 0. 0. 0. 0. 0.]]
+
+    """
+    from numpy import pi
+
+    fx = fx.copy()
+    fy = fy.copy()
+
+    x_key, x_coord = fx.dimension_coordinate(
+        "X", item=True, default=(None, None)
+    )
+    y_key, y_coord = fy.dimension_coordinate(
+        "Y", item=True, default=(None, None)
+    )
+
+    if x_coord is None:
+        raise ValueError("'fx' field has no unique 'X' dimension coordinate")
+
+    if y_coord is None:
+        raise ValueError("'fy' field has no unique 'Y' dimension coordinate")
+
+    if x_wrap is None:
+        x_wrap = fx.iscyclic(x_key)
+
+    x_units = x_coord.Units
+    y_units = y_coord.Units
+
+    # Check for spherical polar coordinates
+    latlon = (x_units.islongitude and y_units.islatitude) or (
+        x_units.units == "degrees" and y_units.units == "degrees"
+    )
+
+    if latlon:
+        # ------------------------------------------------------------
+        # Spherical polar coordinates
+        # ------------------------------------------------------------
+        # Convert latitude and longitude units to radians, so that
+        # the units of the result are nice.
+        radians = Units("radians")
+        x_coord.Units = radians
+        y_coord.Units = radians
+
+        # Get theta as a field that will broadcast to f, and adjust
+        # its values so that theta=0 is at the north pole.
+        theta = pi / 2 - fy.convert(y_key, full_domain=True)
+        sin_theta = theta.sin()
+
+        r = fx.radius(default=radius)
+
+        # r_sin_theta = sin_theta * r
+
+        term1 = (
+            fx.derivative(
+                x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+            )
+            # / r_sin_theta
+        )
+
+        term2 = (fy * sin_theta).derivative(
+            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+        )  # / r_sin_theta
+
+        d = (term1 + term2) / (sin_theta * r)  # r_sin_theta
+
+        # Reset latitude and longitude coordinate units
+        d.dimension_coordinate("X").Units = x_units
+        d.dimension_coordinate("Y").Units = y_units
+    else:
+        # ------------------------------------------------------------
+        # Cartesian coordinates
+        # ------------------------------------------------------------
+        term1 = fx.derivative(
+            x_key, wrap=x_wrap, one_sided_at_boundary=one_sided_at_boundary
+        )
+
+        term2 = fy.derivative(
+            y_key, wrap=None, one_sided_at_boundary=one_sided_at_boundary
+        )
+
+        d = term1 + term2
+
+    # Set the standard name and long name
+    d.set_property(
+        "long_name",
+        f"Horizontal divergence of ({fx.identity()}, {fy.identity()})",
+    )
+    d.del_property("standard_name", None)
+
+    return d

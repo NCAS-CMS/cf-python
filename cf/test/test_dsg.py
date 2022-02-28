@@ -20,7 +20,7 @@ tmpfiles = [
 
 
 def _remove_tmpfiles():
-    """TODO."""
+    """Try to remove defined temporary files by deleting their paths."""
     for f in tmpfiles:
         try:
             os.remove(f)

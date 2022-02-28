@@ -1198,7 +1198,7 @@ The field construct has two regridding methods: `~Field.regrids` for
 regridding data between domains with spherical coordinate systems; and
 `~Field.regridc` for regridding data between domains with Cartesian
 coordinate systems. The interpolation is carried by out using the
-`ESMF <https://www.earthsystemcog.org/projects/esmpy>`_ package, a
+`ESMF <https://earthsystemmodeling.org/esmpy/>`_ package, a
 Python interface to the Earth System Modeling Framework regridding
 utility.
 
@@ -2351,9 +2351,10 @@ sum. Note that the window weights returned by functions of the
           latter i) can not change the window weights as the filter
           passes through the axis; and ii) does not update the cell
           method constructs.
-        
-Derivatives
-^^^^^^^^^^^
+
+	  
+General first order derivative
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The derivative along a dimension of the field construct's data can be
 calculated as a centred finite difference with the `~Field.derivative`
@@ -2370,6 +2371,141 @@ data is inserted.
 
    >>> r = q.derivative('X')
    >>> r = q.derivative('Y', one_sided_at_boundary=True)
+
+   
+Gradient vector
+^^^^^^^^^^^^^^^
+
+The horizontal gradient vector of a scalar field may calculated with
+the `~Field.grad_xy` method when the field has dimension coordinates
+of X and Y, in either Cartesian (e.g. plane projection) or spherical
+polar coordinate systems.
+
+The horizontal gradient vector in Cartesian coordinates is given by:
+
+.. math:: \nabla f(x, y) = \left(
+                           \frac{\partial f}{\partial x},
+                           \frac{\partial f}{\partial y}
+                           \right)
+
+The horizontal gradient vector in spherical polar coordinates is given
+by:
+
+.. math:: \nabla f(\theta, \phi) = \left(
+                                   \frac{1}{r}
+                                   \frac{\partial f}{\partial \theta},
+                                   \frac{1}{r \sin\theta}
+                                   \frac{\partial f}{\partial \phi}
+                                   \right)
+
+where *r* is radial distance to the origin, :math:`\theta` is the
+polar angle with respect to polar axis, and :math:`\phi` is the
+azimuthal angle.
+
+See `cf.Field.grad_xy` for details and examples.
+
+   
+Laplacian
+^^^^^^^^^
+
+The horizontal Laplacian of a scalar field may be calculated with the
+`~Field.laplacian_xy` method when the field has dimension coordinates
+of X and Y, in either Cartesian (e.g. plane projection) or spherical
+polar coordinate systems.
+
+The horizontal Laplacian in Cartesian coordinates is given by:
+
+.. math:: \nabla^2 f(x, y) = \frac{\partial^2 f}{\partial x^2}
+                             +
+                             \frac{\partial^2 f}{\partial y^2}
+
+The horizontal Laplacian in spherical polar coordinates is given by:
+
+.. math:: \nabla^2 f(\theta, \phi) =
+            \frac{1}{r^2 \sin\theta}
+            \frac{\partial}{\partial \theta}
+            \left(
+            \sin\theta
+            \frac{\partial f}{\partial \theta}
+            \right)
+            +
+            \frac{1}{r^2 \sin^2\theta}
+            \frac{\partial^2 f}{\partial \phi^2}
+
+where *r* is radial distance to the origin, :math:`\theta` is the
+polar angle with respect to polar axis, and :math:`\phi` is the
+azimuthal angle.
+
+See `cf.Field.laplacian_xy` for details and examples.
+
+
+Divergence
+^^^^^^^^^^
+
+The horizontal divergence may be calculated with the `cf.div_xy`
+function from orthogonal vector component fields which have dimension
+coordinates of X and Y, in either Cartesian (e.g. plane projection) or
+spherical polar coordinate systems.
+
+The horizontal divergence of the :math:`(f_x, f_y)` vector in
+Cartesian coordinates is given by:
+
+.. math:: \nabla \cdot (f_{x}(x,y), f_{y}(x,y)) =
+            \frac{\partial f_x}{\partial x}
+            +
+            \frac{\partial f_y}{\partial y}
+
+The horizontal divergence of the :math:`(f_\theta, f_\phi)` vector in
+spherical polar coordinates is given by:
+
+.. math:: \nabla \cdot (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+                \frac{1}{r \sin\theta}
+                \left(
+                \frac{\partial (f_\theta \sin\theta)}{\partial \theta}
+                +
+                \frac{\partial f_\phi}{\partial \phi}
+                \right)
+
+where *r* is radial distance to the origin, :math:`\theta` is the
+polar angle with respect to polar axis, and :math:`\phi` is the
+azimuthal angle.
+
+See `cf.div_xy` for details and examples.
+
+
+Curl
+^^^^
+
+The horizontal curl may be calculated with the `cf.curl_xy` function
+from orthogonal vector component fields which have dimension
+coordinates of X and Y, in either Cartesian (e.g. plane projection) or
+spherical polar coordinate systems.
+
+The horizontal curl of the :math:`(f_x, f_y)` vector in Cartesian
+coordinates is given by:
+
+.. math:: \nabla \times (f_{x}(x,y), f_{y}(x,y)) =
+            \frac{\partial f_y}{\partial x}
+            -
+            \frac{\partial f_x}{\partial y}
+
+The horizontal curl of the :math:`(f_\theta, f_\phi)` vector in
+spherical polar coordinates is given by:
+
+.. math:: \nabla \times (f_\theta(\theta,\phi), f_\phi(\theta,\phi)) =
+            \frac{1}{r \sin\theta}
+            \left(
+            \frac{\partial (f_\phi \sin\theta)}{\partial \theta}
+            -
+            \frac{\partial f_\theta}{\partial \phi}
+            \right)
+
+where *r* is radial distance to the origin, :math:`\theta` is the
+polar angle with respect to polar axis, and :math:`\phi` is the
+azimuthal angle.
+
+See `cf.curl_xy` for details and examples.
+
 
 Relative vorticity
 ^^^^^^^^^^^^^^^^^^
@@ -2449,8 +2585,8 @@ derivative wraps around by default.
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    
-.. _CF-netCDF cell methods:           http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#cell-methods
-.. _Climatological statistics:        http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#climatological-statistics
-.. _Latitude-longitude:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_latitude_longitude
-.. _Rotated latitude-longitude:       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_rotated_pole
-.. _Plane projection:                 http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#appendix-grid-mappings
+.. _CF-netCDF cell methods:     http://cfconventions.org/cf-conventions/cf-conventions.html#cell-methods
+.. _Climatological statistics:  http://cfconventions.org/cf-conventions/cf-conventions.html#climatological-statistics
+.. _Latitude-longitude:         http://cfconventions.org/cf-conventions/cf-conventions.html#_latitude_longitude
+.. _Rotated latitude-longitude: http://cfconventions.org/cf-conventions/cf-conventions.html#_rotated_pole
+.. _Plane projection:           http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
