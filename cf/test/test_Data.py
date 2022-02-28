@@ -2342,17 +2342,17 @@ class DataTest(unittest.TestCase):
         cf.Data.mask_fpe(oldm)
         cf.Data.seterr(**olds)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
     def test_Data__len__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        self.assertEqual(len(cf.Data([1, 2, 3])), 3)
-        self.assertEqual(len(cf.Data([[1, 2, 3]])), 1)
-        self.assertEqual(len(cf.Data([[1, 2, 3], [4, 5, 6]])), 2)
+        self.assertEqual(3, len(cf.Data([1, 2, 3])))
+        self.assertEqual(2, len(cf.Data([[1, 2, 3], [4, 5, 6]])))
+        self.assertEqual(1, len(cf.Data([[1, 2, 3]])))
 
-        with self.assertRaises(Exception):
-            _ = len(cf.Data(1))
+        # len() of unsized object
+        with self.assertRaises(TypeError):
+            len(cf.Data(1))
 
     def test_Data__float__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -3767,6 +3767,18 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.shape, shape)
             self.assertEqual(d.dtype, dtype_out)
             self.assertTrue((d.array == np.zeros(shape, dtype=dtype_in)).all())
+
+    def test_Data__iter__(self):
+        for d in (
+            cf.Data([1, 2, 3], "metres"),
+            cf.Data([[1, 2], [3, 4]], "metres"),
+        ):
+            for i, e in enumerate(d):
+                self.assertTrue(e.equals(d[i]))
+
+        # iteration over a 0-d Data
+        with self.assertRaises(TypeError):
+            list(cf.Data(99, "metres"))
 
     def test_Data__bool__(self):
         for x in (1, 1.5, True, "x"):
