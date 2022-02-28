@@ -424,7 +424,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data(np.arange(12).reshape(3, 4), "m", chunks=3)
+        d = cf.Data(np.arange(12).reshape(3, 4), "m", chunks=-1)
         d[-1, -1] = cf.masked
         d[1, 1] = cf.masked
 
@@ -474,6 +474,7 @@ class DataTest(unittest.TestCase):
             e = d.halo(i)
 
             t = d.halo(i, tripolar={"X": 1, "Y": 0})
+            print (t[-i:].shape, e[-i:, ::-1].shape)
             self.assertTrue(t[-i:].equals(e[-i:, ::-1], verbose=2))
 
             t = d.halo(i, tripolar={"X": 1, "Y": 0}, fold_index=0)
