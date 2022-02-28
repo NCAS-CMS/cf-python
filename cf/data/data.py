@@ -8891,7 +8891,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """The second of each date-time value.
 
         Only applicable for data with reference time units. The
-        returnedx `Data` will have the same mask hardness as the
+        returned `Data` will have the same mask hardness as the
         original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.month`, `~cf.Data.day`,
