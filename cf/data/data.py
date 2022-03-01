@@ -706,7 +706,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     value = value.copy()
                     value.Units = self_units
             elif value_units:
-                # No need to check the dask array if the value uits
+                # No need to check the dask array if the value units
                 # are incompatible
                 return False
 
