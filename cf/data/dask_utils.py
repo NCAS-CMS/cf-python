@@ -86,7 +86,7 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
 
         # Note: If a_blocks or b_blocks has more than one chunk in
         #       more than one dimension they will comprise a nested
-        #       sequence of sequences, that needs to be flatten so
+        #       sequence of sequences, that needs to be flattened so
         #       that we can safely iterate through the actual numpy
         #       array elements.
 
