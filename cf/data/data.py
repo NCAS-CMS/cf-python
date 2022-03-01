@@ -10443,6 +10443,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return True
 
+    @daskified(_DASKIFIED_VERBOSE)
     def datum(self, *index):
         """Return an element of the data array as a standard Python
         scalar.
