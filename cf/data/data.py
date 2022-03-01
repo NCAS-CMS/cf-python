@@ -9618,7 +9618,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             dx = concatenate([left, dx, right], axis=axis)
 
         d._set_dask(dx, reset_mask_hardness=False)
-        print(d._get_dask())
+
         # Special case for tripolar: The northern Y axis halo contains
         # the values that have been flipped in the X direction.
         if tripolar:
@@ -9639,8 +9639,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             indices2 = indices1[:]
             indices2[X_axis] = slice(None, None, -1)
 
-            print(depth, tuple(indices1), tuple(indices2))
-            d[tuple(indices1)] = d[tuple(indices2)]
+            dx = d._get_dask()
+            dx[tuple(indices1)] = dx[tuple(indices2)]
+
+            d._set_dask(dx, reset_mask_hardness=False)
 
             if hardmask:
                 d.hardmask = True

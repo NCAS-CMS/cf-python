@@ -427,7 +427,6 @@ class DataTest(unittest.TestCase):
                 e = cf.Data(np.arange(6).reshape(2, 3), "m", chunks=(j, i))
                 self.assertTrue(d.equals(e))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'ndim'")
     def test_Data_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -482,7 +481,6 @@ class DataTest(unittest.TestCase):
             e = d.halo(i)
 
             t = d.halo(i, tripolar={"X": 1, "Y": 0})
-            print(t[-i:].shape, e[-i:, ::-1].shape)
             self.assertTrue(t[-i:].equals(e[-i:, ::-1], verbose=2))
 
             t = d.halo(i, tripolar={"X": 1, "Y": 0}, fold_index=0)
