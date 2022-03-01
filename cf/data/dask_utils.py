@@ -107,7 +107,7 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     )
 
 
-def cf_contains(a, value=None):
+def cf_contains(a, value):
     """Whether or not an array contains a value.
 
     .. versionadded:: TODODASK

@@ -7,6 +7,7 @@ import unittest
 from functools import reduce
 from operator import mul
 
+import dask.array as da
 import numpy as np
 
 SCIPY_AVAILABLE = False
@@ -1088,17 +1089,55 @@ class DataTest(unittest.TestCase):
             return
 
         d = cf.Data([[0, 1, 2], [3, 4, 5]], units="m", chunks=2)
-        self.assertIn(4, d)
-        self.assertIn(4.0, d)
-        self.assertIn(cf.Data(3), d)
-        self.assertIn(cf.Data([[[[3]]]]), d)
-        self.assertIn(cf.Data([0.005], "km"), d)
-        self.assertIn(np.array([[[2]]]), d)
 
-        self.assertNotIn(99, d)
-        self.assertNotIn([1, 2], d)
-        self.assertNotIn(np.array([1, 2]), d)
-        self.assertNotIn(cf.Data(2, "seconds"), d)
+        for value in (
+            4,
+            4.0,
+            cf.Data(3),
+            cf.Data(0.005, "km"),
+            np.array(2),
+            da.from_array(2),
+        ):
+            self.assertIn(value, d)
+
+        for value in (
+            99,
+            np.array(99),
+            da.from_array(99),
+            cf.Data(99, "km"),
+            cf.Data(2, "seconds"),
+        ):
+            self.assertNotIn(value, d)
+
+        for value in (
+            [1],
+            [[1]],
+            [1, 2],
+            [[1, 2]],
+            np.array([1]),
+            np.array([[1]]),
+            np.array([1, 2]),
+            np.array([[1, 2]]),
+            da.from_array([1]),
+            da.from_array([[1]]),
+            da.from_array([1, 2]),
+            da.from_array([[1, 2]]),
+            cf.Data([1]),
+            cf.Data([[1]]),
+            cf.Data([1, 2]),
+            cf.Data([[1, 2]]),
+            cf.Data([0.005], "km"),
+        ):
+            with self.assertRaises(TypeError):
+                value in d
+
+        # Strings
+        d = cf.Data(["foo", "bar"])
+        self.assertIn("foo", d)
+        self.assertNotIn("xyz", d)
+
+        with self.assertRaises(TypeError):
+            ["foo"] in d
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_asdata(self):
