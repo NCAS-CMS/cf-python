@@ -10558,15 +10558,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     index = tuple(index)
                 else:
                     raise ValueError(
-                        "Incorrect number of indices for {} array".format(
-                            self.__class__.__name__
-                        )
+                        f"Incorrect number of indices ({n_index}) for "
+                        f"{self.ndim}-d {self.__class__.__name__} data"
                     )
             elif n_index != self.ndim:
                 raise ValueError(
-                    "Incorrect number of indices for {} array".format(
-                        self.__class__.__name__
-                    )
+                    f"Incorrect number of indices ({n_index}) for "
+                    f"{self.ndim}-d {self.__class__.__name__} data"
                 )
 
             array = self[index].array
@@ -10576,8 +10574,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         else:
             raise ValueError(
-                "Can only convert a {} array of size 1 to a "
-                "Python scalar".format(self.__class__.__name__)
+                f"For size {self.size} data, must provide an index of "
+                "the element to be converted to a Python scalar"
             )
 
         if not np.ma.isMA(array):
