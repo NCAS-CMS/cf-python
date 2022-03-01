@@ -8753,6 +8753,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return old
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def year(self):
         """The year of each date-time value.
 
@@ -8775,6 +8776,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "year")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def month(self):
         """The month of each date-time value.
 
@@ -8797,6 +8799,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "month")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def day(self):
         """The day of each date-time value.
 
@@ -8819,6 +8822,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "day")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def hour(self):
         """The hour of each date-time value.
 
@@ -8841,6 +8845,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "hour")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def minute(self):
         """The minute of each date-time value.
 
@@ -8863,6 +8868,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return YMDhms(self, "minute")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def second(self):
         """The second of each date-time value.
 
@@ -9588,7 +9594,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Create the halo
         dx = d._get_dask()
-       
+
         indices = [slice(None)] * ndim
         for axis, size in sorted(depth.items()):
             if not size:
@@ -9612,7 +9618,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             dx = concatenate([left, dx, right], axis=axis)
 
         d._set_dask(dx, reset_mask_hardness=False)
-        print (d._get_dask())
+        print(d._get_dask())
         # Special case for tripolar: The northern Y axis halo contains
         # the values that have been flipped in the X direction.
         if tripolar:
@@ -9633,7 +9639,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             indices2 = indices1[:]
             indices2[X_axis] = slice(None, None, -1)
 
-            print (depth, tuple(indices1), tuple(indices2))
+            print(depth, tuple(indices1), tuple(indices2))
             d[tuple(indices1)] = d[tuple(indices2)]
 
             if hardmask:
