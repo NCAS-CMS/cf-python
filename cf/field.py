@@ -14351,6 +14351,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         # Initialize the output field with the percentile data
         # ------------------------------------------------------------
+
+        # TODODASK: Make sure that this is OK whaen `ranks` is a
+        #           scalar
+
         out = type(self)()
         out.set_properties(self.properties())
 

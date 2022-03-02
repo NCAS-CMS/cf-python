@@ -13,6 +13,7 @@ from ..cfdatetime import (
     st2rt,
 )
 from ..units import Units
+from .dask_utils import cf_YMDhms
 
 
 def _is_numeric_dtype(array):
@@ -551,7 +552,7 @@ def conform_units(value, units):
         units: `Units`
             The units to conform to.
 
-    **Examples:**
+    **Examples**
 
     >>> conform_units(1, cf.Units('metres'))
     1
@@ -588,3 +589,46 @@ def conform_units(value, units):
             )
 
     return value
+
+
+def YMDhms(d, attr):
+    """Return a date-time component of the data.
+
+    Only applicable for data with reference time units. The returned
+    `Data` will have the same mask hardness as the original array.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
+                 `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
+
+    :Parameters:
+
+        d: `Data`
+            The data from which to extract date-time component.
+
+        attr: `str`
+            The name of the date-time component, one of ``'year'``,
+            ``'month'``, ``'day'``, ``'hour'``, ``'minute'``,
+            ``'second'``.
+
+    :Returns:
+
+        `Data`
+            The date-time component
+
+    **Examples**
+
+    >>> d = cf.Data([0, 1, 2], 'days since 1999-12-31')
+    >>> YMDhms(d, 'year').array
+    >>> array([1999, 2000, 2000])
+
+    """
+    units = d.Units
+    if not units.isreftime:
+        raise ValueError(f"Can't get {attr}s from data with {units!r}")
+
+    d = d._asdatetime()
+    d._map_blocks(partial(cf_YMDhms, attr=attr), dtype=int)
+    d.override_units(Units(None), inplace=True)
+    return d
