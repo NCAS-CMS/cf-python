@@ -8,6 +8,7 @@ import warnings
 from functools import reduce
 from operator import mul
 
+import dask.array as da
 import numpy as np
 
 SCIPY_AVAILABLE = False
@@ -1094,21 +1095,60 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, fm.shape)
         self.assertTrue((f._auxiliary_mask_return().array == fm).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "TypeError: 'int' is not iterable")
-    def test_Data___contains__(self):
+    def test_Data__contains__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data([[0.0, 1, 2], [3, 4, 5]], units="m")
-        self.assertIn(4, d)
-        self.assertNotIn(40, d)
-        self.assertIn(cf.Data(3), d)
-        self.assertIn(cf.Data([[[[3]]]]), d)
-        value = d[1, 2]
-        value.Units *= 2
-        value.squeeze(0)
-        self.assertIn(value, d)
-        self.assertIn(np.array([[[2]]]), d)
+        d = cf.Data([[0, 1, 2], [3, 4, 5]], units="m", chunks=2)
+
+        for value in (
+            4,
+            4.0,
+            cf.Data(3),
+            cf.Data(0.005, "km"),
+            np.array(2),
+            da.from_array(2),
+        ):
+            self.assertIn(value, d)
+
+        for value in (
+            99,
+            np.array(99),
+            da.from_array(99),
+            cf.Data(99, "km"),
+            cf.Data(2, "seconds"),
+        ):
+            self.assertNotIn(value, d)
+
+        for value in (
+            [1],
+            [[1]],
+            [1, 2],
+            [[1, 2]],
+            np.array([1]),
+            np.array([[1]]),
+            np.array([1, 2]),
+            np.array([[1, 2]]),
+            da.from_array([1]),
+            da.from_array([[1]]),
+            da.from_array([1, 2]),
+            da.from_array([[1, 2]]),
+            cf.Data([1]),
+            cf.Data([[1]]),
+            cf.Data([1, 2]),
+            cf.Data([[1, 2]]),
+            cf.Data([0.005], "km"),
+        ):
+            with self.assertRaises(TypeError):
+                value in d
+
+        # Strings
+        d = cf.Data(["foo", "bar"])
+        self.assertIn("foo", d)
+        self.assertNotIn("xyz", d)
+
+        with self.assertRaises(TypeError):
+            ["foo"] in d
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_asdata(self):
