@@ -10298,18 +10298,54 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def change_calendar(self, calendar, inplace=False, i=False):
-        """Change the calendar of the data array elements.
+        """Change the calendar of date-time array elements.
 
-        .. note:: Changing the calendar could result in a change of
-                  reference time data array values.
+        Reinterprets the existing date-times for the new calendar by
+        adjusting the underlying numerical values relative to the
+        refernce date-time defined by the units.
 
-                  Not to be confused with using the
-                  `override_calendar` method or resetting the `Units`
-                  attribute. `override_calendar` is different because
-                  the new calendar need not be equivalent to the
-                  original ones and the data array elements will not
-                  be changed to reflect the new units. Resetting
-                  `d.Units` will
+        If a date-time value is not allowed in the new calendar then
+        an exception is raised when the data array is accessed.
+
+        .. seealso:: `override_calendar`, `Units`
+
+        :Parameters:
+
+            calendar: `str`
+                The new calendar, as recognised by the CF conventions.
+
+                *Parameter example:*
+                  ``'proleptic_gregorian'``
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The new data with updated calendar, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2, 3, 4], 'days since 2004-02-27')
+        >>> print(d.array)
+        [0 1 2 3 4]
+        >>> print(d.datetime_as_string)
+        ['2004-02-27 00:00:00' '2004-02-28 00:00:00' '2004-02-29 00:00:00'
+         '2004-03-01 00:00:00' '2004-03-02 00:00:00']
+        >>> e = d.change_calendar('360_day')
+        >>> print(e.array)
+        [0 1 2 4 5]
+        >>> print(e.datetime_as_string)
+        ['2004-02-27 00:00:00' '2004-02-28 00:00:00' '2004-02-29 00:00:00'
+        '2004-03-01 00:00:00' '2004-03-02 00:00:00']
+
+        >>> d.change_calendar('noleap').array
+        Traceback (most recent call last):
+            ...
+        ValueError: invalid day number provided in cftime.DatetimeNoLeap(2004, 2, 29, 0, 0, 0, 0, has_year_zero=True)
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -10318,7 +10354,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if not units.isreftime:
             raise ValueError(
                 "Can't change calendar of non-reference time "
-                "units: {!r}".format(units)
+                f"units: {units!r}"
             )
 
         d._asdatetime(inplace=True)
