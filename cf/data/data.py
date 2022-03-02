@@ -20,7 +20,6 @@ from dask.highlevelgraph import HighLevelGraph
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
 from ..cfdatetime import dt as cf_dt
-from ..cfdatetime import dt2rt, rt2dt  # , st2rt
 from ..constants import masked as cf_masked
 from ..decorators import (
     _deprecated_kwarg_check,
@@ -106,8 +105,10 @@ from .creation import (
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
+    cf_dt2rt,
     cf_harden_mask,
     cf_percentile,
+    cf_rt2dt,
     cf_soften_mask,
     cf_where,
 )
@@ -116,6 +117,7 @@ from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
+    YMDhms,
     _is_numeric_dtype,
     conform_units,
     convert_to_datetime,
@@ -879,101 +881,101 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         x.__iter__() <==> iter(x)
 
-        **Examples:**
+        **Performance**
+
+        If the shape of the data is unknown then it is calculated
+        immediately by executing all delayed operations.
+
+        **Examples**
 
         >>> d = cf.Data([1, 2, 3], 'metres')
         >>> for e in d:
-        ...    print(repr(e))
+        ...     print(repr(e))
         ...
-        1
-        2
-        3
+        <CF Data(1): [1] metres>
+        <CF Data(1): [2] metres>
+        <CF Data(1): [3] metres>
 
-        >>> d = cf.Data([[1, 2], [4, 5]], 'metres')
-        >>> for e in d:
-        ...    print(repr(e))
-        ...
-        <CF Data: [1, 2] metres>
-        <CF Data: [4, 5] metres>
-
-        >>> d = cf.Data(34, 'metres')
+        >>> d = cf.Data([[1, 2], [3, 4]], 'metres')
         >>> for e in d:
         ...     print(repr(e))
-        ..
+        ...
+        <CF Data: [1, 2] metres>
+        <CF Data: [3, 4] metres>
+
+        >>> d = cf.Data(99, 'metres')
+        >>> for e in d:
+        ...     print(repr(e))
+        ...
+        Traceback (most recent call last):
+            ...
         TypeError: iteration over a 0-d Data
 
         """
-        ndim = self._ndim
+        try:
+            n = len(self)
+        except TypeError:
+            raise TypeError(f"iteration over a 0-d {self.__class__.__name__}")
 
-        if not ndim:
-            raise TypeError(
-                "Iteration over 0-d {}".format(self.__class__.__name__)
-            )
-
-        elif ndim == 1:
-            if self.fits_in_memory(self.dtype.itemsize):
-                i = iter(self.array)
-                while 1:
-                    try:
-                        yield next(i)
-                    except StopIteration:
-                        return
-            else:
-                for n in range(self._size):
-                    yield self[n].array[0]
-
-        else:
-            # ndim > 1
-            for n in range(self._shape[0]):
-                out = self[n, ...]
-                out.squeeze(0, inplace=True)
-                yield out
+        for i in range(n):
+            yield self[i]
 
     def __len__(self):
-        """The built-in function `len`
+        """Called to implement the built-in function `len`.
 
         x.__len__() <==> len(x)
 
-        **Examples:**
+        **Performance**
 
-        >>> len(Data([1, 2, 3]))
+        If the shape of the data is unknown then it is calculated
+        immediately by executing all delayed operations.
+
+        **Examples**
+
+        >>> len(cf.Data([1, 2, 3]))
         3
-        >>> len(Data([[1, 2, 3]]))
+        >>> len(cf.Data([[1, 2, 3]]))
         1
-        >>> len(Data([[1, 2, 3], [4, 5, 6]]))
+        >>> len(cf.Data([[1, 2, 3], [4, 5, 6]]))
         2
-        >>> len(Data(1))
-        TypeError: len() of scalar Data
+        >>> len(cf.Data(1))
+        Traceback (most recent call last):
+            ...
+        TypeError: len() of unsized object
 
         """
-        shape = self._shape
-        if shape:
-            return shape[0]
+        dx = self._get_dask()
+        if math.isnan(dx.size):
+            logger.warning("Computing data len: Performance may be degraded")
+            dx.compute_chunk_sizes()
 
-        raise TypeError("len() of scalar {}".format(self.__class__.__name__))
+        return len(dx)
 
     def __bool__(self):
         """Truth value testing and the built-in operation `bool`
 
         x.__bool__() <==> bool(x)
 
-        **Examples:**
+        **Performance**
 
-        >>> bool(Data(1))
+        `__bool__` causes all delayed operations to be computed.
+
+        **Examples**
+
+        >>> bool(cf.Data(1.5))
         True
-        >>> bool(Data([[False]]))
+        >>> bool(cf.Data([[False]]))
         False
-        >>> bool(Data([1, 2]))
-        ValueError: The truth value of Data with more than one element is ambiguous. Use d.any() or d.all()
 
         """
-        if self._size == 1:
-            return bool(self.array)
+        size = self.size
+        if size != 1:
+            raise ValueError(
+                f"The truth value of a {self.__class__.__name__} with {size} "
+                "elements is ambiguous. Use d.any() or d.all()"
+            )
 
-        raise ValueError(
-            "The truth value of Data with more than one element is "
-            "ambiguous. Use d.any() or d.all()"
-        )
+        return bool(self.array)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -1521,9 +1523,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def _map_blocks(self, func, **kwargs):
         """Apply a function to the data in-place.
 
-        .. note:: This method does not reset the mask hardness. It may
-                  be necessary for a call to `_map_blocks` to be
-                  followed by a call to `_reset_mask_hardness`.
+        .. warning:: **This method **does not reset the mask
+                     hardness**. It may be necessary for a call to
+                     `_map_blocks` to be followed by a call to
+                     `_reset_mask_hardness` (or equivalent).
 
         .. versionadded:: TODODASK
 
@@ -3344,6 +3347,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def _asdatetime(self, inplace=False):
         """Change the internal representation of data array elements
@@ -3370,46 +3374,37 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples:**
+        **Examples**
 
-        >>> d._asdatetime()
+        >>> d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
+        >>> e = d._asdatetime()
+        >>> print(e.array)
+        [[cftime.DatetimeGregorian(2000, 12, 30, 22, 19, 12, 0, has_year_zero=False)
+          cftime.DatetimeGregorian(2001, 1, 3, 4, 4, 48, 0, has_year_zero=False)]]
+        >>> f = e._asreftime()
+        >>> print(f.array)
+        [[1.93 5.17]]
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        units = self.Units
 
+        units = d.Units
         if not units.isreftime:
             raise ValueError(
-                "Can't convert {!r} data to date-time objects".format(units)
+                f"Can't convert {units!r} values to date-time objects"
             )
 
-        if d._isdatetime():
-            if inplace:
-                d = None
-            return d
-
-        config = d.partition_configuration(
-            readonly=False, func=rt2dt, dtype=None
-        )
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            p_units = partition.Units
-            partition.Units = Units(p_units.units, p_units._utime.calendar)
-            partition.close()
-
-        d.Units = Units(units.units, units._utime.calendar)
-
-        d._dtype = array.dtype
+        if not d._isdatetime():
+            d._map_blocks(cf_rt2dt, units=units, dtype=object)
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def _isdatetime(self):
-        """True if the internal representation is a datetime-like
-        object."""
+        """True if the internal representation is a datetime object."""
         return self.dtype.kind == "O" and self.Units.isreftime
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def _asreftime(self, inplace=False):
         """Change the internal representation of data array elements
@@ -3434,40 +3429,28 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples:**
+        **Examples**
 
-        >>> d._asreftime()
+        >>> d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
+        >>> e = d._asdatetime()
+        >>> print(e.array)
+        [[cftime.DatetimeGregorian(2000, 12, 30, 22, 19, 12, 0, has_year_zero=False)
+          cftime.DatetimeGregorian(2001, 1, 3, 4, 4, 48, 0, has_year_zero=False)]]
+        >>> f = e._asreftime()
+        >>> print(f.array)
+        [[1.93 5.17]]
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+
         units = d.Units
+        if not units.isreftime:
+            raise ValueError(
+                f"Can't convert {units!r} values to numeric reference times"
+            )
 
-        if not d._isdatetime():
-            if units.isreftime:
-                if inplace:
-                    d = None
-                return d
-            else:
-                raise ValueError(
-                    "Can't convert {!r} data to numeric reference "
-                    "times".format(units)
-                )
-        # --- End: if
-
-        config = d.partition_configuration(
-            readonly=False, func=dt2rt, dtype=None
-        )
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            p_units = partition.Units
-            partition.Units = Units(p_units.units, p_units._utime.calendar)
-            partition.close()
-
-        d.Units = Units(units.units, units._utime.calendar)
-
-        d._dtype = array.dtype
+        if d._isdatetime():
+            d._map_blocks(cf_dt2rt, units=units, dtype=float)
 
         return d
 
@@ -6464,9 +6447,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @property
     def mask(self):
-        """The boolean missing data mask of the data array.
+        """The Boolean missing data mask of the data array.
 
-        The boolean mask has True where the data array has missing data
+        The Boolean mask has True where the data array has missing data
         and False otherwise.
 
         :Returns:
@@ -6481,40 +6464,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> m.dtype
         dtype('bool')
         >>> m.shape
-        (12, 73, 96])
+        (12, 73, 96)
 
         """
-        mask = self.copy()
+        mask_data_obj = self.copy()
 
-        config = mask.partition_configuration(readonly=False)
+        dx = self._get_dask()
+        mask = da.ma.getmaskarray(dx)
 
-        for partition in mask.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
+        mask_data_obj._set_dask(mask, reset_mask_hardness=True)
+        mask_data_obj.override_units(_units_None, inplace=True)
+        mask_data_obj.hardmask = True
 
-            if partition.masked:
-                # Array is masked
-                partition.subarray = array.mask.copy()
-            else:
-                # Array is not masked
-                partition.subarray = FilledArray(
-                    shape=array.shape,
-                    size=array.size,
-                    ndim=array.ndim,
-                    dtype=_dtype_bool,
-                    fill_value=0,
-                )
-
-            partition.Units = _units_None
-
-            partition.close()
-
-        mask._Units = _units_None
-        mask.dtype = _dtype_bool
-
-        mask._hardmask = True
-
-        return mask
+        return mask_data_obj
 
     @staticmethod
     def mask_fpe(*arg):
@@ -8839,181 +8801,143 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return old
 
-    def _YMDhms(self, attr):
-        """Provides datetime components of the data array elements.
-
-        .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
-        `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
-
-        """
-
-        def _func(array, units_in, dummy0, dummy1):
-            """The returned array is always independent.
-
-            :Parameters:
-
-                array: numpy array
-
-                units_in: `Units`
-
-                dummy0:
-                    Ignored.
-
-                dummy1:
-                    Ignored.
-
-            :Returns:
-
-                numpy array
-
-            """
-            if not self._isdatetime():
-                array = rt2dt(array, units_in)
-
-            return _array_getattr(array, attr)
-
-        # --- End: def
-
-        if not self.Units.isreftime:
-            raise ValueError(
-                "Can't get {}s from data with {!r}".format(attr, self.Units)
-            )
-
-        new = self.copy()
-
-        new._Units = _units_None
-
-        config = new.partition_configuration(
-            readonly=False, func=_func, dtype=None
-        )
-
-        for partition in new.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            new_dtype = array.dtype
-            partition.close()
-
-        new._dtype = new_dtype
-
-        return new
-
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def year(self):
-        """The year of each data array element.
+        """The year of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.month`, `~cf.Data.day`, `~cf.Data.hour`,
                      `~cf.Data.minute`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.year
-        <CF Data: [[2000, 2001]] >
+        <CF Data(1, 2): [[2000, 2001]] >
 
         """
-        return self._YMDhms("year")
+        return YMDhms(self, "year")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def month(self):
-        """The month of each data array element.
+        """The month of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.day`, `~cf.Data.hour`,
                      `~cf.Data.minute`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.month
-        <CF Data: [[12, 1]] >
+        <CF Data(1, 2): [[12, 1]] >
 
         """
-        return self._YMDhms("month")
+        return YMDhms(self, "month")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def day(self):
-        """The day of each data array element.
+        """The day of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.month`, `~cf.Data.hour`,
                      `~cf.Data.minute`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.day
-        <CF Data: [[30, 3]] >
+        <CF Data(1, 2): [[30, 3]] >
 
         """
-        return self._YMDhms("day")
+        return YMDhms(self, "day")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def hour(self):
-        """The hour of each data array element.
+        """The hour of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.month`, `~cf.Data.day`,
                      `~cf.Data.minute`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.hour
-        <CF Data: [[22, 4]] >
+        <CF Data(1, 2): [[22, 4]] >
 
         """
-        return self._YMDhms("hour")
+        return YMDhms(self, "hour")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def minute(self):
-        """The minute of each data array element.
+        """The minute of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.month`, `~cf.Data.day`,
                      `~cf.Data.hour`, `~cf.Data.second`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.minute
-        <CF Data: [[19, 4]] >
+        <CF Data(1, 2): [[19, 4]] >
 
         """
-        return self._YMDhms("minute")
+        return YMDhms(self, "minute")
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def second(self):
-        """The second of each data array element.
+        """The second of each date-time value.
 
-        Only applicable for reference time units.
+        Only applicable for data with reference time units. The
+        returned `Data` will have the same mask hardness as the
+        original array.
 
         .. seealso:: `~cf.Data.year`, `~cf.Data.month`, `~cf.Data.day`,
                      `~cf.Data.hour`, `~cf.Data.minute`
 
+        **Examples**
+
         >>> d = cf.Data([[1.93, 5.17]], 'days since 2000-12-29')
         >>> d
-        <CF Data: [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
+        <CF Data(1, 2): [[2000-12-30 22:19:12, 2001-01-03 04:04:48]] >
         >>> d.second
-        <CF Data: [[12, 48]] >
+        <CF Data(1, 2): [[12, 48]] >
 
         """
-        return self._YMDhms("second")
+        return YMDhms(self, "second")
 
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
@@ -11012,7 +10936,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if axes is not None and not axes and axes != 0:
+        if axes is not None and not axes and axes != 0:  # i.e. empty sequence
             return d
 
         if axes is None:
@@ -11024,7 +10948,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             return d
 
         index = [
-            slice(None, None, -1) if i in axes else slice(None) for i in iaxes
+            slice(None, None, -1) if i in iaxes else slice(None)
+            for i in range(d.ndim)
         ]
 
         dx = d._get_dask()
@@ -13671,18 +13596,6 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
     new_partition_matrix.resize(new_shape)
 
     return new_partition_matrix
-
-
-# --------------------------------------------------------------------
-# ???
-# --------------------------------------------------------------------
-def _getattr(x, attr):
-    if not x:
-        return False
-    return getattr(x, attr)
-
-
-_array_getattr = np.vectorize(_getattr)
 
 
 def _broadcast(a, shape):
