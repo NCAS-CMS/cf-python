@@ -8444,21 +8444,29 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return d
 
     @classmethod
+    @daskified(_DASKIFIED_VERBOSE)
     def asdata(cls, d, dtype=None, copy=False):
         """Convert the input to a `Data` object.
+
+        If the input *d* has the Data interface (i.e. it has a
+        `__data__` method), then the output of this method is used as
+        the returned `Data` object. Otherwise, `Data(d)` is returned.
 
         :Parameters:
 
             d: data-like
-                Input data in any form that can be converted to an cf.Data
-                object. This includes `cf.Data` and `cf.Field` objects,
-                numpy arrays and any object which may be converted to a
+                Input data in any form that can be converted to an
+                `Data` object. This includes `Data` and `Field`
+                objects, and object with the Data inferface, numpy
+                arrays and any object which may be converted to a
                 numpy array.
 
            dtype: data-type, optional
                 By default, the data-type is inferred from the input data.
 
-           copy:
+           copy: `bool`, optional
+                If True and *d* has the Data interface, then a copy of
+                `d.__data__()` is returned.
 
         :Returns:
 
@@ -8467,7 +8475,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 input if it is already a `Data` object with matching dtype
                 and *copy* is False.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([1, 2])
         >>> cf.Data.asdata(d) is d
