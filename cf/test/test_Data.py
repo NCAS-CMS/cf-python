@@ -3847,7 +3847,8 @@ class DataTest(unittest.TestCase):
             [0, 1, 2, 3, 4], "days since 2004-02-27", calendar="standard"
         )
         e = d.change_calendar("360_day")
-        self.assertTrue((e.array == [0, 1, 2, 4, 5]).all())
+        self.assertTrue(np.allclose(e.array, [0, 1, 2, 4, 5]))
+        self.assertEqual(e.Units, cf.Units("days since 2004-02-27", "360_day"))
 
         # An Exception shouild be raised when a date is stored that is
         # invalid to the calendar (e.g. 29th of February in the noleap
