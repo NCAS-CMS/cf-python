@@ -104,6 +104,7 @@ from .creation import (
 )
 from .dask_utils import (
     _da_ma_allclose,
+    cf_contains,
     cf_dt2rt,
     cf_harden_mask,
     cf_percentile,
@@ -650,37 +651,81 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         x.__contains__(y) <==> y in x
 
-        Returns True if the value is contained anywhere in the data
-        array. The value may be a `cf.Data` object.
+        Returns True if the scalar *value* is contained anywhere in
+        the data. If *value* is not scalar then an exception is
+        raised.
 
         **Performance**
 
-        All delayed operations are exectued, and there is no
-        short-circuit once the first occurrence is found.
+        `__contains__` causes all delayed operations to be computed
+        unless *value* is a `Data` object with incompatible units, in
+        which case `False` is always returned.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([[0.0, 1,  2], [3, 4, 5]], 'm')
+        >>> d = cf.Data([[0, 1, 2], [3, 4, 5]], 'm')
         >>> 4 in d
         True
-        >>> cf.Data(3) in d
+        >>> 4.0 in d
         True
-        >>> cf.Data([2.5], units='2 m') in d
+        >>> cf.Data(5) in d
         True
-        >>> [[2]] in d
+        >>> cf.Data(5, 'm') in d
         True
-        >>> numpy.array([[[2]]]) in d
+        >>> cf.Data(0.005, 'km') in d
         True
-        >>> Data(2, 'seconds') in d
+
+        >>> 99 in d
+        False
+        >>> cf.Data(2, 'seconds') in d
+        False
+
+        >>> [1] in d
+        Traceback (most recent call last):
+            ...
+        TypeError: elementwise comparison failed; must test against a scalar, not [1]
+        >>> [1, 2] in d
+        Traceback (most recent call last):
+            ...
+        TypeError: elementwise comparison failed; must test against a scalar, not [1, 2]
+
+        >>> d = cf.Data(["foo", "bar"])
+        >>> 'foo' in d
+        True
+        >>> 'xyz' in d
         False
 
         """
+        # Check that value is scalar by seeing if its shape is ()
+        shape = getattr(value, "shape", None)
+        if shape is None:
+            if isinstance(value, str):
+                # Strings are scalars, even though they have a len().
+                shape = ()
+            else:
+                try:
+                    len(value)
+                except TypeError:
+                    # value has no len() so assume that it is a scalar
+                    shape = ()
+                else:
+                    # value has a len() so assume that it is not a scalar
+                    shape = True
+        elif is_dask_collection(value) and math.isnan(value.size):
+            # value is a dask array with unknown size, so calculate
+            # the size. This is acceptable, as we're going to compute
+            # it anyway at the end of this method.
+            value.compute_chunk_sizes()
+            shape = value.shape
 
-        def contains_chunk(a, value):
-            out = value in a
-            return np.array(out).reshape((1,) * a.ndim)
+        if shape:
+            raise TypeError(
+                "elementwise comparison failed; must test against a scalar, "
+                f"not {value!r}"
+            )
 
-        if isinstance(value, self.__class__):  # TODDASK chek aother type stoo
+        # If value is a scalar Data object then conform its units
+        if isinstance(value, self.__class__):
             self_units = self.Units
             value_units = value.Units
             if value_units.equivalent(self_units):
@@ -688,6 +733,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     value = value.copy()
                     value.Units = self_units
             elif value_units:
+                # No need to check the dask array if the value units
+                # are incompatible
                 return False
 
             value = value._get_dask()
@@ -698,10 +745,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx_ind = out_ind
 
         dx = da.blockwise(
-            partial(contains_chunk, value=value),
+            cf_contains,
             out_ind,
             dx,
             dx_ind,
+            value,
+            (),
             adjust_chunks={i: 1 for i in out_ind},
             dtype=bool,
         )
