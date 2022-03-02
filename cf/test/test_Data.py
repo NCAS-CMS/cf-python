@@ -2000,38 +2000,6 @@ class DataTest(unittest.TestCase):
         d[1, -1] = cf.masked
         self.assertTrue((d.unique() == cf.Data([1, 2, 4], "metre")).all())
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "hits 'TODODASK - use harden_mask/soften_mask'"
-    )
-    def test_Data_varray(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # Scalar array
-        d = cf.Data(9, "km")
-        d.hardmask = False
-        a = d.varray
-        self.assertEqual(a.shape, ())
-        self.assertEqual(a, np.array(9))
-        d[...] = cf.masked
-        a = d.varray
-        self.assertEqual(a.shape, ())
-        self.assertIs(a[()], np.ma.masked)
-        a[()] = 18
-        self.assertEqual(a, np.array(18))
-
-        b = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-        d = cf.Data(b, "km")
-        e = d.copy()
-        v = e.varray
-        v[0, 0, 0, 0] = -999
-        v = e.varray
-        self.assertEqual(v[0, 0, 0, 0], -999)
-        self.assertEqual(v.shape, b.shape)
-        self.assertFalse((v == b).all())
-        v[0, 0, 0, 0] = 0
-        self.assertTrue((v == b).all())
-
     def test_Data_year_month_day_hour_minute_second(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -3841,6 +3809,47 @@ class DataTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             bool(cf.Data([1, 2]))
+
+    def test_Data_compute(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # Scalar numeric array
+        d = cf.Data(9, "km")
+        a = d.compute()
+        self.assertEqual(a.shape, ())
+        self.assertEqual(a, np.array(9))
+        d[...] = cf.masked
+        a = d.compute()
+        self.assertEqual(a.shape, ())
+        self.assertIs(a[()], np.ma.masked)
+
+        # Non-scalar numeric array
+        b = np.arange(24).reshape(2, 1, 3, 4)
+        d = cf.Data(b, "km", fill_value=-123)
+        a = d.compute()
+        self.assertTrue((a == b).all())
+
+        # Fill value
+        d[0, 0, 0, 0] = cf.masked
+        self.assertEqual(d.compute().fill_value, d.fill_value)
+
+        # Date-time array
+        d = cf.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
+        self.assertEqual(d.compute(), 2.5)
+
+    def test_Data_persist(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cf.Data(9, "km")
+        self.assertIsNone(d.persist(inplace=True))
+
+        # Scalar numeric array
+        d = cf.Data([1, 2, 3.0, 4], "km", mask=[0, 1, 0, 0], chunks=2)
+        e = d.persist()
+        self.assertIsInstance(e, cf.Data)
+        self.assertTrue(e.equals(d))
 
 
 if __name__ == "__main__":

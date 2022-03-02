@@ -69,7 +69,7 @@ def _is_numeric_dtype(array):
 def convert_to_datetime(array, units):
     """Convert a dask array of numbers to one of date-time objects.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     .. seealso `convert_to_reftime`
 
@@ -107,7 +107,7 @@ def convert_to_reftime(array, units=None, first_value=None):
     """Convert a dask array of string or object date-times to floating
     point reference times.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     .. seealso `convert_to_datetime`
 
@@ -196,31 +196,6 @@ def convert_to_reftime(array, units=None, first_value=None):
         else:
             units = Units(d_units, calendar=d_calendar)
 
-        # Check that all date-time objects have correct and equivalent
-        # calendars
-        #        calendars = unique_calendars(array)
-        #        if len(calendars) > 1:
-        #            raise ValueError(
-        #                "Not all date-time objects have equivalent "
-        #                f"calendars: {tuple(calendars)}"
-        #            )
-
-        # If the date-times are calendar-agnostic, assign the given
-        # calendar, defaulting to Gregorian.
-        #        if calendars.pop() == "":
-        #        if first_value.calendar == "":
-        #
-        #            def set_calendar(x, calendar=default_calendar):
-        #                np.vectorize(
-        #                    partial(dt, calendar=calendar), otypes=[np.dtype(object)]
-        #                )
-        #
-        #            array = array.map_blocks(
-        #                set_calendar,
-        #                calendar=getattr(units, "calendar", default_calendar),
-        #                dtype=object,
-        #            )
-
         # Convert the date-time objects to reference times
         array = array.map_blocks(
             dt2rt, units_in=None, units_out=units, dtype=float
@@ -235,9 +210,9 @@ def convert_to_reftime(array, units=None, first_value=None):
 
 
 def first_non_missing_value(array, cached=None):
-    """Return the first non-missing value of an array.
+    """Return the first non-missing value of a dask array.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     :Parameters:
 
@@ -277,7 +252,7 @@ def first_non_missing_value(array, cached=None):
 def unique_calendars(array):
     """Find the unique calendars from a dask array of date-time objects.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     :Parameters:
 
@@ -296,7 +271,7 @@ def unique_calendars(array):
 
     _calendars = np.vectorize(_get_calendar, otypes=[np.dtype(str)])
 
-    # TODO
+    # TODODASK
     #
     # da.unique doesn't work well with masked data (2022-02-07), so do
     # move to numpy-space for now. When da.unique is better we can

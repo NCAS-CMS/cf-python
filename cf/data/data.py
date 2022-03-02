@@ -601,7 +601,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 dt = hasattr(first_value, "timetuple")
 
         # Convert string or object date-times to floating point
-        # reference times, if appropriate.
+        # reference times
         if dt and array.dtype.kind in "USO":
             array, units = convert_to_reftime(array, units, first_value)
             # Reset the units
@@ -2373,16 +2373,40 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):
-        """TODODASK.
+        """Persist the underlaying dask array into memory.
 
-            should this be called `to_memory`? This is part of the larger
-            scheme for memory management
+        This turns an underlying lazy dask array into a equivalent
+        chunked dask array, but now with the results fully computed
+
+        `persist` is particularly useful when using distributed
+        systems, because the results will be kept in distributed
+        memory, rather than returned to the local process.
+
+        Compare with `compute` and `array`.
 
         **Performance**
 
         `persist` causes all delayed operations to be computed.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `compute`, `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The persisted data. If the operation was in-place then
+                `None` is returned.
+
+        **Examples**
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -2943,6 +2967,51 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = d._get_dask()
         d._set_dask(da.ceil(dx), reset_mask_hardness=False)
         return d
+
+    @daskified(_DASKIFIED_VERBOSE)
+    def compute(self):
+        """A numpy view the data.
+
+        In-place changes to the returned numpy array *might* affect
+        the underlying dask array, depending on how the dask array has
+        been defined, including any delayed operations.
+
+        The returned numpy array has the same mask hardness and fill
+        values as the data.
+
+        Compare with `array`.
+
+        **Performance**
+
+        `array` causes all delayed operations to be computed.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `persist`, `array`, `datetime_array`
+
+        :Returns:
+
+            `numpy.ndarray`
+                The numpy view the data.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3.0], 'km')
+        >>> d.compute()
+        array([1., 2., 3.])
+
+        """
+        a = self._get_dask().compute()
+
+        if np.ma.isMA(a):
+            if self.hardmask:
+                a.harden_mask()
+            else:
+                a.soften_mask()
+
+            a.set_fill_value(self.fill_value)
+
+        return a
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -6338,11 +6407,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def array(self):
         """A numpy array copy the data.
 
+        In-place changes to the returned numpy array do not affect the
+        underlying dask array.
+
+        The returned numpy array has the same mask hardness and fill
+        values as the data.
+
+        Compare with `compute`.
+
         **Performance**
 
         `array` causes all delayed operations to be computed.
 
-        .. seealso:: `datetime_array`, `varray`
+        .. seealso:: `datetime_array`, `compute`, `persist`
 
         **Examples**
 
@@ -6366,18 +6443,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         2000-12-01 00:00:00
 
         """
-        dx = self._get_dask()
-        a = dx.compute().copy()
-
-        if np.ma.isMA(a):
-            if self.hardmask:
-                a.harden_mask()
-            else:
-                a.soften_mask()
-
-            a.set_fill_value(self.fill_value)
-
-        return a
+        return self.compute().copy()
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
@@ -6391,7 +6457,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         The data-type of the data array is unchanged.
 
-        .. seealso:: `array`
+        .. seealso:: `array`, `compute`, `persist`
 
         **Performance**
 
@@ -6454,19 +6520,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return a
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def varray(self):
         """A numpy array view the data array.
 
-        Deprecated at version 4.0.0.
+        Deprecated at version TODODASK.
 
-        .. seealso:: `array`, `datetime_array`
+        .. seealso:: `array`, `datetime_array`, `compute`, `persist`
 
         """
         raise NotImplementedError(
-            "The varray method was deprecated at version 4.0.0"
+            "The varray method was deprecated at version TODODASK"
         )
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def mask(self):
         """The Boolean missing data mask of the data array.
 
@@ -6493,7 +6561,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = self._get_dask()
         mask = da.ma.getmaskarray(dx)
 
-        mask_data_obj._set_dask(mask, reset_mask_hardness=True)
+        mask_data_obj._set_dask(mask, reset_mask_hardness=False)
         mask_data_obj.override_units(_units_None, inplace=True)
         mask_data_obj.hardmask = True
 
@@ -8511,18 +8579,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 data.dtype = dtype
 
             return data
-
-        data = data()
-        if copy:
-            data = data.copy()
-            if dtype is not None and np.dtype(dtype) != data.dtype:
-                data.dtype = dtype
-        else:
-            if dtype is not None and np.dtype(dtype) != data.dtype:
-                data = data.copy()
-                data.dtype = dtype
-
-        return data
 
     def close(self):
         """Close all files referenced by the data array.
