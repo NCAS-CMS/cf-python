@@ -2457,21 +2457,32 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = round(cf.Data([1, 2]))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_argmax(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data(np.arange(1200).reshape(40, 5, 6))
+        d = cf.Data(np.arange(120).reshape(4, 5, 6))
 
-        self.assertEqual(d.argmax(), 1199)
-        self.assertEqual(d.argmax(unravel=True), (39, 4, 5))
+        self.assertEqual(d.argmax().array, 119)
+
+        index = d.argmax(unravel=True)
+        self.assertEqual(index, (3, 4, 5))
+        self.assertEqual(d[index].array, 119)
 
         e = d.argmax(axis=1)
-        self.assertEqual(e.shape, (40, 6))
+        self.assertEqual(e.shape, (4, 6))
         self.assertTrue(
-            e.equals(cf.Data.full(shape=(40, 6), fill_value=4, dtype=int))
+            e.equals(cf.Data.full(shape=(4, 6), fill_value=4, dtype=int))
         )
+
+        self.assertEqual(d[d.argmax(unravel=True)].array, 119)
+
+        d = cf.Data([0, 4, 2, 3, 4])
+        self.assertEqual(d.argmax().array, 1)
+
+        # Bad axis
+        with self.assertRaises(Exception):
+            d.argmax(axis=d.ndim)
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits 'NoneType' is not iterable")
     def test_Data__collapse_SHAPE(self):
