@@ -498,13 +498,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         super().__init__(array=array, fill_value=fill_value, _use_array=False)
 
-        # Create the _HDF_chunks attribute: defines HDF chunking when
-        # writing to disk.
-        #
-        # Never change the value of the _HDF_chunks attribute
-        # in-place.
-        self._HDF_chunks = None
-
         if loadd is not None:
             self.loadd(loadd)
             return
@@ -2519,9 +2512,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if cyclic:
             cfa_data["_cyclic"] = cyclic.copy()
 
-        HDF_chunks = self._HDF_chunks
-        if HDF_chunks:
-            cfa_data["_HDF_chunks"] = HDF_chunks.copy()
+        cfa_data["_HDF_chunks"] = self.HDF_chunks()
 
         partitions = []
         for index, partition in self.partitions.ndenumerate():
@@ -2675,12 +2666,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             self._cyclic = _empty_set
 
-        HDF_chunks = d.get("_HDF_chunks", None)
-        # Never change the value of the _HDF_chunks attribute in-place
+        HDF_chunks = d.get("_HDF_chunks")
         if HDF_chunks:
-            self._HDF_chunks = HDF_chunks.copy()
-        else:
-            self._HDF_chunks = None
+            self.HDF_chunks(HDF_chunks)
 
         filename = d.get("file", None)
 
@@ -5832,12 +5820,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @property
     def _HDF_chunks(self):
-        """The HDF chunksizes.
+        """Storage for HDF chunksizes.
 
-        DO NOT CHANGE IN PLACE.
+        Contains a `dict` that defines the HDF chunk size for a subset
+        of the axes defined by the `_axes` attribute. An empty
+        dictionary may be stored as `None`, instead.
+
+        .. warning:: Never change the value of the `_HDF_chunks`
+                     attribute in-place.
+
+        .. seealso:: `HDF_Chunks`
 
         """
-        return self._custom["_HDF_chunks"]
+        return self._custom.get("_HDF_chunks", {})
 
     @_HDF_chunks.setter
     def _HDF_chunks(self, value):
@@ -5845,7 +5840,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @_HDF_chunks.deleter
     def _HDF_chunks(self):
-        del self._custom["_HDF_chunks"]
+        self._custom["_HDF_chunks"] = {}
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
@@ -10965,18 +10960,73 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def HDF_chunks(self, *chunks):
-        """TODO."""
+        """Get or set HDF chunk sizes.
+
+        The HDF chunk sizes may be used by external code that allows
+        `Data` objects to be written to netCDF files.
+
+        :Parameters:
+
+            chunks: `dict` or `None`, *optional*
+                Specify HDF chunk sizes.
+
+                When no positional argument is provided, the HDF chunk
+                sizes are unchanged
+
+                If `None` then the HDF chunks sizes for each dimension
+                are cleared, so that the HDF default chunk size value
+                will be used when writing data to disk.
+
+                If a `dict` then it defines for a subset of the
+                dimensions, defined by their integer positions, the
+                corresponding HDF chunk sizes. The HDF chunk sizes are
+                set as a number of elements along the dimension.
+
+        :Returns:
+
+            `dict`
+                The HDF chunks for each dimension prior to the change,
+                or the current HDF chunks if no new values are
+                specified. A value of `None` is an indication that the
+                default chunk size should be used for that dimension.
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(30).reshape(5, 6))
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({1: 2})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: None, 1: 2}
+        >>> d.HDF_chunks({1:None})
+        {0: None, 1: 2}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({0: 3, 1: 6})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks({1: 4})
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks({1: 999})
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks(None)
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+
+        """
         _HDF_chunks = self._HDF_chunks
-
-        if _HDF_chunks is None:
-            _HDF_chunks = {}
-        else:
-            _HDF_chunks = _HDF_chunks.copy()
-
-        org_HDF_chunks = dict(
-            [(i, _HDF_chunks.get(axis)) for i, axis in enumerate(self._axes)]
-        )
+        org_HDF_chunks = {
+            i: _HDF_chunks.get(axis) for i, axis in enumerate(self._axes)
+        }
 
         if not chunks:
             return org_HDF_chunks
@@ -10984,19 +11034,28 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         chunks = chunks[0]
 
         if chunks is None:
-            # Clear all chunking. Never change the value of the
-            # _HDF_chunks attribute in-place.
-            self._HDF_chunks = None
+            # Clear all chunking.
+            self._HDF_chunks = {}
             return org_HDF_chunks
 
+        ndim = self.ndim
         axes = self._axes
+
+        _HDF_chunks = _HDF_chunks.copy()
         for axis, size in chunks.items():
-            _HDF_chunks[axes[axis]] = size
+            try:
+                _HDF_chunks[axes[axis]] = size
+            except IndexError:
+                raise IndexError(
+                    "Can set HDF chunks: No dimension "
+                    f"{axis} in {ndim}-d data. Valid dimensions are "
+                    f"{tuple(range(ndim))}"
+                )
 
-        if _HDF_chunks.values() == [None] * self.ndim:
-            _HDF_chunks = None
+        if not any(_HDF_chunks.values()):
+            _HDF_chunks = {}
 
-        # Never change the value of the _HDF_chunks attribute in-place
+        # Set the new HDF chunks.
         self._HDF_chunks = _HDF_chunks
 
         return org_HDF_chunks
@@ -12228,13 +12287,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
-
-        hdf = self._HDF_chunks
-        if hdf:
-            # Never change the value of the _HDF_chunks attribute in-place
-            self._HDF_chunks = {
-                axis: size for axis, size in hdf.items() if axis not in axes
-            }
 
         return d
 
