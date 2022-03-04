@@ -1150,7 +1150,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             ["foo"] in d
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_asdata(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
