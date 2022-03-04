@@ -8457,7 +8457,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d: data-like
                 Input data in any form that can be converted to an
                 `Data` object. This includes `Data` and `Field`
-                objects, and object with the Data inferface, numpy
+                objects, and objects with the Data interface, numpy
                 arrays and any object which may be converted to a
                 numpy array.
 
