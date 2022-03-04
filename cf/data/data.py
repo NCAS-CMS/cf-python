@@ -837,18 +837,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return hash_array(self.array)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __float__(self):
         """Called to implement the built-in function `float`
 
         x.__float__() <==> float(x)
 
-        """
-        if self.size != 1:
-            raise TypeError(
-                "only length-1 arrays can be converted to Python scalars"
-            )
+        **Performance**
 
-        return float(self.datum())
+        `__float__` causes all delayed operations to be executed,
+        unless the dask array size is already known to be greater than
+        1.
+
+        """
+        return float(self._get_dask())
 
     def __round__(self, *ndigits):
         """Called to implement the built-in function `round`
@@ -863,18 +865,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return round(self.datum(), *ndigits)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __int__(self):
         """Called to implement the built-in function `int`
 
         x.__int__() <==> int(x)
 
-        """
-        if self.size != 1:
-            raise TypeError(
-                "only length-1 arrays can be converted to Python scalars"
-            )
+        **Performance**
 
-        return int(self.datum())
+        `__int__` causes all delayed operations to be executed, unless
+        the dask array size is already known to be greater than 1.
+
+        """
+        return int(self._get_dask())
 
     def __iter__(self):
         """Called when an iterator is required.
