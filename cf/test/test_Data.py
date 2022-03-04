@@ -1811,12 +1811,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.datum(-1), 3)
             for index in d.ndindex():
                 self.assertEqual(d.datum(index), d.array[index].item())
-                self.assertEqual(
-                    d.datum(*index),
-                    d.array[index].item(),
-                    "{}, {}".format(d.datum(*index), d.array[index].item()),
-                )
-        # --- End: for
+                self.assertEqual(d.datum(*index), d.array[index].item())
 
         d = cf.Data(5, "metre")
         d[()] = cf.masked
@@ -1834,6 +1829,20 @@ class DataTest(unittest.TestCase):
         self.assertIs(d.datum((0, 0)), cf.masked)
         self.assertIs(d.datum([0, -1]), cf.masked)
         self.assertIs(d.datum(-1, -1), cf.masked)
+
+        d = cf.Data([1, 2])
+        with self.assertRaises(ValueError):
+            d.datum()
+
+        with self.assertRaises(ValueError):
+            d.datum(3)
+
+        with self.assertRaises(ValueError):
+            d.datum(0, 0)
+
+        d = cf.Data([[1, 2]])
+        with self.assertRaises(ValueError):
+            d.datum((0,))
 
     def test_Data_flip(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
