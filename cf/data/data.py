@@ -8455,7 +8455,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             d: data-like
-                Input data in any form that can be converted to an
+                Input data in any form that can be converted to a
                 `Data` object. This includes `Data` and `Field`
                 objects, and objects with the Data interface, numpy
                 arrays and any object which may be converted to a
