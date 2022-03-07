@@ -3153,7 +3153,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `sum`
+        .. seealso:: `diff`, `sum`
 
         :Parameters:
 
@@ -3210,15 +3210,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [ 8 17 27 38]]
 
         >>> d[0, 0] = cf.masked
-        >>> d[1, 1] = cf.masked
+        >>> d[1, [1, 3]] = cf.masked
         >>> d[2, 0:2] = cf.masked
         >>> print(d.array)
         [[-- 1 2 3]
-         [4 -- 6 7]
+         [4 -- 6 --]
          [-- -- 10 11]]
+        >>> print(d.cumsum(axis=0).array)
+        [[-- 1 2 3]
+         [4 -- 8 --]
+         [-- -- 18 14]]
         >>> print(d.cumsum(axis=1).array)
         [[-- 1 3 6]
-         [4 -- 10 17]
+         [4 -- 10 --]
          [-- -- 10 21]]
 
         """
@@ -3227,7 +3231,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 self,
                 "cumsum",
                 {"masked_as_zero": None},
-                message="",
+                message="This keyword is ",
                 version="TODODASK",
                 removed_at="5.0.0",
             )  # pragma: no cover
