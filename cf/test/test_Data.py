@@ -872,7 +872,6 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.digitize(bins, inplace=True))
         self.assertTrue(d.equals(e))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_cumsum(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -883,18 +882,18 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(e.cumsum(axis=0, inplace=True))
         self.assertTrue(e.equals(f, verbose=2))
 
-        d = cf.Data(self.a)
+        d = cf.Data(self.a, chunks=3)
 
-        for i in range(d.ndim):
+        for i in [None] + list(range(d.ndim)):
             b = np.cumsum(self.a, axis=i)
             e = d.cumsum(axis=i)
             self.assertTrue((e.array == b).all())
 
-        d = cf.Data(self.ma)
+        d = cf.Data(self.ma, chunks=3)
 
-        for i in range(d.ndim):
+        for i in [None] + list(range(d.ndim)):
             b = np.cumsum(self.ma, axis=i)
-            e = d.cumsum(axis=i, masked_as_zero=False)
+            e = d.cumsum(axis=i)
             self.assertTrue(cf.functions._numpy_allclose(e.array, b))
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")

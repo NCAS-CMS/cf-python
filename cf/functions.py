@@ -3223,6 +3223,7 @@ def _DEPRECATION_ERROR_KWARGS(
     relaxed_identity=False,
     info=False,
     version="3.0.0",
+    removed_at="4.0.0",
 ):
     # Unsafe to set mutable '{}' as default in the func signature.
     if kwargs is None:  # distinguish from falsy '{}'
@@ -3238,7 +3239,7 @@ def _DEPRECATION_ERROR_KWARGS(
             f"Keyword {key!r} of method "
             f"'{instance.__class__.__name__}.{method}' has been deprecated "
             f"at version {version} and is no longer available and will be "
-            f"removed at version 4.0.0. {message}"
+            f"removed at version {removed_at}. {message}"
         )
 
 
