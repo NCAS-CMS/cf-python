@@ -3162,19 +3162,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 be calculated. By default the cumulative sum is
                 computed over the flattened array.
 
-            masked_as_zero: `bool`, optional
-                Deprecated at version TODODASK.
-
-                If True then set missing data values to zero before
-                calculating the cumulative sum. By default the output
-                data will be masked at the same locations as the
-                original data.
-
-                .. note:: Sums produced entirely from masked elements
-                          will always result in masked values in the
-                          output data, regardless of the setting of
-                          *masked_as_zero*.
-
             method: `str`, optional
                 Choose which method to use to perform the cumulative
                 sum. See `dask.array.cumsum` for details.
@@ -3184,6 +3171,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             {{inplace: `bool`, optional}}
 
                 .. versionadded:: 3.3.0
+
+            masked_as_zero: deprecated at version TODODASK
+                See the examples for the new behaviour when there are
+                masked values.
 
         :Returns:
 
@@ -3231,7 +3222,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 self,
                 "cumsum",
                 {"masked_as_zero": None},
-                message="This keyword is ",
+                message="",
                 version="TODODASK",
                 removed_at="5.0.0",
             )  # pragma: no cover
@@ -3240,60 +3231,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = dx.cumsum(axis=axis, method=method)
+
+        # Note: The dask cumsum method resets the mask hardness to the
+        #       numpy default, so we need to reset the mask hardness
+        #       during _set_dask.
         d._set_dask(dx, reset_mask_hardness=True)
 
         return d
-
-    #        # Parse axis
-    #        ndim = self._ndim
-    #        if -ndim - 1 <= axis < 0:
-    #            axis += ndim + 1
-    #        elif not 0 <= axis <= ndim:
-    #            raise ValueError(
-    #                "Can't cumsum: Invalid axis specification: Expected "
-    #                "-{0}<=axis<{0}, got axis={1}".format(ndim, axis)
-    #            )
-    #
-    #        d = _inplace_enabled_define_and_cleanup(self)
-    #
-    #        sections = self.section(axis, chunks=True)
-    #
-    #        # Cumulatively sum each section
-    #        for key, data in sections.items():
-    #            array = data.array
-    #
-    #            filled = False
-    #            if masked_as_zero and np.ma.is_masked(array):
-    #                mask = array.mask
-    #                array = array.filled(0)
-    #                filled = True
-    #
-    #            array = np.cumsum(array, axis=axis)
-    #
-    #            if filled:
-    #                size = array.shape[axis]
-    #                shape = [1] * array.ndim
-    #                shape[axis] = size
-    #                new_mask = np.cumsum(mask, axis=axis) == np.arange(
-    #                    1, size + 1
-    #                ).reshape(shape)
-    #                array = np.ma.array(array, mask=new_mask, copy=False)
-    #
-    #            sections[key] = type(self)(
-    #                array, units=self.Units, fill_value=self.fill_value
-    #            )
-    #
-    #        # Glue the sections back together again
-    #        out = self.reconstruct_sectioned_data(sections, cyclic=self.cyclic())
-    #
-    #        if inplace:
-    #            d.__dict__ = out.__dict__
-    #        else:
-    #            d = out
-    #
-    #        return d
-    #
-    #        return out
 
     @_inplace_enabled(default=False)
     def rechunk(
