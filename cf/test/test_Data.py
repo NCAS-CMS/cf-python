@@ -2417,8 +2417,8 @@ class DataTest(unittest.TestCase):
             self.assertEqual(float(cf.Data(x)), float(x))
             self.assertEqual(float(cf.Data(x)), float(x))
 
-        with self.assertRaises(Exception):
-            _ = float(cf.Data([1, 2]))
+        with self.assertRaises(TypeError):
+            float(cf.Data([1, 2]))
 
     def test_Data__int__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
