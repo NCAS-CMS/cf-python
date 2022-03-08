@@ -8778,20 +8778,67 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._size - self.count()
 
+    @daskified(_DASKIFIED_VERBOSE)
     def cyclic(self, axes=None, iscyclic=True):
-        """Returns or sets the axes of the data array which are cyclic.
+        """Get or set the cyclic axes.
+
+        Some methods treat the first and last elements of a cyclic
+        axis as adjacent and physically connected, such as
+        `convolution_filter`, `__getitem__` and `__setitem__`. Some
+        methods may make a cyclic axis non-cyclis, such as `halo`.
 
         :Parameters:
 
             axes: (sequence of) `int`, optional
+                Select the axes to to have their cyclicity set. By
+                default, or if *axes* is `None` or an empty sequence,
+                no axes are modified.
 
             iscyclic: `bool`
+                Specify whether to make the the axes cyclic or
+                non-cyclic. By default (True), the axes are set as
+                cyclic.
 
         :Returns:
 
             `set`
+                The cyclic axes prior to the change, or the current
+                cylcic axes if no axes are specified.
 
-        **Examples:**
+        **Examples**
+
+        >>> d = cf.Data(np.arange(12).reshape(3, 4))
+        >>> d.cyclic()
+        set()
+        >>> d.cyclic(0)
+        set()
+        >>> d.cyclic()
+        {0}
+        >>> d.cyclic(0, iscyclic=False)
+        {0}
+        >>> d.cyclic()
+        set()
+        >>> d.cyclic([0, 1])
+        set()
+        >>> d.cyclic()
+        {0, 1}
+        >>> d.cyclic([0, 1], iscyclic=False)
+        {0, 1}
+        >>> d.cyclic()
+        set()
+
+        >>> print(d.array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> d[0, -1:2]
+        Traceback (most recent call last):
+            ...
+        IndexError: Can't take a cyclic slice of a non-cyclic axis
+        >>> d.cyclic(1)
+        set()
+        >>> d[0, -1:2]
+        <CF Data(1, 2): [[3, 0, 1]]>
 
         """
         cyclic_axes = self._cyclic

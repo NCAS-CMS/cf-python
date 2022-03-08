@@ -3850,6 +3850,34 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             bool(cf.Data([1, 2]))
 
+    def test_Data_cyclic(self):
+        d = cf.Data(np.arange(12).reshape(3, 4))
+        self.assertEqual(d.cyclic(), set())
+        self.assertEqual(d.cyclic(0), set())
+        self.assertEqual(d.cyclic(), {0})
+        self.assertEqual(d.cyclic(1), {0})
+        self.assertEqual(d.cyclic(), {0, 1})
+        self.assertEqual(d.cyclic(0, iscyclic=False), {0, 1})
+        self.assertEqual(d.cyclic(), {1})
+        self.assertEqual(d.cyclic(1, iscyclic=False), {1})
+        self.assertEqual(d.cyclic(), set())
+        self.assertEqual(d.cyclic([0, 1]), set())
+        self.assertEqual(d.cyclic(), {0, 1})
+        self.assertEqual(d.cyclic([0, 1], iscyclic=False), {0, 1})
+        self.assertEqual(d.cyclic(), set())
+
+        # Invalid axis
+        with self.assertRaises(ValueError):
+            d.cyclic(2)
+
+        # Scalar data
+        d = cf.Data(9)
+        self.assertEqual(d.cyclic(), set())
+
+        # Scalar data invalid axis
+        with self.assertRaises(ValueError):
+            d.cyclic(0)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
