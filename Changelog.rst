@@ -6,6 +6,8 @@ version 3.13.0
 * Fix bug in `cf.read` when reading PP or fields files for which the
   ``um`` keyword has been set, but without the ``'version'`` key
   (https://github.com/NCAS-CMS/cf-python/issues/306)
+* Fix bug when setting the CFA "base" option to an empty string in
+  `cf.write` (https://github.com/NCAS-CMS/cf-python/issues/346)
 * Changed dependency: ``1.9.0.2<=cfdm<1.9.1.0``
 * New dependency: ``packaging>=20.0``
 
