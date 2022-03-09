@@ -10302,7 +10302,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         Reinterprets the existing date-times for the new calendar by
         adjusting the underlying numerical values relative to the
-        refernce date-time defined by the units.
+        reference date-time defined by the units.
 
         If a date-time value is not allowed in the new calendar then
         an exception is raised when the data array is accessed.
