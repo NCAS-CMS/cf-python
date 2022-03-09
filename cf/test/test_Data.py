@@ -3850,7 +3850,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(np.allclose(e.array, [0, 1, 2, 4, 5]))
         self.assertEqual(e.Units, cf.Units("days since 2004-02-27", "360_day"))
 
-        # An Exception shouild be raised when a date is stored that is
+        # An Exception should be raised when a date is stored that is
         # invalid to the calendar (e.g. 29th of February in the noleap
         # calendar).
         with self.assertRaises(ValueError):
