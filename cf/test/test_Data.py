@@ -897,7 +897,6 @@ class DataTest(unittest.TestCase):
             e = d.cumsum(axis=i, masked_as_zero=False)
             self.assertTrue(cf.functions._numpy_allclose(e.array, b))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
