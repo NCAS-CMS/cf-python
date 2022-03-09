@@ -10080,7 +10080,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if not ndim:
             if axes or axes == 0:
                 raise ValueError(
-                    "Can't flatten: Can't remove an axes from "
+                    "Can't flatten: Can't remove axes from "
                     f"scalar {self.__class__.__name__}"
                 )
 
