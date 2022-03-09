@@ -10110,7 +10110,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Find the flattened shape.
         #
         # E.g. if the *transposed* shape is (10, 20, 30, 50, 40, 60)
-        #      and *transposed* axes [2, 3] are to be falttened then
+        #      and *transposed* axes [2, 3] are to be flattened then
         #      the new shape will be (10, 20, 1500, 40, 60)
         shape = d.shape
         new_shape = [n for i, n in enumerate(shape) if i not in axes]
