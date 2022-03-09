@@ -3850,6 +3850,20 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             bool(cf.Data([1, 2]))
 
+    def test_Data_change_calendar(self):
+        d = cf.Data(
+            [0, 1, 2, 3, 4], "days since 2004-02-27", calendar="standard"
+        )
+        e = d.change_calendar("360_day")
+        self.assertTrue(np.allclose(e.array, [0, 1, 2, 4, 5]))
+        self.assertEqual(e.Units, cf.Units("days since 2004-02-27", "360_day"))
+
+        # An Exception should be raised when a date is stored that is
+        # invalid to the calendar (e.g. 29th of February in the noleap
+        # calendar).
+        with self.assertRaises(ValueError):
+            e = d.change_calendar("noleap").array
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
