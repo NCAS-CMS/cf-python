@@ -7587,7 +7587,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> d.argmax(axis=0)
         <CF Data(3): [1, 1, 1]>
-        d.argmax(axis=1)
+        >>> d.argmax(axis=1)
         <CF Data(2): [2, 2]>
 
         Only the first occurrence is returned.
