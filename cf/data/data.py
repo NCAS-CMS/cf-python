@@ -7542,6 +7542,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         If no axis is specified then the returned index locates the
         maximum of the whole data.
 
+        In case of multiple occurrences of the maximum values, the
+        indices corresponding to the first occurrence are returned.
+
         **Performance**
 
         If the data index is returned as a `tuple` (see the *unravel*
@@ -7590,11 +7593,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.argmax(axis=1)
         <CF Data(2): [2, 2]>
 
-        Only the first occurrence is returned.
+        Only the location of the first occurrence is returned:
 
         >>> d = cf.Data([0, 4, 2, 3, 4])
         >>> d.argmax()
         <CF Data(): 1>
+
+        >>> d = cf.Data(np.arange(6).reshape(2, 3))
+        >>> d[1, 1] = 5
+        >>> print(d.array)
+        [[0 1 2]
+         [3 5 5]]
+        >>> d.argmax(1)
+        <CF Data(2): [2, 1]>
 
         """
         dx = self._get_dask()
