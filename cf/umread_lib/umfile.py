@@ -18,7 +18,7 @@ class File:
     def __init__(
         self, path, byte_ordering=None, word_size=None, fmt=None, parse=True
     ):
-        """Open andparse a UM file.
+        """Open and parse a UM file.
 
         The optional *byte_ordering*, *word_size* and *fmt* arguments
         specify the file type. If all three are set, then this forces the
@@ -114,7 +114,7 @@ class File:
         self.fd = None
 
     def _detect_file_type(self):
-        """TODO.
+        """Store string values describing the auto-detected file type.
 
         :Returns:
 
@@ -126,7 +126,7 @@ class File:
             file_type_obj = c.detect_file_type(self.fd)
         except Exception:
             self.close_fd()
-            raise IOError("File {} has unsupported format".format(self.path))
+            raise IOError(f"File {self.path} has unsupported format")
 
         d = c.file_type_obj_to_dict(file_type_obj)
         self.fmt = d["fmt"]
@@ -182,7 +182,7 @@ class Var:
             return -1
 
     def _compare_recs_by_extra_data(self, a, b):
-        """TODO.
+        """Compare records with respect to their extra data.
 
         :Returns:
 
@@ -192,7 +192,7 @@ class Var:
         return self._compare(a.get_extra_data(), b.get_extra_data())
 
     def _compare_recs_by_orig_order(self, a, b):
-        """TODO.
+        """Compare records with respect to their original order.
 
         :Returns:
 
@@ -202,13 +202,15 @@ class Var:
         return self._compare(self.recs.index(a), self.recs.index(b))
 
     def group_records_by_extra_data(self):
-        """Returns a list of (sub)lists of records where each records
-        within each sublist has matching extra data (if any), so if the
-        whole variable has consistent extra data then the return value
-        will be of length 1.
+        """Group records by matching extra data.
 
-        Within each group, the ordering of returned records is the same as
-        in the `!recs` attribute.
+        Returns a list of (sub)lists of records where each record
+        within each sublist has matching extra data (if
+        any). Therefore, if the whole variable has consistent extra
+        data then the returned value will be a list of length 1.
+
+        Within each group, the ordering of returned records is the
+        same as in the `!recs` attribute.
 
         :Returns:
 
@@ -283,23 +285,23 @@ class Rec:
         """Instantiate a `Rec` object from the `File` object and the
         header and data offsets.
 
-         The headers are read in, and also the record object is ready for
-         calling `get_data`.
+        The headers are read in, and also the record object is ready for
+        calling `get_data`.
 
-         :Parameters:
+        :Parameters:
 
-             file: `File`
-                 A view of a file including sets of PP records combined
-                 into variables.
+            file: `File`
+                A view of a file including sets of PP records combined
+                into variables.
 
-             hdr_offset: `int`
-                 The start word in the file of the header.
+            hdr_offset: `int`
+                The start word in the file of the header.
 
-             data_offset: `int`
-                 The start word in the file of the data.
+            data_offset: `int`
+                The start word in the file of the data.
 
-             disk_length: `int`
-                 The length in words of the data in the file.
+            disk_length: `int`
+                The length in words of the data in the file.
 
         :Returns:
 
@@ -348,8 +350,9 @@ class Rec:
         return edu.get_data()
 
     def get_extra_data(self):
-        """Get extra data associated with the record, either by reading
-        or using cached read.
+        """Get extra data associated with the record.
+
+        This is done either by reading or using cached read.
 
         :Returns:
 
@@ -362,7 +365,7 @@ class Rec:
         return self._extra_data
 
     def get_type_and_num_words(self):
-        """Get the data type (as numpy type) and number of words.
+        """Get the data type and number of words.
 
         :Returns:
 

@@ -10,6 +10,7 @@ from . import (
     Count,
     Datum,
     DimensionCoordinate,
+    Domain,
     DomainAncillary,
     DomainAxis,
     Field,
@@ -32,7 +33,7 @@ from .functions import CF
 
 
 class CFImplementation(cfdm.CFDMImplementation):
-    """TODO.
+    """A container for the CF data model implementation for `cf`.
 
     .. versionadded:: 3.0.0
 
@@ -78,6 +79,7 @@ _implementation = CFImplementation(
     CellMethod=CellMethod,
     CoordinateReference=CoordinateReference,
     DimensionCoordinate=DimensionCoordinate,
+    Domain=Domain,
     DomainAncillary=DomainAncillary,
     DomainAxis=DomainAxis,
     Field=Field,
@@ -123,6 +125,7 @@ def implementation():
      'CellMethod': cf.cellmethod.CellMethod,
      'CoordinateReference': cf.coordinatereference.CoordinateReference,
      'DimensionCoordinate': cf.dimensioncoordinate.DimensionCoordinate,
+     'Domain': cf.domain.Domain,
      'DomainAncillary': cf.domainancillary.DomainAncillary,
      'DomainAxis': cf.domainaxis.DomainAxis,
      'Field': cf.field.Field,

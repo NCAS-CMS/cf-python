@@ -8,6 +8,57 @@ import numpy as np
 from ..cfdatetime import dt as cf_dt
 from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..units import Units
+from .dask_utils import cf_YMDhms
+
+
+def _is_numeric_dtype(array):
+    """True if the given array is of a numeric or boolean data type.
+
+    .. versionadded:: 4.0.0
+
+        :Parameters:
+
+            array: numpy-like array
+
+        :Returns:
+
+            `bool`
+                Whether or not the array holds numeric elements.
+
+    **Examples:**
+
+    >>> a = np.array([0, 1, 2])
+    >>> _is_numeric_dtype(a)
+    True
+    >>> a = np.array([False, True, True])
+    >>> _is_numeric_dtype(a)
+    True
+    >>> a = np.array(["a", "b", "c"], dtype="S1")
+    >>> _is_numeric_dtype(a)
+    False
+    >>> a = np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0])
+    >>> _is_numeric_dtype(a)
+    True
+    >>> a = np.array(10)
+    >>> _is_numeric_dtype(a)
+    True
+    >>> a = np.empty(1, dtype=object)
+    >>> _is_numeric_dtype(a)
+    False
+
+    """
+    # TODODASK: do we need to make any specific checks relating to ways of
+    # encoding datetimes, which could be encoded as strings, e.g. as in
+    # "2000-12-3 12:00", yet could be considered, or encoded as, numeric?
+    dtype = array.dtype
+    # This checks if the dtype is either a standard "numeric" type (i.e.
+    # int types, floating point types or complex floating point types)
+    # or Boolean, which are effectively a restricted int type (0 or 1).
+    # We determine the former by seeing if it sits under the 'np.number'
+    # top-level dtype in the NumPy dtype hierarchy; see the
+    # 'Hierarchy of type objects' figure diagram under:
+    # https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars
+    return np.issubdtype(dtype, np.number) or np.issubdtype(dtype, np.bool_)
 
 
 def convert_to_datetime(array, units):
@@ -443,7 +494,7 @@ def conform_units(value, units):
         units: `Units`
             The units to conform to.
 
-    **Examples:**
+    **Examples**
 
     >>> conform_units(1, cf.Units('metres'))
     1
@@ -480,3 +531,46 @@ def conform_units(value, units):
             )
 
     return value
+
+
+def YMDhms(d, attr):
+    """Return a date-time component of the data.
+
+    Only applicable for data with reference time units. The returned
+    `Data` will have the same mask hardness as the original array.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
+                 `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
+
+    :Parameters:
+
+        d: `Data`
+            The data from which to extract date-time component.
+
+        attr: `str`
+            The name of the date-time component, one of ``'year'``,
+            ``'month'``, ``'day'``, ``'hour'``, ``'minute'``,
+            ``'second'``.
+
+    :Returns:
+
+        `Data`
+            The date-time component
+
+    **Examples**
+
+    >>> d = cf.Data([0, 1, 2], 'days since 1999-12-31')
+    >>> YMDhms(d, 'year').array
+    >>> array([1999, 2000, 2000])
+
+    """
+    units = d.Units
+    if not units.isreftime:
+        raise ValueError(f"Can't get {attr}s from data with {units!r}")
+
+    d = d._asdatetime()
+    d._map_blocks(partial(cf_YMDhms, attr=attr), dtype=int)
+    d.override_units(Units(None), inplace=True)
+    return d

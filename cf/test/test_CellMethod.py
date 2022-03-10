@@ -55,7 +55,7 @@ class CellMethodTest(unittest.TestCase):
         for s in self.strings:
             cms = cf.CellMethod.create(s)
             t = " ".join(map(str, cms))
-            self.assertEqual(t, s, "{!r} != {!r}".format(t, s))
+            self.assertEqual(t, s, f"{t!r} != {s!r}")
             for cm in cms:
                 repr(cm)
 
@@ -120,7 +120,7 @@ class CellMethodTest(unittest.TestCase):
             for cm0, cm1 in zip(cms0, cms1):
                 self.assertTrue(
                     cm0.equivalent(cm1, verbose=2),
-                    "{0!r} not equivalent to {1!r}".format(cm0, cm1),
+                    f"{cm0!r} not equivalent to {cm1!r}",
                 )
 
     def test_CellMethod_get_set_delete(self):

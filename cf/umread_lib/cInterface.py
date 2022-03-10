@@ -136,7 +136,7 @@ class CInterface:
         self.lib = CT.CDLL(lib_path)
 
     def _is_null_pointer(self, ptr):
-        """TODO.
+        """True if the pointer is a null pointer.
 
         :Returns:
 
@@ -174,7 +174,7 @@ class CInterface:
 
     def file_type_obj_to_dict(self, file_type):
         """Converts a `File_type` object returned by `detect_file_type` into a
-        dictionary that include meaningful string values in place of the
+        dictionary that includes meaningful string values in place of the
         integers that derive from the C enum statments, specifically:
         'fmt': 'PP' or 'FF' 'byte_ordering': 'little_endian' or
         'big_endian' and also 'word_size': 4 or 8
@@ -194,7 +194,7 @@ class CInterface:
         }
 
     def create_file_type(self, fmt, byte_ordering, word_size):
-        """TODO.
+        """Creates a `File_type` object for passing to `file_parse`.
 
         :Parameters:
 
@@ -251,16 +251,14 @@ class CInterface:
             self._int_ptr = CT.POINTER(CT.c_int64)
             self._real_ptr = CT.POINTER(CT.c_double)
         else:
-            raise ValueError(
-                "Word size must be 4 or 8 (not {!r})".format(word_size)
-            )
+            raise ValueError(f"Word size must be 4 or 8 (not {word_size!r})")
 
     def _get_ctypes_int_array(self, size=None):
-        """TODO."""
+        """Get ctypes corresponding to the `numpy` integer array."""
         return _get_ctypes_array(self.file_data_int_type, size)
 
     def _get_ctypes_real_array(self, size=None):
-        """TODO."""
+        """Get ctypes corresponding to the `numpy` real array."""
         return _get_ctypes_array(self.file_data_real_type, size)
 
     def _get_empty_real_array(self, size):

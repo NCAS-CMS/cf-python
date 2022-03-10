@@ -18,7 +18,7 @@ rm -fr $dir
 
 pip install dist/cf-python-$vn.tar.gz -t $dir --no-deps
 
-export PYTHONPATH=$dir:$PYTHONAPTH
+export PYTHONPATH=$dir:$PYTHONPATH
 export PATH=$dir/bin:$PATH
 
 cd $dir/cf/test

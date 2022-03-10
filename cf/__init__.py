@@ -10,29 +10,30 @@ nonetheless be modified in memory.
 
 The `cf` package can:
 
-* read field constructs from netCDF, CDL, PP and UM datasets,
+* read field constructs and domain constructs from netCDF, CDL, PP and
+  UM datasets,
 
-* create new field constructs in memory,
+* create new field and domain constructs in memory,
 
-* inspect field constructs,
+* inspect field and domain constructs,
 
-* test whether two field constructs are the same,
+* test whether two constructs are the same,
 
-* modify field construct metadata and data,
+* modify field and domain construct metadata and data,
 
-* create subspaces of field constructs,
+* create subspaces of field and domain constructs,
 
 * write and append field constructs to netCDF datasets on disk,
 
-* incorporate, and create, metadata stored in external files (*new in
-  version 3.0.0*),
+* incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
 
-* read, write, and create coordinates defined by geometry cells (*new
-  in version 3.2.0*),
+* read, write, and create coordinates defined by geometry cells,
+
+* read netCDF and CDL datasets containing hierarchical groups,
 
 * combine field constructs arithmetically,
 
@@ -42,7 +43,7 @@ The `cf` package can:
 * perform statistical collapses on field constructs,
 
 * perform histogram, percentile and binning operations on field
-  constructs (*new in version 3.0.3*),
+  constructs,
 
 * regrid field constructs with (multi-)linear, nearest neighbour,
   first- and second-order conservative and higher order patch recovery
@@ -56,16 +57,9 @@ The `cf` package can:
   vorticity).
 
 All of the above use LAMA functionality, which allows multiple fields
-larger than the available memory to exist and be manipulated.
-
-
-**Hierarchical groups**
-
-Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future release of `cf` will include
-support for netCDF4 files containing data organised in hierarchical
-groups, but this is not available in version 3.2.0 (even though it is
-allowed in CF-1.8).
+larger than the available memory to exist and be manipulated. (Note:
+work is underway to replace this functionality with a dask
+implementation.)
 
 
 **Visualization**
@@ -80,10 +74,9 @@ installation and source code.
 
 """
 
-__Conventions__ = "CF-1.8"
-__author__ = "David Hassell"
-__date__ = "2021-??-??"
-__version__ = "4.0.0"
+__Conventions__ = "CF-1.9"
+__date__ = "2022-01-18"
+__version__ = "4.0.0b0"
 
 _requires = ("numpy", "netCDF4", "cftime", "cfunits", "cfdm", "psutil")
 
@@ -102,17 +95,11 @@ import importlib.util
 import platform
 
 # Check the version of Python
-_minimum_vn = "3.6.0"
+_minimum_vn = "3.7.0"
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(
         f"Bad python version: cf requires python version {_minimum_vn} "
         f"or later. Got {platform.python_version()}"
-    )
-
-if LooseVersion(platform.python_version()) < LooseVersion("3.7.0"):
-    print(
-        "\nDeprecation Warning: Python 3.6 support will be removed at "
-        "the next version of cf\n"
     )
 
 _found_ESMF = bool(importlib.util.find_spec("ESMF"))
@@ -171,7 +158,7 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of numpy
-_minimum_vn = "1.15"
+_minimum_vn = "1.22"
 if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         f"Bad numpy version: cf requires numpy>={_minimum_vn}. "
@@ -179,7 +166,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = "3.3.3"
+_minimum_vn = "3.3.4"
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
@@ -219,6 +206,7 @@ from .units import Units
 
 from .constructlist import ConstructList
 from .fieldlist import FieldList
+from .domainlist import DomainList
 
 from .dimensioncoordinate import DimensionCoordinate
 from .auxiliarycoordinate import AuxiliaryCoordinate
@@ -279,9 +267,10 @@ from .query import (
     son,
     seasons,
 )
+
 from .constants import *  # noqa: F403
 from .functions import *  # noqa: F403
-from .maths import relative_vorticity, histogram
+from .maths import curl_xy, div_xy, relative_vorticity, histogram
 from .examplefield import example_field, example_fields, example_domain
 
 from .cfimplementation import CFImplementation, implementation

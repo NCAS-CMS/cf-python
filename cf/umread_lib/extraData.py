@@ -1,7 +1,6 @@
-import string
 import sys
 
-import numpy
+import numpy as np
 
 
 def cmp(a, b):
@@ -17,7 +16,7 @@ _codes = {
     5: ("y_domain_upper_bound", float),
     6: ("x_domain_upper_bound", float),
     7: ("z_domain_lower_bound", float),
-    8: ("x_domain_upper_bound", float),
+    8: ("z_domain_upper_bound", float),
     10: ("title", str),
     11: ("domain_title", str),
     12: ("x_lower_bound", float),
@@ -38,19 +37,19 @@ class ExtraData(dict):
         k.sort()
         return k
 
-    _tolerances = {
-        numpy.dtype(numpy.float32): 1e-5,
-        numpy.dtype(numpy.float64): 1e-13,
-    }
+    _tolerances = {np.dtype(np.float32): 1e-5, np.dtype(np.float64): 1e-13}
 
     def _cmp_floats(self, a, b, tolerance):
         if a == b:
             return 0
+
         delta = abs(b * tolerance)
         if a < b - delta:
             return -1
+
         if a > b + delta:
             return 1
+
         return 0
 
     def _cmp_float_arrays(self, avals, bvals):
@@ -58,11 +57,13 @@ class ExtraData(dict):
         c = cmp(n, len(bvals))
         if c != 0:
             return c
+
         tolerance = self._tolerances[avals.dtype]
         for i in range(n):
             c = self._cmp_floats(avals[i], bvals[i], tolerance)
             if c != 0:
                 return c
+
         return 0
 
     def __cmp__(self, other):
@@ -74,6 +75,7 @@ class ExtraData(dict):
         c = cmp(ka, kb)
         if c != 0:
             return c
+
         for key in ka:
             valsa = self[key]
             valsb = other[key]
@@ -84,15 +86,17 @@ class ExtraData(dict):
                 c = cmp(valsa, valsb)
             else:
                 assert False
+
             if c != 0:
                 return c
+
         return 0
 
 
 class ExtraDataUnpacker:
 
-    _int_types = {4: numpy.int32, 8: numpy.int64}
-    _float_types = {4: numpy.float32, 8: numpy.float64}
+    _int_types = {4: np.int32, 8: np.int64}
+    _float_types = {4: np.float32, 8: np.float64}
 
     def __init__(self, raw_extra_data, word_size, byte_ordering):
         self.rdata = raw_extra_data
@@ -112,34 +116,57 @@ class ExtraDataUnpacker:
         self.rdata = self.rdata[pos:]
         return rv
 
-    def tweak_string(self, st):
-        """undo byte-swapping of string and remove trailing NULs."""
+    def convert_bytes_to_string(self, st):
+        """Convert bytes to string.
+
+        :Returns:
+
+            `str`
+
+        """
         if self.is_swapped:
-            # concatenate backwards substrings
-            st = string.join(
-                [
-                    st[pos : pos + self.ws][::-1]
-                    for pos in range(0, len(st), self.ws)
-                ],
-                "",
-            )
+            indices = slice(None, None, -1)
+        else:
+            indices = slice(None)
+
+        st = "".join(
+            [
+                st[pos : pos + self.ws][indices].decode("utf-8")
+                for pos in range(0, len(st), self.ws)
+            ]
+        )
+
         while st.endswith("\x00"):
             st = st[:-1]
+
         return st
 
     def get_data(self):
-        """get list of (key, value) for extra data."""
+        """Get the (key, value) pairs for extra data.
+
+        :Returns:
+
+            `ExtraData`
+
+        """
         d = {}
         while self.rdata:
-            i = numpy.fromstring(self.next_words(1), self.itype)[0]
+            i = np.frombuffer(self.next_words(1), self.itype)[0]
             if i == 0:
                 break
-            ia, ib = (i / 1000, i % 1000)
-            key, type = _codes[ib]
+
+            ia, ib = divmod(i, 1000)
+            key, etype = _codes[ib]
+
             rawvals = self.next_words(ia)
-            if type == float:
-                vals = numpy.fromstring(rawvals, self.ftype)
-            elif type == str:
-                vals = self.tweak_string(rawvals)
-            d[key] = vals
+            if etype == float:
+                vals = np.frombuffer(rawvals, self.ftype)
+            elif etype == str:
+                vals = np.array([self.convert_bytes_to_string(rawvals)])
+
+            if key not in d:
+                d[key] = vals
+            else:
+                d[key] = np.append(d[key], vals)
+
         return ExtraData(d)

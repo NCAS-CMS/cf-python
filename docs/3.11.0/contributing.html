@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Contributing &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.11.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter"><strong>Installation</strong></a></li>
+      <li>Next: <a href="tutorial.html" title="next chapter"><strong>Tutorial</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="contributing">
+<span id="id1"></span><h1><strong>Contributing</strong><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p>Version 3.11.0 for version 1.9 of the CF conventions.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#reporting-bugs" id="id2"><strong>Reporting bugs</strong></a></p></li>
+<li><p><a class="reference internal" href="#feature-requests-and-suggested-improvements" id="id3"><strong>Feature requests and suggested improvements</strong></a></p></li>
+<li><p><a class="reference internal" href="#questions" id="id4"><strong>Questions</strong></a></p></li>
+<li><p><a class="reference internal" href="#preparing-pull-requests" id="id5"><strong>Preparing pull requests</strong></a></p></li>
+<li><p><a class="reference internal" href="#contributors" id="id6"><strong>Contributors</strong></a></p></li>
+</ul>
+</div>
+<section id="reporting-bugs">
+<h2><a class="toc-backref" href="#id2"><strong>Reporting bugs</strong></a><a class="headerlink" href="#reporting-bugs" title="Permalink to this headline">¶</a></h2>
+<p>Please report bugs via a new issue in issue tracker
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues">https://github.com/NCAS-CMS/cf-python/issues</a>), using the <strong>Bug
+report</strong> issue template.</p>
+</section>
+<hr class="docutils" />
+<section id="feature-requests-and-suggested-improvements">
+<h2><a class="toc-backref" href="#id3"><strong>Feature requests and suggested improvements</strong></a><a class="headerlink" href="#feature-requests-and-suggested-improvements" title="Permalink to this headline">¶</a></h2>
+<p>Suggestions for new features and any improvements to the
+functionality, API, documentation and infrastructure can be submitted
+via a new issue in issue tracker
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues">https://github.com/NCAS-CMS/cf-python/issues</a>), using the <strong>Feature
+request</strong> issue template.</p>
+</section>
+<hr class="docutils" />
+<section id="questions">
+<h2><a class="toc-backref" href="#id4"><strong>Questions</strong></a><a class="headerlink" href="#questions" title="Permalink to this headline">¶</a></h2>
+<p>Questions, such as “how can I do this?”, “why does it behave like
+that?”, “how can I make it faster?”, etc., can be raised via a new
+issue in issue tracker (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues">https://github.com/NCAS-CMS/cf-python/issues</a>),
+using the <strong>Question</strong> issue template.</p>
+</section>
+<hr class="docutils" />
+<section id="preparing-pull-requests">
+<h2><a class="toc-backref" href="#id5"><strong>Preparing pull requests</strong></a><a class="headerlink" href="#preparing-pull-requests" title="Permalink to this headline">¶</a></h2>
+<p>Pull requests should follow on from a discussion in the issue tracker
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues">https://github.com/NCAS-CMS/cf-python/issues</a>).</p>
+<p>Fork the cf-python GitHub repository
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python">https://github.com/NCAS-CMS/cf-python</a>).</p>
+<p>Clone your fork locally and create a branch:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git clone git@github.com:&lt;YOUR GITHUB USERNAME&gt;/cf-python.git
+<span class="gp">$ </span><span class="nb">cd</span> cf-python
+<span class="gp">$ </span>git checkout -b &lt;your-bugfix-feature-branch-name master&gt;
+</pre></div>
+</div>
+<p>Break your edits up into reasonably-sized commits, each representing
+a single logical change:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git commit -a -m <span class="s2">&quot;&lt;COMMIT MESSAGE&gt;&quot;</span>
+</pre></div>
+</div>
+<p>Create a new changelog entry in <code class="docutils literal notranslate"><span class="pre">Changelog.rst</span></code>. The entry should be
+written (where <code class="docutils literal notranslate"><span class="pre">&lt;description&gt;</span></code> should be a <em>brief</em> description of
+the change) as:</p>
+<div class="highlight-rst notranslate"><div class="highlight"><pre><span></span><span class="m">*</span> &lt;description&gt; (https://github.com/NCAS-CMS/cf-python/issues/&lt;issue number&gt;)
+</pre></div>
+</div>
+<p>Run the test suite to make sure the tests all pass:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> cf/test
+<span class="gp">$ </span>python run_tests.py
+</pre></div>
+</div>
+<p>Add your name to the list of contributors list at
+<code class="docutils literal notranslate"><span class="pre">docs/source/contributing.rst</span></code>.</p>
+<p>Finally, make sure all commits have been pushed to the remote copy of
+your fork and submit the pull request via the GitHub website, to the
+<code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the <code class="docutils literal notranslate"><span class="pre">NCAS-CMS/cf-python</span></code> repository. Make sure
+to reference the original issue in the pull request’s description.</p>
+<p>Note that you can create the pull request while you’re working on
+this, as it will automatically update as you add more commits. If it is
+a work in progress, you can mark it initially as a draft pull request.</p>
+</section>
+<hr class="docutils" />
+<section id="contributors">
+<h2><a class="toc-backref" href="#id6"><strong>Contributors</strong></a><a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h2>
+<p>We would like to acknowledge and thank all those who have contributed
+ideas, code, and documentation to the cf library:</p>
+<ul class="simple">
+<li><p>A James Phillips</p></li>
+<li><p>Alan Iwi</p></li>
+<li><p>Bruno P. Kinoshita</p></li>
+<li><p>Bryan Lawrence</p></li>
+<li><p>Charles Roberts</p></li>
+<li><p>David Hassell</p></li>
+<li><p>Evert Rol</p></li>
+<li><p>Javier Dehesa</p></li>
+<li><p>Jonathan Gregory</p></li>
+<li><p>Klaus Zimmermann</p></li>
+<li><p>Kristian Sebastián</p></li>
+<li><p>Michael Decker</p></li>
+<li><p>Sadie Bartholomew</p></li>
+<li><p>Thibault Hallouin</p></li>
+<li><p>Tim Bradshaw</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2021, NCAS | Page built on 2021-10-08.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

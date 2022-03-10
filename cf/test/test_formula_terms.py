@@ -30,8 +30,8 @@ def _formula_terms(standard_name):
     )
 
     aux = cf.AuxiliaryCoordinate()
-    aux.long_name = "Computed from parametric {} vertical coordinates".format(
-        standard_name
+    aux.long_name = (
+        f"Computed from parametric {standard_name} vertical coordinates"
     )
 
     if standard_name == "atmosphere_ln_pressure_coordinate":
@@ -731,10 +731,8 @@ def _formula_terms(standard_name):
 
     else:
         raise ValueError(
-            "Bad standard name: {}, "
-            "not an element of FormulaTerms.standard_names".format(
-                standard_name
-            )
+            f"Bad standard name: {standard_name}, "
+            "not an element of FormulaTerms.standard_names"
         )
 
     return (field, aux, computed_standard_name)
@@ -889,13 +887,8 @@ class FormulaTermsTest(unittest.TestCase):
 
             self.assertTrue(
                 x.equals(a, atol=1e-5, rtol=1e-05, verbose=-1),
-                "{}, {}, {}\n{}\n{}".format(
-                    standard_name,
-                    x.array,
-                    a.array,
-                    x.bounds.array,
-                    a.bounds.array,
-                ),
+                f"{standard_name}, {x.array}, {a.array}"
+                f"\n{x.bounds.array}\n{a.bounds.array}",
             )
 
 

@@ -567,7 +567,7 @@ Mathematical operations
    ~cf.Field.exp
    ~cf.Field.log
 
-.. rubric:: Derivatives
+.. rubric:: Differential operators
 
 .. autosummary::
    :nosignatures:
@@ -575,6 +575,8 @@ Mathematical operations
    :template: method.rst
 
    ~cf.Field.derivative
+   ~cf.Field.grad_xy
+   ~cf.Field.laplacian_xy
 
 .. rubric:: Convolution filters
 

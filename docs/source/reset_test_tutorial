@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 sample_files=sample_files
 test_tutorial=test_tutorial
 
@@ -14,3 +16,5 @@ cp $sample_files/* $test_tutorial
 cd $test_tutorial
 
 zip cf_tutorial_files.zip *.nc *.pp
+
+set +x
