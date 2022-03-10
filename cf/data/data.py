@@ -1579,32 +1579,35 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         self.hardmask = self.hardmask
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
         """Calculate the n-th discrete difference along the given axis.
 
-        The first difference is given by ``x[i+1] - x[i]`` along the given
-        axis, higher differences are calculated by using `diff`
+        The first difference is given by ``x[i+1] - x[i]`` along the
+        given axis, higher differences are calculated by using `diff`
         recursively.
 
-        The shape of the output is the same as the input except along the
-        given axis, where the dimension is smaller by *n*. The data type
-        of the output is the same as the type of the difference between
-        any two elements of the input.
+        The shape of the output is the same as the input except along
+        the given axis, where the dimension is smaller by *n*. The
+        data type of the output is the same as the type of the
+        difference between any two elements of the input.
 
         .. versionadded:: 3.2.0
+
+        .. seealso:: `cumsum`, `sum`
 
         :Parameters:
 
             axis: int, optional
-                The axis along which the difference is taken. By default
-                the last axis is used. The *axis* argument is an integer
-                that selects the axis corresponding to the given position
-                in the list of axes of the data array.
+                The axis along which the difference is taken. By
+                default the last axis is used. The *axis* argument is
+                an integer that selects the axis corresponding to the
+                given position in the list of axes of the data array.
 
             n: int, optional
-                The number of times values are differenced. If zero, the
-                input is returned as-is. By default *n* is ``1``.
+                The number of times values are differenced. If zero,
+                the input is returned as-is. By default *n* is ``1``.
 
             {{inplace: `bool`, optional}}
 
@@ -1614,7 +1617,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The n-th differences, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data(numpy.arange(12.).reshape(3, 4))
         >>> d[1, 1] = 4.5
@@ -1658,28 +1661,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if n == 0:
-            return d
-
-        out = d
-        for _ in range(n):
-            sections = out.section(axis, chunks=True)
-
-            # Diff each section
-            for key, data in sections.items():
-                output_array = np.diff(data.array, axis=axis)
-
-                sections[key] = type(self)(
-                    output_array, units=self.Units, fill_value=self.fill_value
-                )
-
-            # Glue the sections back together again
-            out = self.__class__.reconstruct_sectioned_data(sections)
-
-        if inplace:
-            d.__dict__ = out.__dict__
-        else:
-            d = out
+        dx = self._get_dask()
+        dx = da.diff(dx, axis=axis, n=n)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 

@@ -653,7 +653,6 @@ class DataTest(unittest.TestCase):
                         )
                         self.assertTrue((e.array == b).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_diff(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -668,8 +667,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == a).all())
 
         e = d.copy()
-        x = e.diff(inplace=True)
-        self.assertIsNone(x)
+        self.assertIsNone(e.diff(inplace=True))
         self.assertTrue(e.equals(d.diff()))
 
         for n in (0, 1, 2):
