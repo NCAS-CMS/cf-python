@@ -10961,7 +10961,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 Specify HDF chunk sizes.
 
                 When no positional argument is provided, the HDF chunk
-                sizes are unchanged
+                sizes are unchanged.
 
                 If `None` then the HDF chunks sizes for each dimension
                 are cleared, so that the HDF default chunk size value
