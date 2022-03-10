@@ -9818,9 +9818,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._map_blocks(cf_soften_mask, dtype=self.dtype)
         self._hardmask = False
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
-        """Replace masked elements with the fill value.
+        """Replace masked elements with a fill value.
 
         .. versionadded:: 3.4.0
 
@@ -9857,25 +9858,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if fill_value is None:
             fill_value = d.get_fill_value(None)
             if fill_value is None:  # still...
-                fill_value = default_netCDF_fillvals().get(
-                    d.dtype.str[1:], None
-                )
+                fill_value = default_netCDF_fillvals().get(d.dtype.str[1:])
                 if fill_value is None and d.dtype.kind in ("SU"):
                     fill_value = default_netCDF_fillvals().get("S1", None)
 
-                if fill_value is None:  # should not be None by this stage
+                if fill_value is None:
                     raise ValueError(
                         "Can't determine fill value for "
-                        "data type {!r}".format(d.dtype.str)
+                        f"data type {d.dtype.str!r}"
                     )
-        # --- End: if
 
-        hardmask = d.hardmask
-        d.hardmask = False
-
-        d.where(d.mask, fill_value, inplace=True)
-
-        d.hardmask = hardmask
+        d._map_blocks(np.ma.filled, fill_value=fill_value, dtype=d.dtype)
 
         return d
 

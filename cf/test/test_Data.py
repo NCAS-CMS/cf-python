@@ -3627,9 +3627,6 @@ class DataTest(unittest.TestCase):
         #         self.assertTrue((e.array == c).all())
         #         self.assertTrue((d1.mask.array == c.mask).all())
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "hits 'TODODASK - use harden_mask/soften_mask'"
-    )
     def test_Data_filled(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
