@@ -3850,26 +3850,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             bool(cf.Data([1, 2]))
 
-    def test_Data_HDF_chunks(self):
-        d = cf.Data(np.arange(30).reshape(5, 6))
-        self.assertEqual(d.HDF_chunks(), {0: None, 1: None})
-        self.assertEqual(d.HDF_chunks({1: 2}), {0: None, 1: None})
-        self.assertEqual(d.HDF_chunks(), {0: None, 1: 2})
-        self.assertEqual(d.HDF_chunks({1: None}), {0: None, 1: 2})
-        self.assertEqual(d.HDF_chunks(), {0: None, 1: None})
-        self.assertEqual(d.HDF_chunks({0: 3, 1: 6}), {0: None, 1: None})
-        self.assertEqual(d.HDF_chunks(), {0: 3, 1: 6})
-        self.assertEqual(d.HDF_chunks({1: 4}), {0: 3, 1: 6})
-        self.assertEqual(d.HDF_chunks(), {0: 3, 1: 4})
-        self.assertEqual(d.HDF_chunks({1: 999}), {0: 3, 1: 4})
-        self.assertEqual(d.HDF_chunks(), {0: 3, 1: 999})
-        self.assertEqual(d.HDF_chunks(None), {0: 3, 1: 999})
-        self.assertEqual(d.HDF_chunks(), {0: None, 1: None})
-
-        # Non-existent dimension index
-        with self.assertRaises(IndexError):
-            d.HDF_chunks({2: None})
-
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

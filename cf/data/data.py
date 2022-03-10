@@ -30,6 +30,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
     _numpy_isclose,
     _section,
     abspath,
@@ -1156,6 +1157,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         for mask in auxiliary_mask:
             new.where(mask, cf_masked, None, inplace=True)
+
+        if new.shape != self.shape:
+            # Delete hdf5 chunksizes when the shape has changed.
+            new.nc_clear_hdf5_chunksizes()
 
         return new
 
@@ -5817,30 +5822,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @_cyclic.deleter
     def _cyclic(self):
         self._custom["_cyclic"] = _empty_set
-
-    @property
-    def _HDF_chunks(self):
-        """Storage for HDF chunksizes.
-
-        Contains a `dict` that defines the HDF chunk size for a subset
-        of the axes defined by the `_axes` attribute. An empty
-        dictionary may be stored as `None`, instead.
-
-        .. warning:: Never change the value of the `_HDF_chunks`
-                     attribute in-place.
-
-        .. seealso:: `HDF_Chunks`
-
-        """
-        return self._custom.get("_HDF_chunks", {})
-
-    @_HDF_chunks.setter
-    def _HDF_chunks(self, value):
-        self._custom["_HDF_chunks"] = value
-
-    @_HDF_chunks.deleter
-    def _HDF_chunks(self):
-        self._custom["_HDF_chunks"] = {}
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
@@ -10967,6 +10948,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         The HDF chunk sizes may be used by external code that allows
         `Data` objects to be written to netCDF files.
 
+        Deprecated at version TODODASK and is no longer available. Use
+        the methods `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+        and `nc_set_hdf5_chunksizes` instead.
+
+        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`
+
         :Parameters:
 
             chunks: `dict` or `None`, *optional*
@@ -11023,42 +11011,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         {0: None, 1: None}
 
         """
-        _HDF_chunks = self._HDF_chunks
-        org_HDF_chunks = {
-            i: _HDF_chunks.get(axis) for i, axis in enumerate(self._axes)
-        }
-
-        if not chunks:
-            return org_HDF_chunks
-
-        chunks = chunks[0]
-
-        if chunks is None:
-            # Clear all chunking.
-            self._HDF_chunks = {}
-            return org_HDF_chunks
-
-        ndim = self.ndim
-        axes = self._axes
-
-        _HDF_chunks = _HDF_chunks.copy()
-        for axis, size in chunks.items():
-            try:
-                _HDF_chunks[axes[axis]] = size
-            except IndexError:
-                raise IndexError(
-                    "Can set HDF chunks: No dimension "
-                    f"{axis} in {ndim}-d data. Valid dimensions are "
-                    f"{tuple(range(ndim))}"
-                )
-
-        if not any(_HDF_chunks.values()):
-            _HDF_chunks = {}
-
-        # Set the new HDF chunks.
-        self._HDF_chunks = _HDF_chunks
-
-        return org_HDF_chunks
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "HDF_chunks",
+            message="Use the methods 'nc_clear_hdf5_chunksizes', "
+            "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
+            "instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )
 
     def inspect(self):
         """Inspect the object for debugging.
