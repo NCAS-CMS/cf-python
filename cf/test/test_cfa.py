@@ -27,7 +27,8 @@ class cfaTest(unittest.TestCase):
             | stat.S_IRGRP
             | stat.S_IXUSR  # reading
             | stat.S_IXOTH
-            | stat.S_IXGRP,  # executing
+            | stat.S_IXGRP  # executing
+            | stat.S_IWUSR,  # writing
         )
 
     def test_cfa(self):
