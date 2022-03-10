@@ -182,8 +182,94 @@ class DataUtilsTest(unittest.TestCase):
         ]
         d = da.from_array(np.ma.array(a, mask=[1, 0, 0]), chunks=2)
         c = cf.data.utils.unique_calendars(d)
-        print(c)
         self.assertEqual(c, set(["all_leap", "standard"]))
+
+    def test_Data_Utils_first_non_missing_value(self):
+        """TODO."""
+        for method in ("index", "mask"):
+            # Scalar data
+            d = da.from_array(0)
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 0
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            d[()] = np.ma.masked
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), None
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            # 1-d data
+            d = da.arange(8)
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 0
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            d[0] = np.ma.masked
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 1
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            # 2-d data
+            d = da.arange(8).reshape(2, 4)
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 0
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            d[0] = np.ma.masked
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 4
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            d[...] = np.ma.masked
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), None
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+        # Bad method
+        with self.assertRaises(ValueError):
+            cf.data.utils.first_non_missing_value(d, method="bad")
 
 
 if __name__ == "__main__":

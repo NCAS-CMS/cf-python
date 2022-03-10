@@ -2,6 +2,7 @@
 from functools import lru_cache, partial
 from itertools import product
 
+import dask.array as da
 import numpy as np
 
 from ..cfdatetime import (
@@ -66,7 +67,7 @@ def _is_numeric_dtype(array):
     return np.issubdtype(dtype, np.number) or np.issubdtype(dtype, np.bool_)
 
 
-def convert_to_datetime(array, units):
+def convert_to_datetime(a, units):
     """Convert a dask array of numbers to one of date-time objects.
 
     .. versionadded:: TODODASK
@@ -75,8 +76,8 @@ def convert_to_datetime(array, units):
 
     :Parameters:
 
-        array: `dask.array.Array`
-            The input reference time values.
+        a: `dask.array.Array`
+            The input numeric reference time values.
 
         units: `Units`
             The reference time units that define the output
@@ -96,14 +97,14 @@ def convert_to_datetime(array, units):
     2000-12-03 12:00:00
 
     """
-    return array.map_blocks(
+    return a.map_blocks(
         partial(rt2dt, units_in=units),
         dtype=object,
         meta=np.array((), dtype=object),
     )
 
 
-def convert_to_reftime(array, units=None, first_value=None):
+def convert_to_reftime(a, units=None, first_value=None):
     """Convert a dask array of string or object date-times to floating
     point reference times.
 
@@ -113,7 +114,7 @@ def convert_to_reftime(array, units=None, first_value=None):
 
     :Parameters:
 
-        array: `dask.array.Array`
+        a: `dask.array.Array`
 
         units: `Units`, optional
              Specify the units for the output reference time
@@ -124,8 +125,8 @@ def convert_to_reftime(array, units=None, first_value=None):
         first_value: optional
             If set, then assumed to be equal to the first non-missing
             value of the array, thereby removing the need to find it
-            by inspection of *array*, which may be expensive. By
-            default the first non-missing value is found from *array*.
+            by inspection of *a*, which may be expensive. By default
+            the first non-missing value is found from *a*.
 
     :Returns:
 
@@ -149,11 +150,11 @@ def convert_to_reftime(array, units=None, first_value=None):
     <Units: days since 1999-12-01 standard>
 
     """
-    kind = array.dtype.kind
+    kind = a.dtype.kind
     if kind in "US":
         # Convert date-time strings to reference time floats
         if not units:
-            first_value = first_non_missing_value(array, cached=first_value)
+            first_value = first_non_missing_value(a, cached=first_value)
             if first_value is not None:
                 YMD = str(first_value).partition("T")[0]
             else:
@@ -161,13 +162,13 @@ def convert_to_reftime(array, units=None, first_value=None):
 
             units = Units("days since " + YMD, default_calendar)
 
-        array = array.map_blocks(
+        a = a.map_blocks(
             partial(st2rt, units_in=units, units_out=units), dtype=float
         )
 
     elif kind == "O":
         # Convert date-time objects to reference time floats
-        first_value = first_non_missing_value(array, cached=first_value)
+        first_value = first_non_missing_value(a, cached=first_value)
         if first_value is not None:
             x = first_value
         else:
@@ -197,59 +198,119 @@ def convert_to_reftime(array, units=None, first_value=None):
             units = Units(d_units, calendar=d_calendar)
 
         # Convert the date-time objects to reference times
-        array = array.map_blocks(
-            dt2rt, units_in=None, units_out=units, dtype=float
-        )
+        a = a.map_blocks(dt2rt, units_in=None, units_out=units, dtype=float)
 
     if not units.isreftime:
         raise ValueError(
             f"Can't create a reference time array with units {units!r}"
         )
 
-    return array, units
+    return a, units
 
 
-def first_non_missing_value(array, cached=None):
+def first_non_missing_value(a, cached=None, method="index"):
     """Return the first non-missing value of a dask array.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        array: `dask.array.Array`
+        a: `dask.array.Array`
             The array to be inspected.
 
         cached: scalar, optional
-            If set to a value other than `None`, then return this
-            value instead of inspecting the array.
+            If set to a value other than `None`, then return without
+            inspecting the array. This allows a previously found first
+            value to be used instead of a potentially costly array
+            access.
+
+        method: `str`, optional
+            Select the method used to find the first non-missing
+            value.
+
+            The default ``'index'`` method evaulates sequentially
+            elements of the flattened array. The ``'mask'`` method
+            finds the first non-missing value from the mask of the
+            whole array.
+
+            It is considered likely that the ``'index'`` method is
+            fastest for data for which the first element is not
+            missing, but this may not always be the case.
 
     :Returns:
 
             If set, then *cached* is returned. Otherwise returns the
-            first non-missing value of *array*, or `None` if there
-            isn't one.
+            first non-missing value of *a*, or `None` if there isn't
+            one.
+
+    **Examples**
+
+    >>> import dask.array as da
+    >>> d = da.arange(8).reshape(2, 4)
+    >>> print(d.compute())
+    [[0 1 2 3]
+     [4 5 6 7]]
+    >>> cf.data.utils.first_non_missing_value(d)
+    0
+    >>> cf.data.utils.first_non_missing_value(d, cached=99)
+    99
+    >>> d[0, 0] = np.ma.masked
+    >>> cf.data.utils.first_non_missing_value(d)
+    1
+    >>> d[0, :] = np.ma.masked
+    >>> cf.data.utils.first_non_missing_value(d)
+    4
+    >>> cf.data.utils.first_non_missing_value(d, cached=99)
+    99
+    >>> d[...] = np.ma.masked
+    >>> print(cf.data.utils.first_non_missing_value(d))
+    None
+    >>> print(cf.data.utils.first_non_missing_value(d, cached=99))
+    99
 
     """
     if cached is not None:
         return cached
 
-    # This does not look particularly efficient, but the expectation
-    # is that the first element in the array will not be missing data.
+    if method == "index":
+        shape = a.shape
+        for i in range(a.size):
+            index = np.unravel_index(i, shape)
+            x = a[index].compute()
+            if not (x is np.ma.masked or np.ma.getmask(x)):
+                try:
+                    return x.item()
+                except AttributeError:
+                    return x
 
-    shape = array.shape
-    for i in range(array.size):
-        index = np.unravel_index(i, shape)
-        x = array[index].compute()
-        if x is not np.ma.masked:
+        return
+
+    if method == "mask":
+        mask = da.ma.getmaskarray(a)
+        if not a.ndim:
+            # Scalar data
+            if mask:
+                return
+
+            a = a.compute()
             try:
-                return x.item()
+                return a.item()
             except AttributeError:
-                return x
+                return a
 
-    return None
+        x = a[da.unravel_index(mask.argmin(), a.shape)].compute()
+        if x is np.ma.masked:
+            return
+
+        try:
+            return x.item()
+        except AttributeError:
+            return x
+
+    raise ValueError(f"Unknown value of 'method': {method!r}")
 
 
-def unique_calendars(array):
+def unique_calendars(a):
     """Find the unique calendars from a dask array of date-time objects.
 
     .. versionadded:: TODODASK
@@ -277,10 +338,10 @@ def unique_calendars(array):
     # move to numpy-space for now. When da.unique is better we can
     # replace the next two lines of code with:
     #
-    #   array = array.map_blocks(_calendars, dtype=str)
+    #   a = a.map_blocks(_calendars, dtype=str)
     #   calendars = da.unique(array).compute()
-    array = _calendars(array.compute())
-    calendars = np.unique(array)
+    a = _calendars(a.compute())
+    calendars = np.unique(a)
 
     if np.ma.isMA(calendars):
         calendars = calendars.compressed()

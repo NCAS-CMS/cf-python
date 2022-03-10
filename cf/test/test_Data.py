@@ -1657,11 +1657,6 @@ class DataTest(unittest.TestCase):
             self.assertEqual(a.shape, ())
             self.assertEqual(a, x)
 
-            a = d.datetime_array
-            a = d.array
-            self.assertEqual(a.shape, ())
-            self.assertEqual(a, x)
-
         # Non-scalar array
         for d, x in zip(
             [
@@ -1670,12 +1665,6 @@ class DataTest(unittest.TestCase):
             ],
             ([[11292.5, 11293.5]], [[0, 1]]),
         ):
-            a = d.datetime_array
-            a = d.array
-            self.assertTrue((a == x).all())
-            a = d.datetime_array
-            a = d.array
-            self.assertTrue((a == x).all())
             a = d.datetime_array
             self.assertTrue(
                 (
@@ -1690,6 +1679,9 @@ class DataTest(unittest.TestCase):
                     )
                 ).all()
             )
+
+            a = d.array
+            self.assertTrue((a == x).all())
 
     def test_Data_asdatetime_asreftime_isdatetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -3821,6 +3813,7 @@ class DataTest(unittest.TestCase):
         # Scalar numeric array
         d = cf.Data(9, "km")
         a = d.compute()
+        self.assertIsInstance(a, np.ndarray)
         self.assertEqual(a.shape, ())
         self.assertEqual(a, np.array(9))
         d[...] = cf.masked

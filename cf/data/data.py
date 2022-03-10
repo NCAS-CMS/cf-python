@@ -128,14 +128,6 @@ from .utils import (  # is_small,; is_very_small,
     scalar_masked_array,
 )
 
-# from .chunk_utils import (  # is_small,; is_very_small,
-#    harden_mask_chunk,
-#   soften_mask_chunk,
-# )
-
-# from dask.array import Array
-
-
 _DASKIFIED_VERBOSE = None  # see below for valid levels, adapt as useful
 
 
@@ -314,7 +306,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         copy=True,
         dtype=None,
         mask=None,
-        dask_from_array_options={},
+        init_options=None,
         _use_array=True,
     ):
         """**Initialization**
@@ -432,9 +424,34 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASK
 
-            chunk: deprecated at version 4.0.0
+            init_options: `dict`, optional
+                Provide optional keyword arguments to methods and
+                functions called during the initialisation process. A
+                dictionary key identifies a method or function. The
+                corresponding value is another dictionary whose
+                key/value pairs are the keyword parameter names and
+                values to be applied.
+
+                Supported keys are:
+
+                * ``'from_array'``: Provide keyword arguments to
+                  the `dask.array.from_array` function. This is used
+                  when initialising data that is not already a dask
+                  array and is not compressed by convention.
+
+                * ``'first_non_missing_value'``: Provide keyword
+                  arguments to the
+                  `cf.data.utils.first_non_missing_value`
+                  function. This is used when the input array contains
+                  date-time strings or objects, and may affect
+                  performance.
+
+                 *Parameter example:*
+                   ``{'from_array': {'inline_array': True}}``
+
+            chunk: deprecated at version TODODASK
                 Use the *chunks* parameter instead.
 
         **Examples:**
@@ -450,6 +467,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         if source is None and isinstance(array, self.__class__):
             source = array
+
+        if init_options is None:
+            init_options = {}
 
         if source is not None:
             if loadd is not None:
@@ -566,10 +586,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "Consider rechunking after initialisation."
                 )
 
-            if dask_from_array_options:
+            if init_options.get("from_array"):
                 raise ValueError(
-                    "Can't define 'dask.array.from_array' parameters for "
-                    "compressed input arrays"
+                    "Can't define 'from_array' initialisation options "
+                    "for compressed input arrays"
                 )
 
             # Save the input compressed array, as this will contain
@@ -580,7 +600,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         elif not is_dask_collection(array):
             # Turn the data into a dask array
-            array = to_dask(array, chunks, dask_from_array_options)
+            kwargs = init_options.get("from_array", {})
+            if "chunks" in kwargs:
+                raise TypeError(
+                    "Can't define 'chunks' in the 'from_array' "
+                    "initialisation options. "
+                    "Use the 'chunks' parameter instead."
+                )
+
+            array = to_dask(array, chunks, **kwargs)
 
         elif chunks != _DEFAULT_CHUNKS:
             # The data is already a dask array
@@ -596,7 +624,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         first_value = None
         if not dt and array.dtype.kind == "O":
-            first_value = first_non_missing_value(array)
+            kwargs = init_options.get("first_non_missing_value", {})
+            first_value = first_non_missing_value(array, **kwargs)
+
             if first_value is not None:
                 dt = hasattr(first_value, "timetuple")
 
@@ -8590,6 +8620,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 data.dtype = dtype
 
             return data
+
+        data = data()
+        if copy:
+            data = data.copy()
+            if dtype is not None and np.dtype(dtype) != data.dtype:
+                data.dtype = dtype
+        elif dtype is not None and np.dtype(dtype) != data.dtype:
+            data = data.copy()
+            data.dtype = dtype
+
+        return data
 
     def close(self):
         """Close all files referenced by the data array.
