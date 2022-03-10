@@ -897,7 +897,6 @@ class DataTest(unittest.TestCase):
             e = d.cumsum(axis=i, masked_as_zero=False)
             self.assertTrue(cf.functions._numpy_allclose(e.array, b))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1150,7 +1149,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             ["foo"] in d
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_asdata(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1811,12 +1809,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.datum(-1), 3)
             for index in d.ndindex():
                 self.assertEqual(d.datum(index), d.array[index].item())
-                self.assertEqual(
-                    d.datum(*index),
-                    d.array[index].item(),
-                    "{}, {}".format(d.datum(*index), d.array[index].item()),
-                )
-        # --- End: for
+                self.assertEqual(d.datum(*index), d.array[index].item())
 
         d = cf.Data(5, "metre")
         d[()] = cf.masked
@@ -1834,6 +1827,20 @@ class DataTest(unittest.TestCase):
         self.assertIs(d.datum((0, 0)), cf.masked)
         self.assertIs(d.datum([0, -1]), cf.masked)
         self.assertIs(d.datum(-1, -1), cf.masked)
+
+        d = cf.Data([1, 2])
+        with self.assertRaises(ValueError):
+            d.datum()
+
+        with self.assertRaises(ValueError):
+            d.datum(3)
+
+        with self.assertRaises(ValueError):
+            d.datum(0, 0)
+
+        d = cf.Data([[1, 2]])
+        with self.assertRaises(ValueError):
+            d.datum((0,))
 
     def test_Data_flip(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2377,8 +2384,8 @@ class DataTest(unittest.TestCase):
             self.assertEqual(float(cf.Data(x)), float(x))
             self.assertEqual(float(cf.Data(x)), float(x))
 
-        with self.assertRaises(Exception):
-            _ = float(cf.Data([1, 2]))
+        with self.assertRaises(TypeError):
+            float(cf.Data([1, 2]))
 
     def test_Data__int__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -3588,9 +3595,6 @@ class DataTest(unittest.TestCase):
         #         self.assertTrue((e.array == c).all())
         #         self.assertTrue((d1.mask.array == c.mask).all())
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "hits 'TODODASK - use harden_mask/soften_mask'"
-    )
     def test_Data_filled(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -3850,6 +3854,20 @@ class DataTest(unittest.TestCase):
         e = d.persist()
         self.assertIsInstance(e, cf.Data)
         self.assertTrue(e.equals(d))
+
+    def test_Data_change_calendar(self):
+        d = cf.Data(
+            [0, 1, 2, 3, 4], "days since 2004-02-27", calendar="standard"
+        )
+        e = d.change_calendar("360_day")
+        self.assertTrue(np.allclose(e.array, [0, 1, 2, 4, 5]))
+        self.assertEqual(e.Units, cf.Units("days since 2004-02-27", "360_day"))
+
+        # An Exception should be raised when a date is stored that is
+        # invalid to the calendar (e.g. 29th of February in the noleap
+        # calendar).
+        with self.assertRaises(ValueError):
+            e = d.change_calendar("noleap").array
 
 
 if __name__ == "__main__":

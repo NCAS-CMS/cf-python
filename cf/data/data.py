@@ -840,18 +840,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return hash_array(self.array)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __float__(self):
         """Called to implement the built-in function `float`
 
         x.__float__() <==> float(x)
 
-        """
-        if self.size != 1:
-            raise TypeError(
-                "only length-1 arrays can be converted to Python scalars"
-            )
+        **Performance**
 
-        return float(self.datum())
+        `__float__` causes all delayed operations to be executed,
+        unless the dask array size is already known to be greater than
+        1.
+
+        """
+        return float(self._get_dask())
 
     def __round__(self, *ndigits):
         """Called to implement the built-in function `round`
@@ -866,18 +868,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return round(self.datum(), *ndigits)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __int__(self):
         """Called to implement the built-in function `int`
 
         x.__int__() <==> int(x)
 
-        """
-        if self.size != 1:
-            raise TypeError(
-                "only length-1 arrays can be converted to Python scalars"
-            )
+        **Performance**
 
-        return int(self.datum())
+        `__int__` causes all delayed operations to be executed, unless
+        the dask array size is already known to be greater than 1.
+
+        """
+        return int(self._get_dask())
 
     def __iter__(self):
         """Called when an iterator is required.
@@ -8533,21 +8536,29 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return d
 
     @classmethod
+    @daskified(_DASKIFIED_VERBOSE)
     def asdata(cls, d, dtype=None, copy=False):
         """Convert the input to a `Data` object.
+
+        If the input *d* has the Data interface (i.e. it has a
+        `__data__` method), then the output of this method is used as
+        the returned `Data` object. Otherwise, `Data(d)` is returned.
 
         :Parameters:
 
             d: data-like
-                Input data in any form that can be converted to an cf.Data
-                object. This includes `cf.Data` and `cf.Field` objects,
-                numpy arrays and any object which may be converted to a
+                Input data in any form that can be converted to a
+                `Data` object. This includes `Data` and `Field`
+                objects, and objects with the Data interface, numpy
+                arrays and any object which may be converted to a
                 numpy array.
 
            dtype: data-type, optional
                 By default, the data-type is inferred from the input data.
 
-           copy:
+           copy: `bool`, optional
+                If True and *d* has the Data interface, then a copy of
+                `d.__data__()` is returned.
 
         :Returns:
 
@@ -8556,7 +8567,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 input if it is already a `Data` object with matching dtype
                 and *copy* is False.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([1, 2])
         >>> cf.Data.asdata(d) is d
@@ -9884,9 +9895,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._map_blocks(cf_soften_mask, dtype=self.dtype)
         self._hardmask = False
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
-        """Replace masked elements with the fill value.
+        """Replace masked elements with a fill value.
 
         .. versionadded:: 3.4.0
 
@@ -9923,25 +9935,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if fill_value is None:
             fill_value = d.get_fill_value(None)
             if fill_value is None:  # still...
-                fill_value = default_netCDF_fillvals().get(
-                    d.dtype.str[1:], None
-                )
+                fill_value = default_netCDF_fillvals().get(d.dtype.str[1:])
                 if fill_value is None and d.dtype.kind in ("SU"):
                     fill_value = default_netCDF_fillvals().get("S1", None)
 
-                if fill_value is None:  # should not be None by this stage
+                if fill_value is None:
                     raise ValueError(
                         "Can't determine fill value for "
-                        "data type {!r}".format(d.dtype.str)
+                        f"data type {d.dtype.str!r}"
                     )
-        # --- End: if
 
-        hardmask = d.hardmask
-        d.hardmask = False
-
-        d.where(d.mask, fill_value, inplace=True)
-
-        d.hardmask = hardmask
+        d._map_blocks(np.ma.filled, fill_value=fill_value, dtype=d.dtype)
 
         return d
 
@@ -10115,10 +10119,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 else:
                     yield cf_masked
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
-        """Flatten axes of the data.
-
-        TODODASK - check against daask flatten behaviour
+        """Flatten specified axes of the data.
 
         Any subset of the axes may be flattened.
 
@@ -10130,21 +10134,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. versionadded:: 3.0.2
 
-        .. seealso:: `compressed`, `insert_dimension`, `flip`, `swapaxes`,
-                     `transpose`
+        .. seealso:: `compressed`, `flat`, `insert_dimension`, `flip`,
+                     `swapaxes`, `transpose`
 
         :Parameters:
 
-            axes: (sequence of) int or str, optional
-                Select the axes.  By default all axes are flattened. The
-                *axes* argument may be one, or a sequence, of:
-
-                  * An internal axis identifier. Selects this axis.
-
-                  * An integer. Selects the axis corresponding to the given
-                    position in the list of axes of the data array.
-
-                No axes are flattened if *axes* is an empty sequence.
+            axes: (sequence of) `int`
+                Select the axes to be flattened. By default all axes
+                are flattened. Each axis is identified by its integer
+                position. No axes are flattened if *axes* is an empty
+                sequence.
 
             {{inplace: `bool`, optional}}
 
@@ -10156,7 +10155,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
-        >>> d = cf.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+        >>> import numpy as np
+        >>> d = cf.Data(np.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
         >>> print(d.array)
@@ -10204,27 +10204,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
           [15 19 23]]]
 
         """
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
-        ndim = self._ndim
+        ndim = d.ndim
         if not ndim:
             if axes or axes == 0:
                 raise ValueError(
-                    "Can't flatten: Can't remove an axis from "
-                    "scalar {}".format(self.__class__.__name__)
+                    "Can't flatten: Can't remove axes from "
+                    f"scalar {self.__class__.__name__}"
                 )
 
-            if inplace:
-                d = None
             return d
 
-        shape = list(d._shape)
-
-        # Note that it is important that the first axis in the list is
-        # the left-most flattened axis
         if axes is None:
             axes = list(range(ndim))
         else:
@@ -10232,39 +10223,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         n_axes = len(axes)
         if n_axes <= 1:
-            if inplace:
-                d = None
             return d
 
+        dx = d._get_dask()
+
+        # It is important that the first axis in the list is the
+        # left-most flattened axis.
+        #
+        # E.g. if the shape is (10, 20, 30, 40, 50, 60) and the axes
+        #      to be flattened are [2, 4], then the data must be
+        #      transposed with order [0, 1, 2, 4, 3, 5]
+        order = [i for i in range(ndim) if i not in axes]
+        order[axes[0] : axes[0]] = axes
+        dx = dx.transpose(order)
+
+        # Find the flattened shape.
+        #
+        # E.g. if the *transposed* shape is (10, 20, 30, 50, 40, 60)
+        #      and *transposed* axes [2, 3] are to be flattened then
+        #      the new shape will be (10, 20, 1500, 40, 60)
+        shape = d.shape
         new_shape = [n for i, n in enumerate(shape) if i not in axes]
-        new_shape.insert(axes[0], np.prod([shape[i] for i in axes]))
+        new_shape.insert(axes[0], reduce(mul, [shape[i] for i in axes], 1))
 
-        out = d.empty(new_shape, dtype=d.dtype, units=d.Units, chunk=True)
-        out.hardmask = False
+        dx = dx.reshape(new_shape)
+        d._set_dask(dx, reset_mask_hardness=False)
 
-        n_non_flattened_axes = ndim - n_axes
-
-        for key, data in d.section(axes).items():
-            flattened_array = data.array.flatten()
-            size = flattened_array.size
-
-            first_None_index = key.index(None)
-
-            indices = [i for i in key if i is not None]
-            indices.insert(first_None_index, slice(0, size))
-
-            shape = [1] * n_non_flattened_axes
-            shape.insert(first_None_index, size)
-
-            out[tuple(indices)] = flattened_array.reshape(shape)
-
-        out.hardmask = True
-
-        if inplace:
-            d.__dict__ = out.__dict__
-            out = None
-
-        return out
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
@@ -10371,31 +10356,71 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def change_calendar(self, calendar, inplace=False, i=False):
-        """Change the calendar of the data array elements.
+        """Change the calendar of date-time array elements.
 
-        Changing the calendar could result in a change of reference time
-        data array values.
+        Reinterprets the existing date-times for the new calendar by
+        adjusting the underlying numerical values relative to the
+        reference date-time defined by the units.
 
-        Not to be confused with using the `override_calendar` method or
-        resetting `d.Units`. `override_calendar` is different because the
-        new calendar need not be equivalent to the original ones and the
-        data array elements will not be changed to reflect the new
-        units. Resetting `d.Units` will
+        If a date-time value is not allowed in the new calendar then
+        an exception is raised when the data array is accessed.
+
+        .. seealso:: `override_calendar`, `Units`
+
+        :Parameters:
+
+            calendar: `str`
+                The new calendar, as recognised by the CF conventions.
+
+                *Parameter example:*
+                  ``'proleptic_gregorian'``
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The new data with updated calendar, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2, 3, 4], 'days since 2004-02-27')
+        >>> print(d.array)
+        [0 1 2 3 4]
+        >>> print(d.datetime_as_string)
+        ['2004-02-27 00:00:00' '2004-02-28 00:00:00' '2004-02-29 00:00:00'
+         '2004-03-01 00:00:00' '2004-03-02 00:00:00']
+        >>> e = d.change_calendar('360_day')
+        >>> print(e.array)
+        [0 1 2 4 5]
+        >>> print(e.datetime_as_string)
+        ['2004-02-27 00:00:00' '2004-02-28 00:00:00' '2004-02-29 00:00:00'
+        '2004-03-01 00:00:00' '2004-03-02 00:00:00']
+
+        >>> d.change_calendar('noleap').array
+        Traceback (most recent call last):
+            ...
+        ValueError: invalid day number provided in cftime.DatetimeNoLeap(2004, 2, 29, 0, 0, 0, 0, has_year_zero=True)
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if not self.Units.isreftime:
+        units = self.Units
+        if not units.isreftime:
             raise ValueError(
                 "Can't change calendar of non-reference time "
-                "units: {!r}".format(self.Units)
+                f"units: {units!r}"
             )
 
         d._asdatetime(inplace=True)
-        d.override_units(Units(self.Units.units, calendar), inplace=True)
+        d.override_calendar(calendar, inplace=True)
         d._asreftime(inplace=True)
 
         return d
@@ -10569,6 +10594,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return True
 
+    @daskified(_DASKIFIED_VERBOSE)
     def datum(self, *index):
         """Return an element of the data array as a standard Python
         scalar.
@@ -10684,15 +10710,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     index = tuple(index)
                 else:
                     raise ValueError(
-                        "Incorrect number of indices for {} array".format(
-                            self.__class__.__name__
-                        )
+                        f"Incorrect number of indices ({n_index}) for "
+                        f"{self.ndim}-d {self.__class__.__name__} data"
                     )
             elif n_index != self.ndim:
                 raise ValueError(
-                    "Incorrect number of indices for {} array".format(
-                        self.__class__.__name__
-                    )
+                    f"Incorrect number of indices ({n_index}) for "
+                    f"{self.ndim}-d {self.__class__.__name__} data"
                 )
 
             array = self[index].array
@@ -10702,8 +10726,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         else:
             raise ValueError(
-                "Can only convert a {} array of size 1 to a "
-                "Python scalar".format(self.__class__.__name__)
+                f"For size {self.size} data, must provide an index of "
+                "the element to be converted to a Python scalar"
             )
 
         if not np.ma.isMA(array):
