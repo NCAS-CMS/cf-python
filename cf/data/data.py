@@ -7557,7 +7557,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             unravel: `bool`, optional
 
                 If True then when locating the maximum over the whole
-                data, return the location as a index for each axis as
+                data, return the location as an index for each axis as
                 a `tuple`. By default an index to the flattened array
                 is returned in this case. Ignored if locating the
                 maxima over a subset of the axes.
