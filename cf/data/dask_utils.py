@@ -15,6 +15,8 @@ from ..cfdatetime import dt2rt, rt2dt
 from ..functions import atol as cf_atol
 from ..functions import rtol as cf_rtol
 
+# from dask.utils import deepmap  # Apply function inside nested lists
+
 
 def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     """An effective dask.array.ma.allclose method.

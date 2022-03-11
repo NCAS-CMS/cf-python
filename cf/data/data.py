@@ -17,6 +17,7 @@ from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
 from dask.core import flatten
 from dask.highlevelgraph import HighLevelGraph
+from dask.array.routines import result_type
 from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
 from ..cfdatetime import dt as cf_dt
@@ -49,40 +50,19 @@ from . import (  # GatheredSubarray,; RaggedContiguousSubarray,; RaggedIndexedCo
     NetCDFArray,
     UMArray,
 )
-from .collapse_functions import (  # max_f,; max_ffinalise,; max_fpartial,
-    max_abs_f,
-    max_abs_ffinalise,
-    max_abs_fpartial,
+from .collapse_functions import (
     mean_abs_f,
     mean_abs_ffinalise,
     mean_abs_fpartial,
     mean_f,
     mean_ffinalise,
     mean_fpartial,
-    mid_range_f,
-    mid_range_ffinalise,
-    mid_range_fpartial,
-    min_abs_f,
-    min_abs_ffinalise,
-    min_abs_fpartial,
-    min_f,
-    min_ffinalise,
-    min_fpartial,
-    range_f,
-    range_ffinalise,
-    range_fpartial,
     root_mean_square_f,
     root_mean_square_ffinalise,
     root_mean_square_fpartial,
-    sample_size_f,
-    sample_size_ffinalise,
-    sample_size_fpartial,
     sd_f,
     sd_ffinalise,
     sd_fpartial,
-    sum_f,
-    sum_ffinalise,
-    sum_fpartial,
     sum_of_squares_f,
     sum_of_squares_ffinalise,
     sum_of_squares_fpartial,
@@ -8246,36 +8226,30 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
     def sample_size(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         inplace=False,
+        split_every=None,
         i=False,
-        _preserve_partitions=False,
     ):
-        """Collapses axes with their sample size.
+        from .collapse_functions import cf_sample_size
 
-        :Parameters:
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        """
-        return self._collapse(
-            sample_size_f,
-            sample_size_fpartial,
-            sample_size_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
-            weights=None,
+        d = _inplace_enabled_define_and_cleanup(self)
+        d = _collapse(
+            d,
+            cf_sample_size,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            units=Units("1"),
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
+        return d
 
     @property
     def binary_mask(self):
@@ -10779,28 +10753,28 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return cls(array, units=units, chunk=chunk)
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
     def mid_range(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
+        split_every=None,
         inplace=False,
-        _preserve_partitions=False,
         i=False,
     ):
-        """Collapse axes with the unweighted average of their maximum
-        and minimum values.
+        """Collapse axes with the absolute difference between their
+        maximum and minimum values.
 
         Missing data array elements are omitted from the calculation.
 
-        .. seealso:: `maximum`, `minimum`, `mean`, `range`, `sum`, `sd`, `var`
+        .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sample_size`,
+                     `sd`, `sum`, `sum_of_weights`, `sum_of_weights2`,
+                     `var`
 
         :Parameters:
-
-            axes: (sequence of) `int`, optional
-
-            squeeze: `bool`, optional
 
             {{inplace: `bool`, optional}}
 
@@ -10814,16 +10788,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        return self._collapse(
-            mid_range_f,
-            mid_range_fpartial,
-            mid_range_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
+        from .collapse_functions import cf_mid_range
+
+        d = _inplace_enabled_define_and_cleanup(self)
+        d = _collapse(
+            d,
+            cf_mid_range,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
@@ -12682,14 +12658,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
     def range(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
+        split_every=None,
         inplace=False,
-        _preserve_partitions=False,
         i=False,
     ):
         """Collapse axes with the absolute difference between their
@@ -12703,6 +12681,28 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
+            split_every: `int` or `dict`, optional
+                Determines the depth of the recursive aggregation. If
+                set to a number greater an oe equal to the number of
+                input chunks, the aggregation will be performed in two
+                steps, one ``chunk`` function per input chunk and a
+                single ``aggregate`` function at the end. If set to
+                less than that (and greater than 1), an intermediate
+                ``combine`` function will be used, so that any one
+                ``combine`` or ``aggregate`` function has no more than
+                ``split_every`` inputs. The depth of the aggregation
+                graph will be :math:`log_{split_every}(input chunks
+                along reduced axes)`. Setting to a low value can
+                reduce cache size and network transfers, at the cost
+                of more CPU and a larger dask graph.
+
+                Different values can be assigned to different axes in
+                a dictionary.
+
+                Omit to let dask heuristically decide a good
+                default. A default can also be set globally with the
+                ``split_every`` key in :mod:`dask.config`.
+
             {{inplace: `bool`, optional}}
 
             {{i: deprecated at version 3.0.0}}
@@ -12715,17 +12715,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        return self._collapse(
-            range_f,
-            range_fpartial,
-            range_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
-            weights=None,
+        from .collapse_functions import cf_range
+
+        d = _inplace_enabled_define_and_cleanup(self)
+        d = _collapse(
+            d,
+            cf_range,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -12778,54 +12779,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
     def sum(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
-        weights=None,
         inplace=False,
+        split_every=None,
         i=False,
         _preserve_partitions=False,
     ):
-        """Collapse axes with their sum.
+        from .collapse_functions import cf_sum
 
-        Missing data array elements are omitted from the calculation.
-
-        .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `range`,
-                     `sample_size`, `sd`, `sum_of_weights`,
-                     `sum_of_weights2`, `var`
-
-        :Parameters:
-
-            axes : (sequence of) int, optional
-
-            squeeze : bool, optional
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        :Returns:
-
-            `Data` or `None`
-                The collapsed array.
-
-        **Examples:**
-
-        """
-        return self._collapse(
-            sum_f,
-            sum_fpartial,
-            sum_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
-            weights=weights,
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        dx = cf_sum(
+            dx,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
+        return d
 
     def sum_of_squares(
         self,
@@ -13290,6 +13270,36 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self, axes, data=True, stop=stop, chunks=chunks, min_step=min_step
         )
 
+
+    
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
+    def sumw(
+        self,
+        axes=None,
+            weights=None,
+        squeeze=False,
+        mtol=1,
+        inplace=False,
+        split_every=None,
+        i=False,
+    ):
+        from .collapse_functions import cf_sumw
+
+        d = _inplace_enabled_define_and_cleanup(self)
+   
+        d = _collapse(
+            d,
+            cf_sumw,
+            axis=axes,
+            weights=weights,
+            keepdims=not squeeze,
+            split_every=split_every,
+            mtol=mtol,
+        )
+        return d
+
     # ----------------------------------------------------------------
     # Alias
     # ----------------------------------------------------------------
@@ -13298,43 +13308,56 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Alias for `datetime_array`"""
         return self.datetime_array
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
     def max(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         inplace=False,
+        split_every=None,
         i=False,
-        _preserve_partitions=False,
     ):
-        """Alias for `maximum`"""
-        return self.maximum(
-            axes=axes,
-            squeeze=squeeze,
-            mtol=mtol,
-            inplace=inplace,
-            i=i,
-            _preserve_partitions=_preserve_partitions,
-        )
+        from .collapse_functions import cf_max
 
+        d = _inplace_enabled_define_and_cleanup(self)
+        d = _collapse(
+            d,
+            cf_max,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
+            mtol=mtol,
+        )
+        return d
+
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
     def min(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         inplace=False,
+        split_every=None,
         i=False,
         _preserve_partitions=False,
     ):
-        """Alias for `minimum`"""
-        return self.minimum(
-            axes=axes,
-            squeeze=squeeze,
+        from .collapse_functions import cf_min
+
+        d = _inplace_enabled_define_and_cleanup(self)
+        d = _collapse(
+            d,
+            cf_min,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            inplace=inplace,
-            i=i,
-            _preserve_partitions=_preserve_partitions,
         )
+        return d
 
     def standard_deviation(
         self,
@@ -13607,3 +13630,35 @@ def _where_broadcastable(data, x, name):
             )
 
     return True
+
+
+def _collapse(
+        d, collapse_func, axis=None, weights=None, keepdims=True, split_every=None, mtol=1
+):
+    """TODODASK."""
+    dx = d._get_dask()
+
+    if weights is not None:
+        weights = da.asanyarray(dask_compatible(weights))
+        
+        if issubclass(a.dtype.type, (np.integer, np.bool_)):
+            result_dtype = result_type(a.dtype, weights.dtype, "f8")
+        else:
+            result_dtype = result_type(a.dtype, weights.dtype)
+            
+        # Sort out broadcasting of weights!!!
+            
+        dx = multiply(dx, weights, dtype=result_dtype)
+
+        need to dived by sum of weiughts, sometimes
+        
+    dx = collapse_func(
+        dx,
+        axis=axis,
+        keepdims=keepdims,
+        split_every=split_every,
+        mtol=mtol,
+    )
+    d._set_dask(dx, reset_mask_hardness=True)
+
+    return d

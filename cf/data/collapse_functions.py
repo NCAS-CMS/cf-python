@@ -1,5 +1,10 @@
+from functools import partial
 from functools import partial as functools_partial
+from functools import reduce
+from operator import mul
 
+import numpy as np
+from dask.array.reductions import reduction
 from numpy import abs as numpy_abs
 from numpy import amax as numpy_amax
 from numpy import amin as numpy_amin
@@ -33,19 +38,18 @@ def asanyarray(*args):
 
     :Returns:
 
-        `tuple`
+        `list`
             The input objects left as, else converted to, `numpy.ndarray`
 
     """
     out = []
     for x in args:
-        if x is not None and not numpy_ndim(x):
+        if x is not None and not np.ndim(x):
             # Make sure that we have a numpy array (as opposed to, e.g. a
             # numpy.float64)
-            out.append(numpy_asanyarray(x))
+            out.append(np.asanyarray(x))
         else:
             out.append(x)
-    # --- End: for
 
     return out
 
@@ -208,12 +212,38 @@ def mask_where_too_few_values(Nmin, N, x):
             strictly less than *Nmin*.
 
     """
+    print(" N.min() =", N.min(), Nmin)
     if N.min() < Nmin:
         mask = N < Nmin
         N = numpy_ma_array(N, mask=mask, copy=False, shrink=False)
         x = numpy_ma_array(x, mask=mask, copy=False, shrink=True)
 
     return asanyarray(N, x)
+
+
+def mask_small_sample_size(x, N, axis, mtol, original_shape):
+    """Mask elements of N and x where N is strictly less than Nmin.
+
+    :Parameters:
+
+        Nmin: `int`
+
+        N: `numpy.ndarray`
+
+        x: `numpy.ndarray`
+
+    :Returns:
+
+        (`numpy.ndarray`, `numpy.ndarray`)
+            A tuple containing *N* and *x*, both masked where *N* is
+            strictly less than *Nmin*.
+
+    """
+    if mtol < 1:
+        Nmax = reduce(mul, [original_shape[i] for i in axis], 1)
+        x = np.ma.masked_where(N < (1 - mtol) * Nmax, x, copy=False)
+
+    return x
 
 
 def double_precision(a):
@@ -242,219 +272,6 @@ def double_precision(a):
         return a.astype(newtype, copy=False)
 
 
-# --------------------------------------------------------------------
-# Maximum
-# --------------------------------------------------------------------
-def max_f(a, axis=None, masked=False):
-    """Return the maximum of an array or maximum along a specified axis.
-
-    :Parameters:
-
-        a: numpy array_like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-        masked: `bool`
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the maximum.
-
-    """
-    (N,) = sample_size_f(a, axis=axis, masked=masked)
-    amax = numpy_amax(a, axis=axis)
-
-    if not numpy_ndim(amax):
-        # Make sure that we have a numpy array (as opposed to, e.g. a
-        # numpy.float64)
-        amax = numpy_asanyarray(amax)
-
-    return asanyarray(N, amax)
-
-
-def max_fpartial(out, out1=None, group=False):
-    """Return the partial maximum of an array.
-
-    :Parameters:
-
-        out: 2-`tuple` of `numpy.ndarray`
-
-        out1: 2-`tuple` of `numpy.ndarray`, optional
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the maximum.
-
-    """
-    N, amax = out
-
-    if out1 is not None:
-        N1, amax1 = out1
-        N = psum(N, N1)
-        amax = pmax(amax, amax1)
-
-    return asanyarray(N, amax)
-
-
-def max_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to the maximum of an
-    array.
-
-    Here mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        sub_samples: *optional*
-            Ignored.
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the maximum.
-
-    """
-    return mask_where_too_few_values(1, *out)
-
-
-# --------------------------------------------------------------------
-# Minimum
-# --------------------------------------------------------------------
-def min_f(a, axis=None, masked=False):
-    """Return the minimum of an array or minimum along a specified axis.
-
-    :Parameters:
-
-        a: numpy array_like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-        masked: `bool`, optional
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the minimum.
-
-    """
-    (N,) = sample_size_f(a, axis=axis, masked=masked)
-    amin = numpy_amin(a, axis=axis)
-
-    return asanyarray(N, amin)
-
-
-def min_fpartial(out, out1=None, group=False):
-    """Return the partial minimum of an array.
-
-    :Parameters:
-
-        out: 2-`tuple` of `numpy.ndarray`
-
-        out1: 2-`tuple` of `numpy.ndarray`, optional
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the minimum.
-
-    """
-    N, amin = out
-
-    if out1 is not None:
-        N1, amin1 = out1
-        N = psum(N, N1)
-        amin = pmin(amin, amin1)
-
-    return asanyarray(N, amin)
-
-
-def min_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to the minimum of an
-    array.
-
-    Here mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        sub_samples: optional
-            Ignored.
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the minimum.
-
-    """
-    return mask_where_too_few_values(1, *out)
-
-
-# --------------------------------------------------------------------
-# maximum_absolute_value
-# --------------------------------------------------------------------
-def max_abs_f(a, axis=None, masked=False):
-    """Return the maximum of the absolute array, or the maximum of the
-    absolute array along an axis.
-
-    :Parameters:
-
-        a: numpy array_like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-        masked: bool
-
-    :Returns:
-
-        2-tuple of numpy arrays
-            The sample sizes and the maxima of the absolute values.
-
-    """
-    return max_f(numpy_abs(a), axis=axis, masked=masked)
-
-
-max_abs_fpartial = max_fpartial
-max_abs_ffinalise = max_ffinalise
-
-
-# --------------------------------------------------------------------
-# minimum_absolute_value
-# --------------------------------------------------------------------
-def min_abs_f(a, axis=None, masked=False):
-    """Return the minimum of the absolute array, or the minimum of the
-    absolute array along an axis.
-
-    :Parameters:
-
-        a: numpy array_like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input is
-            used.
-
-        masked: `bool`
-
-    :Returns:
-
-        2-tuple of `numpy.ndarray`
-            The sample sizes and the minima of the absolute values.
-
-    """
-    return min_f(numpy_abs(a), axis=axis, masked=masked)
-
-
-min_abs_fpartial = min_fpartial
-min_abs_ffinalise = min_ffinalise
 
 
 # --------------------------------------------------------------------
@@ -664,223 +481,7 @@ def root_mean_square_ffinalise(out, sub_samples=None):
     return asanyarray(N, avg)
 
 
-# --------------------------------------------------------------------
-# Mid-range: Average of maximum and minimum
-# --------------------------------------------------------------------
-def mid_range_f(a, axis=None, masked=False):
-    """Return the minimum and maximum of an array or the minimum and
-    maximum along an axis.
 
-    ``mid_range_f(a, axis=axis)`` is equivalent to ``(numpy.amin(a,
-    axis=axis), numpy.amax(a, axis=axis))``
-
-    :Parameters:
-
-        a: numpy array_like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-        kwargs: ignored
-
-    :Returns:
-
-        3-`tuple`
-            The sample size, minimum and maximum inside a 3-tuple.
-
-    """
-    (N,) = sample_size_f(a, axis=axis, masked=masked)
-    amin = numpy_amin(a, axis=axis)
-    amax = numpy_amax(a, axis=axis)
-
-    if not numpy_ndim(amin):
-        # Make sure that we have a numpy array (as opposed to, e.g. a
-        # numpy.float64)
-        amin = numpy_asanyarray(amin)
-        amax = numpy_asanyarray(amax)
-
-    return asanyarray(N, amin, amax)
-
-
-def mid_range_fpartial(out, out1=None, group=False):
-    """Return the partial minimum and partial maximum of an array.
-
-    :Parameters:
-
-        out: 3-`tuple` of `numpy.ndarray`
-
-        out1: 3-`tuple` of `numpy.ndarray`, optional
-
-        group: ignored
-
-    :Returns:
-
-        3-`tuple`
-            The sample size, minimum and maximum inside a 3-tuple.
-
-    """
-    N, amin, amax = out
-
-    if out1 is not None:
-        N1, amin1, amax1 = out1
-
-        N = psum(N, N1)
-        amin = pmin(amin, amin1)
-        amax = pmax(amax, amax1)
-
-    return asanyarray(N, amin, amax)
-
-
-def mid_range_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to the array mid-range
-    value.
-
-    Also mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        out: ordered sequence
-
-        amin: `numpy.ndarray`
-
-        amax: `numpy.ndarray`
-
-        sub_samples: optional
-            Ignored.
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the mid-range value.
-
-    """
-    N, amin, amax = out
-
-    amax = double_precision(amax)
-
-    # Cast bool, unsigned int, and int to float64
-    if issubclass(amax.dtype.type, (numpy_integer, numpy_bool_)):
-        amax = amax.astype(float)
-
-    # Calculate the mid-range value, storing it in the amax variable
-    amax += amin
-    amax *= 0.5
-
-    return mask_where_too_few_values(1, N, amax)
-
-
-# ---------------------------------------------------------------------
-# Range: Absolute difference between maximum and minimum
-# ---------------------------------------------------------------------
-range_f = mid_range_f
-range_fpartial = mid_range_fpartial
-
-
-def range_ffinalise(out, sub_samples=None):
-    """Absolute difference between maximum and minimum.
-
-    Also mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        out: ordered sequence
-
-        sub_samples: optional
-            Ignored.
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the range.
-
-    """
-    N, amin, amax = out
-
-    # Calculate the range value, storing it in the amax variable
-    amax = double_precision(amax)
-    amax -= amin
-
-    return mask_where_too_few_values(1, N, amax)
-
-
-# ---------------------------------------------------------------------
-# Sample size
-# ---------------------------------------------------------------------
-def sample_size_f(a, axis=None, masked=False):
-    """Return the sample size.
-
-    :Parameters:
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    if masked:
-        N = numpy_sum(~a.mask, axis=axis, dtype=float)
-        if not numpy_ndim(N):
-            N = numpy_asanyarray(N)
-    else:
-        if axis is None:
-            N = numpy_array(a.size, dtype=float)
-        else:
-            shape = a.shape
-            N = numpy_empty(shape[:axis] + shape[axis + 1 :], dtype=float)
-            N[...] = shape[axis]
-    # --- End: if
-
-    return asanyarray(N)
-
-
-def sample_size_fpartial(out, out1=None, group=False):
-    """Return the partial sample size.
-
-    :Parameters:
-
-        out: ordered sequence of one numpy array
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    (N,) = out
-    if out1 is not None:
-        (N1,) = out1
-        N = psum(N, N1)
-
-    return asanyarray(N)
-
-
-def sample_size_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to give the sample size.
-
-    :Parameters:
-
-        out: ordered sequence of one numpy array
-
-        sub_samples: optional
-            Ignored.
-
-    :Returns:
-
-        `tuple`
-            A 2-tuple containing *N* twice.
-
-    """
-    (N,) = out
-    return asanyarray(N, N)
-
-
-# ---------------------------------------------------------------------
-# sum
-# ---------------------------------------------------------------------
 def sum_f(a, axis=None, weights=None, masked=False):
     """Return the sum of an array or the sum along an axis.
 
@@ -1377,3 +978,508 @@ def sd_ffinalise(out, sub_samples=None):
     sd **= 0.5
 
     return asanyarray(N, sd)
+
+
+from dask.array import chunk
+from dask.array.core import _concatenate2, broadcast_to
+from dask.array.reductions import divide
+from dask.utils import deepmap  # Apply function inside nested lists
+
+
+def combine_sample_sizes(pairs, axis, **kwargs):
+    # Create a nested list of N and recursively concatenate it
+    # along the specified axes
+    return combine_arrays(pairs, "N", chunk.sum, axis, int, False, **kwargs)
+
+
+def combine_arrays(
+    pairs, key, func, axis, dtype, computing_meta=False, **kwargs
+):
+    # Create a nested list of N and recursively concatenate it
+    # along the specified axes
+    x = deepmap(lambda pair: pair[key], pairs) if not computing_meta else pairs
+    if dtype:
+        kwargs["dtype"] = dtype
+
+    x = func(_concatenate2(x, axes=axis), axis=axis, **kwargs)
+    return x
+
+
+# --------------------------------------------------------------------
+# max
+# --------------------------------------------------------------------
+def cf_max_chunk(x, computing_meta=False, **kwargs):
+    """Find the max of an array."""
+    if computing_meta:
+        return x
+
+    d = {"max": chunk.max(x, **kwargs)}
+    d.update(cf_sample_size_chunk(x, **kwargs))
+    return d
+
+
+def cf_max_combine(
+    pairs,
+    axis=None,
+    computing_meta=False,
+    **kwargs,
+):
+    """Find the max and min of a nested list of arrays."""
+    if not isinstance(pairs, list):
+        pairs = [pairs]
+
+    # Create a nested list of maxima and recursively concatenate it
+    # along the specified axes
+    m = combine_arrays(
+        pairs, "max", chunk.max, axis, None, computing_meta, **kwargs
+    )
+    if computing_meta:
+        return m
+
+    return {"N": combine_sample_sizes(pairs, axis, **kwargs), "max": m}
+
+
+def cf_max_agg(
+    pairs,
+    axis=None,
+    computing_meta=False,
+    mtol=1,
+    original_shape=None,
+    **kwargs,
+):
+    """Find the range of a nested list of arrays."""
+    d = cf_max_combine(pairs, axis, computing_meta, **kwargs)
+
+    m = d["max"]
+    m = mask_small_sample_size(m, d["N"], axis, mtol, original_shape)
+
+    return m
+
+
+def cf_max(a, axis=None, keepdims=False, mtol=1, split_every=None):
+    """TODODASK."""
+    dtype = a.dtype
+    return reduction(
+        a,
+        cf_max_chunk,
+        partial(cf_max_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_max_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+    )
+
+
+
+# --------------------------------------------------------------------
+# maximum_absolute_value
+# --------------------------------------------------------------------
+def cf_max_abs_chunk(x, computing_meta=False, **kwargs):
+    """Return the maximum of the absolute array, or the maximum of the
+    absolute array along an axis.
+
+    :Parameters:
+
+        a: numpy array_like
+            Input array
+
+        axis: `int`, optional
+            Axis along which to operate. By default, flattened input
+            is used.
+
+        masked: bool
+
+    :Returns:
+
+        2-tuple of numpy arrays
+            The sample sizes and the maxima of the absolute values.
+
+    """
+    if computing_meta:
+        return x
+
+    d = {"max": cf_max_chunk(np.abs(x), **kwargs)}
+    d.update(cf_sample_size_chunk(x, **kwargs))
+    return d
+
+
+cf_max_abs_combine = cf_max_combine
+cf_max_abs_agg = cf_max_agg
+
+# --------------------------------------------------------------------
+# min
+# --------------------------------------------------------------------
+def cf_min_chunk(x, computing_meta=False, **kwargs):
+    """Find the max of an array."""
+    if computing_meta:
+        return x
+
+    d = {"min": chunk.min(x, **kwargs)}
+    d.update(cf_sample_size_chunk(x, **kwargs))
+    return d
+
+
+def cf_min_combine(
+    pairs,
+    axis=None,
+    computing_meta=False,
+    **kwargs,
+):
+    """Find the max and min of a nested list of arrays."""
+    if not isinstance(pairs, list):
+        pairs = [pairs]
+
+    # Create a nested list of maxima and recursively concatenate it
+    # along the specified axes
+    m = combine_arrays(
+        pairs, "min", chunk.min, axis, None, computing_meta, **kwargs
+    )
+    if computing_meta:
+        return m
+
+    return {"N": combine_sample_sizes(pairs, axis, **kwargs), "min": m}
+
+
+def cf_min_agg(
+    pairs,
+    axis=None,
+    computing_meta=False,
+    mtol=1,
+    original_shape=None,
+    **kwargs,
+):
+    """Find the range of a nested list of arrays."""
+    d = cf_min_combine(pairs, axis, computing_meta, **kwargs)
+
+    m = d["min"]
+    m = mask_small_sample_size(m, d["N"], axis, mtol, original_shape)
+
+    return m
+
+
+
+def cf_min(a, axis=None, keepdims=False, mtol=1, split_every=None):
+    """TODODASK."""
+    dtype = a.dtype
+    return reduction(
+        a,
+        cf_min_chunk,
+        partial(cf_min_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_min_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+    )
+
+# --------------------------------------------------------------------
+# minimum absolute value
+# --------------------------------------------------------------------
+def cf_min_abs_chunk(x, computing_meta=False, **kwargs):
+    """Return the maximum of the absolute array, or the maximum of the
+    absolute array along an axis.
+
+    :Parameters:
+
+        a: numpy array_like
+            Input array
+
+        axis: `int`, optional
+            Axis along which to operate. By default, flattened input
+            is used.
+
+        masked: bool
+
+    :Returns:
+
+        2-tuple of numpy arrays
+            The sample sizes and the maxima of the absolute values.
+
+    """
+    if computing_meta:
+        return x
+
+    d = {"min": cf_min_chunk(np.abs(x), **kwargs)}
+    d.update(cf_sample_size_chunk(x, **kwargs))
+    return d
+
+
+cf_min_abs_combine = cf_min_combine
+cf_min_abs_agg = cf_min_agg
+
+# --------------------------------------------------------------------
+# range
+# --------------------------------------------------------------------
+def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
+    """Find the max and min of an array."""
+    if computing_meta:
+        return x
+
+    d = cf_max_chunk(x, **kwargs)
+    d.update(cf_min_chunk(x, **kwargs))
+    d.update(cf_sample_size_chunk(x, dtype=dtype, **kwargs))
+    return d
+
+
+def cf_range_combine(
+    pairs,
+    axis=None,
+    dtype=None,
+    computing_meta=False,
+    **kwargs,
+):
+    """Find the max and min of a nested list of arrays."""
+    if not isinstance(pairs, list):
+        pairs = [pairs]
+
+    # Create a nested list of maxima and recursively concatenate it
+    # along the specified axes
+    mx = combine_arrays(
+        pairs, "max", chunk.max, axis, None, computing_meta, **kwargs
+    )
+    if computing_meta:
+        return mx
+
+    mn = combine_arrays(
+        pairs, "min", chunk.min, axis, None, computing_meta, **kwargs
+    )
+
+    return {
+        "N": combine_sample_sizes(pairs, axis, **kwargs),
+        "max": mx,
+        "min": mn,
+    }
+
+
+def cf_range_agg(
+    pairs,
+    axis=None,
+    computing_meta=False,
+    mtol=1,
+    original_shape=None,
+    **kwargs,
+):
+    """Find the range of a nested list of arrays."""
+    d = cf_range_combine(pairs, axis, computing_meta, **kwargs)
+
+    # Calculate the range
+    r = d["max"] - d["min"]
+    r = mask_small_sample_size(r, d["N"], axis, mtol, original_shape)
+
+    return r
+
+
+def cf_range(a, axis=None, keepdims=False, mtol=1, split_every=None):
+    """TODODASK."""
+    dtype = a.dtype
+    return reduction(
+        a,
+        cf_range_chunk,
+        partial(cf_range_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_range_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+    )
+
+# --------------------------------------------------------------------
+# mid-range
+# --------------------------------------------------------------------
+
+cf_mid_range_chunk = cf_range_chunk
+cf_mid_range_combine = cf_range_combine
+
+
+def cf_mid_range_agg(
+    pairs,
+    axis=None,
+    dtype="f8",
+    computing_meta=False,
+    mtol=1,
+    original_shape=None,
+    **kwargs,
+):
+    """Find the mid-range of a nested list of arrays."""
+    d = cf_range_combine(pairs, axis, dtype, computing_meta, **kwargs)
+
+    # Calculate the mid-range
+    mr = d["max"] + d["min"]
+    mr = divide(mr, 2.0, dtype=dtype)
+    mr = mask_small_sample_size(mr, d["N"], axis, mtol, original_shape)
+
+    return mr
+
+
+def cf_mid_range(
+    a, axis=None, dtype=float, keepdims=False, mtol=1, split_every=None
+):
+    """TODODASK."""
+    dtype = float
+    return reduction(
+        a,
+        cf_mid_range_chunk,
+        partial(cf_mid_range_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_mid_range_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+    )
+
+# --------------------------------------------------------------------
+# sample_size
+# --------------------------------------------------------------------
+def cf_sample_size_chunk(x, dtype=int, computing_meta=False, **kwargs):
+    if computing_meta:
+        return x
+
+    if np.ma.isMA(x):
+        N = chunk.sum(~x.mask, dtype=dtype, **kwargs)
+        if not np.ndim(N):
+            N = np.asanyarray(N)
+    else:
+        axis = kwargs["axis"]
+        shape = [1 if i in axis else n for i, n in enumerate(x.shape)]
+        size = reduce(mul, [n for i, n in enumerate(x.shape) if i in axis], 1)
+        N = np.full(shape, size, dtype=dtype)
+
+    return {"N": N}
+
+
+def cf_sample_size_combine(
+    pairs,
+    axis=None,
+    computing_meta=False,
+    **kwargs,
+):
+    if not isinstance(pairs, list):
+        pairs = [pairs]
+
+    N = combine_arrays(pairs, "N", chunk.sum, axis, None,
+                       computing_meta, **kwargs)
+    if computing_meta:
+        return N
+
+    return {"N": N}
+
+
+def cf_sample_size_agg(
+    pairs,
+    axis=None,
+    computing_meta=False,
+    func=None,
+    mtol=1,
+    original_shape=None,
+    **kwargs,
+):
+    d = cf_sample_size_combine(pairs, axis, computing_meta, **kwargs)
+
+    N = d["N"]
+    N = mask_small_sample_size(N, N, axis, mtol, original_shape)
+    return N
+
+
+def cf_sample_size(a, axis=None, keepdims=False, mtol=1, split_every=None):
+    """TODODASK."""
+    dtype = int
+    return reduction(
+        a,
+        cf_sample_size_chunk,
+        partial(cf_sample_size_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_sample_size_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+    )
+
+
+
+# --------------------------------------------------------------------
+# sum
+# --------------------------------------------------------------------
+def cf_sum_chunk(x, dtype=float, computing_meta=False, func=None, **kwargs):
+    """Find the max of an array."""
+    if computing_meta:
+        return x
+
+    d = {"sum": chunk.sum(x, **kwargs)}
+    d.update(cf_sample_size_chunk(x, dtype=dtype, **kwargs))
+    return d
+
+
+def cf_sum_combine(
+    pairs,
+    axis=None,
+    dtype="f8",
+    computing_meta=False,
+    func=None,
+    **kwargs,
+):
+    """Apply the function to the data in a nested list of arrays."""
+    if not isinstance(pairs, list):
+        pairs = [pairs]
+
+    # Create a nested list of maxima and recursively concatenate it
+    # along the specified axes
+    x = combine_arrays(
+        pairs, "sum", chunk.sum, axis, dtype, computing_meta, **kwargs
+    )
+    if computing_meta:
+        return x
+
+    return {"N": combine_sample_sizes(pairs, axis, **kwargs), "sum": x}
+
+
+def cf_sum_agg(
+    pairs,
+    axis=None,
+    dtype="f8",
+    computing_meta=False,
+    func=None,
+    mtol=1,
+    original_shape=None,
+    **kwargs,
+):
+    """Apply the function to the data in a nested list of arrays and
+    mask where the sample size is below the threshold."""
+    d = cf_sum_combine(pairs, axis, computing_meta, **kwargs)
+
+    x = mask_small_sample_size(d["sum"], d["N"], axis, mtol, original_shape)
+    return x
+
+
+def cf_sum(a, axis=None, keepdims=False, mtol=1, split_every=None):
+    """TODODASK."""
+    func = chunk.sum
+    dtype = float
+    return reduction(
+        a,
+        partial(cf_sum_chunk, func=func),
+        partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_sum_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+    )
