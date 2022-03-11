@@ -428,12 +428,11 @@ class DataTest(unittest.TestCase):
                 e = cf.Data(np.arange(6).reshape(2, 3), "m", chunks=(j, i))
                 self.assertTrue(d.equals(e))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'ndim'")
     def test_Data_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data(np.arange(12).reshape(3, 4), "m")
+        d = cf.Data(np.arange(12).reshape(3, 4), "m", chunks=-1)
         d[-1, -1] = cf.masked
         d[1, 1] = cf.masked
 
@@ -443,13 +442,14 @@ class DataTest(unittest.TestCase):
         e = d.halo(0)
         self.assertTrue(d.equals(e, verbose=2))
 
+        shape = d.shape
         for i in (1, 2):
             e = d.halo(i)
 
-            self.assertEqual(e.shape, (d.shape[0] + i * 2, d.shape[1] + i * 2))
+            self.assertEqual(e.shape, (shape[0] + i * 2, shape[1] + i * 2))
 
             # Body
-            self.assertTrue(d.equals(e[i:-i, i:-i], verbose=2))
+            self.assertTrue(d.equals(e[i:-i, i:-i]))
 
             # Corners
             self.assertTrue(e[:i, :i].equals(d[:i, :i], verbose=2))
@@ -460,14 +460,13 @@ class DataTest(unittest.TestCase):
         for i in (1, 2):
             e = d.halo(i, axes=0)
 
-            self.assertEqual(e.shape, (d.shape[0] + i * 2, d.shape[1]))
-
+            self.assertEqual(e.shape, (shape[0] + i * 2, shape[1]))
             self.assertTrue(d.equals(e[i:-i, :], verbose=2))
 
         for j, i in zip([1, 1, 2, 2], [1, 2, 1, 2]):
             e = d.halo({0: j, 1: i})
 
-            self.assertEqual(e.shape, (d.shape[0] + j * 2, d.shape[1] + i * 2))
+            self.assertEqual(e.shape, (shape[0] + j * 2, shape[1] + i * 2))
 
             # Body
             self.assertTrue(d.equals(e[j:-j, i:-i], verbose=2))
@@ -478,38 +477,19 @@ class DataTest(unittest.TestCase):
             self.assertTrue(e[-j:, :i].equals(d[-j:, :i], verbose=2))
             self.assertTrue(e[-j:, -i:].equals(d[-j:, -i:], verbose=2))
 
-        with self.assertRaises(Exception):
-            _ = d.halo(4)
+        # Tripolar
+        for i in (1, 2):
+            e = d.halo(i)
 
-    #     e = d.halo(1, axes=0)
-    #
-    #    >>> print(e.array)
-    #    [[ 0  1  2  3]
-    #     [ 0  1  2  3]
-    #     [ 4 --  6  7]
-    #     [ 8  9 10 --]
-    #     [ 8  9 10 --]]
-    #    >>> d.equals(e[1:-1, :])
-    #    True
-    #    >>> f = d.halo({0: 1})
-    #    >>> f.equals(e)
-    #    True
-    #
-    #    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0})
-    #    >>> print(e.array)
-    #    [[ 0  0  1  2  3  3]
-    #     [ 0  0  1  2  3  3]
-    #     [ 4  4 --  6  7  7]
-    #     [ 8  8  9 10 -- --]
-    #     [-- -- 10  9  8  8]]
-    #
-    #    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0}, fold_index=0)
-    #    >>> print(e.array)
-    #    [[ 3  3  2  1  0  0]
-    #     [ 0  0  1  2  3  3]
-    #     [ 4  4 --  6  7  7]
-    #     [ 8  8  9 10 -- --]
-    #     [ 8  8  9 10 -- --]]
+            t = d.halo(i, tripolar={"X": 1, "Y": 0})
+            self.assertTrue(t[-i:].equals(e[-i:, ::-1], verbose=2))
+
+            t = d.halo(i, tripolar={"X": 1, "Y": 0}, fold_index=0)
+            self.assertTrue(t[:i].equals(e[:i, ::-1], verbose=2))
+
+        # Depth too large for axis size
+        with self.assertRaises(ValueError):
+            d.halo(4)
 
     def test_Data_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

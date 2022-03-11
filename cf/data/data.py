@@ -9322,106 +9322,118 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_deprecated_kwarg_check("size")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the data by adding a halo.
 
-        The halo may be applied over a subset of the data dimensions and
-        each dimension may have a different halo size (including
-        zero). The halo region is populated with a copy of the proximate
-        values from the original data.
+        The halo contains the adjacent values up to the given
+        depth(s). See the example for details.
+
+        The halo may be applied over a subset of the data dimensions
+        and each dimension may have a different halo size (including
+        zero). The halo region is populated with a copy of the
+        proximate values from the original data.
 
         **Cyclic axes**
 
-        A cyclic axis that is expanded with a halo of at least size 1 is
-        no longer considered to be cyclic.
+        A cyclic axis that is expanded with a halo of at least size 1
+        is no longer considered to be cyclic.
 
         **Tripolar domains**
 
-        Data for global tripolar domains are a special case in that a halo
-        added to the northern end of the "Y" axis must be filled with
-        values that are flipped in "X" direction. Such domains need to be
-        explicitly indicated with the *tripolar* parameter.
+        Data for global tripolar domains are a special case in that a
+        halo added to the northern end of the "Y" axis must be filled
+        with values that are flipped in "X" direction. Such domains
+        need to be explicitly indicated with the *tripolar* parameter.
 
         .. versionadded:: 3.5.0
 
         :Parameters:
 
-            size: `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the halo
-                size that is applied to all of the axes defined by the
-                *axes* parameter.
+                If *depth* is a non-negative `int` then this is the
+                halo size that is applied to all of the axes defined
+                by the *axes* parameter.
 
                 Alternatively, halo sizes may be assigned to axes
                 individually by providing a `dict` for which a key
-                specifies an axis (defined by its integer position in the
-                data) with a corresponding value of the halo size for that
-                axis. Axes not specified by the dictionary are not
-                expanded, and the *axes* parameter must not also be set.
+                specifies an axis (defined by its integer position in
+                the data) with a corresponding value of the halo size
+                for that axis. Axes not specified by the dictionary
+                are not expanded, and the *axes* parameter must not
+                also be set.
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``depth=1``.
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results in
-                  no change to the data shape.
+                  Specify a halo size of zero ``depth=0``. This
+                  results in no change to the data shape.
 
                 *Parameter example:*
-                  For data with three dimensions, specify a halo size of 3
-                  for the first dimension and 1 for the second dimension:
-                  ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
-                  3, 1: 1, 2: 0}``
+                  For data with three dimensions, specify a halo size
+                  of 3 for the first dimension and 1 for the second
+                  dimension: ``depth={0: 3, 1: 1}``. This is
+                  equivalent to ``depth={0: 3, 1: 1, 2: 0}``.
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
-                  dimensions `size=2, axes=[0, -1]`` or equivalently
-                  ``size={0: 2, -1: 2}``.
+                  dimensions `depth=2, axes=[0, -1]`` or equivalently
+                  ``depth={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
-                Select the domain axes to be expanded, defined by their
-                integer positions in the data. By default, or if *axes* is
-                `None`, all axes are selected. No axes are expanded if
-                *axes* is an empty sequence.
+                Select the domain axes to be expanded, defined by
+                their integer positions in the data. By default, or if
+                *axes* is `None`, all axes are selected. No axes are
+                expanded if *axes* is an empty sequence.
 
             tripolar: `dict`, optional
                 A dictionary defining the "X" and "Y" axes of a global
-                tripolar domain. This is necessary because in the global
-                tripolar case the "X" and "Y" axes need special treatment,
-                as described above. It must have keys ``'X'`` and ``'Y'``,
-                whose values identify the corresponding domain axis
-                construct by their integer positions in the data.
+                tripolar domain. This is necessary because in the
+                global tripolar case the "X" and "Y" axes need special
+                treatment, as described above. It must have keys
+                ``'X'`` and ``'Y'``, whose values identify the
+                corresponding domain axis construct by their integer
+                positions in the data.
 
-                The "X" and "Y" axes must be a subset of those identified
-                by the *size* or *axes* parameter.
+                The "X" and "Y" axes must be a subset of those
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+                  respectively of the data: ``tripolar={'X': 2, 'Y':
+                  1}``
 
             fold_index: `int`, optional
-                Identify which index of the "Y" axis corresponds to the
-                fold in "X" axis of a tripolar grid. The only valid values
-                are ``-1`` for the last index, and ``0`` for the first
-                index. By default it is assumed to be the last
-                index. Ignored if *tripolar* is `None`.
+                Identify which index of the "Y" axis corresponds to
+                the fold in "X" axis of a tripolar grid. The only
+                valid values are ``-1`` for the last index, and ``0``
+                for the first index. By default it is assumed to be
+                the last index. Ignored if *tripolar* is `None`.
 
             {{inplace: `bool`, optional}}
 
             {{verbose: `int` or `str` or `None`, optional}}
+
+            size: deprecated at version TODODASK
+                Use the *depth* parameter instead.
 
         :Returns:
 
@@ -9435,29 +9447,30 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d[-1, -1] = cf.masked
         >>> d[1, 1] = cf.masked
         >>> print(d.array)
-        [[ 0  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 --]]
+        [[0 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 --]]
 
         >>> e = d.halo(1)
         >>> print(e.array)
-        [[ 0  0  1  2  3  3]
-         [ 0  0  1  2  3  3]
-         [ 4  4 --  6  7  7]
-         [ 8  8  9 10 -- --]
-         [ 8  8  9 10 -- --]]
+        [[0 0 1 2 3 3]
+         [0 0 1 2 3 3]
+         [4 4 -- 6 7 7]
+         [8 8 9 10 -- --]
+         [8 8 9 10 -- --]]
+
         >>> d.equals(e[1:-1, 1:-1])
         True
 
         >>> e = d.halo(2)
         >>> print(e.array)
-        [[ 0  1  0  1  2  3  2  3]
-         [ 4 --  4 --  6  7  6  7]
-         [ 0  1  0  1  2  3  2  3]
-         [ 4 --  4 --  6  7  6  7]
-         [ 8  9  8  9 10 -- 10 --]
-         [ 4 --  4 --  6  7  6  7]
-         [ 8  9  8  9 10 -- 10 --]]
+        [[0 1 0 1 2 3 2 3]
+         [4 -- 4 -- 6 7 6 7]
+         [0 1 0 1 2 3 2 3]
+         [4 -- 4 -- 6 7 6 7]
+         [8 9 8 9 10 -- 10 --]
+         [4 -- 4 -- 6 7 6 7]
+         [8 9 8 9 10 -- 10 --]]
         >>> d.equals(e[2:-2, 2:-2])
         True
 
@@ -9467,11 +9480,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> e = d.halo(1, axes=0)
         >>> print(e.array)
-        [[ 0  1  2  3]
-         [ 0  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 --]
-         [ 8  9 10 --]]
+        [[0 1 2 3]
+         [0 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 --]
+         [8 9 10 --]]
+
         >>> d.equals(e[1:-1, :])
         True
         >>> f = d.halo({0: 1})
@@ -9480,57 +9494,58 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0})
         >>> print(e.array)
-        [[ 0  0  1  2  3  3]
-         [ 0  0  1  2  3  3]
-         [ 4  4 --  6  7  7]
-         [ 8  8  9 10 -- --]
-         [-- -- 10  9  8  8]]
+        [[0 0 1 2 3 3]
+         [0 0 1 2 3 3]
+         [4 4 -- 6 7 7]
+         [8 8 9 10 -- --]
+         [-- -- 10 9 8 8]]
 
         >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0}, fold_index=0)
         >>> print(e.array)
-        [[ 3  3  2  1  0  0]
-         [ 0  0  1  2  3  3]
-         [ 4  4 --  6  7  7]
-         [ 8  8  9 10 -- --]
-         [ 8  8  9 10 -- --]]
+        [[3 3 2 1 0 0]
+         [0 0 1 2 3 3]
+         [4 4 -- 6 7 7]
+         [8 8 9 10 -- --]
+         [8 8 9 10 -- --]]
 
         """
-        _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-        _ = "{}.halo(".format(self.__class__.__name__)
-        logger.info("{}{})".format(_, (",\n" + " " * len(_)).join(_kwargs)))
+        from dask.array.core import concatenate
 
         d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d.ndim
-        shape0 = d.shape
+        shape = d.shape
 
-        # ------------------------------------------------------------
-        # Parse the size and axes parameters
-        # ------------------------------------------------------------
-        if isinstance(size, dict):
+        # Parse the depth and axes parameters
+        if isinstance(depth, dict):
             if axes is not None:
                 raise ValueError(
                     "Can't set the axes parameter when the "
-                    "size parameter is a dictionary"
+                    "depth parameter is a dictionary"
                 )
 
-            axes = self._parse_axes(tuple(size))
-            size = [size[i] if i in axes else 0 for i in range(ndim)]
+            # Check that the dictionary keys are OK and remove size
+            # zero depths
+            axes = self._parse_axes(tuple(depth))
+            depth = {i: size for i, size in depth.items() if size}
         else:
             if axes is None:
                 axes = list(range(ndim))
+            else:
+                axes = d._parse_axes(axes)
 
-            axes = d._parse_axes(axes)
-            size = [size if i in axes else 0 for i in range(ndim)]
+            depth = {i: depth for i in axes}
 
-        # ------------------------------------------------------------
+        # Return if all axis depths are zero
+        if not any(depth.values()):
+            return d
+
         # Parse the tripolar parameter
-        # ------------------------------------------------------------
         if tripolar:
             if fold_index not in (0, -1):
                 raise ValueError(
                     "fold_index parameter must be -1 or 0. "
-                    "Got {!r}".format(fold_index)
+                    f"Got {fold_index!r}"
                 )
 
             # Find the X and Y axes of a tripolar grid
@@ -9540,8 +9555,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             if tripolar:
                 raise ValueError(
-                    "Can not set key {!r} in the tripolar "
-                    "dictionary.".format(tripolar.popitem()[0])
+                    f"Can not set key {tripolar.popitem()[0]!r} in the "
+                    "tripolar dictionary."
                 )
 
             if X_axis is None:
@@ -9556,13 +9571,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if len(X) != 1:
                 raise ValueError(
                     "Must provide exactly one tripolar 'X' axis. "
-                    "Got {!r}".format(X_axis)
+                    f"Got {X_axis!r}"
                 )
 
             if len(Y) != 1:
                 raise ValueError(
                     "Must provide exactly one tripolar 'Y' axis. "
-                    "Got {!r}".format(Y_axis)
+                    f"Got {Y_axis!r}"
                 )
 
             X_axis = X[0]
@@ -9571,135 +9586,76 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if X_axis == Y_axis:
                 raise ValueError(
                     "Tripolar 'X' and 'Y' axes must be different. "
-                    "Got {!r}, {!r}".format(X_axis, Y_axis)
+                    f"Got {X_axis!r}, {Y_axis!r}"
                 )
 
             for A, axis in zip(("X", "Y"), (X_axis, Y_axis)):
                 if axis not in axes:
                     raise ValueError(
                         "If dimensions have been identified with the "
-                        "axes or size parameters then they must include "
-                        "the tripolar {!r} axis: {!r}".format(A, axis)
+                        "axes or depth parameters then they must include "
+                        f"the tripolar {A!r} axis: {axis!r}"
                     )
-            # --- End: for
 
-            tripolar = True
-        # --- End: if
+            tripolar = Y_axis in depth
 
-        # Remove axes with a size 0 halo
-        axes = [i for i in axes if size[i]]
+        # Create the halo
+        dx = d._get_dask()
 
-        if not axes:
-            # Return now if all halos are of size 0
-            return d
+        indices = [slice(None)] * ndim
+        for axis, size in sorted(depth.items()):
+            if not size:
+                continue
 
-        # Check that the halos are not too large
-        for i, (h, n) in enumerate(zip(size, shape0)):
-            if h > n:
+            if size > shape[axis]:
                 raise ValueError(
-                    "Halo size {!r} is too big for axis of size {!r}".format(
-                        h, n
-                    )
+                    f"Halo depth {size} is too large for axis of size "
+                    f"{shape[axis]}"
                 )
-        # --- End: for
 
-        # Initialise the expanded data
-        shape1 = [
-            n + size[i] * 2 if i in axes else n for i, n in enumerate(shape0)
-        ]
-        out = type(d).empty(
-            shape1,
-            dtype=d.dtype,
-            units=d.Units,
-            fill_value=d.get_fill_value(None),
-        )
+            left_indices = indices[:]
+            right_indices = indices[:]
 
-        # ------------------------------------------------------------
-        # Body (not edges nor corners)
-        # ------------------------------------------------------------
-        indices = [
-            slice(h, h + n) if (h and i in axes) else slice(None)
-            for i, (h, n) in enumerate(zip(size, shape0))
-        ]
-        out[tuple(indices)] = d
+            left_indices[axis] = slice(0, size)
+            right_indices[axis] = slice(-size, None)
 
-        # ------------------------------------------------------------
-        # Edges (not corners)
-        # ------------------------------------------------------------
-        for i in axes:
-            size_i = size[i]
+            left = dx[tuple(left_indices)]
+            right = dx[tuple(right_indices)]
 
-            for edge in (0, -1):
-                # Initialise indices to the expanded data
-                indices1 = [slice(None)] * ndim
+            dx = concatenate([left, dx, right], axis=axis)
 
-                if edge == -1:
-                    indices1[i] = slice(-size_i, None)
-                else:
-                    indices1[i] = slice(0, size_i)
+        d._set_dask(dx, reset_mask_hardness=False)
 
-                # Initialise indices to the original data
-                indices0 = indices1[:]
+        # Special case for tripolar: The northern Y axis halo contains
+        # the values that have been flipped in the X direction.
+        if tripolar:
+            hardmask = d.hardmask
+            if hardmask:
+                d.hardmask = False
 
-                for j in axes:
-                    if j == i:
-                        continue
-
-                    size_j = size[j]
-                    indices1[j] = slice(size_j, -size_j)
-
-                out[tuple(indices1)] = d[tuple(indices0)]
-        # --- End: for
-
-        # ------------------------------------------------------------
-        # Corners
-        # ------------------------------------------------------------
-        if len(axes) > 1:
-            for indices in product(
-                *[
-                    (slice(0, size[i]), slice(-size[i], None))
-                    if i in axes
-                    else (slice(None),)
-                    for i in range(ndim)
-                ]
-            ):
-                out[indices] = d[indices]
-
-        hardmask = d.hardmask
-
-        # ------------------------------------------------------------
-        # Special case for tripolar: The northern "Y" axis halo
-        # contains the values that have been flipped in the "X"
-        # direction.
-        # ------------------------------------------------------------
-        if tripolar and size[Y_axis]:
-            indices1 = [slice(None)] * ndim
-
+            indices1 = indices[:]
             if fold_index == -1:
-                # The last index of the "Y" axis corresponds to the
-                # fold in "X" axis of a tripolar grid
-                indices1[Y_axis] = slice(-size[Y_axis], None)
+                # The last index of the Y axis corresponds to the fold
+                # in X axis of a tripolar grid
+                indices1[Y_axis] = slice(-depth[Y_axis], None)
             else:
-                # The first index of the "Y" axis corresponds to the
-                # fold in "X" axis of a tripolar grid
-                indices1[Y_axis] = slice(0, size[Y_axis])
+                # The first index of the Y axis corresponds to the
+                # fold in X axis of a tripolar grid
+                indices1[Y_axis] = slice(0, depth[Y_axis])
 
             indices2 = indices1[:]
             indices2[X_axis] = slice(None, None, -1)
 
-            out.hardmask = False
-            out[tuple(indices1)] = out[tuple(indices2)]
+            dx = d._get_dask()
+            dx[tuple(indices1)] = dx[tuple(indices2)]
 
-        out.hardmask = True
+            d._set_dask(dx, reset_mask_hardness=False)
+
+            if hardmask:
+                d.hardmask = True
 
         # Set expanded axes to be non-cyclic
-        out.cyclic(axes=axes, iscyclic=False)
-
-        if inplace:
-            d.__dict__ = out.__dict__
-            d.hardmask = hardmask
-        else:
-            d = out
+        d.cyclic(axes=tuple(depth), iscyclic=False)
 
         return d
 
