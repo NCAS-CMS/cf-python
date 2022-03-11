@@ -983,6 +983,7 @@ def sd_ffinalise(out, sub_samples=None):
 from dask.array import chunk
 from dask.array.core import _concatenate2, broadcast_to
 from dask.array.reductions import divide
+from dask.array.ufunc import multiply
 from dask.utils import deepmap  # Apply function inside nested lists
 
 
@@ -1474,6 +1475,85 @@ def cf_sum(a, axis=None, keepdims=False, mtol=1, split_every=None):
         a,
         partial(cf_sum_chunk, func=func),
         partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_sum_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+    )
+
+# --------------------------------------------------------------------
+# sum
+# --------------------------------------------------------------------
+def cf_sumw_chunk(x, weights=None, dtype=float, computing_meta=False,
+                  func=None, **kwargs):
+    """Find the max of an array."""
+    print('PPP@',x, weights)
+    if computing_meta:
+        return x
+
+    if weights is not None:
+        x = multiply(x, weights) # sort out  dtype=result_dtype)
+    
+    d = {"sum": chunk.sum(x, **kwargs)}
+    d.update(cf_sample_size_chunk(x, dtype=dtype, **kwargs))
+
+    return d
+
+
+def cf_sumw_combine(
+    pairs,
+    axis=None,
+    dtype="f8",
+    computing_meta=False,
+    func=None,
+    **kwargs,
+):
+    """Apply the function to the data in a nested list of arrays."""
+    if not isinstance(pairs, list):
+        pairs = [pairs]
+
+    # Create a nested list of maxima and recursively concatenate it
+    # along the specified axes
+    x = combine_arrays(
+        pairs, "sum", chunk.sum, axis, dtype, computing_meta, **kwargs
+    )
+    if computing_meta:
+        return x
+
+    return {"N": combine_sample_sizes(pairs, axis, **kwargs), "sum": x}
+
+
+def cf_sumw_agg(
+    pairs,
+    axis=None,
+    dtype="f8",
+    computing_meta=False,
+    func=None,
+    mtol=1,
+    original_shape=None,
+    **kwargs,
+):
+    """Apply the function to the data in a nested list of arrays and
+    mask where the sample size is below the threshold."""
+    d = cf_sum_combine(pairs, axis, computing_meta, **kwargs)
+
+    x = mask_small_sample_size(d["sum"], d["N"], axis, mtol, original_shape)
+    return x
+
+
+def cf_sumw(a, axis=None, keepdims=False, mtol=1, split_every=None):
+    """TODODASK."""
+
+    func = chunk.sum
+    dtype = float
+    return reduction(
+        a,
+        partial(cf_sumw_chunk, func=func),
+        partial(cf_sum_agg, mtol=mtol, original_shape=a[0].shape),
         axis=axis,
         keepdims=keepdims,
         dtype=dtype,

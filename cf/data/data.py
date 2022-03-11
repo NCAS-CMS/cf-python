@@ -13288,7 +13288,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         from .collapse_functions import cf_sumw
 
         d = _inplace_enabled_define_and_cleanup(self)
-   
         d = _collapse(
             d,
             cf_sumw,
@@ -13641,19 +13640,8 @@ def _collapse(
     if weights is not None:
         weights = da.asanyarray(dask_compatible(weights))
         
-        if issubclass(a.dtype.type, (np.integer, np.bool_)):
-            result_dtype = result_type(a.dtype, weights.dtype, "f8")
-        else:
-            result_dtype = result_type(a.dtype, weights.dtype)
-            
-        # Sort out broadcasting of weights!!!
-            
-        dx = multiply(dx, weights, dtype=result_dtype)
-
-        need to dived by sum of weiughts, sometimes
-        
     dx = collapse_func(
-        dx,
+        (dx, weights),
         axis=axis,
         keepdims=keepdims,
         split_every=split_every,
