@@ -3226,6 +3226,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def rechunk(
         self,
@@ -3235,45 +3236,44 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         balance=False,
         inplace=False,
     ):
-        """Convert blocks in the dask array for new chunks.
+        """Change the chunk struture of the data.
 
-        See `dask.array.rechunk`for more details.
+        .. versionadded:: TODODASK
 
-        .. versionadded:: 4.0.0
-
-        .. seealso:: `chunks`
+        .. seealso:: `chunks`, `dask.array.rechunk`
 
         :Parameters:
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
-
             threshold: `int`, optional
                 The graph growth factor under which we don't bother
-                introducing an intermediate step.
+                introducing an intermediate step. See
+                `dask.array.rechunk` for details.
 
             block_size_limit: `int`, optional
-                The maximum block size (in bytes) we want to produce
+                The maximum block size (in bytes) we want to produce.
                 Defaults to the configuration value
-                ``dask.array.chunk-size``
-
-                TODODASK - how to use/import dask config items??
+                ``dask.config.get('array.chunk-size')``. See
+                `dask.array.rechunk` for details.
 
             balance: `bool`, optional
-                If True, try to make each chunk the same
-                size. By default this is not attempted.
+                If True, try to make each chunk the same size. By
+                default this is not attempted. See
+                `dask.array.rechunk` for details.
 
                 This means ``balance=True`` will remove any small
-                leftover chunks, so using ``x.rechunk(chunks=len(x) //
+                leftover chunks, so using ``d.rechunk(chunks=len(d) //
                 N, balance=True)`` will almost certainly result in
                 ``N`` chunks.
 
         :Returns:
 
-            TODODASK
+            `Data` or `None`
+                The rechunked data, or `None` if the operation was
+                in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> x = cf.Data.ones((1000, 1000), chunks=(100, 100))
 
@@ -3285,10 +3285,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> y = x.rechunk({0: 1000})
 
-        Use the value ``-1`` to specify that you want a single chunk along
-        a dimension or the value ``"auto"`` to specify that dask can
-        freely rechunk a dimension to attain blocks of a uniform block
-        size
+        Use the value ``-1`` to specify that you want a single chunk
+        along a dimension or the value ``"auto"`` to specify that dask
+        can freely rechunk a dimension to attain blocks of a uniform
+        block size
 
         >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
 
@@ -3310,7 +3310,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-
         d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
         return d
@@ -5873,9 +5872,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     # Dask attributes
     # ----------------------------------------------------------------
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def chunks(self):
-        """TODODASK."""
+        """The chunk sizes for each dimension.
+
+        **Examples**
+
+        >>> d = cf.Data.ones((4, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2), (4, 1))
+
+        """
         return self._get_dask().chunks
+
+    @chunks.setter
+    def chunks(self, chunks):
+        raise TypeError(
+            "Can't set chunks directly. Use the 'rechunk' method instead."
+        )
 
     @property
     def force_compute(self):

@@ -3848,6 +3848,22 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             e = d.change_calendar("noleap").array
 
+    def test_Data_chunks(self):
+        dx = da.ones((4, 5), chunks=(2, 4))
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        self.assertEqual(d.chunks, dx.chunks)
+
+    def test_Data_rechunk(self):
+        dx = da.ones((4, 5), chunks=(2, 4)).rechunk(-1)
+        d = cf.Data.ones((4, 5), chunks=(2, 4)).rechunk(-1)
+        self.assertEqual(d.chunks, dx.chunks)
+
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        e = d.copy()
+        self.assertIsNone(e.rechunk(-1, inplace=True))
+        self.assertEqual(e.chunks, ((4,), (5,)))
+        self.assertTrue(e.equals(d))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
