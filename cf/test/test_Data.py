@@ -3800,39 +3800,33 @@ class DataTest(unittest.TestCase):
             f = f.data
             d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
             self.assertTrue((d.array == f.array).all())
-            # self.assertTrue(d.equals(f))
 
         for f in cfdm.read("DSG_timeSeries_indexed.nc"):
             f = f.data
             d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
             self.assertTrue((d.array == f.array).all())
-            # self.assertTrue(d.equals(f))
 
         for f in cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc"):
             f = f.data
             d = cf.Data(cf.RaggedIndexedContiguousArray(source=f.source()))
             self.assertTrue((d.array == f.array).all())
-            # self.assertTrue(d.equals(f))
 
         # Ragged bounds
         f = cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc")[0]
         f = f.construct("long_name=height above mean sea level").bounds.data
         d = cf.Data(cf.RaggedIndexedContiguousArray(source=f.source()))
         self.assertTrue((d.array == f.array).all())
-        # self.assertTrue(d.equals(f))
 
         # Gathered
         for f in cfdm.read("gathered.nc"):
             f = f.data
             d = cf.Data(cf.GatheredArray(source=f.source()))
-            # self.assertTrue(d.equals(f))
             self.assertTrue((d.array == f.array).all())
 
         # Subsampled
         f = cfdm.read("subsampled_2.nc")[-3]
         f = f.construct("longitude").data
         d = cf.Data(cf.SubsampledArray(source=f.source()))
-        # self.assertTrue(d.equals(f))
         self.assertTrue((d.array == f.array).all())
 
     def test_Data_empty(self):
