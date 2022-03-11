@@ -102,8 +102,7 @@ def to_dask(array, chunks, dask_from_array_options):
 
 
 def compressed_to_dask(array, chunks):
-    """TODODASK Create and insert a partition matrix for a compressed
-    array.
+    """Create a dask array with `Subarray` chunks.
 
     .. versionadded:: TODODASK
 
