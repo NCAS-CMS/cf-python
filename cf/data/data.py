@@ -9358,7 +9358,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the
+                If *depth* is a non-negative `int` then this is the
                 halo size that is applied to all of the axes defined
                 by the *axes* parameter.
 
