@@ -133,10 +133,10 @@ def compressed_to_dask(array, chunks):
     dsk = {}
     full_slice = Ellipsis
 
-    # A context manager that is used to ensure that all data accessed
-    # from within a `Subarray` instance is done so synchronously,
-    # thereby avoiding any "compute within a compute" thread
-    # proliferation.
+    # Create a context manager that is used to ensure that all data
+    # accessed from within a `Subarray` instance is done so
+    # synchronously, thereby avoiding any "compute within a compute"
+    # thread proliferation.
     context = partial(config.set, scheduler="synchronous")
 
     compressed_dimensions = array.compressed_dimensions()
@@ -146,12 +146,13 @@ def compressed_to_dask(array, chunks):
     # ----------------------------------------------------------------
     # Set the chunk sizes for the dask array.
     #
-    # Note: The chunk sizes implied by the input 'chunks' for a
-    #       dimension that has been compressed are ignored in favour
-    #       of those created by 'array.subarray_shapes'. For
-    #       subsampled arrays, such chunk sizes will be incorrect and
-    #       must be corrected later.
+    # Note: For a dimensions that have been compressed, the chunk
+    #       sizes implied by the input *chunks* parameter are
+    #       overwritten with those created by `array.subarray_shapes`.
     #
+    #       For subsampled arrays, the compressed dimension chunks
+    #       created by `array.subarray_shapes` will be incorrect and
+    #       must be corrected later.
     # ----------------------------------------------------------------
     uncompressed_dtype = array.dtype
     chunks = normalize_chunks(
@@ -222,12 +223,17 @@ def compressed_to_dask(array, chunks):
         #       function of the tie point indices which haven't yet
         #       been accessed. Therefore, the chunks for the
         #       compressed dimensons must be redefined here.
-        #
         # ------------------------------------------------------------
 
         # Re-initialise the chunks
         u_dims = list(compressed_dimensions)
         chunks = [[] if i in u_dims else c for i, c in enumerate(chunks)]
+
+        # For each dimension, initialise the index of the chunk
+        # previously created (prior to the chunk currently being
+        # created. The value -1 is an arbitrary negative value that is
+        # always less than any chunk index, which is always a natural
+        # number.
         previous_chunk_location = [-1] * len(chunks)
 
         parameters = conformed_data["parameters"]
@@ -261,7 +267,7 @@ def compressed_to_dask(array, chunks):
                 False,
             )
 
-            # Add correct chunk sizes
+            # Add correct chunk sizes for compressed dimensions
             for d in u_dims[:]:
                 previous = previous_chunk_location[d]
                 new = chunk_location[d]
@@ -269,7 +275,8 @@ def compressed_to_dask(array, chunks):
                     chunks[d].append(u_shape[d])
                     previous_chunk_location[d] = new
                 elif new < previous:
-                    # No more chunk sizes required for this dimension
+                    # No more chunk sizes required for this compressed
+                    # dimension
                     u_dims.remove(d)
 
         chunks = [tuple(c) for c in chunks]
