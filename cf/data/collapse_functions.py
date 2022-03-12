@@ -243,7 +243,7 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
         Nmax = reduce(mul, [original_shape[i] for i in axis], 1)
         x = np.ma.masked_where(N < (1 - mtol) * Nmax, x, copy=False)
 
-    return x
+    return asanyarray(x)[0]
 
 
 def double_precision(a):
@@ -986,6 +986,23 @@ from dask.array.reductions import divide
 from dask.array.ufunc import multiply
 from dask.utils import deepmap  # Apply function inside nested lists
 
+def sum_of_weights(x, weights=None, N=None, squared=False, **kwargs):
+    """TODO"""
+    if weights is None:
+        if N is None:
+            N = cf_sample_size_chunk(x, **kwargs)["N"]
+            
+        sw = N
+    else:
+        if squared:
+            weights = multiply(weights, weights, dtype=float)
+
+        if np.ma.is_masked(x):
+            weights = np.ma.masked_where(x.mask, weights)
+
+        sw = weights.sum(**kwargs)
+
+    return sw
 
 def combine_sample_sizes(pairs, axis, **kwargs):
     # Create a nested list of N and recursively concatenate it
@@ -1006,6 +1023,91 @@ def combine_arrays(
     return x
 
 
+def sum_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
+    # Create a nested list of N and recursively concatenate it
+    # along the specified axes    
+    return combine_arrays(pairs, key, chunk.sum, axis, dtype,
+                          computing_meta, **kwargs)
+
+
+# --------------------------------------------------------------------
+# mean
+# --------------------------------------------------------------------
+def cf_mean_chunk(x, weights=None, dtype=float, computing_meta=False, **kwargs):
+    """Find the max of an array."""
+    if computing_meta:
+        return x
+
+    d = cf_sum_chunk(x, weights=weights, **kwargs)
+
+    if weights is None:
+        sw = d["N"]
+    else:
+        sw = chunk.sum(weights, **kwargs)
+        
+    d["sw"] = sw
+    return d
+
+def cf_mean_combine(
+    pairs,
+    axis=None,
+    dtype="f8",
+    computing_meta=False,
+    **kwargs,
+):
+    """Apply the function to the data in a nested list of arrays."""
+    if not isinstance(pairs, list):
+        pairs = [pairs]
+        
+    d = {}
+    for key in ("sum", "sw"):        
+        d[key] = sum_arrays(pairs, key, axis, dtype, computing_meta, **kwargs)
+        if computing_meta:
+            return x
+    
+    d["N"] = combine_sample_sizes(pairs, axis, **kwargs)
+    return d
+
+def cf_mean_agg(
+    pairs,
+    axis=None,
+    dtype="f8",
+    computing_meta=False,
+    mtol=1,
+    original_shape=None,
+    **kwargs,
+):
+    """Apply the function to the data in a nested list of arrays and
+    mask where the sample size is below the threshold."""
+    d = cf_mean_combine(pairs, axis, computing_meta, **kwargs)
+    if computing_meta:
+        return d
+    
+    x = divide(d["sum"], d["sw"]) # dtype?
+    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
+    return x
+
+
+def cf_mean(a, axis=None, weights=None, keepdims=False, mtol=1,
+            split_every=None):
+    """TODODASK."""
+    dtype = float
+    return reduction(
+        a,
+        cf_mean_chunk,
+        partial(cf_mean_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_mean_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+        weights=weights
+    )
+
+
 # --------------------------------------------------------------------
 # max
 # --------------------------------------------------------------------
@@ -1014,9 +1116,10 @@ def cf_max_chunk(x, computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
-    d = {"max": chunk.max(x, **kwargs)}
-    d.update(cf_sample_size_chunk(x, **kwargs))
-    return d
+    return {
+        "max": chunk.max(x, **kwargs),
+        "N": cf_sample_size_chunk(x, **kwargs)["N"],
+    }
 
 
 def cf_max_combine(
@@ -1037,7 +1140,10 @@ def cf_max_combine(
     if computing_meta:
         return m
 
-    return {"N": combine_sample_sizes(pairs, axis, **kwargs), "max": m}
+    return {
+        "max": m,
+        "N": combine_sample_sizes(pairs, axis, **kwargs),
+    }
 
 
 def cf_max_agg(
@@ -1050,11 +1156,13 @@ def cf_max_agg(
 ):
     """Find the range of a nested list of arrays."""
     d = cf_max_combine(pairs, axis, computing_meta, **kwargs)
+    if computing_meta:
+        return d
+    
 
-    m = d["max"]
-    m = mask_small_sample_size(m, d["N"], axis, mtol, original_shape)
-
-    return m
+    x = d["max"]
+    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
+    return x
 
 
 def cf_max(a, axis=None, keepdims=False, mtol=1, split_every=None):
@@ -1102,10 +1210,8 @@ def cf_max_abs_chunk(x, computing_meta=False, **kwargs):
     """
     if computing_meta:
         return x
-
-    d = {"max": cf_max_chunk(np.abs(x), **kwargs)}
-    d.update(cf_sample_size_chunk(x, **kwargs))
-    return d
+    
+    return cf_max_chunk(np.abs(x), **kwargs)
 
 
 cf_max_abs_combine = cf_max_combine
@@ -1119,9 +1225,10 @@ def cf_min_chunk(x, computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
-    d = {"min": chunk.min(x, **kwargs)}
-    d.update(cf_sample_size_chunk(x, **kwargs))
-    return d
+    return  {
+        "min": chunk.min(x, **kwargs),
+        "N": cf_sample_size_chunk(x, **kwargs)["N"],
+    }
 
 
 def cf_min_combine(
@@ -1136,13 +1243,16 @@ def cf_min_combine(
 
     # Create a nested list of maxima and recursively concatenate it
     # along the specified axes
-    m = combine_arrays(
+    x = combine_arrays(
         pairs, "min", chunk.min, axis, None, computing_meta, **kwargs
     )
     if computing_meta:
         return m
 
-    return {"N": combine_sample_sizes(pairs, axis, **kwargs), "min": m}
+    return {
+        "min": x,
+        "N": combine_sample_sizes(pairs, axis, **kwargs),
+    }
 
 
 def cf_min_agg(
@@ -1155,11 +1265,12 @@ def cf_min_agg(
 ):
     """Find the range of a nested list of arrays."""
     d = cf_min_combine(pairs, axis, computing_meta, **kwargs)
-
-    m = d["min"]
-    m = mask_small_sample_size(m, d["N"], axis, mtol, original_shape)
-
-    return m
+    if computing_meta:
+        return d
+    
+    x = d["min"]
+    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
+    return x
 
 
 
@@ -1207,9 +1318,7 @@ def cf_min_abs_chunk(x, computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
-    d = {"min": cf_min_chunk(np.abs(x), **kwargs)}
-    d.update(cf_sample_size_chunk(x, **kwargs))
-    return d
+    return cf_min_chunk(np.abs(x), **kwargs)
 
 
 cf_min_abs_combine = cf_min_combine
@@ -1224,9 +1333,8 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
         return x
 
     d = cf_max_chunk(x, **kwargs)
-    d.update(cf_min_chunk(x, **kwargs))
-    d.update(cf_sample_size_chunk(x, dtype=dtype, **kwargs))
-    return d
+    d["min"] = chunk.min(x, **kwargs)
+    return  d
 
 
 def cf_range_combine(
@@ -1253,9 +1361,9 @@ def cf_range_combine(
     )
 
     return {
-        "N": combine_sample_sizes(pairs, axis, **kwargs),
         "max": mx,
         "min": mn,
+        "N": combine_sample_sizes(pairs, axis, **kwargs),
     }
 
 
@@ -1269,12 +1377,13 @@ def cf_range_agg(
 ):
     """Find the range of a nested list of arrays."""
     d = cf_range_combine(pairs, axis, computing_meta, **kwargs)
-
+    if computing_meta:
+        return d
+    
     # Calculate the range
-    r = d["max"] - d["min"]
-    r = mask_small_sample_size(r, d["N"], axis, mtol, original_shape)
-
-    return r
+    x = d["max"] - d["min"]
+    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
+    return x
 
 
 def cf_range(a, axis=None, keepdims=False, mtol=1, split_every=None):
@@ -1293,11 +1402,9 @@ def cf_range(a, axis=None, keepdims=False, mtol=1, split_every=None):
         concatenate=False,
         meta=np.array((), dtype=dtype),
     )
-
 # --------------------------------------------------------------------
 # mid-range
 # --------------------------------------------------------------------
-
 cf_mid_range_chunk = cf_range_chunk
 cf_mid_range_combine = cf_range_combine
 
@@ -1313,13 +1420,14 @@ def cf_mid_range_agg(
 ):
     """Find the mid-range of a nested list of arrays."""
     d = cf_range_combine(pairs, axis, dtype, computing_meta, **kwargs)
+    if computing_meta:
+        return d
+    
 
     # Calculate the mid-range
-    mr = d["max"] + d["min"]
-    mr = divide(mr, 2.0, dtype=dtype)
-    mr = mask_small_sample_size(mr, d["N"], axis, mtol, original_shape)
-
-    return mr
+    x = divide(d["max"] + d["min"], 2.0, dtype=dtype)
+    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
+    return x
 
 
 def cf_mid_range(
@@ -1341,6 +1449,7 @@ def cf_mid_range(
         meta=np.array((), dtype=dtype),
     )
 
+
 # --------------------------------------------------------------------
 # sample_size
 # --------------------------------------------------------------------
@@ -1349,7 +1458,7 @@ def cf_sample_size_chunk(x, dtype=int, computing_meta=False, **kwargs):
         return x
 
     if np.ma.isMA(x):
-        N = chunk.sum(~x.mask, dtype=dtype, **kwargs)
+        N = chunk.sum(~np.ma.getmaskarray(x), dtype=dtype, **kwargs)
         if not np.ndim(N):
             N = np.asanyarray(N)
     else:
@@ -1370,28 +1479,29 @@ def cf_sample_size_combine(
     if not isinstance(pairs, list):
         pairs = [pairs]
 
-    N = combine_arrays(pairs, "N", chunk.sum, axis, None,
+    x = combine_arrays(pairs, "N", chunk.sum, axis, None,
                        computing_meta, **kwargs)
     if computing_meta:
-        return N
-
-    return {"N": N}
+        return x
+    
+    return {"N": x}
 
 
 def cf_sample_size_agg(
     pairs,
     axis=None,
     computing_meta=False,
-    func=None,
     mtol=1,
     original_shape=None,
     **kwargs,
 ):
     d = cf_sample_size_combine(pairs, axis, computing_meta, **kwargs)
-
-    N = d["N"]
-    N = mask_small_sample_size(N, N, axis, mtol, original_shape)
-    return N
+    if computing_meta:
+        return d
+    
+    x = d["N"]
+    x = mask_small_sample_size(x, x, axis, mtol, original_shape)
+    return x
 
 
 def cf_sample_size(a, axis=None, keepdims=False, mtol=1, split_every=None):
@@ -1416,13 +1526,16 @@ def cf_sample_size(a, axis=None, keepdims=False, mtol=1, split_every=None):
 # --------------------------------------------------------------------
 # sum
 # --------------------------------------------------------------------
-def cf_sum_chunk(x, dtype=float, computing_meta=False, func=None, **kwargs):
+def cf_sum_chunk(x, weights=None, dtype=float, computing_meta=False, **kwargs):
     """Find the max of an array."""
     if computing_meta:
         return x
 
-    d = {"sum": chunk.sum(x, **kwargs)}
-    d.update(cf_sample_size_chunk(x, dtype=dtype, **kwargs))
+    if weights is not None:
+        x = multiply(x, weights) # sort out  dtype=result_dtype)
+
+    d = cf_sample_size_chunk(x, **kwargs)
+    d["sum"] = chunk.sum(x, dtype=dtype, **kwargs)
     return d
 
 
@@ -1431,7 +1544,6 @@ def cf_sum_combine(
     axis=None,
     dtype="f8",
     computing_meta=False,
-    func=None,
     **kwargs,
 ):
     """Apply the function to the data in a nested list of arrays."""
@@ -1440,13 +1552,14 @@ def cf_sum_combine(
 
     # Create a nested list of maxima and recursively concatenate it
     # along the specified axes
-    x = combine_arrays(
-        pairs, "sum", chunk.sum, axis, dtype, computing_meta, **kwargs
-    )
+    x = sum_arrays(pairs, "sum", axis, dtype, computing_meta, **kwargs)
     if computing_meta:
         return x
 
-    return {"N": combine_sample_sizes(pairs, axis, **kwargs), "sum": x}
+    return {
+        "sum": x,
+        "N": combine_sample_sizes(pairs, axis, **kwargs),
+    }
 
 
 def cf_sum_agg(
@@ -1454,7 +1567,6 @@ def cf_sum_agg(
     axis=None,
     dtype="f8",
     computing_meta=False,
-    func=None,
     mtol=1,
     original_shape=None,
     **kwargs,
@@ -1462,18 +1574,20 @@ def cf_sum_agg(
     """Apply the function to the data in a nested list of arrays and
     mask where the sample size is below the threshold."""
     d = cf_sum_combine(pairs, axis, computing_meta, **kwargs)
+    if computing_meta:
+        return d
 
-    x = mask_small_sample_size(d["sum"], d["N"], axis, mtol, original_shape)
+    x = d["sum"]
+    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
     return x
 
 
-def cf_sum(a, axis=None, keepdims=False, mtol=1, split_every=None):
+def cf_sum(a, axis=None, weights=None, keepdims=False, mtol=1, split_every=None):
     """TODODASK."""
-    func = chunk.sum
     dtype = float
     return reduction(
         a,
-        partial(cf_sum_chunk, func=func),
+        cf_sum_chunk,
         partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
         axis=axis,
         keepdims=keepdims,
@@ -1483,83 +1597,291 @@ def cf_sum(a, axis=None, keepdims=False, mtol=1, split_every=None):
         out=None,
         concatenate=False,
         meta=np.array((), dtype=dtype),
+        weights=weights
     )
-
 # --------------------------------------------------------------------
-# sum
+# variance
 # --------------------------------------------------------------------
-def cf_sumw_chunk(x, weights=None, dtype=float, computing_meta=False,
-                  func=None, **kwargs):
-    """Find the max of an array."""
-    print('PPP@',x, weights)
-    if computing_meta:
-        return x
+def cf_var_chunk(x, weights=None, dtype=float, computing_meta=False,
+                 ddof=0, **kwargs):
+    """Return a tuple containing metrics relating to the array variance.
 
-    if weights is not None:
-        x = multiply(x, weights) # sort out  dtype=result_dtype)
+    The tuple is a 7-tuple that contains, in the order given, the
+    following variables:
+
+    ========  ============================================================
+    Variable  Description
+    ========  ============================================================
+    N         Sample size
+
+    var       Sample variance (ddof=0)
+
+    avg       Weighted mean
+
+    V1        Sum of weights
+
+    V2        Sum of squares of weights
+
+    ddof      Delta degrees of freedom
+
+    weighted  Whether or not the sample is weighted
+    ========  ============================================================
+
+    :Parameters:
+
+        a: numpy array_like
+            Input array
+
+        axis: `int`, optional
+            Axis along which to operate. By default, flattened input
+            is used.
+
+        weights: numpy array-like, optional
+            Weights associated with values of the array. By default the
+            statistics are unweighted.
+
+        masked: `bool`, optional
+
+        ddof: delta degrees of freedom, optional
+
+    :Returns:
+
+        7-`tuple`
+            Tuple containing the value of the statistical metrics described
+            in the above table, in the given order.
+
+    """
+    # Make sure that a is double precision
+    a = double_precision(a)
+
+    weighted = weights is not None
+
+    # ----------------------------------------------------------------
+    # Methods:
+    #
+    # http://en.wikipedia.org/wiki/Standard_deviation#Population-based_statistics
+    # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_variance
+    # ----------------------------------------------------------------
+
+    # Calculate N   = number of data points
+    # Calculate avg = mean of data
+    # Calculate V1  = sum of weights
+    d = cf_mean_chunk(x, weights, dtype=dtype, **kwargs)
+
+    N = d["N"]
+    V1 = d["sw"]
+    avg = d["avg"] #divide(d"sum"], V1) # dtype
     
-    d = {"sum": chunk.sum(x, **kwargs)}
-    d.update(cf_sample_size_chunk(x, dtype=dtype, **kwargs))
+#    N, avg, V1 = mean_f(a, weights=weights, axis=axis, masked=masked)
 
-    return d
+    # Calculate V2 = sum of squares of weights
+    if weights is not None and ddof == 1:
+        V2 = sum_of_weights(x, weights, N=N, squared=True, **kwargs)
+    else:
+        V2 = None
+
+#    if axis is not None and avg.size > 1:
+#        # We collapsed over a single axis and the array has 2 or more
+#        # axes, so add an extra size 1 axis to the mean so that
+#        # broadcasting works when we calculate the variance.
+#        reshape_avg = True
+#        if masked:
+#            expand_dims = numpy_ma_expand_dims
+#        else:
+#            expand_dims = numpy_expand_dims
+#
+#        avg = expand_dims(avg, axis)
+#    else:
+#        reshape_avg = False
+
+    var = x - avg
+    var *= var
+
+    if np.ma.isMA(var):
+        average = np.ma.average
+    else:
+        average = np.average
+
+    var = average(var, weights=weights, **kwargs)
+
+#    if reshape_avg:
+#        shape = avg.shape
+#        avg = avg.reshape(shape[:axis] + shape[axis + 1 :])
+
+#    (N, var, avg, V1, V2) = asanyarray(N, var, avg, V1, V2)
+
+    
+
+    return {"var": var,
+            "avg": avg,
+            "N": N,
+            "V1": V1,
+            "V2": V2,
+#            "ddof": ddof,
+#            "weighted": weighted,
+    }
 
 
-def cf_sumw_combine(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    func=None,
-    **kwargs,
-):
-    """Apply the function to the data in a nested list of arrays."""
-    if not isinstance(pairs, list):
-        pairs = [pairs]
 
-    # Create a nested list of maxima and recursively concatenate it
-    # along the specified axes
-    x = combine_arrays(
-        pairs, "sum", chunk.sum, axis, dtype, computing_meta, **kwargs
-    )
-    if computing_meta:
-        return x
+def cf_var_combine(out, out1=None, group=False):
+    """Return a tuple of partial metrics relating to the array variance.
 
-    return {"N": combine_sample_sizes(pairs, axis, **kwargs), "sum": x}
+    The tuple is a 7-tuple that contains, in the order given, the
+    following variables:
+
+    ========  ============================================================
+    Variable  Description
+    ========  ============================================================
+    N         Partial sample size
+
+    var       Partial sum of V1*(variance + mean^2)
+
+    avg       Unweighted partial sum
+
+    V1        Partial sum of weights
+
+    V2        Partial sum of squares of weights
+
+    ddof      Delta degrees of freedom
+
+    weighted  Whether or not the population is weighted
+    ========  ============================================================
+
+    For further information, see:
+    https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
+
+    :Parameters:
+
+        out: 7-`tuple`
+
+        out1: 7-`tuple`, optional
+
+    :Returns:
+
+        7-`tuple`
+            Tuple containing the value of the statistical metrics described
+            in the above table, in the given order.
+
+    """
+    (N, var, avg, V1, V2, ddof, weighted) = out
+
+    if out1 is None and not group:
+        # ------------------------------------------------------------
+        # var = V1(var+avg**2)
+        # avg = V1*avg = unweighted partial sum
+        # ------------------------------------------------------------
+        var += avg * avg
+        var *= V1
+        avg *= V1
+    else:
+        # ------------------------------------------------------------
+        # var = var + V1b(varb+avgb**2)
+        # avg = avg + V1b*avgb
+        # V1  = V1 + V1b
+        # V2  = V2 + V2b
+        # ------------------------------------------------------------
+        (Nb, varb, avgb, V1b, V2b, ddof, weighted) = out1
+
+        N = psum(N, Nb)
+
+        if not group:
+            varb += avgb * avgb
+            varb *= V1b
+            avgb *= V1b
+
+        var = psum(var, varb)
+        avg = psum(avg, avgb)
+        V1 = psum(V1, V1b)
+
+        if weighted and ddof == 1:
+            V2 = psum(V2, V2b)
+    # --- End: if
+
+    (N, var, avg, V1, V2) = asanyarray(N, var, avg, V1, V2)
+
+    return (N, var, avg, V1, V2, ddof, weighted)
+
+def var_ffinalise(out, sub_samples=None):
+    """Calculate the variance of the array and return it with the sample
+    size.
+
+    Also mask out any values derived from a too-small sample size.
+
+    :Parameters:
+
+        out: 7-`tuple`
+
+        sub_samples: optional
+
+    :Returns:
+
+        2-`tuple` of `numpy.ndarray`
+            The sample size and the variance.
+
+    """
+    (N, var, avg, V1, V2, ddof, weighted) = out
+
+    N, var = mask_where_too_few_values(max(2, ddof + 1), N, var)
+    N, V1 = mask_where_too_few_values(max(2, ddof + 1), N, V1)
+    if V2 is not None:
+        N, V2 = mask_where_too_few_values(max(2, ddof + 1), N, V2)
+
+    if sub_samples:
+        # ----------------------------------------------------------------
+        # The global biased variance = {[SUM(pV1(pv+pm**2)]/V1} - m**2
+        #
+        #   where pV1 = partial sum of weights
+        #         pv  = partial biased variance
+        #         pm  = partial mean
+        #         V1  = global sum of weights
+        #         m   = global mean
+        #
+        # Currently: var = SUM(pV1(pv+pm**2)
+        #            avg = V1*m
+        #
+        # https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
+        #
+        # For the general case of M non-overlapping data sets, X_{1}
+        # through X_{M}, and the aggregate data set X=\bigcup_{i}X_{i}
+        # we have the unweighted mean and variance is:
+        #
+        # \mu_{X}={\frac{1}{\sum_{i}{N_{X_{i}}}}}\left(\sum_{i}{N_{X_{i}}\mu_{X_{i}}}\right)
+        #
+        # var_{X}={{\frac{1}{\sum_{i}{N_{X_{i}}-ddof}}}\left(\sum_{i}{\left[(N_{X_{i}}-1)\sigma_{X_{i}}^{2}+N_{X_{i}}\mu_{X_{i}}^{2}\right]}-\left[\sum_{i}{N_{X_{i}}}\right]\mu_{X}^{2}\right)}
+        #
+        # ----------------------------------------------------------------
+        avg /= V1
+        avg *= avg
+        var /= V1
+        var -= avg
+
+    # ----------------------------------------------------------------
+    # var is now the biased global variance
+    # ----------------------------------------------------------------
+    if not weighted:
+        if ddof:
+            # The unweighted variance with N-ddof degrees of freedom is
+            # [V1/(V1-ddof)]*var. In this case V1 equals the sample size,
+            # N. ddof=1 provides an unbiased estimator of the variance of
+            # a hypothetical infinite population.
+            V1 /= V1 - ddof
+            var *= V1
+    elif ddof == 1:
+        # Calculate the weighted unbiased variance. The unbiased
+        # variance weighted with _reliability_ weights is
+        # [V1**2/(V1**2-V2)]*var.
+        #
+        # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_variance
+        V1 **= 2
+        var *= V1
+        V1 -= V2
+        var /= V1
+    elif ddof:
+        raise ValueError(
+            "Can only calculate a weighted variance with a delta degrees "
+            "of freedom (ddof) of 0 or 1: Got {}".format(ddof)
+        )
+
+    return asanyarray(N, var)
 
 
-def cf_sumw_agg(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    func=None,
-    mtol=1,
-    original_shape=None,
-    **kwargs,
-):
-    """Apply the function to the data in a nested list of arrays and
-    mask where the sample size is below the threshold."""
-    d = cf_sum_combine(pairs, axis, computing_meta, **kwargs)
-
-    x = mask_small_sample_size(d["sum"], d["N"], axis, mtol, original_shape)
-    return x
-
-
-def cf_sumw(a, axis=None, keepdims=False, mtol=1, split_every=None):
-    """TODODASK."""
-
-    func = chunk.sum
-    dtype = float
-    return reduction(
-        a,
-        partial(cf_sumw_chunk, func=func),
-        partial(cf_sum_agg, mtol=mtol, original_shape=a[0].shape),
-        axis=axis,
-        keepdims=keepdims,
-        dtype=dtype,
-        split_every=split_every,
-        combine=cf_sum_combine,
-        out=None,
-        concatenate=False,
-        meta=np.array((), dtype=dtype),
-    )

@@ -7894,183 +7894,203 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
     def mean(
         self,
         axes=None,
+            weights=None,
         squeeze=False,
         mtol=1,
-        weights=None,
         inplace=False,
+        split_every=None,
         i=False,
-        _preserve_partitions=False,
     ):
-        """Collapse axes with their mean.
+        from .collapse_functions import cf_mean as func
 
-        The mean is unweighted by default, but may be weighted (see the
-        *weights* parameter).
+        d = _inplace_enabled_define_and_cleanup(self)
+        return _collapse( d, func, axis=axes, weights=weights,
+                          keepdims=not squeeze,
+                          split_every=split_every, mtol=mtol )
 
-        Missing data array elements and their corresponding weights
-        are omitted from the calculation.
-
-        :Parameters:
-
-            axes: (sequence of) int, optional
-                The axes to be collapsed. By default flattened input is
-                used. Each axis is identified by its integer position. No
-                axes are collapsed if *axes* is an empty sequence.
-
-            squeeze: `bool`, optional
-                If True then collapsed axes are removed. By default the
-                axes which are collapsed are left in the result as axes
-                with size 1, meaning that the result is guaranteed to
-                broadcast correctly against the original array.
-
-            weights: data-like or dict, optional
-                Weights associated with values of the array. By default
-                all non-missing elements of the array are assumed to have
-                a weight equal to one. If *weights* is a data-like object
-                then it must have either the same shape as the array or,
-                if that is not the case, the same shape as the axes being
-                collapsed. If *weights* is a dictionary then each key is
-                axes of the array (an int or tuple of ints) with a
-                corresponding data-like value of weights for those
-                axes. In this case, the implied weights array is the outer
-                product of the dictionary's values.
-
-                *Parameter example:*
-                  If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-                  1-dimensional weights for axis 1 and ``x`` must contain
-                  2-dimensional weights for axes 2 and 0. This is
-                  equivalent, for example, to ``weights={(1, 2, 0), y}``,
-                  where ``y`` is the outer product of ``w`` and ``x``. If
-                  ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
-                  equivalent to ``weights=y``. If ``axes=None`` and the
-                  array is 3-dimensional then ``weights={(1, 2, 0), y}``
-                  is equivalent to ``weights=y.transpose([2, 0, 1])``.
-
-            mtol: number, optional
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        :Returns:
-
-            `Data` or `None`
-                The collapsed array.
-
-        .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
-                     `var`
-
-        **Examples:**
-
-        >>> d = cf.Data([[1, 2, 4], [1, 4, 9]], 'm')
-        >>> print(d.array)
-        [[1 2 4]
-         [1 4 9]]
-
-        >>> d.mean()
-        <CF Data: 3.5 m>
-        >>> d.mean(squeeze=True)
-        <CF Data(): 3.5 m>
-        >>> d.mean(axes=[0, 1])
-        <CF Data(1, 1): [[3.5]] m>
-        >>> d.mean(axes=[1, 0])
-        <CF Data(1, 1): [[3.5]] m>
-        >>> print(d.mean(axes=0).array)
-        [[1.  3.  6.5]]
-        >>> print(d.mean(axes=1).array)
-        [[2.33333333]
-         [4.66666667]]
-        >>> d.mean(axes=1, squeeze=True)
-        <CF Data(2): [2.3333333333333335, 4.666666666666667] m>
-
-        >>> y = cf.Data([1, 3])
-        >>> x = cf.Data([1, 2, 1])
-        >>> w = cf.Data.insert_dimension(y, 1) * x
-        >>> print(w.array)
-        [[1 2 1]
-         [3 6 3]]
-
-        >>> d.mean(weights=w)
-        <CF Data(1, 1): [[3.9375]] m>
-        >>> d.mean(weights={(0, 1): w})
-        <CF Data(1, 1): [[3.9375]] m>
-        >>> d.mean(axes=[0, 1], weights={(0, 1): w})
-        <CF Data(1, 1): [[3.9375]] m>
-        >>> d.mean(axes=[1, 0], weights={(0, 1): w})
-        <CF Data(1, 1): [[3.9375]] m>
-        >>> d.mean(axes=(0, 1), weights={1: x, 0: y})
-        <CF Data(1, 1): [[3.9375]] m>
-
-        >>> d.mean(axes=1, weights=w)
-        <CF Data(2, 1): [[2.25, 4.5]] m>
-        >>> d.mean(axes=1, weights=x)
-        <CF Data(2, 1): [[2.25, 4.5]] m>
-        >>> d.mean(axes=1, weights={1: x})
-        <CF Data(2, 1): [[2.25, 4.5]] m>
-        >>> d.mean(axes=1, weights={(0, 1): w})
-        <CF Data(2, 1): [[2.25, 4.5]] m>
-        >>> d.mean(axes=1, weights={0: y, (1,): x})
-        <CF Data(2, 1): [[2.25, 4.5]] m>
-
-        >>> d.mean(axes=1)
-        <CF Data(2, 1): [[2.3333333333333335, 4.666666666666667]] m>
-        >>> d.mean(axes=1, weights={0: y})
-        <CF Data(2, 1): [[2.3333333333333335, 4.666666666666667]] m>
-
-        >>> e = cf.Data(numpy.arange(24).reshape(3, 2, 4))
-        >>> print(e.array)
-        [[[ 0  1  2  3]
-          [ 4  5  6  7]]
-         [[ 8  9 10 11]
-          [12 13 14 15]]
-         [[16 17 18 19]
-          [20 21 22 23]]]
-
-        >>> e.mean(axes=[0, 2])
-        <CF Data(1, 2, 1): [[[9.5, 13.5]]]>
-        >>> f = e.mean(axes=[0, 2], squeeze=True)
-        >>> f
-        <CF Data(2): [9.5, 13.5]>
-        >>> f.shape
-        (2,)
-        >>> print(e.mean(axes=[0, 1]).array)
-        [[[10. 11. 12. 13.]]]
-        >>> print(e.mean(axes=[0, 1], weights={(1, 0): w}).array)
-        [[[11. 12. 13. 14.]]]
-
-        >>> e[0, 0] = cf.masked
-        >>> e[-1, -1] = cf.masked
-        >>> e[..., 2] = cf.masked
-        >>> print(e.array)
-        [[[-- -- -- --]
-          [4 5 -- 7]]
-         [[8 9 -- 11]
-          [12 13 -- 15]]
-         [[16 17 -- 19]
-          [-- -- -- --]]]
-
-        >>> e.mean()
-        <CF Data(1, 1, 1): [[[11.333333333333334]]]>
-        >>> print(e.mean(axes=[0, 1]).array)
-        [[[10.0 11.0 -- 13.0]]]
-        >>> print(e.mean(axes=[0, 1], weights={(1, 0): w}).array)
-        [[[9.666666666666666 10.666666666666666 -- 12.666666666666666]]]
-
-        """
-        return self._collapse(
-            mean_f,
-            mean_fpartial,
-            mean_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
-            weights=weights,
-            mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
-        )
+#    @_deprecated_kwarg_check("i")
+#    def mean(
+#        self,
+#        axes=None,
+#        squeeze=False,
+#        mtol=1,
+#        weights=None,
+#        inplace=False,
+#        i=False,
+#        _preserve_partitions=False,
+#    ):
+#        """Collapse axes with their mean.
+#
+#        The mean is unweighted by default, but may be weighted (see the
+#        *weights* parameter).
+#
+#        Missing data array elements and their corresponding weights
+#        are omitted from the calculation.
+#
+#        :Parameters:
+#
+#            axes: (sequence of) int, optional
+#                The axes to be collapsed. By default flattened input is
+#                used. Each axis is identified by its integer position. No
+#                axes are collapsed if *axes* is an empty sequence.
+#
+#            squeeze: `bool`, optional
+#                If True then collapsed axes are removed. By default the
+#                axes which are collapsed are left in the result as axes
+#                with size 1, meaning that the result is guaranteed to
+#                broadcast correctly against the original array.
+#
+#            weights: data-like or dict, optional
+#                Weights associated with values of the array. By default
+#                all non-missing elements of the array are assumed to have
+#                a weight equal to one. If *weights* is a data-like object
+#                then it must have either the same shape as the array or,
+#                if that is not the case, the same shape as the axes being
+#                collapsed. If *weights* is a dictionary then each key is
+#                axes of the array (an int or tuple of ints) with a
+#                corresponding data-like value of weights for those
+#                axes. In this case, the implied weights array is the outer
+#                product of the dictionary's values.
+#
+#                *Parameter example:*
+#                  If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
+#                  1-dimensional weights for axis 1 and ``x`` must contain
+#                  2-dimensional weights for axes 2 and 0. This is
+#                  equivalent, for example, to ``weights={(1, 2, 0), y}``,
+#                  where ``y`` is the outer product of ``w`` and ``x``. If
+#                  ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
+#                  equivalent to ``weights=y``. If ``axes=None`` and the
+#                  array is 3-dimensional then ``weights={(1, 2, 0), y}``
+#                  is equivalent to ``weights=y.transpose([2, 0, 1])``.
+#
+#            mtol: number, optional
+#
+#            {{inplace: `bool`, optional}}
+#
+#            {{i: deprecated at version 3.0.0}}
+#
+#        :Returns:
+#
+#            `Data` or `None`
+#                The collapsed array.
+#
+#        .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
+#                     `var`
+#
+#        **Examples:**
+#
+#        >>> d = cf.Data([[1, 2, 4], [1, 4, 9]], 'm')
+#        >>> print(d.array)
+#        [[1 2 4]
+#         [1 4 9]]
+#
+#        >>> d.mean()
+#        <CF Data: 3.5 m>
+#        >>> d.mean(squeeze=True)
+#        <CF Data(): 3.5 m>
+#        >>> d.mean(axes=[0, 1])
+#        <CF Data(1, 1): [[3.5]] m>
+#        >>> d.mean(axes=[1, 0])
+#        <CF Data(1, 1): [[3.5]] m>
+#        >>> print(d.mean(axes=0).array)
+#        [[1.  3.  6.5]]
+#        >>> print(d.mean(axes=1).array)
+#        [[2.33333333]
+#         [4.66666667]]
+#        >>> d.mean(axes=1, squeeze=True)
+#        <CF Data(2): [2.3333333333333335, 4.666666666666667] m>
+#
+#        >>> y = cf.Data([1, 3])
+#        >>> x = cf.Data([1, 2, 1])
+#        >>> w = cf.Data.insert_dimension(y, 1) * x
+#        >>> print(w.array)
+#        [[1 2 1]
+#         [3 6 3]]
+#
+#        >>> d.mean(weights=w)
+#        <CF Data(1, 1): [[3.9375]] m>
+#        >>> d.mean(weights={(0, 1): w})
+#        <CF Data(1, 1): [[3.9375]] m>
+#        >>> d.mean(axes=[0, 1], weights={(0, 1): w})
+#        <CF Data(1, 1): [[3.9375]] m>
+#        >>> d.mean(axes=[1, 0], weights={(0, 1): w})
+#        <CF Data(1, 1): [[3.9375]] m>
+#        >>> d.mean(axes=(0, 1), weights={1: x, 0: y})
+#        <CF Data(1, 1): [[3.9375]] m>
+#
+#        >>> d.mean(axes=1, weights=w)
+#        <CF Data(2, 1): [[2.25, 4.5]] m>
+#        >>> d.mean(axes=1, weights=x)
+#        <CF Data(2, 1): [[2.25, 4.5]] m>
+#        >>> d.mean(axes=1, weights={1: x})
+#        <CF Data(2, 1): [[2.25, 4.5]] m>
+#        >>> d.mean(axes=1, weights={(0, 1): w})
+#        <CF Data(2, 1): [[2.25, 4.5]] m>
+#        >>> d.mean(axes=1, weights={0: y, (1,): x})
+#        <CF Data(2, 1): [[2.25, 4.5]] m>
+#
+#        >>> d.mean(axes=1)
+#        <CF Data(2, 1): [[2.3333333333333335, 4.666666666666667]] m>
+#        >>> d.mean(axes=1, weights={0: y})
+#        <CF Data(2, 1): [[2.3333333333333335, 4.666666666666667]] m>
+#
+#        >>> e = cf.Data(numpy.arange(24).reshape(3, 2, 4))
+#        >>> print(e.array)
+#        [[[ 0  1  2  3]
+#          [ 4  5  6  7]]
+#         [[ 8  9 10 11]
+#          [12 13 14 15]]
+#         [[16 17 18 19]
+#          [20 21 22 23]]]
+#
+#        >>> e.mean(axes=[0, 2])
+#        <CF Data(1, 2, 1): [[[9.5, 13.5]]]>
+#        >>> f = e.mean(axes=[0, 2], squeeze=True)
+#        >>> f
+#        <CF Data(2): [9.5, 13.5]>
+#        >>> f.shape
+#        (2,)
+#        >>> print(e.mean(axes=[0, 1]).array)
+#        [[[10. 11. 12. 13.]]]
+#        >>> print(e.mean(axes=[0, 1], weights={(1, 0): w}).array)
+#        [[[11. 12. 13. 14.]]]
+#
+#        >>> e[0, 0] = cf.masked
+#        >>> e[-1, -1] = cf.masked
+#        >>> e[..., 2] = cf.masked
+#        >>> print(e.array)
+#        [[[-- -- -- --]
+#          [4 5 -- 7]]
+#         [[8 9 -- 11]
+#          [12 13 -- 15]]
+#         [[16 17 -- 19]
+#          [-- -- -- --]]]
+#
+#        >>> e.mean()
+#        <CF Data(1, 1, 1): [[[11.333333333333334]]]>
+#        >>> print(e.mean(axes=[0, 1]).array)
+#        [[[10.0 11.0 -- 13.0]]]
+#        >>> print(e.mean(axes=[0, 1], weights={(1, 0): w}).array)
+#        [[[9.666666666666666 10.666666666666666 -- 12.666666666666666]]]
+#
+#        """
+#        return self._collapse(
+#            mean_f,
+#            mean_fpartial,
+#            mean_ffinalise,
+#            axes=axes,
+#            squeeze=squeeze,
+#            weights=weights,
+#            mtol=mtol,
+#            inplace=inplace,
+#            _preserve_partitions=_preserve_partitions,
+#        )
 
     def mean_absolute_value(
         self,
@@ -10300,6 +10320,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._Units = Units(d.Units._units, calendar)
 
         return d
+
+    def to_dask_array(self):
+        """Store the data array on disk.
+
+        There is no change to partition's whose sub-arrays are already on
+        disk.
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> d.to_disk()
+
+        """
+        return self._get_dask()
 
     def to_disk(self):
         """Store the data array on disk.
@@ -12785,6 +12822,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def sum(
         self,
         axes=None,
+            weights=None,
         squeeze=False,
         mtol=1,
         inplace=False,
@@ -12795,17 +12833,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         from .collapse_functions import cf_sum
 
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
-        dx = cf_sum(
-            dx,
-            axis=axes,
-            keepdims=not squeeze,
-            split_every=split_every,
-            mtol=mtol,
-        )
-        d._set_dask(dx, reset_mask_hardness=True)
-
-        return d
+        return _collapse( d, cf_sum, axis=axes, weights=weights,
+                          keepdims=not squeeze,
+                          split_every=split_every, mtol=mtol )
 
     def sum_of_squares(
         self,
@@ -13636,13 +13666,10 @@ def _collapse(
 ):
     """TODODASK."""
     dx = d._get_dask()
-
-    if weights is not None:
-        weights = da.asanyarray(dask_compatible(weights))
-        
     dx = collapse_func(
-        (dx, weights),
+        dx,
         axis=axis,
+        weights=weights,
         keepdims=keepdims,
         split_every=split_every,
         mtol=mtol,
