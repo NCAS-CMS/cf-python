@@ -422,7 +422,7 @@ def dask_compatible(a):
     except AttributeError:
         return a
 
-    
+
 def scalar_masked_array(dtype=float):
     """Return a scalar masked array.
 
