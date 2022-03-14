@@ -574,3 +574,70 @@ def YMDhms(d, attr):
     d._map_blocks(partial(cf_YMDhms, attr=attr), dtype=int)
     d.override_units(Units(None), inplace=True)
     return d
+
+
+def process_weights(d, weights, axis):
+    """TODODASK."""
+    if not isinstance(weights, dict):
+        return weights
+
+    if not w:
+        # No weights
+        return
+
+    weights = weights.copy()
+    weights_axes = set()
+    for key, value in tuple(weights.items()):
+        key = d._parse_axes(key)
+        if weights_axes.intersection(key):
+            raise ValueError("Duplicate weights axis")
+
+        weights_axes.update(key)
+        weights[tuple(key)] = weights.pop(key)
+
+    if not weights_axes.intersection(axis):
+        # No weights span collapse axes
+        return
+
+    # Add missing dimensions to each component as size 1
+    w = []
+    shape = d.shape
+    for key, value in weights.items():
+        new_shape = [n if i in key else 1 for i, n in enumerate(shape)]
+        w.append(value.reshape(new_shape))
+
+    # Return the product of the weights components
+    return reduce(mul, w)
+
+
+def collapse(
+    func,
+    d,
+    axis=None,
+    weights=None,
+    keepdims=True,
+    mtol=1,
+    split_every=None,
+    ddof=None,
+):
+    """TODODASK."""
+    kwargs = {
+        "axis": axis,
+        "keepdims": keepdims,
+        "split_every": split_every,
+        "mtol": mtol,
+    }
+
+    if weights is not None:
+        weights = process_weights(d, weights, axis)
+        if weights is not None:
+            kwargs["weights"] = weights
+
+    if ddof is not None:
+        kwargs["ddof"] = ddof
+
+    dx = d.to_dask_array()
+    dx = func(dx, **kwargs)
+    d._set_dask(dx, reset_mask_hardness=True)
+
+    return d, weights

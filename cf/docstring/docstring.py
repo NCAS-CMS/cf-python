@@ -246,6 +246,91 @@ _docstring_substitution_definitions = {
                   domain axis. If the vertical axis does not appear in
                   the computed non-parametric coodinates then this an
                   empty tuple.""",
+    # collapse axes
+    "{{collapse axes: (sequence of) int, optional}}": """axes: (sequence of) int, optional
+                The axes to be collapsed. By default flattened input
+                is used. Each axis is identified by its integer
+                position. No axes are collapsed if *axes* is an empty
+                sequence. TODODASK - is the axes=() behaviour
+                correct??""",
+    # collapse axes
+    "{{collapse squeeze: `bool`, optional}}": """squeeze: `bool`, optional
+                By default, the axes which are collapsed are left in
+                the result as dimensions with size one, so that the
+                result will broadcast correctly against the input
+                array. If set to True then collapsed axes are removed
+                from the data.""",
+    # collapse weights
+    "{{collapse weights: optional}}}": """weights: optional
+                Weights associated with values of the array. By
+                default all non-missing elements of the array are
+                assumed to have a weight equal to one.
+
+                If *weights* is a data_like object then it must be
+                broadcastable to the array or, if that is not the
+                case, the same shape as the axes being
+                collapsed. TODODASK - scrib the last possibility?
+
+                If *weights* is a dictionary then each key specifies
+                axes of the array (an `int` or `tuple` of `int`), with
+                a corresponding value of data_like weights for those
+                axes. In this case, the implied weights array is the
+                outer product of the dictionary's values.
+
+
+                Specify the weights for the collapse axes. The weights
+                are, in general, those that would be returned by this
+                call of the field construct's `weights` method:
+                ``f.weights(weights, axes=axes, measure=measure,
+                scale=scale, radius=radius, great_circle=great_circle,
+                components=True)``. See the *axes*, *measure*,
+                *scale*, *radius* and *great_circle* parameters and
+                `cf.Field.weights` for details.
+
+                .. note:: By default *weights* is `None`, resulting in
+                          **unweighted calculations**.
+
+                If the alternative form of providing the collapse method
+                and axes combined as a CF cell methods-like string via the
+                *method* parameter has been used, then the *axes*
+                parameter is ignored and the axes are derived from the
+                *method* parameter. For example, if *method* is ``'T:
+                area: minimum'`` then this defines axes of ``['T',
+                'area']``. If *method* specifies multiple collapses,
+                e.g. ``'T: minimum area: mean'`` then this implies axes of
+                ``'T'`` for the first collapse, and axes of ``'area'`` for
+                the second collapse.
+
+                .. note:: Setting *weights* to `True` is generally a good
+                          way to ensure that all collapses are
+                          appropriately weighted according to the field
+                          construct's metadata. In this case, if it is not
+                          possible to create weights for any axis then an
+                          exception will be raised.
+
+                          However, care needs to be taken if *weights* is
+                          `True` when cell volume weights are desired. The
+                          volume weights will be taken from a "volume"
+                          cell measure construct if one exists, otherwise
+                          the cell volumes will be calculated as being
+                          proportional to the sizes of one-dimensional
+                          vertical coordinate cells. In the latter case
+                          **if the vertical dimension coordinates do not
+                          define the actual height or depth thickness of
+                          every cell in the domain then the weights will
+                          be incorrect**.
+
+                *Parameter example:*
+                  To specify weights based on the field construct's
+                  metadata for all collapse axes use ``weights=True``.
+
+                *Parameter example:*
+                  To specify weights based on cell areas use
+                  ``weights='area'``.
+
+                *Parameter example:*
+                  To specify weights based on cell areas and linearly in
+                  time you could set ``weights=('area', 'T')``.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

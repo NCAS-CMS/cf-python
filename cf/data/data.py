@@ -71,6 +71,7 @@ from .partitionmatrix import PartitionMatrix
 from .utils import (  # is_small,; is_very_small,
     YMDhms,
     _is_numeric_dtype,
+    collapse,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
@@ -6919,6 +6920,32 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         self.Units = Units(value, self.get_calendar(default=None))
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
+    def max(
+        self,
+        axes=None,
+        squeeze=False,
+        mtol=1,
+        split_every=None,
+        inplace=False,
+        i=False,
+    ):
+        from .collapse_functions import cf_max
+
+        d = _inplace_enabled_define_and_cleanup(self)
+        d, _ = collapse(
+            cf_maxn,
+            d,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
+            mtol=mtol,
+        )
+
+        return d
+
     @_deprecated_kwarg_check("i")
     def maximum(
         self,
@@ -6930,7 +6957,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         i=False,
         _preserve_partitions=False,
     ):
-        """Collapse axes with their maximum.
+        """Alias.
+
+        Collapse axes with their maximum.
 
         Missing data array elements are omitted from the calculation.
 
@@ -6960,6 +6989,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             inplace=inplace,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     def maximum_absolute_value(
         self,
         axes=None,
@@ -6967,7 +6998,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         mtol=1,
         split_every=None,
         inplace=False,
-        _preserve_partitions=False,
     ):
         """Collapse axes with their maximum absolute value.
 
@@ -7003,20 +7033,43 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[3, 9]] m>
 
         """
-        from .collapse_functions import cf_max_abs as collapse
+        from .collapse_functions import cf_max_abs
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = collapse(
+            cf_max_abs,
+            d,
             axis=axes,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
+        return d
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
+    def min(
+        self,
+        axes=None,
+        squeeze=False,
+        mtol=1,
+        inplace=False,
+        split_every=None,
+        i=False,
+        _preserve_partitions=False,
+    ):
+        from .collapse_functions import cf_min
+
+        d = _inplace_enabled_define_and_cleanup(self)
+        d, _ = collapse(
+            cf_min,
+            d,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
+            mtol=mtol,
+        )
         return d
 
     @_deprecated_kwarg_check("i")
@@ -7029,7 +7082,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         i=False,
         _preserve_partitions=False,
     ):
-        """Collapse axes with their minimum.
+        """Alias.
+
+        Collapse axes with their minimum.
 
         Missing data array elements are omitted from the calculation.
 
@@ -7061,13 +7116,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             inplace=inplace,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     def minimum_absolute_value(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         inplace=False,
-        _preserve_partitions=False,
     ):
         """Collapse axes with their minimum absolute value.
 
@@ -7077,12 +7133,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                      `var`
 
         :Parameters:
-
-            axes : (sequence of) int, optional
-
-            squeeze : bool, optional
-
-            {{inplace: `bool`, optional}}
 
         :Returns:
 
@@ -7095,7 +7145,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
         >>> d.minimum_absolute_value()
         <CF Data(1, 1): [[1]] m>
-        >>> d.d.min()
+        >>> d.min()
         <CF Data(1, 1): [[-12]] m>
         >>> d.minimum_absolute_value(axes=1)
         <CF Data(2, 1): [[1, 8]] m>
@@ -7103,20 +7153,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[-1, -12]] m>
 
         """
-        from .collapse_functions import cf_min_abs as collapse
+        from .collapse_functions import cf_min_abs
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = collapse(
+            cf_min_abs,
+            d,
             axis=axes,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
-
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -7132,179 +7179,31 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         split_every=None,
         i=False,
     ):
-        from .collapse_functions import cf_mean as collapse
+        """Collapse axes with their mean.
+
+        The mean is unweighted by default, but may be weighted (see the
+        *weights* parameter).
+
+        Missing data array elements and their corresponding weights
+        are omitted from the calculation.
+
+        """
+        from .collapse_functions import cf_mean
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = collapse(
+            cf_mean,
+            d,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
-
         return d
 
-    #        """Collapse axes with their mean.
-    #
-    #        The mean is unweighted by default, but may be weighted (see the
-    #        *weights* parameter).
-    #
-    #        Missing data array elements and their corresponding weights
-    #        are omitted from the calculation.
-    #
-    #        :Parameters:
-    #
-    #            axes: (sequence of) int, optional
-    #                The axes to be collapsed. By default flattened input is
-    #                used. Each axis is identified by its integer position. No
-    #                axes are collapsed if *axes* is an empty sequence.
-    #
-    #            squeeze: `bool`, optional
-    #                If True then collapsed axes are removed. By default the
-    #                axes which are collapsed are left in the result as axes
-    #                with size 1, meaning that the result is guaranteed to
-    #                broadcast correctly against the original array.
-    #
-    #            weights: data-like or dict, optional
-    #                Weights associated with values of the array. By default
-    #                all non-missing elements of the array are assumed to have
-    #                a weight equal to one. If *weights* is a data-like object
-    #                then it must have either the same shape as the array or,
-    #                if that is not the case, the same shape as the axes being
-    #                collapsed. If *weights* is a dictionary then each key is
-    #                axes of the array (an int or tuple of ints) with a
-    #                corresponding data-like value of weights for those
-    #                axes. In this case, the implied weights array is the outer
-    #                product of the dictionary's values.
-    #
-    #                *Parameter example:*
-    #                  If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-    #                  1-dimensional weights for axis 1 and ``x`` must contain
-    #                  2-dimensional weights for axes 2 and 0. This is
-    #                  equivalent, for example, to ``weights={(1, 2, 0), y}``,
-    #                  where ``y`` is the outer product of ``w`` and ``x``. If
-    #                  ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
-    #                  equivalent to ``weights=y``. If ``axes=None`` and the
-    #                  array is 3-dimensional then ``weights={(1, 2, 0), y}``
-    #                  is equivalent to ``weights=y.transpose([2, 0, 1])``.
-    #
-    #            mtol: number, optional
-    #
-    #            {{inplace: `bool`, optional}}
-    #
-    #            {{i: deprecated at version 3.0.0}}
-    #
-    #        :Returns:
-    #
-    #            `Data` or `None`
-    #                The collapsed array.
-    #
-    #        .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
-    #                     `var`
-    #
-    #        **Examples:**
-    #
-    #        >>> d = cf.Data([[1, 2, 4], [1, 4, 9]], 'm')
-    #        >>> print(d.array)
-    #        [[1 2 4]
-    #         [1 4 9]]
-    #
-    #        >>> d.mean()
-    #        <CF Data: 3.5 m>
-    #        >>> d.mean(squeeze=True)
-    #        <CF Data(): 3.5 m>
-    #        >>> d.mean(axes=[0, 1])
-    #        <CF Data(1, 1): [[3.5]] m>
-    #        >>> d.mean(axes=[1, 0])
-    #        <CF Data(1, 1): [[3.5]] m>
-    #        >>> print(d.mean(axes=0).array)
-    #        [[1.  3.  6.5]]
-    #        >>> print(d.mean(axes=1).array)
-    #        [[2.33333333]
-    #         [4.66666667]]
-    #        >>> d.mean(axes=1, squeeze=True)
-    #        <CF Data(2): [2.3333333333333335, 4.666666666666667] m>
-    #
-    #        >>> y = cf.Data([1, 3])
-    #        >>> x = cf.Data([1, 2, 1])
-    #        >>> w = cf.Data.insert_dimension(y, 1) * x
-    #        >>> print(w.array)
-    #        [[1 2 1]
-    #         [3 6 3]]
-    #
-    #        >>> d.mean(weights=w)
-    #        <CF Data(1, 1): [[3.9375]] m>
-    #        >>> d.mean(weights={(0, 1): w})
-    #        <CF Data(1, 1): [[3.9375]] m>
-    #        >>> d.mean(axes=[0, 1], weights={(0, 1): w})
-    #        <CF Data(1, 1): [[3.9375]] m>
-    #        >>> d.mean(axes=[1, 0], weights={(0, 1): w})
-    #        <CF Data(1, 1): [[3.9375]] m>
-    #        >>> d.mean(axes=(0, 1), weights={1: x, 0: y})
-    #        <CF Data(1, 1): [[3.9375]] m>
-    #
-    #        >>> d.mean(axes=1, weights=w)
-    #        <CF Data(2, 1): [[2.25, 4.5]] m>
-    #        >>> d.mean(axes=1, weights=x)
-    #        <CF Data(2, 1): [[2.25, 4.5]] m>
-    #        >>> d.mean(axes=1, weights={1: x})
-    #        <CF Data(2, 1): [[2.25, 4.5]] m>
-    #        >>> d.mean(axes=1, weights={(0, 1): w})
-    #        <CF Data(2, 1): [[2.25, 4.5]] m>
-    #        >>> d.mean(axes=1, weights={0: y, (1,): x})
-    #        <CF Data(2, 1): [[2.25, 4.5]] m>
-    #
-    #        >>> d.mean(axes=1)
-    #        <CF Data(2, 1): [[2.3333333333333335, 4.666666666666667]] m>
-    #        >>> d.mean(axes=1, weights={0: y})
-    #        <CF Data(2, 1): [[2.3333333333333335, 4.666666666666667]] m>
-    #
-    #        >>> e = cf.Data(numpy.arange(24).reshape(3, 2, 4))
-    #        >>> print(e.array)
-    #        [[[ 0  1  2  3]
-    #          [ 4  5  6  7]]
-    #         [[ 8  9 10 11]
-    #          [12 13 14 15]]
-    #         [[16 17 18 19]
-    #          [20 21 22 23]]]
-    #
-    #        >>> e.mean(axes=[0, 2])
-    #        <CF Data(1, 2, 1): [[[9.5, 13.5]]]>
-    #        >>> f = e.mean(axes=[0, 2], squeeze=True)
-    #        >>> f
-    #        <CF Data(2): [9.5, 13.5]>
-    #        >>> f.shape
-    #        (2,)
-    #        >>> print(e.mean(axes=[0, 1]).array)
-    #        [[[10. 11. 12. 13.]]]
-    #        >>> print(e.mean(axes=[0, 1], weights={(1, 0): w}).array)
-    #        [[[11. 12. 13. 14.]]]
-    #
-    #        >>> e[0, 0] = cf.masked
-    #        >>> e[-1, -1] = cf.masked
-    #        >>> e[..., 2] = cf.masked
-    #        >>> print(e.array)
-    #        [[[-- -- -- --]
-    #          [4 5 -- 7]]
-    #         [[8 9 -- 11]
-    #          [12 13 -- 15]]
-    #         [[16 17 -- 19]
-    #          [-- -- -- --]]]
-    #
-    #        >>> e.mean()
-    #        <CF Data(1, 1, 1): [[[11.333333333333334]]]>
-    #        >>> print(e.mean(axes=[0, 1]).array)
-    #        [[[10.0 11.0 -- 13.0]]]
-    #        >>> print(e.mean(axes=[0, 1], weights={(1, 0): w}).array)
-    #        [[[9.666666666666666 10.666666666666666 -- 12.666666666666666]]]
-    #
-    #        """
-
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     def mean_absolute_value(
         self,
         axes=None,
@@ -7324,12 +7223,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
-            axes : (sequence of) int, optional
-
-            weights:
-
-            squeeze : bool, optional
-
             {{inplace: `bool`, optional}}
 
         :Returns:
@@ -7347,21 +7240,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[2.0, 9.666666666666666]] m>
 
         """
-        from .collapse_functions import cf_mean_abs as collapse
+        from .collapse_functions import cf_mean_abs
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = collapse(
+            ccf_mean_abs,
+            d,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
-
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -7384,28 +7274,26 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
-            axes: (sequence of) int, optional
-                The axes to be collapsed. By default flattened input is
-                used. Each axis is identified by its integer position. No
-                axes are collapsed if *axes* is an empty sequence.
+            {{collapse axes: (sequence of) int, optional}}
 
-            squeeze: `bool`, optional
-                If True then collapsed axes are removed. By default the
-                axes which are collapsed are left in the result as axes
-                with size 1, meaning that the result is guaranteed to
-                broadcast correctly against the original array.
+            {{collapse squeeze: `bool`, optional}}
 
-            weights: data-like or dict, optional
-                Weights associated with values of the array. By default
-                all non-missing elements of the array are assumed to have
-                a weight equal to one. If *weights* is a data-like object
-                then it must have either the same shape as the array or,
-                if that is not the case, the same shape as the axes being
-                collapsed. If *weights* is a dictionary then each key is
-                axes of the array (an int or tuple of ints) with a
-                corresponding data-like value of weights for those
-                axes. In this case, the implied weights array is the outer
-                product of the dictionary's values.
+            weights: data_like or dict, optional
+
+                Weights associated with values of the array. By
+                default all non-missing elements of the array are
+                assumed to have a weight equal to one. If *weights* is
+                a data_like object then it must have either the same
+                shape as the array or, if that is not the case, the
+                same shape as the axes being collapsed.
+
+
+
+                If *weights* is a dictionary then each key specifies
+                axes of the array (an `int` or `tuple` of `int`), with
+                a corresponding value of data_like weights for those
+                axes. In this case, the implied weights array is the
+                outer product of the dictionary's values.
 
                 Note that the units of the weights matter for an integral
                 collapse, which differs from a weighted sum in that the units
@@ -7438,14 +7326,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
+        from .collapse_functions import cf_sum
+
         d = _inplace_enabled_define_and_cleanup(self)
-        d.sum(
-            axes=axes,
+        d, weights = collapse(
+            cf_sum,
+            d,
+            axis=axes,
             weights=weights,
-            squeeze=squeeze,
-            mtol=mtol,
+            keepdims=not squeeze,
             split_every=split_every,
-            inplace=True,
+            mtol=mtol,
         )
 
         new_units = None
@@ -7475,22 +7366,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         i=False,
     ):
-        from .collapse_functions import cf_sample_size as collapse
+        from .collapse_functions import cf_sample_size
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = collapse(
+            cf_sample_size,
+            d,
             axis=axes,
-            weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
-
-        return d
 
     @property
     def binary_mask(self):
@@ -12063,23 +11949,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         split_every=None,
         i=False,
-        _preserve_partitions=False,
     ):
-        from .collapse_functions import cf_sum as collapse
+        from .collapse_functions import cf_sum
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = collapse(
+            cf_sum,
+            d,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
-
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -12125,22 +12007,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[14, 289]] m2>
 
         """
-        from .collapse_functions import cf_sum_of_squares as collapse
+        from .collapse_functions import cf_sum_of_squares
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = collapse(
+            cf_sum_of_squares,
+            d,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
 
-        units = self.Units
+        units = d.Units
         if units:
             d.override_units(units ** 2, inplace=True)
 
@@ -12190,28 +12070,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        from .collapse_functions import cf_sum_of_weights as collapse
+        from .collapse_functions import cf_sum_of_weights
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        if weights is None:
-            units = _units_None
-        else:
-            units = getattr(weights, "Units", None)
-            if units is None:
-                units = _units_None
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, weights = collapse(
+            cf_sum_of_weights,
+            d,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        dx = da.sqrt(dx)
-        d._set_dask(dx, reset_mask_hardness=True)
 
         units = _units_None
         if weights is not None:
@@ -12262,21 +12132,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        from .collapse_functions import cf_sum_of_weights2 as collapse
+        from .collapse_functions import cf_sum_of_weights2
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, weights = collapse(
+            cf_sum_of_weights2,
+            d,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        dx = da.sqrt(dx)
-        d._set_dask(dx, reset_mask_hardness=True)
 
         units = _units_None
         if weights is not None:
@@ -12297,7 +12164,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         squeeze=False,
         mtol=1,
         weights=None,
-        ddof=0,
+        ddof=0,  # TODASK: Is this the right default?
+        split_every=None,
         inplace=False,
         i=False,
         _preserve_partitions=False,
@@ -12446,12 +12314,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d.var(
             axes=axes,
             weights=weights,
+            squeeze=squeeze,
             mtol=mtol,
+            ddof=ddof,
             split_every=split_every,
             inplace=True,
         )
-        d **= 0.5
-        return d
+        return d ** 0.5  # TODODASK: replace with sqrt
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -12470,20 +12339,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     ):
         from .collapse_functions import cf_var
 
-        collapse = partial(cf_var, ddof=ddof)
-
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = collapse(
+            partial(cf_var, ddof=ddof),
+            d,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
-            split_every=split_every,
             mtol=mtol,
+            split_every=split_every,
+            ddof=ddof,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
 
         units = d.Units
         if units:
@@ -12548,36 +12414,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self, axes, data=True, stop=stop, chunks=chunks, min_step=min_step
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
-    def sum(
-        self,
-        axes=None,
-        weights=None,
-        squeeze=False,
-        mtol=1,
-        inplace=False,
-        split_every=None,
-        i=False,
-    ):
-        from .collapse_functions import cf_sum as collapse
-
-        d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
-            axis=axes,
-            weights=weights,
-            keepdims=not squeeze,
-            split_every=split_every,
-            mtol=mtol,
-        )
-        d._set_dask(dx, reset_mask_hardness=True)
-
-        return d
-
     # ----------------------------------------------------------------
     # Alias
     # ----------------------------------------------------------------
@@ -12585,63 +12421,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def dtarray(self):
         """Alias for `datetime_array`"""
         return self.datetime_array
-
-    @daskified(_DASKIFIED_VERBOSE)
-    @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
-    def max(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
-        i=False,
-    ):
-        from .collapse_functions import cf_max as collapse
-
-        d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
-            axis=axes,
-            keepdims=not squeeze,
-            split_every=split_every,
-            mtol=mtol,
-        )
-        d._set_dask(dx, reset_mask_hardness=True)
-
-        return d
-
-    @daskified(_DASKIFIED_VERBOSE)
-    @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
-    def min(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        inplace=False,
-        split_every=None,
-        i=False,
-        _preserve_partitions=False,
-    ):
-        from .collapse_functions import cf_min as collapse
-
-        d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
-            axis=axes,
-            keepdims=not squeeze,
-            split_every=split_every,
-            mtol=mtol,
-        )
-        d._set_dask(dx, reset_mask_hardness=True)
-
-        return d
 
     def standard_deviation(
         self,
@@ -12652,7 +12431,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         ddof=0,
         inplace=False,
         i=False,
-        _preserve_partitions=False,
     ):
         """Alias for `sd`"""
         return self.sd(
@@ -12662,6 +12440,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             mtol=mtol,
             ddof=ddof,
             inplace=inplace,
+            i=i,
         )
 
     def variance(
@@ -12673,7 +12452,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         ddof=0,
         inplace=False,
         i=False,
-        _preserve_partitions=False,
     ):
         """Alias for `var`"""
         return self.var(
@@ -12683,11 +12461,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             mtol=mtol,
             ddof=ddof,
             inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
+            i=i,
         )
-
-
-# --- End: class
 
 
 def _size_of_index(index, size=None):
