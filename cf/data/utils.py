@@ -576,37 +576,52 @@ def YMDhms(d, attr):
     return d
 
 
-def process_weights(d, weights, axis):
+def format_weights(d, weights, axis=None):
     """TODODASK."""
     if not isinstance(weights, dict):
         return weights
 
-    if not w:
+    if not weights:
         # No weights
         return
 
+    ndim = d.ndim
+    if axis is None:
+        axis = tuple(range(d.ndim))
+    else:
+        axis = d._parse_axes(axis)
+        
     weights = weights.copy()
     weights_axes = set()
     for key, value in tuple(weights.items()):
-        key = d._parse_axes(key)
+        del weights[key]
+        key = tuple(d._parse_axes(key))
         if weights_axes.intersection(key):
             raise ValueError("Duplicate weights axis")
+        
+        if value.ndim > ndim: TODO: test weights .shpae against impled eaxes shape            
+            raise ValueError(
+                f"Weights component for axes {key} with shape "
+                f"{weights.shape} is not broadcastable to data with "
+                f"shape {d.shape}"
+            )
 
+        weights[key] = value
         weights_axes.update(key)
-        weights[tuple(key)] = weights.pop(key)
 
     if not weights_axes.intersection(axis):
         # No weights span collapse axes
         return
 
-    # Add missing dimensions to each component as size 1
+    # For each componente, add missing dimensions as size 1.
     w = []
     shape = d.shape
     for key, value in weights.items():
         new_shape = [n if i in key else 1 for i, n in enumerate(shape)]
         w.append(value.reshape(new_shape))
 
-    # Return the product of the weights components
+    # Return the product of the weights components, which will be
+    # broadcastable to d
     return reduce(mul, w)
 
 
@@ -629,7 +644,7 @@ def collapse(
     }
 
     if weights is not None:
-        weights = process_weights(d, weights, axis)
+        weights = format_weights(d, weights, axis)
         if weights is not None:
             kwargs["weights"] = weights
 
