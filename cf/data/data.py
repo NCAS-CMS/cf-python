@@ -14,7 +14,6 @@ import dask.array as da
 import numpy as np
 from dask.array import Array
 from dask.array.core import normalize_chunks
-from dask.array.routines import result_type
 from dask.base import is_dask_collection, tokenize
 from dask.core import flatten
 from dask.highlevelgraph import HighLevelGraph
@@ -36,7 +35,6 @@ from ..functions import (
     abspath,
 )
 from ..functions import atol as cf_atol
-from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
 from ..functions import default_netCDF_fillvals
 from ..functions import fm_threshold as cf_fm_threshold
@@ -49,32 +47,6 @@ from ..units import Units
 from . import (  # GatheredSubarray,; RaggedContiguousSubarray,; RaggedIndexedContiguousSubarray,; RaggedIndexedSubarray,
     NetCDFArray,
     UMArray,
-)
-from .collapse_functions import (
-    mean_abs_f,
-    mean_abs_ffinalise,
-    mean_abs_fpartial,
-    mean_f,
-    mean_ffinalise,
-    mean_fpartial,
-    root_mean_square_f,
-    root_mean_square_ffinalise,
-    root_mean_square_fpartial,
-    sd_f,
-    sd_ffinalise,
-    sd_fpartial,
-    sum_of_squares_f,
-    sum_of_squares_ffinalise,
-    sum_of_squares_fpartial,
-    sw2_f,
-    sw2_ffinalise,
-    sw2_fpartial,
-    sw_f,
-    sw_ffinalise,
-    sw_fpartial,
-    var_f,
-    var_ffinalise,
-    var_fpartial,
 )
 from .creation import (
     compressed_to_dask,
@@ -4966,758 +4938,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._unary_operation("__pos__")
 
-    @_deprecated_kwarg_check("i")
-    @_inplace_enabled(default=False)
-    def _collapse(
-        self,
-        func,
-        fpartial,
-        ffinalise,
-        axes=None,
-        squeeze=False,
-        weights=None,
-        mtol=1,
-        units=None,
-        inplace=False,
-        i=False,
-        _preserve_partitions=False,
-        **kwargs,
-    ):
-        """Collapse the data.
-
-        :Parameters:
-
-            func: function
-
-            fpartial: function
-
-            ffinalise: function
-
-            axes: (sequence of) `int`, optional
-                The axes to be collapsed. By default flattened input is
-                used. Each axis is identified by its integer position. No
-                axes are collapsed if *axes* is an empty sequence.
-
-            squeeze: `bool`, optional
-                If False then the axes which are collapsed are left in the
-                result as axes with size 1. In this case the result will
-                broadcast correctly against the original array. By default
-                collapsed axes are removed.
-
-            weights: *optional*
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-            _preserve_partitions: `bool`, optional
-                If True then preserve the shape of the partition matrix of
-                the input data, at the expense of a much slower
-                execution. By default, the partition matrix may be reduced
-                (using `varray`) to considerably speed things up.
-
-            kwargs: *optional*
-
-        :Returns:
-
-            `Data` or `None`
-
-        """
-        d = _inplace_enabled_define_and_cleanup(self)
-        ndim = d._ndim
-        self_axes = d._axes
-        self_shape = d._shape
-
-        original_self_axes = self_axes[:]
-
-        if axes is None:
-            # Collapse all axes
-            axes = list(range(ndim))
-            n_collapse_axes = ndim
-            n_non_collapse_axes = 0
-            Nmax = d._size
-        elif not axes and axes != 0:
-            # Collapse no axes
-            if inplace:
-                d = None
-            return d
-        else:
-            # Collapse some (maybe all) axes
-            axes = sorted(d._parse_axes(axes))  # , '_collapse'))
-            n_collapse_axes = len(axes)
-            n_non_collapse_axes = ndim - n_collapse_axes
-            Nmax = 1
-            for i in axes:
-                Nmax *= self_shape[i]
-        # --- End: if
-
-        # -------------------------------------------------------------
-        # Parse the weights.
-        #
-        # * Change the keys from dimension names to the integer
-        #   positions of the dimensions.
-        #
-        # * Make sure all non-null weights are Data objects.
-        # ------------------------------------------------------------
-        if weights is not None:
-            if not isinstance(weights, dict):
-                # If the shape of the weights is not the same as the
-                # shape of the data array then the weights are assumed
-                # to span the collapse axes in the order in which they
-                # are given
-                if np.shape(weights) == self_shape:
-                    weights = {tuple(self_axes): weights}
-                else:
-                    weights = {tuple([self_axes[i] for i in axes]): weights}
-
-            else:
-                weights = weights.copy()
-                weights_axes = set()
-                for key, value in tuple(weights.items()):
-                    del weights[key]
-                    key = d._parse_axes(key)
-                    if weights_axes.intersection(key):
-                        raise ValueError("Duplicate weights axis")
-
-                    weights_axes.update(key)
-                    weights[tuple([self_axes[i] for i in key])] = value
-                # --- End: for
-
-                if not weights_axes.intersection(axes):
-                    # Ignore all of the weights if none of them span
-                    # any collapse axes
-                    weights = {}
-            # --- End: if
-
-            for key, weight in tuple(weights.items()):
-                if weight is None or np.size(weight) == 1:
-                    # Ignore undefined weights and size 1 weights
-                    del weights[key]
-                    continue
-
-                weight_ndim = np.ndim(weight)
-                if weight_ndim != len(key):
-                    raise ValueError(
-                        "Can't collapse: Incorrect number of weights "
-                        "axes (%d != %d)" % (weight.ndim, len(key))
-                    )
-
-                if weight_ndim > ndim:
-                    raise ValueError(
-                        "Can't collapse: Incorrect number of weights "
-                        "axes (%d > %d)" % (weight.ndim, ndim)
-                    )
-
-                for n, axis in zip(np.shape(weight), key):
-                    if n != self_shape[self_axes.index(axis)]:
-                        raise ValueError(
-                            "Can't collapse: Incorrect weights "
-                            "shape {!r}".format(np.shape(weight))
-                        )
-                # --- End: for
-
-                # Convert weight to a data object, if necessary.
-                weight = type(self).asdata(weight)
-
-                if weight.dtype.char in ("S", "U"):
-                    # Ignore string-valued weights
-                    del weights[key]
-                    continue
-
-                weights[key] = weight
-            # --- End: for
-        # --- End: if
-
-        if axes != list(range(n_non_collapse_axes, ndim)):
-            transpose_iaxes = [i for i in range(ndim) if i not in axes] + axes
-            d.transpose(transpose_iaxes, inplace=True)
-
-        if weights:
-            # Optimize when weights span only non-partitioned axes
-            # (do this before permuting the order of the weight
-            # axes to be consistent with the order of the data
-            # axes)
-            weights = d._collapse_optimize_weights(weights)
-
-            # Permute the order of the weight axes to be
-            # consistent with the order of the data axes
-            self_axes = d._axes
-            for key, w in tuple(weights.items()):
-                key1 = tuple([axis for axis in self_axes if axis in key])
-
-                if key1 != key:
-                    w = w.transpose([key.index(axis) for axis in key1])
-
-                del weights[key]
-                ikey = tuple([self_axes.index(axis) for axis in key1])
-
-                weights[ikey] = w
-
-            # Add the weights to kwargs
-            kwargs["weights"] = weights
-
-        # If the input data array 'fits' in one chunk of memory, then
-        # make sure that it has only one partition
-        if (
-            not _preserve_partitions
-            and d._pmndim
-            and d.fits_in_one_chunk_in_memory(d.dtype.itemsize)
-        ):
-            d.varray
-
-        # -------------------------------------------------------------
-        # Initialise the output data array
-        # -------------------------------------------------------------
-        new = d[(Ellipsis,) + (0,) * n_collapse_axes]
-
-        #        new._auxiliary_mask = None
-        for partition in new.partitions.matrix.flat:
-            # Do this so as not to upset the ref count on the
-            # parittion's of d
-            del partition.subarray
-
-        # d.to_memory()
-
-        #        save = not new.fits_in_memory(new.dtype.itemsize)
-        keep_in_memory = new.fits_in_memory(new.dtype.itemsize)
-
-        datatype = d.dtype
-
-        if units is None:
-            new_units = new.Units
-        else:
-            new_units = units
-
-        p_axes = new._axes[:n_non_collapse_axes]
-        p_units = new_units
-
-        c_slice = (slice(None),) * n_collapse_axes
-
-        config = new.partition_configuration(
-            readonly=False, auxiliary_mask=None, extra_memory=False  # DCH ??x
-        )
-
-        processed_partitions = []
-        for pmindex, partition in np.ndenumerate(new.partitions.matrix):
-            if partition._process_partition:
-                # Only process the partition if it is flagged
-                partition.open(config)
-
-                # Save the position of the partition in the partition
-                # matrix
-                partition._pmindex = pmindex
-
-                partition.axes = p_axes
-                partition.flip = []
-                partition.part = []
-                partition.Units = p_units
-
-                if squeeze:
-                    # Note: parentheses for line continuation (not a tuple):
-                    partition.location = partition.location[
-                        :n_non_collapse_axes
-                    ]
-                    partition.shape = partition.shape[:n_non_collapse_axes]
-
-                indices = partition.indices[:n_non_collapse_axes] + c_slice
-
-                partition.subarray = d._collapse_subspace(
-                    func,
-                    fpartial,
-                    ffinalise,
-                    indices,
-                    n_non_collapse_axes,
-                    n_collapse_axes,
-                    Nmax,
-                    mtol,
-                    _preserve_partitions=_preserve_partitions,
-                    _parallelise_collapse_subspace=False,
-                    **kwargs,
-                )
-
-                partition.close(keep_in_memory=keep_in_memory)
-
-                # Add each partition to a list of processed partitions
-                processed_partitions.append(partition)
-            # --- End: if
-        # --- End: for
-
-        # processed_partitions contains a list of all the partitions
-        # that have been processed on this rank. In the serial case
-        # this is all of them and this line of code has no
-        # effect. Otherwise the processed partitions from each rank
-        # are distributed to every rank and processed_partitions now
-        # contains all the processed partitions from every rank.
-        processed_partitions = self._share_partitions(
-            processed_partitions, False
-        )
-
-        # Put the processed partitions back in the partition matrix
-        # according to each partitions _pmindex attribute set above.
-        pm = new.partitions.matrix
-        for partition in processed_partitions:
-            pm[partition._pmindex] = partition
-
-            p_datatype = partition.subarray.dtype
-            if datatype != p_datatype:
-                datatype = np.result_type(p_datatype, datatype)
-        # --- End: for
-
-        new._Units = new_units
-        new.dtype = datatype
-
-        if squeeze:
-            new._axes = p_axes
-            new._ndim = ndim - n_collapse_axes
-            new._shape = new._shape[: new._ndim]
-        else:
-            new_axes = new._axes
-            if new_axes != original_self_axes:
-                iaxes = [new_axes.index(axis) for axis in original_self_axes]
-                new.transpose(iaxes, inplace=True)
-        # --- End: if
-
-        # ------------------------------------------------------------
-        # Update d in place and return
-        # ------------------------------------------------------------
-        d.__dict__ = new.__dict__
-
-        return d
-
-    def _collapse_subspace(
-        self,
-        func,
-        fpartial,
-        ffinalise,
-        indices,
-        n_non_collapse_axes,
-        n_collapse_axes,
-        Nmax,
-        mtol,
-        weights=None,
-        _preserve_partitions=False,
-        _parallelise_collapse_subspace=True,
-        **kwargs,
-    ):
-        """Collapse a subspace of a data array.
-
-        If set, *weights* and *kwargs* are passed to the function call. If
-        there is a *weights* keyword argument then this should either evaluate
-        to False or be a dictionary of weights for at least one of the data
-        dimensions.
-
-        :Parameters:
-
-            func : function
-
-            fpartial : function
-
-            ffinalise : function
-
-            indices: tuple
-                The indices of the master array which would create the
-                subspace.
-
-            n_non_collapse_axes : int
-                The number of data array axes which are not being
-                collapsed. It is assumed that they are in the slowest moving
-                positions.
-
-            n_collapse_axes : int
-                The number of data array axes which are being collapsed. It is
-                assumed that they are in the fastest moving positions.
-
-            weights : dict, optional
-
-            kwargs : *optional*
-
-        :Returns:
-
-            `list`
-
-        **Examples:**
-
-        """
-
-        ndim = self._ndim
-
-        master_shape = self.shape
-
-        data = self[indices]
-
-        # If the input data array 'fits' in one chunk of memory, then
-        # make sure that it has only one partition
-        if (
-            not _preserve_partitions
-            and data._pmndim
-            and data.fits_in_memory(data.dtype.itemsize)
-        ):
-            data.varray
-
-        # True iff at least two, but not all, axes are to be
-        # collapsed.
-        reshape = 1 < n_collapse_axes < ndim
-
-        out = None
-
-        if n_collapse_axes == ndim:
-            # All axes are to be collapsed
-            kwargs.pop("axis", None)
-        else:
-            # At least one axis, but not all axes, are to be
-            # collapsed. It is assumed that the collapse axes are in
-            # the last (fastest varying) positions (-1, -2, ...). We
-            # set kwargs['axis']=-1 (actually we use the +ve integer
-            # equivalent of -1) if there is more then one collapse
-            # axis because, in this case (i.e. reshape is True), we
-            # will reshape everything.
-            kwargs["axis"] = ndim - n_collapse_axes
-
-        masked = False
-
-        sub_samples = 0
-
-        #        pda_args = data.pda_args(revert_to_file=True) #, readonly=True)
-        config = data.partition_configuration(readonly=True)
-
-        # Flag which partitions will be processed on this rank. If
-        # _parallelise_collapse_subspace is False then all partitions
-        # will be flagged for processing.
-        data._flag_partitions_for_processing(_parallelise_collapse_subspace)
-
-        for i, partition in enumerate(data.partitions.matrix.flat):
-            if partition._process_partition:
-                # Only process a partition if flagged
-                partition.open(config)
-                array = partition.array
-
-                p_masked = partition.masked
-
-                if p_masked:
-                    masked = True
-                    if array.mask.all():
-                        # The array is all missing data
-                        partition.close()
-                        continue
-
-                # Still here? Then there are some non-missing sub-array
-                # elements.
-                if weights is not None:
-                    w = self._collapse_create_weights(
-                        array,
-                        partition.indices,
-                        indices,
-                        master_shape,
-                        weights,
-                        n_non_collapse_axes,
-                        n_collapse_axes,
-                    )
-                    wmin = w.min()
-                    if wmin < 0:
-                        raise ValueError(
-                            "Can't collapse with negative weights"
-                        )
-
-                    if wmin == 0:
-                        # Mask the array where the weights are zero
-                        array = np.ma.masked_where(w == 0, array, copy=True)
-                        if array.mask.all():
-                            # The array is all missing data
-                            partition.close()
-                            continue
-                    # --- End: if
-
-                    kwargs["weights"] = w
-                # --- End: if
-
-                partition.close()
-
-                if reshape:
-                    # At least two, but not all, axes are to be collapsed
-                    # => we need to reshape the array and the weights.
-                    shape = array.shape
-                    ndim = array.ndim
-                    new_shape = shape[:n_non_collapse_axes]
-                    new_shape += (reduce(mul, shape[n_non_collapse_axes:]),)
-                    array = np.reshape(array.copy(), new_shape)
-
-                    if weights is not None:
-                        w = kwargs["weights"]
-                        if w.ndim < ndim:
-                            # The weights span only collapse axes (as
-                            # opposed to spanning all axes)
-                            new_shape = (w.size,)
-
-                        kwargs["weights"] = np.reshape(w, new_shape)
-                # --- End: if
-
-                p_out = func(array, masked=p_masked, **kwargs)
-
-                if out is None:
-                    if (
-                        not _parallelise_collapse_subspace
-                        and data.partitions.size == i + 1
-                    ):
-                        # There is exactly one partition so we are done
-                        out = p_out
-                        break
-                    # --- End: if
-                    out = fpartial(p_out)
-                else:
-                    out = fpartial(out, p_out)
-                # --- End: if
-
-                sub_samples += 1
-
-            # --- End: if
-        # --- End: for
-
-        # In the case that the inner loop is not parallelised,
-        # just finalise.
-        out = self._collapse_finalise(
-            ffinalise,
-            out,
-            sub_samples,
-            masked,
-            Nmax,
-            mtol,
-            data,
-            n_non_collapse_axes,
-        )
-        #        # --- End: if
-
-        return out
-
-    @classmethod
-    def _collapse_finalise(
-        cls,
-        ffinalise,
-        out,
-        sub_samples,
-        masked,
-        Nmax,
-        mtol,
-        data,
-        n_non_collapse_axes,
-    ):
-        """Finalise a collapse over a data array."""
-        if out is not None:
-            # Finalise
-            N, out = ffinalise(out, sub_samples)
-            out = cls._collapse_mask(out, masked, N, Nmax, mtol)
-        else:
-            # no data - return all masked
-            out = np.ma.masked_all(
-                data.shape[:n_non_collapse_axes], data.dtype
-            )
-
-        return out
-
-    @staticmethod
-    def _collapse_mask(array, masked, N, Nmax, mtol):
-        """Re-masks a masked array to reflect a collapse.
-
-        :Parameters:
-
-            array: numpy array
-
-            masked: bool
-
-            N: numpy array-like
-
-            Nmax: int
-
-            mtol: numpy array-like
-
-        :Returns:
-
-           numpy array
-
-        """
-        if masked and mtol < 1:
-            x = N < (1 - mtol) * Nmax
-            if x.any():
-                array = np.ma.masked_where(x, array, copy=False)
-        # --- End: if
-
-        return array
-
-    @staticmethod
-    def _collapse_create_weights(
-        array,
-        indices,
-        master_indices,
-        master_shape,
-        master_weights,
-        n_non_collapse_axes,
-        n_collapse_axes,
-    ):
-        """Collapse weights of an array.
-
-        :Parameters:
-
-            array : numpy array
-
-            indices : tuple
-
-            master_indices : tuple
-
-            master_shape : tuple
-
-            master_weights : dict
-
-            n_non_collapse_axes : int
-                The number of array axes which are not being collapsed. It
-                is assumed that they are in the slowest moving positions.
-
-            n_collapse_axes : int
-                The number of array axes which are being collapsed. It is
-                assumed that they are in the fastest moving positions.
-
-        :Returns:
-
-            `numpy array or `None`
-
-        **Examples:**
-
-        """
-        array_shape = array.shape
-        array_ndim = array.ndim
-
-        weights_indices = []
-        for master_index, index, size in zip(
-            master_indices, indices, master_shape
-        ):
-            start, stop, step = master_index.indices(size)
-
-            size1, mod = divmod(stop - start - 1, step)
-
-            start1, stop1, step1 = index.indices(size1 + 1)
-
-            size2, mod = divmod(stop1 - start1, step1)
-
-            if mod != 0:
-                size2 += 1
-
-            start += start1 * step
-            step *= step1
-            stop = start + (size2 - 1) * step + 1
-
-            weights_indices.append(slice(start, stop, step))
-
-        base_shape = (1,) * array_ndim
-
-        masked = False
-        zero_weights = False
-
-        weights = []
-        for key, weight in master_weights.items():
-            shape = list(base_shape)
-            index = []
-            for i in key:
-                shape[i] = array_shape[i]
-                index.append(weights_indices[i])
-
-            weight = weight[tuple(index)].array
-
-            zero_weights = zero_weights or (weight.min() <= 0)
-
-            masked = masked or np.ma.isMA(weight)
-
-            if weight.ndim != array_ndim:
-                # Make sure that the weight has the same number of
-                # dimensions as the array
-                weight = weight.reshape(shape)
-
-            weights.append(weight)
-
-        weights_out = weights[0]
-
-        if len(weights) > 1:
-            # There are two or more weights, so create their product
-            # (can't do this in-place because of broadcasting woe)
-            for w in weights[1:]:
-                weights_out = weights_out * w
-
-        weights_out_shape = weights_out.shape
-
-        if (
-            not masked
-            and weights_out_shape[:n_non_collapse_axes]
-            == base_shape[:n_non_collapse_axes]
-        ):
-            # The input weights are not masked and only span collapse axes
-            weights_out = weights_out.reshape(
-                weights_out_shape[n_non_collapse_axes:]
-            )
-
-            if (
-                weights_out_shape[n_non_collapse_axes:]
-                != array_shape[n_non_collapse_axes:]
-            ):
-                # The input weights span some, but not all, of the
-                # collapse axes, so broadcast the weights over all
-                # collapse axes
-                weights_out = broadcast_array(
-                    weights_out, array_shape[n_non_collapse_axes:]
-                )
-        else:
-            if weights_out_shape != array_shape:
-                # Either a) The input weights span at least one
-                # non-collapse axis, so broadcast the weights over all
-                # axes or b) The weights contain masked values
-                weights_out = broadcast_array(weights_out, array_shape)
-
-            if masked and np.ma.isMA(array):
-                if not (array.mask | weights_out.mask == array.mask).all():
-                    raise ValueError(
-                        "The output weights mask {} is not compatible with "
-                        "the array mask {}.".format(
-                            weights_out.mask, array.mask
-                        )
-                    )
-        # --- End: if
-
-        return weights_out
-
-    def _collapse_optimize_weights(self, weights):
-        """Optimise when weights span only non-partitioned axes.
-
-        weights: `dict`
-
-        """
-        non_partitioned_axes = set(self._axes).difference(self._pmaxes)
-
-        x = []
-        new_key = ()
-        for key in weights:
-            if non_partitioned_axes.issuperset(key):
-                x.append(key)
-                new_key += key
-        # --- End: for
-
-        if len(x) > 1:
-            reshaped_weights = []
-            for key in x:
-                w = weights.pop(key)
-                w = w.array
-                shape = [
-                    (w.shape[key.index(axis)] if axis in key else 1)
-                    for axis in new_key
-                ]
-                w = w.reshape(shape)
-
-                reshaped_weights.append(w)
-
-            # Create their product
-            new_weight = reshaped_weights[0]
-            for w in reshaped_weights[1:]:
-                new_weight = new_weight * w
-
-            weights[new_key] = type(self)(new_weight)
-
-        return weights
-
     # ----------------------------------------------------------------
     # Private attributes
     # ----------------------------------------------------------------
@@ -7705,6 +6925,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         axes=None,
         squeeze=False,
         mtol=1,
+        split_every=None,
         inplace=False,
         i=False,
         _preserve_partitions=False,
@@ -7731,23 +6952,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        # TODODASK: Placeholder for the real thing, that takes into
-        # account axes=axes, squeeze=squeeze, mtol=mtol,
-        # inplace=inplace.
-        #
-        # This is only here for now, in this form, to ensure that
-        # cf.read works
-        return self._get_dask().max()
-
-    #        return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
-    #                              squeeze=squeeze, mtol=mtol, inplace=inplace,
-    #                              _preserve_partitions=_preserve_partitions)
+        return self.max(
+            axes=axes,
+            squeeze=squeeze,
+            mtol=mtol,
+            split_every=split_every,
+            inplace=inplace,
+        )
 
     def maximum_absolute_value(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
+        split_every=None,
         inplace=False,
         _preserve_partitions=False,
     ):
@@ -7785,16 +7003,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[3, 9]] m>
 
         """
-        return self._collapse(
-            max_abs_f,
-            max_abs_fpartial,
-            max_abs_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
+        from .collapse_functions import cf_max_abs as collapse
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
+        return d
 
     @_deprecated_kwarg_check("i")
     def minimum(
@@ -7830,15 +7053,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        return self._collapse(
-            min_f,
-            min_fpartial,
-            min_ffinalise,
+        return self.min(
             axes=axes,
             squeeze=squeeze,
             mtol=mtol,
+            split_every=split_every,
             inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
 
     def minimum_absolute_value(
@@ -7883,16 +7103,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[-1, -12]] m>
 
         """
-        return self._collapse(
-            min_abs_f,
-            min_abs_fpartial,
-            min_abs_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
+        from .collapse_functions import cf_min_abs as collapse
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -7907,30 +7132,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         split_every=None,
         i=False,
     ):
-        from .collapse_functions import cf_mean as func
+        from .collapse_functions import cf_mean as collapse
 
         d = _inplace_enabled_define_and_cleanup(self)
-        return _collapse(
-            d,
-            func,
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
 
-    #    @_deprecated_kwarg_check("i")
-    #    def mean(
-    #        self,
-    #        axes=None,
-    #        squeeze=False,
-    #        mtol=1,
-    #        weights=None,
-    #        inplace=False,
-    #        i=False,
-    #        _preserve_partitions=False,
-    #    ):
+        return d
+
     #        """Collapse axes with their mean.
     #
     #        The mean is unweighted by default, but may be weighted (see the
@@ -8086,17 +7304,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     #        [[[9.666666666666666 10.666666666666666 -- 12.666666666666666]]]
     #
     #        """
-    #        return self._collapse(
-    #            mean_f,
-    #            mean_fpartial,
-    #            mean_ffinalise,
-    #            axes=axes,
-    #            squeeze=squeeze,
-    #            weights=weights,
-    #            mtol=mtol,
-    #            inplace=inplace,
-    #            _preserve_partitions=_preserve_partitions,
-    #        )
 
     def mean_absolute_value(
         self,
@@ -8104,6 +7311,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         squeeze=False,
         mtol=1,
         weights=None,
+        split_every=None,
         inplace=False,
         _preserve_partitions=False,
     ):
@@ -8139,24 +7347,32 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[2.0, 9.666666666666666]] m>
 
         """
-        return self._collapse(
-            mean_abs_f,
-            mean_abs_fpartial,
-            mean_abs_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
-            weights=weights,
-            mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
-        )
+        from .collapse_functions import cf_mean_abs as collapse
 
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
+            axis=axes,
+            weights=weights,
+            keepdims=not squeeze,
+            split_every=split_every,
+            mtol=mtol,
+        )
+        d._set_dask(dx, reset_mask_hardness=True)
+
+        return d
+
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     def integral(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         weights=None,
+        split_every=None,
         inplace=False,
         _preserve_partitions=False,
     ):
@@ -8222,35 +7438,30 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        if weights is None:
-            units = None
-        else:
-            units = self.Units
-            if not units:
-                units = Units("1")
-
-            weights_units = getattr(weights, "Units", None)
-            if weights_units is not None:
-                units = units * weights_units
-            else:
-                for w in weights.values():
-                    weights_units = getattr(w, "Units", None)
-                    if weights_units is not None:
-                        units = units * weights_units
-        # --- End: if
-
-        return self._collapse(
-            sum_f,
-            sum_fpartial,
-            sum_ffinalise,
+        d = _inplace_enabled_define_and_cleanup(self)
+        d.sum(
             axes=axes,
-            squeeze=squeeze,
             weights=weights,
+            squeeze=squeeze,
             mtol=mtol,
-            inplace=inplace,
-            units=units,
-            _preserve_partitions=_preserve_partitions,
+            split_every=split_every,
+            inplace=True,
         )
+
+        new_units = None
+        if weights is not None:
+            weights_units = getattr(weights, "Units", None)
+            if weights_units:
+                units = self.Units
+                if units:
+                    new_units = units * weights_units
+                else:
+                    new_units = weights_units
+
+        if new_units is not None:
+            d.override_units(new_units, inplace=True)
+
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -8260,21 +7471,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         axes=None,
         squeeze=False,
         mtol=1,
-        inplace=False,
         split_every=None,
+        inplace=False,
         i=False,
     ):
-        from .collapse_functions import cf_sample_size
+        from .collapse_functions import cf_sample_size as collapse
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d = _collapse(
-            d,
-            cf_sample_size,
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
             axis=axes,
+            weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
         return d
 
     @property
@@ -10831,17 +10046,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        from .collapse_functions import cf_mid_range
+        from .collapse_functions import cf_mid_range as collapse
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d = _collapse(
-            d,
-            cf_mid_range,
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
             axis=axes,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -11128,17 +10346,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        return self._collapse(
-            root_mean_square_f,
-            root_mean_square_fpartial,
-            root_mean_square_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
+        from .collapse_functions import cf_rms as collapse
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
+            axis=axes,
             weights=weights,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
@@ -12725,8 +11948,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             split_every: `int` or `dict`, optional
-                Determines the depth of the recursive aggregation. If
-                set to a number greater an oe equal to the number of
+                Determines the depth of the recursive aggregation. See
+                `dask.array.reduction` for details.
+
+
+                set to a number greater than to equal to the number of
                 input chunks, the aggregation will be performed in two
                 steps, one ``chunk`` function per input chunk and a
                 single ``aggregate`` function at the end. If set to
@@ -12758,17 +11984,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        from .collapse_functions import cf_range
+        from .collapse_functions import cf_range as collapse
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d = _collapse(
-            d,
-            cf_range,
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
             axis=axes,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -12836,25 +12065,32 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         i=False,
         _preserve_partitions=False,
     ):
-        from .collapse_functions import cf_sum
+        from .collapse_functions import cf_sum as collapse
 
         d = _inplace_enabled_define_and_cleanup(self)
-        return _collapse(
-            d,
-            cf_sum,
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
 
+        return d
+
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     def sum_of_squares(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         weights=None,
+        split_every=None,
         inplace=False,
         _preserve_partitions=False,
     ):
@@ -12889,30 +12125,38 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[14, 289]] m2>
 
         """
+        from .collapse_functions import cf_sum_of_squares as collapse
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
+            axis=axes,
+            weights=weights,
+            keepdims=not squeeze,
+            split_every=split_every,
+            mtol=mtol,
+        )
+        d._set_dask(dx, reset_mask_hardness=True)
+
         units = self.Units
         if units:
-            units = units ** 2
+            d.override_units(units ** 2, inplace=True)
 
-        return self._collapse(
-            sum_of_squares_f,
-            sum_of_squares_fpartial,
-            sum_of_squares_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
-            weights=weights,
-            units=units,
-            mtol=mtol,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
-        )
+        return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
+    #    @_deprecated_kwarg_check("i")
     def sum_of_weights(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         weights=None,
+        split_every=None,
         inplace=False,
         i=False,
         _preserve_partitions=False,
@@ -12930,6 +12174,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             squeeze : bool, optional
 
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
             {[inplace: `bool`, optional}}
 
             {{i: deprecated at version 3.0.0}}
@@ -12942,40 +12190,49 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
+        from .collapse_functions import cf_sum_of_weights as collapse
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
         if weights is None:
-            units = Units()
+            units = _units_None
         else:
-            weights_units = getattr(weights, "Units", None)
-            if weights_units is not None:
-                units = weights_units
-            else:
-                units = Units("1")
-                for w in weights.values():
-                    weights_units = getattr(w, "Units", None)
-                    if weights_units is not None:
-                        units = units * weights_units
-        # --- End: if
+            units = getattr(weights, "Units", None)
+            if units is None:
+                units = _units_None
 
-        return self._collapse(
-            sw_f,
-            sw_fpartial,
-            sw_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
+            axis=axes,
             weights=weights,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            units=units,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
+        dx = da.sqrt(dx)
+        d._set_dask(dx, reset_mask_hardness=True)
 
+        units = _units_None
+        if weights is not None:
+            units = getattr(weights, "Units", None)
+            if units is None:
+                units = _units_None
+
+        d.override_units(units, inplace=True)
+
+        return d
+
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def sum_of_weights2(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         weights=None,
+        split_every=None,
         inplace=False,
         i=False,
         _preserve_partitions=False,
@@ -13005,32 +12262,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        if weights is None:
-            units = Units()
-        else:
-            weights_units = getattr(weights, "Units", None)
-            if weights_units is not None:
-                units = weights_units
-            else:
-                units = Units("1")
-                for w in weights.values():
-                    weights_units = getattr(w, "Units", None)
-                    if weights_units is not None:
-                        units = units * (weights_units ** 2)
-        # --- End: if
+        from .collapse_functions import cf_sum_of_weights2 as collapse
 
-        return self._collapse(
-            sw2_f,
-            sw2_fpartial,
-            sw2_ffinalise,
-            axes=axes,
-            squeeze=squeeze,
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
+            axis=axes,
             weights=weights,
+            keepdims=not squeeze,
+            split_every=split_every,
             mtol=mtol,
-            units=units,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
+        dx = da.sqrt(dx)
+        d._set_dask(dx, reset_mask_hardness=True)
+
+        units = _units_None
+        if weights is not None:
+            units = getattr(weights, "Units", None)
+            if units is None:
+                units = _units_None
+            else:
+                units = units ** 2
+
+        d.override_units(units, inplace=True)
+
+        return d
 
     @_deprecated_kwarg_check("i")
     def sd(
@@ -13184,18 +12442,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data: 1.02887985207 >
 
         """
-        return self._collapse(
-            sd_f,
-            sd_fpartial,
-            sd_ffinalise,
+        d = _inplace_enabled_define_and_cleanup(self)
+        d.var(
             axes=axes,
-            squeeze=squeeze,
             weights=weights,
             mtol=mtol,
-            ddof=ddof,
-            inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
+            split_every=split_every,
+            inplace=True,
         )
+        d **= 0.5
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -13206,88 +12462,34 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         weights=None,
         squeeze=False,
         mtol=1,
-            ddof=0,
+        ddof=0,
         inplace=False,
         split_every=None,
         i=False,
         _preserve_partitions=False,
     ):
         from .collapse_functions import cf_var
-        
+
+        collapse = partial(cf_var, ddof=ddof)
+
         d = _inplace_enabled_define_and_cleanup(self)
-        _collapse(
-            d,
-            partial(cf_var, ddof=ddof),
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
 
         units = d.Units
         if units:
             d.override_units(units ** 2, inplace=True)
 
         return d
-    
-#    @_deprecated_kwarg_check("i")
-#    def var(
-#        self,
-#        axes=None,
-#        squeeze=False,
-#        weights=None,
-#        mtol=1,
-#        ddof=0,
-#        inplace=False,
-#        i=False,
-#        _preserve_partitions=False,
-#    ):
-#        """Collapse axes with their weighted variance.
-#
-#        The units of the returned array are the square of the units of the
-#        array.
-#
-#        .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `range`, `sum`,
-#                     `sd`, `stats`
-#
-#        :Parameters:
-#
-#            axes : (sequence of) int, optional
-#
-#            squeeze : bool, optional
-#
-#            weights :
-#
-#            {{inplace: `bool`, optional}}
-#
-#            {{i: deprecated at version 3.0.0}}
-#
-#        :Returns:
-#
-#            `Data` or `None`
-#                The collapsed array.
-#
-#        **Examples:**
-#
-#        """
-#        units = self.Units
-#        if units:
-#            units = units ** 2
-#
-#        return self._collapse(
-#            var_f,
-#            var_fpartial,
-#            var_ffinalise,
-#            axes=axes,
-#            squeeze=squeeze,
-#            weights=weights,
-#            mtol=mtol,
-#            units=units,
-#            ddof=ddof,
-#            inplace=inplace,
-#            _preserve_partitions=_preserve_partitions,
-#        )
 
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"
@@ -13349,7 +12551,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
-    def sumw(
+    def sum(
         self,
         axes=None,
         weights=None,
@@ -13359,18 +12561,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         split_every=None,
         i=False,
     ):
-        from .collapse_functions import cf_sumw
+        from .collapse_functions import cf_sum as collapse
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d = _collapse(
-            d,
-            cf_sumw,
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
         return d
 
     # ----------------------------------------------------------------
@@ -13389,21 +12594,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         axes=None,
         squeeze=False,
         mtol=1,
-        inplace=False,
         split_every=None,
+        inplace=False,
         i=False,
     ):
-        from .collapse_functions import cf_max
+        from .collapse_functions import cf_max as collapse
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d = _collapse(
-            d,
-            cf_max,
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
             axis=axes,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -13419,17 +12627,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         i=False,
         _preserve_partitions=False,
     ):
-        from .collapse_functions import cf_min
+        from .collapse_functions import cf_min as collapse
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d = _collapse(
-            d,
-            cf_min,
+
+        dx = d._get_dask()
+        dx = collapse(
+            dx,
             axis=axes,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        d._set_dask(dx, reset_mask_hardness=True)
+
         return d
 
     def standard_deviation(
@@ -13451,7 +12662,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             mtol=mtol,
             ddof=ddof,
             inplace=inplace,
-            _preserve_partitions=_preserve_partitions,
         )
 
     def variance(
@@ -13703,27 +12913,3 @@ def _where_broadcastable(data, x, name):
             )
 
     return True
-
-
-def _collapse(
-    d,
-    collapse_func,
-    axis=None,
-    weights=None,
-    keepdims=True,
-    split_every=None,
-    mtol=1,
-):
-    """TODODASK."""
-    dx = d._get_dask()
-    dx = collapse_func(
-        dx,
-        axis=axis,
-        weights=weights,
-        keepdims=keepdims,
-        split_every=split_every,
-        mtol=mtol,
-    )
-    d._set_dask(dx, reset_mask_hardness=True)
-
-    return d

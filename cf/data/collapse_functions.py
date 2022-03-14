@@ -1,995 +1,7 @@
-from functools import partial
-from functools import partial as functools_partial
-from functools import reduce
+from functools import partial, reduce
 from operator import mul
 
 import numpy as np
-from numpy import abs as numpy_abs
-from numpy import array as numpy_array
-from numpy import asanyarray as numpy_asanyarray
-from numpy import average as numpy_average
-from numpy import expand_dims as numpy_expand_dims
-from numpy import maximum as numpy_maximum
-from numpy import minimum as numpy_minimum
-from numpy import ndim as numpy_ndim
-from numpy.ma import array as numpy_ma_array
-from numpy.ma import average as numpy_ma_average
-from numpy.ma import expand_dims as numpy_ma_expand_dims
-from numpy.ma import isMA as numpy_ma_isMA
-from numpy.ma import nomask as numpy_ma_nomask
-from numpy.ma import where as numpy_ma_where
-
-from ..functions import broadcast_array
-
-
-#def asanyarray(*args):
-#    """Return every input array as an numpy ndarray, or a subclass of.
-#
-#    :Parameters:
-#
-#        args: sequence of array-like input objects
-#
-#    :Returns:
-#
-#        `list`
-#            The input objects left as, else converted to, `numpy.ndarray`
-#
-#    """
-#    out = []
-#    for x in args:
-#        if x is not None and not np.ndim(x):
-#            # Make sure that we have a numpy array (as opposed to, e.g. a
-#            # numpy.float64)
-#            out.append(np.asanyarray(x))
-#        else:
-#            out.append(x)
-#
-#    return out
-
-
-def asanyarray(x):
-    """Return every input array as an numpy ndarray, or a subclass of.
-
-    :Parameters:
-
-        args: sequence of array-like input objects
-
-    :Returns:
-
-        `list`
-            The input objects left as, else converted to, `numpy.ndarray`
-
-    """
-    if not np.ndim(x):
-        # Make sure that we have a numpy array (e.g. as opposed to a
-        # numpy.float64)
-        return np.asanyarray(x)
-
-    return x
-
-
-def psum(x, y):
-    """Add two arrays element-wise.
-
-    If either or both of the arrays are masked then the output array is
-    masked only where both input arrays are masked.
-
-    :Parameters:
-
-        x: numpy array-like
-           *Might be updated in place*.
-
-        y: numpy array-like
-           Will not be updated in place.
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    **Examples:**
-
-    >>> c = psum(a, b)
-
-    """
-    if numpy_ma_isMA(x):
-        if numpy_ma_isMA(y):
-            # x and y are both masked
-            x_mask = x.mask
-            x = x.filled(0)
-            x += y.filled(0)
-            x = numpy_ma_array(x, mask=x_mask & y.mask, copy=False)
-        else:
-            # Only x is masked
-            x = x.filled(0)
-            x += y
-    elif numpy_ma_isMA(y):
-        # Only y is masked
-        x += y.filled(0)
-    else:
-        # x and y are both unmasked
-        x += y
-
-    return x
-
-
-def pmax(x, y):
-    """The element-wise maximum of two arrays.
-
-    :Parameters:
-
-        x: array-like
-           May be updated in place and should not be used again.
-
-        y: array-like
-           Will not be updated in place.
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    if numpy_ma_isMA(x):
-        if numpy_ma_isMA(y):
-            # x and y are both masked
-            z = numpy_maximum(x, y)
-            z = numpy_ma_where(x.mask & ~y.mask, y, z)
-            x = numpy_ma_where(y.mask & ~x.mask, x, z)
-            if x.mask is numpy_ma_nomask:  # not numpy_any(x.mask):
-                x = numpy_array(x)
-        else:
-            # Only x is masked
-            z = numpy_maximum(x, y)
-            x = numpy_ma_where(x.mask, y, z)
-            if x.mask is numpy_ma_nomask:  # not numpy_any(x.mask):
-                x = numpy_array(x)
-    elif numpy_ma_isMA(y):
-        # Only y is masked
-        z = numpy_maximum(x, y)
-        x = numpy_ma_where(y.mask, x, z)
-        if x.mask is numpy_ma_nomask:  # not numpy_any(x.mask):
-            x = numpy_array(x)
-    else:
-        # x and y are both unmasked
-        if not numpy_ndim(x):
-            # Make sure that we have a numpy array (as opposed to,
-            # e.g. a numpy.float64)
-            x = numpy_asanyarray(x)
-
-        numpy_maximum(x, y, out=x)
-
-    return x
-
-
-def pmin(x, y):
-    """The element-wise minimum of two arrays.
-
-    :Parameters:
-
-        x: `numpy.ndarray`
-           May be updated in place and should not be used again.
-
-        y: `numpy.ndarray`
-           Will not be updated in place.
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    if numpy_ma_isMA(x):
-        if numpy_ma_isMA(y):
-            # x and y are both masked
-            z = numpy_minimum(x, y)
-            z = numpy_ma_where(x.mask & ~y.mask, y, z)
-            x = numpy_ma_where(y.mask & ~x.mask, x, z)
-            if x.mask is numpy_ma_nomask:
-                x = numpy_array(x)
-        else:
-            # Only x is masked
-            z = numpy_minimum(x, y)
-            x = numpy_ma_where(x.mask, y, z)
-            if x.mask is numpy_ma_nomask:
-                x = numpy_array(x)
-    elif numpy_ma_isMA(y):
-        # Only y is masked
-        z = numpy_minimum(x, y)
-        x = numpy_ma_where(y.mask, x, z)
-        if x.mask is numpy_ma_nomask:
-            x = numpy_array(x)
-    else:
-        # x and y are both unmasked
-        if not numpy_ndim(x):
-            # Make sure that we have a numpy array (as opposed to,
-            # e.g. a numpy.float64)
-            x = numpy_asanyarray(x)
-
-        numpy_minimum(x, y, out=x)
-
-    return x
-
-
-def mask_where_too_few_values(Nmin, N, x):
-    """Mask elements of N and x where N is strictly less than Nmin.
-
-    :Parameters:
-
-        Nmin: `int`
-
-        N: `numpy.ndarray`
-
-        x: `numpy.ndarray`
-
-    :Returns:
-
-        (`numpy.ndarray`, `numpy.ndarray`)
-            A tuple containing *N* and *x*, both masked where *N* is
-            strictly less than *Nmin*.
-
-    """
-    if N.min() < Nmin:
-        mask = N < Nmin
-        N = numpy_ma_array(N, mask=mask, copy=False, shrink=False)
-        x = numpy_ma_array(x, mask=mask, copy=False, shrink=True)
-
-    return asanyarray(N, x)
-
-
-def mask_small_sample_size(x, N, axis, mtol, original_shape):
-    """Mask elements of N and x where N is strictly less than Nmin.
-
-    :Parameters:
-
-        Nmin: `int`
-
-        N: `numpy.ndarray`
-
-        x: `numpy.ndarray`
-
-    :Returns:
-
-        (`numpy.ndarray`, `numpy.ndarray`)
-            A tuple containing *N* and *x*, both masked where *N* is
-            strictly less than *Nmin*.
-
-    """
-    if mtol < 1:
-        Nmax = reduce(mul, [original_shape[i] for i in axis], 1)
-        x = np.ma.masked_where(N < (1 - mtol) * Nmax, x, copy=False)
-
-    return asanyarray(x)
-
-
-def double_precision(a):
-    """Convert the input array to double precision.
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    char = a.dtype.char
-    if char == "f":
-        newtype = float
-    elif char == "i":
-        newtype = int
-    else:
-        return a
-
-    if numpy_ma_isMA(a):
-        return a.astype(newtype)
-    else:
-        return a.astype(newtype, copy=False)
-
-
-# --------------------------------------------------------------------
-# mean
-# --------------------------------------------------------------------
-def mean_f(a, axis=None, weights=None, masked=False):
-    """The weighted average along the specified axes.
-
-    :Parameters:
-
-        a: array-like
-            Input array. Not all missing data
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-        weights: numpy array-like, optional
-            Weights associated with values of the array. By default the
-            statistics are unweighted.
-
-        masked: `bool`, optional
-
-    :Returns:
-
-        3-`tuple` of `numpy.ndarray`
-            The sample size, average and sum of weights inside a 3-tuple.
-
-    """
-    a = double_precision(a)
-
-    if masked:
-        average = numpy_ma_average
-    else:
-        average = numpy_average
-
-    avg, sw = average(a, axis=axis, weights=weights, returned=True)
-
-    if not numpy_ndim(avg):
-        avg = numpy_asanyarray(avg)
-        sw = numpy_asanyarray(sw)
-
-    if weights is None:
-        N = sw.copy()
-    else:
-        (N,) = sample_size_f(a, axis=axis, masked=masked)
-
-    return asanyarray(N, avg, sw)
-
-
-def mean_fpartial(out, out1=None, group=False):
-    """Return the partial sample size, the partial sum and partial sum
-    of the weights.
-
-    :Parameters:
-
-        out: 3-`tuple` of `numpy.ndarray`
-            Either an output from a previous call to `mean_fpartial`;
-            or, if *out1* is `None`, an output from `mean_f`.
-
-        out1: 3-`tuple` of `numpy.ndarray`, optional
-            An output from `mean_f`.
-
-    :Returns:
-
-        3-`tuple` of `numpy.ndarray`
-            The sample size, average and sum of weights inside a 3-tuple.
-
-    """
-    N, avg, sw = out
-
-    if out1 is None and not group:
-        # This is the first partition to be processed
-
-        # Convert the partition average to a partition sum
-        avg *= sw
-    else:
-        # Combine this partition with existing partial combination
-        N1, avg1, sw1 = out1
-
-        # Convert the partition average to a partition sum
-        if not group:
-            avg1 *= sw1
-
-        N = psum(N, N1)
-        avg = psum(avg, avg1)  # Now a partial sum
-        sw = psum(sw, sw1)
-
-    return asanyarray(N, avg, sw)
-
-
-def mean_ffinalise(out, sub_samples=None):
-    """Divide the weighted sum by the sum of weights.
-
-    Also mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        out: 3-`tuple` of `numpy.ndarray`
-            An output from `mean_fpartial`.
-
-        sub_samples: optional
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the mean.
-
-    """
-    N, avg, sw = out
-
-    if sub_samples:
-        avg /= sw
-
-    return mask_where_too_few_values(1, N, avg)
-
-
-# --------------------------------------------------------------------
-# mean_absolute_value
-# --------------------------------------------------------------------
-def mean_abs_f(a, axis=None, weights=None, masked=False):
-    """Return the mean of the absolute array, or the means of the
-    absolute array along an axis.
-
-    :Parameters:
-
-        a: numpy array_like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input is
-            used.
-
-        masked: `bool`
-
-    :Returns:
-
-        2-tuple of `numpy.ndarray`
-            The sample sizes and the means of the absolute values.
-
-    """
-    return mean_f(numpy_abs(a), axis=axis, weights=weights, masked=masked)
-
-
-mean_abs_fpartial = mean_fpartial
-mean_abs_ffinalise = mean_ffinalise
-
-
-# --------------------------------------------------------------------
-# root_mean_square
-# --------------------------------------------------------------------
-def root_mean_square_f(a, axis=None, weights=None, masked=False):
-    """The RMS along the specified axes.
-
-    :Parameters:
-
-        a: array-like
-            Input array. Not all missing data
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-        weights: numpy array-like, optional
-            Weights associated with values of the array. By default the
-            statistics are unweighted.
-
-        masked: `bool`, optional
-
-    :Returns:
-
-        `tuple`
-            3-tuple.
-
-    """
-    a = double_precision(a)
-
-    return mean_f(a ** 2, axis=axis, weights=weights, masked=masked)
-
-
-root_mean_square_fpartial = mean_fpartial
-
-
-def root_mean_square_ffinalise(out, sub_samples=None):
-    """Divide the weighted sum by the sum of weights and take the square
-    root.
-
-    Also mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        out: 3-`tuple` of `numpy.ndarray`
-            An output from `root_mean_square_fpartial`.
-
-        sub_samples: optional
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the RMS.
-
-    """
-    N, avg = mean_ffinalise(out, sub_samples=sub_samples)
-
-    avg **= 0.5
-
-    return asanyarray(N, avg)
-
-
-def sum_f(a, axis=None, weights=None, masked=False):
-    """Return the sum of an array or the sum along an axis.
-
-    ``sum_f(a, axis=axis)`` is equivalent to ``(numpy.sum(a,
-    axis=axis),)``
-
-    :Parameters:
-
-        a: numpy array-like
-            Input array
-
-        weights: numpy array-like, optional
-            Weights associated with values of the array. By default the
-            statistics are unweighted.
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the sum.
-
-    """
-    a = double_precision(a)
-
-    (N,) = sample_size_f(a, axis=axis, masked=masked)
-
-    if weights is not None:
-        # A weights array has been provided
-        weights = double_precision(weights)
-
-        if weights.ndim < a.ndim:
-            weights = broadcast_array(weights, a.shape)
-
-        a = a * weights
-
-    asum = a.sum(axis=axis)
-
-    if not numpy_ndim(asum):
-        asum = numpy_asanyarray(asum)
-
-    return asanyarray(N, asum)
-
-
-def sum_fpartial(out, out1=None, group=False):
-    """Return the partial sum of an array.
-
-    :Parameters:
-
-        out: 2-`tuple` of `numpy.ndarray`
-
-        out1: 2-`tuple` of `numpy.ndarray`, optional
-
-        group: *optional*
-            Ignored.
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the sum.
-
-    """
-    N, asum = out
-
-    if out1 is not None:
-        N1, asum1 = out1
-        N = psum(N, N1)
-        asum = psum(asum, asum1)
-
-    return asanyarray(N, asum)
-
-
-def sum_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to the sum of an array.
-
-    Here mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        sub_samples: optional
-            Ignored.
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the sum.
-
-    """
-    return mask_where_too_few_values(1, *out)
-
-
-# ---------------------------------------------------------------------
-# sum_of_squares
-# ---------------------------------------------------------------------
-def sum_of_squares_f(a, axis=None, weights=None, masked=False):
-    """Return the sum of the square of an array or the sum of squares
-    along an axis.
-
-    :Parameters:
-
-        a: numpy array-like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-    :Returns:
-
-        `tuple`
-            2-tuple
-
-    """
-    a = double_precision(a)
-    return sum_f(a ** 2, axis=axis, weights=weights, masked=masked)
-
-
-sum_of_squares_fpartial = sum_fpartial
-sum_of_squares_ffinalise = sum_ffinalise
-
-
-# ---------------------------------------------------------------------
-# Sum of weights
-# ---------------------------------------------------------------------
-def sw_f(
-    a, axis=None, masked=False, weights=None, N=None, sum_of_squares=False
-):
-    """Return the sum of weights for an array.
-
-    :Parameters:
-
-        a: numpy array_like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-        masked: `bool`, optional
-
-        weights: numpy array-like, optional
-            Weights associated with values of the array. By default the
-            statistics are unweighted.
-
-        N:  `numpy.ndarray`
-            Sample size
-
-        sum_of_squares: delta degrees of freedom
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the sum of weights.
-
-    """
-    if N is None:
-        (N,) = sample_size_f(a, axis=axis, masked=masked)
-
-    if weights is not None:
-        # A weights array has been provided
-        weights = double_precision(weights)
-
-        if weights.ndim < a.ndim:
-            weights = broadcast_array(weights, a.shape)
-
-        if masked:
-            weights = numpy_ma_array(weights, mask=a.mask, copy=False)
-
-        if sum_of_squares:
-            weights = weights * weights
-
-        sw = weights.sum(axis=axis)
-
-        if not numpy_ndim(sw):
-            sw = numpy_asanyarray(sw)
-    else:
-        # The sum of weights is equal to the sample size (i.e. an
-        # unweighted sample)
-        sw = N.copy()
-
-    return asanyarray(N, sw)
-
-
-sw_fpartial = sum_fpartial
-sw_ffinalise = sum_ffinalise
-
-# ---------------------------------------------------------------------
-# Sum of squares of weights
-# ---------------------------------------------------------------------
-sw2_f = functools_partial(sw_f, sum_of_squares=True)
-sw2_fpartial = sum_fpartial
-sw2_ffinalise = sum_ffinalise
-
-
-# ---------------------------------------------------------------------
-# Variance
-# ---------------------------------------------------------------------
-def var_f(a, axis=None, weights=None, masked=False, ddof=0):
-    """Return a tuple containing metrics relating to the array variance.
-
-    The tuple is a 7-tuple that contains, in the order given, the
-    following variables:
-
-    ========  ============================================================
-    Variable  Description
-    ========  ============================================================
-    N         Sample size
-
-    var       Sample variance (ddof=0)
-
-    avg       Weighted mean
-
-    V1        Sum of weights
-
-    V2        Sum of squares of weights
-
-    ddof      Delta degrees of freedom
-
-    weighted  Whether or not the sample is weighted
-    ========  ============================================================
-
-    :Parameters:
-
-        a: numpy array_like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
-
-        weights: numpy array-like, optional
-            Weights associated with values of the array. By default the
-            statistics are unweighted.
-
-        masked: `bool`, optional
-
-        ddof: delta degrees of freedom, optional
-
-    :Returns:
-
-        7-`tuple`
-            Tuple containing the value of the statistical metrics described
-            in the above table, in the given order.
-
-    """
-    # Make sure that a is double precision
-    a = double_precision(a)
-
-    weighted = weights is not None
-
-    # ----------------------------------------------------------------
-    # Methods:
-    #
-    # http://en.wikipedia.org/wiki/Standard_deviation#Population-based_statistics
-    # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_variance
-    # ----------------------------------------------------------------
-
-    # Calculate N   = number of data points
-    # Calculate avg = mean of data
-    # Calculate V1  = sum of weights
-    N, avg, V1 = mean_f(a, weights=weights, axis=axis, masked=masked)
-
-    # Calculate V2 = sum of squares of weights
-    if weighted and ddof == 1:
-        N, V2 = sw2_f(a, axis=axis, masked=masked, weights=weights, N=N)
-    else:
-        V2 = None
-
-    if axis is not None and avg.size > 1:
-        # We collapsed over a single axis and the array has 2 or more
-        # axes, so add an extra size 1 axis to the mean so that
-        # broadcasting works when we calculate the variance.
-        reshape_avg = True
-        if masked:
-            expand_dims = numpy_ma_expand_dims
-        else:
-            expand_dims = numpy_expand_dims
-
-        avg = expand_dims(avg, axis)
-    else:
-        reshape_avg = False
-
-    var = a - avg
-    var *= var
-
-    if masked:
-        average = numpy_ma_average
-    else:
-        average = numpy_average
-
-    var = average(var, axis=axis, weights=weights)
-
-    if reshape_avg:
-        shape = avg.shape
-        avg = avg.reshape(shape[:axis] + shape[axis + 1 :])
-
-    (N, var, avg, V1, V2) = asanyarray(N, var, avg, V1, V2)
-
-    return (N, var, avg, V1, V2, ddof, weighted)
-
-
-def var_fpartial(out, out1=None, group=False):
-    """Return a tuple of partial metrics relating to the array variance.
-
-    The tuple is a 7-tuple that contains, in the order given, the
-    following variables:
-
-    ========  ============================================================
-    Variable  Description
-    ========  ============================================================
-    N         Partial sample size
-
-    var       Partial sum of V1*(variance + mean^2)
-
-    avg       Unweighted partial sum
-
-    V1        Partial sum of weights
-
-    V2        Partial sum of squares of weights
-
-    ddof      Delta degrees of freedom
-
-    weighted  Whether or not the population is weighted
-    ========  ============================================================
-
-    For further information, see:
-    https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
-
-    :Parameters:
-
-        out: 7-`tuple`
-
-        out1: 7-`tuple`, optional
-
-    :Returns:
-
-        7-`tuple`
-            Tuple containing the value of the statistical metrics described
-            in the above table, in the given order.
-
-    """
-    (N, var, avg, V1, V2, ddof, weighted) = out
-
-    if out1 is None and not group:
-        # ------------------------------------------------------------
-        # var = V1(var+avg**2)
-        # avg = V1*avg = unweighted partial sum
-        # ------------------------------------------------------------
-        var += avg * avg
-        var *= V1
-        avg *= V1
-    else:
-        # ------------------------------------------------------------
-        # var = var + V1b(varb+avgb**2)
-        # avg = avg + V1b*avgb
-        # V1  = V1 + V1b
-        # V2  = V2 + V2b
-        # ------------------------------------------------------------
-        (Nb, varb, avgb, V1b, V2b, ddof, weighted) = out1
-
-        N = psum(N, Nb)
-
-        if not group:
-            varb += avgb * avgb
-            varb *= V1b
-            avgb *= V1b
-
-        var = psum(var, varb)
-        avg = psum(avg, avgb)
-        V1 = psum(V1, V1b)
-
-        if weighted and ddof == 1:
-            V2 = psum(V2, V2b)
-    # --- End: if
-
-    (N, var, avg, V1, V2) = asanyarray(N, var, avg, V1, V2)
-
-    return (N, var, avg, V1, V2, ddof, weighted)
-
-
-def var_ffinalise(out, sub_samples=None):
-    """Calculate the variance of the array and return it with the sample
-    size.
-
-    Also mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        out: 7-`tuple`
-
-        sub_samples: optional
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the variance.
-
-    """
-    (N, var, avg, V1, V2, ddof, weighted) = out
-
-    N, var = mask_where_too_few_values(max(2, ddof + 1), N, var)
-    N, V1 = mask_where_too_few_values(max(2, ddof + 1), N, V1)
-    if V2 is not None:
-        N, V2 = mask_where_too_few_values(max(2, ddof + 1), N, V2)
-
-    if sub_samples:
-        # ----------------------------------------------------------------
-        # The global biased variance = {[SUM(pV1(pv+pm**2)]/V1} - m**2
-        #
-        #   where pV1 = partial sum of weights
-        #         pv  = partial biased variance
-        #         pm  = partial mean
-        #         V1  = global sum of weights
-        #         m   = global mean
-        #
-        # Currently: var = SUM(pV1(pv+pm**2)
-        #            avg = V1*m
-        #
-        # https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
-        #
-        # For the general case of M non-overlapping data sets, X_{1}
-        # through X_{M}, and the aggregate data set X=\bigcup_{i}X_{i}
-        # we have the unweighted mean and variance is:
-        #
-        # \mu_{X}={\frac{1}{\sum_{i}{N_{X_{i}}}}}\left(\sum_{i}{N_{X_{i}}\mu_{X_{i}}}\right)
-        #
-        # var_{X}={{\frac{1}{\sum_{i}{N_{X_{i}}-ddof}}}\left(\sum_{i}{\left[(N_{X_{i}}-1)\sigma_{X_{i}}^{2}+N_{X_{i}}\mu_{X_{i}}^{2}\right]}-\left[\sum_{i}{N_{X_{i}}}\right]\mu_{X}^{2}\right)}
-        #
-        # ----------------------------------------------------------------
-        avg /= V1
-        avg *= avg
-        var /= V1
-        var -= avg
-
-    # ----------------------------------------------------------------
-    # var is now the biased global variance
-    # ----------------------------------------------------------------
-    if not weighted:
-        if ddof:
-            # The unweighted variance with N-ddof degrees of freedom is
-            # [V1/(V1-ddof)]*var. In this case V1 equals the sample size,
-            # N. ddof=1 provides an unbiased estimator of the variance of
-            # a hypothetical infinite population.
-            V1 /= V1 - ddof
-            var *= V1
-    elif ddof == 1:
-        # Calculate the weighted unbiased variance. The unbiased
-        # variance weighted with _reliability_ weights is
-        # [V1**2/(V1**2-V2)]*var.
-        #
-        # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_variance
-        V1 **= 2
-        var *= V1
-        V1 -= V2
-        var /= V1
-    elif ddof:
-        raise ValueError(
-            "Can only calculate a weighted variance with a delta degrees "
-            "of freedom (ddof) of 0 or 1: Got {}".format(ddof)
-        )
-
-    return asanyarray(N, var)
-
-
-# ---------------------------------------------------------------------
-# standard_deviation
-# ---------------------------------------------------------------------
-sd_f = var_f
-sd_fpartial = var_fpartial
-
-
-def sd_ffinalise(out, sub_samples=None):
-    """Apply any logic to finalise the collapse to the standard
-    deviation.
-
-    :Parameters:
-
-        out: `tuple`
-            A 2-tuple
-
-        sub_samples: *optional*
-            Ignored.
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the standard deviation.
-
-    """
-    N, sd = var_ffinalise(out, sub_samples)
-
-    sd **= 0.5
-
-    return asanyarray(N, sd)
-
-
 from dask.array import chunk
 from dask.array.core import _concatenate2
 from dask.array.reductions import divide, numel, reduction
@@ -997,13 +9,53 @@ from dask.core import flatten
 from dask.utils import deepmap  # Apply function inside nested lists
 
 
+def mask_small_sample_size(x, N, axis, mtol, original_shape):
+    """Mask elements where the sample size of the collapsed data is
+    below a threshold.
+
+    :Parameters:
+
+        x: `numpy.ndarray`
+            The collapsed data.
+
+        N: `numpy.ndarray`
+            The sample sizes of the collapsed values.
+
+        axis: sequence of `int`
+            The axes being collapsed.
+
+        mtol: number
+
+        original_shape: `tuple`
+            The shape of the original, uncollapsed data.
+
+    :Returns:
+
+        `numpy.ndarray`
+            Array *x* masked where *N* is sufficiently small. Note
+            that input *x* may be modified in-place with the output.
+
+    """
+    if not x.ndim:
+        # Make sure that we have a numpy array (e.g. as opposed to a
+        # numpy.float64)
+        x = np.asanyarray(x)
+
+    if mtol < 1:
+        # Nmax = total number of element, including an missing values
+        Nmax = reduce(mul, [original_shape[i] for i in axis], 1)
+        x = np.ma.masked_where(N < (1 - mtol) * Nmax, x, copy=False)
+
+    return x
+
+
 def sum_of_weights(
-    x, weights=None, dtype="f8", N=None, squared=False, **kwargs
+    x, weights=None, squared=False, dtype="f8", N=None, **kwargs
 ):
     """TODO."""
     if weights is None:
         if N is None:
-            N = cf_sample_size_chunk(x, dtype=dtype, **kwargs)["N"]
+            N = cf_sample_size_chunk(x, **kwargs)["N"]
 
         return N
 
@@ -1017,17 +69,12 @@ def sum_of_weights(
 
 
 def combine_arrays(
-    pairs, key, func, axis, dtype, computing_meta=False, **kwargs
+    pairs, key, func, axis, dtype=None, computing_meta=False, **kwargs
 ):
-    """rename *key*"""
     # Create a nested list of N and recursively concatenate it
-    # along the specified axes
-    if isinstance(key, str):
-        dm_func = lambda pair: pair[key]
-    else:
-        dm_func = key
+    # along the specified
+    x = deepmap(lambda pair: pair[key], pairs) if not computing_meta else pairs
 
-    x = deepmap(dm_func, pairs) if not computing_meta else pairs
     if dtype:
         kwargs["dtype"] = dtype
 
@@ -1057,26 +104,60 @@ def min_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
 
 def sum_sample_sizes(pairs, axis, **kwargs):
     """Alias of `combine_arrays` with ``key="N", func=chunk.sum,
-    computing_meta=False, dtype="i8"``."""
-    return combine_arrays(pairs, "N", chunk.sum, axis, "i8", False, **kwargs)
+    dtype="i8", computing_meta=False``."""
+    return combine_arrays(
+        pairs, "N", chunk.sum, axis, dtype="i8", computing_meta=False, **kwargs
+    )
 
 
 # --------------------------------------------------------------------
 # mean
 # --------------------------------------------------------------------
 def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
-    """Find the max of an array."""
+    """Return chunk-based values for calculating the global mean.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * V1: The sum of ``weights`` (set to ``N`` if weights are
+                  not present).
+
+            * sum: The weighted sum of ``x``.
+
+    """
     if computing_meta:
         return x
 
-    d = cf_sum_chunk(x, weights=weights, **kwargs)
+    # N, sum
+    d = cf_sum_chunk(x, weights, dtype=dtype, **kwargs)
 
     if weights is None:
-        sw = d["N"]
+        d["V1"] = d["N"]
     else:
-        sw = chunk.sum(weights, **kwargs)
+        d["V1"] = chunk.sum(weights, dtype=dtype, **kwargs)
 
-    d["sw"] = sw
     return d
 
 
@@ -1092,7 +173,7 @@ def cf_mean_combine(
         pairs = [pairs]
 
     d = {}
-    for key in ("sum", "sw"):
+    for key in ("sum", "V1"):
         d[key] = sum_arrays(pairs, key, axis, dtype, computing_meta, **kwargs)
         if computing_meta:
             return d[key]
@@ -1116,7 +197,7 @@ def cf_mean_agg(
     if computing_meta:
         return d
 
-    x = divide(d["sum"], d["sw"])  # dtype?
+    x = divide(d["sum"], d["V1"], dtype=dtype)
     x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
     return x
 
@@ -1143,10 +224,106 @@ def cf_mean(
 
 
 # --------------------------------------------------------------------
-# max
+# mean_absolute_value
 # --------------------------------------------------------------------
-def cf_max_chunk(x, computing_meta=False, **kwargs):
-    """Find the max of an array."""
+def cf_mean_abs_chunk(
+    x, weights=None, dtype=None, computing_meta=False, **kwargs
+):
+    """Return chunk-based values for calculating the global absolute
+    mean.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * V1: The sum of the weights (set to N if weights are not
+                  present).
+
+            * sum: The weighted sum of ``abs(x)``.
+
+    """
+    if computing_meta:
+        return x
+
+    return cf_mean_chunk(np.abs(x), weights, dtype=dtype, **kwargs)
+
+
+def cf_mean_abs(
+    a, weights=None, axis=None, keepdims=False, mtol=None, split_every=None
+):
+    """TODODASK."""
+    dtype = a.dtype
+    return reduction(
+        a,
+        cf_mean_abs_chunk,
+        partial(cf_mean_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_mean_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+        weights=weights,
+    )
+
+
+# --------------------------------------------------------------------
+# maximum
+# --------------------------------------------------------------------
+def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
+    """Return chunk-based values for calculating the global maximum.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction. Ignored.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * max: The maximum of `x``.
+
+    """
     if computing_meta:
         return x
 
@@ -1217,25 +394,36 @@ def cf_max(a, axis=None, keepdims=False, mtol=None, split_every=None):
 # --------------------------------------------------------------------
 # maximum_absolute_value
 # --------------------------------------------------------------------
-def cf_max_abs_chunk(x, computing_meta=False, **kwargs):
-    """Return the maximum of the absolute array, or the maximum of the
-    absolute array along an axis.
+def cf_max_abs_chunk(x, dtype=None, computing_meta=False, **kwargs):
+    """Return chunk-based values for calculating the global absolute
+    max.
 
     :Parameters:
 
-        a: numpy array_like
-            Input array
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
 
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
 
-        masked: bool
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
 
     :Returns:
 
-        2-tuple of numpy arrays
-            The sample sizes and the maxima of the absolute values.
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * max: The maximum of ``abs(x)``.
 
     """
     if computing_meta:
@@ -1244,15 +432,58 @@ def cf_max_abs_chunk(x, computing_meta=False, **kwargs):
     return cf_max_chunk(np.abs(x), **kwargs)
 
 
-cf_max_abs_combine = cf_max_combine
-cf_max_abs_agg = cf_max_agg
+def cf_max_abs(a, axis=None, keepdims=False, mtol=None, split_every=None):
+    """TODODASK."""
+    dtype = a.dtype
+    return reduction(
+        a,
+        cf_max_abs_chunk,
+        partial(cf_max_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_max_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+    )
 
 
 # --------------------------------------------------------------------
-# min
+# minimum
 # --------------------------------------------------------------------
-def cf_min_chunk(x, computing_meta=False, **kwargs):
-    """Find the max of an array."""
+def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
+    """Return chunk-based values for calculating the global minimum.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * min: The minimum of ``x``.
+
+    """
     if computing_meta:
         return x
 
@@ -1323,25 +554,36 @@ def cf_min(a, axis=None, keepdims=False, mtol=None, split_every=None):
 # --------------------------------------------------------------------
 # minimum absolute value
 # --------------------------------------------------------------------
-def cf_min_abs_chunk(x, computing_meta=False, **kwargs):
-    """Return the maximum of the absolute array, or the maximum of the
-    absolute array along an axis.
+def cf_min_abs_chunk(x, dtype=None, computing_meta=False, **kwargs):
+    """Return chunk-based values for calculating the global absolute
+    min.
 
     :Parameters:
 
-        a: numpy array_like
-            Input array
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
 
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
 
-        masked: bool
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
 
     :Returns:
 
-        2-tuple of numpy arrays
-            The sample sizes and the maxima of the absolute values.
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * min: The minimum of ``abs(x)``.
 
     """
     if computing_meta:
@@ -1350,15 +592,60 @@ def cf_min_abs_chunk(x, computing_meta=False, **kwargs):
     return cf_min_chunk(np.abs(x), **kwargs)
 
 
-cf_min_abs_combine = cf_min_combine
-cf_min_abs_agg = cf_min_agg
+def cf_min_abs(a, axis=None, keepdims=False, mtol=None, split_every=None):
+    """TODODASK."""
+    dtype = a.dtype
+    return reduction(
+        a,
+        cf_min_abs_chunk,
+        partial(cf_min_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_min_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+    )
 
 
 # --------------------------------------------------------------------
 # range
 # --------------------------------------------------------------------
 def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
-    """Find the max and min of an array."""
+    """Return chunk-based values for calculating the global range.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * min: The minimum of ``x``.
+
+            * max: The maximum of ``x`.
+
+    """
     if computing_meta:
         return x
 
@@ -1478,9 +765,120 @@ def cf_mid_range(
 
 
 # --------------------------------------------------------------------
+# root mean square
+# --------------------------------------------------------------------
+def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
+    """Return chunk-based values for calculating the global RMS.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * sum: The weighted sum of ``x**2``.
+
+    """
+    if computing_meta:
+        return x
+
+    return cf_mean_chunk(
+        np.multiply(x, x, dtype=dtype), weights=weights, dtype=dtype, **kwargs
+    )
+
+
+def cf_rms_agg(
+    pairs,
+    axis=None,
+    dtype="f8",
+    computing_meta=False,
+    mtol=None,
+    original_shape=None,
+    **kwargs,
+):
+    """Apply the function to the data in a nested list of arrays and
+    mask where the sample size is below the threshold."""
+    d = cf_sum_combine(pairs, axis, computing_meta, **kwargs)
+    if computing_meta:
+        return d
+
+    x = np.sqrt(d["sum"], dtype=dtype)
+    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
+    return x
+
+
+def cf_rms(
+    a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+):
+    """TODODASK."""
+    dtype = float
+    return reduction(
+        a,
+        cf_rms_chunk,
+        partial(cf_rms_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_sum_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+        weights=weights,
+    )
+
+
+# --------------------------------------------------------------------
 # sample_size
 # --------------------------------------------------------------------
 def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
+    """Return chunk-based values for calculating the global sample size.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+    """
     if computing_meta:
         return x
 
@@ -1550,7 +948,36 @@ def cf_sample_size(a, axis=None, keepdims=False, mtol=None, split_every=None):
 # sum
 # --------------------------------------------------------------------
 def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
-    """Find the max of an array."""
+    """Return chunk-based values for calculating the global sum.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * sum: The weighted sum of ``x``.
+
+    """
     if computing_meta:
         return x
 
@@ -1572,7 +999,6 @@ def cf_sum_combine(
     """Apply the function to the data in a nested list of arrays."""
     if not isinstance(pairs, list):
         pairs = [pairs]
-
 
     # Create a nested list of maxima and recursively concatenate it
     # along the specified axes
@@ -1628,74 +1054,233 @@ def cf_sum(
 
 
 # --------------------------------------------------------------------
+# sum of sqaures
+# --------------------------------------------------------------------
+def cf_sum_of_squares_chunk(
+    x, weights=None, dtype="f8", computing_meta=False, **kwargs
+):
+    """Return chunk-based values for calculating the global sum.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * sum: The weighted sum of ``x**2``
+
+    """
+    if computing_meta:
+        return x
+
+    return cf_sum_chunk(
+        np.multiply(x, x, dtype=dtype), weights, dtype=dtype, **kwargs
+    )
+
+
+def cf_sum_of_squares(
+    a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+):
+    """TODODASK."""
+    dtype = float
+    return reduction(
+        a,
+        cf_sum_of_squares_chunk,
+        partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_sum_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+        weights=weights,
+    )
+
+
+# --------------------------------------------------------------------
+# sum of weights
+# --------------------------------------------------------------------
+def cf_sum_of_weights_chunk(
+    x, weights=None, dtype="f8", computing_meta=False, squared=False, **kwargs
+):
+    """Return chunk-based values for calculating the global sum.
+
+    :Parameters:
+
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
+
+        weights: numpy array-like, optional
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
+
+        dtype: data_type, optional
+            Data type of global reduction.
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * sum: The sum of ``weights``, or the sum of
+                   ``weights**2`` if *squared* is True.
+
+    """
+    if computing_meta:
+        return x
+
+    # N
+    d = cf_sample_size_chunk(x, **kwargs)
+
+    # sum
+    d["sum"] = sum_of_weights(
+        x, weights=weights, dtype=dtype, N=d["N"], squared=squared, **kwargs
+    )
+    return d
+
+
+def cf_sum_of_weights(
+    a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+):
+    """TODODASK."""
+    dtype = float
+    return reduction(
+        a,
+        cf_sum_of_weights_chunk,
+        partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_sum_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+        weights=weights,
+    )
+
+
+def cf_sum_of_weights2(
+    a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+):
+    """TODODASK."""
+    dtype = float
+    return reduction(
+        a,
+        partial(cf_sum_of_weights_chunk, squared=True),
+        partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
+        axis=axis,
+        keepdims=keepdims,
+        dtype=dtype,
+        split_every=split_every,
+        combine=cf_sum_combine,
+        out=None,
+        concatenate=False,
+        meta=np.array((), dtype=dtype),
+        weights=weights,
+    )
+
+
+# --------------------------------------------------------------------
 # variance
 # --------------------------------------------------------------------
 def cf_var_chunk(
     x, weights=None, dtype="f8", computing_meta=False, ddof=None, **kwargs
 ):
-    """Return a tuple containing metrics relating to the array variance.
+    """Return chunk-based values for calculating the global variance.
 
-    The tuple is a 7-tuple that contains, in the order given, the
-    following variables:
-
-    ========  ============================================================
-    Variable  Description
-    ========  ============================================================
-    N         Sample size
-
-    var       Sample variance (ddof=0)
-
-    avg       Weighted mean
-
-    V1        Sum of weights
-
-    V2        Sum of squares of weights
-
-    ddof      Delta degrees of freedom
-
-    weighted  Whether or not the sample is weighted
-    ========  ============================================================
+    .. note:: If weights are provided then they are interpreted as
+              reliability weights, as opposed to frequency weights
+              (where a weight equals the number of occurrences).
 
     :Parameters:
 
-        a: numpy array_like
-            Input array
-
-        axis: `int`, optional
-            Axis along which to operate. By default, flattened input
-            is used.
+        x: numpy.ndarray
+            Chunks data being reduced along one or more axes.
 
         weights: numpy array-like, optional
-            Weights associated with values of the array. By default the
-            statistics are unweighted.
+            Weights to be used in the reduction of *x*, with the same
+            shape as *x*. By default the reduction is unweighted.
 
-        masked: `bool`, optional
+        dtype: data_type, optional
+            Data type of global reduction.
 
-        ddof: delta degrees of freedom, optional
+        ddof: number, optional
+            The delta degrees of freedom. The number of degrees of
+            freedom used in the calculation is (N-*ddof*) where N
+            represents the number of non-missing elements. By default
+            *ddof* is 0, for the biased variance. Setting ddof to
+            ``1`` applies Bessel's correction
+            (https://en.wikipedia.org/wiki/Bessel's_correction)
+
+        computing_meta: `bool` optional
+            See `dask.array.reductions` for details.
+
+        kwargs: `dict`, optional
+            See `dask.array.reductions` for details.
 
     :Returns:
 
-        7-`tuple`
-            Tuple containing the value of the statistical metrics described
-            in the above table, in the given order.
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+            * V1: The sum of ``weights`` (set to ``N`` if weights are
+                  not set).
+
+            * sum: The weighted sum of ``x``.
+
+            * part: ``V1 * (sigma**2 + mu**2)``, where ``sigma**2`` is
+                    the weighted biased (i.e. ``ddof=0``) variance of
+                    ``x``, and ``mu`` is the weighted mean of
+                    ``x``. See
+                    https://en.wikipedia.org/wiki/Pooled_variance#Sample-based_statistics
+                    for details.
+
+            * V2: The sum of ``weights**2``. Only present if *weights*
+                  are set and ``ddof=1``.
 
     """
-    # ----------------------------------------------------------------
-    # Methods:
-    #
-    # http://en.wikipedia.org/wiki/Standard_deviation#Population-based_statistics
-    # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_variance
-    # ----------------------------------------------------------------
     if computing_meta:
         return x
 
+    # N, V1, sum
     d = cf_mean_chunk(x, weights, dtype=dtype, **kwargs)
 
     wsum = d["sum"]
-    V1 = d["sw"]
-    N = d["N"]
-    
-    # with np.errstate(divide="ignore", invalid="ignore"):??????
+    V1 = d["V1"]
+
+    # part
     avg = divide(wsum, V1, dtype=dtype)
     part = x - avg
     part *= part
@@ -1704,13 +1289,7 @@ def cf_var_chunk(
 
     part = chunk.sum(part, dtype=dtype, **kwargs)
     part = part + avg * wsum
-
-    d = {
-        "part": part,
-        "wsum": wsum,
-        "N": N,
-        "V1": V1,
-    }
+    d["part"] = part
 
     if weights is not None and ddof == 1:
         d["V2"] = sum_of_weights(x, weights, squared=True, **kwargs)
@@ -1725,38 +1304,12 @@ def cf_var_combine(
     computing_meta=False,
     **kwargs,
 ):
-    """Return a tuple of partial metrics relating to the array variance.
-
-    The tuple is a 7-tuple that contains, in the order given, the
-    following variables:
-
-    ========  ============================================================
-    Variable  Description
-    ========  ============================================================
-    N         Partial sample size
-
-    var       Partial sum of V1*(variance + mean^2)
-
-    avg       Unweighted partial sum
-
-    V1        Partial sum of weights
-
-    V2        Partial sum of squares of weights
-
-    ddof      Delta degrees of freedom
-
-    weighted  Whether or not the population is weighted
-    ========  ============================================================
-
-    For further information, see:
-    https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
-
-    """
+    """TODO."""
     d = {}
 
     weighted = "V2" in flatten(pairs)
 
-    keys = ("part", "wsum")
+    keys = ("part", "sum")
     if weighted:
         keys += ("V1", "V2")
 
@@ -1783,23 +1336,7 @@ def cf_var_agg(
     ddof=None,
     **kwargs,
 ):
-    """Calculate the variance of the array and return it with the sample
-    size.
-
-    Also mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        out: 7-`tuple`
-
-        sub_samples: optional
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the variance.
-
-    """
+    """TODO."""
     d = cf_var_combine(pairs, axis, computing_meta, **kwargs)
     if computing_meta:
         return d
@@ -1808,33 +1345,47 @@ def cf_var_agg(
     V2 = d.get("V2")
     weighted = V2 is not None
 
+    wsum = d["sum"]
+    var = d["part"] - wsum * wsum / V1
+
+    # Note: var is currently the global value of V1 * sigma**2, where
+    # sigma is the global weighted biased (i.e. ddof=0) variance.
+
     if ddof == 0:  # intended equality with zero
         # Weighted or unweighted variance with ddof=0
         f = 1 / V1
     elif not weighted:
-        # Unweighted variance with any non-zero value of ddof
+        # Unweighted variance with any non-zero value of ddof.
         f = 1 / (V1 - ddof)
     elif ddof == 1:
-        # Weighted variance with ddof=1
-        #
-        # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_variance
+        # Weighted variance with ddof=1. For details see
         # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
         f = V1 / (V1 * V1 - V2)
     else:
         raise ValueError(
-            "Can only calculate a weighted variance with a ddof=0 or "
-            f"ddof=1: Got {ddof!r}"
+            "Can only calculate a weighted variance with ddof=0 or ddof=1: "
+            f"Got {ddof!r}"
         )
 
-    wsum = d["wsum"]
-    var = f * (d["part"] - wsum * wsum / V1)
+    # Calculate the global variance, with the specified weighting and
+    # ddof.
+    var = f * var
+
+    # Note: var is now the global value of sigma**2
 
     var = mask_small_sample_size(var, d["N"], axis, mtol, original_shape)
     return var
 
 
-def cf_var( a, axis=None, weights=None, keepdims=False, mtol=None,
-            ddof=None, split_every=None ):
+def cf_var(
+    a,
+    axis=None,
+    weights=None,
+    keepdims=False,
+    mtol=None,
+    ddof=None,
+    split_every=None,
+):
     """TODODASK."""
     dtype = float
     return reduction(
@@ -1851,63 +1402,3 @@ def cf_var( a, axis=None, weights=None, keepdims=False, mtol=None,
         meta=np.array((), dtype=dtype),
         weights=weights,
     )
-
-
-def cf_sd_agg(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    mtol=None,
-    original_shape=None,
-    ddof=None,
-    **kwargs,
-):
-    """Calculate the variance of the array and return it with the sample
-    size.
-
-    Also mask out any values derived from a too-small sample size.
-
-    :Parameters:
-
-        out: 7-`tuple`
-
-        sub_samples: optional
-
-    :Returns:
-
-        2-`tuple` of `numpy.ndarray`
-            The sample size and the variance.
-
-    """
-    d = cf_var_combine(pairs, axis, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    V2 = d.get("V2")
-    weighted = V2 is not None
-
-    V1 = d["V1"]
-    if ddof == 0:  # intended equality with zero
-        # Weighted or unweighted variance with ddof=0
-        f = 1 / V1
-    elif not weighted:
-        # Unweighted variance with any non-zero value of ddof
-        f = 1 / (V1 - ddof)
-    elif ddof == 1:
-        # Weighted variance with ddof=1
-        #
-        # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_variance
-        # https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
-        f = V1 / (V1 * V1 - V2)
-    else:
-        raise ValueError(
-            "Can only calculate a weighted variance with a ddof=0 or "
-            f"ddof=1: Got {ddof!r}"
-        )
-
-    wsum = d["sum"]
-    var = f * (d["part"] - (wsum * wsum) / V1)
-
-    var = mask_small_sample_size(var, d["N"], axis, mtol, original_shape)
-    return var
