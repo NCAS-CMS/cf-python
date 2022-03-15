@@ -1909,7 +1909,6 @@ class DataTest(unittest.TestCase):
             for i, j in zip(d.ndindex(), np.ndindex(d.shape)):
                 self.assertEqual(i, j)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_pmshape'")
     def test_Data_roll(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1917,8 +1916,6 @@ class DataTest(unittest.TestCase):
         a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         d = cf.Data(a.copy())
-
-        _ = d._pmshape
 
         e = d.roll(0, 4)
         e.roll(2, 120, inplace=True)
