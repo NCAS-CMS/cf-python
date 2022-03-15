@@ -3236,7 +3236,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         balance=False,
         inplace=False,
     ):
-        """Change the chunk struture of the data.
+        """Change the chunk structure of the data.
 
         .. versionadded:: TODODASK
 
