@@ -48,6 +48,7 @@ from . import (  # GatheredSubarray,; RaggedContiguousSubarray,; RaggedIndexedCo
     NetCDFArray,
     UMArray,
 )
+from .collapse_functions import Collapse
 from .creation import (
     compressed_to_dask,
     convert_to_builtin_type,
@@ -68,10 +69,9 @@ from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
-from .utils import (  # is_small,; is_very_small,
+from .utils import (  # is_small,; is_very_small,; collapse,
     YMDhms,
     _is_numeric_dtype,
-    collapse,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
@@ -1951,7 +1951,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         _preserve_partitions=False,
     ):
-        """Compute the median of the values."""
+        """Compute the median of the values.
+
+        :Parameters:
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
+        """
         return self.percentile(
             50,
             axes=axes,
@@ -1975,6 +1985,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         Specifically, calculate the mean of the upper group of data
         values defined by the upper tenth of their distribution.
+
+        :Parameters:
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -2120,23 +2138,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 is guaranteed to broadcast correctly against the original
                 data.
 
-            mtol: number, optional
-                Set an upper limit of the amount input data values
-                which are allowed to be missing data when contributing
-                to individual output percentile values. It is defined
-                as a fraction (between 0 and 1 inclusive) of the
-                contributing input data values. The default is 1,
-                meaning that a missing datum in the output array only
-                occurs when all of its contributing input array
-                elements are missing data. A value of 0 means that a
-                missing datum in the output array occurs whenever any
-                of its contributing input array elements are missing
-                data.
+            {{mtol: number, optional}
 
-                *Parameter example:*
-                  To ensure that an output array element is a missing
-                  value if more than 25% of its input array elements
-                  are missing data: ``mtol=0.25``.
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
 
@@ -6932,11 +6938,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         i=False,
     ):
-        from .collapse_functions import cf_max
+        """TODO.
+
+        :Parameters:
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
+        """
+        #        from .collapse_functions import cf_max
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            cf_maxn,
+        d, _ = _collapse(
+            Collapse.max,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -6970,6 +6987,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             axes : (sequence of) int, optional
 
             squeeze : bool, optional
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
 
@@ -7012,6 +7035,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             squeeze : bool, optional
 
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
             {{inplace: `bool`, optional}}
 
         :Returns:
@@ -7033,11 +7062,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[3, 9]] m>
 
         """
-        from .collapse_functions import cf_max_abs
+        #        from .collapse_functions import cf_max_abs
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            cf_max_abs,
+        d, _ = _collapse(
+            Collapse.max_abs,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -7059,11 +7088,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         i=False,
         _preserve_partitions=False,
     ):
-        from .collapse_functions import cf_min
+        """TODO.
+
+        :Parameters:
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
+        """
+        #        from .collapse_functions import cf_min
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            cf_min,
+        d, _ = _collapse(
+            Collapse.min,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -7078,6 +7118,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         axes=None,
         squeeze=False,
         mtol=1,
+        split_every=None,
         inplace=False,
         i=False,
         _preserve_partitions=False,
@@ -7123,6 +7164,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         axes=None,
         squeeze=False,
         mtol=1,
+        split_every=None,
         inplace=False,
     ):
         """Collapse axes with their minimum absolute value.
@@ -7133,6 +7175,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                      `var`
 
         :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
+            {{inplace: `bool`, optional}}
 
         :Returns:
 
@@ -7153,11 +7207,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[-1, -12]] m>
 
         """
-        from .collapse_functions import cf_min_abs
+        #        from .collapse_functions import cf_min_abs
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            cf_min_abs,
+        d, _ = _collapse(
+            Collapse.min_abs,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -7187,12 +7241,26 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         Missing data array elements and their corresponding weights
         are omitted from the calculation.
 
-        """
-        from .collapse_functions import cf_mean
+        :Parameters:
 
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
+            {{inplace: `bool`, optional}}
+
+        """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            cf_mean,
+        d, _ = _collapse(
+            Collapse.mean,
             d,
             axis=axes,
             weights=weights,
@@ -7223,6 +7291,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
             {{inplace: `bool`, optional}}
 
         :Returns:
@@ -7240,11 +7320,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[2.0, 9.666666666666666]] m>
 
         """
-        from .collapse_functions import cf_mean_abs
+        #        from .collapse_functions import cf_mean_abs
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            ccf_mean_abs,
+        d, _ = _collapse(
+            Collapse.mean_abs,
             d,
             axis=axes,
             weights=weights,
@@ -7274,43 +7354,35 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
-            {{collapse axes: (sequence of) int, optional}}
+            {{collapse axes: (sequence of) `int`, optional}}
 
             {{collapse squeeze: `bool`, optional}}
 
-            weights: data_like or dict, optional
+            {{weights: data_like, `dict`, or `None`, optional}}
 
-                Weights associated with values of the array. By
-                default all non-missing elements of the array are
-                assumed to have a weight equal to one. If *weights* is
-                a data_like object then it must have either the same
-                shape as the array or, if that is not the case, the
-                same shape as the axes being collapsed.
-
-
-
-                If *weights* is a dictionary then each key specifies
-                axes of the array (an `int` or `tuple` of `int`), with
-                a corresponding value of data_like weights for those
-                axes. In this case, the implied weights array is the
-                outer product of the dictionary's values.
-
-                Note that the units of the weights matter for an integral
-                collapse, which differs from a weighted sum in that the units
-                of the weights are incorporated into the result.
+                Note that the units of the weights matter for an
+                integral collapse, which differs from a weighted sum
+                in that the units of the weights are incorporated into
+                the result.
 
                 *Parameter example:*
-                  If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-                  1-dimensional weights for axis 1 and ``x`` must contain
-                  2-dimensional weights for axes 2 and 0. This is
-                  equivalent, for example, to ``weights={(1, 2, 0), y}``,
-                  where ``y`` is the outer product of ``w`` and ``x``. If
-                  ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
-                  equivalent to ``weights=y``. If ``axes=None`` and the
-                  array is 3-dimensional then ``weights={(1, 2, 0), y}``
-                  is equivalent to ``weights=y.transpose([2, 0, 1])``.
+                  If ``weights={1: w, (2, 0): x}`` then ``w`` must
+                  contain 1-dimensional weights for axis 1 and ``x``
+                  must contain 2-dimensional weights for axes 2 and
+                  0. This is equivalent, for example, to
+                  ``weights={(1, 2, 0), y}``, where ``y`` is the outer
+                  product of ``w`` and ``x``. If ``axes=[1, 2, 0]``
+                  then ``weights={(1, 2, 0), y}`` is equivalent to
+                  ``weights=y``. If ``axes=None`` and the array is
+                  3-dimensional then ``weights={(1, 2, 0), y}`` is
+                  equivalent to ``weights=y.transpose([2, 0, 1])``.
 
-            mtol: number, optional
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
 
@@ -7326,11 +7398,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        from .collapse_functions import cf_sum
+        #        from .collapse_functions import cf_sum
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, weights = collapse(
-            cf_sum,
+        d, weights = _collapse(
+            Collapse.sum,
             d,
             axis=axes,
             weights=weights,
@@ -7366,17 +7438,29 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         i=False,
     ):
-        from .collapse_functions import cf_sample_size
+        """TODO.
+
+        :Parameters:
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
+        """
+        #        from .collapse_functions import cf_sample_size
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            cf_sample_size,
+        d, _ = _collapse(
+            Collapse.sample_size,
             d,
             axis=axes,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
+        return d
 
     @property
     def binary_mask(self):
@@ -9920,6 +10004,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
             {{inplace: `bool`, optional}}
 
             {{i: deprecated at version 3.0.0}}
@@ -9932,20 +10022,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        from .collapse_functions import cf_mid_range as collapse
+        #        from .collapse_functions import cf_mid_range
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = _collapse(
+            Collapse.mid_range,
+            d,
             axis=axes,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
-
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -10130,6 +10217,71 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             return self == y
 
     @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):
+        """Change the shape of the data without changing its values.
+
+        :Parameters:
+
+            shape: `tuple` of `int`, or any number of `int`
+                The new shape for the data, which should be compatible
+                with the original shape. If an integer, then the
+                result will be a 1-d array of that length. One shape
+                dimension can be -1, in which case the value is
+                inferred from the length of the array and remaining
+                dimensions.
+
+            merge_chunks: `bool`
+                When True (the default) merge chunks using the logic
+                in `dask.array.rechunk` when communication is
+                necessary given the input array chunking and the
+                output shape. When False, the input array will be
+                rechunked to a chunksize of 1, which can create very
+                many tasks. See `dask.array.reshape` for details.
+
+            limit: int, optional
+                The maximum block size to target in bytes. If no limit
+                is provided, it defaults to the configuration value
+                ``dask.config.get('array.chunk-size')``. See
+                `dask.array.reshape` for details.
+
+        :Returns:
+
+            `Data` or `None`
+                 The reshaped data, or `None` if the operation was
+                 in-place.
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(12))
+        >>> print(d.array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11]
+        >>> print(d.reshape(3, 4).array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> print(d.reshape((4, 3)).array)
+        [[ 0  1  2]
+         [ 3  4  5]
+         [ 6  7  8]
+         [ 9 10 11]]
+        >>> print(d.reshape(-1, 6).array)
+        [[ 0  1  2  3  4  5]
+         [ 6  7  8  9 10 11]]
+        >>>  print(d.reshape(1, 1, 2, 6).array)
+        [[[[ 0  1  2  3  4  5]
+           [ 6  7  8  9 10 11]]]]
+        >>> print(d.reshape(1, 1, -1).array)
+        [[[[ 0  1  2  3  4  5  6  7  8  9 10 11]]]]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
+        d._set_dask(dx, reset_mask_hardness=True)
+        return d
+
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def rint(self, inplace=False, i=False):
@@ -10165,14 +10317,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._set_dask(da.rint(dx), reset_mask_hardness=False)
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     def root_mean_square(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         weights=None,
+        split_every=None,
         inplace=False,
-        _preserve_partitions=False,
     ):
         """Collapse axes with their root mean square.
 
@@ -10181,45 +10335,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
-            axes: (sequence of) int, optional
-                The axes to be collapsed. By default flattened input is
-                used. Each axis is identified by its integer position. No
-                axes are collapsed if *axes* is an empty sequence.
+            {{collapse axes: (sequence of) `int`, optional}}
 
-            squeeze: `bool`, optional
-                If True then collapsed axes are removed. By default the
-                axes which are collapsed are left in the result as axes
-                with size 1, meaning that the result is guaranteed to
-                broadcast correctly against the original array.
+            {{weights: data_like, `dict`, or `None`, optional}}
 
-            weights: data-like or dict, optional
-                Weights associated with values of the array. By default
-                all non-missing elements of the array are assumed to have
-                a weight equal to one. If *weights* is a data-like object
-                then it must have either the same shape as the array or,
-                if that is not the case, the same shape as the axes being
-                collapsed. If *weights* is a dictionary then each key is
-                axes of the array (an int or tuple of ints) with a
-                corresponding data-like value of weights for those
-                axes. In this case, the implied weights array is the outer
-                product of the dictionary's values.
+            {{collapse squeeze: `bool`, optional}}
 
-                *Parameter example:*
-                  If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-                  1-dimensional weights for axis 1 and ``x`` must contain
-                  2-dimensional weights for axes 2 and 0. This is
-                  equivalent, for example, to ``weights={(1, 2, 0), y}``,
-                  where ``y`` is the outer product of ``w`` and ``x``. If
-                  ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
-                  equivalent to ``weights=y``. If ``axes=None`` and the
-                  array is 3-dimensional then ``weights={(1, 2, 0), y}``
-                  is equivalent to ``weights=y.transpose([2, 0, 1])``.
+            {{mtol: number, optional}
 
-            mtol: number, optional
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
 
         :Returns:
 
@@ -10232,21 +10360,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        from .collapse_functions import cf_rms as collapse
+        #        from .collapse_functions import cf_rms
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = _collapse(
+            Collapse.rms,
+            d,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
-
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -11858,6 +11983,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 default. A default can also be set globally with the
                 ``split_every`` key in :mod:`dask.config`.
 
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
             {{inplace: `bool`, optional}}
 
             {{i: deprecated at version 3.0.0}}
@@ -11870,20 +12001,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        from .collapse_functions import cf_range as collapse
+        #        from .collapse_functions import cf_range
 
         d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d._get_dask()
-        dx = collapse(
-            dx,
+        d, _ = _collapse(
+            Collapse.range,
+            d,
             axis=axes,
             keepdims=not squeeze,
             split_every=split_every,
             mtol=mtol,
         )
-        d._set_dask(dx, reset_mask_hardness=True)
-
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -11950,11 +12078,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         split_every=None,
         i=False,
     ):
-        from .collapse_functions import cf_sum
+        """TODO.
 
+        :Parameters:
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
+        """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            cf_sum,
+        d, _ = _collapse(
+            Collapse.sum,
             d,
             axis=axes,
             weights=weights,
@@ -11974,7 +12111,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         weights=None,
         split_every=None,
         inplace=False,
-        _preserve_partitions=False,
     ):
         """Collapse axes with the sum of the squares of the values.
 
@@ -11986,9 +12122,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
-            axes : (sequence of) int, optional
+            {{collapse axes: (sequence of) `int`, optional}}
 
-            squeeze : bool, optional
+            {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
 
@@ -12007,11 +12151,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[14, 289]] m2>
 
         """
-        from .collapse_functions import cf_sum_of_squares
-
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            cf_sum_of_squares,
+        d, _ = _collapse(
+            Collapse.sum_of_squares,
             d,
             axis=axes,
             weights=weights,
@@ -12029,17 +12171,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
-    #    @_deprecated_kwarg_check("i")
     def sum_of_weights(
         self,
         axes=None,
+        weights=None,
         squeeze=False,
         mtol=1,
-        weights=None,
         split_every=None,
         inplace=False,
         i=False,
-        _preserve_partitions=False,
     ):
         """Collapse axes with the sum of weights.
 
@@ -12050,9 +12190,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
-            axes : (sequence of) int, optional
+            {{collapse axes: (sequence of) `int`, optional}}
 
-            squeeze : bool, optional
+            {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{mtol: number, optional}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -12067,14 +12211,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples:**
+        **Examples**
 
         """
-        from .collapse_functions import cf_sum_of_weights
+        #        from .collapse_functions import cf_sum_of_weights
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, weights = collapse(
-            cf_sum_of_weights,
+        d, weights = _collapse(
+            Collapse.sum_of_weights,
             d,
             axis=axes,
             weights=weights,
@@ -12099,13 +12243,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def sum_of_weights2(
         self,
         axes=None,
+        weights=None,
         squeeze=False,
         mtol=1,
-        weights=None,
         split_every=None,
         inplace=False,
         i=False,
-        _preserve_partitions=False,
     ):
         """Collapse axes with the sum of squares of weights.
 
@@ -12116,9 +12259,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Parameters:
 
-            axes : (sequence of) int, optional
+            {{collapse axes: (sequence of) `int`, optional}}
 
-            squeeze : bool, optional
+            {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
 
@@ -12129,14 +12280,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples:**
+        **Examples**
 
         """
-        from .collapse_functions import cf_sum_of_weights2
+        #        from .collapse_functions import cf_sum_of_weights2
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, weights = collapse(
-            cf_sum_of_weights2,
+        d, weights = _collapse(
+            Collapse.sum_of_weights2,
             d,
             axis=axes,
             weights=weights,
@@ -12148,7 +12299,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         units = _units_None
         if weights is not None:
             units = getattr(weights, "Units", None)
-            if units is None:
+            if not units:
                 units = _units_None
             else:
                 units = units ** 2
@@ -12164,7 +12315,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         squeeze=False,
         mtol=1,
         weights=None,
-        ddof=0,  # TODASK: Is this the right default?
+        ddof=None,
         split_every=None,
         inplace=False,
         i=False,
@@ -12267,22 +12418,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                   0): x.outerproduct(y)}`` (see `outerproduct` for
                   details).
 
-            mtol : number, optional
-                For each element in the output data array, the fraction of
-                contributing input array elements which is allowed to
-                contain missing data. Where this fraction exceeds *mtol*,
-                missing data is returned. The default is 1, meaning a
-                missing datum in the output array only occurs when its
-                contributing input array elements are all missing data. A
-                value of 0 means that a missing datum in the output array
-                occurs whenever any of its contributing input array
-                elements are missing data. Any intermediate value is
-                permitted.
+            {{mtol: number, optional}
 
-            ddof : number, optional
-                The delta degrees of freedom. The number of degrees of
-                freedom used in the calculation is (N-*ddof*) where N
-                represents the number of elements. By default *ddof* is 0
+            {{ddof: number}}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
 
@@ -12331,24 +12473,38 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         weights=None,
         squeeze=False,
         mtol=1,
-        ddof=0,
+        ddof=None,
         inplace=False,
         split_every=None,
         i=False,
         _preserve_partitions=False,
     ):
-        from .collapse_functions import cf_var
+        """TODO.
+
+        :Parameters:
+
+            {{mtol: number, optional}
+
+            {{ddof: number}}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
+        """
+        if ddof is None:
+            raise ValueError("Must set the delta degrees of freedom (ddof)")
 
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = collapse(
-            partial(cf_var, ddof=ddof),
+        d, _ = _collapse(
+            partial(Collapse.var, ddof=ddof),
             d,
             axis=axes,
             weights=weights,
             keepdims=not squeeze,
             mtol=mtol,
-            split_every=split_every,
             ddof=ddof,
+            split_every=split_every,
         )
 
         units = d.Units
@@ -12428,7 +12584,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         squeeze=False,
         mtol=1,
         weights=None,
-        ddof=0,
+        ddof=None,
         inplace=False,
         i=False,
     ):
@@ -12449,7 +12605,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         squeeze=False,
         weights=None,
         mtol=1,
-        ddof=0,
+        ddof=None,
         inplace=False,
         i=False,
     ):
@@ -12688,3 +12844,209 @@ def _where_broadcastable(data, x, name):
             )
 
     return True
+
+
+def _collapse(
+    func,
+    d,
+    axis=None,
+    weights=None,
+    keepdims=True,
+    mtol=1,
+    ddof=None,
+    split_every=None,
+):
+    """Collapse data using a callable *func*.
+
+     .. versionadded:: TODODASK
+
+     .. seealso:: `_format_weights`
+
+    :Parameters:
+
+        func: callable
+            The function that collapses the underlying `dask` array of
+            *d*. Must have the minimum signature (parameters and
+            default values) ``func(dx, axis=None, keepdims=False,
+            mtol=None, split_every=None)`` (optionally including
+            ``weights=None`` or ``ddof=None``), where ``dx`` is a
+            `dask.array.Array`
+
+        d: `Data`
+            The data to be collapsed.
+
+        axis: (sequence of) int, optional
+            The axes to be collapsed. By default all axes are
+            collapsed, resulting in output with size 1. Each axis is
+            identified by its integer position. If *axes* is an empty
+            sequence then the collapse is applied to each scalar
+            element and the reuslt has the same shape as the input
+            data.
+
+        weights: data_like, `dict`, or `None`, optional
+            Weights associated with values of the array. By default
+            all non-missing elements of the array are assumed to have
+            a weight equal to one.
+
+            If *weights* is a data_like object then it must be
+            broadcastable to the array or, if that is not the case,
+            the same shape as the axes being collapsed. TODODASK -
+            scrib the last possibility?
+
+            If *weights* is a dictionary then each key specifies axes
+            of the array (an `int` or `tuple` of `int`), with a
+            corresponding value of data_like weights for those
+            axes. The dimensions of a weights value must correspond to
+            its key axes in the same order. The weights that will be
+            used in the collapse will an outer product of the
+            dictionary's values.
+
+            For collapses that do need need weights (such as a
+            maximum), *weights * must be `None` and *func* need not
+            support a ``weights`` parameter.
+
+        keepdims: `bool`, optional
+            By default, the axes which are collapsed are left in the
+            result as dimensions with size one, so that the result
+            will broadcast correctly against the input array. If set
+            to False then collapsed axes are removed from the data.
+
+        mtol: number, optional
+            Set the sampe size threshold below which collapsed values
+            are set to missing data. It is defined as a fraction
+            (between 0 and 1 inclusive) of the contributing input data
+            values. A missing datum in the output array occurs
+            whenever at least ``100*mtol%`` of its contributing input
+            array elements are missing data.
+
+        ddof: number, optional
+            The delta degrees of freedom. The number of degrees of
+            freedom used in the calculation is (N-*ddof*) where N
+            represents the number of non-missing elements.
+
+            For collapses that do need degrees of freedom (such as a
+            mean), *ddof * must be `None` and *func* need not support
+            a ``ddof`` parameter.
+
+        split_every: `int` or `dict`, optional
+            Determines the depth of the recursive aggregation. See
+            `dask.array.reduction` for details.
+
+    :Returns:
+
+        `Data`, formatted weights
+            The collapsed data and the output of ``_format_weights(d,
+            weights, axis)``.
+
+    """
+    kwargs = {
+        "axis": axis,
+        "keepdims": keepdims,
+        "split_every": split_every,
+        "mtol": mtol,
+    }
+
+    weights = _format_weights(d, weights, axis)
+    if weights is not None:
+        kwargs["weights"] = weights
+
+    if ddof is not None:
+        kwargs["ddof"] = ddof
+
+    dx = d.to_dask_array()
+    dx = func(dx, **kwargs)
+    d._set_dask(dx, reset_mask_hardness=True)
+
+    return d, weights
+
+
+def _format_weights(d, weights, axis=None):
+    """TODODASK.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples**
+
+    >>> d = cf.Data(np.arange(12)).reshape(4, 3)
+
+    >>> print(cf.data.data._format_weights(d, None))
+    None
+
+    >>> cf.data.data._format_weights(d, [1, 2, 1], (0, 1))
+    <CF Data(3): [1, 2, 1]>
+
+    >>> cf.data.data._format_weights(d, [[1, 2, 1]], (0, 1))
+    <CF Data(1, 3): [[1, 2, 1]]>
+
+    >>> cf.data.data._format_weights(d, {1: [1, 2, 1]}, (0, 1))
+    <CF Data(1, 3): [[1, 2, 1]]>
+
+    >>> cf.data.data._format_weights(
+    ...   d, {0: [1, 2, 3, 4], 1: [1, 2, 1}, (0, 1)
+    ... )
+    TODODASK (need __mul__ to be daskified)
+
+    """
+    if weights is None:
+        # No weights
+        return
+
+    if not isinstance(weights, dict):
+        # Weights is data_like. Don't check broadcastability to d,
+        # leave that to whatever uses the weights.
+        return Data.asdata(weights)
+
+    if not weights:
+        # No weights (empty dictionary)
+        return
+
+    if axis is None:
+        axis = tuple(range(d.ndim))
+    else:
+        axis = d._parse_axes(axis)
+
+    weights = weights.copy()
+    weights_axes = set()
+    for key, value in tuple(weights.items()):
+        del weights[key]
+        key = d._parse_axes(key)
+        if weights_axes.intersection(key):
+            raise ValueError("Duplicate weights axis")
+
+        weights[tuple(key)] = value
+        weights_axes.update(key)
+
+    if not weights_axes.intersection(axis):
+        # No weights span collapse axes
+        return
+
+    # For each component, add missing dimensions as size 1.
+    w = []
+    shape = d.shape
+    for key, value in weights.items():
+        value = Data.asdata(value)
+
+        # Make sure axes are in ascending order
+        skey = tuple(sorted(key))
+        if key != skey:
+            value = value.transpose(skey)
+            key = skey
+
+        if not all(
+            True if i in (j, 1) else False
+            for i, j in zip(value.shape, [shape[i] for i in key])
+        ):
+            raise ValueError(
+                f"Weights component for axes {tuple(key)} with shape "
+                f"{value.shape} is not broadcastable to data with "
+                f"shape {shape}"
+            )
+
+        new_shape = [n if i in key else 1 for i, n in enumerate(shape)]
+        w.append(value.reshape(new_shape))
+
+    # Return the product of the weights components, which will be
+    # broadcastable to d
+    return reduce(mul, w)

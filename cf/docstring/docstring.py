@@ -247,24 +247,33 @@ _docstring_substitution_definitions = {
                   the computed non-parametric coodinates then this an
                   empty tuple.""",
     # collapse axes
-    "{{collapse axes: (sequence of) int, optional}}": """axes: (sequence of) int, optional
-                The axes to be collapsed. By default flattened input
-                is used. Each axis is identified by its integer
-                position. No axes are collapsed if *axes* is an empty
-                sequence. TODODASK - is the axes=() behaviour
-                correct??""",
-    # collapse axes
+    "{{collapse axes: (sequence of) `int`, optional}}": """axes: (sequence of) `int`, optional
+                The axes to be collapsed. By default all axes are
+                collapsed, resulting in output with size 1. Each axis
+                is identified by its integer position. If *axes* is an
+                empty sequence then the collapse is applied to each
+                scalar element and the reuslt has the same shape as
+                the input data.""",
+    # collapse squeeze
     "{{collapse squeeze: `bool`, optional}}": """squeeze: `bool`, optional
                 By default, the axes which are collapsed are left in
                 the result as dimensions with size one, so that the
                 result will broadcast correctly against the input
                 array. If set to True then collapsed axes are removed
                 from the data.""",
-    # collapse weights
-    "{{collapse weights: optional}}}": """weights: optional
-                Weights associated with values of the array. By
-                default all non-missing elements of the array are
-                assumed to have a weight equal to one.
+    # collapse keepdims
+    "{{collapse keepdims: `bool`, optional}}": """keepdims: `bool`, optional
+                By default, the axes which are collapsed are left in
+                the result as dimensions with size one, so that the
+                result will broadcast correctly against the input
+                array. If set to False then collapsed axes are removed
+                from the data.""",
+    # weights
+    "{{weights: data_like, `dict`, or `None`, optional}}": """weights: data_like, `dict`, or `None`, optional
+                Weights associated with values of the array.  By
+                default *weights* is `None`, meaning that all
+                non-missing elements of the array are assumed to have
+                a weight equal to one.
 
                 If *weights* is a data_like object then it must be
                 broadcastable to the array or, if that is not the
@@ -274,63 +283,63 @@ _docstring_substitution_definitions = {
                 If *weights* is a dictionary then each key specifies
                 axes of the array (an `int` or `tuple` of `int`), with
                 a corresponding value of data_like weights for those
-                axes. In this case, the implied weights array is the
-                outer product of the dictionary's values.
+                axes. The dimensions of a weights value must
+                correspond to its key axes in the same order. The
+                weights that will be used in the collapse will an
+                outer product of the dictionary's values.""",
+    # collapse mtol
+    "{{mtol: number, optional}}": """mtol: number, optional
+                The sample size threshold below which collapsed values
+                are set to missing data. It is defined as a fraction
+                (between 0 and 1 inclusive) of the contributing input
+                data values. A missing datum in the output array
+                occurs whenever at least ``100*mtol%`` of its
+                contributing input array elements are missing
+                data. The default of *mtol* is 1, meaning that a
+                missing datum in the output array only occurs when all
+                of its contributing input array elements are missing
+                data. A value of 0 means that a missing datum in the
+                output array occurs whenever any of its contributing
+                input array elements are missing. Any intermediate
+                value is allowed. Note that for non-zero values of
+                *mtol*, different collapsed elements may have
+                different sample sizes, depending on the distribution
+                of missing data in the input data.""",
+    # ddof
+    "{{ddof: number}}": """ddof: number
+                The delta degrees of freedom. The number of degrees of
+                freedom used in the calculation is (N-*ddof*) where N
+                represents the number of non-missing elements. A value
+                of 1 applies Bessel's correction.""",
+    # split_every
+    "{{split_every: `int` or `dict`, optional}}": """split_every: `int` or `dict`, optional
+                Determines the depth of the recursive aggregation. If
+                set to or more than the number of input chunks, the
+                aggregation will be performed in two steps, one
+                partial collapse per input chunk and a single
+                aggregation at the end. If set to less than that, an
+                intermediate aggregation step will be used, so that
+                any of the intermediate or final aggregation steps
+                operates on no more than ``split_every`` inputs. The
+                depth of the aggregation graph will be
+                :math:`log_{split_every}(input chunks along reduced
+                axes)`. Setting to a low value can reduce cache size
+                and network transfers, at the cost of more CPU and a
+                larger dask graph.
 
+                By default, `dask` heuristically decides on a good
+                value. A default can also be set globally with the
+                ``split_every`` key in `dask.config`. See
+                `dask.array.reduction` for details.""",
+    # Collapse weights
+    "{{Collapse weights: data_like or `None`, optional}}": """weights: data_like or `None`, optional
+                Weights associated with values of the array. By
+                default *weights* is `None`, meaning that all
+                non-missing elements of the array are assumed to have
+                a weight equal to one.
 
-                Specify the weights for the collapse axes. The weights
-                are, in general, those that would be returned by this
-                call of the field construct's `weights` method:
-                ``f.weights(weights, axes=axes, measure=measure,
-                scale=scale, radius=radius, great_circle=great_circle,
-                components=True)``. See the *axes*, *measure*,
-                *scale*, *radius* and *great_circle* parameters and
-                `cf.Field.weights` for details.
-
-                .. note:: By default *weights* is `None`, resulting in
-                          **unweighted calculations**.
-
-                If the alternative form of providing the collapse method
-                and axes combined as a CF cell methods-like string via the
-                *method* parameter has been used, then the *axes*
-                parameter is ignored and the axes are derived from the
-                *method* parameter. For example, if *method* is ``'T:
-                area: minimum'`` then this defines axes of ``['T',
-                'area']``. If *method* specifies multiple collapses,
-                e.g. ``'T: minimum area: mean'`` then this implies axes of
-                ``'T'`` for the first collapse, and axes of ``'area'`` for
-                the second collapse.
-
-                .. note:: Setting *weights* to `True` is generally a good
-                          way to ensure that all collapses are
-                          appropriately weighted according to the field
-                          construct's metadata. In this case, if it is not
-                          possible to create weights for any axis then an
-                          exception will be raised.
-
-                          However, care needs to be taken if *weights* is
-                          `True` when cell volume weights are desired. The
-                          volume weights will be taken from a "volume"
-                          cell measure construct if one exists, otherwise
-                          the cell volumes will be calculated as being
-                          proportional to the sizes of one-dimensional
-                          vertical coordinate cells. In the latter case
-                          **if the vertical dimension coordinates do not
-                          define the actual height or depth thickness of
-                          every cell in the domain then the weights will
-                          be incorrect**.
-
-                *Parameter example:*
-                  To specify weights based on the field construct's
-                  metadata for all collapse axes use ``weights=True``.
-
-                *Parameter example:*
-                  To specify weights based on cell areas use
-                  ``weights='area'``.
-
-                *Parameter example:*
-                  To specify weights based on cell areas and linearly in
-                  time you could set ``weights=('area', 'T')``.""",
+                When *weights* is a data_like object then it must have
+                the same shape as the array.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
