@@ -3288,7 +3288,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         Use the value ``-1`` to specify that you want a single chunk
         along a dimension or the value ``"auto"`` to specify that dask
         can freely rechunk a dimension to attain blocks of a uniform
-        block size
+        block size.
 
         >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
 
