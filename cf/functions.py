@@ -850,9 +850,9 @@ class chunksize(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        upper_chunksize = (free_memory_factor() * min_total_memory()) / (
-            (_WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()
-        )
+        #        upper_chunksize = (free_memory_factor() * min_total_memory()) / (
+        #            (_WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()
+        #        )
 
         arg = float(arg)
         if arg <= 0:

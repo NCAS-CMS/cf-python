@@ -3297,8 +3297,11 @@ class DataTest(unittest.TestCase):
         e = d.integral(weights=weights)
         self.assertEqual(e.Units, cf.Units("K"))
 
-        e = d.integral(weights=cf.Data(weights, "m"))
+        e = d.integral(weights=cf.Data(weights, "m"), mtol=0)
         self.assertEqual(e.Units, cf.Units("K m"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_max(self):
         # Masked array
@@ -3317,7 +3320,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.range().Units, cf.Units("K"))
+        e = d.max(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_maximum_absolute_value(self):
         # Masked array
@@ -3336,7 +3343,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.range().Units, cf.Units("K"))
+        e = d.maximum_absolute_value(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_mean(self):
         # Masked array, non-masked weights
@@ -3357,7 +3368,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.range().Units, cf.Units("K"))
+        e = d.mean(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_mean_absolute_value(self):
         # Masked array, non-masked weights
@@ -3378,7 +3393,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.range().Units, cf.Units("K"))
+        e = d.mean_absolute_value(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_mid_range(self):
         # Masked array, non-masked weights
@@ -3397,7 +3416,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.range().Units, cf.Units("K"))
+        e = d.mid_range(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_min(self):
         # Masked array
@@ -3416,7 +3439,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.range().Units, cf.Units("K"))
+        e = d.min(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_minimum_absolute_value(self):
         # Masked array
@@ -3435,7 +3462,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.range().Units, cf.Units("K"))
+        e = d.minimum_absolute_value(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_range(self):
         # Masked array
@@ -3454,7 +3485,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.range().Units, cf.Units("K"))
+        e = d.range(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_root_mean_square(self):
         # Masked array, non-masked weights
@@ -3475,7 +3510,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.root_mean_square().Units, cf.Units("K"))
+        e = d.root_mean_square(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_sample_size(self):
         # Masked array
@@ -3508,7 +3547,12 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.sample_size().Units, cf.Units())
+        d = cf.Data(self.ma, "K", chunks=(2, 3, 2, 5))
+        e = d.sample_size(mtol=0)
+        self.assertEqual(e.Units, cf.Units())
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_sd(self):
         # Masked array, non-masked weights
@@ -3519,10 +3563,14 @@ class DataTest(unittest.TestCase):
         sd = d.sd(weights=weights, ddof=1)
         var = d.var(weights=weights, ddof=1)
 
+        self.assertTrue(sd.equals(var.sqrt()))
+
         # Check units
         self.assertEqual(sd.Units, cf.Units("K"))
 
-        self.assertTrue(sd.equals(var.sqrt()))
+        # Check mtol
+        sd = d.sd(ddof=0, mtol=0)
+        self.assertEqual(sd.array, np.ma.masked)
 
     def test_Data_sum(self):
         # Masked array, non-masked weights
@@ -3543,7 +3591,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.sum().Units, cf.Units("K"))
+        e = d.sum(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_sum_of_squares(self):
         # Masked array, non-masked weights
@@ -3564,7 +3616,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.sum_of_squares().Units, cf.Units("K2"))
+        e = d.sum_of_squares(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K2"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_sum_of_weights(self):
         # Masked array, non-masked weights
@@ -3598,9 +3654,13 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.sum_of_weights().Units, cf.Units())
-        w = cf.Data(weights, "m")
-        self.assertEqual(d.sum_of_weights(weights=w).Units, cf.Units("m"))
+        e = d.sum_of_weights()
+        self.assertEqual(e.Units, cf.Units())
+        e = d.sum_of_weights(weights=cf.Data(weights, "m"), mtol=0)
+        self.assertEqual(e.Units, cf.Units("m"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_sum_of_weights2(self):
         # Masked array, non-masked weights
@@ -3631,8 +3691,11 @@ class DataTest(unittest.TestCase):
         e = d.sum_of_weights2(weights=weights)
         self.assertEqual(e.Units, cf.Units())
 
-        e = d.sum_of_weights2(weights=cf.Data(weights, "m"))
+        e = d.sum_of_weights2(weights=cf.Data(weights, "m"), mtol=0)
         self.assertEqual(e.Units, cf.Units("m2"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_var(self):
         # Masked array, non-masked weights
@@ -3694,7 +3757,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.var(ddof=0).Units, cf.Units("K2"))
+        e = d.var(ddof=0, mtol=0)
+        self.assertEqual(e.Units, cf.Units("K2"))
+
+        # Check mtol
+        self.assertEqual(e.array, np.ma.masked)
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __lt__ and __le__")
     def test_Data_mean_of_upper_decile(self):
@@ -3735,7 +3802,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
         # Check units
-        self.assertEqual(d.mean_of_upper_decile().Units, cf.Units("K2"))
+        e = d.mean_of_upper_decile(mtol=0)
+        self.assertEqual(e.Units, cf.Units("K2"))
+
+        # Check mtol
+        self.assertEqual(e.array.item(), np.ma.masked)
 
 
 if __name__ == "__main__":

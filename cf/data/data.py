@@ -17,7 +17,6 @@ from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
 from dask.core import flatten
 from dask.highlevelgraph import HighLevelGraph
-from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
 from ..cfdatetime import dt as cf_dt
 from ..constants import masked as cf_masked
@@ -1476,48 +1475,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
-    def _map_blocks(self, func, **kwargs):
-        """Apply a function to the data in-place.
-
-        .. warning:: **This method **does not reset the mask
-                     hardness**. It may be necessary for a call to
-                     `_map_blocks` to be followed by a call to
-                     `_reset_mask_hardness` (or equivalent).
-
-        .. versionadded:: TODODASK
-
-        .. seealso:: `_reset_mask_hardness`
-
-        :Parameters:
-
-            func:
-                The function to be applied to the data, via
-                `dask.array.map_blocks`, to each chunk of the dask
-                array.
-
-            kwargs: optional
-                Keyword arguments passed to the
-                `dask.array.map_blocks` method.
-
-        :Returns:
-
-            `dask.array.Array`
-                The updated dask array.
-
-        **Examples:**
-
-        >>> d = cf.Data([1, 2, 3])
-        >>> dx = d._map_blocks(lambda x: x / 2)
-        >>> print(d.array)
-        [0.5 1.  1.5]
-
-        """
-        dx = self._get_dask()
-        dx = dx.map_blocks(func, **kwargs)
-        self._set_dask(dx, reset_mask_hardness=False)
-
-        return dx
-
     def _reset_mask_hardness(self):
         """Re-apply the mask hardness to the dask array.
 
@@ -2026,11 +1983,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{weights: data_like, `dict`, or `None`, optional}}
 
+                TODODASK - note that weights only applies to the
+                           calculation of the mean, not the upper
+                           decile.
+
             {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
-                TODODASK - note that mtol onlty applies calculation of
-                uppder decile, not the mean!
+
+                TODODASK - note that mtol only applies to the
+                           calculation of the upper decile, not the
+                           mean.
 
             include_decile: `bool`, optional
                 TODODASK
@@ -2053,9 +2016,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
 
-        # TODODASK: Some updates off the back of collapse done, but
-        #           still needs looking at. Unit test has also been
-        #           written, but not run. Needs __lt__ and __le__.
+        # TODODASK: Some updates off the back of daskifying collapse
+        #           have been done, but still needs looking at. A unit
+        #           test has also been written, but not run. Needs
+        #           __lt__ and __le__.
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -2067,7 +2031,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             inplace=False,
         )
 
-        with numpy_testing_suppress_warnings() as sup:
+        with np.testing.suppress_warnings() as sup:
             sup.filter(
                 RuntimeWarning, message=".*invalid value encountered in less.*"
             )
@@ -3382,7 +3346,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
 
         if not d._isdatetime():
-            d._map_blocks(cf_rt2dt, units=units, dtype=object)
+            dx = d.to_dask_array()
+            dx = dx.map_blocks(cf_rt2dt, units=units, dtype=object)
+            d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -3437,7 +3403,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
 
         if d._isdatetime():
-            d._map_blocks(cf_dt2rt, units=units, dtype=float)
+            dx = d.to_dask_array()
+            dx = dx.map_blocks(cf_dt2rt, units=units, dtype=float)
+            d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -5209,7 +5177,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 x=x, from_units=old_units, to_units=value, inplace=False
             )
 
-        self._map_blocks(cf_Units, dtype=dtype)
+        dx = self.to_dask_array()
+        dx = dx.map_blocks(cf_Units, dtype=dtype)
+        self._set_dask(dx, reset_mask_hardness=False)
 
         self._Units = value
 
@@ -9060,7 +9030,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [1 -- 3]
 
         """
-        self._map_blocks(cf_harden_mask, dtype=self.dtype)
+        dx = self.to_dask_array()
+        dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
+        self._set_dask(dx, reset_mask_hardness=False)
         self._hardmask = True
 
     def soften_mask(self):
@@ -9091,7 +9063,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [  1 999   3]
 
         """
-        self._map_blocks(cf_soften_mask, dtype=self.dtype)
+        dx = self.to_dask_array()
+        dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
+        self._set_dask(dx, reset_mask_hardness=False)
         self._hardmask = False
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -9144,7 +9118,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                         f"data type {d.dtype.str!r}"
                     )
 
-        d._map_blocks(np.ma.filled, fill_value=fill_value, dtype=d.dtype)
+        dx = d.to_dask_array()
+        dx = dx.map_blocks(np.ma.filled, fill_value=fill_value, dtype=d.dtype)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -12393,15 +12369,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        #        d, _ = _collapse(
-        #            Collapse.sum_of_squares,
-        #            d,
-        #            axis=axes,
-        #            weights=weights,
-        #            keepdims=not squeeze,
-        #            split_every=split_every,
-        #            mtol=mtol,
-        #        )
         d.square(inplace=True)
         d.sum(
             axes=axes,
@@ -12777,7 +12744,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
-            partial(Collapse.var, ddof=ddof),
+            Collapse.var,
             d,
             axis=axes,
             weights=weights,
@@ -12967,7 +12934,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return d
 
     # ----------------------------------------------------------------
-    # Alias
+    # Aliases
     # ----------------------------------------------------------------
     @property
     def dtarray(self):
@@ -13018,6 +12985,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             i=i,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
     def standard_deviation(
         self,
         axes=None,
@@ -13039,6 +13009,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             i=i,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
     def variance(
         self,
         axes=None,
@@ -13097,109 +13070,6 @@ def _size_of_index(index, size=None):
     else:
         # Index is a list of integers
         return len(index)
-
-
-def _overlapping_partitions(partitions, indices, axes, master_flip):
-    """Return the nested list of (modified) partitions which overlap the
-    given indices to the master array.
-
-    :Parameters:
-
-        partitions : cf.PartitionMatrix
-
-        indices : tuple
-
-        axes : sequence of str
-
-        master_flip : list
-
-    :Returns:
-
-        numpy array
-            A numpy array of cf.Partition objects.
-
-    **Examples:**
-
-    >>> type(f.Data)
-    <class 'cf.data.Data'>
-    >>> d._axes
-    ['dim1', 'dim2', 'dim0']
-    >>> axis_to_position = {'dim0': 2, 'dim1': 0, 'dim2' : 1}
-    >>> indices = (slice(None), slice(5, 1, -2), [1,3,4,8])
-    >>> x = _overlapping_partitions(d.partitions, indices, axis_to_position, master_flip)
-
-    """
-
-    axis_to_position = {}
-    for i, axis in enumerate(axes):
-        axis_to_position[axis] = i
-
-    if partitions.size == 1:
-        partition = partitions.matrix.item()
-
-        # Find out if this partition overlaps the original slice
-        p_indices, shape = partition.overlaps(indices)
-
-        if p_indices is None:
-            # This partition is not in the slice out of bounds - raise
-            # error?
-            return
-
-        # Still here? Create a new partition
-        partition = partition.copy()
-        partition.new_part(p_indices, axis_to_position, master_flip)
-        partition.shape = shape
-
-        new_partition_matrix = np.empty(partitions.shape, dtype=object)
-        new_partition_matrix[...] = partition
-
-        return new_partition_matrix
-    # --- End: if
-
-    # Still here? Then there are 2 or more partitions.
-
-    partitions_list = []
-    partitions_list_append = partitions_list.append
-
-    flat_pm_indices = []
-    flat_pm_indices_append = flat_pm_indices.append
-
-    partitions_flat = partitions.matrix.flat
-
-    i = partitions_flat.index
-
-    for partition in partitions_flat:
-        # Find out if this partition overlaps the original slice
-        p_indices, shape = partition.overlaps(indices)
-
-        if p_indices is None:
-            # This partition is not in the slice
-            i = partitions_flat.index
-            continue
-
-        # Still here? Then this partition overlaps the slice, so
-        # create a new partition.
-        partition = partition.copy()
-        partition.new_part(p_indices, axis_to_position, master_flip)
-        partition.shape = shape
-
-        partitions_list_append(partition)
-
-        flat_pm_indices_append(i)
-
-        i = partitions_flat.index
-    # --- End: for
-
-    new_shape = [
-        len(set(s))
-        for s in np.unravel_index(flat_pm_indices, partitions.shape)
-    ]
-
-    new_partition_matrix = np.empty((len(flat_pm_indices),), dtype=object)
-    new_partition_matrix[...] = partitions_list
-    new_partition_matrix.resize(new_shape)
-
-    return new_partition_matrix
 
 
 def _broadcast(a, shape):
@@ -13309,8 +13179,8 @@ def _collapse(
             *d*. Must have the minimum signature (parameters and
             default values) ``func(dx, axis=None, keepdims=False,
             mtol=None, split_every=None)`` (optionally including
-            ``weights=None`` or ``ddof=None``), where ``dx`` is a
-            `dask.array.Array`
+            ``weights=None`` or ``ddof=None``), where ``dx`` is a the
+            dask array contained in *d*.
 
         d: `Data`
             The data to be collapsed.
@@ -13324,32 +13194,29 @@ def _collapse(
             data.
 
         weights: data_like, `dict`, or `None`, optional
-
             Weights associated with values of the data. By default
-            *weights* is `None`, meaning that all non-missing
-            elements of the data have a weight of 1 and all
-            missing elements have a weight of 0.
+            *weights* is `None`, meaning that all non-missing elements
+            of the data have a weight of 1 and all missing elements
+            have a weight of 0.
 
             If *weights* is a data_like object then it must be
             broadcastable to the array.
 
-            If *weights* is a dictionary then each key specifies
-            axes of the data (an `int` or `tuple` of `int`), with
-            a corresponding value of data_like weights for those
-            axes. The dimensions of a weights value must
-            correspond to its key axes in the same order. Not all
-            of the axes need weights assigned to them. The weights
-            that will be used will be an outer product of the
-            dictionary's values.
+            If *weights* is a dictionary then each key specifies axes
+            of the data (an `int` or `tuple` of `int`), with a
+            corresponding value of data_like weights for those
+            axes. The dimensions of a weights value must correspond to
+            its key axes in the same order. Not all of the axes need
+            weights assigned to them. The weights that will be used
+            will be an outer product of the dictionary's values.
 
             However they are specified, the weights are internally
-            broadcast to the shape of the data, and those weights
-            that are missing data, or that correspond to the
-            missing elements of the data, are assigned a weight of
-            0.
+            broadcast to the shape of the data, and those weights that
+            are missing data, or that correspond to the missing
+            elements of the data, are assigned a weight of 0.
 
             For collapse functions that do not have a ``weights``
-            parameter, *weights * must be `None`.
+            parameter, *weights* must be `None`.
 
         keepdims: `bool`, optional
             By default, the axes which are collapsed are left in the
@@ -13370,9 +13237,8 @@ def _collapse(
             freedom used in the calculation is (N-*ddof*) where N
             represents the number of non-missing elements.
 
-            For collapses that do need degrees of freedom (such as a
-            mean), *ddof * must be `None` and *func* need not support
-            a ``ddof`` parameter.
+            For collapse functions that do not have a ``ddof``
+            parameter, *ddof* must be `None`.
 
         split_every: `int` or `dict`, optional
             Determines the depth of the recursive aggregation. See
@@ -13408,6 +13274,10 @@ def _collapse(
 def _parse_weights(d, weights, axis=None):
     """Parse the weights input to `_collapse`.
 
+     .. versionadded:: TODODASK
+
+     .. seealso:: `_collapse`
+
     :Parameters:
 
         d: `Data`
@@ -13424,12 +13294,13 @@ def _parse_weights(d, weights, axis=None):
         `Data` or `None`
             * If *weights* is a data_like object then they are
               returned unchanged as a `Data` object. It is up to the
-              downstream functions to check the weights
-              broadcastability.
+              downstream functions to check if the weights can be
+              broadcast to the data.
 
             * If *weights* is a dictionary then the dictionary
               values', i.e. the weights components, outer product is
-              broadcast to the data and returned as a `Data` object.
+              returned in `Data` object that is broadcastable to the
+              data.
 
               If the dictionary is empty, or none of the axes defined
               by the keys correspond to collapse axes defined by

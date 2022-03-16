@@ -549,61 +549,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    #    @staticmethod
-    #    def sum_of_squares(
-    #        a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
-    #    ):
-    #        """Return sum of square values of an array.
-    #
-    #        Calculates the sum of square value of an array or the sum of
-    #        square values along axes.
-    #
-    #        See
-    #        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
-    #        for mathematical definitions.
-    #
-    #        .. versionadded:: TODODASK
-    #
-    #        :Parameters:
-    #
-    #            a: `dask.array.Array`
-    #                The array to be collapsed.
-    #
-    #            {{Collapse weights: data_like or `None`, optional}}
-    #
-    #            {{collapse axes: (sequence of) `int`, optional}}
-    #
-    #            {{collapse keepdims: `bool`, optional}}
-    #
-    #            {{mtol: number, optional}
-    #
-    #            {{split_every: `int` or `dict`, optional}}
-    #
-    #        :Returns:
-    #
-    #            `dask.array.Array`
-    #                The collapsed array.
-    #
-    #        """
-    #        if weights is None:
-    #            dtype = double_precision_dtype(a)
-    #        else:
-    #            dtype = "f8"
-    #
-    #        return reduction(
-    #            a,
-    #            partial(cf_sum_chunk, squared=True),
-    #            partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
-    #            axis=axis,
-    #            keepdims=keepdims,
-    #            dtype=dtype,
-    #            split_every=split_every,
-    #            combine=cf_sum_combine,
-    #            concatenate=False,
-    #            meta=np.array((), dtype=dtype),
-    #            weights=weights,
-    #        )
-
     @staticmethod
     def sum_of_weights(
         a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
@@ -1725,9 +1670,7 @@ def cf_sample_size_agg(
 # --------------------------------------------------------------------
 # sum
 # --------------------------------------------------------------------
-def cf_sum_chunk(
-    x, weights=None, dtype="f8", computing_meta=False, squared=False, **kwargs
-):
+def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     """Chunk calculations for the sum.
 
     This function is passed to `dask.array.reduction` as callable
@@ -1737,9 +1680,6 @@ def cf_sum_chunk(
 
     :Parameters:
 
-        squared: `bool`, optional
-            If True then calculate the weighted sum of the squares.
-
         See `dask.array.reductions` for details.
 
     :Returns:
@@ -1747,15 +1687,11 @@ def cf_sum_chunk(
         `dict`
             Dictionary with the keys:
             * N: The sample size.
-            * sum: The weighted sum of ``x``, or the weighted sum of
-                   ``x**2`` if *squared* is True.
+            * sum: The weighted sum of ``x``
 
     """
     if computing_meta:
         return x
-
-    if squared:
-        x = np.multiply(x, x, dtype=dtype)
 
     if weights is not None:
         x = np.multiply(x, weights, dtype=dtype)
@@ -2026,12 +1962,12 @@ def cf_var_agg(
     This function is passed to `dask.array.reduction` as callable
     *aggregate* parameter.
 
-    .. note:: If weights are provided then they are interpreted as
-              reliability weights, as opposed to frequency weights.
+    .. note:: Weights are interpreted as reliability weights, as
+              opposed to frequency weights.
 
     See
     https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
-    for details
+    for details.
 
     .. versionadded:: TODODASK
 
@@ -2083,7 +2019,7 @@ def cf_var_agg(
             f"Got: {ddof!r}"
         )
 
-    # Now get the required global variance
+    # Now get the required global variance with the requested ddof
     var = f * var
 
     var = mask_small_sample_size(var, d["N"], axis, mtol, original_shape)
