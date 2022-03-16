@@ -8785,7 +8785,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         Some methods treat the first and last elements of a cyclic
         axis as adjacent and physically connected, such as
         `convolution_filter`, `__getitem__` and `__setitem__`. Some
-        methods may make a cyclic axis non-cyclis, such as `halo`.
+        methods may make a cyclic axis non-cyclic, such as `halo`.
 
         :Parameters:
 
