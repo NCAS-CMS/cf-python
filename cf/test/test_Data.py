@@ -428,12 +428,11 @@ class DataTest(unittest.TestCase):
                 e = cf.Data(np.arange(6).reshape(2, 3), "m", chunks=(j, i))
                 self.assertTrue(d.equals(e))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'ndim'")
     def test_Data_halo(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data(np.arange(12).reshape(3, 4), "m")
+        d = cf.Data(np.arange(12).reshape(3, 4), "m", chunks=-1)
         d[-1, -1] = cf.masked
         d[1, 1] = cf.masked
 
@@ -443,13 +442,14 @@ class DataTest(unittest.TestCase):
         e = d.halo(0)
         self.assertTrue(d.equals(e, verbose=2))
 
+        shape = d.shape
         for i in (1, 2):
             e = d.halo(i)
 
-            self.assertEqual(e.shape, (d.shape[0] + i * 2, d.shape[1] + i * 2))
+            self.assertEqual(e.shape, (shape[0] + i * 2, shape[1] + i * 2))
 
             # Body
-            self.assertTrue(d.equals(e[i:-i, i:-i], verbose=2))
+            self.assertTrue(d.equals(e[i:-i, i:-i]))
 
             # Corners
             self.assertTrue(e[:i, :i].equals(d[:i, :i], verbose=2))
@@ -460,14 +460,13 @@ class DataTest(unittest.TestCase):
         for i in (1, 2):
             e = d.halo(i, axes=0)
 
-            self.assertEqual(e.shape, (d.shape[0] + i * 2, d.shape[1]))
-
+            self.assertEqual(e.shape, (shape[0] + i * 2, shape[1]))
             self.assertTrue(d.equals(e[i:-i, :], verbose=2))
 
         for j, i in zip([1, 1, 2, 2], [1, 2, 1, 2]):
             e = d.halo({0: j, 1: i})
 
-            self.assertEqual(e.shape, (d.shape[0] + j * 2, d.shape[1] + i * 2))
+            self.assertEqual(e.shape, (shape[0] + j * 2, shape[1] + i * 2))
 
             # Body
             self.assertTrue(d.equals(e[j:-j, i:-i], verbose=2))
@@ -478,38 +477,19 @@ class DataTest(unittest.TestCase):
             self.assertTrue(e[-j:, :i].equals(d[-j:, :i], verbose=2))
             self.assertTrue(e[-j:, -i:].equals(d[-j:, -i:], verbose=2))
 
-        with self.assertRaises(Exception):
-            _ = d.halo(4)
+        # Tripolar
+        for i in (1, 2):
+            e = d.halo(i)
 
-    #     e = d.halo(1, axes=0)
-    #
-    #    >>> print(e.array)
-    #    [[ 0  1  2  3]
-    #     [ 0  1  2  3]
-    #     [ 4 --  6  7]
-    #     [ 8  9 10 --]
-    #     [ 8  9 10 --]]
-    #    >>> d.equals(e[1:-1, :])
-    #    True
-    #    >>> f = d.halo({0: 1})
-    #    >>> f.equals(e)
-    #    True
-    #
-    #    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0})
-    #    >>> print(e.array)
-    #    [[ 0  0  1  2  3  3]
-    #     [ 0  0  1  2  3  3]
-    #     [ 4  4 --  6  7  7]
-    #     [ 8  8  9 10 -- --]
-    #     [-- -- 10  9  8  8]]
-    #
-    #    >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0}, fold_index=0)
-    #    >>> print(e.array)
-    #    [[ 3  3  2  1  0  0]
-    #     [ 0  0  1  2  3  3]
-    #     [ 4  4 --  6  7  7]
-    #     [ 8  8  9 10 -- --]
-    #     [ 8  8  9 10 -- --]]
+            t = d.halo(i, tripolar={"X": 1, "Y": 0})
+            self.assertTrue(t[-i:].equals(e[-i:, ::-1], verbose=2))
+
+            t = d.halo(i, tripolar={"X": 1, "Y": 0}, fold_index=0)
+            self.assertTrue(t[:i].equals(e[:i, ::-1], verbose=2))
+
+        # Depth too large for axis size
+        with self.assertRaises(ValueError):
+            d.halo(4)
 
     def test_Data_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -653,7 +633,6 @@ class DataTest(unittest.TestCase):
                         )
                         self.assertTrue((e.array == b).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_diff(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -668,8 +647,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == a).all())
 
         e = d.copy()
-        x = e.diff(inplace=True)
-        self.assertIsNone(x)
+        self.assertIsNone(e.diff(inplace=True))
         self.assertTrue(e.equals(d.diff()))
 
         for n in (0, 1, 2):
@@ -872,7 +850,6 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.digitize(bins, inplace=True))
         self.assertTrue(d.equals(e))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_cumsum(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -883,21 +860,20 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(e.cumsum(axis=0, inplace=True))
         self.assertTrue(e.equals(f, verbose=2))
 
-        d = cf.Data(self.a)
+        d = cf.Data(self.a, chunks=3)
 
-        for i in range(d.ndim):
+        for i in [None] + list(range(d.ndim)):
             b = np.cumsum(self.a, axis=i)
             e = d.cumsum(axis=i)
             self.assertTrue((e.array == b).all())
 
-        d = cf.Data(self.ma)
+        d = cf.Data(self.ma, chunks=3)
 
-        for i in range(d.ndim):
+        for i in [None] + list(range(d.ndim)):
             b = np.cumsum(self.ma, axis=i)
-            e = d.cumsum(axis=i, masked_as_zero=False)
+            e = d.cumsum(axis=i)
             self.assertTrue(cf.functions._numpy_allclose(e.array, b))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1933,7 +1909,6 @@ class DataTest(unittest.TestCase):
             for i, j in zip(d.ndindex(), np.ndindex(d.shape)):
                 self.assertEqual(i, j)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_pmshape'")
     def test_Data_roll(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1941,8 +1916,6 @@ class DataTest(unittest.TestCase):
         a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         d = cf.Data(a.copy())
-
-        _ = d._pmshape
 
         e = d.roll(0, 4)
         e.roll(2, 120, inplace=True)
@@ -2457,21 +2430,32 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = round(cf.Data([1, 2]))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_argmax(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data(np.arange(1200).reshape(40, 5, 6))
+        d = cf.Data(np.arange(120).reshape(4, 5, 6))
 
-        self.assertEqual(d.argmax(), 1199)
-        self.assertEqual(d.argmax(unravel=True), (39, 4, 5))
+        self.assertEqual(d.argmax().array, 119)
+
+        index = d.argmax(unravel=True)
+        self.assertEqual(index, (3, 4, 5))
+        self.assertEqual(d[index].array, 119)
 
         e = d.argmax(axis=1)
-        self.assertEqual(e.shape, (40, 6))
+        self.assertEqual(e.shape, (4, 6))
         self.assertTrue(
-            e.equals(cf.Data.full(shape=(40, 6), fill_value=4, dtype=int))
+            e.equals(cf.Data.full(shape=(4, 6), fill_value=4, dtype=int))
         )
+
+        self.assertEqual(d[d.argmax(unravel=True)].array, 119)
+
+        d = cf.Data([0, 4, 2, 3, 4])
+        self.assertEqual(d.argmax().array, 1)
+
+        # Bad axis
+        with self.assertRaises(Exception):
+            d.argmax(axis=d.ndim)
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits 'NoneType' is not iterable")
     def test_Data__collapse_SHAPE(self):
@@ -3628,9 +3612,6 @@ class DataTest(unittest.TestCase):
         #         self.assertTrue((e.array == c).all())
         #         self.assertTrue((d1.mask.array == c.mask).all())
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "hits 'TODODASK - use harden_mask/soften_mask'"
-    )
     def test_Data_filled(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -3877,6 +3858,36 @@ class DataTest(unittest.TestCase):
         # Scalar data invalid axis
         with self.assertRaises(ValueError):
             d.cyclic(0)
+
+    def test_Data_change_calendar(self):
+        d = cf.Data(
+            [0, 1, 2, 3, 4], "days since 2004-02-27", calendar="standard"
+        )
+        e = d.change_calendar("360_day")
+        self.assertTrue(np.allclose(e.array, [0, 1, 2, 4, 5]))
+        self.assertEqual(e.Units, cf.Units("days since 2004-02-27", "360_day"))
+
+        # An Exception should be raised when a date is stored that is
+        # invalid to the calendar (e.g. 29th of February in the noleap
+        # calendar).
+        with self.assertRaises(ValueError):
+            e = d.change_calendar("noleap").array
+
+    def test_Data_chunks(self):
+        dx = da.ones((4, 5), chunks=(2, 4))
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        self.assertEqual(d.chunks, dx.chunks)
+
+    def test_Data_rechunk(self):
+        dx = da.ones((4, 5), chunks=(2, 4)).rechunk(-1)
+        d = cf.Data.ones((4, 5), chunks=(2, 4)).rechunk(-1)
+        self.assertEqual(d.chunks, dx.chunks)
+
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        e = d.copy()
+        self.assertIsNone(e.rechunk(-1, inplace=True))
+        self.assertEqual(e.chunks, ((4,), (5,)))
+        self.assertTrue(e.equals(d))
 
 
 if __name__ == "__main__":

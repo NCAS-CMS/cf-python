@@ -1579,32 +1579,35 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         self.hardmask = self.hardmask
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
         """Calculate the n-th discrete difference along the given axis.
 
-        The first difference is given by ``x[i+1] - x[i]`` along the given
-        axis, higher differences are calculated by using `diff`
+        The first difference is given by ``x[i+1] - x[i]`` along the
+        given axis, higher differences are calculated by using `diff`
         recursively.
 
-        The shape of the output is the same as the input except along the
-        given axis, where the dimension is smaller by *n*. The data type
-        of the output is the same as the type of the difference between
-        any two elements of the input.
+        The shape of the output is the same as the input except along
+        the given axis, where the dimension is smaller by *n*. The
+        data type of the output is the same as the type of the
+        difference between any two elements of the input.
 
         .. versionadded:: 3.2.0
+
+        .. seealso:: `cumsum`, `sum`
 
         :Parameters:
 
             axis: int, optional
-                The axis along which the difference is taken. By default
-                the last axis is used. The *axis* argument is an integer
-                that selects the axis corresponding to the given position
-                in the list of axes of the data array.
+                The axis along which the difference is taken. By
+                default the last axis is used. The *axis* argument is
+                an integer that selects the axis corresponding to the
+                given position in the list of axes of the data array.
 
             n: int, optional
-                The number of times values are differenced. If zero, the
-                input is returned as-is. By default *n* is ``1``.
+                The number of times values are differenced. If zero,
+                the input is returned as-is. By default *n* is ``1``.
 
             {{inplace: `bool`, optional}}
 
@@ -1614,7 +1617,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The n-th differences, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data(numpy.arange(12.).reshape(3, 4))
         >>> d[1, 1] = 4.5
@@ -1658,28 +1661,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if n == 0:
-            return d
-
-        out = d
-        for _ in range(n):
-            sections = out.section(axis, chunks=True)
-
-            # Diff each section
-            for key, data in sections.items():
-                output_array = np.diff(data.array, axis=axis)
-
-                sections[key] = type(self)(
-                    output_array, units=self.Units, fill_value=self.fill_value
-                )
-
-            # Glue the sections back together again
-            out = self.__class__.reconstruct_sectioned_data(sections)
-
-        if inplace:
-            d.__dict__ = out.__dict__
-        else:
-            d = out
+        dx = self._get_dask()
+        dx = da.diff(dx, axis=axis, n=n)
+        d._set_dask(dx, reset_mask_hardness=False)
 
         return d
 
@@ -3143,47 +3127,57 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    def cumsum(self, axis, masked_as_zero=False, inplace=False):
+    def cumsum(
+        self,
+        axis=None,
+        masked_as_zero=False,
+        method="sequential",
+        inplace=False,
+    ):
         """Return the data cumulatively summed along the given axis.
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `sum`
+        .. seealso:: `diff`, `sum`
 
         :Parameters:
 
             axis: `int`, optional
-                Select the axis over which the cumulative sums are to be
-                calculated.
+                Select the axis over which the cumulative sums are to
+                be calculated. By default the cumulative sum is
+                computed over the flattened array.
 
-            masked_as_zero: `bool`, optional
-                If True then set missing data values to zero before
-                calculating the cumulative sum. By default the output data
-                will be masked at the same locations as the original data.
+            method: `str`, optional
+                Choose which method to use to perform the cumulative
+                sum. See `dask.array.cumsum` for details.
 
-                .. note:: Sums produced entirely from masked elements will
-                          always result in masked values in the output
-                          data, regardless of the setting of
-                          *masked_as_zero*.
+                .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
 
                 .. versionadded:: 3.3.0
 
+            masked_as_zero: deprecated at version TODODASK
+                See the examples for the new behaviour when there are
+                masked values.
+
         :Returns:
 
-             `Data`
-                The data with the cumulatively summed axis, or `None` if
-                the operation was in-place.
+             `Data` or `None`
+                The data with the cumulatively summed axis, or `None`
+                if the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
         >>> print(d.array)
         [[ 0  1  2  3]
          [ 4  5  6  7]
          [ 8  9 10 11]]
+        >>> print(d.cumsum().array)
+        [ 0  1  3  6 10 15 21 28 36 45 55 66]
         >>> print(d.cumsum(axis=0).array)
         [[ 0  1  2  3]
          [ 4  6  8 10]
@@ -3194,73 +3188,45 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [ 8 17 27 38]]
 
         >>> d[0, 0] = cf.masked
-        >>> d[1, 1] = cf.masked
+        >>> d[1, [1, 3]] = cf.masked
         >>> d[2, 0:2] = cf.masked
         >>> print(d.array)
-        [[--  1  3  6]
-         [ 4 -- 10 17]
-         [-- -- 10 21]]
+        [[-- 1 2 3]
+         [4 -- 6 --]
+         [-- -- 10 11]]
+        >>> print(d.cumsum(axis=0).array)
+        [[-- 1 2 3]
+         [4 -- 8 --]
+         [-- -- 18 14]]
         >>> print(d.cumsum(axis=1).array)
-        [[--  1  3  6]
-         [ 4 -- 10 17]
-         [-- -- 10 21]]
-        >>> print(d.cumsum(axis=1, masked_as_zero=True).array)
-        [[--  1  3  6]
-         [ 4  4 10 17]
+        [[-- 1 3 6]
+         [4 -- 10 --]
          [-- -- 10 21]]
 
         """
-        # Parse axis
-        ndim = self._ndim
-        if -ndim - 1 <= axis < 0:
-            axis += ndim + 1
-        elif not 0 <= axis <= ndim:
-            raise ValueError(
-                "Can't cumsum: Invalid axis specification: Expected "
-                "-{0}<=axis<{0}, got axis={1}".format(ndim, axis)
-            )
+        if masked_as_zero:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "cumsum",
+                {"masked_as_zero": None},
+                message="",
+                version="TODODASK",
+                removed_at="5.0.0",
+            )  # pragma: no cover
 
         d = _inplace_enabled_define_and_cleanup(self)
 
-        sections = self.section(axis, chunks=True)
+        dx = d._get_dask()
+        dx = dx.cumsum(axis=axis, method=method)
 
-        # Cumulatively sum each section
-        for key, data in sections.items():
-            array = data.array
-
-            filled = False
-            if masked_as_zero and np.ma.is_masked(array):
-                mask = array.mask
-                array = array.filled(0)
-                filled = True
-
-            array = np.cumsum(array, axis=axis)
-
-            if filled:
-                size = array.shape[axis]
-                shape = [1] * array.ndim
-                shape[axis] = size
-                new_mask = np.cumsum(mask, axis=axis) == np.arange(
-                    1, size + 1
-                ).reshape(shape)
-                array = np.ma.array(array, mask=new_mask, copy=False)
-
-            sections[key] = type(self)(
-                array, units=self.Units, fill_value=self.fill_value
-            )
-
-        # Glue the sections back together again
-        out = self.reconstruct_sectioned_data(sections, cyclic=self.cyclic())
-
-        if inplace:
-            d.__dict__ = out.__dict__
-        else:
-            d = out
+        # Note: The dask cumsum method resets the mask hardness to the
+        #       numpy default, so we need to reset the mask hardness
+        #       during _set_dask.
+        d._set_dask(dx, reset_mask_hardness=True)
 
         return d
 
-        return out
-
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def rechunk(
         self,
@@ -3270,45 +3236,44 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         balance=False,
         inplace=False,
     ):
-        """Convert blocks in the dask array for new chunks.
+        """Change the chunk structure of the data.
 
-        See `dask.array.rechunk`for more details.
+        .. versionadded:: TODODASK
 
-        .. versionadded:: 4.0.0
-
-        .. seealso:: `chunks`
+        .. seealso:: `chunks`, `dask.array.rechunk`
 
         :Parameters:
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
-
             threshold: `int`, optional
                 The graph growth factor under which we don't bother
-                introducing an intermediate step.
+                introducing an intermediate step. See
+                `dask.array.rechunk` for details.
 
             block_size_limit: `int`, optional
-                The maximum block size (in bytes) we want to produce
+                The maximum block size (in bytes) we want to produce.
                 Defaults to the configuration value
-                ``dask.array.chunk-size``
-
-                TODODASK - how to use/import dask config items??
+                ``dask.config.get('array.chunk-size')``. See
+                `dask.array.rechunk` for details.
 
             balance: `bool`, optional
-                If True, try to make each chunk the same
-                size. By default this is not attempted.
+                If True, try to make each chunk the same size. By
+                default this is not attempted. See
+                `dask.array.rechunk` for details.
 
                 This means ``balance=True`` will remove any small
-                leftover chunks, so using ``x.rechunk(chunks=len(x) //
+                leftover chunks, so using ``d.rechunk(chunks=len(d) //
                 N, balance=True)`` will almost certainly result in
                 ``N`` chunks.
 
         :Returns:
 
-            TODODASK
+            `Data` or `None`
+                The rechunked data, or `None` if the operation was
+                in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> x = cf.Data.ones((1000, 1000), chunks=(100, 100))
 
@@ -3320,10 +3285,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> y = x.rechunk({0: 1000})
 
-        Use the value ``-1`` to specify that you want a single chunk along
-        a dimension or the value ``"auto"`` to specify that dask can
-        freely rechunk a dimension to attain blocks of a uniform block
-        size
+        Use the value ``-1`` to specify that you want a single chunk
+        along a dimension or the value ``"auto"`` to specify that dask
+        can freely rechunk a dimension to attain blocks of a uniform
+        block size.
 
         >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
 
@@ -3345,7 +3310,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-
         d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
         return d
@@ -5908,9 +5872,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     # Dask attributes
     # ----------------------------------------------------------------
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def chunks(self):
-        """TODODASK."""
+        """The chunk sizes for each dimension.
+
+        **Examples**
+
+        >>> d = cf.Data.ones((4, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2), (4, 1))
+
+        """
         return self._get_dask().chunks
+
+    @chunks.setter
+    def chunks(self, chunks):
+        raise TypeError(
+            "Can't set chunks directly. Use the 'rechunk' method instead."
+        )
 
     @property
     def force_compute(self):
@@ -7545,98 +7524,80 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         If no axis is specified then the returned index locates the
         maximum of the whole data.
 
+        In case of multiple occurrences of the maximum values, the
+        indices corresponding to the first occurrence are returned.
+
+        **Performance**
+
+        If the data index is returned as a `tuple` (see the *unravel*
+        parameter) then all delayed operations are computed.
+
         :Parameters:
 
             axis: `int`, optional
                 The specified axis over which to locate the maximum
-                values. By default the maximum over the whole data is
-                located.
+                values. By default the maximum over the flattened data
+                is located.
 
             unravel: `bool`, optional
-                If True, then when locating the maximum over the whole
-                data, return the location as a tuple of indices for each
-                axis. By default an index to the flattened array is
-                returned in this case. Ignored if locating the maxima over
-                a subset of the axes.
+
+                If True then when locating the maximum over the whole
+                data, return the location as an index for each axis as
+                a `tuple`. By default an index to the flattened array
+                is returned in this case. Ignored if locating the
+                maxima over a subset of the axes.
 
         :Returns:
 
-            `int` or `tuple` or `Data`
+            `Data` or `tuple`
                 The location of the maximum, or maxima.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data(numpy.arange(120).reshape(4, 5, 6))
-        >>> d.argmax()
-        119
-        >>> d.argmax(unravel=True)
-        (3, 4, 5)
+        >>> d = cf.Data(np.arange(6).reshape(2, 3))
+        >>> print(d.array)
+        [[0 1 2]
+         [3 4 5]]
+        >>> a = d.argmax()
+        >>> a
+        <CF Data(): 5>
+        >>> a.array
+        5
+
+        >>> index = d.argmax(unravel=True)
+        >>> index
+        (1, 2)
+        >>> d[index]
+        <CF Data(1, 1): [[5]]>
+
         >>> d.argmax(axis=0)
-        <CF Data(5, 6): [[3, ..., 3]]>
+        <CF Data(3): [1, 1, 1]>
         >>> d.argmax(axis=1)
-        <CF Data(4, 6): [[4, ..., 4]]>
-        >>> d.argmax(axis=2)
-        <CF Data(4, 5): [[5, ..., 5]]>
+        <CF Data(2): [2, 2]>
+
+        Only the location of the first occurrence is returned:
+
+        >>> d = cf.Data([0, 4, 2, 3, 4])
+        >>> d.argmax()
+        <CF Data(): 1>
+
+        >>> d = cf.Data(np.arange(6).reshape(2, 3))
+        >>> d[1, 1] = 5
+        >>> print(d.array)
+        [[0 1 2]
+         [3 5 5]]
+        >>> d.argmax(1)
+        <CF Data(2): [2, 1]>
 
         """
-        if axis is not None:
-            ndim = self._ndim
-            if -ndim - 1 <= axis < 0:
-                axis += ndim + 1
-            elif not 0 <= axis <= ndim:
-                raise ValueError(
-                    "Can't argmax: Invalid axis specification: Expected "
-                    "-{0}<=axis<{0}, got axis={1}".format(ndim, axis)
-                )
+        dx = self._get_dask()
+        a = dx.argmax(axis=axis)
 
-            if ndim == 1 and axis == 0:
-                axis = None
-        # --- End: if
+        if unravel and (axis is None or self.ndim <= 1):
+            # Return a multidimensional index tuple
+            return tuple(np.array(da.unravel_index(a, self.shape)))
 
-        if axis is None:
-            config = self.partition_configuration(readonly=True)
-
-            out = []
-
-            for partition in self.partitions.matrix.flat:
-                partition.open(config)
-                array = partition.array
-                index = np.unravel_index(array.argmax(), array.shape)
-                mx = array[index]
-                index = [x[0] + i for x, i in zip(partition.location, index)]
-                out.append((mx, index))
-                partition.close()
-
-            mx, index = sorted(out)[-1]
-
-            if unravel:
-                return tuple(index)
-
-            return np.ravel_multi_index(index, self.shape)
-
-        # Parse axis
-        ndim = self._ndim
-        if -ndim - 1 <= axis < 0:
-            axis += ndim + 1
-        elif not 0 <= axis <= ndim:
-            raise ValueError(
-                "Can't argmax: Invalid axis specification: Expected "
-                "-{0}<=axis<{0}, got axis={1}".format(ndim, axis)
-            )
-
-        sections = self.section(axis, chunks=True)
-        for key, d in sections.items():
-            array = d.varray.argmax(axis=axis)
-            array = np.expand_dims(array, axis)
-            sections[key] = type(self)(
-                array, self.Units, fill_value=self.fill_value
-            )
-
-        out = self.reconstruct_sectioned_data(sections)
-
-        out.squeeze(axis, inplace=True)
-
-        return out
+        return type(self)(a)
 
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
@@ -9161,7 +9122,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `itertools.product`
                 An iterator over tuples of indices of the data array.
 
-        **Examples:**
+        **Examples**
+
+        >>> d = cf.Data(np.arange(6).reshape(2, 3))
+        >>> print(d.array)
+        [[0 1 2]
+         [3 4 5]]
+        >>> for i in d.ndindex():
+        ...     print(i, d[i])
+        ...
+        (0, 0) [[0]]
+        (0, 1) [[1]]
+        (0, 2) [[2]]
+        (1, 0) [[3]]
+        (1, 1) [[4]]
+        (1, 2) [[5]]
+
+        >>> d = cf.Data(9)
+        >>> for i in d.ndindex():
+        ...     print(i, d[i])
+        ...
+        () 9
 
         """
         return product(*[range(0, r) for r in self.shape])
@@ -9422,106 +9403,118 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_deprecated_kwarg_check("size")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the data by adding a halo.
 
-        The halo may be applied over a subset of the data dimensions and
-        each dimension may have a different halo size (including
-        zero). The halo region is populated with a copy of the proximate
-        values from the original data.
+        The halo contains the adjacent values up to the given
+        depth(s). See the example for details.
+
+        The halo may be applied over a subset of the data dimensions
+        and each dimension may have a different halo size (including
+        zero). The halo region is populated with a copy of the
+        proximate values from the original data.
 
         **Cyclic axes**
 
-        A cyclic axis that is expanded with a halo of at least size 1 is
-        no longer considered to be cyclic.
+        A cyclic axis that is expanded with a halo of at least size 1
+        is no longer considered to be cyclic.
 
         **Tripolar domains**
 
-        Data for global tripolar domains are a special case in that a halo
-        added to the northern end of the "Y" axis must be filled with
-        values that are flipped in "X" direction. Such domains need to be
-        explicitly indicated with the *tripolar* parameter.
+        Data for global tripolar domains are a special case in that a
+        halo added to the northern end of the "Y" axis must be filled
+        with values that are flipped in "X" direction. Such domains
+        need to be explicitly indicated with the *tripolar* parameter.
 
         .. versionadded:: 3.5.0
 
         :Parameters:
 
-            size: `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the halo
-                size that is applied to all of the axes defined by the
-                *axes* parameter.
+                If *depth* is a non-negative `int` then this is the
+                halo size that is applied to all of the axes defined
+                by the *axes* parameter.
 
                 Alternatively, halo sizes may be assigned to axes
                 individually by providing a `dict` for which a key
-                specifies an axis (defined by its integer position in the
-                data) with a corresponding value of the halo size for that
-                axis. Axes not specified by the dictionary are not
-                expanded, and the *axes* parameter must not also be set.
+                specifies an axis (defined by its integer position in
+                the data) with a corresponding value of the halo size
+                for that axis. Axes not specified by the dictionary
+                are not expanded, and the *axes* parameter must not
+                also be set.
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``depth=1``.
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results in
-                  no change to the data shape.
+                  Specify a halo size of zero ``depth=0``. This
+                  results in no change to the data shape.
 
                 *Parameter example:*
-                  For data with three dimensions, specify a halo size of 3
-                  for the first dimension and 1 for the second dimension:
-                  ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
-                  3, 1: 1, 2: 0}``
+                  For data with three dimensions, specify a halo size
+                  of 3 for the first dimension and 1 for the second
+                  dimension: ``depth={0: 3, 1: 1}``. This is
+                  equivalent to ``depth={0: 3, 1: 1, 2: 0}``.
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
-                  dimensions `size=2, axes=[0, -1]`` or equivalently
-                  ``size={0: 2, -1: 2}``.
+                  dimensions `depth=2, axes=[0, -1]`` or equivalently
+                  ``depth={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
-                Select the domain axes to be expanded, defined by their
-                integer positions in the data. By default, or if *axes* is
-                `None`, all axes are selected. No axes are expanded if
-                *axes* is an empty sequence.
+                Select the domain axes to be expanded, defined by
+                their integer positions in the data. By default, or if
+                *axes* is `None`, all axes are selected. No axes are
+                expanded if *axes* is an empty sequence.
 
             tripolar: `dict`, optional
                 A dictionary defining the "X" and "Y" axes of a global
-                tripolar domain. This is necessary because in the global
-                tripolar case the "X" and "Y" axes need special treatment,
-                as described above. It must have keys ``'X'`` and ``'Y'``,
-                whose values identify the corresponding domain axis
-                construct by their integer positions in the data.
+                tripolar domain. This is necessary because in the
+                global tripolar case the "X" and "Y" axes need special
+                treatment, as described above. It must have keys
+                ``'X'`` and ``'Y'``, whose values identify the
+                corresponding domain axis construct by their integer
+                positions in the data.
 
-                The "X" and "Y" axes must be a subset of those identified
-                by the *size* or *axes* parameter.
+                The "X" and "Y" axes must be a subset of those
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+                  respectively of the data: ``tripolar={'X': 2, 'Y':
+                  1}``
 
             fold_index: `int`, optional
-                Identify which index of the "Y" axis corresponds to the
-                fold in "X" axis of a tripolar grid. The only valid values
-                are ``-1`` for the last index, and ``0`` for the first
-                index. By default it is assumed to be the last
-                index. Ignored if *tripolar* is `None`.
+                Identify which index of the "Y" axis corresponds to
+                the fold in "X" axis of a tripolar grid. The only
+                valid values are ``-1`` for the last index, and ``0``
+                for the first index. By default it is assumed to be
+                the last index. Ignored if *tripolar* is `None`.
 
             {{inplace: `bool`, optional}}
 
             {{verbose: `int` or `str` or `None`, optional}}
+
+            size: deprecated at version TODODASK
+                Use the *depth* parameter instead.
 
         :Returns:
 
@@ -9535,29 +9528,30 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d[-1, -1] = cf.masked
         >>> d[1, 1] = cf.masked
         >>> print(d.array)
-        [[ 0  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 --]]
+        [[0 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 --]]
 
         >>> e = d.halo(1)
         >>> print(e.array)
-        [[ 0  0  1  2  3  3]
-         [ 0  0  1  2  3  3]
-         [ 4  4 --  6  7  7]
-         [ 8  8  9 10 -- --]
-         [ 8  8  9 10 -- --]]
+        [[0 0 1 2 3 3]
+         [0 0 1 2 3 3]
+         [4 4 -- 6 7 7]
+         [8 8 9 10 -- --]
+         [8 8 9 10 -- --]]
+
         >>> d.equals(e[1:-1, 1:-1])
         True
 
         >>> e = d.halo(2)
         >>> print(e.array)
-        [[ 0  1  0  1  2  3  2  3]
-         [ 4 --  4 --  6  7  6  7]
-         [ 0  1  0  1  2  3  2  3]
-         [ 4 --  4 --  6  7  6  7]
-         [ 8  9  8  9 10 -- 10 --]
-         [ 4 --  4 --  6  7  6  7]
-         [ 8  9  8  9 10 -- 10 --]]
+        [[0 1 0 1 2 3 2 3]
+         [4 -- 4 -- 6 7 6 7]
+         [0 1 0 1 2 3 2 3]
+         [4 -- 4 -- 6 7 6 7]
+         [8 9 8 9 10 -- 10 --]
+         [4 -- 4 -- 6 7 6 7]
+         [8 9 8 9 10 -- 10 --]]
         >>> d.equals(e[2:-2, 2:-2])
         True
 
@@ -9567,11 +9561,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> e = d.halo(1, axes=0)
         >>> print(e.array)
-        [[ 0  1  2  3]
-         [ 0  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 --]
-         [ 8  9 10 --]]
+        [[0 1 2 3]
+         [0 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 --]
+         [8 9 10 --]]
+
         >>> d.equals(e[1:-1, :])
         True
         >>> f = d.halo({0: 1})
@@ -9580,57 +9575,58 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0})
         >>> print(e.array)
-        [[ 0  0  1  2  3  3]
-         [ 0  0  1  2  3  3]
-         [ 4  4 --  6  7  7]
-         [ 8  8  9 10 -- --]
-         [-- -- 10  9  8  8]]
+        [[0 0 1 2 3 3]
+         [0 0 1 2 3 3]
+         [4 4 -- 6 7 7]
+         [8 8 9 10 -- --]
+         [-- -- 10 9 8 8]]
 
         >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0}, fold_index=0)
         >>> print(e.array)
-        [[ 3  3  2  1  0  0]
-         [ 0  0  1  2  3  3]
-         [ 4  4 --  6  7  7]
-         [ 8  8  9 10 -- --]
-         [ 8  8  9 10 -- --]]
+        [[3 3 2 1 0 0]
+         [0 0 1 2 3 3]
+         [4 4 -- 6 7 7]
+         [8 8 9 10 -- --]
+         [8 8 9 10 -- --]]
 
         """
-        _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-        _ = "{}.halo(".format(self.__class__.__name__)
-        logger.info("{}{})".format(_, (",\n" + " " * len(_)).join(_kwargs)))
+        from dask.array.core import concatenate
 
         d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d.ndim
-        shape0 = d.shape
+        shape = d.shape
 
-        # ------------------------------------------------------------
-        # Parse the size and axes parameters
-        # ------------------------------------------------------------
-        if isinstance(size, dict):
+        # Parse the depth and axes parameters
+        if isinstance(depth, dict):
             if axes is not None:
                 raise ValueError(
                     "Can't set the axes parameter when the "
-                    "size parameter is a dictionary"
+                    "depth parameter is a dictionary"
                 )
 
-            axes = self._parse_axes(tuple(size))
-            size = [size[i] if i in axes else 0 for i in range(ndim)]
+            # Check that the dictionary keys are OK and remove size
+            # zero depths
+            axes = self._parse_axes(tuple(depth))
+            depth = {i: size for i, size in depth.items() if size}
         else:
             if axes is None:
                 axes = list(range(ndim))
+            else:
+                axes = d._parse_axes(axes)
 
-            axes = d._parse_axes(axes)
-            size = [size if i in axes else 0 for i in range(ndim)]
+            depth = {i: depth for i in axes}
 
-        # ------------------------------------------------------------
+        # Return if all axis depths are zero
+        if not any(depth.values()):
+            return d
+
         # Parse the tripolar parameter
-        # ------------------------------------------------------------
         if tripolar:
             if fold_index not in (0, -1):
                 raise ValueError(
                     "fold_index parameter must be -1 or 0. "
-                    "Got {!r}".format(fold_index)
+                    f"Got {fold_index!r}"
                 )
 
             # Find the X and Y axes of a tripolar grid
@@ -9640,8 +9636,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             if tripolar:
                 raise ValueError(
-                    "Can not set key {!r} in the tripolar "
-                    "dictionary.".format(tripolar.popitem()[0])
+                    f"Can not set key {tripolar.popitem()[0]!r} in the "
+                    "tripolar dictionary."
                 )
 
             if X_axis is None:
@@ -9656,13 +9652,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if len(X) != 1:
                 raise ValueError(
                     "Must provide exactly one tripolar 'X' axis. "
-                    "Got {!r}".format(X_axis)
+                    f"Got {X_axis!r}"
                 )
 
             if len(Y) != 1:
                 raise ValueError(
                     "Must provide exactly one tripolar 'Y' axis. "
-                    "Got {!r}".format(Y_axis)
+                    f"Got {Y_axis!r}"
                 )
 
             X_axis = X[0]
@@ -9671,135 +9667,76 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if X_axis == Y_axis:
                 raise ValueError(
                     "Tripolar 'X' and 'Y' axes must be different. "
-                    "Got {!r}, {!r}".format(X_axis, Y_axis)
+                    f"Got {X_axis!r}, {Y_axis!r}"
                 )
 
             for A, axis in zip(("X", "Y"), (X_axis, Y_axis)):
                 if axis not in axes:
                     raise ValueError(
                         "If dimensions have been identified with the "
-                        "axes or size parameters then they must include "
-                        "the tripolar {!r} axis: {!r}".format(A, axis)
+                        "axes or depth parameters then they must include "
+                        f"the tripolar {A!r} axis: {axis!r}"
                     )
-            # --- End: for
 
-            tripolar = True
-        # --- End: if
+            tripolar = Y_axis in depth
 
-        # Remove axes with a size 0 halo
-        axes = [i for i in axes if size[i]]
+        # Create the halo
+        dx = d._get_dask()
 
-        if not axes:
-            # Return now if all halos are of size 0
-            return d
+        indices = [slice(None)] * ndim
+        for axis, size in sorted(depth.items()):
+            if not size:
+                continue
 
-        # Check that the halos are not too large
-        for i, (h, n) in enumerate(zip(size, shape0)):
-            if h > n:
+            if size > shape[axis]:
                 raise ValueError(
-                    "Halo size {!r} is too big for axis of size {!r}".format(
-                        h, n
-                    )
+                    f"Halo depth {size} is too large for axis of size "
+                    f"{shape[axis]}"
                 )
-        # --- End: for
 
-        # Initialise the expanded data
-        shape1 = [
-            n + size[i] * 2 if i in axes else n for i, n in enumerate(shape0)
-        ]
-        out = type(d).empty(
-            shape1,
-            dtype=d.dtype,
-            units=d.Units,
-            fill_value=d.get_fill_value(None),
-        )
+            left_indices = indices[:]
+            right_indices = indices[:]
 
-        # ------------------------------------------------------------
-        # Body (not edges nor corners)
-        # ------------------------------------------------------------
-        indices = [
-            slice(h, h + n) if (h and i in axes) else slice(None)
-            for i, (h, n) in enumerate(zip(size, shape0))
-        ]
-        out[tuple(indices)] = d
+            left_indices[axis] = slice(0, size)
+            right_indices[axis] = slice(-size, None)
 
-        # ------------------------------------------------------------
-        # Edges (not corners)
-        # ------------------------------------------------------------
-        for i in axes:
-            size_i = size[i]
+            left = dx[tuple(left_indices)]
+            right = dx[tuple(right_indices)]
 
-            for edge in (0, -1):
-                # Initialise indices to the expanded data
-                indices1 = [slice(None)] * ndim
+            dx = concatenate([left, dx, right], axis=axis)
 
-                if edge == -1:
-                    indices1[i] = slice(-size_i, None)
-                else:
-                    indices1[i] = slice(0, size_i)
+        d._set_dask(dx, reset_mask_hardness=False)
 
-                # Initialise indices to the original data
-                indices0 = indices1[:]
+        # Special case for tripolar: The northern Y axis halo contains
+        # the values that have been flipped in the X direction.
+        if tripolar:
+            hardmask = d.hardmask
+            if hardmask:
+                d.hardmask = False
 
-                for j in axes:
-                    if j == i:
-                        continue
-
-                    size_j = size[j]
-                    indices1[j] = slice(size_j, -size_j)
-
-                out[tuple(indices1)] = d[tuple(indices0)]
-        # --- End: for
-
-        # ------------------------------------------------------------
-        # Corners
-        # ------------------------------------------------------------
-        if len(axes) > 1:
-            for indices in product(
-                *[
-                    (slice(0, size[i]), slice(-size[i], None))
-                    if i in axes
-                    else (slice(None),)
-                    for i in range(ndim)
-                ]
-            ):
-                out[indices] = d[indices]
-
-        hardmask = d.hardmask
-
-        # ------------------------------------------------------------
-        # Special case for tripolar: The northern "Y" axis halo
-        # contains the values that have been flipped in the "X"
-        # direction.
-        # ------------------------------------------------------------
-        if tripolar and size[Y_axis]:
-            indices1 = [slice(None)] * ndim
-
+            indices1 = indices[:]
             if fold_index == -1:
-                # The last index of the "Y" axis corresponds to the
-                # fold in "X" axis of a tripolar grid
-                indices1[Y_axis] = slice(-size[Y_axis], None)
+                # The last index of the Y axis corresponds to the fold
+                # in X axis of a tripolar grid
+                indices1[Y_axis] = slice(-depth[Y_axis], None)
             else:
-                # The first index of the "Y" axis corresponds to the
-                # fold in "X" axis of a tripolar grid
-                indices1[Y_axis] = slice(0, size[Y_axis])
+                # The first index of the Y axis corresponds to the
+                # fold in X axis of a tripolar grid
+                indices1[Y_axis] = slice(0, depth[Y_axis])
 
             indices2 = indices1[:]
             indices2[X_axis] = slice(None, None, -1)
 
-            out.hardmask = False
-            out[tuple(indices1)] = out[tuple(indices2)]
+            dx = d._get_dask()
+            dx[tuple(indices1)] = dx[tuple(indices2)]
 
-        out.hardmask = True
+            d._set_dask(dx, reset_mask_hardness=False)
+
+            if hardmask:
+                d.hardmask = True
 
         # Set expanded axes to be non-cyclic
-        out.cyclic(axes=axes, iscyclic=False)
-
-        if inplace:
-            d.__dict__ = out.__dict__
-            d.hardmask = hardmask
-        else:
-            d = out
+        d.cyclic(axes=tuple(depth), iscyclic=False)
 
         return d
 
@@ -9865,9 +9802,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._map_blocks(cf_soften_mask, dtype=self.dtype)
         self._hardmask = False
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
-        """Replace masked elements with the fill value.
+        """Replace masked elements with a fill value.
 
         .. versionadded:: 3.4.0
 
@@ -9904,25 +9842,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if fill_value is None:
             fill_value = d.get_fill_value(None)
             if fill_value is None:  # still...
-                fill_value = default_netCDF_fillvals().get(
-                    d.dtype.str[1:], None
-                )
+                fill_value = default_netCDF_fillvals().get(d.dtype.str[1:])
                 if fill_value is None and d.dtype.kind in ("SU"):
                     fill_value = default_netCDF_fillvals().get("S1", None)
 
-                if fill_value is None:  # should not be None by this stage
+                if fill_value is None:
                     raise ValueError(
                         "Can't determine fill value for "
-                        "data type {!r}".format(d.dtype.str)
+                        f"data type {d.dtype.str!r}"
                     )
-        # --- End: if
 
-        hardmask = d.hardmask
-        d.hardmask = False
-
-        d.where(d.mask, fill_value, inplace=True)
-
-        d.hardmask = hardmask
+        d._map_blocks(np.ma.filled, fill_value=fill_value, dtype=d.dtype)
 
         return d
 
@@ -10096,10 +10026,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 else:
                     yield cf_masked
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
-        """Flatten axes of the data.
-
-        TODODASK - check against daask flatten behaviour
+        """Flatten specified axes of the data.
 
         Any subset of the axes may be flattened.
 
@@ -10111,21 +10041,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. versionadded:: 3.0.2
 
-        .. seealso:: `compressed`, `insert_dimension`, `flip`, `swapaxes`,
-                     `transpose`
+        .. seealso:: `compressed`, `flat`, `insert_dimension`, `flip`,
+                     `swapaxes`, `transpose`
 
         :Parameters:
 
-            axes: (sequence of) int or str, optional
-                Select the axes.  By default all axes are flattened. The
-                *axes* argument may be one, or a sequence, of:
-
-                  * An internal axis identifier. Selects this axis.
-
-                  * An integer. Selects the axis corresponding to the given
-                    position in the list of axes of the data array.
-
-                No axes are flattened if *axes* is an empty sequence.
+            axes: (sequence of) `int`
+                Select the axes to be flattened. By default all axes
+                are flattened. Each axis is identified by its integer
+                position. No axes are flattened if *axes* is an empty
+                sequence.
 
             {{inplace: `bool`, optional}}
 
@@ -10137,7 +10062,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
-        >>> d = cf.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+        >>> import numpy as np
+        >>> d = cf.Data(np.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
         >>> print(d.array)
@@ -10185,27 +10111,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
           [15 19 23]]]
 
         """
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
-        ndim = self._ndim
+        ndim = d.ndim
         if not ndim:
             if axes or axes == 0:
                 raise ValueError(
-                    "Can't flatten: Can't remove an axis from "
-                    "scalar {}".format(self.__class__.__name__)
+                    "Can't flatten: Can't remove axes from "
+                    f"scalar {self.__class__.__name__}"
                 )
 
-            if inplace:
-                d = None
             return d
 
-        shape = list(d._shape)
-
-        # Note that it is important that the first axis in the list is
-        # the left-most flattened axis
         if axes is None:
             axes = list(range(ndim))
         else:
@@ -10213,39 +10130,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         n_axes = len(axes)
         if n_axes <= 1:
-            if inplace:
-                d = None
             return d
 
+        dx = d._get_dask()
+
+        # It is important that the first axis in the list is the
+        # left-most flattened axis.
+        #
+        # E.g. if the shape is (10, 20, 30, 40, 50, 60) and the axes
+        #      to be flattened are [2, 4], then the data must be
+        #      transposed with order [0, 1, 2, 4, 3, 5]
+        order = [i for i in range(ndim) if i not in axes]
+        order[axes[0] : axes[0]] = axes
+        dx = dx.transpose(order)
+
+        # Find the flattened shape.
+        #
+        # E.g. if the *transposed* shape is (10, 20, 30, 50, 40, 60)
+        #      and *transposed* axes [2, 3] are to be flattened then
+        #      the new shape will be (10, 20, 1500, 40, 60)
+        shape = d.shape
         new_shape = [n for i, n in enumerate(shape) if i not in axes]
-        new_shape.insert(axes[0], np.prod([shape[i] for i in axes]))
+        new_shape.insert(axes[0], reduce(mul, [shape[i] for i in axes], 1))
 
-        out = d.empty(new_shape, dtype=d.dtype, units=d.Units, chunk=True)
-        out.hardmask = False
+        dx = dx.reshape(new_shape)
+        d._set_dask(dx, reset_mask_hardness=False)
 
-        n_non_flattened_axes = ndim - n_axes
-
-        for key, data in d.section(axes).items():
-            flattened_array = data.array.flatten()
-            size = flattened_array.size
-
-            first_None_index = key.index(None)
-
-            indices = [i for i in key if i is not None]
-            indices.insert(first_None_index, slice(0, size))
-
-            shape = [1] * n_non_flattened_axes
-            shape.insert(first_None_index, size)
-
-            out[tuple(indices)] = flattened_array.reshape(shape)
-
-        out.hardmask = True
-
-        if inplace:
-            d.__dict__ = out.__dict__
-            out = None
-
-        return out
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
@@ -10352,31 +10263,71 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def change_calendar(self, calendar, inplace=False, i=False):
-        """Change the calendar of the data array elements.
+        """Change the calendar of date-time array elements.
 
-        Changing the calendar could result in a change of reference time
-        data array values.
+        Reinterprets the existing date-times for the new calendar by
+        adjusting the underlying numerical values relative to the
+        reference date-time defined by the units.
 
-        Not to be confused with using the `override_calendar` method or
-        resetting `d.Units`. `override_calendar` is different because the
-        new calendar need not be equivalent to the original ones and the
-        data array elements will not be changed to reflect the new
-        units. Resetting `d.Units` will
+        If a date-time value is not allowed in the new calendar then
+        an exception is raised when the data array is accessed.
+
+        .. seealso:: `override_calendar`, `Units`
+
+        :Parameters:
+
+            calendar: `str`
+                The new calendar, as recognised by the CF conventions.
+
+                *Parameter example:*
+                  ``'proleptic_gregorian'``
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The new data with updated calendar, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2, 3, 4], 'days since 2004-02-27')
+        >>> print(d.array)
+        [0 1 2 3 4]
+        >>> print(d.datetime_as_string)
+        ['2004-02-27 00:00:00' '2004-02-28 00:00:00' '2004-02-29 00:00:00'
+         '2004-03-01 00:00:00' '2004-03-02 00:00:00']
+        >>> e = d.change_calendar('360_day')
+        >>> print(e.array)
+        [0 1 2 4 5]
+        >>> print(e.datetime_as_string)
+        ['2004-02-27 00:00:00' '2004-02-28 00:00:00' '2004-02-29 00:00:00'
+        '2004-03-01 00:00:00' '2004-03-02 00:00:00']
+
+        >>> d.change_calendar('noleap').array
+        Traceback (most recent call last):
+            ...
+        ValueError: invalid day number provided in cftime.DatetimeNoLeap(2004, 2, 29, 0, 0, 0, 0, has_year_zero=True)
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        if not self.Units.isreftime:
+        units = self.Units
+        if not units.isreftime:
             raise ValueError(
                 "Can't change calendar of non-reference time "
-                "units: {!r}".format(self.Units)
+                f"units: {units!r}"
             )
 
         d._asdatetime(inplace=True)
-        d.override_units(Units(self.Units.units, calendar), inplace=True)
+        d.override_calendar(calendar, inplace=True)
         d._asreftime(inplace=True)
 
         return d
