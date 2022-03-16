@@ -8795,7 +8795,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 no axes are modified.
 
             iscyclic: `bool`
-                Specify whether to make the the axes cyclic or
+                Specify whether to make the axes cyclic or
                 non-cyclic. By default (True), the axes are set as
                 cyclic.
 
