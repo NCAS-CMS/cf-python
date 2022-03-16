@@ -225,9 +225,9 @@ _docstring_substitution_definitions = {
                   dimension.
 
                 *Parameter example:*
-                   Blocksizes of some or all dimensions mapped to
-                   dimension positions, like ``{1: 200}``, or ``{0:
-                   -1, 1: (400, 400)}``.""",
+                  Blocksizes of some or all dimensions mapped to
+                  dimension positions, like ``{1: 200}``, or ``{0: -1,
+                  1: (400, 400)}``.""",
     # Returns formula
     "{{Returns formula}}": """5-`tuple`
                 * The standard name of the parametric coordinates.

@@ -1884,7 +1884,6 @@ class DataTest(unittest.TestCase):
             for i, j in zip(d.ndindex(), np.ndindex(d.shape)):
                 self.assertEqual(i, j)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_pmshape'")
     def test_Data_roll(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1892,8 +1891,6 @@ class DataTest(unittest.TestCase):
         a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         d = cf.Data(a.copy())
-
-        _ = d._pmshape
 
         e = d.roll(0, 4)
         e.roll(2, 120, inplace=True)
@@ -3126,6 +3123,34 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             bool(cf.Data([1, 2]))
 
+    def test_Data_cyclic(self):
+        d = cf.Data(np.arange(12).reshape(3, 4))
+        self.assertEqual(d.cyclic(), set())
+        self.assertEqual(d.cyclic(0), set())
+        self.assertEqual(d.cyclic(), {0})
+        self.assertEqual(d.cyclic(1), {0})
+        self.assertEqual(d.cyclic(), {0, 1})
+        self.assertEqual(d.cyclic(0, iscyclic=False), {0, 1})
+        self.assertEqual(d.cyclic(), {1})
+        self.assertEqual(d.cyclic(1, iscyclic=False), {1})
+        self.assertEqual(d.cyclic(), set())
+        self.assertEqual(d.cyclic([0, 1]), set())
+        self.assertEqual(d.cyclic(), {0, 1})
+        self.assertEqual(d.cyclic([0, 1], iscyclic=False), {0, 1})
+        self.assertEqual(d.cyclic(), set())
+
+        # Invalid axis
+        with self.assertRaises(ValueError):
+            d.cyclic(2)
+
+        # Scalar data
+        d = cf.Data(9)
+        self.assertEqual(d.cyclic(), set())
+
+        # Scalar data invalid axis
+        with self.assertRaises(ValueError):
+            d.cyclic(0)
+
     def test_Data_change_calendar(self):
         d = cf.Data(
             [0, 1, 2, 3, 4], "days since 2004-02-27", calendar="standard"
@@ -3139,6 +3164,22 @@ class DataTest(unittest.TestCase):
         # calendar).
         with self.assertRaises(ValueError):
             e = d.change_calendar("noleap").array
+
+    def test_Data_chunks(self):
+        dx = da.ones((4, 5), chunks=(2, 4))
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        self.assertEqual(d.chunks, dx.chunks)
+
+    def test_Data_rechunk(self):
+        dx = da.ones((4, 5), chunks=(2, 4)).rechunk(-1)
+        d = cf.Data.ones((4, 5), chunks=(2, 4)).rechunk(-1)
+        self.assertEqual(d.chunks, dx.chunks)
+
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        e = d.copy()
+        self.assertIsNone(e.rechunk(-1, inplace=True))
+        self.assertEqual(e.chunks, ((4,), (5,)))
+        self.assertTrue(e.equals(d))
 
     def test_Data_reshape(self):
         a = self.ma

@@ -3246,6 +3246,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def rechunk(
         self,
@@ -3255,45 +3256,44 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         balance=False,
         inplace=False,
     ):
-        """Convert blocks in the dask array for new chunks.
+        """Change the chunk structure of the data.
 
-        See `dask.array.rechunk`for more details.
+        .. versionadded:: TODODASK
 
-        .. versionadded:: 4.0.0
-
-        .. seealso:: `chunks`
+        .. seealso:: `chunks`, `dask.array.rechunk`
 
         :Parameters:
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
-
             threshold: `int`, optional
                 The graph growth factor under which we don't bother
-                introducing an intermediate step.
+                introducing an intermediate step. See
+                `dask.array.rechunk` for details.
 
             block_size_limit: `int`, optional
-                The maximum block size (in bytes) we want to produce
+                The maximum block size (in bytes) we want to produce.
                 Defaults to the configuration value
-                ``dask.array.chunk-size``
-
-                TODODASK - how to use/import dask config items??
+                ``dask.config.get('array.chunk-size')``. See
+                `dask.array.rechunk` for details.
 
             balance: `bool`, optional
-                If True, try to make each chunk the same
-                size. By default this is not attempted.
+                If True, try to make each chunk the same size. By
+                default this is not attempted. See
+                `dask.array.rechunk` for details.
 
                 This means ``balance=True`` will remove any small
-                leftover chunks, so using ``x.rechunk(chunks=len(x) //
+                leftover chunks, so using ``d.rechunk(chunks=len(d) //
                 N, balance=True)`` will almost certainly result in
                 ``N`` chunks.
 
         :Returns:
 
-            TODODASK
+            `Data` or `None`
+                The rechunked data, or `None` if the operation was
+                in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> x = cf.Data.ones((1000, 1000), chunks=(100, 100))
 
@@ -3305,10 +3305,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> y = x.rechunk({0: 1000})
 
-        Use the value ``-1`` to specify that you want a single chunk along
-        a dimension or the value ``"auto"`` to specify that dask can
-        freely rechunk a dimension to attain blocks of a uniform block
-        size
+        Use the value ``-1`` to specify that you want a single chunk
+        along a dimension or the value ``"auto"`` to specify that dask
+        can freely rechunk a dimension to attain blocks of a uniform
+        block size.
 
         >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
 
@@ -3330,7 +3330,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d._get_dask()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-
         d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
         return d
@@ -7975,7 +7974,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         # TODODASK - simply use da.ma.count (dask>=2022.3.1)
-        
+
         config = self.partition_configuration(readonly=True)
 
         n = 0
@@ -8032,20 +8031,67 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._size - self.count()
 
+    @daskified(_DASKIFIED_VERBOSE)
     def cyclic(self, axes=None, iscyclic=True):
-        """Returns or sets the axes of the data array which are cyclic.
+        """Get or set the cyclic axes.
+
+        Some methods treat the first and last elements of a cyclic
+        axis as adjacent and physically connected, such as
+        `convolution_filter`, `__getitem__` and `__setitem__`. Some
+        methods may make a cyclic axis non-cyclic, such as `halo`.
 
         :Parameters:
 
             axes: (sequence of) `int`, optional
+                Select the axes to have their cyclicity set. By
+                default, or if *axes* is `None` or an empty sequence,
+                no axes are modified.
 
             iscyclic: `bool`
+                Specify whether to make the axes cyclic or
+                non-cyclic. By default (True), the axes are set as
+                cyclic.
 
         :Returns:
 
             `set`
+                The cyclic axes prior to the change, or the current
+                cylcic axes if no axes are specified.
 
-        **Examples:**
+        **Examples**
+
+        >>> d = cf.Data(np.arange(12).reshape(3, 4))
+        >>> d.cyclic()
+        set()
+        >>> d.cyclic(0)
+        set()
+        >>> d.cyclic()
+        {0}
+        >>> d.cyclic(0, iscyclic=False)
+        {0}
+        >>> d.cyclic()
+        set()
+        >>> d.cyclic([0, 1])
+        set()
+        >>> d.cyclic()
+        {0, 1}
+        >>> d.cyclic([0, 1], iscyclic=False)
+        {0, 1}
+        >>> d.cyclic()
+        set()
+
+        >>> print(d.array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> d[0, -1:2]
+        Traceback (most recent call last):
+            ...
+        IndexError: Can't take a cyclic slice of a non-cyclic axis
+        >>> d.cyclic(1)
+        set()
+        >>> d[0, -1:2]
+        <CF Data(1, 2): [[3, 0, 1]]>
 
         """
         cyclic_axes = self._cyclic
@@ -8368,7 +8414,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `itertools.product`
                 An iterator over tuples of indices of the data array.
 
-        **Examples:**
+        **Examples**
+
+        >>> d = cf.Data(np.arange(6).reshape(2, 3))
+        >>> print(d.array)
+        [[0 1 2]
+         [3 4 5]]
+        >>> for i in d.ndindex():
+        ...     print(i, d[i])
+        ...
+        (0, 0) [[0]]
+        (0, 1) [[1]]
+        (0, 2) [[2]]
+        (1, 0) [[3]]
+        (1, 1) [[4]]
+        (1, 2) [[5]]
+
+        >>> d = cf.Data(9)
+        >>> for i in d.ndindex():
+        ...     print(i, d[i])
+        ...
+        () 9
 
         """
         return product(*[range(0, r) for r in self.shape])
@@ -13354,13 +13420,13 @@ def _parse_weights(d, weights, axis=None):
             See `_collapse` for details.
 
     :Returns:
-    
+
         `Data` or `None`
             * If *weights* is a data_like object then they are
               returned unchanged as a `Data` object. It is up to the
               downstream functions to check the weights
               broadcastability.
-        
+
             * If *weights* is a dictionary then the dictionary
               values', i.e. the weights components, outer product is
               broadcast to the data and returned as a `Data` object.
