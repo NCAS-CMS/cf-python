@@ -4476,7 +4476,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         self._flip([])
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def _unary_operation(self, operation):
         """Implement unary arithmetic operations.
 

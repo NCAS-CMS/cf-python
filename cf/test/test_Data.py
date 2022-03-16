@@ -2042,7 +2042,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cf.Data([[1, 2]], units="m").year
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "'NoneType' is not iterable")
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
