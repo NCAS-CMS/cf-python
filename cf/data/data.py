@@ -3805,7 +3805,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         inplace = method[2] == "i"
-        method_type = method[-5:-2]
+        method_type = method.strip("_")
+
+        comparison_method_types = ("_eq", "_ne", "_lt", "_le", "_gt", "_ge")
 
         # ------------------------------------------------------------
         # Ensure that other is an independent Data object
@@ -3972,7 +3974,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         # Set the data-type of the result
         # ------------------------------------------------------------
-        if method_type in ("_eq", "_ne", "_lt", "_le", "_gt", "_ge"):
+        if method_type in comparison_method_types:
             new_dtype = np.dtype(bool)
             rtol = self._rtol
             atol = self._atol
@@ -4110,7 +4112,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if broadcasting:
                 result.partitions.set_location_map(result._axes)
 
-            if method_type in ("_eq", "_ne", "_lt", "_le", "_gt", "_ge"):
+            if method_type in comparison_method_types:
                 result.override_units(Units(), inplace=True)
 
             return result
