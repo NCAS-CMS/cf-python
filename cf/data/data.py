@@ -8790,7 +8790,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Parameters:
 
             axes: (sequence of) `int`, optional
-                Select the axes to to have their cyclicity set. By
+                Select the axes to have their cyclicity set. By
                 default, or if *axes* is `None` or an empty sequence,
                 no axes are modified.
 
