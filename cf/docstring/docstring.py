@@ -270,23 +270,28 @@ _docstring_substitution_definitions = {
                 from the data.""",
     # weights
     "{{weights: data_like, `dict`, or `None`, optional}}": """weights: data_like, `dict`, or `None`, optional
-                Weights associated with values of the array.  By
-                default *weights* is `None`, meaning that all
-                non-missing elements of the array are assumed to have
-                a weight equal to one.
+                Weights associated with values of the data. By default
+                *weights* is `None`, meaning that all non-missing
+                elements of the data have a weight of 1 and all
+                missing elements have a weight of 0.
 
                 If *weights* is a data_like object then it must be
-                broadcastable to the array or, if that is not the
-                case, the same shape as the axes being
-                collapsed. TODODASK - scrib the last possibility?
+                broadcastable to the array.
 
                 If *weights* is a dictionary then each key specifies
-                axes of the array (an `int` or `tuple` of `int`), with
+                axes of the data (an `int` or `tuple` of `int`), with
                 a corresponding value of data_like weights for those
                 axes. The dimensions of a weights value must
-                correspond to its key axes in the same order. The
-                weights that will be used in the collapse will an
-                outer product of the dictionary's values.""",
+                correspond to its key axes in the same order. Not all
+                of the axes need weights assigned to them. The weights
+                that will be used will be an outer product of the
+                dictionary's values.
+
+                However they are specified, the weights are internally
+                broadcast to the shape of the data, and those weights
+                that are missing data, or that correspond to the
+                missing elements of the data, are assigned a weight of
+                0.""",
     # collapse mtol
     "{{mtol: number, optional}}": """mtol: number, optional
                 The sample size threshold below which collapsed values
@@ -307,10 +312,12 @@ _docstring_substitution_definitions = {
                 of missing data in the input data.""",
     # ddof
     "{{ddof: number}}": """ddof: number
-                The delta degrees of freedom. The number of degrees of
-                freedom used in the calculation is (N-*ddof*) where N
-                represents the number of non-missing elements. A value
-                of 1 applies Bessel's correction.""",
+                The delta degrees of freedom, a non-negative
+                number. The number of degrees of freedom used in the
+                calculation is (N-*ddof*) where N represents the
+                number of non-missing elements. A value of 1 applies
+                Bessel's correction. If the calculation is weighted
+                then *ddof* can only be 0 or 1.""",
     # split_every
     "{{split_every: `int` or `dict`, optional}}": """split_every: `int` or `dict`, optional
                 Determines the depth of the recursive aggregation. If

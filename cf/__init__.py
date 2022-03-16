@@ -78,7 +78,7 @@ __Conventions__ = "CF-1.9"
 __date__ = "2022-01-18"
 __version__ = "4.0.0b0"
 
-_requires = ("numpy", "netCDF4", "cftime", "cfunits", "cfdm", "psutil")
+_requires = ("numpy", "netCDF4", "cftime", "cfunits", "cfdm", "psutil", "dask")
 
 x = ", ".join(_requires)
 _error0 = f"cf v{ __version__} requires the modules {x}. "
@@ -104,10 +104,6 @@ if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
 
 _found_ESMF = bool(importlib.util.find_spec("ESMF"))
 
-# TODODASK - Remove the next 2 lines when the move to dask is complete
-mpi_on = False
-mpi_size = 1
-
 try:
     import netCDF4
 except ImportError as error1:
@@ -130,6 +126,11 @@ except ImportError as error1:
 
 try:
     import psutil
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
+try:
+    import dask
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
@@ -181,6 +182,14 @@ if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     raise RuntimeError(
         f"Bad cfdm version: cf requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
         f"Got {_cfdm_version} at {cfdm.__file__}"
+    )
+
+# Check the version of dask
+_minimum_vn = "2020.2.1"
+if LooseVersion(dask.__version__) < LooseVersion(_minimum_vn):
+    raise RuntimeError(
+        f"Bad dask version: cf requires dask>={_minimum_vn}. "
+        f"Got {dask.__version__} at {dask.__file__}"
     )
 
 from .constructs import Constructs

@@ -24,6 +24,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         Calculates the maximum value of an array or the maximum values
         along axes.
 
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
         .. versionadded:: TODODASK
 
         :Parameters:
@@ -65,6 +69,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         Calculates the maximum absolute value of an array or the
         maximum absolute values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
         .. versionadded:: TODODASK
 
@@ -110,6 +118,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         Calculates the mean value of an array or the mean values along
         axes.
 
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
         .. versionadded:: TODODASK
 
         :Parameters:
@@ -152,10 +164,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
     def mean_abs(
         a, weights=None, axis=None, keepdims=False, mtol=None, split_every=None
     ):
-        """"Return mean absolute values of an array.
+        """Return mean absolute values of an array.
 
         Calculates the mean absolute value of an array or the mean
         absolute values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
         .. versionadded:: TODODASK
 
@@ -204,6 +220,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         Calculates the mid-range value of an array or the mid-range
         values along axes.
 
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
         .. versionadded:: TODODASK
 
         :Parameters:
@@ -245,6 +265,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         Calculates the minimum value of an array or the minimum values
         along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
         .. versionadded:: TODODASK
 
@@ -288,8 +312,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
         Calculates the minimum absolute value of an array or the
         minimum absolute values along axes.
 
-        .. versionadded:: TODODASK
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
+        .. versionadded:: TODODASK
 
         :Parameters:
 
@@ -330,6 +357,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         Calculates the range value of an array or the range values
         along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
         .. versionadded:: TODODASK
 
@@ -374,6 +405,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         Calculates the RMS value of an array or the RMS values along
         axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
         .. versionadded:: TODODASK
 
@@ -420,6 +455,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         Calculates the sample size value of an array or the sample
         size values along axes.
 
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
         .. versionadded:: TODODASK
 
         :Parameters:
@@ -464,8 +503,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
         Calculates the sum value of an array or the sum values along
         axes.
 
-        .. versionadded:: TODODASK
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
+        .. versionadded:: TODODASK
 
         :Parameters:
 
@@ -507,56 +549,60 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @staticmethod
-    def sum_of_squares(
-        a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
-    ):
-        """Return sum of square values of an array.
-
-        Calculates the sum of square value of an array or the sum of
-        square values along axes.
-
-        .. versionadded:: TODODASK
-
-        :Parameters:
-
-            a: `dask.array.Array`
-                The array to be collapsed.
-
-            {{Collapse weights: data_like or `None`, optional}}
-
-            {{collapse axes: (sequence of) `int`, optional}}
-
-            {{collapse keepdims: `bool`, optional}}
-
-            {{mtol: number, optional}
-
-            {{split_every: `int` or `dict`, optional}}
-
-        :Returns:
-
-            `dask.array.Array`
-                The collapsed array.
-
-        """
-        if weights is None:
-            dtype = double_precision_dtype(a)
-        else:
-            dtype = "f8"
-
-        return reduction(
-            a,
-            partial(cf_sum_chunk, squared=True),
-            partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
-            axis=axis,
-            keepdims=keepdims,
-            dtype=dtype,
-            split_every=split_every,
-            combine=cf_sum_combine,
-            concatenate=False,
-            meta=np.array((), dtype=dtype),
-            weights=weights,
-        )
+    #    @staticmethod
+    #    def sum_of_squares(
+    #        a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+    #    ):
+    #        """Return sum of square values of an array.
+    #
+    #        Calculates the sum of square value of an array or the sum of
+    #        square values along axes.
+    #
+    #        See
+    #        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+    #        for mathematical definitions.
+    #
+    #        .. versionadded:: TODODASK
+    #
+    #        :Parameters:
+    #
+    #            a: `dask.array.Array`
+    #                The array to be collapsed.
+    #
+    #            {{Collapse weights: data_like or `None`, optional}}
+    #
+    #            {{collapse axes: (sequence of) `int`, optional}}
+    #
+    #            {{collapse keepdims: `bool`, optional}}
+    #
+    #            {{mtol: number, optional}
+    #
+    #            {{split_every: `int` or `dict`, optional}}
+    #
+    #        :Returns:
+    #
+    #            `dask.array.Array`
+    #                The collapsed array.
+    #
+    #        """
+    #        if weights is None:
+    #            dtype = double_precision_dtype(a)
+    #        else:
+    #            dtype = "f8"
+    #
+    #        return reduction(
+    #            a,
+    #            partial(cf_sum_chunk, squared=True),
+    #            partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
+    #            axis=axis,
+    #            keepdims=keepdims,
+    #            dtype=dtype,
+    #            split_every=split_every,
+    #            combine=cf_sum_combine,
+    #            concatenate=False,
+    #            meta=np.array((), dtype=dtype),
+    #            weights=weights,
+    #        )
 
     @staticmethod
     def sum_of_weights(
@@ -566,6 +612,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         Calculates the sum of weights value for an array or the sum of
         weights values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
         .. versionadded:: TODODASK
 
@@ -613,6 +663,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         Calculates the sum of squares of weights value for an array or
         the sum of squares of weights values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
         .. versionadded:: TODODASK
 
@@ -667,6 +721,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         Calculates the variance value of an array or the variance
         values along axes.
 
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
         .. versionadded:: TODODASK
 
         :Parameters:
@@ -696,7 +754,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         return reduction(
             a,
             partial(cf_var_chunk, ddof=ddof),
-            partial(cf_var_agg, mtol=mtol, ddof=ddof, original_shape=a.shape),
+            partial(cf_var_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
             dtype=dtype,
@@ -723,7 +781,7 @@ def double_precision_dtype(a):
     **Examples**
 
     >>> for d in (float, 'float32', int, 'int32'):
-    ...     print(double_precision_dtype(np.array(9, dtype=d)))
+    ...     print(double_precision_dtype(np.array(1, dtype=d)))
     ...
     f8
     f8
@@ -792,7 +850,7 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
     return x
 
 
-def sum_weights(x, weights=None, squared=False, dtype="f8", N=None, **kwargs):
+def sum_weights(x, weights=None, squared=False, N=None, dtype="f8", **kwargs):
     """TODO.
 
     .. versionadded:: TODODASK
@@ -808,9 +866,9 @@ def sum_weights(x, weights=None, squared=False, dtype="f8", N=None, **kwargs):
         # the squares of the weights are both equal to the sample
         # size.
         if N is None:
-            return cf_sample_size_chunk(x, dtype=dtype, **kwargs)["N"]
+            return cf_sample_size_chunk(x, **kwargs)["N"]
 
-        return N.astype(dtype)
+        return N
 
     if squared:
         weights = np.multiply(weights, weights, dtype=dtype)
@@ -831,6 +889,8 @@ def combine_arrays(
     along the axes, and apply a function to the result along the same
     axes.
 
+    .. versionadded:: TODODASK
+
     :Returns:
 
         `numpy.ndarray`
@@ -846,7 +906,11 @@ def combine_arrays(
 
 
 def sum_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
-    """Alias of `combine_arrays` with ``func=chunk.sum``."""
+    """Alias of `combine_arrays` with ``func=chunk.sum``.
+
+    .. versionadded:: TODODASK
+
+    """
     return combine_arrays(
         pairs, key, chunk.sum, axis, dtype, computing_meta, **kwargs
     )
@@ -864,7 +928,11 @@ def max_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
 
 
 def min_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
-    """Alias of `combine_arrays` with ``func=chunk.min``."""
+    """Alias of `combine_arrays` with ``func=chunk.min``.
+
+    .. versionadded:: TODODASK
+
+    """
     return combine_arrays(
         pairs, key, chunk.min, axis, dtype, computing_meta, **kwargs
     )
@@ -915,6 +983,8 @@ def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
 
     d["V1"] = sum_weights(x, weights, N=d["N"], **kwargs)
 
+    d["weighted"] = weights is not None
+
     return d
 
 
@@ -941,13 +1011,21 @@ def cf_mean_combine(
     if not isinstance(pairs, list):
         pairs = [pairs]
 
-    d = {}
-    for key in ("sum", "V1"):
-        d[key] = sum_arrays(pairs, key, axis, dtype, computing_meta, **kwargs)
-        if computing_meta:
-            return d[key]
+    d = {"weighted": next(flatten(pairs))["weighted"]}
+
+    d["sum"] = sum_arrays(pairs, "sum", axis, dtype, computing_meta, **kwargs)
+    if computing_meta:
+        return d["sum"]
 
     d["N"] = sum_sample_sizes(pairs, axis, **kwargs)
+
+    if d["weighted"]:
+        d["V1"] = sum_arrays(
+            pairs, "V1", axis, dtype, computing_meta, **kwargs
+        )
+    else:
+        d["V1"] = d["N"]
+
     return d
 
 
@@ -960,7 +1038,7 @@ def cf_mean_agg(
     original_shape=None,
     **kwargs,
 ):
-    """"Aggregate calculations for the mean.
+    """Aggregate calculations for the mean.
 
     This function is passed to `dask.array.reduction` as callable
     *aggregate* parameter.
@@ -1525,7 +1603,7 @@ def cf_rms_agg(
         `dask.array.Array`
             The collapsed array.
 
-    """    
+    """
     d = cf_mean_combine(pairs, axis, dtype, computing_meta, **kwargs)
     if computing_meta:
         return d
@@ -1799,9 +1877,10 @@ def cf_sum_of_weights_chunk(
     # N
     d = cf_sample_size_chunk(x, **kwargs)
 
-    # sum
-    d["sum"] = sum_weights(x, weights=weights, squared=squared,
-                           N=d["N"], **kwargs )
+    d["sum"] = sum_weights(
+        x, weights=weights, squared=squared, N=d["N"], **kwargs
+    )
+
     return d
 
 
@@ -1840,12 +1919,13 @@ def cf_var_chunk(
             * N: The sample size.
             * V1: The sum of ``weights`` (equal to ``N`` if weights
                   are not set).
+            * V2: The sum of ``weights**2``.
             * sum: The weighted sum of ``x``.
             * part: ``V1 * (sigma**2 + mu**2)``, where ``sigma**2`` is
                     the weighted biased (i.e. ``ddof=0``) variance of
                     ``x``, and ``mu`` is the weighted mean of ``x``.
-            * V2: The sum of ``weights**2``. Only present if *weights*
-                  are set and ``ddof=1``.
+            * weighted: True if weights have been set.
+            * ddof: The delta degrees of freedom.
 
     """
     if computing_meta:
@@ -1857,7 +1937,6 @@ def cf_var_chunk(
     wsum = d["sum"]
     V1 = d["V1"]
 
-    # part
     avg = divide(wsum, V1, dtype=dtype)
     part = x - avg
     part *= part
@@ -1866,10 +1945,16 @@ def cf_var_chunk(
 
     part = chunk.sum(part, dtype=dtype, **kwargs)
     part = part + avg * wsum
+
     d["part"] = part
 
-    if weights is not None and ddof == 1:
-        d["V2"] = sum_weights(x, weights, squared=True, **kwargs)
+    if ddof == 1:
+        d["V2"] = sum_weights(x, weights, squared=True, N=d["N"], **kwargs)
+    else:
+        d["V2"] = d["N"]
+
+    d["weighted"] = weights is not None
+    d["ddof"] = ddof
 
     return d
 
@@ -1897,22 +1982,32 @@ def cf_var_combine(
     if not isinstance(pairs, list):
         pairs = [pairs]
 
-    weighted = "V2" in flatten(pairs)
+    d = next(flatten(pairs))
+    weighted = d["weighted"]
+    ddof = d["ddof"]
 
-    keys = ("part", "sum")
-    if weighted:
-        keys += ("V1", "V2")
+    d = {"weighted": weighted, "ddof": ddof}
 
-    d = {}
-    for key in keys:
-        d[key] = sum_arrays(pairs, key, axis, dtype, computing_meta, **kwargs)
-        if computing_meta:
-            return d[key]
+    d["part"] = sum_arrays(
+        pairs, "part", axis, dtype, computing_meta, **kwargs
+    )
+    if computing_meta:
+        return d["part"]
 
     d["N"] = sum_sample_sizes(pairs, axis, **kwargs)
 
-    if not weighted:
-        d["V1"] = d["N"].astype("f8")
+    d["sum"] = sum_arrays(pairs, "sum", axis, dtype, computing_meta, **kwargs)
+
+    d["V1"] = d["N"]
+    d["V2"] = d["N"]
+    if weighted:
+        d["V1"] = sum_arrays(
+            pairs, "V1", axis, dtype, computing_meta, **kwargs
+        )
+        if ddof == 1:
+            d["V2"] = sum_arrays(
+                pairs, "V2", axis, dtype, computing_meta, **kwargs
+            )
 
     return d
 
@@ -1923,7 +2018,6 @@ def cf_var_agg(
     dtype="f8",
     computing_meta=False,
     mtol=None,
-    ddof=None,
     original_shape=None,
     **kwargs,
 ):
@@ -1948,12 +2042,6 @@ def cf_var_agg(
             set to missing data. See `mask_small_sample_size` for
             details.
 
-        ddof: number
-            The delta degrees of freedom. The number of degrees of
-            freedom used in the calculation is (N-*ddof*) where N
-            represents the number of non-missing elements. A value of
-            1 applies Bessel's correction.
-
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
@@ -1969,6 +2057,7 @@ def cf_var_agg(
     if computing_meta:
         return d
 
+    ddof = d["ddof"]
     V1 = d["V1"]
     wsum = d["sum"]
     var = d["part"] - wsum * wsum / V1
@@ -1976,21 +2065,18 @@ def cf_var_agg(
     # Note: var is now the global value of V1 * sigma**2, where sigma
     #       is the global weighted biased (i.e. ddof=0) variance.
 
-    V2 = d.get("V2")
-    weighted = V2 is not None
-    
     if ddof is None:
         raise ValueError(f"Must set ddof to a numeric value. Got: {ddof!r}")
 
     if not ddof:
         # Weighted or unweighted variance with ddof=0
         f = 1 / V1
-    elif not weighted:
+    elif not d["weighted"]:
         # Unweighted variance with any non-zero value of ddof
         f = 1 / (V1 - ddof)
     elif ddof == 1:
         # Weighted variance with ddof=1
-        f = V1 / (V1 * V1 - V2)
+        f = V1 / (V1 * V1 - d["V2"])
     else:
         raise ValueError(
             "Can only calculate a weighted variance with ddof=0 or ddof=1. "

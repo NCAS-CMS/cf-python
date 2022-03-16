@@ -43,7 +43,7 @@ from numpy.ma import masked as _numpy_ma_masked
 from numpy.ma import take as _numpy_ma_take
 from psutil import Process, virtual_memory
 
-from . import __file__, __version__, mpi_size
+from . import __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
@@ -810,7 +810,7 @@ class chunksize(ConstantAccess):
 
     The upper limit to the chunksize is given by:
 
-    .. math:: upper\_chunksize = \dfrac{f \cdot total\_memory}{mpi\_size
+    .. math:: upper\_chunksize = \dfrac{f \cdot total\_memory}{1
                                  \cdot w_1 + w_2}
 
     where :math:`f` is the *free memory factor* and :math:`w_1` and
@@ -851,16 +851,11 @@ class chunksize(ConstantAccess):
 
         """
         upper_chunksize = (free_memory_factor() * min_total_memory()) / (
-            (mpi_size * _WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()
+            (_WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()
         )
 
         arg = float(arg)
-        if arg > upper_chunksize and mpi_size > 1:
-            raise ValueError(
-                f"Specified chunk size ({arg}) is too large for the given "
-                f"free memory factor ({upper_chunksize})"
-            )
-        elif arg <= 0:
+        if arg <= 0:
             raise ValueError(f"Chunk size ({arg}) must be positive")
 
         return arg

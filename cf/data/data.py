@@ -1949,17 +1949,45 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         squeeze=False,
         mtol=1,
         inplace=False,
-        _preserve_partitions=False,
     ):
-        """Compute the median of the values.
+        """Calculate median values.
+
+        Calculates the median value or the median values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `mean_of_upper_decile`, `percentile`
 
         :Parameters:
 
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
             {{mtol: number, optional}
 
-            {{split_every: `int` or `dict`, optional}}
+            {{inplace: `bool`, optional}}
 
-                .. versionadded:: TODODASK
+        :Returns:
+
+            `Data` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2])
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.median()
+        <CF Data(1, 1): [[6.0]] K>
 
         """
         return self.percentile(
@@ -1974,27 +2002,61 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def mean_of_upper_decile(
         self,
         axes=None,
-        include_decile=True,
-        squeeze=False,
         weights=None,
+        squeeze=False,
         mtol=1,
+        include_decile=True,
+        split_every=None,
         inplace=False,
-        _preserve_partitions=False,
     ):
-        """Compute the mean the of upper decile.
+        """Calculate means of the upper deciles.
 
-        Specifically, calculate the mean of the upper group of data
-        values defined by the upper tenth of their distribution.
+        Calculates the mean of the upper decile or the mean or the
+        mean of the upper decile values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `mean`, `median`, `percentile`
 
         :Parameters:
 
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
             {{mtol: number, optional}
+                TODODASK - note that mtol onlty applies calculation of
+                uppder decile, not the mean!
+
+            include_decile: `bool`, optional
+                TODODASK
 
             {{split_every: `int` or `dict`, optional}}
 
                 .. versionadded:: TODODASK
 
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        TODODASK
+
         """
+
+        # TODODASK: Some updates off the back of collapse done, but
+        #           still needs looking at. Unit test has also been
+        #           written, but not run. Needs __lt__ and __le__.
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         p90 = d.percentile(
@@ -2003,7 +2065,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             squeeze=False,
             mtol=mtol,
             inplace=False,
-            _preserve_partitions=_preserve_partitions,
         )
 
         with numpy_testing_suppress_warnings() as sup:
@@ -2014,7 +2075,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 mask = d < p90
             else:
                 mask = d <= p90
-        # --- End: with
 
         if mtol < 1:
             mask.filled(False, inplace=True)
@@ -2023,10 +2083,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         d.mean(
             axes=axes,
-            squeeze=squeeze,
             weights=weights,
+            squeeze=squeeze,
+            mtol=1,
+            split_every=split_every,
             inplace=True,
-            _preserve_partitions=_preserve_partitions,
         )
 
         return d
@@ -6938,9 +6999,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         i=False,
     ):
-        """TODO.
+        """Calculate maximum values.
+
+        Calculates the maximum value or the maximum values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `maximum_absolute_value`, `min`
 
         :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -6948,9 +7021,30 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 .. versionadded:: TODODASK
 
-        """
-        #        from .collapse_functions import cf_max
+            {{inplace: `bool`, optional}}
 
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.max()
+        <CF Data(1, 1): [[11]] K>
+
+        """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
             Collapse.max,
@@ -6963,55 +7057,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    @_deprecated_kwarg_check("i")
-    def maximum(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
-        i=False,
-        _preserve_partitions=False,
-    ):
-        """Alias.
-
-        Collapse axes with their maximum.
-
-        Missing data array elements are omitted from the calculation.
-
-        .. seealso:: `minimum`, `mean`, `mid_range`, `sum`, `sd`, `var`
-
-        :Parameters:
-
-            axes : (sequence of) int, optional
-
-            squeeze : bool, optional
-
-            {{mtol: number, optional}
-
-            {{split_every: `int` or `dict`, optional}}
-
-                .. versionadded:: TODODASK
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `Data` or `None`
-                The collapsed array.
-
-        **Examples:**
-
-        """
-        return self.max(
-            axes=axes,
-            squeeze=squeeze,
-            mtol=mtol,
-            split_every=split_every,
-            inplace=inplace,
-        )
-
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def maximum_absolute_value(
@@ -7022,18 +7067,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         split_every=None,
         inplace=False,
     ):
-        """Collapse axes with their maximum absolute value.
+        """Calculate maximum absolute values.
 
-        Missing data elements are omitted from the calculation.
+        Calculates the maximum absolute value or the maximum absolute
+        values along axes.
 
-        .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sum`, `sd`,
-                     `var`
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `max`, `minimum_absolute_value`
 
         :Parameters:
 
-            axes : (sequence of) int, optional
+            {{collapse axes: (sequence of) `int`, optional}}
 
-            squeeze : bool, optional
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -7043,27 +7092,28 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{inplace: `bool`, optional}}
 
+            {{i: deprecated at version 3.0.0}}
+
         :Returns:
 
             `Data` or `None`
                 The collapsed data, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[-99 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
         >>> d.maximum_absolute_value()
-        <CF Data(1, 1): [[12]] m>
-        >>> d.max()
-        <CF Data(1, 1): [[9]] m>
-        >>> d.maximum_absolute_value(axes=1)
-        <CF Data(2, 1): [[3, 12]] m>
-        >>> d.max(axes=1)
-        <CF Data(2, 1): [[3, 9]] m>
+        <CF Data(1, 1): [[99]] K>
 
         """
-        #        from .collapse_functions import cf_max_abs
-
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
             Collapse.max_abs,
@@ -7088,91 +7138,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         i=False,
         _preserve_partitions=False,
     ):
-        """TODO.
+        """Calculate minimum values.
 
-        :Parameters:
+        Calculates the minimum value or the minimum values along axes.
 
-            {{mtol: number, optional}
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
-            {{split_every: `int` or `dict`, optional}}
-
-                .. versionadded:: TODODASK
-
-        """
-        #        from .collapse_functions import cf_min
-
-        d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
-            Collapse.min,
-            d,
-            axis=axes,
-            keepdims=not squeeze,
-            split_every=split_every,
-            mtol=mtol,
-        )
-        return d
-
-    @_deprecated_kwarg_check("i")
-    def minimum(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
-        i=False,
-        _preserve_partitions=False,
-    ):
-        """Alias.
-
-        Collapse axes with their minimum.
-
-        Missing data array elements are omitted from the calculation.
-
-        :Parameters:
-
-            axes : (sequence of) int, optional
-
-            squeeze : bool, optional
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        :Returns:
-
-            `Data` or `None`
-                The collapsed array.
-
-        .. seealso:: `maximum`, `mean`, `mid_range`, `sum`, `sd`, `var`
-
-        **Examples:**
-
-        """
-        return self.min(
-            axes=axes,
-            squeeze=squeeze,
-            mtol=mtol,
-            split_every=split_every,
-            inplace=inplace,
-        )
-
-    @daskified(_DASKIFIED_VERBOSE)
-    @_inplace_enabled(default=False)
-    def minimum_absolute_value(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
-    ):
-        """Collapse axes with their minimum absolute value.
-
-        Missing data elements are omitted from the calculation.
-
-        .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sum`, `sd`,
-                     `var`
+         ..seealso:: `max`, `minimum_absolute_value`
 
         :Parameters:
 
@@ -7188,27 +7162,97 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{inplace: `bool`, optional}}
 
+            {{i: deprecated at version 3.0.0}}
+
         :Returns:
 
             `Data` or `None`
                 The collapsed data, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
-        >>> d.minimum_absolute_value()
-        <CF Data(1, 1): [[1]] m>
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
         >>> d.min()
-        <CF Data(1, 1): [[-12]] m>
-        >>> d.minimum_absolute_value(axes=1)
-        <CF Data(2, 1): [[1, 8]] m>
-        >>> d.min(axes=1)
-        <CF Data(2, 1): [[-1, -12]] m>
+        <CF Data(1, 1): [[0]] K>
 
         """
-        #        from .collapse_functions import cf_min_abs
+        d = _inplace_enabled_define_and_cleanup(self)
+        d, _ = _collapse(
+            Collapse.min,
+            d,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
+            mtol=mtol,
+        )
+        return d
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    def minimum_absolute_value(
+        self,
+        axes=None,
+        squeeze=False,
+        mtol=1,
+        split_every=None,
+        inplace=False,
+    ):
+        """Calculate minimum absolute values.
+
+        Calculates the minimum absolute value or the minimum absolute
+        values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `maximum_absolute_value`, `min`
+
+        :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{mtol: number, optional}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: TODODASK
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[0, 0] = -99
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[-99 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.minimum_absolute_value()
+        <CF Data(1, 1): [[1]] K>
+
+        """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
             Collapse.min_abs,
@@ -7233,21 +7277,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         split_every=None,
         i=False,
     ):
-        """Collapse axes with their mean.
+        """Calculate mean values.
 
-        The mean is unweighted by default, but may be weighted (see the
-        *weights* parameter).
+        Calculates the mean value or the mean values along axes.
 
-        Missing data array elements and their corresponding weights
-        are omitted from the calculation.
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `mean_abslute_value`, `sd`, `sum`
 
         :Parameters:
 
             {{collapse axes: (sequence of) `int`, optional}}
 
-            {{collapse squeeze: `bool`, optional}}
-
             {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -7256,6 +7302,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.mean()
+        <CF Data(1, 1): [[5.636363636363637]] K>
+
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.mean(weights=w)
+        <CF Data(1, 1): [[5.878787878787879]] K>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -7280,22 +7353,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         weights=None,
         split_every=None,
         inplace=False,
-        _preserve_partitions=False,
     ):
-        """Collapse axes with their mean absolute value.
+        """Calculate mean absolute values.
 
-        Missing data elements are omitted from the calculation.
+        Calculates the mean absolute value or the mean absolute values
+        along axes.
 
-        .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sum`, `sd`,
-                     `var`
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `mean`, `sd`, `sum`
 
         :Parameters:
 
             {{collapse axes: (sequence of) `int`, optional}}
 
-            {{collapse squeeze: `bool`, optional}}
-
             {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -7311,17 +7387,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The collapsed data, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[0, 0] = -99
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[-99 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
         >>> d.mean_absolute_value()
-        <CF Data(1, 1): [[5.833333333333333]] m>
-        >>> d.mean_absolute_value(axes=1)
-        <CF Data(2, 1): [[2.0, 9.666666666666666]] m>
+        <CF Data(1, 1): [[14.636363636363637]] K>
+
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.mean_absolute_value(weights=w)
+        <CF Data(1, 1): [[11.878787878787879]] K>
 
         """
-        #        from .collapse_functions import cf_mean_abs
-
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
             Collapse.mean_abs,
@@ -7346,37 +7432,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         _preserve_partitions=False,
     ):
-        """Collapse axes with their integral.
+        """Calculate summed values.
 
-        If weights are not provided then all non-missing elements are
-        given weighting of one such that the collapse method becomes
-        a `sum`.
+        Calculates the sum value or the sum values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `mean`, `sd`, `sum`
 
         :Parameters:
 
             {{collapse axes: (sequence of) `int`, optional}}
 
-            {{collapse squeeze: `bool`, optional}}
-
             {{weights: data_like, `dict`, or `None`, optional}}
 
-                Note that the units of the weights matter for an
-                integral collapse, which differs from a weighted sum
-                in that the units of the weights are incorporated into
-                the result.
-
-                *Parameter example:*
-                  If ``weights={1: w, (2, 0): x}`` then ``w`` must
-                  contain 1-dimensional weights for axis 1 and ``x``
-                  must contain 2-dimensional weights for axes 2 and
-                  0. This is equivalent, for example, to
-                  ``weights={(1, 2, 0), y}``, where ``y`` is the outer
-                  product of ``w`` and ``x``. If ``axes=[1, 2, 0]``
-                  then ``weights={(1, 2, 0), y}`` is equivalent to
-                  ``weights=y``. If ``axes=None`` and the array is
-                  3-dimensional then ``weights={(1, 2, 0), y}`` is
-                  equivalent to ``weights=y.transpose([2, 0, 1])``.
-
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -7386,20 +7458,37 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{inplace: `bool`, optional}}
 
+            {{i: deprecated at version 3.0.0}}
+
         :Returns:
 
             `Data` or `None`
-                The collapsed data, or `None` of the operation was
+                The collapsed data, or `None` if the operation was
                 in-place.
 
-        .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
-                     `var`
+        **Examples**
 
-        **Examples:**
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.integral()
+        <CF Data(1, 1): [[62]] K>
+
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.integral(weights=w)
+        <CF Data(1, 1): [[97.0]] K>
+
+        >>> d.integral(weights=cf.Data(w, 'm'))
+        <CF Data(1, 1): [[97.0]] m.K>
 
         """
-        #        from .collapse_functions import cf_sum
-
         d = _inplace_enabled_define_and_cleanup(self)
         d, weights = _collapse(
             Collapse.sum,
@@ -7438,9 +7527,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         i=False,
     ):
-        """TODO.
+        """Calculate sample size values.
+
+        The sample size is the number of non-missing values.
+
+        Calculates the sample size value or the sample size values
+        along axes.
 
         :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -7448,9 +7546,30 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 .. versionadded:: TODODASK
 
-        """
-        #        from .collapse_functions import cf_sample_size
+            {{inplace: `bool`, optional}}
 
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.sample_size()
+        <CF Data(1, 1): [[11]]>
+
+        """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
             Collapse.sample_size,
@@ -7460,6 +7579,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             split_every=split_every,
             mtol=mtol,
         )
+        d.override_units(_units_None, inplace=True)
+
         return d
 
     @property
@@ -7853,7 +7974,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         8
 
         """
-        # TODODASK - daskify, previously parallelise=mpi_on (not =False)
+        # TODODASK - simply use da.ma.count (dask>=2022.3.1)
+        
         config = self.partition_configuration(readonly=True)
 
         n = 0
@@ -10022,8 +10144,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        #        from .collapse_functions import cf_mid_range
-
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
             Collapse.mid_range,
@@ -10360,8 +10480,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        #        from .collapse_functions import cf_rms
-
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
             Collapse.rms,
@@ -12001,8 +12119,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples:**
 
         """
-        #        from .collapse_functions import cf_range
-
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
             Collapse.range,
@@ -12078,15 +12194,59 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         split_every=None,
         i=False,
     ):
-        """TODO.
+        """Calculate sum values.
+
+        Calculates the sum value or the sum values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `integral`, `mean`, `sd`, `sum_of_squares`,
+                     `sum_of_weights`
 
         :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
             {{split_every: `int` or `dict`, optional}}
 
                 .. versionadded:: TODODASK
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.sum()
+        <CF Data(1, 1): [[62]] K>
+
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.sum(weights=cf.Data(w, 'm'))
+        <CF Data(1, 1): [[97.0]] K>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -12106,19 +12266,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def sum_of_squares(
         self,
         axes=None,
+        weights=None,
         squeeze=False,
         mtol=1,
-        weights=None,
         split_every=None,
         inplace=False,
     ):
-        """Collapse axes with the sum of the squares of the values.
+        """Calculate sums of squares.
 
-        Missing data array elements are omitted from the calculation.
+        Calculates the sum of squares or the sum of squares values
+        along axes.
 
-        .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `range`,
-                     `sample_size`, `sd`, `sum_of_weights`,
-                     `sum_of_weights2`, `var`
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `sum`, `sum_of_squares`,
+                     `sum_of_weights2`
 
         :Parameters:
 
@@ -12142,30 +12306,45 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The collapsed data, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
         >>> d.sum_of_squares()
-        <CF Data(1, 1): [[303]] m2>
-        >>> d.sum_of_squares(axes=1)
-        <CF Data(2, 1): [[14, 289]] m2>
+        <CF Data(1, 1): [[490]] K2>
+
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.sum_of_squares(weights=w)
+        <CF Data(1, 1): [[779.0]] K2>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
-            Collapse.sum_of_squares,
-            d,
-            axis=axes,
+        #        d, _ = _collapse(
+        #            Collapse.sum_of_squares,
+        #            d,
+        #            axis=axes,
+        #            weights=weights,
+        #            keepdims=not squeeze,
+        #            split_every=split_every,
+        #            mtol=mtol,
+        #        )
+        d.square(inplace=True)
+        d.sum(
+            axes=axes,
             weights=weights,
-            keepdims=not squeeze,
-            split_every=split_every,
+            squeeze=squeeze,
             mtol=mtol,
+            split_every=split_every,
+            inplace=True,
         )
-
-        units = d.Units
-        if units:
-            d.override_units(units ** 2, inplace=True)
-
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -12181,12 +12360,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         i=False,
     ):
-        """Collapse axes with the sum of weights.
+        """Calculate sums of weights.
 
-        Missing data array elements are omitted from the calculation.
+        Calculates the sum of weights or the sum of weights values
+        along axes.
 
-        .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `sd`, `sum`, `sum_of_weights2`, `var`
+        The weights given by the *weights* parameter are internally
+        broadcast to the shape of the data, and those weights that are
+        missing data, or that correspond to the missing elements of
+        the data, are assigned a weight of 0. It is these processed
+        weights that are summed.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `sum`, `sum_of_squares`,
+                     `sum_of_weights2`
 
         :Parameters:
 
@@ -12209,13 +12399,32 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
-                The collapsed array.
+                The collapsed data, or `None` if the operation was
+                in-place.
 
         **Examples**
 
-        """
-        #        from .collapse_functions import cf_sum_of_weights
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.sum_of_weights()
+        <CF Data(1, 1): [[11]]>
 
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.sum_of_weights(weights=w)
+        <CF Data(1, 1): [[16.5]]>
+
+        >>> d.sum_of_weights(weights=cf.Data(w, 'm'))
+        <CF Data(1, 1): [[16.5]] m>
+
+        """
         d = _inplace_enabled_define_and_cleanup(self)
         d, weights = _collapse(
             Collapse.sum_of_weights,
@@ -12250,12 +12459,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         i=False,
     ):
-        """Collapse axes with the sum of squares of weights.
+        """Calculate sums of squares of weights.
 
-        Missing data array elements are omitted from the calculation.
+        Calculates the sum of squares of weights or the sum of squares
+        of weights values along axes.
 
-        .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
-                     `sample_size`, `sd`, `sum`, `sum_of_weights`, `var`
+        The weights given by the *weights* parameter are internally
+        broadcast to the shape of the data, and those weights that
+        are missing data, or that correspond to the missing elements
+        of the data, are assigned a weight of 0. It is these processed
+        weights that are squared and summed.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `sum`, `sum_of_squares`,
+                     `sum_of_weights2`
 
         :Parameters:
 
@@ -12271,20 +12491,39 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 .. versionadded:: TODODASK
 
-            {{inplace: `bool`, optional}}
+            {[inplace: `bool`, optional}}
 
             {{i: deprecated at version 3.0.0}}
 
         :Returns:
 
             `Data` or `None`
-                The collapsed array.
+                The collapsed data, or `None` if the operation was
+                in-place.
 
         **Examples**
 
-        """
-        #        from .collapse_functions import cf_sum_of_weights2
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.sum_of_weights2()
+        <CF Data(1, 1): [[11]]>
 
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.sum_of_weights2(weights=w)
+        <CF Data(1, 1): [[26.75]]>
+
+        >>> d.sum_of_weights2(weights=cf.Data(w, 'm'))
+        <CF Data(1, 1): [[26.75]] m2>
+
+        """
         d = _inplace_enabled_define_and_cleanup(self)
         d, weights = _collapse(
             Collapse.sum_of_weights2,
@@ -12308,7 +12547,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
     def sd(
         self,
         axes=None,
@@ -12319,104 +12560,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         split_every=None,
         inplace=False,
         i=False,
-        _preserve_partitions=False,
     ):
-        r"""Collapse axes by calculating their standard deviation.
+        r"""Calculate standard deviations.
 
-        The standard deviation may be adjusted for the number of degrees of
-        freedom and may be calculated with weighted values.
+        Calculates the standard deviation of an array or the standard
+        deviations along axes.
 
-        Missing data array elements and those with zero weight are omitted
-        from the calculation.
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
 
-        The unweighted standard deviation, :math:`s`, of :math:`N` values
-        :math:`x_i` with mean :math:`m` and with :math:`N-ddof` degrees of
-        freedom (:math:`ddof\ge0`) is:
-
-        .. math:: s=\sqrt{\\frac{1}{N-ddof} \sum_{i=1}^{N} (x_i - m)^2}
-
-        The weighted standard deviation, :math:`\\tilde{s}_N`, of :math:`N`
-        values :math:`x_i` with corresponding weights :math:`w_i`, weighted
-        mean :math:`\\tilde{m}` and with :math:`N` degrees of freedom is:
-
-        .. math:: \\tilde{s}_N=\sqrt{\\frac{1}{\sum_{i=1}^{N} w_i}
-                              \sum_{i=1}^{N} w_i(x_i - \\tilde{m})^2}
-
-        The weighted standard deviation, :math:`\\tilde{s}`, of :math:`N`
-        values :math:`x_i` with corresponding weights :math:`w_i` and with
-        :math:`N-ddof` degrees of freedom (:math:`ddof>0`) is:
-
-        .. math:: \\tilde{s} = \sqrt{\\frac{f \sum_{i=1}^{N} w_i}{f
-                              \sum_{i=1}^{N} w_i - ddof}} \\tilde{s}_N
-
-        where :math:`f` is the smallest positive number whose product with
-        each weight is an integer. :math:`f \sum_{i=1}^{N} w_i` is the
-        size of a new sample created by each :math:`x_i` having
-        :math:`fw_i` repeats. In practice, :math:`f` may not exist or may
-        be difficult to calculate, so :math:`f` is either set to a
-        predetermined value or an approximate value is calculated. The
-        approximation is the smallest positive number whose products with
-        the smallest and largest weights and the sum of the weights are
-        all integers, where a positive number is considered to be an
-        integer if its decimal part is sufficiently small (no greater than
-        :math:`10^{-8}` plus :math:`10^{-5}` times its integer part). This
-        approximation will never overestimate :math:`f`, so
-        :math:`\\tilde{s}` will never be underestimated when the
-        approximation is used. If the weights are all integers which are
-        collectively coprime then setting :math:`f=1` will guarantee that
-        :math:`\\tilde{s}` is exact.
+         ..seealso:: `mean`, `sum`, `var`
 
         :Parameters:
 
-            axes : (sequence of) `int`, optional
-                The axes to be collapsed. By default flattened input is
-                used. Each axis is identified by its integer position. No
-                axes are collapsed if *axes* is an empty sequence.
+            {{collapse axes: (sequence of) `int`, optional}}
 
-            squeeze : `bool`, optional
-                If True then collapsed axes are removed. By default the
-                axes which are collapsed are left in the result as axes
-                with size 1. When the collapsed axes are retained, the
-                result is guaranteed to broadcast correctly against the
-                original array.
+            {{weights: data_like, `dict`, or `None`, optional}}
 
-                *Parameter example:*
-                  Suppose that an array, ``d``, has shape (2, 3, 4) and
-                  ``e = d.sd(axis=1)``. Then ``e`` has shape (2, 1, 4)
-                  and, for example, ``d/e`` is allowed. If ``e =
-                  d.sd(axis=1, squeeze=True)`` then ``e`` will have shape
-                  (2, 4) and ``d/e`` is an illegal operation.
-
-            weights : data-like or `dict`, optional
-                Weights associated with values of the array. By default
-                all non-missing elements of the array are assumed to have
-                equal weights of 1. If *weights* is a data-like object
-                then it must have either the same shape as the array or,
-                if that is not the case, the same shape as the axes being
-                collapsed. If *weights* is a dictionary then each key is
-                axes of the array (an int or tuple of ints) with a
-                corresponding data-like value of weights for those
-                axes. In this case, the implied weights array is the outer
-                product of the dictionary's values it may be used in
-                conjunction with any value of *axes*, because the axes to
-                which the weights apply are given explicitly.
-
-                *Parameter example:*
-                  Suppose that the original array being collapsed has
-                  shape (2, 3, 4) and *weights* is set to a data-like
-                  object, ``w``. If ``axes=None`` then ``w`` must have
-                  shape (2, 3, 4). If ``axes=(0, 1, 2)`` then ``w`` must
-                  have shape (2, 3, 4). If ``axes=(2, 0, 1)`` then ``w``
-                  must either have shape (2, 3, 4) or else (4, 2, 3). If
-                  ``axes=1`` then ``w`` must either have shape (2, 3, 4)
-                  or else (3,). If ``axes=(2, 0)`` then ``w`` must either
-                  have shape (2, 3, 4) or else (4, 2). Suppose *weights*
-                  is a dictionary. If ``weights={1: x}`` then ``x`` must
-                  have shape (3,). If ``weights={1: x, (2, 0): y}`` then
-                  ``x`` must have shape (3,) and ``y`` must have shape (4,
-                  2). The last example is equivalent to ``weights={(1, 2,
-                  0): x.outerproduct(y)}`` (see `outerproduct` for
-                  details).
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -12433,23 +12595,29 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4])
-        >>> e = cf.Data([1, 2, 3, 4])
-        >>> d.sd(squeeze=False)
-        <CF Data: [1.06262254195] >
-        >>> d.sd()
-        <CF Data: 1.06262254195 >
-        >>> e.sd(weights=[2, 3, 5, 6])
-        <CF Data: 1.09991882817 >
-        >>> e.sd(weights=[2, 3, 5, 6], f=1)
-        <CF Data: 1.06262254195 >
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
         >>> d.sd(ddof=0)
-        <CF Data: 1.02887985207 >
-        >>> e.sd(ddof=0, weights=[2, 3, 5, 6])
-        <CF Data: 1.02887985207 >
+        <CF Data(1, 1): [[3.5744733184250004]] K>
+        >>> d.sd(ddof=1)
+        <CF Data(1, 1): [[3.7489392439122637]] K>
+
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.sd(ddof=1, weights=w)
+        <CF Data(1, 1): [[3.7457375639741506]] K>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -12462,7 +12630,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             split_every=split_every,
             inplace=True,
         )
-        return d ** 0.5  # TODODASK: replace with sqrt
+        d.sqrt(inplace=True)
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -12477,11 +12646,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         split_every=None,
         i=False,
-        _preserve_partitions=False,
     ):
-        """TODO.
+        """Calculate variances.
+
+        Calculates the variance of an array or the variance values
+        along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `mean`, `sd`, `sum`
 
         :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{weights: data_like, `dict`, or `None`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -12490,6 +12673,37 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             {{split_every: `int` or `dict`, optional}}
 
                 .. versionadded:: TODODASK
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.var(ddof=0)
+        <CF Data(1, 1): [[12.776859504132233]] K2>
+        >>> d.var(ddof=1)
+        <CF Data(1, 1): [[14.054545454545456]] K2>
+
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.var(ddof=1, weights=w)
+        <CF Data(1, 1): [[14.030549898167004]] K2>
 
         """
         if ddof is None:
@@ -12570,6 +12784,122 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self, axes, data=True, stop=stop, chunks=chunks, min_step=min_step
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    def square(self, dtype=None, inplace=False):
+        """Calculate the non-negative square root.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `sqrt`, `sum_of_squares`
+
+        :Parameters:
+
+            dtype: data-type, optional
+                Overrides the data type of the output arrays. A
+                matching precision of the calculation should be
+                chosen. For example, a *dtype* of ``'int32'`` is only
+                allowed when the input values are integers.
+
+             {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The element-wise positive square root of the data
+                collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([[0, 1, 2.5, 3, 4]], 'K', mask=[[0, 0, 0, 1, 0]])
+        >>> e = d.square()
+        >>> e
+        <CF Data(1, 5): [[0.0, ..., 16.0]] K2>
+        >>> print(e.array)
+        [[0.0 1.0 6.25 -- 16.0]]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d.to_dask_array()
+        dx = da.square(dx, dtype=dtype)
+        d._set_dask(dx, reset_mask_hardness=False)
+
+        units = d.Units
+        if units:
+            d.override_units(units ** 2, inplace=True)
+
+        return d
+
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    def sqrt(self, dtype=None, inplace=False):
+        """Calculate the non-negative square root.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `square`
+
+        :Parameters:
+
+            dtype: data-type, optional
+                Overrides the data type of the output arrays. A
+                matching precision of the calculation should be
+                chosen. For example, a *dtype* of ``'int32'` is not
+                allowed, even if the input values are perfect squares.
+
+             {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The element-wise positive square root of the data
+                collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([[0, 1, 2, 3, 4]], 'K2', mask=[[0, 0, 0, 1, 0]])
+        >>> e = d.sqrt()
+        >>> e
+        <CF Data(1, 5): [[0.0, ..., 2.0]] K>
+        >>> print(e.array)
+        [[0.0 1.0 1.4142135623730951 -- 2.0]]
+
+        Negative values raise a warning but result in either NaN or,
+        if the there are already missing values, missing data:
+
+        >>> import warnings
+        >>> d = cf.Data([0, 1, -4])
+        >>> print(d.array)
+        [ 0  1 -4]
+        >>> with warnings.catch_warnings():
+        ...     warnings.simplefilter("ignore")
+        ...     print(d.sqrt().array)
+        ...
+        [ 0.  1. nan]
+
+        >>> d = cf.Data([0, 1, -4], mask=[1, 0, 0])
+        >>> print(d.array)
+        [-- 1 -4]
+        >>> with warnings.catch_warnings():
+        ...     warnings.simplefilter("ignore")
+        ...     print(d.sqrt().array)
+        ...
+        [-- 1.0 --]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d.to_dask_array()
+        dx = da.sqrt(dx, dtype=dtype)
+        d._set_dask(dx, reset_mask_hardness=False)
+
+        units = d.Units
+        if units:
+            d.override_units(units ** 0.5, inplace=True)
+
+        return d
+
     # ----------------------------------------------------------------
     # Alias
     # ----------------------------------------------------------------
@@ -12577,6 +12907,50 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def dtarray(self):
         """Alias for `datetime_array`"""
         return self.datetime_array
+
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
+    def maximum(
+        self,
+        axes=None,
+        squeeze=False,
+        mtol=1,
+        split_every=None,
+        inplace=False,
+        i=False,
+    ):
+        """Alias for `max`"""
+        return self.max(
+            axes=axes,
+            squeeze=squeeze,
+            mtol=mtol,
+            split_every=split_every,
+            inplace=inplace,
+            i=i,
+        )
+
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
+    def minimum(
+        self,
+        axes=None,
+        squeeze=False,
+        mtol=1,
+        split_every=None,
+        inplace=False,
+        i=False,
+    ):
+        """Alias for `min`"""
+        return self.min(
+            axes=axes,
+            squeeze=squeeze,
+            mtol=mtol,
+            split_every=split_every,
+            inplace=inplace,
+            i=i,
+        )
 
     def standard_deviation(
         self,
@@ -12856,11 +13230,11 @@ def _collapse(
     ddof=None,
     split_every=None,
 ):
-    """Collapse data using a callable *func*.
+    """Collapse data using a given funcion.
 
      .. versionadded:: TODODASK
 
-     .. seealso:: `_format_weights`
+     .. seealso:: `_parse_weights`
 
     :Parameters:
 
@@ -12884,26 +13258,32 @@ def _collapse(
             data.
 
         weights: data_like, `dict`, or `None`, optional
-            Weights associated with values of the array. By default
-            all non-missing elements of the array are assumed to have
-            a weight equal to one.
+
+            Weights associated with values of the data. By default
+            *weights* is `None`, meaning that all non-missing
+            elements of the data have a weight of 1 and all
+            missing elements have a weight of 0.
 
             If *weights* is a data_like object then it must be
-            broadcastable to the array or, if that is not the case,
-            the same shape as the axes being collapsed. TODODASK -
-            scrib the last possibility?
+            broadcastable to the array.
 
-            If *weights* is a dictionary then each key specifies axes
-            of the array (an `int` or `tuple` of `int`), with a
-            corresponding value of data_like weights for those
-            axes. The dimensions of a weights value must correspond to
-            its key axes in the same order. The weights that will be
-            used in the collapse will an outer product of the
+            If *weights* is a dictionary then each key specifies
+            axes of the data (an `int` or `tuple` of `int`), with
+            a corresponding value of data_like weights for those
+            axes. The dimensions of a weights value must
+            correspond to its key axes in the same order. Not all
+            of the axes need weights assigned to them. The weights
+            that will be used will be an outer product of the
             dictionary's values.
 
-            For collapses that do need need weights (such as a
-            maximum), *weights * must be `None` and *func* need not
-            support a ``weights`` parameter.
+            However they are specified, the weights are internally
+            broadcast to the shape of the data, and those weights
+            that are missing data, or that correspond to the
+            missing elements of the data, are assigned a weight of
+            0.
+
+            For collapse functions that do not have a ``weights``
+            parameter, *weights * must be `None`.
 
         keepdims: `bool`, optional
             By default, the axes which are collapsed are left in the
@@ -12935,7 +13315,7 @@ def _collapse(
     :Returns:
 
         `Data`, formatted weights
-            The collapsed data and the output of ``_format_weights(d,
+            The collapsed data and the output of ``_parse_weights(d,
             weights, axis)``.
 
     """
@@ -12946,9 +13326,8 @@ def _collapse(
         "mtol": mtol,
     }
 
-    weights = _format_weights(d, weights, axis)
     if weights is not None:
-        kwargs["weights"] = weights
+        kwargs["weights"] = _parse_weights(d, weights, axis)
 
     if ddof is not None:
         kwargs["ddof"] = ddof
@@ -12960,39 +13339,66 @@ def _collapse(
     return d, weights
 
 
-def _format_weights(d, weights, axis=None):
-    """TODODASK.
+def _parse_weights(d, weights, axis=None):
+    """Parse the weights input to `_collapse`.
+
+    :Parameters:
+
+        d: `Data`
+            The data to be collapsed.
+
+        weights: data_like or `dict`
+            See `_collapse` for details.
+
+        axis: (sequence of) `int`, optional
+            See `_collapse` for details.
 
     :Returns:
-
+    
         `Data` or `None`
+            * If *weights* is a data_like object then they are
+              returned unchanged as a `Data` object. It is up to the
+              downstream functions to check the weights
+              broadcastability.
+        
+            * If *weights* is a dictionary then the dictionary
+              values', i.e. the weights components, outer product is
+              broadcast to the data and returned as a `Data` object.
+
+              If the dictionary is empty, or none of the axes defined
+              by the keys correspond to collapse axes defined by
+              *axis*, then then the collapse is unweighted and `None`
+              is returned.
+
+            Note that, in all cases, the returned weights are *not*
+            modified to account for missing values in the data.
 
     **Examples**
 
     >>> d = cf.Data(np.arange(12)).reshape(4, 3)
 
-    >>> print(cf.data.data._format_weights(d, None))
-    None
-
-    >>> cf.data.data._format_weights(d, [1, 2, 1], (0, 1))
+    >>> _parse_weights(d, [1, 2, 1], (0, 1))
     <CF Data(3): [1, 2, 1]>
 
-    >>> cf.data.data._format_weights(d, [[1, 2, 1]], (0, 1))
+    >>> _parse_weights(d, [[1, 2, 1]], (0, 1))
     <CF Data(1, 3): [[1, 2, 1]]>
 
-    >>> cf.data.data._format_weights(d, {1: [1, 2, 1]}, (0, 1))
+    >>> _parse_weights(d, {1: [1, 2, 1]}, (0, 1))
     <CF Data(1, 3): [[1, 2, 1]]>
 
-    >>> cf.data.data._format_weights(
-    ...   d, {0: [1, 2, 3, 4], 1: [1, 2, 1}, (0, 1)
-    ... )
-    TODODASK (need __mul__ to be daskified)
+    >>> print(_parse_weights(d, {0: [1, 2, 3, 4], 1: [1, 2, 1]}, (0, 1)))
+    [[1 2 1]
+     [2 4 2]
+     [3 6 3]
+     [4 8 4]]
+
+    >>> print(cf.data.data._parse_weights(d, {}, (0, 1)))
+    None
+
+    >>> print(cf.data.data._parse_weights(d, {1: [1, 2, 1]}, 0))
+    None
 
     """
-    if weights is None:
-        # No weights
-        return
-
     if not isinstance(weights, dict):
         # Weights is data_like. Don't check broadcastability to d,
         # leave that to whatever uses the weights.

@@ -6,11 +6,6 @@ from tempfile import gettempdir
 from numpy.ma import masked as numpy_ma_masked
 from psutil import virtual_memory
 
-from . import mpi_on, mpi_size
-
-if mpi_on:
-    from . import mpi_comm
-
 from .units import Units
 
 # platform = sys.platform
@@ -78,9 +73,8 @@ in cf.
       disabled.
 
     FREE_MEMORY_FACTOR: `int`
-      Factor to divide the free memory by. If MPI is on this is equal
-      to the number of PEs. Otherwise it is equal to 1 and is ignored
-      in any case.
+      Factor to divide the free memory by. It is equal to 1 and is
+      ignored in any case.
 
     COLLAPSE_PARALLEL_MODE: `int`
       The mode to use when parallelising collapse. By default this is
@@ -113,17 +107,12 @@ CONSTANTS["FM_THRESHOLD"] = (
     CONSTANTS["FREE_MEMORY_FACTOR"] * CONSTANTS["TOTAL_MEMORY"]
 )
 
-if mpi_on:
-    CONSTANTS["MIN_TOTAL_MEMORY"] = min(
-        mpi_comm.allgather(CONSTANTS["TOTAL_MEMORY"])
-    )
-else:
-    CONSTANTS["MIN_TOTAL_MEMORY"] = CONSTANTS["TOTAL_MEMORY"]
+CONSTANTS["MIN_TOTAL_MEMORY"] = CONSTANTS["TOTAL_MEMORY"]
 
 CONSTANTS["CHUNKSIZE"] = (
     CONSTANTS["FREE_MEMORY_FACTOR"] * CONSTANTS["MIN_TOTAL_MEMORY"]
 ) / (
-    mpi_size * CONSTANTS["WORKSPACE_FACTOR_1"]
+    CONSTANTS["WORKSPACE_FACTOR_1"]
     + CONSTANTS["WORKSPACE_FACTOR_2"]
 )
 
