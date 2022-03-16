@@ -9075,7 +9075,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `itertools.product`
                 An iterator over tuples of indices of the data array.
 
-        **Examples:**
+        **Examples**
+
+        >>> d = cf.Data(np.arange(6).reshape(2, 3))
+        >>> print(d.array)
+        [[0 1 2]
+         [3 4 5]]
+        >>> for i in d.ndindex():
+        ...     print(i, d[i])
+        ...
+        (0, 0) [[0]]
+        (0, 1) [[1]]
+        (0, 2) [[2]]
+        (1, 0) [[3]]
+        (1, 1) [[4]]
+        (1, 2) [[5]]
+
+        >>> d = cf.Data(9)
+        >>> for i in d.ndindex():
+        ...     print(i, d[i])
+        ...
+        () 9
 
         """
         return product(*[range(0, r) for r in self.shape])
