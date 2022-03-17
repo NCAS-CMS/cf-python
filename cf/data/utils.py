@@ -228,10 +228,13 @@ def first_non_missing_value(a, cached=None, method="index"):
             Select the method used to find the first non-missing
             value.
 
-            The default ``'index'`` method evaulates sequentially
-            elements of the flattened array. The ``'mask'`` method
-            finds the first non-missing value from the mask of the
-            whole array.
+            The default ``'index'`` method evaulates sequentially the
+            elements of the flattened array and returns when the first
+            non-missing value is found.
+
+            The ``'mask'`` method finds the first non-missing value of
+            the flattened array as that which has the same location as
+            the first False element of the flattened array mask.
 
             It is considered likely that the ``'index'`` method is
             fastest for data for which the first element is not
