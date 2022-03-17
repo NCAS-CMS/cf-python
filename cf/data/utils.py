@@ -118,7 +118,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 
         units: `Units`, optional
              Specify the units for the output reference time
-             values. By default the the units are inferred from first
+             values. By default the units are inferred from the first
              non-missing value in the array, or set to ``<Units: days
              since 1970-01-01 gregorian>`` if all values are missing.
 
