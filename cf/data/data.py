@@ -6438,7 +6438,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @property
     @daskified(_DASKIFIED_VERBOSE)
     def array(self):
-        """A numpy array copy the data.
+        """A numpy array copy of the data.
 
         In-place changes to the returned numpy array do not affect the
         underlying dask array.
