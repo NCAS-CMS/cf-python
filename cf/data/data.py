@@ -3025,7 +3025,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `numpy.ndarray`
-                The numpy view the data.
+                The numpy view of the data.
 
         **Examples**
 
