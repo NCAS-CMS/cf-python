@@ -64,13 +64,13 @@ class FormulaTerms(metaclass=DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring
+        """Return the package depth for "package" docstring
         substitutions.
 
         See `_docstring_package_depth` for details.
 
         """
-        return 1
+        return 0
 
     # ----------------------------------------------------------------
     # Private methods
