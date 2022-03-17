@@ -3812,6 +3812,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         # Ensure that other is an independent Data object
         # ------------------------------------------------------------
+        # TODODASK is this still needed? Comment below was left unfinished.
         if getattr(other, "_NotImplemented_RHS_Data_op", False):
             # Make sure that
             return NotImplemented
@@ -3824,7 +3825,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             ):
                 other = cf_dt(
                     other,
-                    # .timetuple()[0:6], microsecond=other.microsecond,
                     calendar=getattr(self.Units, "calendar", "standard"),
                 )
             elif other is None:
@@ -3834,304 +3834,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             other = type(self).asdata(other)
 
+        # ------------------------------------------------------------
+        # Prepare data0 (i.e. self copied)
+        # ------------------------------------------------------------
         data0 = self.copy()
-
         data0, other, new_Units = data0._combined_units(other, method, True)
+        dx0 = data0._get_dask()
 
         # ------------------------------------------------------------
-        # Bring other into memory, if appropriate.
+        # Ensure that data1 (i.e. other) is broadcastable to data0
         # ------------------------------------------------------------
-        other.to_memory()
+        # SB TODODASK
+        dx1 = other._get_dask()
 
         # ------------------------------------------------------------
-        # Find which dimensions need to be broadcast in one or other
-        # of the arrays.
-        #
-        # Method:
-        #
-        #   For each common dimension, the 'broadcast_indices' list
-        #   will have a value of None if there is no broadcasting
-        #   required (i.e. the two arrays have the same size along
-        #   that dimension) or a value of slice(None) if broadcasting
-        #   is required (i.e. the two arrays have the different sizes
-        #   along that dimension and one of the sizes is 1).
-        #
-        #   Example:
-        #
-        #     If c.shape is (7,1,6,1,5) and d.shape is (6,4,1) then
-        #     broadcast_indices will be
-        #     [None,slice(None),slice(None)].
-        #
-        #     The indices to d which correspond to a partition of c,
-        #     are the relevant subset of partition.indices updated
-        #     with the non None elements of the broadcast_indices
-        #     list.
-        #
-        #     In this example, if a partition of c were to have a
-        #     partition.indices value of (slice(0,3), slice(0,1),
-        #     slice(2,4), slice(0,1), slice(0,5)), then the relevant
-        #     subset of these is partition.indices[2:] and the
-        #     corresponding indices to d are (slice(2,4), slice(None),
-        #     slice(None))
-        #
+        # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
-        data0_shape = data0._shape
-        data1_shape = other._shape
 
-        if data0_shape == data1_shape:
-            # self and other have the same shapes
-            broadcasting = False
-
-            align_offset = 0
-
-            new_shape = data0_shape
-            new_ndim = data0._ndim
-            new_axes = data0._axes
-            new_size = data0._size
-
+        if inplace:
+            # SB TODODASK perform 'method' operation in-place
+            pass
         else:
-            # self and other have different shapes
-            broadcasting = True
+            # SB TODODASK perform 'method' operation with new data object
+            pass
 
-            data0_ndim = data0._ndim
-            data1_ndim = other._ndim
+        data0._set_dask(dx0, reset_mask_hardness=False)
 
-            align_offset = data0_ndim - data1_ndim
-            if align_offset >= 0:
-                # self has at least as many axes as other
-                shape0 = data0_shape[align_offset:]
-                shape1 = data1_shape
-
-                new_shape = data0_shape[:align_offset]
-                new_ndim = data0_ndim
-                new_axes = data0._axes
-            else:
-                # other has more axes than self
-                align_offset = -align_offset
-                shape0 = data0_shape
-                shape1 = data1_shape[align_offset:]
-
-                new_shape = data1_shape[:align_offset]
-                new_ndim = data1_ndim
-                if not data0_ndim:
-                    new_axes = other._axes
-                else:
-                    new_axes = []
-                    existing_axes = self._all_axis_names()
-                    for n in new_shape:
-                        axis = new_axis_identifier(existing_axes)
-                        existing_axes.append(axis)
-                        new_axes.append(axis)
-                    # --- End: for
-                    new_axes += data0._axes
-                # --- End: for
-
-                align_offset = 0
-            # --- End: if
-
-            broadcast_indices = []
-            for a, b in zip(shape0, shape1):
-                if a == b:
-                    new_shape += (a,)
-                    broadcast_indices.append(None)
-                    continue
-
-                # Still here?
-                if a > 1 and b == 1:
-                    new_shape += (a,)
-                elif b > 1 and a == 1:
-                    new_shape += (b,)
-                else:
-                    raise ValueError(
-                        "Can't broadcast shape {} against shape {}".format(
-                            data1_shape, data0_shape
-                        )
-                    )
-
-                broadcast_indices.append(slice(None))
-
-            new_size = reduce(mul, new_shape, 1)
-
-            dummy_location = [None] * new_ndim
-        # ---End: if
-
-        new_flip = []
-
-        # ------------------------------------------------------------
-        # Create a Data object which just contains the metadata for
-        # the result. If we're doing a binary arithmetic operation
-        # then result will get filled with data and returned. If we're
-        # an augmented arithmetic assignment then we'll update self
-        # with this new metadata.
-        # ------------------------------------------------------------
-
-        result = data0.copy()
-        result._shape = new_shape
-        result._ndim = new_ndim
-        result._size = new_size
-        result._axes = new_axes
-
-        # ------------------------------------------------------------
-        # Set the data-type of the result
-        # ------------------------------------------------------------
-        if method_type in comparison_method_types:
-            new_dtype = np.dtype(bool)
-            rtol = self._rtol
-            atol = self._atol
-        else:
-            if "true" in method:
-                new_dtype = np.dtype(float)
-            elif not inplace:
-                new_dtype = np.result_type(data0.dtype, other.dtype)
-            else:
-                new_dtype = data0.dtype
-        # --- End: if
-
-        # ------------------------------------------------------------
-        # Set flags to control whether or not the data of result and
-        # self should be kept in memory
-        # ------------------------------------------------------------
-        config = data0.partition_configuration(readonly=not inplace)
-
-        original_numpy_seterr = np.seterr(**_seterr)
-
-        # Think about dtype, here.
-
-        for partition_r, partition_s in zip(
-            result.partitions.matrix.flat, data0.partitions.matrix.flat
-        ):
-
-            partition_s.open(config)
-
-            indices = partition_s.indices
-
-            array0 = partition_s.array
-
-            if broadcasting:
-                indices = tuple(
-                    [
-                        (index if not broadcast_index else broadcast_index)
-                        for index, broadcast_index in zip(
-                            indices[align_offset:], broadcast_indices
-                        )
-                    ]
-                )
-                indices = (Ellipsis,) + indices
-
-            array1 = other[indices].array
-
-            # UNRESOLVED ISSUE: array1 could be much larger than the
-            # chunk size.
-
-            if not inplace:
-                partition = partition_r
-                partition.update_inplace_from(partition_s)
-            else:
-                partition = partition_s
-
-            # --------------------------------------------------------
-            # Do the binary operation on this partition's data
-            # --------------------------------------------------------
-            try:
-                if method == "__eq__":  # and data0.Units.isreftime:
-                    array0 = _numpy_isclose(
-                        array0, array1, rtol=rtol, atol=atol
-                    )
-                elif method == "__ne__":
-                    array0 = ~_numpy_isclose(
-                        array0, array1, rtol=rtol, atol=atol
-                    )
-                else:
-                    array0 = getattr(array0, method)(array1)
-
-            except FloatingPointError as error:
-                # Floating point point errors have been trapped
-                if _mask_fpe[0]:
-                    # Redo the calculation ignoring the errors and
-                    # then set invalid numbers to missing data
-                    np.seterr(**_seterr_raise_to_ignore)
-                    array0 = getattr(array0, method)(array1)
-                    array0 = np.ma.masked_invalid(array0, copy=False)
-                    np.seterr(**_seterr)
-                else:
-                    # Raise the floating point error exception
-                    raise FloatingPointError(error)
-            except TypeError as error:
-                if inplace:
-                    raise TypeError(
-                        "Incompatible result data-type ({0!r}) for "
-                        "in-place {1!r} arithmetic".format(
-                            np.result_type(array0.dtype, array1.dtype).name,
-                            array0.dtype.name,
-                        )
-                    )
-                else:
-                    raise TypeError(error)
-            # --- End: try
-
-            if array0 is NotImplemented:
-                array0 = np.zeros(partition.shape, dtype=bool)
-            elif not array0.ndim and not isinstance(array0, np.ndarray):
-                array0 = np.asanyarray(array0)
-
-            if not inplace:
-                p_datatype = array0.dtype
-                if new_dtype != p_datatype:
-                    new_dtype = np.result_type(p_datatype, new_dtype)
-
-            partition.subarray = array0
-            partition.Units = new_Units
-            partition.axes = new_axes
-            partition.flip = new_flip
-            partition.part = []
-
-            if broadcasting:
-                partition.location = dummy_location
-                partition.shape = list(array0.shape)
-
-            partition._original = None
-            partition._write_to_disk = False
-            partition.close(units=new_Units)
-
-            if not inplace:
-                partition_s.close()
-        # --- End: for
-
-        # Reset numpy.seterr
-        np.seterr(**original_numpy_seterr)
-
-        source = result.source(None)
-        if source is not None and source.get_compression_type():
-            result._del_Array(None)
-
-        if not inplace:
-            result._Units = new_Units
-            result.dtype = new_dtype
-            result._flip(new_flip)
-
-            if broadcasting:
-                result.partitions.set_location_map(result._axes)
-
-            if method_type in comparison_method_types:
-                result.override_units(Units(), inplace=True)
-
-            return result
-        else:
-            # Update the metadata for the new master array in place
-            data0._shape = new_shape
-            data0._ndim = new_ndim
-            data0._size = new_size
-            data0._axes = new_axes
-            data0._flip(new_flip)
-            data0._Units = new_Units
-            data0.dtype = new_dtype
-
-            if broadcasting:
-                data0.partitions.set_location_map(new_axes)
-
-            self.__dict__ = data0.__dict__
-
-            return self
+        return data0
 
     def __query_set__(self, values):
         """Implements the “member of set” condition."""
