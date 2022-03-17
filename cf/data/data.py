@@ -2412,7 +2412,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Persist the underlaying dask array into memory.
 
         This turns an underlying lazy dask array into a equivalent
-        chunked dask array, but now with the results fully computed
+        chunked dask array, but now with the results fully computed.
 
         `persist` is particularly useful when using distributed
         systems, because the results will be kept in distributed
