@@ -6555,7 +6555,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @property
     @daskified(_DASKIFIED_VERBOSE)
     def varray(self):
-        """A numpy array view the data array.
+        """A numpy array view of the data array.
 
         Deprecated at version TODODASK.
 
