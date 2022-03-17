@@ -1,3 +1,4 @@
+"""Functions used during `Data` object collapses."""
 import inspect
 from functools import partial, reduce
 from operator import mul
@@ -52,8 +53,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         return 0
 
-    @staticmethod
-    def max(a, axis=None, keepdims=False, mtol=None, split_every=None):
+    @classmethod
+    def max(cls, a, axis=None, keepdims=False, mtol=None, split_every=None):
         """Return maximum values of an array.
 
         Calculates the maximum value of an array or the maximum values
@@ -99,8 +100,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @staticmethod
-    def max_abs(a, axis=None, keepdims=False, mtol=None, split_every=None):
+    @classmethod
+    def max_abs(
+        cls, a, axis=None, keepdims=False, mtol=None, split_every=None
+    ):
         """Return maximum absolute values of an array.
 
         Calculates the maximum absolute value of an array or the
@@ -131,24 +134,23 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        check_input_dtype(a)
-        dtype = a.dtype
-        return reduction(
-            a,
-            cf_max_abs_chunk,
-            partial(cf_max_agg, mtol=mtol, original_shape=a.shape),
+        return cls.max(
+            abs(a),
             axis=axis,
             keepdims=keepdims,
-            dtype=dtype,
+            mtol=mtol,
             split_every=split_every,
-            combine=cf_max_combine,
-            concatenate=False,
-            meta=np.array((), dtype=dtype),
         )
 
-    @staticmethod
+    @classmethod
     def mean(
-        a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        axis=None,
+        weights=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
     ):
         """Return mean values of an array.
 
@@ -198,9 +200,15 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @staticmethod
+    @classmethod
     def mean_abs(
-        a, weights=None, axis=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        weights=None,
+        axis=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
     ):
         """Return mean absolute values of an array.
 
@@ -234,25 +242,24 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        check_input_dtype(a)
-        dtype = "f8"
-        return reduction(
-            a,
-            cf_mean_abs_chunk,
-            partial(cf_mean_agg, mtol=mtol, original_shape=a.shape),
+        return cls.mean(
+            abs(a),
+            weights=weights,
             axis=axis,
             keepdims=keepdims,
-            dtype=dtype,
+            mtol=mtol,
             split_every=split_every,
-            combine=cf_mean_combine,
-            concatenate=False,
-            meta=np.array((), dtype=dtype),
-            weights=weights,
         )
 
-    @staticmethod
+    @classmethod
     def mid_range(
-        a, axis=None, dtype=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        axis=None,
+        dtype=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
     ):
         """Return mid-range values of an array.
 
@@ -284,7 +291,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        check_input_dtype(a, allow="fi")
+        check_input_dtype(a, allowed="fi")
         dtype = "f8"
         return reduction(
             a,
@@ -299,8 +306,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @staticmethod
-    def min(a, axis=None, keepdims=False, mtol=None, split_every=None):
+    @classmethod
+    def min(cls, a, axis=None, keepdims=False, mtol=None, split_every=None):
         """Return minimum values of an array.
 
         Calculates the minimum value of an array or the minimum values
@@ -346,8 +353,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @staticmethod
-    def min_abs(a, axis=None, keepdims=False, mtol=None, split_every=None):
+    @classmethod
+    def min_abs(
+        cls, a, axis=None, keepdims=False, mtol=None, split_every=None
+    ):
         """Return minimum absolute values of an array.
 
         Calculates the minimum absolute value of an array or the
@@ -378,23 +387,16 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        check_input_dtype(a)
-        dtype = a.dtype
-        return reduction(
-            a,
-            cf_min_abs_chunk,
-            partial(cf_min_agg, mtol=mtol, original_shape=a.shape),
+        return cls.min(
+            abs(a),
             axis=axis,
             keepdims=keepdims,
-            dtype=dtype,
+            mtol=mtol,
             split_every=split_every,
-            combine=cf_min_combine,
-            concatenate=False,
-            meta=np.array((), dtype=dtype),
         )
 
-    @staticmethod
-    def range(a, axis=None, keepdims=False, mtol=None, split_every=None):
+    @classmethod
+    def range(cls, a, axis=None, keepdims=False, mtol=None, split_every=None):
         """Return range values of an array.
 
         Calculates the range value of an array or the range values
@@ -425,7 +427,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        check_input_dtype(a, allow="fi")
+        check_input_dtype(a, allowed="fi")
         dtype = a.dtype
         return reduction(
             a,
@@ -440,9 +442,15 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @staticmethod
+    @classmethod
     def rms(
-        a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        axis=None,
+        weights=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
     ):
         """Return root mean square (RMS) values of an array.
 
@@ -492,8 +500,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @staticmethod
-    def sample_size(a, axis=None, keepdims=False, mtol=None, split_every=None):
+    @classmethod
+    def sample_size(
+        cls, a, axis=None, keepdims=False, mtol=None, split_every=None
+    ):
         """Return sample size values of an array.
 
         Calculates the sample size value of an array or the sample
@@ -539,9 +549,15 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @staticmethod
+    @classmethod
     def sum(
-        a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        axis=None,
+        weights=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
     ):
         """Return sum values of an array.
 
@@ -595,9 +611,15 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @staticmethod
+    @classmethod
     def sum_of_weights(
-        a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        axis=None,
+        weights=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
     ):
         """Return sum of weights values for an array.
 
@@ -647,9 +669,15 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @staticmethod
+    @classmethod
     def sum_of_weights2(
-        a, axis=None, weights=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        axis=None,
+        weights=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
     ):
         """Return sum of squares of weights values for an array.
 
@@ -687,7 +715,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         dtype = "f8"
         return reduction(
             a,
-            partial(cf_sum_of_weights_chunk, squared=True),
+            partial(cf_sum_of_weights_chunk, square=True),
             partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -699,8 +727,9 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @staticmethod
+    @classmethod
     def var(
+        cls,
         a,
         axis=None,
         weights=None,
@@ -760,7 +789,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
 
-def check_input_dtype(a, allow="fib"):
+def check_input_dtype(a, allowed="fib"):
     """Check that data has a data type allowed by a collapse method.
 
     The collapse method is assumed to be defined by the calling
@@ -771,7 +800,7 @@ def check_input_dtype(a, allow="fib"):
         a: `dask.array.Array`
             The data.
 
-        allow: `str`, optional
+        allowed: `str`, optional
             The data type kinds allowed by the collapse
             method. Defaults to ``'fib'``, meaning that only float,
             integer and Boolean data types are allowed.
@@ -781,7 +810,7 @@ def check_input_dtype(a, allow="fib"):
         `None`
 
     """
-    if a.dtype.kind not in allow:
+    if a.dtype.kind not in allowed:
         method = inspect.currentframe().f_back.f_code.co_name
         raise TypeError(f"Can't calculate {method} of data with {a.dtype!r}")
 
@@ -887,7 +916,7 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
 
 
 def sum_weights_chunk(
-    x, weights=None, squared=False, N=None, dtype="f8", **kwargs
+    x, weights=None, square=False, N=None, dtype="f8", **kwargs
 ):
     """Sum the weights.
 
@@ -896,7 +925,7 @@ def sum_weights_chunk(
     :Parameters:
 
         x: `numpy.ndarray`
-            The collapsed data.
+            The data.
 
         weights: `numpy.ndarray`, optional
             The weights associated with values of the data. Must have
@@ -907,7 +936,7 @@ def sum_weights_chunk(
             missing data, or that correspond to the missing elements
             of the data, are assigned a weight of 0.
 
-        squared: `bool`, optional
+        square: `bool`, optional
             If True calculate the sum of the squares of the weights.
 
         N: `numpy.ndarray`, optional
@@ -931,7 +960,7 @@ def sum_weights_chunk(
 
         return N
 
-    if squared:
+    if square:
         weights = np.multiply(weights, weights, dtype=dtype)
 
     if np.ma.is_masked(x):
@@ -1001,15 +1030,21 @@ def min_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     )
 
 
-def sum_sample_sizes(pairs, axis, **kwargs):
+def sum_sample_sizes(pairs, axis, computing_meta=False, **kwargs):
     """Alias of `combine_arrays` with ``key="N", func=chunk.sum,
-    dtype="i8", computing_meta=False``.
+    dtype="i8"``.
 
     .. versionadded:: TODODASK
 
     """
     return combine_arrays(
-        pairs, "N", chunk.sum, axis, dtype="i8", computing_meta=False, **kwargs
+        pairs,
+        "N",
+        chunk.sum,
+        axis,
+        dtype="i8",
+        computing_meta=computing_meta,
+        **kwargs,
     )
 
 
@@ -1019,23 +1054,25 @@ def sum_sample_sizes(pairs, axis, **kwargs):
 def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     """Chunk calculations for the mean.
 
-     This function is passed to `dask.array.reduction` as callable
-     *chunk* parameter.
+     This function is passed to `dask.array.reduction` as its *chunk*
+     parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
         `dict`
             Dictionary with the keys:
+
             * N: The sample size.
             * V1: The sum of ``weights`` (equal to ``N`` if weights
                   are not set).
             * sum: The weighted sum of ``x``.
+            * weighted: True if weights have been set.
 
     """
     if computing_meta:
@@ -1045,7 +1082,6 @@ def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     d = cf_sum_chunk(x, weights, dtype=dtype, **kwargs)
 
     d["V1"] = sum_weights_chunk(x, weights, N=d["N"], **kwargs)
-
     d["weighted"] = weights is not None
 
     return d
@@ -1058,13 +1094,16 @@ def cf_mean_combine(
     computing_meta=False,
     **kwargs,
 ):
-    """Combine calculations for the mean.
+    """Combination calculations for the mean.
+
+    This function is passed to `dask.array.reduction` as its *combine*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
@@ -1074,18 +1113,16 @@ def cf_mean_combine(
     if not isinstance(pairs, list):
         pairs = [pairs]
 
-    d = {"weighted": next(flatten(pairs))["weighted"]}
+    weighted = next(flatten(pairs))["weighted"]
+    d = {"weighted": weighted}
 
     d["sum"] = sum_arrays(pairs, "sum", axis, dtype, computing_meta, **kwargs)
     if computing_meta:
         return d["sum"]
 
     d["N"] = sum_sample_sizes(pairs, axis, **kwargs)
-
-    if d["weighted"]:
-        d["V1"] = sum_arrays(
-            pairs, "V1", axis, dtype, computing_meta, **kwargs
-        )
+    if weighted:
+        d["V1"] = sum_arrays(pairs, "V1", axis, dtype, **kwargs)
     else:
         d["V1"] = d["N"]
 
@@ -1101,9 +1138,9 @@ def cf_mean_agg(
     original_shape=None,
     **kwargs,
 ):
-    """Aggregate calculations for the mean.
+    """Aggregation calculations for the mean.
 
-    This function is passed to `dask.array.reduction` as callable
+    This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
     .. versionadded:: TODODASK
@@ -1118,7 +1155,8 @@ def cf_mean_agg(
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -1136,57 +1174,25 @@ def cf_mean_agg(
 
 
 # --------------------------------------------------------------------
-# mean_absolute_value
-# --------------------------------------------------------------------
-def cf_mean_abs_chunk(
-    x, weights=None, dtype=None, computing_meta=False, **kwargs
-):
-    """Chunk calculations for the mean of the absolute values.
-
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
-
-    .. versionadded:: TODODASK
-
-    :Parameters:
-
-        See `dask.array.reductions` for details.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-            * N: The sample size.
-            * V1: The sum of ``weights`` (equal to ``N`` if weights
-                  are not set).
-            * sum: The weighted sum of ``abs(x)``.
-
-    """
-    if computing_meta:
-        return x
-
-    return cf_mean_chunk(np.abs(x), weights, dtype=dtype, **kwargs)
-
-
-# --------------------------------------------------------------------
 # maximum
 # --------------------------------------------------------------------
 def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the maximum.
 
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
         `dict`
             Dictionary with the keys:
+
             * N: The sample size.
             * max: The maximum of `x``.
 
@@ -1206,13 +1212,16 @@ def cf_max_combine(
     computing_meta=False,
     **kwargs,
 ):
-    """Combine  calculations for the maximum.
+    """Combination calculations for the maximum.
+
+    This function is passed to `dask.array.reduction` as its *combine*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
@@ -1222,14 +1231,12 @@ def cf_max_combine(
     if not isinstance(pairs, list):
         pairs = [pairs]
 
-    # Create a nested list of maxima and recursively concatenate it
-    # along the specified axes
-    m = max_arrays(pairs, "max", axis, None, computing_meta, **kwargs)
+    mx = max_arrays(pairs, "max", axis, None, computing_meta, **kwargs)
     if computing_meta:
-        return m
+        return mx
 
     return {
-        "max": m,
+        "max": mx,
         "N": sum_sample_sizes(pairs, axis, **kwargs),
     }
 
@@ -1242,9 +1249,9 @@ def cf_max_agg(
     original_shape=None,
     **kwargs,
 ):
-    """Aggregate calculations for the maximum.
+    """Aggregation calculations for the maximum.
 
-    This function is passed to `dask.array.reduction` as callable
+    This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
     .. versionadded:: TODODASK
@@ -1259,7 +1266,8 @@ def cf_max_agg(
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -1277,35 +1285,6 @@ def cf_max_agg(
 
 
 # --------------------------------------------------------------------
-# maximum_absolute_value
-# --------------------------------------------------------------------
-def cf_max_abs_chunk(x, dtype=None, computing_meta=False, **kwargs):
-    """Chunk calculations for the maximum of absolute values.
-
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
-
-    .. versionadded:: TODODASK
-
-    :Parameters:
-
-        See `dask.array.reductions` for details.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-            * N: The sample size.
-            * max: The maximum of ``abs(x)``.
-
-    """
-    if computing_meta:
-        return x
-
-    return cf_max_chunk(np.abs(x), **kwargs)
-
-
-# --------------------------------------------------------------------
 # mid-range
 # --------------------------------------------------------------------
 def cf_mid_range_agg(
@@ -1317,9 +1296,9 @@ def cf_mid_range_agg(
     original_shape=None,
     **kwargs,
 ):
-    """Aggregate calculations for the mid-range.
+    """Aggregation calculations for the mid-range.
 
-    This function is passed to `dask.array.reduction` as callable
+    This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
     .. versionadded:: TODODASK
@@ -1334,7 +1313,8 @@ def cf_mid_range_agg(
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -1358,19 +1338,20 @@ def cf_mid_range_agg(
 def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the minimum.
 
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
         `dict`
             Dictionary with the keys:
+
             * N: The sample size.
             * min: The minimum of ``x``.
 
@@ -1390,13 +1371,16 @@ def cf_min_combine(
     computing_meta=False,
     **kwargs,
 ):
-    """Combine calculations for the minimum.
+    """Combination calculations for the minimum.
+
+    This function is passed to `dask.array.reduction` as its *combine*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
@@ -1406,14 +1390,12 @@ def cf_min_combine(
     if not isinstance(pairs, list):
         pairs = [pairs]
 
-    # Create a nested list of maxima and recursively concatenate it
-    # along the specified axes
-    x = min_arrays(pairs, "min", axis, None, computing_meta, **kwargs)
+    mn = min_arrays(pairs, "min", axis, None, computing_meta, **kwargs)
     if computing_meta:
-        return x
+        return mn
 
     return {
-        "min": x,
+        "min": mn,
         "N": sum_sample_sizes(pairs, axis, **kwargs),
     }
 
@@ -1426,9 +1408,9 @@ def cf_min_agg(
     original_shape=None,
     **kwargs,
 ):
-    """Aggregate calculations for the minimum.
+    """Aggregation calculations for the minimum.
 
-    This function is passed to `dask.array.reduction` as callable
+    This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
     .. versionadded:: TODODASK
@@ -1443,7 +1425,8 @@ def cf_min_agg(
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -1461,53 +1444,25 @@ def cf_min_agg(
 
 
 # --------------------------------------------------------------------
-# minimum absolute value
-# --------------------------------------------------------------------
-def cf_min_abs_chunk(x, dtype=None, computing_meta=False, **kwargs):
-    """Chunk calculations for the minimum of absolute values.
-
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
-
-    .. versionadded:: TODODASK
-
-    :Parameters:
-
-        See `dask.array.reductions` for details.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-            * N: The sample size.
-            * min: The minimum of ``abs(x)``.
-
-    """
-    if computing_meta:
-        return x
-
-    return cf_min_chunk(np.abs(x), **kwargs)
-
-
-# --------------------------------------------------------------------
 # range
 # --------------------------------------------------------------------
 def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
     """Chunk calculations for the range.
 
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
         `dict`
             Dictionary with the keys:
+
             * N: The sample size.
             * min: The minimum of ``x``.
             * max: The maximum of ``x`.
@@ -1516,7 +1471,9 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
     if computing_meta:
         return x
 
+    # N, max
     d = cf_max_chunk(x, **kwargs)
+
     d["min"] = chunk.min(x, **kwargs)
     return d
 
@@ -1528,13 +1485,16 @@ def cf_range_combine(
     computing_meta=False,
     **kwargs,
 ):
-    """Combine calculations for the range.
+    """Combination calculations for the range.
+
+    This function is passed to `dask.array.reduction` as its *combine*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
@@ -1544,13 +1504,11 @@ def cf_range_combine(
     if not isinstance(pairs, list):
         pairs = [pairs]
 
-    # Create a nested list of maxima and recursively concatenate it
-    # along the specified axes
     mx = max_arrays(pairs, "max", axis, None, computing_meta, **kwargs)
     if computing_meta:
         return mx
 
-    mn = min_arrays(pairs, "min", axis, None, computing_meta, **kwargs)
+    mn = min_arrays(pairs, "min", axis, None, **kwargs)
 
     return {
         "max": mx,
@@ -1567,9 +1525,9 @@ def cf_range_agg(
     original_shape=None,
     **kwargs,
 ):
-    """Aggregate calculations for the range.
+    """Aggregation calculations for the range.
 
-    This function is passed to `dask.array.reduction` as callable
+    This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
     .. versionadded:: TODODASK
@@ -1584,7 +1542,8 @@ def cf_range_agg(
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -1608,19 +1567,20 @@ def cf_range_agg(
 def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     """Chunk calculations for the root mean square (RMS)..
 
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
         `dict`
             Dictionary with the keys:
+
             * N: The sample size.
             * sum: The weighted sum of ``x**2``.
 
@@ -1642,9 +1602,9 @@ def cf_rms_agg(
     original_shape=None,
     **kwargs,
 ):
-    """Aggregate calculations for the root mean square (RMS).
+    """Aggregation calculations for the root mean square (RMS).
 
-    This function is passed to `dask.array.reduction` as callable
+    This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
     .. versionadded:: TODODASK
@@ -1659,7 +1619,8 @@ def cf_rms_agg(
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -1682,19 +1643,20 @@ def cf_rms_agg(
 def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
     """Chunk calculations for the sample size.
 
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
         `dict`
             Dictionary with the keys:
+
             * N: The sample size.
 
     """
@@ -1719,13 +1681,16 @@ def cf_sample_size_combine(
     computing_meta=False,
     **kwargs,
 ):
-    """Combine calculations for the sample size.
+    """Combination calculations for the sample size.
+
+    This function is passed to `dask.array.reduction` as its *combine*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
@@ -1751,9 +1716,9 @@ def cf_sample_size_agg(
     original_shape=None,
     **kwargs,
 ):
-    """Aggregate calculations for the sample size.
+    """Aggregation calculations for the sample size.
 
-    This function is passed to `dask.array.reduction` as callable
+    This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
     .. versionadded:: TODODASK
@@ -1768,7 +1733,8 @@ def cf_sample_size_agg(
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -1791,19 +1757,20 @@ def cf_sample_size_agg(
 def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     """Chunk calculations for the sum.
 
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
         `dict`
             Dictionary with the keys:
+
             * N: The sample size.
             * sum: The weighted sum of ``x``
 
@@ -1826,13 +1793,16 @@ def cf_sum_combine(
     computing_meta=False,
     **kwargs,
 ):
-    """Combine calculations for the sum.
+    """Combination calculations for the sum.
+
+    This function is passed to `dask.array.reduction` as its *combine*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
@@ -1842,8 +1812,6 @@ def cf_sum_combine(
     if not isinstance(pairs, list):
         pairs = [pairs]
 
-    # Create a nested list of maxima and recursively concatenate it
-    # along the specified axes
     x = sum_arrays(pairs, "sum", axis, dtype, computing_meta, **kwargs)
     if computing_meta:
         return x
@@ -1863,9 +1831,9 @@ def cf_sum_agg(
     original_shape=None,
     **kwargs,
 ):
-    """Aggregate calculations for the sum.
+    """Aggregation calculations for the sum.
 
-    This function is passed to `dask.array.reduction` as callable
+    This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
     .. versionadded:: TODODASK
@@ -1880,7 +1848,8 @@ def cf_sum_agg(
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -1901,28 +1870,30 @@ def cf_sum_agg(
 # sum of weights
 # --------------------------------------------------------------------
 def cf_sum_of_weights_chunk(
-    x, weights=None, dtype="f8", computing_meta=False, squared=False, **kwargs
+    x, weights=None, dtype="f8", computing_meta=False, square=False, **kwargs
 ):
     """Chunk calculations for the sum of the weights.
 
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
 
     :Parameters:
 
-        squared: `bool`, optional
+        square: `bool`, optional
             If True then calculate the sum of the squares of the
             weights.
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
         `dict`
             Dictionary with the keys:
+
             * N: The sample size.
             * sum: The sum of ``weights``, or the sum of
-                   ``weights**2`` if *squared* is True.
+                   ``weights**2`` if *square* is True.
 
     """
     if computing_meta:
@@ -1932,7 +1903,7 @@ def cf_sum_of_weights_chunk(
     d = cf_sample_size_chunk(x, **kwargs)
 
     d["sum"] = sum_weights_chunk(
-        x, weights=weights, squared=squared, N=d["N"], **kwargs
+        x, weights=weights, square=square, N=d["N"], **kwargs
     )
 
     return d
@@ -1946,8 +1917,8 @@ def cf_var_chunk(
 ):
     """Chunk calculations for the variance.
 
-    This function is passed to `dask.array.reduction` as callable
-    *chunk* parameter.
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
 
     See
     https://en.wikipedia.org/wiki/Pooled_variance#Sample-based_statistics
@@ -1963,7 +1934,8 @@ def cf_var_chunk(
             represents the number of non-missing elements. A value of
             1 applies Bessel's correction.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 
@@ -1973,7 +1945,8 @@ def cf_var_chunk(
             * N: The sample size.
             * V1: The sum of ``weights`` (equal to ``N`` if weights
                   are not set).
-            * V2: The sum of ``weights**2``.
+            * V2: The sum of ``weights**2``, or `None` of not
+                  required.
             * sum: The weighted sum of ``x``.
             * part: ``V1 * (sigma**2 + mu**2)``, where ``sigma**2`` is
                     the weighted biased (i.e. ``ddof=0``) variance of
@@ -1985,6 +1958,8 @@ def cf_var_chunk(
     if computing_meta:
         return x
 
+    weighted = weights is not None
+
     # N, V1, sum
     d = cf_mean_chunk(x, weights, dtype=dtype, **kwargs)
 
@@ -1994,7 +1969,7 @@ def cf_var_chunk(
     avg = divide(wsum, V1, dtype=dtype)
     part = x - avg
     part *= part
-    if weights is not None:
+    if weighted:
         part = part * weights
 
     part = chunk.sum(part, dtype=dtype, **kwargs)
@@ -2002,14 +1977,12 @@ def cf_var_chunk(
 
     d["part"] = part
 
-    if ddof == 1:
-        d["V2"] = sum_weights_chunk(
-            x, weights, squared=True, N=d["N"], **kwargs
-        )
+    if weighted and ddof == 1:
+        d["V2"] = sum_weights_chunk(x, weights, square=True, **kwargs)
     else:
-        d["V2"] = d["N"]
+        d["V2"] = None
 
-    d["weighted"] = weights is not None
+    d["weighted"] = weighted
     d["ddof"] = ddof
 
     return d
@@ -2022,13 +1995,16 @@ def cf_var_combine(
     computing_meta=False,
     **kwargs,
 ):
-    """Combine calculations for the variance.
+    """Combination calculations for the variance.
+
+    This function is passed to `dask.array.reduction` as its *combine*
+    parameter.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        See `dask.array.reductions` for details.
+        See `dask.array.reductions` for details of the parameters.
 
     :Returns:
 
@@ -2041,7 +2017,6 @@ def cf_var_combine(
     d = next(flatten(pairs))
     weighted = d["weighted"]
     ddof = d["ddof"]
-
     d = {"weighted": weighted, "ddof": ddof}
 
     d["part"] = sum_arrays(
@@ -2050,20 +2025,15 @@ def cf_var_combine(
     if computing_meta:
         return d["part"]
 
+    d["sum"] = sum_arrays(pairs, "sum", axis, dtype, **kwargs)
+
     d["N"] = sum_sample_sizes(pairs, axis, **kwargs)
-
-    d["sum"] = sum_arrays(pairs, "sum", axis, dtype, computing_meta, **kwargs)
-
     d["V1"] = d["N"]
-    d["V2"] = d["N"]
+    d["V2"] = None
     if weighted:
-        d["V1"] = sum_arrays(
-            pairs, "V1", axis, dtype, computing_meta, **kwargs
-        )
+        d["V1"] = sum_arrays(pairs, "V1", axis, dtype, **kwargs)
         if ddof == 1:
-            d["V2"] = sum_arrays(
-                pairs, "V2", axis, dtype, computing_meta, **kwargs
-            )
+            d["V2"] = sum_arrays(pairs, "V2", axis, dtype, **kwargs)
 
     return d
 
@@ -2077,9 +2047,9 @@ def cf_var_agg(
     original_shape=None,
     **kwargs,
 ):
-    """Aggregate calculations for the variance.
+    """Aggregation calculations for the variance.
 
-    This function is passed to `dask.array.reduction` as callable
+    This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
     .. note:: Weights are interpreted as reliability weights, as
@@ -2101,7 +2071,8 @@ def cf_var_agg(
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
 
-        See `dask.array.reductions` for further details.
+        See `dask.array.reductions` for details of the other
+        parameters.
 
     :Returns:
 

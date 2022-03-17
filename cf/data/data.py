@@ -68,7 +68,7 @@ from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
 from .partition import Partition
 from .partitionmatrix import PartitionMatrix
-from .utils import (  # is_small,; is_very_small,; collapse,
+from .utils import (  # is_small,; is_very_small,
     YMDhms,
     _is_numeric_dtype,
     conform_units,
@@ -6763,7 +6763,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 is located.
 
             unravel: `bool`, optional
-
                 If True then when locating the maximum over the whole
                 data, return the location as an index for each axis as
                 a `tuple`. By default an index to the flattened array
@@ -12872,9 +12871,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
-                The element-wise positive square root of the data
-                collapsed data, or `None` if the operation was
-                in-place.
+                The element-wise square of the data, or `None` if the
+                operation was in-place.
 
         **Examples**
 
@@ -12921,9 +12919,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
-                The element-wise positive square root of the data
-                collapsed data, or `None` if the operation was
-                in-place.
+                The element-wise positive square root of the data, or
+                `None` if the operation was in-place.
 
         **Examples**
 

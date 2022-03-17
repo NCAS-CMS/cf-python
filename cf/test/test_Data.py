@@ -3474,6 +3474,7 @@ class DataTest(unittest.TestCase):
     def test_Data_range(self):
         # Masked array
         a = self.ma
+
         d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
