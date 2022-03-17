@@ -34,22 +34,22 @@ def _is_numeric_dtype(array):
     **Examples:**
 
     >>> a = np.array([0, 1, 2])
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     True
     >>> a = np.array([False, True, True])
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     True
     >>> a = np.array(["a", "b", "c"], dtype="S1")
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     False
     >>> a = np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0])
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     True
     >>> a = np.array(10)
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     True
     >>> a = np.empty(1, dtype=object)
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     False
 
     """
@@ -92,7 +92,7 @@ def convert_to_datetime(a, units):
 
     >>> import dask.array as da
     >>> d = da.from_array(2.5)
-    >>> e = convert_to_datetime(d, cf.Units("days since 2000-12-01"))
+    >>> e = cf.data.utils.convert_to_datetime(d, cf.Units("days since 2000-12-01"))
     >>> print(e.compute())
     2000-12-03 12:00:00
 
@@ -135,15 +135,15 @@ def convert_to_reftime(a, units=None, first_value=None):
 
     >>> import dask.array as da
     >>> d = da.from_array(2.5)
-    >>> e = convert_to_datetime(d, cf.Units("days since 2000-12-01"))
+    >>> e = cf.data.utils.convert_to_datetime(d, cf.Units("days since 2000-12-01"))
 
-    >>> f, u = convert_to_reftime(e)
+    >>> f, u = cf.data.utils.convert_to_reftime(e)
     >>> f.compute()
     0.5
     >>> u
     <Units: days since 2000-12-3 standard>
 
-    >>> f, u = convert_to_reftime(e, cf.Units("days since 1999-12-01"))
+    >>> f, u = cf.data.utils.convert_to_reftime(e, cf.Units("days since 1999-12-01"))
     >>> f.compute()
     368.5
     >>> u
@@ -376,29 +376,29 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 
     **Examples:**
 
-    >>> new_axis_identifier()
+    >>> cf.data.utils.new_axis_identifier()
     'dim0'
-    >>> new_axis_identifier(['dim0'])
+    >>> cf.data.utils.new_axis_identifier(['dim0'])
     'dim1'
-    >>> new_axis_identifier(['dim3'])
+    >>> cf.data.utils.new_axis_identifier(['dim3'])
     'dim1'
-     >>> new_axis_identifier(['dim1'])
+     >>> cf.data.utils.new_axis_identifier(['dim1'])
     'dim2'
-    >>> new_axis_identifier(['dim1', 'dim0'])
+    >>> cf.data.utils.new_axis_identifier(['dim1', 'dim0'])
     'dim2'
-    >>> new_axis_identifier(['dim3', 'dim4'])
+    >>> cf.data.utils.new_axis_identifier(['dim3', 'dim4'])
     'dim2'
-    >>> new_axis_identifier(['dim2', 'dim0'])
+    >>> cf.data.utils.new_axis_identifier(['dim2', 'dim0'])
     'dim3'
-    >>> new_axis_identifier(['dim3', 'dim4', 'dim0'])
+    >>> cf.data.utils.new_axis_identifier(['dim3', 'dim4', 'dim0'])
     'dim5'
-    >>> d._new_axis_identifier(basename='axis')
+    >>> cf.data.utils.new_axis_identifier(basename='axis')
     'axis0'
-    >>> d._new_axis_identifier(basename='axis')
+    >>> cf.data.utils.new_axis_identifier(basename='axis')
     'axis0'
-    >>> d._new_axis_identifier(['dim0'], basename='axis')
+    >>> cf.data.utils.new_axis_identifier(['dim0'], basename='axis')
     'axis1'
-    >>> d._new_axis_identifier(['dim0', 'dim1'], basename='axis')
+    >>> cf.data.utils.new_axis_identifier(['dim0', 'dim1'], basename='axis')
     'axis2'
 
     """
@@ -427,7 +427,7 @@ def chunk_positions(chunks):
     **Examples**
 
     >>> chunks = ((1, 2), (9,), (44, 55, 66))
-    >>> for position in chunk_positions(chunks):
+    >>> for position in cf.data.utils.chunk_positions(chunks):
     ...     print(position)
     ...
     (0, 0, 0)
@@ -457,7 +457,7 @@ def chunk_shapes(chunks):
     **Examples**
 
     >>> chunks = ((1, 2), (9,), (4, 5, 6))
-    >>> for shape in chunk_shapes(chunks):
+    >>> for shape in cf.data.utils.chunk_shapes(chunks):
     ...     print(shape)
     ...
     (1, 9, 4)
@@ -535,22 +535,22 @@ def scalar_masked_array(dtype=float):
 
      **Examples**
 
-     >>> scalar_masked_array()
+     >>> cf.data.utils.scalar_masked_array()
      masked_array(data=--,
                   mask=True,
             fill_value=1e+20,
                  dtype=float64)
-     >>> scalar_masked_array(dtype('int32'))
+     >>> cf.data.utils.scalar_masked_array(dtype('int32'))
      masked_array(data=--,
                   mask=True,
             fill_value=999999,
                  dtype=int32)
-     >>> scalar_masked_array('U45')
+     >>> cf.data.utils.scalar_masked_array('U45')
      masked_array(data=--,
                   mask=True,
             fill_value='N/A',
                 dtype='<U45')
-    >>> scalar_masked_array(bool)
+    >>> cf.data.utils.scalar_masked_array(bool)
     masked_array(data=--,
                  mask=True,
             fill_value=True,
@@ -590,22 +590,22 @@ def conform_units(value, units):
 
     **Examples**
 
-    >>> conform_units(1, cf.Units('metres'))
+    >>> cf.data.utils.conform_units(1, cf.Units('metres'))
     1
-    >>> conform_units([1, 2, 3], cf.Units('metres'))
+    >>> cf.data.utils.conform_units([1, 2, 3], cf.Units('metres'))
     [1, 2, 3]
-    >>> import numpy
-    >>> conform_units(numpy.array([1, 2, 3]), cf.Units('metres'))
+    >>> import numpy as np
+    >>> cf.data.utils.conform_units(np.array([1, 2, 3]), cf.Units('metres'))
     array([1, 2, 3])
-    >>> conform_units('string', cf.Units('metres'))
+    >>> cf.data.utils.conform_units('string', cf.Units('metres'))
     'string'
     >>> d = cf.Data([1, 2] , 'm')
-    >>> conform_units(d, cf.Units('metres'))
+    >>> cf.data.utils.conform_units(d, cf.Units('metres'))
     <CF Data(2): [1, 2] m>
     >>> d = cf.Data([1, 2] , 'km')
-    >>> conform_units(d, cf.Units('metres'))
+    >>> cf.data.utils.conform_units(d, cf.Units('metres'))
     <CF Data(2): [1000.0, 2000.0] metres>
-    >>> conform_units(d, cf.Units('s'))
+    >>> cf.data.utils.conform_units(d, cf.Units('s'))
         ...
     ValueError: Units <Units: km> are incompatible with units <Units: s>
 
@@ -656,7 +656,7 @@ def YMDhms(d, attr):
     **Examples**
 
     >>> d = cf.Data([0, 1, 2], 'days since 1999-12-31')
-    >>> YMDhms(d, 'year').array
+    >>> cf.data.utils.YMDhms(d, 'year').array
     >>> array([1999, 2000, 2000])
 
     """
