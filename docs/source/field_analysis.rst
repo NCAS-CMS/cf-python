@@ -131,84 +131,116 @@ the new cell method construct (if one is created).
 ============================  ========================================  ==========================
 Method                        Description                               Cell method
 ============================  ========================================  ==========================
-``'maximum'``                 The maximum of the values.                ``maximum``
-                          
-``'minimum'``                 The minimum of the values.                ``minimum``
-                                   
-``'maximum_absolute_value'``  The maximum of the absolute values.       ``maximum_absolute_value``
-                          
-``'minimum_absolute_value'``  The minimum of the absolute values.       ``minimum_absolute_value``
-                          
-``'mid_range'``               The average of the maximum and the        ``mid_range``
-                              minimum of the values.
-                              
-``'range'``                   The absolute difference between the       ``range``
-                              maximum and the minimum of the values.
-			      
-``'median'``                  The median of the values.                 ``median`` 
-
-``'sample_size'``             The sample size, :math:`N`, as would be   ``point``
-                              used for other calculations, i.e. the
+``'sample_size'``             The sample size, :math:`N`, equal to the  ``point``
 			      number of non-missing values.
                               
-``'sum_of_weights'``          The sum of :math:`N` weights              ``sum``
-                              :math:`w_i`, as would be used for other
-                              calculations, is
+``'maximum'``                 The maximum of the non-missing values.    ``maximum``
+
+                              .. math:: m_x=\max\{x_0, \ldots, x_N\}
+                          
+``'minimum'``                 The minimum of the non-missing values.    ``minimum``
+
+                              .. math::  m_n=\min\{x_0, \ldots, x_N\}
+                                   
+``'maximum_absolute_value'``  The maximum of the non-missing absolute   ``maximum_absolute_value``
+                              values.
+
+                              .. math:: \max\{|x_0|, \ldots, |x_N|\}
+                          
+``'minimum_absolute_value'``  The minimum of the absolute absolute      ``minimum_absolute_value``
+                              values.
+
+                              .. math:: \min\{|x_0|, \ldots, |x_N|\}
+                          
+``'mid_range'``               The average of the maximum and the        ``mid_range``
+                              minimum of the non-missing values.
+
+                              .. math:: \frac{m_x + m_n}{2}    
+                              
+``'range'``                   The absolute difference between the       ``range``
+                              maximum and the minimum of the
+			      non-missing values.
+
+                              .. math:: m_x - m_n
+			      
+``'median'``                  The median of the :math:`N` non-missing   ``median``
+                              values.
+
+``'sum_of_weights'``          The sum of the :math:`N` weights          ``sum``
+                              :math:`w_i` that correspond to
+			      non-missing values.
 
 			      .. math:: V_{1}=\sum_{i=1}^{N} w_i
 			      
-``'sum_of_weights2'``         The sum of the squares of :math:`N`       ``sum``
-                              weights :math:`w_i`, as would be used
-                              for other calculations, is
+``'sum_of_weights2'``         The sum of the squares of the :math:`N`   ``sum``
+                              weights :math:`w_i` that correspond to
+      		              non-missing values.
 
-			      .. math:: V_{2}=\sum_{i=1}^{N}  w_i^{2}
+			      .. math:: V_{2}=\sum_{i=1}^{N} w_i^{2}
 
-``'sum'``                     The unweighted sum of :math:`N` values    ``sum``
-                              :math:`x_i` is
+``'sum'``                     The unweighted sum of the :math:`N`       ``sum``
+                              non-missing values :math:`x_i` is
 			      
                               .. math:: t=\sum_{i=1}^{N} x_i
 
-``'sum_of_squares'``          The unweighted sum of the squares of      ``sum_of_squares``
-                              :math:`N` values :math:`x_i` is
+			      The weighted sum of the :math:`N`
+                              non-missing values :math:`x_i` with
+                              corresponding weights :math:`w_i` is
+			      
+                              .. math:: \hat{t}=\sum_{i=1}^{N} w_i x_i
+
+``'sum_of_squares'``          The unweighted sum of the squares of the  ``sum_of_squares``
+                              :math:`N` non-missing values :math:`x_i`
+   			      is
 			      
                               .. math:: t_2=\sum_{i=1}^{N} x_{i}^{2}
                               
-``'integral'``                The integral of :math:`N` values          ``sum``
-                              :math:`x_i` with corresponding cell       
-                              measures :math:`m_i` is
+			      The weighted sum of the squares of the
+			      :math:`N` non-missing values :math:`x_i`
+			      with corresponding weights :math:`w_i`
+			      is
+			      
+                              .. math:: \hat{t}_2=\sum_{i=1}^{N}
+				                  w_i x_{i}^{2}
+
+``'integral'``                The :ref:`weighted <Collapse-weights>`    ``sum``
+                              sum of the :math:`N` non-missing values
+			      :math:`x_i` with corresponding cell 
+		              measures :math:`m_i`.
 			      
                               .. math:: i=\sum_{i=1}^{N} m_i x_i
 
-			      Note that the integral differs from a
-			      weighted sum in that the units of the
-			      cell measures are incorporated into the
-			      result.
+			      .. note:: The integral differs from a
+                      		        weighted sum in that the units
+                      		        of the measures are
+                      		        incorporated into the result.
 			      
-``'mean'``                    The unweighted mean of :math:`N` values   ``mean``
-                              :math:`x_i` is
+``'mean'``                    The unweighted mean of the :math:`N`      ``mean``
+                              non-missing values :math:`x_i` is
                               
                               .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N}
 					               x_i
                               
                               The :ref:`weighted <Collapse-weights>`
-                              mean of :math:`N` values :math:`x_i`
-                              with corresponding weights :math:`w_i`
-                              is
+                              mean of the :math:`N` non-missing values
+                              :math:`x_i` with corresponding weights
+                              :math:`w_i`. is
 			      
                               .. math:: \hat{\mu}=\frac{1}{V_{1}}
                                                     \sum_{i=1}^{N}
-                                         w_i x_i
+                                                    w_i x_i
 					
-``'mean_absolute_value'``     The unweighted mean of :math:`N`          ``mean_absolute_value``
-                              values :math:`x_i` absoluted is 
+``'mean_absolute_value'``     The unweighted mean of the :math:`N`      ``mean_absolute_value``
+                              non-missing absolute values :math:`x_i`
+			      is
                               
                               .. math:: \mu_{abs}=\frac{1}{N}
 				       \sum_{i=1}^{N}|x_i|
                               
                               The :ref:`weighted <Collapse-weights>`
-                              mean of :math:`N` values :math:`x_i`
-                              absoluted with corresponding weights
-                              :math:`w_i` is
+                              mean of the :math:`N` non-missing
+			      absolute values :math:`x_i` with
+			      corresponding weights :math:`w_i` is
 			      
                               .. math:: \hat{\mu}_{abs}=
                                              \frac{1}{V_{1}}
@@ -218,8 +250,8 @@ Method                        Description                               Cell met
                               upper group of data values defined by
                               the upper tenth of their distribution
 
-``'variance'``                The unweighted variance of :math:`N`      ``variance``
-                              values :math:`x_i` and with 
+``'variance'``                The unweighted variance of the :math:`N`  ``variance``
+                              non-missing values :math:`x_i` and with 
                               :math:`N-ddof` degrees of freedom
    			      (:math:`ddof\ge0`) is
 			      
@@ -236,9 +268,10 @@ Method                        Description                               Cell met
                               :math:`ddof=1`.
 			      
                               The :ref:`weighted <Collapse-weights>`
-                              biased estimate of the variance of
-                              :math:`N` values :math:`x_i` with
-                              corresponding weights :math:`w_i` is
+                              biased estimate of the variance of the
+                              :math:`N` non-missing values :math:`x_i`
+                              with corresponding weights :math:`w_i`
+                              is
 			      
                               .. math:: \hat{s}_{N}^{2}=
 					\frac{1}{V_{1}}
@@ -246,9 +279,11 @@ Method                        Description                               Cell met
                                         w_i(x_i -
                                         \hat{\mu})^{2}
                                    
-                              The corresponding :ref:`weighted
-                              <Collapse-weights>` unbiased estimate of
-                              the variance is
+                              The :ref:`weighted <Collapse-weights>`
+                              unbiased estimate of the variance of the
+                              :math:`N` non-missing values :math:`x_i`
+                              with corresponding weights :math:`w_i`
+                              is
                               
                               .. math:: \hat{s}^{2}=\frac{1}{V_{1} -
                                                     (V_{1}/V_{2})}
@@ -256,28 +291,31 @@ Method                        Description                               Cell met
                                                     w_i(x_i -
                                                     \hat{\mu})^{2}
 			      
-                              In both cases, the weights are assumed
-                              to be non-random reliability weights, as
-                              opposed to frequency weights.
+                              .. note:: The weights used in the
+                                        variance calculations are
+                                        assumed to be non-random
+                                        reliability weights, as
+                                        opposed to frequency weights.
                                   
 ``'standard_deviation'``      The standard deviation is the square      ``standard_deviation``
                               root of the unweighted or
 			      :ref:`weighted <Collapse-weights>`
-		              variance, as defined in this table.
+		              variance.
 			       
-``'root_mean_square'``        The unweighted root mean square of        ``root_mean_square`` 
-                              :math:`N` values :math:`x_i` is
+``'root_mean_square'``        The unweighted root mean square of the    ``root_mean_square`` 
+                              :math:`N` non-missing values
+			      :math:`x_i` is
 			      
-                              .. math:: RMS=\sqrt{\frac{1}{N}
+                              .. math:: r=\sqrt{\frac{1}{N}
 				                   \sum_{i=1}^{N}
 				                   x_{i}^2}
 			      
                               The :ref:`weighted <Collapse-weights>`
-                              root mean square of :math:`N` values
-                              :math:`x_i` with corresponding weights
-                              :math:`w_i` is
+                              root mean square of the :math:`N`
+                              non-missing values :math:`x_i` with
+                              corresponding weights :math:`w_i` is
 			      
-                              .. math:: \hat{RMS}=\sqrt{
+                              .. math:: \hat{r}=\sqrt{
 				              \frac{1}{V_{1}}
 				              \sum_{i=1}^{N} w_i
 				              x_{i}^2}			      
