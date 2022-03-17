@@ -130,7 +130,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 
     :Returns:
 
-        `dask.array.Array`, `Units`
+        (`dask.array.Array`, `Units`)
             The reference times, and their units.
 
     >>> import dask.array as da
