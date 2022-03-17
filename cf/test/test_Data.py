@@ -3422,6 +3422,9 @@ class DataTest(unittest.TestCase):
         # Check mtol
         self.assertEqual(e.array, np.ma.masked)
 
+        with self.assertRaises(TypeError):
+            cf.Data([0, 1], dtype=bool).mid_range()
+
     def test_Data_min(self):
         # Masked array
         a = self.ma
@@ -3490,6 +3493,9 @@ class DataTest(unittest.TestCase):
 
         # Check mtol
         self.assertEqual(e.array, np.ma.masked)
+
+        with self.assertRaises(TypeError):
+            cf.Data([0, 1], dtype=bool).range()
 
     def test_Data_root_mean_square(self):
         # Masked array, non-masked weights

@@ -47,7 +47,7 @@ from . import (  # GatheredSubarray,; RaggedContiguousSubarray,; RaggedIndexedCo
     NetCDFArray,
     UMArray,
 )
-from .collapse_functions import Collapse
+from .collapse import Collapse
 from .creation import (
     compressed_to_dask,
     convert_to_builtin_type,
@@ -6976,7 +6976,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `maximum_absolute_value`, `min`
+         ..seealso:: `sample_size`, `maximum_absolute_value`, `min`
 
         :Parameters:
 
@@ -7045,7 +7045,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `max`, `minimum_absolute_value`
+         ..seealso:: `sample_size`, `max`, `minimum_absolute_value`
 
         :Parameters:
 
@@ -7115,7 +7115,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `max`, `minimum_absolute_value`
+         ..seealso:: `sample_size`, `max`, `minimum_absolute_value`
 
         :Parameters:
 
@@ -7183,7 +7183,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `maximum_absolute_value`, `min`
+         ..seealso:: `sample_size`, `maximum_absolute_value`, `min`
 
         :Parameters:
 
@@ -7254,7 +7254,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `mean_abslute_value`, `sd`, `sum`
+         ..seealso:: `sample_size`, `mean_abslute_value`, `sd`, `sum`
 
         :Parameters:
 
@@ -7332,7 +7332,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `mean`, `sd`, `sum`
+         ..seealso:: `sample_size`, `mean`, `sd`, `sum`
 
         :Parameters:
 
@@ -7409,7 +7409,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `mean`, `sd`, `sum`
+         ..seealso:: `sample_size`, `mean`, `sd`, `sum`
 
         :Parameters:
 
@@ -7502,6 +7502,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         Calculates the sample size value or the sample size values
         along axes.
+
+        .. seealso:: `sum_of_weights`
 
         :Parameters:
 
@@ -10157,16 +10159,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         i=False,
     ):
-        """Collapse axes with the absolute difference between their
-        maximum and minimum values.
+        """Calculate mid-range values.
 
-        Missing data array elements are omitted from the calculation.
+        The mid-range is half of the maximum plus the minimum.
 
-        .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sample_size`,
-                     `sd`, `sum`, `sum_of_weights`, `sum_of_weights2`,
-                     `var`
+        Calculates the mid-range value or the mid-range values along
+        axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `sample_size`, `max`, `min`, `range`
 
         :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -10183,7 +10193,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples:**
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.mid_range()
+        <CF Data(1, 1): [[5.5]] K>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -10490,10 +10511,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         split_every=None,
         inplace=False,
     ):
-        """Collapse axes with their root mean square.
+        """Calculate root mean square (RMS) values.
 
-        Missing data array elements and their corresponding weights are
-        omitted from the calculation.
+        Calculates the RMS value or the RMS values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `sample_size`, `mean`, `sum`,
 
         :Parameters:
 
@@ -10516,10 +10542,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
-                     `var`
+        **Examples**
 
-        **Examples:**
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.root_mean_square()
+        <CF Data(1, 1): [[6.674238124719146]] K>
+
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.root_mean_square(weights=w)
+        <CF Data(1, 1): [[6.871107713616576]] K>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -12107,41 +12147,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace=False,
         i=False,
     ):
-        """Collapse axes with the absolute difference between their
-        maximum and minimum values.
+        """Calculate range values.
 
-        Missing data array elements are omitted from the calculation.
+        The range is the maximum minus the minimum.
 
-        .. seealso:: `maximum`, `minimum`, `mean`, `mid_range`, `sample_size`,
-                     `sd`, `sum`, `sum_of_weights`, `sum_of_weights2`,
-                     `var`
+        Calculates the range value or the range values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `sample_size`, `max`, `min`, `mid_range`
 
         :Parameters:
 
-            split_every: `int` or `dict`, optional
-                Determines the depth of the recursive aggregation. See
-                `dask.array.reduction` for details.
+            {{collapse axes: (sequence of) `int`, optional}}
 
-
-                set to a number greater than to equal to the number of
-                input chunks, the aggregation will be performed in two
-                steps, one ``chunk`` function per input chunk and a
-                single ``aggregate`` function at the end. If set to
-                less than that (and greater than 1), an intermediate
-                ``combine`` function will be used, so that any one
-                ``combine`` or ``aggregate`` function has no more than
-                ``split_every`` inputs. The depth of the aggregation
-                graph will be :math:`log_{split_every}(input chunks
-                along reduced axes)`. Setting to a low value can
-                reduce cache size and network transfers, at the cost
-                of more CPU and a larger dask graph.
-
-                Different values can be assigned to different axes in
-                a dictionary.
-
-                Omit to let dask heuristically decide a good
-                default. A default can also be set globally with the
-                ``split_every`` key in :mod:`dask.config`.
+            {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}
 
@@ -12158,7 +12180,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples:**
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = cf.Data(a, 'K')
+        >>> d[1, 1] = np.ma.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.range()
+        <CF Data(1, 1): [[11]] K>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -12244,8 +12277,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `integral`, `mean`, `sd`, `sum_of_squares`,
-                     `sum_of_weights`
+         ..seealso:: `sample_size`, `integral`, `mean`, `sd`,
+                     `sum_of_squares`, `sum_of_weights`
 
         :Parameters:
 
@@ -12323,7 +12356,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `sum`, `sum_of_squares`,
+         ..seealso:: `sample_size`, `sum`, `sum_of_squares`,
                      `sum_of_weights2`
 
         :Parameters:
@@ -12408,7 +12441,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `sum`, `sum_of_squares`,
+         ..seealso:: `sample_size`, `sum`, `sum_of_squares`,
                      `sum_of_weights2`
 
         :Parameters:
@@ -12507,8 +12540,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `sum`, `sum_of_squares`,
-                     `sum_of_weights2`
+         ..seealso:: `sample_size`, `sum`, `sum_of_squares`,
+                     `sum_of_weights`
 
         :Parameters:
 
@@ -12603,7 +12636,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `mean`, `sum`, `var`
+         ..seealso:: `sample_size`, `mean`, `sum`, `var`
 
         :Parameters:
 
@@ -12689,7 +12722,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-         ..seealso:: `mean`, `sd`, `sum`
+         ..seealso:: `sample_size`, `mean`, `sd`, `sum`
 
         :Parameters:
 
@@ -12846,6 +12879,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples**
 
         >>> d = cf.Data([[0, 1, 2.5, 3, 4]], 'K', mask=[[0, 0, 0, 1, 0]])
+        >>> print(d.array)
+        [[0.0 1.0 2.5 -- 4.0]]
         >>> e = d.square()
         >>> e
         <CF Data(1, 5): [[0.0, ..., 16.0]] K2>
@@ -12893,14 +12928,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         **Examples**
 
         >>> d = cf.Data([[0, 1, 2, 3, 4]], 'K2', mask=[[0, 0, 0, 1, 0]])
+        >>>print(d.array)
+        [[0 1 2 -- 4]]
         >>> e = d.sqrt()
         >>> e
         <CF Data(1, 5): [[0.0, ..., 2.0]] K>
         >>> print(e.array)
         [[0.0 1.0 1.4142135623730951 -- 2.0]]
 
-        Negative values raise a warning but result in either NaN or,
-        if the there are already missing values, missing data:
+        Negative values raise a warning but nonetheless result in NaN
+        or, if the there are already missing values, missing data:
 
         >>> import warnings
         >>> d = cf.Data([0, 1, -4])
@@ -13225,12 +13262,17 @@ def _collapse(
             to False then collapsed axes are removed from the data.
 
         mtol: number, optional
-            Set the sampe size threshold below which collapsed values
-            are set to missing data. It is defined as a fraction
-            (between 0 and 1 inclusive) of the contributing input data
-            values. A missing datum in the output array occurs
-            whenever at least ``100*mtol%`` of its contributing input
-            array elements are missing data.
+            The sample size threshold below which collapsed values are
+            set to missing data. It is defined as a fraction (between
+            0 and 1 inclusive) of the contributing input data values.
+
+            The default of *mtol* is 1, meaning that a missing datum
+            in the output array occurs whenever all of its
+            contributing input array elements are missing data.
+
+            For other values, a missing datum in the output array
+            occurs whenever more than ``100*mtol%`` of its
+            contributing input array elements are missing data.
 
         ddof: number, optional
             The delta degrees of freedom. The number of degrees of

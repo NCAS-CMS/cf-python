@@ -1,3 +1,4 @@
+import inspect
 from functools import partial, reduce
 from operator import mul
 
@@ -7,15 +8,49 @@ from dask.array import chunk
 from dask.array.core import _concatenate2
 from dask.array.reductions import divide, numel, reduction
 from dask.core import flatten
-from dask.utils import deepmap  # Apply function inside nested lists
+from dask.utils import deepmap
+
+from ..docstring import _docstring_substitution_definitions
 
 
 class Collapse(metaclass=DocstringRewriteMeta):
-    """Container for functions that collapse `dask` arrays.
+    """Container for functions that collapse dask arrays.
 
     .. versionadded:: TODODASK
 
     """
+
+    def __docstring_substitutions__(self):
+        """Define docstring substitutions that apply to this class and
+        all of its subclasses.
+
+        These are in addtion to, and take precendence over, docstring
+        substitutions defined by the base classes of this class.
+
+        See `_docstring_substitutions` for details.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `_docstring_substitutions`
+
+        :Returns:
+
+            `dict`
+                The docstring substitutions that have been applied.
+
+        """
+        return _docstring_substitution_definitions
+
+    def __docstring_package_depth__(self):
+        """Return the package depth for "package" docstring
+        substitutions.
+
+        See `_docstring_package_depth` for details.
+
+        .. versionadded:: TODODASK
+
+        """
+        return 0
 
     @staticmethod
     def max(a, axis=None, keepdims=False, mtol=None, split_every=None):
@@ -39,7 +74,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -49,6 +84,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = a.dtype
         return reduction(
             a,
@@ -85,7 +121,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -95,6 +131,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = a.dtype
         return reduction(
             a,
@@ -135,7 +172,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -145,6 +182,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = "f8"
         return reduction(
             a,
@@ -186,7 +224,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -196,6 +234,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = "f8"
         return reduction(
             a,
@@ -235,7 +274,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -245,6 +284,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a, allow="fi")
         dtype = "f8"
         return reduction(
             a,
@@ -281,7 +321,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -291,6 +331,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = a.dtype
         return reduction(
             a,
@@ -327,7 +368,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -337,6 +378,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = a.dtype
         return reduction(
             a,
@@ -373,7 +415,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -383,6 +425,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a, allow="fi")
         dtype = a.dtype
         return reduction(
             a,
@@ -423,7 +466,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -433,6 +476,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = "f8"
         return reduction(
             a,
@@ -470,7 +514,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -480,6 +524,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = "i8"
         return reduction(
             a,
@@ -520,7 +565,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -530,6 +575,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         if weights is None:
             dtype = double_precision_dtype(a)
         else:
@@ -575,7 +621,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -585,6 +631,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = "f8"
         return reduction(
             a,
@@ -626,7 +673,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -636,6 +683,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = "f8"
         return reduction(
             a,
@@ -683,7 +731,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{collapse keepdims: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{ddof: number}}
 
@@ -695,6 +743,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        check_input_dtype(a)
         dtype = "f8"
         return reduction(
             a,
@@ -711,12 +760,44 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
 
-def double_precision_dtype(a):
-    """Return the double precision data type of an aray.
+def check_input_dtype(a, allow="fib"):
+    """Check that data has a data type allowed by a collapse method.
+
+    The collapse method is assumed to be defined by the calling
+    function.
 
     :Parameters:
 
-        a: array_like
+        a: `dask.array.Array`
+            The data.
+
+        allow: `str`, optional
+            The data type kinds allowed by the collapse
+            method. Defaults to ``'fib'``, meaning that only float,
+            integer and Boolean data types are allowed.
+
+    :Returns:
+
+        `None`
+
+    """
+    if a.dtype.kind not in allow:
+        method = inspect.currentframe().f_back.f_code.co_name
+        raise TypeError(f"Can't calculate {method} of data with {a.dtype!r}")
+
+
+def double_precision_dtype(a, bool_type="i"):
+    """Returns the corresponding double precision data type of an array.
+
+    :Parameters:
+
+        a: `dask.array.Array`
+            The data.
+
+        bool_type: `str`, optional
+            The corresponding double data type kind for Boolean
+            data. Defaults to ``'i'``, meaning ``'i8'`` is
+            returned. Set to ``'f'` to return ``'f8'`` instead.
 
     :Returns:
 
@@ -725,21 +806,30 @@ def double_precision_dtype(a):
 
     **Examples**
 
-    >>> for d in (float, 'float32', int, 'int32'):
+    >>> for d in (int, 'int32', float, 'float32', bool):
     ...     print(double_precision_dtype(np.array(1, dtype=d)))
     ...
+    i8
+    i8
     f8
     f8
     i8
-    i8
+    >>> double_precision_dtype(np.array(1, dtype=bool), bool_type='f')
+    'f8'
 
     """
-    return a.dtype.kind + "8"
+    kind = a.dtype.kind
+    if kind == "b":
+        return bool_type + "8"
+
+    if kind in "fi":
+        return kind + "8"
+
+    raise TypeError("Can't collapse data with {a.dtype!r}")
 
 
 def mask_small_sample_size(x, N, axis, mtol, original_shape):
-    """Mask elements where the sample size of the collapsed data is
-    below a threshold.
+    """Mask elements where the sample size is below a threshold.
 
     .. versionadded:: TODODASK
 
@@ -758,18 +848,19 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
             The sample size threshold below which collapsed values are
             set to missing data. It is defined as a fraction (between
             0 and 1 inclusive) of the contributing input data values.
-            A missing datum in the output array occurs whenever at
-            least ``100*mtol%`` of its contributing input array
-            elements are non-missing data. The default of *mtol* is 1,
-            meaning that a missing datum in the output array only
-            occurs when all of its contributing input array elements
-            are missing data. A value of 0 means that a missing datum
-            in the output array occurs whenever any of its
-            contributing input array elements are missing. Any
-            intermediate value is allowed. Note that for non-zero
-            values of *mtol*, different collapsed elements may have
-            different sample sizes, depending on the distribution of
-            missing data in the input data.
+
+            The default of *mtol* is 1, meaning that a missing datum
+            in the output array occurs whenever all of its
+            contributing input array elements are missing data.
+
+            For other values, a missing datum in the output array
+            occurs whenever more than ``100*mtol%`` of its
+            contributing input array elements are missing data.
+
+            Note that for non-zero values of *mtol*, different
+            collapsed elements may have different sample sizes,
+            depending on the distribution of missing data in the input
+            data.
 
         original_shape: `tuple`
             The shape of the original, uncollapsed data.
@@ -795,15 +886,40 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
     return x
 
 
-def sum_weights(x, weights=None, squared=False, N=None, dtype="f8", **kwargs):
-    """TODO.
+def sum_weights_chunk(
+    x, weights=None, squared=False, N=None, dtype="f8", **kwargs
+):
+    """Sum the weights.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
+        x: `numpy.ndarray`
+            The collapsed data.
+
+        weights: `numpy.ndarray`, optional
+            The weights associated with values of the data. Must have
+            the same shape as *x*. By default *weights* is `None`,
+            meaning that all non-missing elements of the data have a
+            weight of 1 and all missing elements have a weight of
+            0. If given as an array then those weights that are
+            missing data, or that correspond to the missing elements
+            of the data, are assigned a weight of 0.
+
         squared: `bool`, optional
             If True calculate the sum of the squares of the weights.
+
+        N: `numpy.ndarray`, optional
+            The sample size. If provided as an array and there are no
+            weights, then the *N* is returned instead of calculating
+            the sum (of the squares) of weights. Ignored of *weights*
+            is not `None`.
+
+    :Returns:
+
+        `numpy.ndarray`
+            The sum of the weights.
 
     """
     if weights is None:
@@ -827,12 +943,14 @@ def sum_weights(x, weights=None, squared=False, N=None, dtype="f8", **kwargs):
 def combine_arrays(
     pairs, key, func, axis, dtype=None, computing_meta=False, **kwargs
 ):
-    """Worker function for Combine functions.
+    """Worker function for Combine callables.
 
     Select arrays by dictionary key from a nested list of
-    dictionaries, concatenate the resulting a nested list of arrays
-    along the axes, and apply a function to the result along the same
-    axes.
+    dictionaries, concatenate the resulting nested list of arrays
+    along the specified axes, and then apply a function to the result
+    along those same axes.
+
+    See `dask.array.reductions.mean_combine` for an example.
 
     .. versionadded:: TODODASK
 
@@ -926,7 +1044,7 @@ def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     # N, sum
     d = cf_sum_chunk(x, weights, dtype=dtype, **kwargs)
 
-    d["V1"] = sum_weights(x, weights, N=d["N"], **kwargs)
+    d["V1"] = sum_weights_chunk(x, weights, N=d["N"], **kwargs)
 
     d["weighted"] = weights is not None
 
@@ -1813,7 +1931,7 @@ def cf_sum_of_weights_chunk(
     # N
     d = cf_sample_size_chunk(x, **kwargs)
 
-    d["sum"] = sum_weights(
+    d["sum"] = sum_weights_chunk(
         x, weights=weights, squared=squared, N=d["N"], **kwargs
     )
 
@@ -1885,7 +2003,9 @@ def cf_var_chunk(
     d["part"] = part
 
     if ddof == 1:
-        d["V2"] = sum_weights(x, weights, squared=True, N=d["N"], **kwargs)
+        d["V2"] = sum_weights_chunk(
+            x, weights, squared=True, N=d["N"], **kwargs
+        )
     else:
         d["V2"] = d["N"]
 

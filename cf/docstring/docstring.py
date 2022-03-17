@@ -28,14 +28,8 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Class description susbstitutions (1 level of indentation)
     # ----------------------------------------------------------------
-    "{{formula terms links}}": """See the parametric vertical coordinate sections of the CF
-    conventions for more details:
-
-    `4.3.3. Parametric Vertical Coordinate
-    <https://cfconventions.org/Data/cf-conventions/cf-conventions-{{VN}}/cf-conventions.html#parametric-vertical-coordinate>`_
-
-    `Appendix D: Parametric Vertical Coordinates
-    <https://cfconventions.org/Data/cf-conventions/cf-conventions-{{VN}}/cf-conventions.html#parametric-v-coord>`_""",
+    "{{formula terms links}}": """See CF section 4.3.3 "Parametric Vertical Coordinate" and CF
+    Appendix D "Parametric Vertical Coordinates" for details.""",
     # ----------------------------------------------------------------
     # Class description susbstitutions (1 level of indentation)
     # ----------------------------------------------------------------
@@ -297,19 +291,20 @@ _docstring_substitution_definitions = {
                 The sample size threshold below which collapsed values
                 are set to missing data. It is defined as a fraction
                 (between 0 and 1 inclusive) of the contributing input
-                data values. A missing datum in the output array
-                occurs whenever at least ``100*mtol%`` of its
-                contributing input array elements are missing
-                data. The default of *mtol* is 1, meaning that a
-                missing datum in the output array only occurs when all
-                of its contributing input array elements are missing
-                data. A value of 0 means that a missing datum in the
-                output array occurs whenever any of its contributing
-                input array elements are missing. Any intermediate
-                value is allowed. Note that for non-zero values of
-                *mtol*, different collapsed elements may have
-                different sample sizes, depending on the distribution
-                of missing data in the input data.""",
+                data values.
+
+                The default of *mtol* is 1, meaning that a missing
+                datum in the output array occurs whenever all of its
+                contributing input array elements are missing data.
+
+                For other values, a missing datum in the output array
+                occurs whenever more than ``100*mtol%`` of its
+                contributing input array elements are missing data.
+
+                Note that for non-zero values of *mtol*, different
+                collapsed elements may have different sample sizes,
+                depending on the distribution of missing data in the
+                input data.""",
     # ddof
     "{{ddof: number}}": """ddof: number
                 The delta degrees of freedom, a non-negative
