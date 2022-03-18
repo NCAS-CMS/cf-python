@@ -717,16 +717,25 @@ class DataTest(unittest.TestCase):
         d = cf.Data(self.ma, "km")
         self.assertTrue((self.ma.compressed() == d.compressed()).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __eq__")
     def test_Data_stats(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data([1, 1])
 
-        d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
-
-        self.assertIsInstance(d.stats(), dict)
-        _ = d.stats(all=True)
-        _ = d.stats(mean_of_upper_decile=True, range=False)
+        self.assertEqual(
+            d.stats(sum=True, weights=1),
+            {
+                "minimum": 1,
+                "mean": 1.0,
+                "median": 1.0,
+                "maximum": 1,
+                "range": 0,
+                "mid_range": 1.0,
+                "standard_deviation": 0.0,
+                "root_mean_square": 1.0,
+                "sum": 2,
+                "sample_size": 2,
+            },
+        )
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
     def test_Data__init__dtype_mask(self):
@@ -2432,97 +2441,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(Exception):
             d.argmax(axis=d.ndim)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits 'NoneType' is not iterable")
-    def test_Data__collapse_SHAPE(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        a = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
-
-        for h in (
-            "sample_size",
-            "sum",
-            "min",
-            "max",
-            "mean",
-            "var",
-            "sd",
-            "mid_range",
-            "range",
-            "integral",
-            "maximum_absolute_value",
-            "minimum_absolute_value",
-            "sum_of_squares",
-            "root_mean_square",
-            "mean_absolute_value",
-            "median",
-            "mean_of_upper_decile",
-            "sum_of_weights",
-            "sum_of_weights2",
-        ):
-
-            d = cf.Data(a[(slice(None, None, -1),) * a.ndim].copy())
-            d.flip(inplace=True)
-            _ = cf.Data(self.w.copy())
-
-            shape = list(d.shape)
-
-            for axes in self.axes_combinations:
-                e = getattr(d, h)(
-                    axes=axes, squeeze=False, _preserve_partitions=False
-                )
-
-                shape = list(d.shape)
-                for i in axes:
-                    shape[i] = 1
-
-                shape = tuple(shape)
-                self.assertEqual(
-                    e.shape,
-                    shape,
-                    "{}, axes={}, not squeezed bad shape: {} != {}".format(
-                        h, axes, e.shape, shape
-                    ),
-                )
-
-            for axes in self.axes_combinations:
-                e = getattr(d, h)(
-                    axes=axes, squeeze=True, _preserve_partitions=False
-                )
-                shape = list(d.shape)
-                for i in sorted(axes, reverse=True):
-                    shape.pop(i)
-
-                shape = tuple(shape)
-                self.assertEqual(
-                    e.shape,
-                    shape,
-                    "{}, axes={}, squeezed bad shape: {} != {}".format(
-                        h, axes, e.shape, shape
-                    ),
-                )
-
-            e = getattr(d, h)(squeeze=True, _preserve_partitions=False)
-            shape = ()
-            self.assertEqual(
-                e.shape,
-                shape,
-                "{}, axes={}, squeezed bad shape: {} != {}".format(
-                    h, None, e.shape, shape
-                ),
-            )
-
-            e = getattr(d, h)(squeeze=False, _preserve_partitions=False)
-            shape = (1,) * d.ndim
-            self.assertEqual(
-                e.shape,
-                shape,
-                "{}, axes={}, not squeezed bad shape: {} != {}".format(
-                    h, None, e.shape, shape
-                ),
-            )
-        # --- End: for
-
     def test_Data_percentile_median(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -3293,16 +3211,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.integral(weights=weights)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        e = d.integral(weights=cf.Data(weights, "m"), mtol=0)
-        self.assertEqual(e.Units, cf.Units("K m"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
     def test_Data_max(self):
         # Masked array
         a = self.ma
@@ -3319,13 +3227,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.max(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
     def test_Data_maximum_absolute_value(self):
         # Masked array
         a = self.ma
@@ -3341,13 +3242,6 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
-
-        # Check units
-        e = d.maximum_absolute_value(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_mean(self):
         # Masked array, non-masked weights
@@ -3367,13 +3261,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.mean(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
     def test_Data_mean_absolute_value(self):
         # Masked array, non-masked weights
         a = self.ma
@@ -3392,13 +3279,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.mean_absolute_value(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
     def test_Data_mid_range(self):
         # Masked array, non-masked weights
         a = self.ma
@@ -3414,13 +3294,6 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
-
-        # Check units
-        e = d.mid_range(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
 
         with self.assertRaises(TypeError):
             cf.Data([0, 1], dtype=bool).mid_range()
@@ -3441,13 +3314,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.min(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
     def test_Data_minimum_absolute_value(self):
         # Masked array
         a = self.ma
@@ -3463,13 +3329,6 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
-
-        # Check units
-        e = d.minimum_absolute_value(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_range(self):
         # Masked array
@@ -3487,13 +3346,6 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
-
-        # Check units
-        e = d.range(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
 
         with self.assertRaises(TypeError):
             cf.Data([0, 1], dtype=bool).range()
@@ -3515,13 +3367,6 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
-
-        # Check units
-        e = d.root_mean_square(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_sample_size(self):
         # Masked array
@@ -3553,31 +3398,16 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        d = cf.Data(self.ma, "K", chunks=(2, 3, 2, 5))
-        e = d.sample_size(mtol=0)
-        self.assertEqual(e.Units, cf.Units())
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
-    def test_Data_sd(self):
+    def test_Data_std(self):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
         d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
 
-        sd = d.sd(weights=weights, ddof=1)
+        std = d.std(weights=weights, ddof=1)
         var = d.var(weights=weights, ddof=1)
 
-        self.assertTrue(sd.equals(var.sqrt()))
-
-        # Check units
-        self.assertEqual(sd.Units, cf.Units("K"))
-
-        # Check mtol
-        sd = d.sd(ddof=0, mtol=0)
-        self.assertEqual(sd.array, np.ma.masked)
+        self.assertTrue(std.equals(var.sqrt()))
 
     def test_Data_sum(self):
         # Masked array, non-masked weights
@@ -3597,13 +3427,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.sum(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
     def test_Data_sum_of_squares(self):
         # Masked array, non-masked weights
         a = self.ma
@@ -3621,13 +3444,6 @@ class DataTest(unittest.TestCase):
 
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
-
-        # Check units
-        e = d.sum_of_squares(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K2"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
 
     def test_Data_sum_of_weights(self):
         # Masked array, non-masked weights
@@ -3660,15 +3476,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.sum_of_weights()
-        self.assertEqual(e.Units, cf.Units())
-        e = d.sum_of_weights(weights=cf.Data(weights, "m"), mtol=0)
-        self.assertEqual(e.Units, cf.Units("m"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
     def test_Data_sum_of_weights2(self):
         # Masked array, non-masked weights
         a = self.ma
@@ -3694,16 +3501,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.sum_of_weights2(weights=weights)
-        self.assertEqual(e.Units, cf.Units())
-
-        e = d.sum_of_weights2(weights=cf.Data(weights, "m"), mtol=0)
-        self.assertEqual(e.Units, cf.Units("m2"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
     def test_Data_var(self):
         # Masked array, non-masked weights
         a = self.ma
@@ -3722,7 +3519,7 @@ class DataTest(unittest.TestCase):
             b = b / V1
             b = np.ma.asanyarray(b)
 
-            e = d.var(axes=axis, weights=weights, ddof=0, squeeze=True)
+            e = d.var(axes=axis, weights=weights, squeeze=True)
             e = np.ma.array(e.array)
 
             self.assertTrue((e.mask == b.mask).all())
@@ -3763,13 +3560,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.var(ddof=0, mtol=0)
-        self.assertEqual(e.Units, cf.Units("K2"))
-
-        # Check mtol
-        self.assertEqual(e.array, np.ma.masked)
-
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __lt__ and __le__")
     def test_Data_mean_of_upper_decile(self):
         # Masked array, non-masked weights
@@ -3808,12 +3598,121 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-        # Check units
-        e = d.mean_of_upper_decile(mtol=0)
-        self.assertEqual(e.Units, cf.Units("K2"))
+    def test_Data_collapse_mtol(self):
+        # Data with exactly half of its elements masked
+        d = cf.Data(np.arange(6), "K", mask=[0, 1, 0, 1, 0, 1], chunks=2)
 
-        # Check mtol
-        self.assertEqual(e.array.item(), np.ma.masked)
+        for func in (
+            d.integral,
+            d.mean,
+            d.mean_absolute_value,
+            d.median,
+            d.min,
+            d.mid_range,
+            d.minimum_absolute_value,
+            d.max,
+            d.maximum_absolute_value,
+            d.range,
+            d.root_mean_square,
+            d.sample_size,
+            d.std,
+            d.sum,
+            d.sum_of_squares,
+            d.sum_of_weights,
+            d.sum_of_weights2,
+            d.var,
+        ):
+            self.assertTrue(func(mtol=0.4).array.mask)
+            self.assertFalse(func(mtol=0.5).array.mask)
+
+        # TODODASK - add in mean_of_upper_decile when it's daskified
+
+    def test_Data_collapse_units(self):
+        d = cf.Data([1, 2], "K")
+
+        self.assertEqual(d.sample_size().Units, cf.Units())
+
+        for func in (
+            d.integral,
+            d.mean,
+            d.mean_absolute_value,
+            d.median,
+            d.min,
+            d.mid_range,
+            d.minimum_absolute_value,
+            d.max,
+            d.maximum_absolute_value,
+            d.range,
+            d.root_mean_square,
+            d.std,
+            d.sum,
+        ):
+            self.assertEqual(func().Units, d.Units)
+
+        for func in (
+            d.sum_of_squares,
+            d.var,
+        ):
+            self.assertEqual(func().Units, d.Units ** 2)
+
+        for func in (
+            d.sum_of_weights,
+            d.sum_of_weights2,
+        ):
+            self.assertEqual(func().Units, cf.Units())
+
+        # Weighted
+        w = cf.Data(1, "m")
+        self.assertEqual(d.integral(weights=w).Units, d.Units * w.Units)
+        self.assertEqual(d.sum_of_weights(weights=w).Units, w.Units)
+        self.assertEqual(d.sum_of_weights2(weights=w).Units, w.Units ** 2)
+
+        # Dimensionless data
+        d = cf.Data([1, 2])
+        self.assertEqual(d.integral(weights=w).Units, w.Units)
+
+        for func in (
+            d.sum_of_squares,
+            d.var,
+        ):
+            self.assertEqual(func().Units, cf.Units())
+
+        # TODODASK - add in mean_of_upper_decile when it's daskified
+
+    def test_Data_collapse_keepdims(self):
+        d = cf.Data(np.arange(6).reshape(2, 3))
+
+        for func in (
+            d.integral,
+            d.mean,
+            d.mean_absolute_value,
+            d.median,
+            d.min,
+            d.mid_range,
+            d.minimum_absolute_value,
+            d.max,
+            d.maximum_absolute_value,
+            d.range,
+            d.root_mean_square,
+            d.sample_size,
+            d.std,
+            d.sum,
+            d.sum_of_squares,
+            d.sum_of_weights,
+            d.sum_of_weights2,
+            d.var,
+        ):
+            for axis in axis_combinations(d):
+                e = func(axes=axis, squeeze=False)
+                s = [1 if i in axis else n for i, n in enumerate(d.shape)]
+                self.assertEqual(e.shape, tuple(s))
+
+            for axis in axis_combinations(d):
+                e = func(axes=axis, squeeze=True)
+                s = [n for i, n in enumerate(d.shape) if i not in axis]
+                self.assertEqual(e.shape, tuple(s))
+
+        # TODODASK - add in mean_of_upper_decile
 
 
 if __name__ == "__main__":

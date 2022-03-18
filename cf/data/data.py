@@ -2206,7 +2206,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [[-- -- -- --]
          [-- -- -- --]
          [-- 9 10 11]]
-        >>> e.sd()
+        >>> e.std()
         <CF Data(1, 1): [[0.816496580927726]] m>
 
         Find the mean of the values above the 45th percentile along the
@@ -7101,8 +7101,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         axes=None,
         squeeze=False,
         mtol=1,
-        inplace=False,
         split_every=None,
+        inplace=False,
         i=False,
         _preserve_partitions=False,
     ):
@@ -7241,8 +7241,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         weights=None,
         squeeze=False,
         mtol=1,
-        inplace=False,
         split_every=None,
+        inplace=False,
         i=False,
     ):
         """Calculate mean values.
@@ -10643,7 +10643,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         sum=False,
         sum_of_squares=False,
         variance=False,
-        weights=False,
+        weights=None,
     ):
         """Calculate statistics of the data.
 
@@ -10720,17 +10720,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 Calculate the square root of the weighted or unweighted
                 mean of the squares of the values.
 
-            weights: data-like or dict, optional
-                The weights to apply to the calculations. By default the
-                statistics are unweighted.
-
-                The weights may be contained in any scalar or array-like
-                object (such as a numpy array or `Data` instance) that is
-                broadcastable to the shape of the data. If *weights* is a
-                dictionary then each key is axes of the array (an `int` or
-                `tuple` of `int`) with a corresponding data-like value of
-                weights for those axes. In this case, the implied weights
-                array is the outer product of the dictionary's values.
+            {{weights: data_like, `dict`, or `None`, optional}}
 
         :Returns:
 
@@ -10782,15 +10772,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          'sample_size': 5}
 
         """
-
         no_weights = (
             "minimum",
+            "median",
             "maximum",
             "range",
             "mid_range",
             "minimum_absolute_value",
             "maximum_absolute_value",
-            "median",
             "sum",
             "sum_of_squares",
         )
@@ -10814,14 +10803,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             "variance",
         ):
             if all or locals()[stat]:
-                f = getattr(self, stat)
+                func = getattr(self, stat)
                 if stat in no_weights:
-                    value = f(squeeze=True)
+                    value = func(squeeze=True)
                 else:
-                    value = f(squeeze=True, weights=weights)
+                    value = func(squeeze=True, weights=weights)
 
                 out[stat] = value
-        # --- End: for
 
         if all or sample_size:
             out["sample_size"] = int(self.sample_size())
@@ -12264,8 +12252,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         weights=None,
         squeeze=False,
         mtol=1,
-        inplace=False,
         split_every=None,
+        inplace=False,
         i=False,
     ):
         """Calculate sum values.
@@ -12615,13 +12603,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
-    def sd(
+    def std(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         weights=None,
-        ddof=None,
+        ddof=0,
         split_every=None,
         inplace=False,
         i=False,
@@ -12649,6 +12637,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{ddof: number}}
 
+                 By default *ddof* is 0.
+
             {{split_every: `int` or `dict`, optional}}
 
                 .. versionadded:: TODODASK
@@ -12673,15 +12663,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [3 -- 5]
          [6 7 8]
          [9 10 11]]
-        >>> d.sd(ddof=0)
+        >>> d.std()
         <CF Data(1, 1): [[3.5744733184250004]] K>
-        >>> d.sd(ddof=1)
+        >>> d.std(ddof=1)
         <CF Data(1, 1): [[3.7489392439122637]] K>
 
         >>> w = np.linspace(1, 2, 3)
         >>> print(w)
         [1.  1.5 2. ]
-        >>> d.sd(ddof=1, weights=w)
+        >>> d.std(ddof=1, weights=w)
         <CF Data(1, 1): [[3.7457375639741506]] K>
 
         """
@@ -12707,9 +12697,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         weights=None,
         squeeze=False,
         mtol=1,
-        ddof=None,
-        inplace=False,
+        ddof=0,
         split_every=None,
+        inplace=False,
         i=False,
     ):
         """Calculate variances.
@@ -12735,6 +12725,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{ddof: number}}
 
+                 By default *ddof* is 0.
+
             {{split_every: `int` or `dict`, optional}}
 
                 .. versionadded:: TODODASK
@@ -12759,7 +12751,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [3 -- 5]
          [6 7 8]
          [9 10 11]]
-        >>> d.var(ddof=0)
+        >>> d.var()
         <CF Data(1, 1): [[12.776859504132233]] K2>
         >>> d.var(ddof=1)
         <CF Data(1, 1): [[14.054545454545456]] K2>
@@ -12771,9 +12763,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(1, 1): [[14.030549898167004]] K2>
 
         """
-        if ddof is None:
-            raise ValueError("Must set the delta degrees of freedom (ddof)")
-
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = _collapse(
             Collapse.var,
@@ -13022,23 +13011,51 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
+    def sd(
+        self,
+        axes=None,
+        squeeze=False,
+        mtol=1,
+        weights=None,
+        ddof=0,
+        split_every=None,
+        inplace=False,
+        i=False,
+    ):
+        """Alias for `std`"""
+        return self.sdt(
+            axes=axes,
+            squeeze=squeeze,
+            weights=weights,
+            mtol=mtol,
+            ddof=ddof,
+            split_every=split_every,
+            inplace=inplace,
+            i=i,
+        )
+
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check("i")
     def standard_deviation(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         weights=None,
-        ddof=None,
+        ddof=0,
+        split_every=None,
         inplace=False,
         i=False,
     ):
-        """Alias for `sd`"""
-        return self.sd(
+        """Alias for `std`"""
+        return self.std(
             axes=axes,
             squeeze=squeeze,
             weights=weights,
             mtol=mtol,
             ddof=ddof,
+            split_every=split_every,
             inplace=inplace,
             i=i,
         )
@@ -13052,7 +13069,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         squeeze=False,
         weights=None,
         mtol=1,
-        ddof=None,
+        ddof=0,
+        split_every=None,
         inplace=False,
         i=False,
     ):
@@ -13063,6 +13081,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             weights=weights,
             mtol=mtol,
             ddof=ddof,
+            split_every=split_every,
             inplace=inplace,
             i=i,
         )
@@ -13200,7 +13219,7 @@ def _collapse(
     ddof=None,
     split_every=None,
 ):
-    """Collapse data using a given funcion.
+    """Collapse data in-place using a given funcion.
 
      .. versionadded:: TODODASK
 
@@ -13285,7 +13304,7 @@ def _collapse(
 
     :Returns:
 
-        `Data`, formatted weights
+        (`Data`, formatted weights)
             The collapsed data and the output of ``_parse_weights(d,
             weights, axis)``.
 
@@ -13297,8 +13316,9 @@ def _collapse(
         "mtol": mtol,
     }
 
+    weights = _parse_weights(d, weights, axis)
     if weights is not None:
-        kwargs["weights"] = _parse_weights(d, weights, axis)
+        kwargs["weights"] = weights
 
     if ddof is not None:
         kwargs["ddof"] = ddof
@@ -13375,6 +13395,10 @@ def _parse_weights(d, weights, axis=None):
     None
 
     """
+    if weights is None:
+        # No weights
+        return
+
     if not isinstance(weights, dict):
         # Weights is data_like. Don't check broadcastability to d,
         # leave that to whatever uses the weights.
