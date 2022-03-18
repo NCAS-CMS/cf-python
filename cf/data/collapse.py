@@ -592,10 +592,9 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         """
         check_input_dtype(a)
-        if weights is None:
-            dtype = double_precision_dtype(a)
-        else:
-            dtype = "f8"
+        dtype = double_precision_dtype(a)
+        if weights is not None:
+            dtype = np.result_type(double_precision_dtype(weights), dtype)
 
         return reduction(
             a,
@@ -654,7 +653,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         """
         check_input_dtype(a)
-        dtype = "f8"
+        dtype = double_precision_dtype(weights, default="i8")
         return reduction(
             a,
             cf_sum_of_weights_chunk,
@@ -712,7 +711,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         """
         check_input_dtype(a)
-        dtype = "f8"
+        dtype = double_precision_dtype(weights, default="i8")
         return reduction(
             a,
             partial(cf_sum_of_weights_chunk, square=True),
@@ -815,13 +814,17 @@ def check_input_dtype(a, allowed="fib"):
         raise TypeError(f"Can't calculate {method} of data with {a.dtype!r}")
 
 
-def double_precision_dtype(a, bool_type="i"):
+def double_precision_dtype(a, default=None, bool_type="i"):
     """Returns the corresponding double precision data type of an array.
 
     :Parameters:
 
-        a: `dask.array.Array`
-            The data.
+        a: `dask.array.Array` or `None`
+            The data. If `None` then the value of *default* is
+            returned*
+
+        default: `str`, optional
+            If *a* is `None`, then return this data type.
 
         bool_type: `str`, optional
             The corresponding double data type kind for Boolean
@@ -843,10 +846,16 @@ def double_precision_dtype(a, bool_type="i"):
     f8
     f8
     i8
+
     >>> double_precision_dtype(np.array(1, dtype=bool), bool_type='f')
     'f8'
+    >>> double_precision_dtype(None, default="i8")
+    'i8'
 
     """
+    if a is None:
+        return default
+
     kind = a.dtype.kind
     if kind == "b":
         return bool_type + "8"
@@ -915,9 +924,7 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
     return x
 
 
-def sum_weights_chunk(
-    x, weights=None, square=False, N=None, dtype="f8", **kwargs
-):
+def sum_weights_chunk(x, weights=None, square=False, N=None, **kwargs):
     """Sum the weights.
 
     .. versionadded:: TODODASK
@@ -948,7 +955,7 @@ def sum_weights_chunk(
     :Returns:
 
         `numpy.ndarray`
-            The sum of the weights.
+            The sum of the weights, with data type "i8" or "f8".
 
     """
     if weights is None:
@@ -956,10 +963,11 @@ def sum_weights_chunk(
         # the squares of the weights are both equal to the sample
         # size.
         if N is None:
-            return cf_sample_size_chunk(x, **kwargs)["N"]
+            N = cf_sample_size_chunk(x, **kwargs)["N"]
 
         return N
 
+    dtype = double_precision_dtype(weights)
     if square:
         weights = np.multiply(weights, weights, dtype=dtype)
 

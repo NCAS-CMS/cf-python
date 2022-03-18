@@ -3716,6 +3716,64 @@ class DataTest(unittest.TestCase):
 
         # TODODASK - add in mean_of_upper_decile
 
+    def test_Data_collapse_dtype(self):
+        d = cf.Data([1, 2, 3, 4], dtype="i4", chunks=2)
+        e = cf.Data([1.0, 2, 3, 4], dtype="f4", chunks=2)
+        self.assertTrue(d.dtype, "i4")
+        self.assertTrue(e.dtype, "f4")
+
+        for x, r in zip((d, e), ("i4", "f4")):
+            for func in (
+                x.min,
+                x.minimum_absolute_value,
+                x.max,
+                x.maximum_absolute_value,
+                x.range,
+            ):
+                self.assertEqual(func().dtype, r)
+
+        for x, r in zip((d, e), ("i8", "f8")):
+            for func in (
+                x.integral,
+                x.sum,
+                x.sum_of_squares,
+            ):
+                self.assertEqual(func().dtype, r)
+
+        for x, r in zip((d, e), ("f8", "f8")):
+            for func in (
+                x.mean,
+                x.mean_absolute_value,
+                x.median,
+                x.mid_range,
+                x.root_mean_square,
+                x.std,
+                x.var,
+            ):
+                self.assertEqual(func().dtype, r)
+
+        x = d
+        for func in (
+            x.sum_of_weights,
+            x.sum_of_weights2,
+        ):
+            self.assertEqual(func().dtype, "i8")
+
+        # Weights
+        w_int = cf.Data(1, dtype="i4")
+        w_float = cf.Data(1.0, dtype="f4")
+        for w, r in zip((w_int, w_float), ("i8", "f8")):
+            for func in (
+                d.integral,
+                d.sum,
+                d.sum_of_squares,
+                d.sum_of_weights,
+                d.sum_of_weights2,
+            ):
+                self.assertTrue(func(weights=w).dtype, r)
+
+        # TODODASK - add in mean_of_upper_decile
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
