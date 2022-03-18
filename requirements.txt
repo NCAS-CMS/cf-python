@@ -1,5 +1,5 @@
 netCDF4>=1.5.4
-cftime>=1.5.0
+cftime>=1.6.0
 numpy>=1.22
 cfdm>=1.9.0.1, <1.9.1.0
 psutil>=0.6.0
