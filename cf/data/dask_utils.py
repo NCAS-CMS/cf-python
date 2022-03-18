@@ -262,16 +262,22 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
             original array *a*.
 
         mtol: number, optional
-            Set an upper limit of the amount input data values which
-            are allowed to be missing data when contributing to
-            individual output percentile values. It is defined as a
-            fraction (between 0 and 1 inclusive) of the contributing
-            input data values. The default is 1, meaning that a
-            missing datum in the output array only occurs when all of
-            its contributing input array elements are missing data. A
-            value of 0 means that a missing datum in the output array
-            occurs whenever any of its contributing input array
-            elements are missing data.
+            The sample size threshold below which collapsed values are
+            set to missing data. It is defined as a fraction (between
+            0 and 1 inclusive) of the contributing input data values.
+
+            The default of *mtol* is 1, meaning that a missing datum
+            in the output array occurs whenever all of its
+            contributing input array elements are missing data.
+
+            For other values, a missing datum in the output array
+            occurs whenever more than ``100*mtol%`` of its
+            contributing input array elements are missing data.
+
+            Note that for non-zero values of *mtol*, different
+            collapsed elements may have different sample sizes,
+            depending on the distribution of missing data in the input
+            data.
 
     :Returns:
 
@@ -299,7 +305,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
                 a, axis=axis, keepdims=keepdims
             )
             if n_missing.any():
-                mask = np.where(n_missing >= mtol * full_size, True, False)
+                mask = np.where(n_missing > mtol * full_size, True, False)
                 if q.ndim:
                     mask = np.expand_dims(mask, 0)
 
