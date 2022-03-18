@@ -70,19 +70,13 @@ def convert_to_builtin_type(x):
     raise TypeError(f"{type(x)!r} object is not JSON serializable: {x!r}")
 
 
-def to_dask(array, chunks, dask_from_array_options):
+def to_dask(array, chunks, **from_array_options):
     """TODODASK.
 
     .. versionadded:: 4.0.0
 
     """
-    if "chunks" in dask_from_array_options:
-        raise TypeError(
-            "Can't define chunks in the 'dask_from_array_options' "
-            "dictionary. Use the 'chunks' parameter instead"
-        )
-
-    kwargs = dask_from_array_options.copy()
+    kwargs = from_array_options
     kwargs.setdefault("asarray", getattr(array, "dask_asarray", None))
     kwargs.setdefault("lock", getattr(array, "dask_lock", False))
 

@@ -34,7 +34,7 @@ _one_second = Data(1, "second")
 # Default month lengths in days
 _default_month_lengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
-_default_calendar = "gregorian"
+default_calendar = "gregorian"
 
 Offset = namedtuple(
     "offset",
@@ -1436,9 +1436,9 @@ class TimeDuration:
             else:
                 return dt1, dt  # dt1, dt.copy()
 
-        calendar = getattr(dt, "calendar", _default_calendar)
+        calendar = getattr(dt, "calendar", default_calendar)
         if calendar == "":
-            calendar = _default_calendar
+            calendar = default_calendar
 
         dt = cf_dt(dt, calendar=calendar)
 
@@ -1572,9 +1572,9 @@ class TimeDuration:
         """
         abs_self = abs(self)
 
-        calendar = getattr(dt, "calendar", _default_calendar)
+        calendar = getattr(dt, "calendar", default_calendar)
         if calendar == "":
-            calendar = _default_calendar
+            calendar = default_calendar
 
         dt = cf_dt(dt, calendar=calendar)
 

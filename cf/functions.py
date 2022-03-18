@@ -3171,11 +3171,18 @@ def _DEPRECATION_ERROR(message="", version="3.0.0"):
     raise DeprecationError(f"{message}")
 
 
-def _DEPRECATION_ERROR_ARG(instance, method, arg, message="", version="3.0.0"):
+def _DEPRECATION_ERROR_ARG(
+    instance,
+    method,
+    arg,
+    message="",
+    version="3.0.0",
+    removed_at="4.0.0",
+):
     raise DeprecationError(
         f"Argument {arg!r} of method '{instance.__class__.__name__}.{method}' "
         f"has been deprecated at version {version} and is no longer available "
-        f"and will be removed at version 4.0.0. {message}"
+        f"and will be removed at version {removed_at}. {message}"
     )
 
 
@@ -3187,6 +3194,7 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
     traceback=False,
     info=False,
     version="3.0.0",
+    removed_at="4.0.0",
 ):
     # Unsafe to set mutable '{}' as default in the func signature.
     if kwargs is None:  # distinguish from falsy '{}'
@@ -3202,7 +3210,7 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
         raise DeprecationError(
             f"Keyword {key!r} of function '{func}' has been deprecated at "
             f"version {version} and is no longer available and will be "
-            f"removed at version 4.0.0. {message}"
+            f"removed at version {removed_at}. {message}"
         )
 
 
@@ -3239,74 +3247,88 @@ def _DEPRECATION_ERROR_KWARGS(
 
 
 def _DEPRECATION_ERROR_KWARG_VALUE(
-    instance, method, kwarg, value, message="", version="3.0.0"
+    instance,
+    method,
+    kwarg,
+    value,
+    message="",
+    version="3.0.0",
+    removed_at="4.0.0",
 ):
     raise DeprecationError(
         f"Value {value!r} of keyword {kwarg!r} of method "
         f"'{instance.__class__.__name__}.{method}' has been deprecated at "
         f"version {version} and is no longer available and will be removed "
-        f"at version 4.0.0. {message}"
+        f"at version {removed_at}. {message}"
     )
 
 
-def _DEPRECATION_ERROR_METHOD(instance, method, message="", version="3.0.0"):
+def _DEPRECATION_ERROR_METHOD(
+    instance, method, message="", version="3.0.0", removed_at="4.0.0"
+):
     raise DeprecationError(
         f"{instance.__class__.__name__} method {method!r} has been deprecated "
         f"at version {version} and is no longer available and will be "
-        f"removed at version 4.0.0. {message}"
+        f"removed at version {removed_at}. {message}"
     )
 
 
 def _DEPRECATION_ERROR_ATTRIBUTE(
-    instance, attribute, message="", version="3.0.0"
+    instance, attribute, message="", version="3.0.0", removed_at="4.0.0"
 ):
     warnings.warn(
         f"{instance.__class__.__name__} attribute {attribute!r} has been "
         f"deprecated at version {version} and will be removed at version "
-        f"4.0.0. {message}",
+        f"{removed_at}. {message}",
         DeprecationWarning,
     )
 
 
-def _DEPRECATION_ERROR_FUNCTION(func, message="", version="3.0.0"):
+def _DEPRECATION_ERROR_FUNCTION(
+    func, message="", version="3.0.0", removed_at="4.0.0"
+):
     raise DeprecationError(
         f"Function {func!r} has been deprecated at version {version} and is "
-        f"no longer available and will be removed at version 4.0.0. {message}"
+        f"no longer available and will be removed at version {removed_at}. "
+        f"{message}"
     )
 
 
-def _DEPRECATION_ERROR_CLASS(cls, message="", version="3.0.0"):
+def _DEPRECATION_ERROR_CLASS(
+    cls, message="", version="3.0.0", removed_at="4.0.0"
+):
     raise DeprecationError(
         f"Class {cls!r} has been deprecated at version {version} and is no "
-        f"longer available and will be removed at version 4.0.0. {message}"
+        f"longer available and will be removed at version {removed_at}. "
+        f"{message}"
     )
 
 
 def _DEPRECATION_WARNING_METHOD(
-    instance, method, message="", new=None, version="3.0.0"
+    instance, method, message="", new=None, version="3.0.0", removed_at="4.0.0"
 ):
     warnings.warn(
         f"{instance.__class__.__name__} method {method!r} has been deprecated "
-        f"at version {version} and will be removed at version 4.0.0. "
+        f"at version {version} and will be removed at version {removed_at}. "
         f"{message}",
         DeprecationWarning,
     )
 
 
-def _DEPRECATION_ERROR_DICT(message="", version="3.0.0"):
+def _DEPRECATION_ERROR_DICT(message="", version="3.0.0", removed_at="4.0.0"):
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
         f"version {version} and is no longer available and will be removed "
-        f"at version 4.0.0. {message}"
+        f"at version {removed_at}. {message}"
     )
 
 
-def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0"):
+def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0", removed_at="4.0.0"):
     raise DeprecationError(
         f"Use of a {instance.__class__.__name__!r} to identify constructs "
         f"has been deprecated at version {version} and is no longer available "
-        "and will be removed at version 4.0.0. Use the * operator to unpack "
-        "the arguments instead."
+        "and will be removed at version {removed_at}. "
+        "Use the * operator to unpack the arguments instead."
     )
 
 

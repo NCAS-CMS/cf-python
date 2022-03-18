@@ -29,6 +29,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
     _numpy_isclose,
     _section,
     abspath,
@@ -79,14 +80,6 @@ from .utils import (  # is_small,; is_very_small,
     new_axis_identifier,
     scalar_masked_array,
 )
-
-# from .chunk_utils import (  # is_small,; is_very_small,
-#    harden_mask_chunk,
-#   soften_mask_chunk,
-# )
-
-# from dask.array import Array
-
 
 _DASKIFIED_VERBOSE = None  # see below for valid levels, adapt as useful
 
@@ -266,7 +259,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         copy=True,
         dtype=None,
         mask=None,
-        dask_from_array_options={},
+        init_options=None,
         _use_array=True,
     ):
         """**Initialization**
@@ -384,9 +377,34 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASK
 
-            chunk: deprecated at version 4.0.0
+            init_options: `dict`, optional
+                Provide optional keyword arguments to methods and
+                functions called during the initialisation process. A
+                dictionary key identifies a method or function. The
+                corresponding value is another dictionary whose
+                key/value pairs are the keyword parameter names and
+                values to be applied.
+
+                Supported keys are:
+
+                * ``'from_array'``: Provide keyword arguments to
+                  the `dask.array.from_array` function. This is used
+                  when initialising data that is not already a dask
+                  array and is not compressed by convention.
+
+                * ``'first_non_missing_value'``: Provide keyword
+                  arguments to the
+                  `cf.data.utils.first_non_missing_value`
+                  function. This is used when the input array contains
+                  date-time strings or objects, and may affect
+                  performance.
+
+                 *Parameter example:*
+                   ``{'from_array': {'inline_array': True}}``
+
+            chunk: deprecated at version TODODASK
                 Use the *chunks* parameter instead.
 
         **Examples:**
@@ -402,6 +420,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         if source is None and isinstance(array, self.__class__):
             source = array
+
+        if init_options is None:
+            init_options = {}
 
         if source is not None:
             if loadd is not None:
@@ -449,13 +470,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             return
 
         super().__init__(array=array, fill_value=fill_value, _use_array=False)
-
-        # Create the _HDF_chunks attribute: defines HDF chunking when
-        # writing to disk.
-        #
-        # Never change the value of the _HDF_chunks attribute
-        # in-place.
-        self._HDF_chunks = None
 
         if loadd is not None:
             self.loadd(loadd)
@@ -518,10 +532,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "Consider rechunking after initialisation."
                 )
 
-            if dask_from_array_options:
+            if init_options.get("from_array"):
                 raise ValueError(
-                    "Can't define 'dask.array.from_array' parameters for "
-                    "compressed input arrays"
+                    "Can't define 'from_array' initialisation options "
+                    "for compressed input arrays"
                 )
 
             # Save the input compressed array, as this will contain
@@ -532,7 +546,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         elif not is_dask_collection(array):
             # Turn the data into a dask array
-            array = to_dask(array, chunks, dask_from_array_options)
+            kwargs = init_options.get("from_array", {})
+            if "chunks" in kwargs:
+                raise TypeError(
+                    "Can't define 'chunks' in the 'from_array' "
+                    "initialisation options. "
+                    "Use the 'chunks' parameter instead."
+                )
+
+            array = to_dask(array, chunks, **kwargs)
 
         elif chunks != _DEFAULT_CHUNKS:
             # The data is already a dask array
@@ -543,15 +565,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
 
         # Find out if we have an array of date-time objects
+        if units.isreftime:
+            dt = True
+
         first_value = None
         if not dt and array.dtype.kind == "O":
-            first_value = first_non_missing_value(array)
+            kwargs = init_options.get("first_non_missing_value", {})
+            first_value = first_non_missing_value(array, **kwargs)
+
             if first_value is not None:
                 dt = hasattr(first_value, "timetuple")
 
         # Convert string or object date-times to floating point
-        # reference times, if appropriate.
-        if array.dtype.kind in "USO" and (dt or units.isreftime):
+        # reference times
+        if dt and array.dtype.kind in "USO":
             array, units = convert_to_reftime(array, units, first_value)
             # Reset the units
             self._Units = units
@@ -1118,6 +1145,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         for mask in auxiliary_mask:
             new.where(mask, cf_masked, None, inplace=True)
+
+        if new.shape != self.shape:
+            # Delete hdf5 chunksizes when the shape has changed.
+            new.nc_clear_hdf5_chunksizes()
 
         return new
 
@@ -2341,16 +2372,40 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):
-        """TODODASK.
+        """Persist the underlaying dask array into memory.
 
-            should this be called `to_memory`? This is part of the larger
-            scheme for memory management
+        This turns an underlying lazy dask array into a equivalent
+        chunked dask array, but now with the results fully computed.
+
+        `persist` is particularly useful when using distributed
+        systems, because the results will be kept in distributed
+        memory, rather than returned to the local process.
+
+        Compare with `compute` and `array`.
 
         **Performance**
 
         `persist` causes all delayed operations to be computed.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `compute`, `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The persisted data. If the operation was in-place then
+                `None` is returned.
+
+        **Examples**
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -2490,9 +2545,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if cyclic:
             cfa_data["_cyclic"] = cyclic.copy()
 
-        HDF_chunks = self._HDF_chunks
-        if HDF_chunks:
-            cfa_data["_HDF_chunks"] = HDF_chunks.copy()
+        cfa_data["_HDF_chunks"] = self.HDF_chunks()
 
         partitions = []
         for index, partition in self.partitions.ndenumerate():
@@ -2646,12 +2699,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             self._cyclic = _empty_set
 
-        HDF_chunks = d.get("_HDF_chunks", None)
-        # Never change the value of the _HDF_chunks attribute in-place
+        HDF_chunks = d.get("_HDF_chunks")
         if HDF_chunks:
-            self._HDF_chunks = HDF_chunks.copy()
-        else:
-            self._HDF_chunks = None
+            self.HDF_chunks(HDF_chunks)
 
         filename = d.get("file", None)
 
@@ -2911,6 +2961,51 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = d._get_dask()
         d._set_dask(da.ceil(dx), reset_mask_hardness=False)
         return d
+
+    @daskified(_DASKIFIED_VERBOSE)
+    def compute(self):
+        """A numpy view the data.
+
+        In-place changes to the returned numpy array *might* affect
+        the underlying dask array, depending on how the dask array has
+        been defined, including any delayed operations.
+
+        The returned numpy array has the same mask hardness and fill
+        values as the data.
+
+        Compare with `array`.
+
+        **Performance**
+
+        `array` causes all delayed operations to be computed.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `persist`, `array`, `datetime_array`
+
+        :Returns:
+
+            `numpy.ndarray`
+                The numpy view of the data.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3.0], 'km')
+        >>> d.compute()
+        array([1., 2., 3.])
+
+        """
+        a = self._get_dask().compute()
+
+        if np.ma.isMA(a):
+            if self.hardmask:
+                a.harden_mask()
+            else:
+                a.soften_mask()
+
+            a.set_fill_value(self.fill_value)
+
+        return a
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -5538,20 +5633,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @property
     @daskified(_DASKIFIED_VERBOSE)
     def array(self):
-        """A numpy array copy the data array.
+        """A numpy array copy of the data.
 
-            .. note:: If the data array is stored as date-time objects then a
-                      numpy array of numeric reference times will be
-                      returned. A numpy array of date-time objects may be
-                      returned by the `datetime_array` attribute.
+        In-place changes to the returned numpy array do not affect the
+        underlying dask array.
 
-            **Performance**
+        The returned numpy array has the same mask hardness and fill
+        values as the data.
 
-            `array` causes all delayed operations to be computed.
+        Compare with `compute`.
 
-            .. seealso:: `datetime_array`, `varray`
+        **Performance**
 
-            **Examples:**
+        `array` causes all delayed operations to be computed.
+
+        .. seealso:: `datetime_array`, `compute`, `persist`
+
+        **Examples**
 
         >>> d = cf.Data([1, 2, 3.0], 'km')
         >>> a = d.array
@@ -5566,37 +5664,34 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> print(d[0])
         -99.0 km
 
+        >>> d = cf.Data('2000-12-1', units='days since 1999-12-1')
+        >>> print(d.array)
+        366
+        >>> print(d.datetime_array)
+        2000-12-01 00:00:00
+
         """
-        dx = self._get_dask()
-        a = dx.compute()
-
-        if np.ma.isMA(a):
-            if self.hardmask:
-                a.harden_mask()
-            else:
-                a.soften_mask()
-
-        return a
+        return self.compute().copy()
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
     def datetime_array(self):
         """An independent numpy array of date-time objects.
 
-            Only applicable to data arrays with reference time units.
+        Only applicable to data arrays with reference time units.
 
-            If the calendar has not been set then the CF default calendar will
-            be used and the units will be updated accordingly.
+        If the calendar has not been set then the CF default calendar will
+        be used and the units will be updated accordingly.
 
-            The data-type of the data array is unchanged.
+        The data-type of the data array is unchanged.
 
-        .. seealso:: `array`
+        .. seealso:: `array`, `compute`, `persist`
 
-            **Examples:**
+        **Performance**
 
-            **Performance**
+        `datetime_array` causes all delayed operations to be computed.
 
-            `datetime_array` causes all delayed operations to be computed.
+        **Examples**
 
         """
         units = self.Units
@@ -5638,7 +5733,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d = self
 
         dx = d._get_dask()
-        dx = convert_to_datetime(dx, d.Units)  # TODODASK
+        dx = convert_to_datetime(dx, d.Units)
 
         a = dx.compute()
 
@@ -5648,9 +5743,26 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 a.soften_mask()
 
+            a.set_fill_value(self.fill_value)
+
         return a
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
+    def varray(self):
+        """A numpy array view of the data array.
+
+        Deprecated at version TODODASK.
+
+        .. seealso:: `array`, `datetime_array`, `compute`, `persist`
+
+        """
+        raise NotImplementedError(
+            "The varray method was deprecated at version TODODASK"
+        )
+
+    @property
+    @daskified(_DASKIFIED_VERBOSE)
     def mask(self):
         """The Boolean missing data mask of the data array.
 
@@ -5677,7 +5789,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = self._get_dask()
         mask = da.ma.getmaskarray(dx)
 
-        mask_data_obj._set_dask(mask, reset_mask_hardness=True)
+        mask_data_obj._set_dask(mask, reset_mask_hardness=False)
         mask_data_obj.override_units(_units_None, inplace=True)
         mask_data_obj.hardmask = True
 
@@ -7730,10 +7842,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             data = data.copy()
             if dtype is not None and np.dtype(dtype) != data.dtype:
                 data.dtype = dtype
-        else:
-            if dtype is not None and np.dtype(dtype) != data.dtype:
-                data = data.copy()
-                data.dtype = dtype
+        elif dtype is not None and np.dtype(dtype) != data.dtype:
+            data = data.copy()
+            data.dtype = dtype
 
         return data
 
@@ -10277,41 +10388,85 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def HDF_chunks(self, *chunks):
-        """TODO."""
-        _HDF_chunks = self._HDF_chunks
+        """Get or set HDF chunk sizes.
 
-        if _HDF_chunks is None:
-            _HDF_chunks = {}
-        else:
-            _HDF_chunks = _HDF_chunks.copy()
+        The HDF chunk sizes may be used by external code that allows
+        `Data` objects to be written to netCDF files.
 
-        org_HDF_chunks = dict(
-            [(i, _HDF_chunks.get(axis)) for i, axis in enumerate(self._axes)]
+        Deprecated at version TODODASK and is no longer available. Use
+        the methods `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+        and `nc_set_hdf5_chunksizes` instead.
+
+        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`
+
+        :Parameters:
+
+            chunks: `dict` or `None`, *optional*
+                Specify HDF chunk sizes.
+
+                When no positional argument is provided, the HDF chunk
+                sizes are unchanged.
+
+                If `None` then the HDF chunks sizes for each dimension
+                are cleared, so that the HDF default chunk size value
+                will be used when writing data to disk.
+
+                If a `dict` then it defines for a subset of the
+                dimensions, defined by their integer positions, the
+                corresponding HDF chunk sizes. The HDF chunk sizes are
+                set as a number of elements along the dimension.
+
+        :Returns:
+
+            `dict`
+                The HDF chunks for each dimension prior to the change,
+                or the current HDF chunks if no new values are
+                specified. A value of `None` is an indication that the
+                default chunk size should be used for that dimension.
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(30).reshape(5, 6))
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({1: 2})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: None, 1: 2}
+        >>> d.HDF_chunks({1:None})
+        {0: None, 1: 2}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({0: 3, 1: 6})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks({1: 4})
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks({1: 999})
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks(None)
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "HDF_chunks",
+            message="Use the methods 'nc_clear_hdf5_chunksizes', "
+            "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
+            "instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
         )
-
-        if not chunks:
-            return org_HDF_chunks
-
-        chunks = chunks[0]
-
-        if chunks is None:
-            # Clear all chunking. Never change the value of the
-            # _HDF_chunks attribute in-place.
-            self._HDF_chunks = None
-            return org_HDF_chunks
-
-        axes = self._axes
-        for axis, size in chunks.items():
-            _HDF_chunks[axes[axis]] = size
-
-        if _HDF_chunks.values() == [None] * self.ndim:
-            _HDF_chunks = None
-
-        # Never change the value of the _HDF_chunks attribute in-place
-        self._HDF_chunks = _HDF_chunks
-
-        return org_HDF_chunks
 
     def inspect(self):
         """Inspect the object for debugging.
@@ -11588,13 +11743,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
-
-        hdf = self._HDF_chunks
-        if hdf:
-            # Never change the value of the _HDF_chunks attribute in-place
-            self._HDF_chunks = {
-                axis: size for axis, size in hdf.items() if axis not in axes
-            }
 
         return d
 
