@@ -3592,66 +3592,65 @@ class DataTest(unittest.TestCase):
         d = cf.Data(["a", "b", "c"], mask=[1, 0, 0])
         self.assertTrue((d.filled().array == ["", "b", "c"]).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "units-related problem")
     def test_Data_del_units(self):
         d = cf.Data(1)
         with self.assertRaises(ValueError):
             d.del_units()
 
-        d = cf.Data(1, "")
-        self.assertEqual(d.del_units(), "")
         d = cf.Data(1, "m")
         self.assertEqual(d.del_units(), "m")
+        with self.assertRaises(ValueError):
+            d.del_units()
 
         d = cf.Data(1, "days since 2000-1-1")
-        self.assertTrue(d.del_units(), "days since 2000-1-1")
+        self.assertEqual(d.del_units(), "days since 2000-1-1")
+        with self.assertRaises(ValueError):
+            d.del_units()
 
         d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        self.assertEqual(d.del_units(), "days since 2000-1-1")
+        self.assertEqual(d.Units, cf.Units(None, "noleap"))
         with self.assertRaises(ValueError):
             d.del_units()
 
     def test_Data_del_calendar(self):
-        d = cf.Data(1)
-        with self.assertRaises(ValueError):
-            d.del_calendar()
-
-        d = cf.Data(1, "")
-        with self.assertRaises(ValueError):
-            d.del_calendar()
-
-        d = cf.Data(1, "m")
-        with self.assertRaises(ValueError):
-            d.del_calendar()
-
-        d = cf.Data(1, "days since 2000-1-1")
-        with self.assertRaises(ValueError):
-            d.del_calendar()
+        for units in (None, "", "m", "days since 2000-1-1"):
+            d = cf.Data(1, units)
+            with self.assertRaises(ValueError):
+                d.del_calendar()
 
         d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
-        self.assertTrue(d.del_calendar(), "noleap")
+        self.assertEqual(d.del_calendar(), "noleap")
+        with self.assertRaises(ValueError):
+            d.del_calendar()
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "units-related problem")
+    def test_Data_get_calendar(self):
+        for units in (None, "", "m", "days since 2000-1-1"):
+            d = cf.Data(1, units)
+            with self.assertRaises(ValueError):
+                d.get_calendar()
+
+        d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        self.assertTrue(d.get_calendar(), "noleap")
+
     def test_Data_has_units(self):
+        d = cf.Data(1, "")
+        self.assertTrue(d.has_units())
+        d = cf.Data(1, "m")
+        self.assertTrue(d.has_units())
+
         d = cf.Data(1)
         self.assertFalse(d.has_units())
-        d = cf.Data(1, "")
-        self.assertTrue(d.has_units())
-        d = cf.Data(1, "m")
-        self.assertTrue(d.has_units())
+        d = cf.Data(1, calendar="noleap")
+        self.assertFalse(d.has_units())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "units-related problem")
     def test_Data_has_calendar(self):
-        d = cf.Data(1)
-        self.assertFalse(d.has_calendar())
-        d = cf.Data(1, "")
-        self.assertFalse(d.has_calendar())
-        d = cf.Data(1, "m")
-        self.assertFalse(d.has_calendar())
-
-        d = cf.Data(1, "days since 2000-1-1")
-        self.assertFalse(d.has_calendar())
         d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
         self.assertTrue(d.has_calendar())
+
+        for units in (None, "", "m", "days since 2000-1-1"):
+            d = cf.Data(1, units)
+            self.assertFalse(d.has_calendar())
 
     def test_Data_where(self):
         a = np.arange(10)

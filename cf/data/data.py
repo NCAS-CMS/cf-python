@@ -7722,7 +7722,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 The units.
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_units('metres')
         >>> d.get_units()
@@ -7803,7 +7803,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def set_units(self, value):
         """Set the units.
 
-        .. seealso:: `del_units`, `get_units`, `has_units`
+        .. seealso:: `del_units`, `get_units`, `has_units`, `Units`
 
         :Parameters:
 
@@ -9865,6 +9865,70 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._map_blocks(cf_harden_mask, dtype=self.dtype)
         self._hardmask = True
 
+    def has_calendar(self):
+        """Whether a calendar has been set.
+
+        .. seealso:: `del_calendar`, `get_calendar`, `set_calendar`,
+                     `has_units`, `Units`
+
+        :Returns:
+
+            `bool`
+                True if the calendar has been set, otherwise False.
+
+        **Examples**
+
+        >>> d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        >>> d.has_calendar()
+        True
+
+        >>> d = cf.Data(1, calendar="noleap")
+        >>> d.has_calendar()
+        True
+
+        >>> d = cf.Data(1, "days since 2000-1-1")
+        >>> d.has_calendar()
+        False
+
+        >>> d = cf.Data(1, "m")
+        >>> d.has_calendar()
+        False
+
+        """
+        return hasattr(self.Units, "calendar")
+
+    def has_units(self):
+        """Whether units have been set.
+
+        .. seealso:: `del_units`, `get_units`, `set_units`,
+                     `has_calendar`, `Units`
+
+        :Returns:
+
+            `bool`
+                True if units have been set, otherwise False.
+
+        **Examples**
+
+        >>> d = cf.Data(1, "")
+        >>> d.has_units()
+        True
+
+        >>> d = cf.Data(1, "m")
+        >>> d.has_units()
+        True
+
+        >>> d = cf.Data(1)
+        >>> d.has_units()
+        False
+
+        >>> d = cf.Data(1, calendar='noleap')
+        >>> d.has_units()
+        False
+
+        """
+        return hasattr(self.Units, "units")
+
     def soften_mask(self):
         """Force the mask to soft.
 
@@ -10819,7 +10883,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Delete the calendar.
 
         .. seealso:: `get_calendar`, `has_calendar`, `set_calendar`,
-                     `del_units`
+                     `del_units`, `Units`
 
         :Parameters:
 
@@ -10834,38 +10898,42 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `str`
                 The value of the deleted calendar.
 
-        **Examples:**
+        **Examples**
 
-        >>> d.set_calendar('360_day')
-        >>> d.has_calendar()
-        True
-        >>> d.get_calendar()
-        '360_day'
+        >>> d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
         >>> d.del_calendar()
-        >>> d.has_calendar()
-        False
-        >>> d.get_calendar()
-        ValueError: Can't get non-existent calendar
-        >>> print(d.get_calendar(None))
+        'noleap'
+        >>> print(d.del_calendar())
         None
-        >>> print(d.del_calendar(None))
+
+        >>> d = cf.Data(1, "days since 2000-1-1")
+        >>> print(d.del_calendar())
         None
+
+        >>> d = cf.Data(1, "m")
+        Traceback (most recent call last):
+            ...
+        ValueError: Units <Units: m> have no calendar
 
         """
-        calendar = getattr(self.Units, "calendar", None)
+        units = self.Units
+        if not units.isreftime:
+            return self._default(default, f"Units {units!r} have no calendar")
 
-        if calendar is not None:
-            self.override_calendar(None, inplace=True)
-            return calendar
+        calendar = getattr(units, "calendar", None)
+        if calendar is None:
+            return self._default(
+                default, f"{self.__class__.__name__} has no calendar"
+            )
 
-        raise self._default(
-            default, f"{self.__class__.__name__} has no 'calendar' component"
-        )
+        self.override_calendar(None, inplace=True)
+        return calendar
 
     def del_units(self, default=ValueError()):
         """Delete the units.
 
-        .. seealso:: `get_units`, `has_units`, `set_units`, `del_calendar`
+        .. seealso:: `get_units`, `has_units`, `set_units`,
+                     `del_calendar`, `Units`
 
         :Parameters:
 
@@ -10880,39 +10948,35 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `str`
                 The value of the deleted units.
 
-        **Examples:**
+        **Examples**
 
-        >>> d.set_units('metres')
-        >>> d.has_units()
-        True
-        >>> d.get_units()
-        'metres'
+        >>> d = cf.Data(1, "m")
         >>> d.del_units()
-        >>> d.has_units()
-        False
-        >>> d.get_units()
-        ValueError: Can't get non-existent units
-        >>> print(d.get_units(None))
-        None
-        >>> print(d.del_units(None))
-        None
+        'm'
+        >>> d.Units
+        <Units: >
+        >>> d.del_units()
+        Traceback (most recent call last):
+            ...
+        ValueError: Data has no units
+
+        >>> d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        >>> d.del_units()
+        'days since 2000-1-1'
+        >>> d.Units
+        <Units: noleap>
 
         """
-        out = self.Units
-
-        units = getattr(out, "units", None)
-        calendar = getattr(out, "calendar", None)
-
-        if calendar is not None:
-            self.Units = Units(None, calendar)
-        else:
-            del self.Units
+        u = self.Units
+        units = getattr(u, "units", None)
+        calendar = getattr(u, "calendar", None)
+        self.override_units(Units(None, calendar), inplace=True)
 
         if units is not None:
             return units
 
         return self._default(
-            default, f"{self.__class__.__name__} has no 'units' component"
+            default, f"{self.__class__.__name__} has no units"
         )
 
     @classmethod
