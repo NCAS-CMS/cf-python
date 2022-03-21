@@ -66,7 +66,7 @@ class UMArray(FileArray):
                 Deprecated at version 1.9.TODO.0. If set will be
                 ignored.
 
-                The number of uncompressed array dimensions
+                The number of uncompressed array dimensions.
 
         **Examples**
 
