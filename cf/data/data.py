@@ -3835,28 +3835,48 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             other = type(self).asdata(other)
 
         # ------------------------------------------------------------
-        # Prepare data0 (i.e. self copied)
+        # Prepare data0 (i.e. self copied) and data1 (i.e. other)
         # ------------------------------------------------------------
         data0 = self.copy()
-        data0, other, new_Units = data0._combined_units(other, method, True)
-        dx0 = data0._get_dask()
 
-        # ------------------------------------------------------------
-        # Ensure that data1 (i.e. other) is broadcastable to data0
-        # ------------------------------------------------------------
-        # SB TODODASK
+        # Parse units
+        data0, other, new_Units = data0._combined_units(other, method, True)
+
+        # Cast as dask arrays
+        dx0 = data0._get_dask()
         dx1 = other._get_dask()
 
         # ------------------------------------------------------------
         # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
 
+        # SB TODODASK use new_Units somewhere!
         if inplace:
             # SB TODODASK perform 'method' operation in-place
             pass
         else:
-            # SB TODODASK perform 'method' operation with new data object
-            pass
+            try:
+                if method == "__eq__":  # and data0.Units.isreftime:
+                    dx0 = _numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
+                elif method == "__ne__":
+                    dx0 = ~_numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
+                else:
+                    dx0 = getattr(dx0, method)(dx1)
+
+            except FloatingPointError as error:
+                # Floating point point errors have been trapped
+                if _mask_fpe[0]:
+                    # Redo the calculation ignoring the errors and
+                    # then set invalid numbers to missing data
+                    np.seterr(**_seterr_raise_to_ignore)
+                    dx0 = getattr(dx0, method)(array1)
+                    dx0 = np.ma.masked_invalid(dx0, copy=False)
+                    np.seterr(**_seterr)
+                else:
+                    # Raise the floating point error exception
+                    raise FloatingPointError(error)
+            except TypeError as error:
+                raise TypeError(error)
 
         data0._set_dask(dx0, reset_mask_hardness=False)
 
