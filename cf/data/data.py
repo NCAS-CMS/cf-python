@@ -442,13 +442,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 If True then attempt to read the data that defines
                 *array* from disk prior to assigning it to the
                 underlying dask array. This is done by replacing
-                *array* with the output of its `!to_memory`, if it has
-                one. Reading data from disk during initialisation will
-                slow down the initialisation process, but can
-                considerably improve downstream performance by
-                avoiding the need for independent reads on every dask
-                chunk. By default, data of *array* that is on disk
-                remains there until the required.
+                *array* with the output of its ``to_memory()`` method,
+                if it has one. Reading data from disk during
+                initialisation will slow down the initialisation
+                process, but can considerably improve downstream
+                performance by avoiding the need for independent reads
+                on every dask chunk. By default, data of *array* that
+                is on disk remains there until the required.
+
+                If *array* has no ``to_memory()`` method then no
+                action is taken.
 
                 .. versionadded:: TODODASK
 
