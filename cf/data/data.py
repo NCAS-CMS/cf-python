@@ -5983,7 +5983,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             if not old_units.equivalent(value):
                 raise ValueError(
-                    f"Can't set to Units to {value!r} that are not "
+                    f"Can't set Units to {value!r} that are not "
                     f"equivalent to the current units {old_units!r}. "
                     "Consider using the override_units method instead."
                 )
