@@ -230,7 +230,7 @@ def compressed_to_dask(array, chunks):
 
         # For each dimension, initialise the index of the chunk
         # previously created (prior to the chunk currently being
-        # created. The value -1 is an arbitrary negative value that is
+        # created). The value -1 is an arbitrary negative value that is
         # always less than any chunk index, which is always a natural
         # number.
         previous_chunk_location = [-1] * len(chunks)
