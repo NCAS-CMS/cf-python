@@ -1420,6 +1420,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         So both work for now!
 
+        TODODASK: sort this out! See https://github.com/NCAS-CMS/cf-python/pull/354#discussion_r831176499
+
         """
         return self.get_dask(copy=False)
 
