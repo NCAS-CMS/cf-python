@@ -428,7 +428,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                   value ``dask.config("array.chunk-size")``.
 
                 *Parameter example:*
-                  ``-1`` or `None` as a blocksize indicate the size of
+                  ``-1`` or `None` as a blocksize indicates the size of
                   the corresponding dimension.
 
                 *Parameter example:*
