@@ -7775,7 +7775,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def set_calendar(self, calendar):
         """Set the calendar.
 
-        .. seealso:: `del_calendar`, `get_calendar`
+        .. seealso:: `override_calendar`, `override_units`,
+                     `del_calendar`, `get_calendar`
 
         :Parameters:
 
@@ -7786,7 +7787,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_calendar('none')
         >>> d.get_calendar
@@ -7803,7 +7804,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def set_units(self, value):
         """Set the units.
 
-        .. seealso:: `del_units`, `get_units`, `has_units`, `Units`
+        .. seealso:: `override_units`, `del_units`, `get_units`,
+                     `has_units`, `Units`
 
         :Parameters:
 
@@ -7814,7 +7816,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_units('watt')
         >>> d.get_units()

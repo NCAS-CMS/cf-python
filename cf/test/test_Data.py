@@ -3890,6 +3890,43 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.chunks, ((4,), (5,)))
         self.assertTrue(e.equals(d))
 
+    def test_Data_get_units(self):
+        for units in ("", "m", "days since 2000-01-01"):
+            d = cf.Data(1, units)
+            self.assertEqual(d.get_units(), units)
+
+        d = cf.Data(1)
+        with self.assertRaises(ValueError):
+            d.get_units()
+
+    def test_Data_set_calendar(self):
+        d = cf.Data(1, "days since 2000-01-01")
+        d.set_calendar("standard")
+
+        with self.assertRaises(ValueError):
+            d.set_calendar("noleap")
+
+        d = cf.Data(1, "m")
+        d.set_calendar("noleap")
+        self.assertEqual(d.Units, cf.Units("m"))
+
+    def test_Data_set_units(self):
+        for units in (None, "", "m", "days since 2000-01-01"):
+            d = cf.Data(1, units)
+            self.assertEqual(d.Units, cf.Units(units))
+
+        d = cf.Data(1, "m")
+        d.set_units("km")
+        self.assertEqual(d.array, 0.001)
+
+        d = cf.Data(1, "days since 2000-01-01", calendar="noleap")
+        d.set_units("days since 1999-12-31")
+        self.assertEqual(d.array, 2)
+
+        # Can't set to Units that are not equivalent
+        with self.assertRaises(ValueError):
+            d.set_units("km")
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
