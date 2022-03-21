@@ -3849,8 +3849,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
-
-        # SB TODODASK use new_Units somewhere!
         if inplace:
             # SB TODODASK perform 'method' operation in-place
             pass
@@ -3879,6 +3877,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 raise TypeError(error)
 
         data0._set_dask(dx0, reset_mask_hardness=False)
+        data0.override_units(new_Units, inplace=True)
 
         return data0
 
