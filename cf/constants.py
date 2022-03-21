@@ -3,6 +3,8 @@ import sys
 from enum import Enum, auto
 from tempfile import gettempdir
 
+from dask import config
+from dask.utils import parse_bytes
 from numpy.ma import masked as numpy_ma_masked
 from psutil import virtual_memory
 
@@ -120,12 +122,13 @@ if mpi_on:
 else:
     CONSTANTS["MIN_TOTAL_MEMORY"] = CONSTANTS["TOTAL_MEMORY"]
 
-CONSTANTS["CHUNKSIZE"] = (
-    CONSTANTS["FREE_MEMORY_FACTOR"] * CONSTANTS["MIN_TOTAL_MEMORY"]
-) / (
-    mpi_size * CONSTANTS["WORKSPACE_FACTOR_1"]
-    + CONSTANTS["WORKSPACE_FACTOR_2"]
-)
+# CONSTANTS["CHUNKSIZE"] = (
+#    CONSTANTS["FREE_MEMORY_FACTOR"] * CONSTANTS["MIN_TOTAL_MEMORY"]
+# ) / (
+#    mpi_size * CONSTANTS["WORKSPACE_FACTOR_1"]
+#    + CONSTANTS["WORKSPACE_FACTOR_2"]
+# )
+CONSTANTS["CHUNKSIZE"] = parse_bytes(config.get("array.chunk-size"))
 
 masked = numpy_ma_masked
 # nomask = numpy_ma_nomask

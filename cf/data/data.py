@@ -13448,7 +13448,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"
     ):
-        """Returns a dictionary of sections of the Data object.
+        """Returns a dictionary of sections of the `Data` object.
 
         Specifically, returns a dictionary of Data objects which are the
         m-dimensional sections of this n-dimensional Data object, where
@@ -13479,6 +13479,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 size that will fit in one chunk of memory instead of
                 sectioning into slices of size 1 along the dimensions that
                 are being sectioned.
+         
+                Deprecated at version TODODASK. Use `rechunk` instead.
 
             min_step: `int`, optional
                 The minimum step size when making chunks. By default this
@@ -13498,9 +13500,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.section((0, 1))
 
         """
-        return _section(
-            self, axes, data=True, stop=stop, chunks=chunks, min_step=min_step
-        )
+        if chunks:
+            print ("deprecated TODODASK")
+        
+        return _section(self, axes, stop=stop, min_step=min_step)
 
     # ----------------------------------------------------------------
     # Alias

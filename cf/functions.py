@@ -11,6 +11,7 @@ import urllib.parse
 import warnings
 from collections.abc import Iterable
 from hashlib import md5 as hashlib_md5
+from itertools import product
 from marshal import dumps as marshal_dumps
 from math import ceil as math_ceil
 from numbers import Integral
@@ -26,6 +27,8 @@ import cfdm
 
 # import cPickle
 import netCDF4
+from dask import config
+from dask.utils import parse_bytes
 from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
@@ -799,27 +802,21 @@ class relaxed_identities(ConstantAccess):
 
 
 class chunksize(ConstantAccess):
-    r"""Set the chunksize used by LAMA for partitioning the data array.
+    """Set the default chunksize used by `dask` arrays.
 
-    This must be smaller than an upper limit determined by the free
-    memory factor, which is the fraction of memory kept free as a
-    temporary workspace, otherwise an error is raised. If called with
-    None as the argument then the chunksize is set to its upper
-    limit. If called without any arguments the existing chunksize is
+    If called without any arguments then the existing chunksize is
     returned.
-
-    The upper limit to the chunksize is given by:
-
-    .. math:: upper\_chunksize = \dfrac{f \cdot total\_memory}{mpi\_size
-                                 \cdot w_1 + w_2}
-
-    where :math:`f` is the *free memory factor* and :math:`w_1` and
-    :math:`w_2` the *workspace factors* *1* and *2* respectively.
 
     :Parameters:
 
-        arg: `float` or `Constant`, optional
-            The chunksize in bytes.
+        arg: `float` or `str` or `Constant`, optional
+            The chunksize in bytes. Any size accepted by
+            `dask.utils.parse_bytes` is accepted.
+
+            *Parameter example:*
+               A chunksize of 2 MiB may be specified as ``2097152`` or
+               ``'2 MiB'``
+
 
     :Returns:
 
@@ -850,20 +847,8 @@ class chunksize(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        upper_chunksize = (free_memory_factor() * min_total_memory()) / (
-            (mpi_size * _WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()
-        )
-
-        arg = float(arg)
-        if arg > upper_chunksize and mpi_size > 1:
-            raise ValueError(
-                f"Specified chunk size ({arg}) is too large for the given "
-                f"free memory factor ({upper_chunksize})"
-            )
-        elif arg <= 0:
-            raise ValueError(f"Chunk size ({arg}) must be positive")
-
-        return arg
+        config.set({"array.chunk-size": arg})
+        return parse_bytes(arg)
 
 
 class tempdir(ConstantAccess):
@@ -2838,9 +2823,7 @@ def allclose(x, y, rtol=None, atol=None):
     return _numpy_allclose(x, y, rtol=rtol, atol=atol)
 
 
-def _section(
-    x, axes=None, data=False, stop=None, chunks=False, min_step=1, **kwargs
-):
+def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     """Return a list of m dimensional sections of a Field of n
     dimensions or a dictionary of m dimensional sections of a Data
     object of n dimensions, where m <= n.
@@ -2913,6 +2896,39 @@ def _section(
     >>> _section(f, ['latitude', 'longitude'], exact=True)
 
     """
+    if axes is None:
+        axes = list(range(x.ndim))
+
+    axes = x.data._parse_axes(axes)
+
+    ndim = x.ndim
+    shape = x.shape
+    if stop is None:
+        stop = x.size
+
+    axes = [i for i in range(ndim) if i not in axes]
+
+    indices = [[slice(None)]] * ndim
+    for i in axes:
+        indices[i] = [
+            slice(j, j + min_step) for j in range(0, shape[i], min_step)
+        ]
+
+    keys = [[None]] * ndim
+    for i in axes:
+        keys[i] = range(0, shape[i], min_step)
+
+    if chunks:
+        
+        
+    out = {}
+    for j, (key, index) in enumerate(zip(product(*keys), product(*indices))):
+        if j >= stop:
+            return
+        
+        out[key] = x[index]
+
+    return out
 
     def loop_over_index(x, current_index, axis_indices, indices):
         """Expects an index to loop over in the list indices.
