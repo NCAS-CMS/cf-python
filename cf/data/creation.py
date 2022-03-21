@@ -119,7 +119,7 @@ def compressed_to_dask(array, chunks):
 
             The chunk sizes implied by *chunks* for a dimension that
             has been compressed are ignored and replaced with values
-            that implied by the decompression algorithm, so their
+            that are implied by the decompression algorithm, so their
             specification is arbitrary.
 
     :Returns:
