@@ -19,7 +19,7 @@ class FileArray(Array):
 
     def __str__(self):
         """x.__str__() <==> str(x)"""
-        return f"<{self.__class__.__name__}: {self.shape} in {self.file}"
+        return f"<{self.__class__.__name__}: {self.shape} in {self.file}>"
 
     @property
     def _lock(self):
