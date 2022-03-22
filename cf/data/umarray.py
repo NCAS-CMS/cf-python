@@ -64,7 +64,7 @@ class UMArray(abstract.FileArray):
 
             byte_ordering: `str`, optional
 
-        **Examples:**
+        **Examples**
 
         >>> a = UMFileArray(file='file.pp', header_offset=3156,
         ...                 data_offset=3420,
@@ -270,7 +270,7 @@ class UMArray(abstract.FileArray):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.close()
 
@@ -284,7 +284,7 @@ class UMArray(abstract.FileArray):
 
             `umfile_lib.File`
 
-        **Examples:**
+        **Examples**
 
         >>> f.open()
 
