@@ -9118,6 +9118,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def unique(self):
         """The unique elements of the array.
 
@@ -9134,6 +9135,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data: [1, 2, 4] metre>
 
         """
+        from dask.array.reductions import reduction
+
+        dtype = self.dtype
+        return reduction(
+            a,
+            cf_rms_chunk,
+            partial(cf_rms_agg, mtol=mtol, original_shape=a.shape),
+            axis=axis,
+            keepdims=keepdims,
+            dtype=dtype,
+            split_every=split_every,
+            combine=cf_mean_combine,
+            concatenate=False,
+            meta=np.array((), dtype=dtype),
+            weights=weights,
+        )
+        
         config = self.partition_configuration(readonly=True)
 
         u = []
