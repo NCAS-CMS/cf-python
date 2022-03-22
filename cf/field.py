@@ -394,7 +394,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. seealso:: `indices`, `squeeze`, `subspace`, `where`
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (12, 73, 96)
@@ -620,7 +620,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `dict`
                 A description of the domain.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f)
         Axes           : time(3) = [1979-05-01 12:00:00, ..., 1979-05-03 12:00:00] gregorian
@@ -944,7 +944,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The new field, or the same field if the operation was an
                 in place augmented arithmetic assignment.
 
-        **Examples:**
+        **Examples**
 
         >>> h = f._binary_operation(g, '__add__')
         >>> h = f._binary_operation(g, '__ge__')
@@ -1886,7 +1886,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The new field, or the same field if the operation was an
                 in place augmented arithmetic assignment.
 
-        **Examples:**
+        **Examples**
 
         >>> h = f._binary_operation(g, '__add__')
         >>> h = f._binary_operation(g, '__ge__')
@@ -2415,7 +2415,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field`
                 The conformed version of *other*.
 
-        **Examples:**
+        **Examples**
 
         >>> h = f._conform_for_assignment(g)
 
@@ -2645,7 +2645,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field`
                 The conformed version of *other*.
 
-        **Examples:**
+        **Examples**
 
         >>> h = f._conform_for_data_broadcasting(g)
 
@@ -4076,7 +4076,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. seealso:: `featureType`
 
-        **Examples:**
+        **Examples**
 
         >>> f.featureType
         'timeSeries'
@@ -4098,7 +4098,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Stores the `flag_values`, `flag_meanings` and `flag_masks` CF
         properties in an internally consistent manner.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Flags
         <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
@@ -4132,7 +4132,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. seealso:: `array`, `data`, `datetime_array`
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(5): [0, ... 4] kg m-1 s-2>
@@ -4167,7 +4167,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Stored as a 1-d numpy array but may be set as any array-like
         object.
 
-        **Examples:**
+        **Examples**
 
         >>> f.flag_values = ['a', 'b', 'c']
         >>> f.flag_values
@@ -4222,7 +4222,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         Stored as a 1-d numpy array but may be set as array-like object.
 
-        **Examples:**
+        **Examples**
 
         >>> f.flag_masks = numpy.array([1, 2, 4], dtype='int8')
         >>> f.flag_masks
@@ -4281,7 +4281,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Stored as a 1-d numpy string array but may be set as a space
         delimited string or any array-like object.
 
-        **Examples:**
+        **Examples**
 
         >>> f.flag_meanings = 'low medium      high'
         >>> f.flag_meanings
@@ -4343,7 +4343,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         The name of the conventions followed by the field. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Conventions = 'CF-1.6'
         >>> f.Conventions
@@ -4376,7 +4376,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 2.0
 
-        **Examples:**
+        **Examples**
 
         >>> f.featureType = 'trajectoryProfile'
         >>> f.featureType
@@ -4406,7 +4406,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Specifies where the original data was produced. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.institution = 'University of Reading'
         >>> f.institution
@@ -4437,7 +4437,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         methods used to produce it. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.references = 'some references'
         >>> f.references
@@ -4469,7 +4469,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         values are the stated multiple of one standard error. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.standard_error_multiplier = 2.0
         >>> f.standard_error_multiplier
@@ -4503,7 +4503,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         observation'`` or ``'radiosonde'``). See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.source = 'radiosonde'
         >>> f.source
@@ -4534,7 +4534,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         read, or is to be written to. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.title = 'model data'
         >>> f.title
@@ -4610,7 +4610,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 A field construct containing the horizontal cell
                 areas.
 
-        **Examples:**
+        **Examples**
 
         >>> a = f.cell_area()
         >>> a = f.cell_area(radius=cf.Data(3389.5, 'km'))
@@ -4678,7 +4678,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Data`
                 The radius of the sphere, in units of metres.
 
-        **Examples:**
+        **Examples**
 
         >>> f.radius()
         <CF Data(): 6371178.98 m>
@@ -4970,7 +4970,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 field with corresponding values of axis identifiers of the
                 of other field.
 
-        **Examples:**
+        **Examples**
 
         >>> f.map_axes(g)
         {'dim0': 'dim1',
@@ -4999,7 +4999,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.close()
 
@@ -5028,7 +5028,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `bool`
                 True if the selected axis is cyclic, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f.iscyclic('X')
         True
@@ -5415,7 +5415,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 broadcastable form; or if *components* is True, orthogonal
                 weights in a dictionary.
 
-        **Examples:**
+        **Examples**
 
         >>> f
         <CF Field: air_temperature(time(12), latitude(145), longitude(192)) K>
@@ -6060,7 +6060,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 If *return_bins* is True then also return the bins in
                 their 2-d form.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(0)
         >>> f
@@ -6555,7 +6555,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field`
                 The field construct containing the binned values.
 
-        **Examples:**
+        **Examples**
 
         Find the range of values that lie in each bin:
 
@@ -6953,7 +6953,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `bool`
                 `True` if the construct exists, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(0)
         >>> print(f)
@@ -8449,7 +8449,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                  *regroup* parameter is True then a `numpy` array is
                  returned.
 
-        **Examples:**
+        **Examples**
 
         There are further worked examples in
         https://ncas-cms.github.io/cf-python/analysis.html#statistical-collapses
@@ -9552,7 +9552,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 `dict` or `None`
 
-            **Examples:**
+            **Examples**
 
             >>> print(weights)
             None
@@ -10538,7 +10538,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The field construct with expanded data, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(0)
         >>> print(f)
@@ -10680,7 +10680,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `tuple`
                 The indices meeting the conditions.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.example_field(0)
         >>> print(q)
@@ -11331,7 +11331,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 otherwise return a new `Field` instance containing the new
                 data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.Field()
         >>> f.set_data([1, 2, 3])
@@ -11507,7 +11507,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field`
                 The domain mask.
 
-        **Examples:**
+        **Examples**
 
         Create a domain mask which is masked at all between between -30
         and 30 degrees of latitude:
@@ -11760,7 +11760,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 Whether or not the field construct contains the specified
                 metadata constructs.
 
-        **Examples:**
+        **Examples**
 
             TODO
 
@@ -12094,7 +12094,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The field construct of moving window values, or `None`
                 if the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(0)
         >>> print(f)
@@ -12437,7 +12437,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The convolved field construct, or `None` if the operation
                 was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(2)
         >>> print(f)
@@ -12683,7 +12683,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field`
                 The new field construct.
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -12771,7 +12771,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The field construct with the cumulatively summed axis, or
                 `None` if the operation was in-place.
 
-        **Examples:**
+        **Examples**
         >>> f = cf.example_field(2)
         >>> print(f)
         Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -12894,7 +12894,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The field construct with flipped axes, or `None` if
                 the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.flip()
         >>> g = f.flip('time')
@@ -12950,7 +12950,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Returns:
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.argmax('T')
 
@@ -13073,7 +13073,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The field construct with squeezed data, or `None` if the
                 operation was in-place.
 
-                **Examples:**
+                **Examples**
 
         >>> g = f.squeeze()
         >>> g = f.squeeze('time')
@@ -13130,7 +13130,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 positions. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (1, 2, 3)
@@ -13232,7 +13232,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The field construct with transposed data, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f.ndim
         3
@@ -13303,7 +13303,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The field construct with size-1 axes inserted in its data,
                 or `None` if the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.unsqueeze()
         >>> f.unsqueeze(['dim2'], inplace=True)
@@ -13391,7 +13391,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -13457,7 +13457,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -13490,7 +13490,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The position in the field construct's data of the
                 selected domain axis construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f
         <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>
@@ -13523,7 +13523,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `dict`
                 The canonical name for the domain axis construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f.axis_names()
         {'domainaxis0': 'atmosphere_hybrid_height_coordinate',
@@ -13571,7 +13571,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `int`
                 The size of the selected domain axis
 
-        **Examples:**
+        **Examples**
 
         >>> f
         <CF Field: eastward_wind(time(3), air_pressure(5), latitude(110), longitude(106)) m s-1>
@@ -13626,7 +13626,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The keys of the domain axis constructs spanned by the
                 data.
 
-        **Examples:**
+        **Examples**
 
         >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
         >>> f.get_data_axes()
@@ -13995,7 +13995,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The expanded field construct, or `None` if the operation
                 was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(0)
         >>> print(f)
@@ -14268,7 +14268,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field`
                 The percentiles of the original data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(0)
         >>> print(f)
@@ -14832,7 +14832,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `Field`
                 The rolled field.
 
-        **Examples:**
+        **Examples**
 
         Roll the data of the "X" axis one elements to the right:
 
@@ -15060,7 +15060,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 A new field construct with an updated data array, or
                 `None` if the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         Set data array values to 15 everywhere:
 
@@ -15331,7 +15331,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 whether or not it is possible to create specified
                 subspace.
 
-        **Examples:**
+        **Examples**
 
         There are further worked examples
         :ref:`in the tutorial <Subspacing-by-metadata>`.
@@ -15389,7 +15389,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             `FieldList`
                 The sections of the field construct.
 
-        **Examples:**
+        **Examples**
 
         Section a field into 2-d longitude/time slices, checking the
         units:
@@ -15737,7 +15737,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 operation was in-place, or the regridding operator if
                 *return_operator* is True.
 
-        **Examples:**
+        **Examples**
 
         Regrid field construct ``f`` conservatively onto a grid
         contained in field construct ``g``:
@@ -16503,7 +16503,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 operation was in-place, or the regridding operator if
                 *return_operator* is True.
 
-        **Examples:**
+        **Examples**
 
         Regrid the time axes of field ``f`` conservatively onto a grid
         contained in field ``g``:

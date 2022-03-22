@@ -539,7 +539,7 @@ def read(
             The field or domain constructs found in the input
             dataset(s). The list may be empty.
 
-    **Examples:**
+    **Examples**
 
     >>> x = cf.read('file.nc')
 
@@ -1039,7 +1039,7 @@ def file_type(filename):
             The format type of the file. One of ``'netCDF'``, ``'UM'``
             or ``'CDL'``.
 
-    **Examples:**
+    **Examples**
 
     >>> file_type(filename)
     'netCDF'

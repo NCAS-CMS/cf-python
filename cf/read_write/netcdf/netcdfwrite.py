@@ -317,7 +317,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 The list of netCDF auxiliary coordinate names updated in
                 place.
 
-        **Examples:**
+        **Examples**
 
         >>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
 
@@ -615,7 +615,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             `str`
                 The hexadecimal string.
 
-        **Examples:**
+        **Examples**
 
         >>> _random_hex_string()
         'C3eECbBBcf'
@@ -650,7 +650,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             'int' or `float` or `bool`
 
-        **Examples:**
+        **Examples**
 
         >>> type(_convert_to_builtin_type(numpy.bool_(True)))
         bool

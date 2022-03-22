@@ -122,7 +122,7 @@ class Properties(Container):
 
         .. seealso:: `identity`, `identities`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.id = "foo"
@@ -161,7 +161,7 @@ class Properties(Container):
         The calendar used for encoding time data. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.calendar = 'noleap'
         >>> f.calendar
@@ -193,7 +193,7 @@ class Properties(Container):
         Miscellaneous information about the data or methods used to
         produce it. See http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.comment = 'This simulation was done on an HP-35 calculator'
         >>> f.comment
@@ -225,7 +225,7 @@ class Properties(Container):
         A list of the applications that have modified the original
         data. See http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.history = 'created on 2012/10/01'
         >>> f.history
@@ -258,7 +258,7 @@ class Properties(Container):
         user defined calendar. See http://cfconventions.org/latest.html
         for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.leap_month = 2
         >>> f.leap_month
@@ -292,7 +292,7 @@ class Properties(Container):
         of four are also leap years. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.leap_year = 1984
         >>> f.leap_year
@@ -325,7 +325,7 @@ class Properties(Container):
         is not standardized. See http://cfconventions.org/latest.html for
         details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.long_name = 'zonal_wind'
         >>> f.long_name
@@ -360,7 +360,7 @@ class Properties(Container):
 
         Stored as a tuple but may be set as any array-like object.
 
-        **Examples:**
+        **Examples**
 
         >>> f.month_lengths = numpy.array(
         ...     [34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
@@ -396,7 +396,7 @@ class Properties(Container):
         (http://cfconventions.org/standard-names.html). See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.standard_name = 'time'
         >>> f.standard_name
@@ -430,7 +430,7 @@ class Properties(Container):
         (http://www.unidata.ucar.edu/software/udunits). See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.units = 'K'
         >>> f.units
@@ -462,7 +462,7 @@ class Properties(Container):
         The largest valid value of the data. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.valid_max = 100.0
         >>> f.valid_max
@@ -494,7 +494,7 @@ class Properties(Container):
         The smallest valid value of the data. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.valid_min = 8.0
         >>> f.valid_min
@@ -528,7 +528,7 @@ class Properties(Container):
 
         Stored as a tuple but may be set as any array-like object.
 
-        **Examples:**
+        **Examples**
 
         >>> f.valid_range = numpy.array([100., 400.])
         >>> f.valid_range
@@ -585,7 +585,7 @@ class Properties(Container):
                 The value of the named property or the default value, if
                 set.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.{{class}}()
         >>> f.set_property('project', 'CMIP7')
@@ -637,7 +637,7 @@ class Properties(Container):
              `bool`
                 `True` if the property has been set, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.{{class}}()
         >>> f.set_property('project', 'CMIP7')
@@ -688,7 +688,7 @@ class Properties(Container):
 
                 The removed property.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.{{class}}()
         >>> f.set_property('project', 'CMIP7')
@@ -769,7 +769,7 @@ class Properties(Container):
             `bool`
                 Whether or not at least one of the conditions are met.
 
-        **Examples:**
+        **Examples**
 
         >>> f.match_by_identity('time')
 
@@ -822,7 +822,7 @@ class Properties(Container):
             `bool`
                 Whether or not at least one of the conditions are met.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_get_variable()
         'time'
@@ -912,7 +912,7 @@ class Properties(Container):
             `bool`
                 Whether or not the conditions are met.
 
-        **Examples:**
+        **Examples**
 
         >>> f.match_by_property(standard_name='longitude')
 
@@ -972,7 +972,7 @@ class Properties(Container):
             `dict`
                 The properties.
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {}
@@ -1030,7 +1030,7 @@ class Properties(Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {}
@@ -1083,7 +1083,7 @@ class Properties(Container):
 
              `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.{{class}}()
         >>> f.set_property('project', 'CMIP7')

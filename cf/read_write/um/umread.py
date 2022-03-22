@@ -1702,7 +1702,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_vtime(rec)
         [1991, 1, 1, 0, 0]
@@ -1722,7 +1722,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_dtime(rec)
         [1991, 2, 1, 0, 0]
@@ -1742,7 +1742,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_bz(rec)
 
@@ -1766,7 +1766,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_lz(rec)
 
@@ -1796,7 +1796,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_z(rec)
 
@@ -2033,7 +2033,7 @@ class UMField:
                A string derived from LBEXP. If LBEXP is a negative integer
                then that number is returned as a string.
 
-        **Examples:**
+        **Examples**
 
         >>> self.decode_lbexp()
         'aaa5u'
@@ -2085,7 +2085,7 @@ class UMField:
 
             `float`
 
-        **Examples:**
+        **Examples**
 
         >>> u.dtime(rec)
         31.5
@@ -2377,7 +2377,7 @@ class UMField:
 
         This is a bit like printfdr in the UKMO IDL PP library.
 
-        **Examples:**
+        **Examples**
 
         >>> u.printfdr()
 
@@ -2537,7 +2537,7 @@ class UMField:
                 `True` if a field satisfies the condition specified,
                 `False` otherwise.
 
-        **Examples:**
+        **Examples**
 
         >>> ok = u.test_um_condition('true_latitude_longitude', ...)
 
@@ -2597,7 +2597,7 @@ class UMField:
                 `True` if the UM version applicable to this field
                 construct is within the range, `False` otherwise.
 
-        **Examples:**
+        **Examples**
 
         >>> ok = u.test_um_version(401, 505, 1001)
         >>> ok = u.test_um_version(401, None, 606.3)
@@ -2775,7 +2775,7 @@ class UMField:
 
             `float`
 
-        **Examples:**
+        **Examples**
 
         >>> u.vtime(rec)
         31.5
@@ -3281,7 +3281,7 @@ class UMField:
 #
 #     `None`
 #
-# *Examples:*
+# *Examples*
 #
 # >>> load_stash2standard_name()
 # >>> load_stash2standard_name('my_table.txt')
@@ -3475,7 +3475,7 @@ class UMRead(cfdm.read_write.IORead):
             `list`
                 The fields in the file.
 
-        **Examples:**
+        **Examples**
 
         >>> f = read('file.pp')
         >>> f = read('*/file[0-9].pp', um_version=708)
@@ -3536,7 +3536,7 @@ class UMRead(cfdm.read_write.IORead):
 
             `bool`
 
-        **Examples:**
+        **Examples**
 
         >>> r.is_um_file('myfile.pp')
         True

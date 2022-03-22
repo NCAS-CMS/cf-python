@@ -73,7 +73,7 @@ class FieldDomain:
 
             `set`
 
-        **Examples:**
+        **Examples**
 
         >>> f._coordinate_reference_axes('coordinatereference0')
 
@@ -109,7 +109,7 @@ class FieldDomain:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f._conform_coordinate_references('auxiliarycoordinate1')
         >>> f._conform_coordinate_references('auxiliarycoordinate1',
@@ -794,7 +794,7 @@ class FieldDomain:
 
                 The shifts corresponding to each rolled axis.
 
-        **Examples:**
+        **Examples**
 
         """
         if isinstance(shift, Integral):
@@ -960,7 +960,7 @@ class FieldDomain:
     def rank(self):
         """The number of axes in the domain.
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -1049,7 +1049,7 @@ class FieldDomain:
 
             `dict`
 
-        **Examples:**
+        **Examples**
 
         >>> f.iscyclic('X')
         True
@@ -1340,7 +1340,7 @@ class FieldDomain:
 
                         The removed coordinate reference construct.
 
-                **Examples:**
+                **Examples**
 
                 >>> f.del_coordinate_reference('rotated_latitude_longitude')
                 <CF CoordinateReference: rotated_latitude_longitude>
@@ -1477,7 +1477,7 @@ class FieldDomain:
             `DomainAxis`
                 The removed domain axis construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(0)
         >>> g = f[0]
@@ -1590,7 +1590,7 @@ class FieldDomain:
 
                 {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -1653,7 +1653,7 @@ class FieldDomain:
 
                 {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -1719,7 +1719,7 @@ class FieldDomain:
 
                 {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -1785,7 +1785,7 @@ class FieldDomain:
 
                 {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -1853,7 +1853,7 @@ class FieldDomain:
 
                 {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -1917,7 +1917,7 @@ class FieldDomain:
                         constructs used by the selected coordinate reference
                         construct.
 
-                **Examples:**
+                **Examples**
 
                 >>> f.coordinate_reference_domain_axes('coordinatereference0')
                 {'domainaxis0', 'domainaxis1', 'domainaxis2'}
@@ -1987,7 +1987,7 @@ class FieldDomain:
                 cyclic prior to the new setting, or the current cyclic
                 domain axes if no axis was specified.
 
-        **Examples:**
+        **Examples**
 
         >>> f.cyclic()
         set()
@@ -2111,7 +2111,7 @@ class FieldDomain:
 
                 {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -2168,7 +2168,7 @@ class FieldDomain:
             `bool`
                 Whether or not the domain axis is increasing.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.dimension_coordinate('X').array)
         array([  0  30  60])
@@ -2207,7 +2207,7 @@ class FieldDomain:
                 A dictionary whose key/value pairs are domain axis
                 keys and their directions.
 
-        **Examples:**
+        **Examples**
 
         >>> d.directions()
         {'domainaxis1': True, 'domainaxis1': False}
@@ -2276,7 +2276,7 @@ class FieldDomain:
 
                 {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -2354,7 +2354,7 @@ class FieldDomain:
                 {{Returns construct}}
 
 
-        **Examples:**
+        **Examples**
 
         """
         return self._construct(
@@ -2434,7 +2434,7 @@ class FieldDomain:
                 The selected coordinate reference construct, or its
                 key.
 
-        **Examples:**
+        **Examples**
 
         """
         if construct is None:
@@ -2488,7 +2488,7 @@ class FieldDomain:
             `bool`
                 `True` if the construct exists, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(0)
         >>> print(f)
@@ -2537,7 +2537,7 @@ class FieldDomain:
             `bool`
                 True if the selected axis is cyclic, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f.iscyclic('X')
         True
@@ -2597,7 +2597,7 @@ class FieldDomain:
             `bool`
                 Whether or not at least one of the conditions are met.
 
-        **Examples:**
+        **Examples**
 
         >>> f.match_by_rank(3, 4)
 
@@ -2685,7 +2685,7 @@ class FieldDomain:
 
                 The construct that was replaced.
 
-        **Examples:**
+        **Examples**
 
         >>> f.replace_construct('X', new=X_construct)
 
@@ -2801,7 +2801,7 @@ class FieldDomain:
             `str`
                 The construct identifier for the construct.
 
-        **Examples:**
+        **Examples**
 
         >>> key = f.set_construct(c)
         >>> key = f.set_construct(c, copy=False)
@@ -3123,7 +3123,7 @@ def _create_auxiliary_mask_component(mask_shape, ind, compress):
         `Data`
             The mask array.
 
-    **Examples:**
+    **Examples**
 
     >>> f = cf.{{class}}()
     >>> d = _create_auxiliary_mask_component(

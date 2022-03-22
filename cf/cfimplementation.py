@@ -114,7 +114,7 @@ def implementation():
         `CFImplementation`
             A container for the CF data model implementation.
 
-    **Examples:**
+    **Examples**
 
     >>> i = cf.implementation()
     >>> i

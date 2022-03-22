@@ -1000,7 +1000,7 @@ class _Meta:
                 A structural signature of each coordinate reference
                 object.
 
-        **Examples:**
+        **Examples**
 
         >>> sig = coordinate_reference_signatures(refs)
 
@@ -1293,7 +1293,7 @@ class _Meta:
 
             `tuple` or `None`
 
-        **Examples:**
+        **Examples**
 
         >>> m.find_coordrefs('dim0')
         >>> m.find_coordrefs('aux1')
@@ -1586,7 +1586,7 @@ def aggregate(
         `FieldList`
             The aggregated field constructs.
 
-    **Examples:**
+    **Examples**
 
     The following six fields comprise eastward wind at two different times
     and for three different atmospheric heights for each time:
@@ -2781,7 +2781,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
 
         `bool`
 
-    **Examples:**
+    **Examples**
 
     >>> if not _ok_coordinate_arrays(meta, 'latitude', True, False):
     ...     print("Don't aggregate")
