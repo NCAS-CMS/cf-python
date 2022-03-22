@@ -3927,6 +3927,13 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_tolist(self):
+        for x in (1, [1, 2], [[1, 2], [3, 4]]):
+            d = cf.Data(x)
+            e = d.tolist()
+            self.assertEqual(e, np.array(x).tolist())
+            self.assertTrue(d.equals(cf.Data(e)))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
