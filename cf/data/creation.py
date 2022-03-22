@@ -89,14 +89,9 @@ def to_dask(array, chunks, **from_array_options):
     dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
 
     """
-    if "chunks" in dask_from_array_options:
-        raise TypeError(
-            "Can't define 'chunks' in the 'dask_from_array_options' "
-            "dictionary. Use the 'chunks' parameter instead."
-        )
-
-    kwargs = dask_from_array_options.copy()
-    kwargs.setdefault("lock", getattr(array, "_lock", True))
+    kwargs = from_array_options
+    kwargs.setdefault("asarray", getattr(array, "dask_asarray", None))
+    kwargs.setdefault("lock", getattr(array, "dask_lock", False))
 
     return da.from_array(array, chunks=chunks, **kwargs)
 
