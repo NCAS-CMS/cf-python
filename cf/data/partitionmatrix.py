@@ -56,7 +56,7 @@ class PartitionMatrix:
                 array. If the partition matrix is a scalar array then it
                 is an empty list. DO NOT UPDATE INPLACE.
 
-        **Examples:**
+        **Examples**
 
         >>> pm = PartitionMatrix(
         ...          numpy.array(Partition(
@@ -88,7 +88,7 @@ class PartitionMatrix:
 
         Returns either a partition or a partition matrix.
 
-        **Examples:**
+        **Examples**
 
         >>> pm.shape
         (5, 3)
@@ -134,7 +134,7 @@ class PartitionMatrix:
         integer) is given then there must be one index per partition
         matrix dimension.
 
-        **Examples:**
+        **Examples**
 
         >>> pm.shape
         (3,)
@@ -196,7 +196,7 @@ class PartitionMatrix:
     def flat(self):
         """A flat iterator over the partitions in the partition matrix.
 
-        **Examples:**
+        **Examples**
 
         >>> pm.shape
         [2, 2]
@@ -227,7 +227,7 @@ class PartitionMatrix:
         Not to be confused with the number of dimensions of the master
         data array.
 
-        **Examples:**
+        **Examples**
 
         >>> pm.shape
         (8, 4)
@@ -249,7 +249,7 @@ class PartitionMatrix:
         Not to be confused with the sizes of the master data array's
         dimensions.
 
-        **Examples:**
+        **Examples**
 
         >>> pm.ndim
         2
@@ -273,7 +273,7 @@ class PartitionMatrix:
         Not to be confused with the number of elements in the master data
         array.
 
-        **Examples:**
+        **Examples**
 
         >>> pm.shape
         (8, 4)
@@ -488,7 +488,7 @@ class PartitionMatrix:
 
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> pm.copy()
 
@@ -530,7 +530,7 @@ class PartitionMatrix:
 
             `PartitionMatrix`
 
-        **Examples:**
+        **Examples**
 
         >>> pm.shape
         (2, 3)
@@ -555,7 +555,7 @@ class PartitionMatrix:
             `numpy.ndenumerate`
                 An iterator over the array coordinates and values.
 
-        **Examples:**
+        **Examples**
 
         >>> pm.shape
         (2, 3)
@@ -629,7 +629,7 @@ class PartitionMatrix:
 
             `PartitionMatrix`
 
-        **Examples:**
+        **Examples**
 
         >>> pm.shape
         (2, 3, 4, 5)
@@ -666,7 +666,7 @@ class PartitionMatrix:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> pm.set_location_map(['dim1', 'dim0'])
         >>> pm.set_location_map([])
@@ -740,7 +740,7 @@ class PartitionMatrix:
 
             `PartitionMatrix`
 
-        **Examples:**
+        **Examples**
 
         >>> pm.shape
         (1, 2, 1, 2)
@@ -789,7 +789,7 @@ class PartitionMatrix:
 
             `PartitionMatrix`
 
-        **Examples:**
+        **Examples**
 
         >>> pm.ndim
         3
