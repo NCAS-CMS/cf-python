@@ -1927,22 +1927,21 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, d.shape)
         self.assertTrue(f.equals(d, verbose=2))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_swapaxes(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-
-        d = cf.Data(a.copy())
+        a = np.ma.arange(24).reshape(2, 3, 4)
+        a[1, 1] = np.ma.masked
+        d = cf.Data(a, chunks=(-1, -1, 2))
 
         for i in range(-a.ndim, a.ndim):
             for j in range(-a.ndim, a.ndim):
-                b = np.swapaxes(a.copy(), i, j)
+                b = np.swapaxes(a, i, j)
                 e = d.swapaxes(i, j)
-                message = "cf.Data.swapaxes({}, {}) failed".format(i, j)
-                self.assertEqual(b.shape, e.shape, message)
-                self.assertTrue((b == e.array).all(), message)
+                self.assertEqual(b.shape, e.shape)
+                self.assertTrue((b == e.array).all())
+
+        # Bad axes
+        with self.assertRaises(IndexError):
+            d.swapaxes(3, -3)
 
     def test_Data_transpose(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1956,12 +1955,8 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(indices):
                 a = np.transpose(a, axes)
                 d.transpose(axes, inplace=True)
-                message = (
-                    "cf.Data.transpose({}) failed: "
-                    "d.shape={}, a.shape={}".format(axes, d.shape, a.shape)
-                )
-                self.assertEqual(d.shape, a.shape, message)
-                self.assertTrue((d.array == a).all(), message)
+                self.assertEqual(d.shape, a.shape)
+                self.assertTrue((d.array == a).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_unique(self):
