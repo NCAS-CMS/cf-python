@@ -30,6 +30,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
     _numpy_isclose,
     _section,
     abspath,
@@ -304,7 +305,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dtype=None,
         mask=None,
         to_memory=False,
-        dask_from_array_options={},
+        init_options=None,
         _use_array=True,
     ):
         """**Initialization**
@@ -422,20 +423,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                *Parameter example:*
-                  The word ``"auto"`` which acts like a size in bytes,
-                  but uses a chunk size defined by the configuration
-                  value ``dask.config("array.chunk-size")``.
-
-                *Parameter example:*
-                  ``-1`` or `None` as a blocksize indicates the size of
-                  the corresponding dimension.
-
-                *Parameter example:*
-                   Blocksizes of some or all dimensions mapped to
-                   dimension positions, like ``{1: 200}``, or ``{0:
-                   -1, 1: (400, 400)}``.
-
                 .. versionadded:: TODODASK
 
             to_memory: `bool optional
@@ -452,18 +439,41 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 If *array* has no ``to_memory()`` method then no
                 action is taken.
-
+                
+                TODODASK: This keyword needs a review (name and implementation). 
+                          New commit to follow
+                          
                 .. versionadded:: TODODASK
 
-            dask_from_array_options: `dict`, optional
-                 Keyword arguments to pass to `dask.array.from_array`.
+            init_options: `dict`, optional
+                Provide optional keyword arguments to methods and
+                functions called during the initialisation process. A
+                dictionary key identifies a method or function. The
+                corresponding value is another dictionary whose
+                key/value pairs are the keyword parameter names and
+                values to be applied.
 
-                .. versionadded:: TODODASK
+                Supported keys are:
+
+                * ``'from_array'``: Provide keyword arguments to
+                  the `dask.array.from_array` function. This is used
+                  when initialising data that is not already a dask
+                  array and is not compressed by convention.
+
+                * ``'first_non_missing_value'``: Provide keyword
+                  arguments to the
+                  `cf.data.utils.first_non_missing_value`
+                  function. This is used when the input array contains
+                  date-time strings or objects, and may affect
+                  performance.
+
+                 *Parameter example:*
+                   ``{'from_array': {'inline_array': True}}``
 
             chunk: deprecated at version TODODASK
                 Use the *chunks* parameter instead.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data(5)
         >>> d = cf.Data([1,2,3], units='K')
@@ -476,6 +486,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         if source is None and isinstance(array, self.__class__):
             source = array
+
+        if init_options is None:
+            init_options = {}
 
         if source is not None:
             if loadd is not None:
@@ -523,13 +536,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             return
 
         super().__init__(array=array, fill_value=fill_value, _use_array=False)
-
-        # Create the _HDF_chunks attribute: defines HDF chunking when
-        # writing to disk.
-        #
-        # Never change the value of the _HDF_chunks attribute
-        # in-place.
-        self._HDF_chunks = None
 
         if loadd is not None:
             self.loadd(loadd)
@@ -591,10 +597,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             compressed = ""
 
         if compressed:
-            if dask_from_array_options:
+            # The data is compressed, so create a uncompressed dask
+            # view of it.
+            if chunks != _DEFAULT_CHUNKS:
                 raise ValueError(
-                    "Can't set 'dask_from_array_options' with "
-                    "compressed input arrays"
+                    "Can't define chunks for compressed input arrays. "
+                    "Consider rechunking after initialisation."
+                )
+
+            if init_options.get("from_array"):
+                raise ValueError(
+                    "Can't define 'from_array' initialisation options "
+                    "for compressed input arrays"
                 )
 
             # Save the input compressed array, as this will contain
@@ -603,8 +617,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             array = compressed_to_dask(array, chunks)
         elif not is_dask_collection(array):
-            # Turn the array into a dask array
-            array = to_dask(array, chunks, dask_from_array_options)
+            # Turn the data into a dask array
+            kwargs = init_options.get("from_array", {})
+            if "chunks" in kwargs:
+                raise TypeError(
+                    "Can't define 'chunks' in the 'from_array' "
+                    "initialisation options. "
+                    "Use the 'chunks' parameter instead."
+                )
+
+            array = to_dask(array, chunks, **kwargs)
 
         elif chunks != _DEFAULT_CHUNKS:
             # The data is already a dask array
@@ -615,15 +637,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
 
         # Find out if we have an array of date-time objects
+        if units.isreftime:
+            dt = True
+
         first_value = None
         if not dt and array.dtype.kind == "O":
-            first_value = first_non_missing_value(array)
+            kwargs = init_options.get("first_non_missing_value", {})
+            first_value = first_non_missing_value(array, **kwargs)
+
             if first_value is not None:
                 dt = hasattr(first_value, "timetuple")
 
         # Convert string or object date-times to floating point
-        # reference times, if appropriate.
-        if array.dtype.kind in "USO" and (dt or units.isreftime):
+        # reference times
+        if dt and array.dtype.kind in "USO":
             array, units = convert_to_reftime(array, units, first_value)
             # Reset the units
             self._Units = units
@@ -1190,6 +1217,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         for mask in auxiliary_mask:
             new.where(mask, cf_masked, None, inplace=True)
+
+        if new.shape != self.shape:
+            # Delete hdf5 chunksizes when the shape has changed.
+            new.nc_clear_hdf5_chunksizes()
 
         return new
 
@@ -2416,16 +2447,40 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):
-        """TODODASK.
+        """Persist the underlaying dask array into memory.
 
-            should this be called `to_memory`? This is part of the larger
-            scheme for memory management
+        This turns an underlying lazy dask array into a equivalent
+        chunked dask array, but now with the results fully computed.
+
+        `persist` is particularly useful when using distributed
+        systems, because the results will be kept in distributed
+        memory, rather than returned to the local process.
+
+        Compare with `compute` and `array`.
 
         **Performance**
 
         `persist` causes all delayed operations to be computed.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `compute`, `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The persisted data. If the operation was in-place then
+                `None` is returned.
+
+        **Examples**
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -2565,9 +2620,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if cyclic:
             cfa_data["_cyclic"] = cyclic.copy()
 
-        HDF_chunks = self._HDF_chunks
-        if HDF_chunks:
-            cfa_data["_HDF_chunks"] = HDF_chunks.copy()
+        cfa_data["_HDF_chunks"] = self.HDF_chunks()
 
         partitions = []
         for index, partition in self.partitions.ndenumerate():
@@ -2726,12 +2779,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             self._cyclic = _empty_set
 
-        HDF_chunks = d.get("_HDF_chunks", None)
-        # Never change the value of the _HDF_chunks attribute in-place
+        HDF_chunks = d.get("_HDF_chunks")
         if HDF_chunks:
-            self._HDF_chunks = HDF_chunks.copy()
-        else:
-            self._HDF_chunks = None
+            self.HDF_chunks(HDF_chunks)
 
         filename = d.get("file", None)
 
@@ -2991,6 +3041,51 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = d._get_dask()
         d._set_dask(da.ceil(dx), reset_mask_hardness=False)
         return d
+
+    @daskified(_DASKIFIED_VERBOSE)
+    def compute(self):
+        """A numpy view the data.
+
+        In-place changes to the returned numpy array *might* affect
+        the underlying dask array, depending on how the dask array has
+        been defined, including any delayed operations.
+
+        The returned numpy array has the same mask hardness and fill
+        values as the data.
+
+        Compare with `array`.
+
+        **Performance**
+
+        `array` causes all delayed operations to be computed.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `persist`, `array`, `datetime_array`
+
+        :Returns:
+
+            `numpy.ndarray`
+                The numpy view of the data.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3.0], 'km')
+        >>> d.compute()
+        array([1., 2., 3.])
+
+        """
+        a = self._get_dask().compute()
+
+        if np.ma.isMA(a):
+            if self.hardmask:
+                a.harden_mask()
+            else:
+                a.soften_mask()
+
+            a.set_fill_value(self.fill_value)
+
+        return a
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -3290,6 +3385,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def rechunk(
         self,
@@ -3299,45 +3395,44 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         balance=False,
         inplace=False,
     ):
-        """Convert blocks in the dask array for new chunks.
+        """Change the chunk structure of the data.
 
-        See `dask.array.rechunk`for more details.
+        .. versionadded:: TODODASK
 
-        .. versionadded:: 4.0.0
-
-        .. seealso:: `chunks`
+        .. seealso:: `chunks`, `dask.array.rechunk`
 
         :Parameters:
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
-
             threshold: `int`, optional
                 The graph growth factor under which we don't bother
-                introducing an intermediate step.
+                introducing an intermediate step. See
+                `dask.array.rechunk` for details.
 
             block_size_limit: `int`, optional
-                The maximum block size (in bytes) we want to produce
+                The maximum block size (in bytes) we want to produce.
                 Defaults to the configuration value
-                ``dask.array.chunk-size``
-
-                TODODASK - how to use/import dask config items??
+                ``dask.config.get('array.chunk-size')``. See
+                `dask.array.rechunk` for details.
 
             balance: `bool`, optional
-                If True, try to make each chunk the same
-                size. By default this is not attempted.
+                If True, try to make each chunk the same size. By
+                default this is not attempted. See
+                `dask.array.rechunk` for details.
 
                 This means ``balance=True`` will remove any small
-                leftover chunks, so using ``x.rechunk(chunks=len(x) //
+                leftover chunks, so using ``d.rechunk(chunks=len(d) //
                 N, balance=True)`` will almost certainly result in
                 ``N`` chunks.
 
         :Returns:
 
-            TODODASK
+            `Data` or `None`
+                The rechunked data, or `None` if the operation was
+                in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> x = cf.Data.ones((1000, 1000), chunks=(100, 100))
 
@@ -3349,10 +3444,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> y = x.rechunk({0: 1000})
 
-        Use the value ``-1`` to specify that you want a single chunk along
-        a dimension or the value ``"auto"`` to specify that dask can
-        freely rechunk a dimension to attain blocks of a uniform block
-        size
+        Use the value ``-1`` to specify that you want a single chunk
+        along a dimension or the value ``"auto"`` to specify that dask
+        can freely rechunk a dimension to attain blocks of a uniform
+        block size.
 
         >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
 
@@ -3374,7 +3469,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d.get_dask(copy=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-
         d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
         return d
@@ -5863,23 +5957,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._custom["_cyclic"] = _empty_set
 
     @property
-    def _HDF_chunks(self):
-        """The HDF chunksizes.
-
-        DO NOT CHANGE IN PLACE.
-
-        """
-        return self._custom["_HDF_chunks"]
-
-    @_HDF_chunks.setter
-    def _HDF_chunks(self, value):
-        self._custom["_HDF_chunks"] = value
-
-    @_HDF_chunks.deleter
-    def _HDF_chunks(self):
-        del self._custom["_HDF_chunks"]
-
-    @property
     @daskified(_DASKIFIED_VERBOSE)
     def _hardmask(self):
         """Storage for the mask hardness.
@@ -5937,9 +6014,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     # Dask attributes
     # ----------------------------------------------------------------
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def chunks(self):
-        """TODODASK."""
-        return self.get_dask(copy=False).chunks
+        """The chunk sizes for each dimension.
+
+        **Examples**
+
+        >>> d = cf.Data.ones((4, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2), (4, 1))
+
+        """
+        return self._get_dask().chunks
+
+    @chunks.setter
+    def chunks(self, chunks):
+        raise TypeError(
+            "Can't set chunks directly. Use the 'rechunk' method instead."
+        )
 
     @property
     def force_compute(self):
@@ -6372,20 +6464,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @property
     @daskified(_DASKIFIED_VERBOSE)
     def array(self):
-        """A numpy array copy the data array.
+        """A numpy array copy of the data.
 
-            .. note:: If the data array is stored as date-time objects then a
-                      numpy array of numeric reference times will be
-                      returned. A numpy array of date-time objects may be
-                      returned by the `datetime_array` attribute.
+        In-place changes to the returned numpy array do not affect the
+        underlying dask array.
 
-            **Performance**
+        The returned numpy array has the same mask hardness and fill
+        values as the data.
 
-            `array` causes all delayed operations to be computed.
+        Compare with `compute`.
 
-            .. seealso:: `datetime_array`, `varray`
+        **Performance**
 
-            **Examples:**
+        `array` causes all delayed operations to be computed.
+
+        .. seealso:: `datetime_array`, `compute`, `persist`
+
+        **Examples**
 
         >>> d = cf.Data([1, 2, 3.0], 'km')
         >>> a = d.array
@@ -6400,37 +6495,34 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> print(d[0])
         -99.0 km
 
+        >>> d = cf.Data('2000-12-1', units='days since 1999-12-1')
+        >>> print(d.array)
+        366
+        >>> print(d.datetime_array)
+        2000-12-01 00:00:00
+        
         """
-        dx = self.get_dask(copy=False)
-        a = dx.compute()
-
-        if np.ma.isMA(a):
-            if self.hardmask:
-                a.harden_mask()
-            else:
-                a.soften_mask()
-
-        return a
+        return self.compute().copy()
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
     def datetime_array(self):
         """An independent numpy array of date-time objects.
 
-            Only applicable to data arrays with reference time units.
+        Only applicable to data arrays with reference time units.
 
-            If the calendar has not been set then the CF default calendar will
-            be used and the units will be updated accordingly.
+        If the calendar has not been set then the CF default calendar will
+        be used and the units will be updated accordingly.
 
-            The data-type of the data array is unchanged.
+        The data-type of the data array is unchanged.
 
-        .. seealso:: `array`
+        .. seealso:: `array`, `compute`, `persist`
 
-            **Examples:**
+        **Performance**
 
-            **Performance**
+        `datetime_array` causes all delayed operations to be computed.
 
-            `datetime_array` causes all delayed operations to be computed.
+        **Examples**
 
         """
         units = self.Units
@@ -6471,8 +6563,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             d = self
 
-        dx = d.get_dask(copy=False)
-        dx = convert_to_datetime(dx, d.Units)  # TODODASK
+        dx = d._get_dask()
+        dx = convert_to_datetime(dx, d.Units)
 
         a = dx.compute()
 
@@ -6482,9 +6574,26 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 a.soften_mask()
 
+            a.set_fill_value(self.fill_value)
+
         return a
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
+    def varray(self):
+        """A numpy array view of the data array.
+
+        Deprecated at version TODODASK.
+
+        .. seealso:: `array`, `datetime_array`, `compute`, `persist`
+
+        """
+        raise NotImplementedError(
+            "The varray method was deprecated at version TODODASK"
+        )
+
+    @property
+    @daskified(_DASKIFIED_VERBOSE)
     def mask(self):
         """The Boolean missing data mask of the data array.
 
@@ -6511,7 +6620,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = self._get_dask()
         mask = da.ma.getmaskarray(dx)
 
-        mask_data_obj._set_dask(mask, reset_mask_hardness=True)
+        mask_data_obj._set_dask(mask, reset_mask_hardness=False)
         mask_data_obj.override_units(_units_None, inplace=True)
         mask_data_obj.hardmask = True
 
@@ -7684,7 +7793,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 The units.
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_units('metres')
         >>> d.get_units()
@@ -7737,7 +7846,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def set_calendar(self, calendar):
         """Set the calendar.
 
-        .. seealso:: `del_calendar`, `get_calendar`
+        .. seealso:: `override_calendar`, `override_units`,
+                     `del_calendar`, `get_calendar`
 
         :Parameters:
 
@@ -7748,7 +7858,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_calendar('none')
         >>> d.get_calendar
@@ -7765,7 +7875,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def set_units(self, value):
         """Set the units.
 
-        .. seealso:: `del_units`, `get_units`, `has_units`
+        .. seealso:: `override_units`, `del_units`, `get_units`,
+                     `has_units`, `Units`
 
         :Parameters:
 
@@ -7776,7 +7887,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_units('watt')
         >>> d.get_units()
@@ -8525,10 +8636,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             data = data.copy()
             if dtype is not None and np.dtype(dtype) != data.dtype:
                 data.dtype = dtype
-        else:
-            if dtype is not None and np.dtype(dtype) != data.dtype:
-                data = data.copy()
-                data.dtype = dtype
+        elif dtype is not None and np.dtype(dtype) != data.dtype:
+            data = data.copy()
+            data.dtype = dtype
 
         return data
 
@@ -8796,20 +8906,67 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._size - self.count()
 
+    @daskified(_DASKIFIED_VERBOSE)
     def cyclic(self, axes=None, iscyclic=True):
-        """Returns or sets the axes of the data array which are cyclic.
+        """Get or set the cyclic axes.
+
+        Some methods treat the first and last elements of a cyclic
+        axis as adjacent and physically connected, such as
+        `convolution_filter`, `__getitem__` and `__setitem__`. Some
+        methods may make a cyclic axis non-cyclic, such as `halo`.
 
         :Parameters:
 
             axes: (sequence of) `int`, optional
+                Select the axes to have their cyclicity set. By
+                default, or if *axes* is `None` or an empty sequence,
+                no axes are modified.
 
             iscyclic: `bool`
+                Specify whether to make the axes cyclic or
+                non-cyclic. By default (True), the axes are set as
+                cyclic.
 
         :Returns:
 
             `set`
+                The cyclic axes prior to the change, or the current
+                cylcic axes if no axes are specified.
 
-        **Examples:**
+        **Examples**
+
+        >>> d = cf.Data(np.arange(12).reshape(3, 4))
+        >>> d.cyclic()
+        set()
+        >>> d.cyclic(0)
+        set()
+        >>> d.cyclic()
+        {0}
+        >>> d.cyclic(0, iscyclic=False)
+        {0}
+        >>> d.cyclic()
+        set()
+        >>> d.cyclic([0, 1])
+        set()
+        >>> d.cyclic()
+        {0, 1}
+        >>> d.cyclic([0, 1], iscyclic=False)
+        {0, 1}
+        >>> d.cyclic()
+        set()
+
+        >>> print(d.array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> d[0, -1:2]
+        Traceback (most recent call last):
+            ...
+        IndexError: Can't take a cyclic slice of a non-cyclic axis
+        >>> d.cyclic(1)
+        set()
+        >>> d[0, -1:2]
+        <CF Data(1, 2): [[3, 0, 1]]>
 
         """
         cyclic_axes = self._cyclic
@@ -9132,7 +9289,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `itertools.product`
                 An iterator over tuples of indices of the data array.
 
-        **Examples:**
+        **Examples**
+
+        >>> d = cf.Data(np.arange(6).reshape(2, 3))
+        >>> print(d.array)
+        [[0 1 2]
+         [3 4 5]]
+        >>> for i in d.ndindex():
+        ...     print(i, d[i])
+        ...
+        (0, 0) [[0]]
+        (0, 1) [[1]]
+        (0, 2) [[2]]
+        (1, 0) [[3]]
+        (1, 1) [[4]]
+        (1, 2) [[5]]
+
+        >>> d = cf.Data(9)
+        >>> for i in d.ndindex():
+        ...     print(i, d[i])
+        ...
+        () 9
 
         """
         return product(*[range(0, r) for r in self.shape])
@@ -9393,106 +9570,118 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_deprecated_kwarg_check("size")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the data by adding a halo.
 
-        The halo may be applied over a subset of the data dimensions and
-        each dimension may have a different halo size (including
-        zero). The halo region is populated with a copy of the proximate
-        values from the original data.
+        The halo contains the adjacent values up to the given
+        depth(s). See the example for details.
+
+        The halo may be applied over a subset of the data dimensions
+        and each dimension may have a different halo size (including
+        zero). The halo region is populated with a copy of the
+        proximate values from the original data.
 
         **Cyclic axes**
 
-        A cyclic axis that is expanded with a halo of at least size 1 is
-        no longer considered to be cyclic.
+        A cyclic axis that is expanded with a halo of at least size 1
+        is no longer considered to be cyclic.
 
         **Tripolar domains**
 
-        Data for global tripolar domains are a special case in that a halo
-        added to the northern end of the "Y" axis must be filled with
-        values that are flipped in "X" direction. Such domains need to be
-        explicitly indicated with the *tripolar* parameter.
+        Data for global tripolar domains are a special case in that a
+        halo added to the northern end of the "Y" axis must be filled
+        with values that are flipped in "X" direction. Such domains
+        need to be explicitly indicated with the *tripolar* parameter.
 
         .. versionadded:: 3.5.0
 
         :Parameters:
 
-            size: `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the halo
-                size that is applied to all of the axes defined by the
-                *axes* parameter.
+                If *depth* is a non-negative `int` then this is the
+                halo size that is applied to all of the axes defined
+                by the *axes* parameter.
 
                 Alternatively, halo sizes may be assigned to axes
                 individually by providing a `dict` for which a key
-                specifies an axis (defined by its integer position in the
-                data) with a corresponding value of the halo size for that
-                axis. Axes not specified by the dictionary are not
-                expanded, and the *axes* parameter must not also be set.
+                specifies an axis (defined by its integer position in
+                the data) with a corresponding value of the halo size
+                for that axis. Axes not specified by the dictionary
+                are not expanded, and the *axes* parameter must not
+                also be set.
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``depth=1``.
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results in
-                  no change to the data shape.
+                  Specify a halo size of zero ``depth=0``. This
+                  results in no change to the data shape.
 
                 *Parameter example:*
-                  For data with three dimensions, specify a halo size of 3
-                  for the first dimension and 1 for the second dimension:
-                  ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
-                  3, 1: 1, 2: 0}``
+                  For data with three dimensions, specify a halo size
+                  of 3 for the first dimension and 1 for the second
+                  dimension: ``depth={0: 3, 1: 1}``. This is
+                  equivalent to ``depth={0: 3, 1: 1, 2: 0}``.
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
-                  dimensions `size=2, axes=[0, -1]`` or equivalently
-                  ``size={0: 2, -1: 2}``.
+                  dimensions `depth=2, axes=[0, -1]`` or equivalently
+                  ``depth={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
-                Select the domain axes to be expanded, defined by their
-                integer positions in the data. By default, or if *axes* is
-                `None`, all axes are selected. No axes are expanded if
-                *axes* is an empty sequence.
+                Select the domain axes to be expanded, defined by
+                their integer positions in the data. By default, or if
+                *axes* is `None`, all axes are selected. No axes are
+                expanded if *axes* is an empty sequence.
 
             tripolar: `dict`, optional
                 A dictionary defining the "X" and "Y" axes of a global
-                tripolar domain. This is necessary because in the global
-                tripolar case the "X" and "Y" axes need special treatment,
-                as described above. It must have keys ``'X'`` and ``'Y'``,
-                whose values identify the corresponding domain axis
-                construct by their integer positions in the data.
+                tripolar domain. This is necessary because in the
+                global tripolar case the "X" and "Y" axes need special
+                treatment, as described above. It must have keys
+                ``'X'`` and ``'Y'``, whose values identify the
+                corresponding domain axis construct by their integer
+                positions in the data.
 
-                The "X" and "Y" axes must be a subset of those identified
-                by the *size* or *axes* parameter.
+                The "X" and "Y" axes must be a subset of those
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+                  respectively of the data: ``tripolar={'X': 2, 'Y':
+                  1}``
 
             fold_index: `int`, optional
-                Identify which index of the "Y" axis corresponds to the
-                fold in "X" axis of a tripolar grid. The only valid values
-                are ``-1`` for the last index, and ``0`` for the first
-                index. By default it is assumed to be the last
-                index. Ignored if *tripolar* is `None`.
+                Identify which index of the "Y" axis corresponds to
+                the fold in "X" axis of a tripolar grid. The only
+                valid values are ``-1`` for the last index, and ``0``
+                for the first index. By default it is assumed to be
+                the last index. Ignored if *tripolar* is `None`.
 
             {{inplace: `bool`, optional}}
 
             {{verbose: `int` or `str` or `None`, optional}}
+
+            size: deprecated at version TODODASK
+                Use the *depth* parameter instead.
 
         :Returns:
 
@@ -9506,29 +9695,30 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d[-1, -1] = cf.masked
         >>> d[1, 1] = cf.masked
         >>> print(d.array)
-        [[ 0  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 --]]
+        [[0 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 --]]
 
         >>> e = d.halo(1)
         >>> print(e.array)
-        [[ 0  0  1  2  3  3]
-         [ 0  0  1  2  3  3]
-         [ 4  4 --  6  7  7]
-         [ 8  8  9 10 -- --]
-         [ 8  8  9 10 -- --]]
+        [[0 0 1 2 3 3]
+         [0 0 1 2 3 3]
+         [4 4 -- 6 7 7]
+         [8 8 9 10 -- --]
+         [8 8 9 10 -- --]]
+
         >>> d.equals(e[1:-1, 1:-1])
         True
 
         >>> e = d.halo(2)
         >>> print(e.array)
-        [[ 0  1  0  1  2  3  2  3]
-         [ 4 --  4 --  6  7  6  7]
-         [ 0  1  0  1  2  3  2  3]
-         [ 4 --  4 --  6  7  6  7]
-         [ 8  9  8  9 10 -- 10 --]
-         [ 4 --  4 --  6  7  6  7]
-         [ 8  9  8  9 10 -- 10 --]]
+        [[0 1 0 1 2 3 2 3]
+         [4 -- 4 -- 6 7 6 7]
+         [0 1 0 1 2 3 2 3]
+         [4 -- 4 -- 6 7 6 7]
+         [8 9 8 9 10 -- 10 --]
+         [4 -- 4 -- 6 7 6 7]
+         [8 9 8 9 10 -- 10 --]]
         >>> d.equals(e[2:-2, 2:-2])
         True
 
@@ -9538,11 +9728,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> e = d.halo(1, axes=0)
         >>> print(e.array)
-        [[ 0  1  2  3]
-         [ 0  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 --]
-         [ 8  9 10 --]]
+        [[0 1 2 3]
+         [0 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 --]
+         [8 9 10 --]]
+
         >>> d.equals(e[1:-1, :])
         True
         >>> f = d.halo({0: 1})
@@ -9551,57 +9742,58 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0})
         >>> print(e.array)
-        [[ 0  0  1  2  3  3]
-         [ 0  0  1  2  3  3]
-         [ 4  4 --  6  7  7]
-         [ 8  8  9 10 -- --]
-         [-- -- 10  9  8  8]]
+        [[0 0 1 2 3 3]
+         [0 0 1 2 3 3]
+         [4 4 -- 6 7 7]
+         [8 8 9 10 -- --]
+         [-- -- 10 9 8 8]]
 
         >>> e = d.halo(1, tripolar={'X': 1, 'Y': 0}, fold_index=0)
         >>> print(e.array)
-        [[ 3  3  2  1  0  0]
-         [ 0  0  1  2  3  3]
-         [ 4  4 --  6  7  7]
-         [ 8  8  9 10 -- --]
-         [ 8  8  9 10 -- --]]
+        [[3 3 2 1 0 0]
+         [0 0 1 2 3 3]
+         [4 4 -- 6 7 7]
+         [8 8 9 10 -- --]
+         [8 8 9 10 -- --]]
 
         """
-        _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
-        _ = "{}.halo(".format(self.__class__.__name__)
-        logger.info("{}{})".format(_, (",\n" + " " * len(_)).join(_kwargs)))
+        from dask.array.core import concatenate
 
         d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d.ndim
-        shape0 = d.shape
+        shape = d.shape
 
-        # ------------------------------------------------------------
-        # Parse the size and axes parameters
-        # ------------------------------------------------------------
-        if isinstance(size, dict):
+        # Parse the depth and axes parameters
+        if isinstance(depth, dict):
             if axes is not None:
                 raise ValueError(
                     "Can't set the axes parameter when the "
-                    "size parameter is a dictionary"
+                    "depth parameter is a dictionary"
                 )
 
-            axes = self._parse_axes(tuple(size))
-            size = [size[i] if i in axes else 0 for i in range(ndim)]
+            # Check that the dictionary keys are OK and remove size
+            # zero depths
+            axes = self._parse_axes(tuple(depth))
+            depth = {i: size for i, size in depth.items() if size}
         else:
             if axes is None:
                 axes = list(range(ndim))
+            else:
+                axes = d._parse_axes(axes)
 
-            axes = d._parse_axes(axes)
-            size = [size if i in axes else 0 for i in range(ndim)]
+            depth = {i: depth for i in axes}
 
-        # ------------------------------------------------------------
+        # Return if all axis depths are zero
+        if not any(depth.values()):
+            return d
+
         # Parse the tripolar parameter
-        # ------------------------------------------------------------
         if tripolar:
             if fold_index not in (0, -1):
                 raise ValueError(
                     "fold_index parameter must be -1 or 0. "
-                    "Got {!r}".format(fold_index)
+                    f"Got {fold_index!r}"
                 )
 
             # Find the X and Y axes of a tripolar grid
@@ -9611,8 +9803,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             if tripolar:
                 raise ValueError(
-                    "Can not set key {!r} in the tripolar "
-                    "dictionary.".format(tripolar.popitem()[0])
+                    f"Can not set key {tripolar.popitem()[0]!r} in the "
+                    "tripolar dictionary."
                 )
 
             if X_axis is None:
@@ -9627,13 +9819,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if len(X) != 1:
                 raise ValueError(
                     "Must provide exactly one tripolar 'X' axis. "
-                    "Got {!r}".format(X_axis)
+                    f"Got {X_axis!r}"
                 )
 
             if len(Y) != 1:
                 raise ValueError(
                     "Must provide exactly one tripolar 'Y' axis. "
-                    "Got {!r}".format(Y_axis)
+                    f"Got {Y_axis!r}"
                 )
 
             X_axis = X[0]
@@ -9642,135 +9834,76 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if X_axis == Y_axis:
                 raise ValueError(
                     "Tripolar 'X' and 'Y' axes must be different. "
-                    "Got {!r}, {!r}".format(X_axis, Y_axis)
+                    f"Got {X_axis!r}, {Y_axis!r}"
                 )
 
             for A, axis in zip(("X", "Y"), (X_axis, Y_axis)):
                 if axis not in axes:
                     raise ValueError(
                         "If dimensions have been identified with the "
-                        "axes or size parameters then they must include "
-                        "the tripolar {!r} axis: {!r}".format(A, axis)
+                        "axes or depth parameters then they must include "
+                        f"the tripolar {A!r} axis: {axis!r}"
                     )
-            # --- End: for
 
-            tripolar = True
-        # --- End: if
+            tripolar = Y_axis in depth
 
-        # Remove axes with a size 0 halo
-        axes = [i for i in axes if size[i]]
+        # Create the halo
+        dx = d._get_dask()
 
-        if not axes:
-            # Return now if all halos are of size 0
-            return d
+        indices = [slice(None)] * ndim
+        for axis, size in sorted(depth.items()):
+            if not size:
+                continue
 
-        # Check that the halos are not too large
-        for i, (h, n) in enumerate(zip(size, shape0)):
-            if h > n:
+            if size > shape[axis]:
                 raise ValueError(
-                    "Halo size {!r} is too big for axis of size {!r}".format(
-                        h, n
-                    )
+                    f"Halo depth {size} is too large for axis of size "
+                    f"{shape[axis]}"
                 )
-        # --- End: for
 
-        # Initialise the expanded data
-        shape1 = [
-            n + size[i] * 2 if i in axes else n for i, n in enumerate(shape0)
-        ]
-        out = type(d).empty(
-            shape1,
-            dtype=d.dtype,
-            units=d.Units,
-            fill_value=d.get_fill_value(None),
-        )
+            left_indices = indices[:]
+            right_indices = indices[:]
 
-        # ------------------------------------------------------------
-        # Body (not edges nor corners)
-        # ------------------------------------------------------------
-        indices = [
-            slice(h, h + n) if (h and i in axes) else slice(None)
-            for i, (h, n) in enumerate(zip(size, shape0))
-        ]
-        out[tuple(indices)] = d
+            left_indices[axis] = slice(0, size)
+            right_indices[axis] = slice(-size, None)
 
-        # ------------------------------------------------------------
-        # Edges (not corners)
-        # ------------------------------------------------------------
-        for i in axes:
-            size_i = size[i]
+            left = dx[tuple(left_indices)]
+            right = dx[tuple(right_indices)]
 
-            for edge in (0, -1):
-                # Initialise indices to the expanded data
-                indices1 = [slice(None)] * ndim
+            dx = concatenate([left, dx, right], axis=axis)
 
-                if edge == -1:
-                    indices1[i] = slice(-size_i, None)
-                else:
-                    indices1[i] = slice(0, size_i)
+        d._set_dask(dx, reset_mask_hardness=False)
 
-                # Initialise indices to the original data
-                indices0 = indices1[:]
+        # Special case for tripolar: The northern Y axis halo contains
+        # the values that have been flipped in the X direction.
+        if tripolar:
+            hardmask = d.hardmask
+            if hardmask:
+                d.hardmask = False
 
-                for j in axes:
-                    if j == i:
-                        continue
-
-                    size_j = size[j]
-                    indices1[j] = slice(size_j, -size_j)
-
-                out[tuple(indices1)] = d[tuple(indices0)]
-        # --- End: for
-
-        # ------------------------------------------------------------
-        # Corners
-        # ------------------------------------------------------------
-        if len(axes) > 1:
-            for indices in product(
-                *[
-                    (slice(0, size[i]), slice(-size[i], None))
-                    if i in axes
-                    else (slice(None),)
-                    for i in range(ndim)
-                ]
-            ):
-                out[indices] = d[indices]
-
-        hardmask = d.hardmask
-
-        # ------------------------------------------------------------
-        # Special case for tripolar: The northern "Y" axis halo
-        # contains the values that have been flipped in the "X"
-        # direction.
-        # ------------------------------------------------------------
-        if tripolar and size[Y_axis]:
-            indices1 = [slice(None)] * ndim
-
+            indices1 = indices[:]
             if fold_index == -1:
-                # The last index of the "Y" axis corresponds to the
-                # fold in "X" axis of a tripolar grid
-                indices1[Y_axis] = slice(-size[Y_axis], None)
+                # The last index of the Y axis corresponds to the fold
+                # in X axis of a tripolar grid
+                indices1[Y_axis] = slice(-depth[Y_axis], None)
             else:
-                # The first index of the "Y" axis corresponds to the
-                # fold in "X" axis of a tripolar grid
-                indices1[Y_axis] = slice(0, size[Y_axis])
+                # The first index of the Y axis corresponds to the
+                # fold in X axis of a tripolar grid
+                indices1[Y_axis] = slice(0, depth[Y_axis])
 
             indices2 = indices1[:]
             indices2[X_axis] = slice(None, None, -1)
 
-            out.hardmask = False
-            out[tuple(indices1)] = out[tuple(indices2)]
+            dx = d._get_dask()
+            dx[tuple(indices1)] = dx[tuple(indices2)]
 
-        out.hardmask = True
+            d._set_dask(dx, reset_mask_hardness=False)
+
+            if hardmask:
+                d.hardmask = True
 
         # Set expanded axes to be non-cyclic
-        out.cyclic(axes=axes, iscyclic=False)
-
-        if inplace:
-            d.__dict__ = out.__dict__
-            d.hardmask = hardmask
-        else:
-            d = out
+        d.cyclic(axes=tuple(depth), iscyclic=False)
 
         return d
 
@@ -9809,6 +9942,70 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             dtype=self.dtype,
         )
         self._hardmask = True
+
+    def has_calendar(self):
+        """Whether a calendar has been set.
+
+        .. seealso:: `del_calendar`, `get_calendar`, `set_calendar`,
+                     `has_units`, `Units`
+
+        :Returns:
+
+            `bool`
+                True if the calendar has been set, otherwise False.
+
+        **Examples**
+
+        >>> d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        >>> d.has_calendar()
+        True
+
+        >>> d = cf.Data(1, calendar="noleap")
+        >>> d.has_calendar()
+        True
+
+        >>> d = cf.Data(1, "days since 2000-1-1")
+        >>> d.has_calendar()
+        False
+
+        >>> d = cf.Data(1, "m")
+        >>> d.has_calendar()
+        False
+
+        """
+        return hasattr(self.Units, "calendar")
+
+    def has_units(self):
+        """Whether units have been set.
+
+        .. seealso:: `del_units`, `get_units`, `set_units`,
+                     `has_calendar`, `Units`
+
+        :Returns:
+
+            `bool`
+                True if units have been set, otherwise False.
+
+        **Examples**
+
+        >>> d = cf.Data(1, "")
+        >>> d.has_units()
+        True
+
+        >>> d = cf.Data(1, "m")
+        >>> d.has_units()
+        True
+
+        >>> d = cf.Data(1)
+        >>> d.has_units()
+        False
+
+        >>> d = cf.Data(1, calendar='noleap')
+        >>> d.has_units()
+        False
+
+        """
+        return hasattr(self.Units, "units")
 
     def soften_mask(self):
         """Force the mask to soft.
@@ -10769,7 +10966,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Delete the calendar.
 
         .. seealso:: `get_calendar`, `has_calendar`, `set_calendar`,
-                     `del_units`
+                     `del_units`, `Units`
 
         :Parameters:
 
@@ -10784,38 +10981,42 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `str`
                 The value of the deleted calendar.
 
-        **Examples:**
+        **Examples**
 
-        >>> d.set_calendar('360_day')
-        >>> d.has_calendar()
-        True
-        >>> d.get_calendar()
-        '360_day'
+        >>> d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
         >>> d.del_calendar()
-        >>> d.has_calendar()
-        False
-        >>> d.get_calendar()
-        ValueError: Can't get non-existent calendar
-        >>> print(d.get_calendar(None))
+        'noleap'
+        >>> print(d.del_calendar())
         None
-        >>> print(d.del_calendar(None))
+
+        >>> d = cf.Data(1, "days since 2000-1-1")
+        >>> print(d.del_calendar())
         None
+
+        >>> d = cf.Data(1, "m")
+        Traceback (most recent call last):
+            ...
+        ValueError: Units <Units: m> have no calendar
 
         """
-        calendar = getattr(self.Units, "calendar", None)
+        units = self.Units
+        if not units.isreftime:
+            return self._default(default, f"Units {units!r} have no calendar")
 
-        if calendar is not None:
-            self.override_calendar(None, inplace=True)
-            return calendar
+        calendar = getattr(units, "calendar", None)
+        if calendar is None:
+            return self._default(
+                default, f"{self.__class__.__name__} has no calendar"
+            )
 
-        raise self._default(
-            default, f"{self.__class__.__name__} has no 'calendar' component"
-        )
+        self.override_calendar(None, inplace=True)
+        return calendar
 
     def del_units(self, default=ValueError()):
         """Delete the units.
 
-        .. seealso:: `get_units`, `has_units`, `set_units`, `del_calendar`
+        .. seealso:: `get_units`, `has_units`, `set_units`,
+                     `del_calendar`, `Units`
 
         :Parameters:
 
@@ -10830,39 +11031,35 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `str`
                 The value of the deleted units.
 
-        **Examples:**
+        **Examples**
 
-        >>> d.set_units('metres')
-        >>> d.has_units()
-        True
-        >>> d.get_units()
-        'metres'
+        >>> d = cf.Data(1, "m")
         >>> d.del_units()
-        >>> d.has_units()
-        False
-        >>> d.get_units()
-        ValueError: Can't get non-existent units
-        >>> print(d.get_units(None))
-        None
-        >>> print(d.del_units(None))
-        None
+        'm'
+        >>> d.Units
+        <Units: >
+        >>> d.del_units()
+        Traceback (most recent call last):
+            ...
+        ValueError: Data has no units
+
+        >>> d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        >>> d.del_units()
+        'days since 2000-1-1'
+        >>> d.Units
+        <Units: noleap>
 
         """
-        out = self.Units
-
-        units = getattr(out, "units", None)
-        calendar = getattr(out, "calendar", None)
-
-        if calendar is not None:
-            self.Units = Units(None, calendar)
-        else:
-            del self.Units
+        u = self.Units
+        units = getattr(u, "units", None)
+        calendar = getattr(u, "calendar", None)
+        self.override_units(Units(None, calendar), inplace=True)
 
         if units is not None:
             return units
 
         return self._default(
-            default, f"{self.__class__.__name__} has no 'units' component"
+            default, f"{self.__class__.__name__} has no units"
         )
 
     @classmethod
@@ -11010,41 +11207,85 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def HDF_chunks(self, *chunks):
-        """TODO."""
-        _HDF_chunks = self._HDF_chunks
+        """Get or set HDF chunk sizes.
 
-        if _HDF_chunks is None:
-            _HDF_chunks = {}
-        else:
-            _HDF_chunks = _HDF_chunks.copy()
+        The HDF chunk sizes may be used by external code that allows
+        `Data` objects to be written to netCDF files.
 
-        org_HDF_chunks = dict(
-            [(i, _HDF_chunks.get(axis)) for i, axis in enumerate(self._axes)]
+        Deprecated at version TODODASK and is no longer available. Use
+        the methods `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+        and `nc_set_hdf5_chunksizes` instead.
+
+        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`
+
+        :Parameters:
+
+            chunks: `dict` or `None`, *optional*
+                Specify HDF chunk sizes.
+
+                When no positional argument is provided, the HDF chunk
+                sizes are unchanged.
+
+                If `None` then the HDF chunks sizes for each dimension
+                are cleared, so that the HDF default chunk size value
+                will be used when writing data to disk.
+
+                If a `dict` then it defines for a subset of the
+                dimensions, defined by their integer positions, the
+                corresponding HDF chunk sizes. The HDF chunk sizes are
+                set as a number of elements along the dimension.
+
+        :Returns:
+
+            `dict`
+                The HDF chunks for each dimension prior to the change,
+                or the current HDF chunks if no new values are
+                specified. A value of `None` is an indication that the
+                default chunk size should be used for that dimension.
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(30).reshape(5, 6))
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({1: 2})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: None, 1: 2}
+        >>> d.HDF_chunks({1:None})
+        {0: None, 1: 2}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({0: 3, 1: 6})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks({1: 4})
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks({1: 999})
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks(None)
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "HDF_chunks",
+            message="Use the methods 'nc_clear_hdf5_chunksizes', "
+            "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
+            "instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
         )
-
-        if not chunks:
-            return org_HDF_chunks
-
-        chunks = chunks[0]
-
-        if chunks is None:
-            # Clear all chunking. Never change the value of the
-            # _HDF_chunks attribute in-place.
-            self._HDF_chunks = None
-            return org_HDF_chunks
-
-        axes = self._axes
-        for axis, size in chunks.items():
-            _HDF_chunks[axes[axis]] = size
-
-        if _HDF_chunks.values() == [None] * self.ndim:
-            _HDF_chunks = None
-
-        # Never change the value of the _HDF_chunks attribute in-place
-        self._HDF_chunks = _HDF_chunks
-
-        return org_HDF_chunks
 
     def inspect(self):
         """Inspect the object for debugging.
@@ -12273,13 +12514,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
-
-        hdf = self._HDF_chunks
-        if hdf:
-            # Never change the value of the _HDF_chunks attribute in-place
-            self._HDF_chunks = {
-                axis: size for axis, size in hdf.items() if axis not in axes
-            }
 
         return d
 

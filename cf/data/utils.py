@@ -5,8 +5,14 @@ from itertools import product
 import dask.array as da
 import numpy as np
 
-from ..cfdatetime import dt as cf_dt
-from ..cfdatetime import dt2rt, rt2dt, st2rt
+from ..cfdatetime import (
+    canonical_calendar,
+    default_calendar,
+    dt,
+    dt2rt,
+    rt2dt,
+    st2rt,
+)
 from ..units import Units
 from .dask_utils import cf_YMDhms
 
@@ -28,22 +34,22 @@ def _is_numeric_dtype(array):
     **Examples:**
 
     >>> a = np.array([0, 1, 2])
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     True
     >>> a = np.array([False, True, True])
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     True
     >>> a = np.array(["a", "b", "c"], dtype="S1")
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     False
     >>> a = np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0])
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     True
     >>> a = np.array(10)
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     True
     >>> a = np.empty(1, dtype=object)
-    >>> _is_numeric_dtype(a)
+    >>> cf.data.utils._is_numeric_dtype(a)
     False
 
     """
@@ -61,177 +67,261 @@ def _is_numeric_dtype(array):
     return np.issubdtype(dtype, np.number) or np.issubdtype(dtype, np.bool_)
 
 
-def convert_to_datetime(array, units):
-    """Convert a daskarray to.
+def convert_to_datetime(a, units):
+    """Convert a dask array of numbers to one of date-time objects.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
-        :Parameters:
+    .. seealso `convert_to_reftime`
 
-            array: dask array
+    :Parameters:
 
-            units : `Units`
+        a: `dask.array.Array`
+            The input numeric reference time values.
 
-        :Returns:
+        units: `Units`
+            The reference time units that define the output
+            date-time objects.
 
-            dask array
-                A new dask array containing datetime objects.
+    :Returns:
+
+        `dask.array.Array`
+            A new dask array containing date-time objects.
+
+    **Examples**
+
+    >>> import dask.array as da
+    >>> d = da.from_array(2.5)
+    >>> e = cf.data.utils.convert_to_datetime(d, cf.Units("days since 2000-12-01"))
+    >>> print(e.compute())
+    2000-12-03 12:00:00
 
     """
-    dx = array.map_blocks(partial(rt2dt, units_in=units), dtype=object)
-    return dx
+    return a.map_blocks(
+        partial(rt2dt, units_in=units),
+        dtype=object,
+        meta=np.array((), dtype=object),
+    )
 
 
-def convert_to_reftime(array, units, first_value=None):
+def convert_to_reftime(a, units=None, first_value=None):
     """Convert a dask array of string or object date-times to floating
     point reference times.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
-        :Parameters:
+    .. seealso `convert_to_datetime`
 
-            array: dask array
+    :Parameters:
 
-            units : `Units`
+        a: `dask.array.Array`
 
-            first_value : scalar, optional
+        units: `Units`, optional
+             Specify the units for the output reference time
+             values. By default the units are inferred from the first
+             non-missing value in the array, or set to ``<Units: days
+             since 1970-01-01 gregorian>`` if all values are missing.
 
-        :Returns:
+        first_value: optional
+            If set, then assumed to be equal to the first non-missing
+            value of the array, thereby removing the need to find it
+            by inspection of *a*, which may be expensive. By default
+            the first non-missing value is found from *a*.
 
-            dask array, `Units`
-                A new dask array containing reference times, and its
-                units.
+    :Returns:
+
+        (`dask.array.Array`, `Units`)
+            The reference times, and their units.
+
+    >>> import dask.array as da
+    >>> d = da.from_array(2.5)
+    >>> e = cf.data.utils.convert_to_datetime(d, cf.Units("days since 2000-12-01"))
+
+    >>> f, u = cf.data.utils.convert_to_reftime(e)
+    >>> f.compute()
+    0.5
+    >>> u
+    <Units: days since 2000-12-3 standard>
+
+    >>> f, u = cf.data.utils.convert_to_reftime(e, cf.Units("days since 1999-12-01"))
+    >>> f.compute()
+    368.5
+    >>> u
+    <Units: days since 1999-12-01 standard>
 
     """
-    kind = array.dtype.kind
+    kind = a.dtype.kind
     if kind in "US":
         # Convert date-time strings to reference time floats
         if not units:
-            value = first_value(array, first_value)
-            if value is not None:
-                YMD = str(value).partition("T")[0]
+            first_value = first_non_missing_value(a, cached=first_value)
+            if first_value is not None:
+                YMD = str(first_value).partition("T")[0]
             else:
                 YMD = "1970-01-01"
 
-            units = Units("days since " + YMD, units._calendar)
+            units = Units("days since " + YMD, default_calendar)
 
-        array = array.map_blocks(
+        a = a.map_blocks(
             partial(st2rt, units_in=units, units_out=units), dtype=float
         )
 
     elif kind == "O":
         # Convert date-time objects to reference time floats
-        value = first_value(array, first_value)
-        if value is not None:
-            x = value
+        first_value = first_non_missing_value(a, cached=first_value)
+        if first_value is not None:
+            x = first_value
         else:
-            x = cf_dt(1970, 1, 1, calendar="gregorian")
+            x = dt(1970, 1, 1, calendar=default_calendar)
 
         x_since = "days since " + "-".join(map(str, (x.year, x.month, x.day)))
-        x_calendar = getattr(x, "calendar", "gregorian")
+        x_calendar = getattr(x, "calendar", default_calendar)
 
         d_calendar = getattr(units, "calendar", None)
         d_units = getattr(units, "units", None)
 
         if x_calendar != "":
-            if d_calendar is not None:
-                if not units.equivalent(Units(x_since, x_calendar)):
-                    raise ValueError(
-                        f"Incompatible units: "
-                        f"{units!r}, {Units(x_since, x_calendar)!r}"
-                    )
-            else:
+            if units is None:
                 d_calendar = x_calendar
+            elif not units.equivalent(Units(x_since, x_calendar)):
+                raise ValueError(
+                    "Incompatible units: "
+                    f"{units!r}, {Units(x_since, x_calendar)!r}"
+                )
 
         if not units:
-            # Set the units to something that is (hopefully)
-            # close to all of the datetimes, in an attempt to
-            # reduce errors arising from the conversion to
-            # reference times
+            # Set the units to something that is (hopefully) close to
+            # all of the datetimes, in an attempt to reduce errors
+            # arising from the conversion to reference times
             units = Units(x_since, calendar=d_calendar)
         else:
             units = Units(d_units, calendar=d_calendar)
 
-        # Check that all date-time objects have correct and
-        # equivalent calendars
-        calendars = unique_calendars(array)
-        if len(calendars) > 1:
-            raise ValueError(
-                "Not all date-time objects have equivalent "
-                f"calendars: {tuple(calendars)}"
-            )
-
-        # If the date-times are calendar-agnostic, assign the
-        # given calendar, defaulting to Gregorian.
-        if calendars.pop() == "":
-            calendar = getattr(units, "calendar", "gregorian")
-
-            # TODODASK: can map_blocks this, I think
-            new_array = da.empty_like(array, dtype=object)
-            for i in np.ndindex(new_array.shape):
-                new_array[i] = cf_dt(array[i], calendar=calendar)
-
-            array = new_array
-
         # Convert the date-time objects to reference times
-        array = array.map_blocks(dt2rt, units_out=units, dtype=float)
+        a = a.map_blocks(dt2rt, units_in=None, units_out=units, dtype=float)
 
     if not units.isreftime:
         raise ValueError(
             f"Can't create a reference time array with units {units!r}"
         )
 
-    return array, units
+    return a, units
 
 
-def first_non_missing_value(array, cached=None):
-    """Return the first non-missing value of an array.
+def first_non_missing_value(a, cached=None, method="index"):
+    """Return the first non-missing value of a dask array.
 
-    If the array contains only missing data then `None` is returned.
-
-    If a cached value is provided then that is returned without
-    looking for the actual first non-missing value.
-
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     :Parameters:
 
-    array: dask array
-        The array to be inspected.
+        a: `dask.array.Array`
+            The array to be inspected.
 
-    cached: scalar, optional
-        If set to a value other than `Ǹone`, then return this value
-        instead of inspecting the array.
+        cached: scalar, optional
+            If set to a value other than `None`, then return without
+            inspecting the array. This allows a previously found first
+            value to be used instead of a potentially costly array
+            access.
+
+        method: `str`, optional
+            Select the method used to find the first non-missing
+            value.
+
+            The default ``'index'`` method evaulates sequentially the
+            elements of the flattened array and returns when the first
+            non-missing value is found.
+
+            The ``'mask'`` method finds the first non-missing value of
+            the flattened array as that which has the same location as
+            the first False element of the flattened array mask.
+
+            It is considered likely that the ``'index'`` method is
+            fastest for data for which the first element is not
+            missing, but this may not always be the case.
 
     :Returns:
 
-            If the *cached* parameter is set then its value is
-            returned. Otherwise return the first non-missing value, or
-            `None` if there isn't one.
+            If set, then *cached* is returned. Otherwise returns the
+            first non-missing value of *a*, or `None` if there isn't
+            one.
+
+    **Examples**
+
+    >>> import dask.array as da
+    >>> d = da.arange(8).reshape(2, 4)
+    >>> print(d.compute())
+    [[0 1 2 3]
+     [4 5 6 7]]
+    >>> cf.data.utils.first_non_missing_value(d)
+    0
+    >>> cf.data.utils.first_non_missing_value(d, cached=99)
+    99
+    >>> d[0, 0] = np.ma.masked
+    >>> cf.data.utils.first_non_missing_value(d)
+    1
+    >>> d[0, :] = np.ma.masked
+    >>> cf.data.utils.first_non_missing_value(d)
+    4
+    >>> cf.data.utils.first_non_missing_value(d, cached=99)
+    99
+    >>> d[...] = np.ma.masked
+    >>> print(cf.data.utils.first_non_missing_value(d))
+    None
+    >>> print(cf.data.utils.first_non_missing_value(d, cached=99))
+    99
 
     """
     if cached is not None:
         return cached
 
-    # This does not look particularly efficient, but the expectation
-    # is that the first element in the array will not be missing data.
+    if method == "index":
+        shape = a.shape
+        for i in range(a.size):
+            index = np.unravel_index(i, shape)
+            x = a[index].compute()
+            if not (x is np.ma.masked or np.ma.getmask(x)):
+                try:
+                    return x.item()
+                except AttributeError:
+                    return x
 
-    shape = array.shape
-    for i in range(array.size):
-        index = np.unravel_index(i, shape)
-        x = array[index].compute()
+        return
+
+    if method == "mask":
+        mask = da.ma.getmaskarray(a)
+        if not a.ndim:
+            # Scalar data
+            if mask:
+                return
+
+            a = a.compute()
+            try:
+                return a.item()
+            except AttributeError:
+                return a
+
+        x = a[da.unravel_index(mask.argmin(), a.shape)].compute()
         if x is np.ma.masked:
-            continue
+            return
 
-        return x.item()
+        try:
+            return x.item()
+        except AttributeError:
+            return x
 
-    return None
+    raise ValueError(f"Unknown value of 'method': {method!r}")
 
 
-def unique_calendars(array):
+def unique_calendars(a):
     """Find the unique calendars from a dask array of date-time objects.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+        array: `dask.array.Array`
+            A dask array of data-time objects.
 
     :Returns:
 
@@ -241,21 +331,28 @@ def unique_calendars(array):
     """
 
     def _get_calendar(x):
-        getattr(x, "calendar", "gregorian")
+        return getattr(x, "calendar", default_calendar)
 
     _calendars = np.vectorize(_get_calendar, otypes=[np.dtype(str)])
 
-    array = array.map_blocks(_calendars, dtype=str)
+    # TODODASK
+    #
+    # da.unique doesn't work well with masked data (2022-02-07), so do
+    # move to numpy-space for now. When da.unique is better we can
+    # replace the next two lines of code with:
+    #
+    #   a = a.map_blocks(_calendars, dtype=str)
+    #   calendars = da.unique(array).compute()
+    a = _calendars(a.compute())
+    calendars = np.unique(a)
 
-    cals = da.unique(array).compute()
-    if np.ma.isMA(cals):
-        cals = cals.compressed()
+    if np.ma.isMA(calendars):
+        calendars = calendars.compressed()
 
-    # TODODASK - need to allow differetn bu equivalent calendars, such
-    # as "gregorian" and 'standard'. Or perhaps this should by the
-    # caller?
+    # Replace each calendar with its canonical name
+    out = [canonical_calendar[cal] for cal in calendars.tolist()]
 
-    return set(cals.tolist())
+    return set(out)
 
 
 @lru_cache(maxsize=32)
@@ -282,29 +379,29 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 
     **Examples:**
 
-    >>> new_axis_identifier()
+    >>> cf.data.utils.new_axis_identifier()
     'dim0'
-    >>> new_axis_identifier(['dim0'])
+    >>> cf.data.utils.new_axis_identifier(['dim0'])
     'dim1'
-    >>> new_axis_identifier(['dim3'])
+    >>> cf.data.utils.new_axis_identifier(['dim3'])
     'dim1'
-     >>> new_axis_identifier(['dim1'])
+     >>> cf.data.utils.new_axis_identifier(['dim1'])
     'dim2'
-    >>> new_axis_identifier(['dim1', 'dim0'])
+    >>> cf.data.utils.new_axis_identifier(['dim1', 'dim0'])
     'dim2'
-    >>> new_axis_identifier(['dim3', 'dim4'])
+    >>> cf.data.utils.new_axis_identifier(['dim3', 'dim4'])
     'dim2'
-    >>> new_axis_identifier(['dim2', 'dim0'])
+    >>> cf.data.utils.new_axis_identifier(['dim2', 'dim0'])
     'dim3'
-    >>> new_axis_identifier(['dim3', 'dim4', 'dim0'])
+    >>> cf.data.utils.new_axis_identifier(['dim3', 'dim4', 'dim0'])
     'dim5'
-    >>> d._new_axis_identifier(basename='axis')
+    >>> cf.data.utils.new_axis_identifier(basename='axis')
     'axis0'
-    >>> d._new_axis_identifier(basename='axis')
+    >>> cf.data.utils.new_axis_identifier(basename='axis')
     'axis0'
-    >>> d._new_axis_identifier(['dim0'], basename='axis')
+    >>> cf.data.utils.new_axis_identifier(['dim0'], basename='axis')
     'axis1'
-    >>> d._new_axis_identifier(['dim0', 'dim1'], basename='axis')
+    >>> cf.data.utils.new_axis_identifier(['dim0', 'dim1'], basename='axis')
     'axis2'
 
     """
@@ -333,7 +430,7 @@ def chunk_positions(chunks):
     **Examples**
 
     >>> chunks = ((1, 2), (9,), (44, 55, 66))
-    >>> for position in chunk_positions(chunks):
+    >>> for position in cf.data.utils.chunk_positions(chunks):
     ...     print(position)
     ...
     (0, 0, 0)
@@ -363,7 +460,7 @@ def chunk_shapes(chunks):
     **Examples**
 
     >>> chunks = ((1, 2), (9,), (4, 5, 6))
-    >>> for shape in chunk_shapes(chunks):
+    >>> for shape in cf.data.utils.chunk_shapes(chunks):
     ...     print(shape)
     ...
     (1, 9, 4)
@@ -441,22 +538,22 @@ def scalar_masked_array(dtype=float):
 
      **Examples**
 
-     >>> scalar_masked_array()
+     >>> cf.data.utils.scalar_masked_array()
      masked_array(data=--,
                   mask=True,
             fill_value=1e+20,
                  dtype=float64)
-     >>> scalar_masked_array(dtype('int32'))
+     >>> cf.data.utils.scalar_masked_array(dtype('int32'))
      masked_array(data=--,
                   mask=True,
             fill_value=999999,
                  dtype=int32)
-     >>> scalar_masked_array('U45')
+     >>> cf.data.utils.scalar_masked_array('U45')
      masked_array(data=--,
                   mask=True,
             fill_value='N/A',
                 dtype='<U45')
-    >>> scalar_masked_array(bool)
+    >>> cf.data.utils.scalar_masked_array(bool)
     masked_array(data=--,
                  mask=True,
             fill_value=True,
@@ -496,22 +593,22 @@ def conform_units(value, units):
 
     **Examples**
 
-    >>> conform_units(1, cf.Units('metres'))
+    >>> cf.data.utils.conform_units(1, cf.Units('metres'))
     1
-    >>> conform_units([1, 2, 3], cf.Units('metres'))
+    >>> cf.data.utils.conform_units([1, 2, 3], cf.Units('metres'))
     [1, 2, 3]
-    >>> import numpy
-    >>> conform_units(numpy.array([1, 2, 3]), cf.Units('metres'))
+    >>> import numpy as np
+    >>> cf.data.utils.conform_units(np.array([1, 2, 3]), cf.Units('metres'))
     array([1, 2, 3])
-    >>> conform_units('string', cf.Units('metres'))
+    >>> cf.data.utils.conform_units('string', cf.Units('metres'))
     'string'
     >>> d = cf.Data([1, 2] , 'm')
-    >>> conform_units(d, cf.Units('metres'))
+    >>> cf.data.utils.conform_units(d, cf.Units('metres'))
     <CF Data(2): [1, 2] m>
     >>> d = cf.Data([1, 2] , 'km')
-    >>> conform_units(d, cf.Units('metres'))
+    >>> cf.data.utils.conform_units(d, cf.Units('metres'))
     <CF Data(2): [1000.0, 2000.0] metres>
-    >>> conform_units(d, cf.Units('s'))
+    >>> cf.data.utils.conform_units(d, cf.Units('s'))
         ...
     ValueError: Units <Units: km> are incompatible with units <Units: s>
 
@@ -562,7 +659,7 @@ def YMDhms(d, attr):
     **Examples**
 
     >>> d = cf.Data([0, 1, 2], 'days since 1999-12-31')
-    >>> YMDhms(d, 'year').array
+    >>> cf.data.utils.YMDhms(d, 'year').array
     >>> array([1999, 2000, 2000])
 
     """

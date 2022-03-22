@@ -57,7 +57,7 @@ def convert_to_builtin_type(x):
     raise TypeError(f"{type(x)!r} object is not JSON serializable: {x!r}")
 
 
-def to_dask(array, chunks, dask_from_array_options):
+def to_dask(array, chunks, **from_array_options):
     """TODODASK.
 
     .. versionadded:: TODODASK

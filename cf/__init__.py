@@ -150,7 +150,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = "1.5.0"
+_minimum_vn = "1.6.0"
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
