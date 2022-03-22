@@ -30,7 +30,6 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_METHOD,
     _numpy_isclose,
     _section,
     abspath,
@@ -2293,10 +2292,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if interpolation is not None:
             _DEPRECATION_ERROR_KWARGS(
                 self,
-                "interpolation",
+                "percentile",
                 {"interpolation": None},
                 message="Use the 'method' parameter instead.",
-                version="4.0.0",
+                version="TODODASK",
+                removed_at="5.0.0",
             )  # pragma: no cover
 
         d = _inplace_enabled_define_and_cleanup(self)
@@ -3347,15 +3347,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 `dask.array.rechunk` for details.
 
             block_size_limit: `int`, optional
-                The maximum block size (in bytes) we want to produce.
-                Defaults to the configuration value
-                ``dask.config.get('array.chunk-size')``. See
-                `dask.array.rechunk` for details.
+                The maximum block size (in bytes) we want to produce,
+                as defined by the `cf.chunksize` function.
 
             balance: `bool`, optional
                 If True, try to make each chunk the same size. By
-                default this is not attempted. See
-                `dask.array.rechunk` for details.
+                default this is not attempted.
 
                 This means ``balance=True`` will remove any small
                 leftover chunks, so using ``d.rechunk(chunks=len(d) //
@@ -3387,15 +3384,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
 
-        If a chunk size does not divide the dimension then rechunk will
-        leave any unevenness to the last chunk.
+        If a chunk size does not divide the dimension then rechunk
+        will leave any unevenness to the last chunk.
 
         >>> x.rechunk(chunks=(400, -1)).chunks
         ((400, 400, 200), (1000,))
 
-        However if you want more balanced chunks, and don't mind Dask
-        choosing a different chunksize for you then you can use the
-        ``balance=True`` option.
+        However if you want more balanced chunks, and don't mind
+        `dask` choosing a different chunksize for you then you can use
+        the ``balance=True`` option.
 
         >>> x.rechunk(chunks=(400, -1), balance=True).chunks
         ((500, 500), (1000,))
@@ -7592,7 +7589,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                         out.hardmask = hardmask
 
                     return out
-            # --- End: if
 
             if keys[0][i] is not None:
                 new_sections = {}
@@ -7607,11 +7603,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                         )
                         new_key = k[:i]
                         data_list = [sections[k]]
-                # --- End: for
 
                 new_sections[new_key] = cls.concatenate_data(data_list, i)
                 sections = new_sections
-        # --- End: for
 
     def argmax(self, axis=None, unravel=False):
         """Return the indices of the maximum values along an axis.
@@ -11060,86 +11054,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    def HDF_chunks(self, *chunks):
-        """Get or set HDF chunk sizes.
-
-        The HDF chunk sizes may be used by external code that allows
-        `Data` objects to be written to netCDF files.
-
-        Deprecated at version TODODASK and is no longer available. Use
-        the methods `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
-        and `nc_set_hdf5_chunksizes` instead.
-
-        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
-                     `nc_set_hdf5_chunksizes`
-
-        :Parameters:
-
-            chunks: `dict` or `None`, *optional*
-                Specify HDF chunk sizes.
-
-                When no positional argument is provided, the HDF chunk
-                sizes are unchanged.
-
-                If `None` then the HDF chunks sizes for each dimension
-                are cleared, so that the HDF default chunk size value
-                will be used when writing data to disk.
-
-                If a `dict` then it defines for a subset of the
-                dimensions, defined by their integer positions, the
-                corresponding HDF chunk sizes. The HDF chunk sizes are
-                set as a number of elements along the dimension.
-
-        :Returns:
-
-            `dict`
-                The HDF chunks for each dimension prior to the change,
-                or the current HDF chunks if no new values are
-                specified. A value of `None` is an indication that the
-                default chunk size should be used for that dimension.
-
-        **Examples**
-
-        >>> d = cf.Data(np.arange(30).reshape(5, 6))
-        >>> d.HDF_chunks()
-        {0: None, 1: None}
-        >>> d.HDF_chunks({1: 2})
-        {0: None, 1: None}
-        >>> d.HDF_chunks()
-        {0: None, 1: 2}
-        >>> d.HDF_chunks({1:None})
-        {0: None, 1: 2}
-        >>> d.HDF_chunks()
-        {0: None, 1: None}
-        >>> d.HDF_chunks({0: 3, 1: 6})
-        {0: None, 1: None}
-        >>> d.HDF_chunks()
-        {0: 3, 1: 6}
-        >>> d.HDF_chunks({1: 4})
-        {0: 3, 1: 6}
-        >>> d.HDF_chunks()
-        {0: 3, 1: 4}
-        >>> d.HDF_chunks({1: 999})
-        {0: 3, 1: 4}
-        >>> d.HDF_chunks()
-        {0: 3, 1: 999}
-        >>> d.HDF_chunks(None)
-        {0: 3, 1: 999}
-        >>> d.HDF_chunks()
-        {0: None, 1: None}
-
-        """
-        _DEPRECATION_ERROR_METHOD(
-            self,
-            "HDF_chunks",
-            message="Use the methods 'nc_clear_hdf5_chunksizes', "
-            "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
-            "instead.",
-            version="TODODASK",
-            removed_at="5.0.0",
-        )
-
     def inspect(self):
         """Inspect the object for debugging.
 
@@ -11680,35 +11594,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # including space for a full boolean mask
         # ------------------------------------------------------------
         return self.size * (itemsize + 1) <= free_memory() - cf_fm_threshold()
-
-    def fits_in_one_chunk_in_memory(self, itemsize):
-        """Return True if the master array is small enough to be
-        retained in memory.
-
-        :Parameters:
-
-            itemsize: `int`
-                The number of bytes per word of the master data array.
-
-        :Returns:
-
-            `bool`
-
-        **Examples:**
-
-        >>> print(d.fits_one_chunk_in_memory(8))
-        False
-
-        """
-        # ------------------------------------------------------------
-        # Note that self._size*(itemsize+1) is the array size in bytes
-        # including space for a full boolean mask
-        # ------------------------------------------------------------
-        return (
-            cf_chunksize()
-            >= self._size * (itemsize + 1)
-            <= free_memory() - cf_fm_threshold()
-        )
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
@@ -13445,6 +13330,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"
     ):
@@ -13471,15 +13357,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 sectioned.
 
             stop: `int`, optional
+                Deprecated at version TODODASK.
+
                 Stop after this number of sections and return. If stop is
                 None all sections are taken.
 
             chunks: `bool`, optional
+                Depreated at version TODODASK. Consider using
+                `cf.Data.rechunk` instead.
+
                 If True return sections that are of the maximum possible
                 size that will fit in one chunk of memory instead of
                 sectioning into slices of size 1 along the dimensions that
                 are being sectioned.
-         
+
                 Deprecated at version TODODASK. Use `rechunk` instead.
 
             min_step: `int`, optional
@@ -13493,17 +13384,42 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The dictionary of m dimensional sections of the Data
                 object.
 
-        **Examples:**
+        **Examples**
 
-        Section a Data object into 2D slices:
-
-        >>> d.section((0, 1))
+        >>> d = cf.Data(np.arange(120).reshape(2, 6, 10))
+        >>> d
+        <CF Data(2, 6, 10): [[[0, ..., 119]]]>
+        >>> d.section([1, 2])
+        {(0, None, None): <CF Data(1, 6, 10): [[[0, ..., 59]]]>,
+         (1, None, None): <CF Data(1, 6, 10): [[[60, ..., 119]]]>}
+        >>> d.section([0, 1], min_step=2)
+        {(None, None, 0): <CF Data(2, 6, 2): [[[0, ..., 111]]]>,
+         (None, None, 2): <CF Data(2, 6, 2): [[[2, ..., 113]]]>,
+         (None, None, 4): <CF Data(2, 6, 2): [[[4, ..., 115]]]>,
+         (None, None, 6): <CF Data(2, 6, 2): [[[6, ..., 117]]]>,
+         (None, None, 8): <CF Data(2, 6, 2): [[[8, ..., 119]]]>}
 
         """
         if chunks:
-            print ("deprecated TODODASK")
-        
-        return _section(self, axes, stop=stop, min_step=min_step)
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "section",
+                {"chunks": chunks},
+                message="Consider using Data.rechunk() instead.",
+                version="TODODASK",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
+        if stop is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "section",
+                {"stop": stop},
+                version="TODODASK",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
+        return _section(self, axes, min_step=min_step)
 
     # ----------------------------------------------------------------
     # Alias

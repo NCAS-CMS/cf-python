@@ -8,11 +8,6 @@ from dask.utils import parse_bytes
 from numpy.ma import masked as numpy_ma_masked
 from psutil import virtual_memory
 
-from . import mpi_on, mpi_size
-
-if mpi_on:
-    from . import mpi_comm
-
 from .units import Units
 
 # platform = sys.platform
@@ -23,6 +18,10 @@ from .units import Units
 # Find the total amount of memory, in bytes
 # --------------------------------------------------------------------
 _TOTAL_MEMORY = float(virtual_memory().total)
+
+_CHUNKSIZE = "128 MiB"
+config.set({"array.chunk-size": _CHUNKSIZE})
+
 # if platform == 'darwin':
 #     # MacOS
 #    _MemTotal = float(virtual_memory().total)
@@ -55,7 +54,7 @@ in cf.
     TOTAL_MEMORY: `float`
       Find the total amount of physical memory (in bytes).
 
-    CHUNKSIZE: `float`
+    CHUNKSIZE: `int`
       The chunk size (in bytes) for data storage and processing.
 
     FM_THRESHOLD: `float`
@@ -80,9 +79,7 @@ in cf.
       disabled.
 
     FREE_MEMORY_FACTOR: `int`
-      Factor to divide the free memory by. If MPI is on this is equal
-      to the number of PEs. Otherwise it is equal to 1 and is ignored
-      in any case.
+      Factor to divide the free memory by.
 
     COLLAPSE_PARALLEL_MODE: `int`
       The mode to use when parallelising collapse. By default this is
@@ -109,26 +106,14 @@ CONSTANTS = {
     "RELAXED_IDENTITIES": False,
     "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
     "BOUNDS_COMBINATION_MODE": "AND",
+    "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
 }
 
 CONSTANTS["FM_THRESHOLD"] = (
     CONSTANTS["FREE_MEMORY_FACTOR"] * CONSTANTS["TOTAL_MEMORY"]
 )
 
-if mpi_on:
-    CONSTANTS["MIN_TOTAL_MEMORY"] = min(
-        mpi_comm.allgather(CONSTANTS["TOTAL_MEMORY"])
-    )
-else:
-    CONSTANTS["MIN_TOTAL_MEMORY"] = CONSTANTS["TOTAL_MEMORY"]
-
-# CONSTANTS["CHUNKSIZE"] = (
-#    CONSTANTS["FREE_MEMORY_FACTOR"] * CONSTANTS["MIN_TOTAL_MEMORY"]
-# ) / (
-#    mpi_size * CONSTANTS["WORKSPACE_FACTOR_1"]
-#    + CONSTANTS["WORKSPACE_FACTOR_2"]
-# )
-CONSTANTS["CHUNKSIZE"] = parse_bytes(config.get("array.chunk-size"))
+CONSTANTS["MIN_TOTAL_MEMORY"] = CONSTANTS["TOTAL_MEMORY"]
 
 masked = numpy_ma_masked
 # nomask = numpy_ma_nomask

@@ -200,9 +200,8 @@ _docstring_substitution_definitions = {
 
                 By default, ``"auto"`` is used to specify the array
                 chunking, which uses a chunk size in bytes defined by
-                the configuration value
-                ``dask.config.get("array.chunk-size")``,
-                prefering square-like chunk shapes.
+                the `cf.chunksize` function, prefering square-like
+                chunk shapes.
 
                 *Parameter example:*
                   A blocksize like ``1000``.

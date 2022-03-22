@@ -15334,7 +15334,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         return SubspaceField(self)
 
-    def section(self, axes=None, stop=None, **kwargs):
+    def section(self, axes=None, stop=None, min_step=1, **kwargs):
         """Return a FieldList of m dimensional sections of a Field of n
         dimensions, where M <= N.
 
@@ -15385,7 +15385,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          <CF Field: eastward_wind(model_level_number(1), latitude(145), longitude(192)) m s-1>]
 
         """
-        return FieldList(_section(self, axes, data=False, stop=stop, **kwargs))
+
+        # TODODASK: This still need some attention, keyword checking,
+        #           testing, docs, etc., but has been partially
+        #           already updated due to changes already happening
+        #           in `cf.functions._section` that might be
+        #           overlooked/obscured later. See the daskification
+        #           of `cf.functions._section` and `cf.Data.section`
+        #           for more details.
+
+        axes = [self.domain_axis(axis, key=True) for axis in axes]
+        axis_indices = []
+        for key in axes:
+            try:
+                axis_indices.append(self.get_data_axes().index(key))
+            except ValueError:
+                pass
+
+        axes = axis_indices
+
+        return FieldList(
+            tuple(_section(self, axes, min_step=min_step).values())
+        )
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)

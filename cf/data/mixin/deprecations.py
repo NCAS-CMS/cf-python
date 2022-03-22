@@ -46,6 +46,34 @@ class DataClassDeprecationsMixin:
             version="3.0.0",
         )  # pragma: no cover
 
+    def fits_in_one_chunk_in_memory(self, itemsize):
+        """Return True if the master array is small enough to be
+        retained in memory.
+
+        Deprecated at version TODODASK.
+
+        :Parameters:
+
+            itemsize: `int`
+                The number of bytes per word of the master data array.
+
+        :Returns:
+
+            `bool`
+
+        **Examples**
+
+        >>> print(d.fits_one_chunk_in_memory(8))
+        False
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "fits_in_one_chunk_in_memory",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     @property
     def ispartitioned(self):
         """True if the data array is partitioned.
@@ -63,7 +91,7 @@ class DataClassDeprecationsMixin:
         False
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK")
+        _DEPRECATION_ERROR_METHOD("TODODASK")  # pragma: no cover
 
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
@@ -92,7 +120,88 @@ class DataClassDeprecationsMixin:
         >>> d.chunk(100000, omit_axes=[3, 4])
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK. Use 'rechunk' instead")
+        _DEPRECATION_ERROR_METHOD(
+            "TODODASK. Use 'rechunk' instead"
+        )  # pragma: no cover
+
+    def HDF_chunks(self, *chunks):
+        """Get or set HDF chunk sizes.
+
+        The HDF chunk sizes may be used by external code that allows
+        `Data` objects to be written to netCDF files.
+
+        Deprecated at version TODODASK and is no longer available. Use
+        the methods `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+        and `nc_set_hdf5_chunksizes` instead.
+
+        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`
+
+        :Parameters:
+
+            chunks: `dict` or `None`, *optional*
+                Specify HDF chunk sizes.
+
+                When no positional argument is provided, the HDF chunk
+                sizes are unchanged.
+
+                If `None` then the HDF chunks sizes for each dimension
+                are cleared, so that the HDF default chunk size value
+                will be used when writing data to disk.
+
+                If a `dict` then it defines for a subset of the
+                dimensions, defined by their integer positions, the
+                corresponding HDF chunk sizes. The HDF chunk sizes are
+                set as a number of elements along the dimension.
+
+        :Returns:
+
+            `dict`
+                The HDF chunks for each dimension prior to the change,
+                or the current HDF chunks if no new values are
+                specified. A value of `None` is an indication that the
+                default chunk size should be used for that dimension.
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(30).reshape(5, 6))
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({1: 2})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: None, 1: 2}
+        >>> d.HDF_chunks({1:None})
+        {0: None, 1: 2}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({0: 3, 1: 6})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks({1: 4})
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks({1: 999})
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks(None)
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "HDF_chunks",
+            message="Use the methods 'nc_clear_hdf5_chunksizes', "
+            "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
+            "instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @property
     def ismasked(self):
@@ -110,7 +219,9 @@ class DataClassDeprecationsMixin:
         True
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK use is_masked instead")
+        _DEPRECATION_ERROR_METHOD(
+            "TODODASK use is_masked instead"
+        )  # pragma: no cover
 
     @property
     def varray(self):
@@ -133,7 +244,7 @@ class DataClassDeprecationsMixin:
         array([999, 1, 2, 3, 4])
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK")
+        _DEPRECATION_ERROR_METHOD("TODODASK")  # pragma: no cover
 
     def add_partitions(self, extra_boundaries, pdim):
         """Add partition boundaries.
@@ -155,7 +266,9 @@ class DataClassDeprecationsMixin:
         >>> d.add_partitions(    )
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK Consider using rechunk instead")
+        _DEPRECATION_ERROR_METHOD(
+            "TODODASK Consider using rechunk instead"
+        )  # pragma: no cover
 
     def partition_boundaries(self):
         """Return the partition boundaries for each partition matrix
@@ -168,4 +281,6 @@ class DataClassDeprecationsMixin:
         **Examples:**
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK - consider using 'chunks' instead")
+        _DEPRECATION_ERROR_METHOD(
+            "TODODASK - consider using 'chunks' instead"
+        )  # pragma: no cover

@@ -13,7 +13,6 @@ from collections.abc import Iterable
 from hashlib import md5 as hashlib_md5
 from itertools import product
 from marshal import dumps as marshal_dumps
-from math import ceil as math_ceil
 from numbers import Integral
 from os import getpid, listdir, mkdir
 from os.path import abspath as _os_path_abspath
@@ -46,7 +45,7 @@ from numpy.ma import masked as _numpy_ma_masked
 from numpy.ma import take as _numpy_ma_take
 from psutil import Process, virtual_memory
 
-from . import __file__, __version__, mpi_size
+from . import __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
@@ -807,6 +806,11 @@ class chunksize(ConstantAccess):
     If called without any arguments then the existing chunksize is
     returned.
 
+    .. note:: Setting the chunksize will change the `dask` global
+              configuration value ``'array.chunk-size'``. If
+              `chunksize` is used a context manager then the `dask`
+              configuration value is only altered within that context.
+
     :Parameters:
 
         arg: `float` or `str` or `Constant`, optional
@@ -816,7 +820,6 @@ class chunksize(ConstantAccess):
             *Parameter example:*
                A chunksize of 2 MiB may be specified as ``2097152`` or
                ``'2 MiB'``
-
 
     :Returns:
 
@@ -1022,6 +1025,8 @@ class free_memory_factor(ConstantAccess):
             new value was specified.
 
     """
+
+    # TODODASK: Review how all this free memory stuff works with dask
 
     _name = "FREE_MEMORY_FACTOR"
 
@@ -2862,10 +2867,15 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
             passed. By default it is False.
 
         stop: `int`, optional
+            Deprecated at version TODODASK.
+
             Stop after taking this number of sections and return. If
             stop is None all sections are taken.
 
         chunks: `bool`, optional
+            Deprecated at version TODODASK. Consider using
+            `cf.Data.rechunk` instead.
+
             If True return sections that are of the maximum possible
             size that will fit in one chunk of memory instead of
             sectioning into slices of size 1 along the dimensions that
@@ -2882,20 +2892,32 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
             The list of m dimensional sections of the Field or the
             dictionary of m dimensional sections of the Data object.
 
-    **Examples:**
+    **Examples**
 
-    Section a field into 2D longitude/time slices, checking the units:
-
-    >>> _section(f, {None: 'longitude', units: 'radians'},
-    ...             {None: 'time',
-    ...              'units': 'days since 2006-01-01 00:00:00'})
-
-    Section a field into 2D longitude/latitude slices, requiring exact
-    names:
-
-    >>> _section(f, ['latitude', 'longitude'], exact=True)
+    >>> d = cf.Data(np.arange(120).reshape(2, 6, 10))
+    >>> d
+    <CF Data(2, 6, 10): [[[0, ..., 119]]]>
+    >>> d.section([0, 1], min_step=2)
+    {(None, None, 0): <CF Data(2, 6, 2): [[[0, ..., 111]]]>,
+     (None, None, 2): <CF Data(2, 6, 2): [[[2, ..., 113]]]>,
+     (None, None, 4): <CF Data(2, 6, 2): [[[4, ..., 115]]]>,
+     (None, None, 6): <CF Data(2, 6, 2): [[[6, ..., 117]]]>,
+     (None, None, 8): <CF Data(2, 6, 2): [[[8, ..., 119]]]>}
 
     """
+    if stop is not None:
+        raise DeprecationError(
+            "The 'stop' keyword of cf._section() was deprecated at "
+            "version TODODASK and is no longer available"
+        )
+
+    if chunks:
+        raise DeprecationError(
+            "The 'chunks' keyword of cf._section() was deprecated at "
+            "version TODODASK and is no longer available Consider using "
+            "cf.Data.rechunk instead."
+        )
+
     if axes is None:
         axes = list(range(x.ndim))
 
@@ -2903,138 +2925,29 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
 
     ndim = x.ndim
     shape = x.shape
-    if stop is None:
-        stop = x.size
 
+    # TODODASK: For v4.0.0, redefine axes by removing the next
+    #           line. I.e. the specified axes would be those that you
+    #           want to be chopped, not those that you want to remain
+    #           whole.
     axes = [i for i in range(ndim) if i not in axes]
 
-    indices = [[slice(None)]] * ndim
-    for i in axes:
-        indices[i] = [
-            slice(j, j + min_step) for j in range(0, shape[i], min_step)
-        ]
+    indices = [
+        (slice(j, j + min_step) for j in range(0, n, min_step))
+        if i in axes
+        else [slice(None)]
+        for i, n in enumerate(shape)
+    ]
 
-    keys = [[None]] * ndim
-    for i in axes:
-        keys[i] = range(0, shape[i], min_step)
+    keys = [
+        range(0, n, min_step) if i in axes else [None]
+        for i, n in enumerate(shape)
+    ]
 
-    if chunks:
-        
-        
-    out = {}
-    for j, (key, index) in enumerate(zip(product(*keys), product(*indices))):
-        if j >= stop:
-            return
-        
-        out[key] = x[index]
-
+    out = {
+        key: x[index] for key, index in zip(product(*keys), product(*indices))
+    }
     return out
-
-    def loop_over_index(x, current_index, axis_indices, indices):
-        """Expects an index to loop over in the list indices.
-
-        If this is less than 0 the horizontal slice defined by indices
-        is appended to the FieldList fl, if it is the specified axis
-        indices the value in indices is left as slice(None) and it calls
-        itself recursively with the next index, otherwise each index is
-        looped over. In this loop the routine is called recursively with
-        the next index. If the count of the number of slices taken is
-        greater than or equal to stop it returns before taking any more
-        slices.
-
-        """
-        if current_index < 0:
-            if data:
-                d[tuple([x.start for x in indices])] = x[tuple(indices)]
-            else:
-                fl.append(x[tuple(indices)])
-
-            nl_vars["count"] += 1
-            return
-
-        if current_index in axis_indices:
-            loop_over_index(x, current_index - 1, axis_indices, indices)
-            return
-
-        for i in range(0, sizes[current_index], steps[current_index]):
-            if stop is not None and nl_vars["count"] >= stop:
-                return
-
-            indices[current_index] = slice(i, i + steps[current_index])
-            loop_over_index(x, current_index - 1, axis_indices, indices)
-
-    # Retrieve the index of each axis defining the sections
-    if data:
-        if isinstance(axes, int):
-            axes = (axes,)
-
-        if not axes:
-            axis_indices = tuple(range(x.ndim))
-        else:
-            axis_indices = axes
-    else:
-        axis_keys = [x.domain_axis(axis, key=True) for axis in axes]
-        axis_indices = list()
-        for key in axis_keys:
-            try:
-                axis_indices.append(x.get_data_axes().index(key))
-            except ValueError:
-                pass
-
-    # find the size of each dimension
-    sizes = x.shape
-
-    if chunks:
-        steps = list(sizes)
-
-        # Define the factor which, when multiplied by the size of the
-        # data array, determines how many chunks are in the data
-        # array.
-        #
-        # I.e. factor = 1/(the number of words per chunk)
-        factor = (x.dtype.itemsize + 1.0) / chunksize()
-
-        # n_chunks = number of equal sized bits the partition needs to
-        #            be split up into so that each bit's size is less
-        #            than the chunk size.
-        n_chunks = int(math_ceil(x.size * factor))
-
-        for (index, axis_size) in enumerate(sizes):
-            if index in axis_indices:
-                # Do not attempt to "chunk" non-sectioned axes
-                continue
-
-            if int(math_ceil(float(axis_size) / min_step)) <= n_chunks:
-                n_chunks = int(
-                    math_ceil(n_chunks / float(axis_size) * min_step)
-                )
-                steps[index] = min_step
-
-            else:
-                steps[index] = int(axis_size / n_chunks)
-                break
-    else:
-        steps = [
-            size if i in axis_indices else 1 for i, size in enumerate(sizes)
-        ]
-
-    # Use recursion to slice out each section
-    if data:
-        d = dict()
-    else:
-        fl = []
-
-    indices = [slice(None)] * len(sizes)
-
-    nl_vars = {"count": 0}
-
-    current_index = len(sizes) - 1
-    loop_over_index(x, current_index, axis_indices, indices)
-
-    if data:
-        return d
-    else:
-        return fl
 
 
 def _get_module_info(module, try_except=False):
