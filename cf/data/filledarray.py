@@ -88,7 +88,7 @@ class FilledArray(abstract.Array):
     def dtype(self):
         """Data-type of the data elements.
 
-        **Examples**
+        **Examples:**
 
         >>> a.dtype
         dtype('float64')
@@ -102,7 +102,7 @@ class FilledArray(abstract.Array):
     def ndim(self):
         """Number of array dimensions.
 
-        **Examples**
+        **Examples:**
 
         >>> a.shape
         (73, 96)
@@ -132,7 +132,7 @@ class FilledArray(abstract.Array):
     def shape(self):
         """Tuple of array dimension sizes.
 
-        **Examples**
+        **Examples:**
 
         >>> a.shape
         (73, 96)
@@ -162,7 +162,7 @@ class FilledArray(abstract.Array):
     def size(self):
         """Number of elements in the array.
 
-        **Examples**
+        **Examples:**
 
         >>> a.shape
         (73, 96)

@@ -31,7 +31,7 @@ def _is_numeric_dtype(array):
             `bool`
                 Whether or not the array holds numeric elements.
 
-    **Examples**
+    **Examples:**
 
     >>> a = np.array([0, 1, 2])
     >>> cf.data.utils._is_numeric_dtype(a)
@@ -377,7 +377,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
         `str`
             The new axis idenfifier.
 
-    **Examples**
+    **Examples:**
 
     >>> cf.data.utils.new_axis_identifier()
     'dim0'

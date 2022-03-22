@@ -48,7 +48,7 @@ def convert_to_builtin_type(x):
 
             TODO
 
-    **Examples**
+    **Examples:**
 
     >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
     bool
@@ -407,7 +407,7 @@ def generate_axis_identifiers(n):
         `list`
             The new axis idenfifiers.
 
-    **Examples**
+    **Examples:**
 
     >>> generate_axis_identifiers(0)
     []

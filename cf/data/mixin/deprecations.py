@@ -50,7 +50,7 @@ class DataClassDeprecationsMixin:
     def ispartitioned(self):
         """True if the data array is partitioned.
 
-        **Examples**
+        **Examples:**
 
         >>> d._pmsize
         1
@@ -83,7 +83,7 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.chunk()
         >>> d.chunk(100000)
@@ -100,7 +100,7 @@ class DataClassDeprecationsMixin:
 
         TODODASK
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> print(d.ismasked)
@@ -121,7 +121,7 @@ class DataClassDeprecationsMixin:
 
         .. seealso:: `array`, `datetime_array`
 
-        **Examples**
+        **Examples:**
 
         >>> a = d.varray
         >>> type(a)
@@ -150,7 +150,7 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.add_partitions(    )
 
@@ -165,7 +165,7 @@ class DataClassDeprecationsMixin:
 
             `dict`
 
-        **Examples**
+        **Examples:**
 
         """
         _DEPRECATION_ERROR_METHOD("TODODASK - consider using 'chunks' instead")
