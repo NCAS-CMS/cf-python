@@ -68,7 +68,7 @@ def psum(x, y):
 
         `numpy.ndarray`
 
-    **Examples**
+    **Examples:**
 
     >>> c = psum(a, b)
 

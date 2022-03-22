@@ -78,7 +78,7 @@ class CompressedSubarray(abc.ABC):
         """The file on disk which contains the compressed array, or
         `None` of the array is in memory.
 
-        **Examples**
+        **Examples:**
 
          >>> self.file
          '/home/foo/bar.nc'
@@ -96,7 +96,7 @@ class CompressedSubarray(abc.ABC):
 
             `None`
 
-        **Examples**
+        **Examples:**
 
         >>> f.close()
 
@@ -127,7 +127,7 @@ class CompressedSubarray(abc.ABC):
         """True if and only if the compressed array is on disk as
         opposed to in memory.
 
-        **Examples**
+        **Examples:**
 
         >>> a.on_disk()
         True

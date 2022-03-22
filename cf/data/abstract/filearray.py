@@ -36,7 +36,7 @@ class FileArray(Array):
     def dtype(self):
         """Data-type of the data elements.
 
-        **Examples**
+        **Examples:**
 
         >>> a.dtype
         dtype('float64')
@@ -50,7 +50,7 @@ class FileArray(Array):
     def ndim(self):
         """Number of array dimensions.
 
-        **Examples**
+        **Examples:**
 
         >>> a.shape
         (73, 96)
@@ -80,7 +80,7 @@ class FileArray(Array):
     def shape(self):
         """Tuple of array dimension sizes.
 
-        **Examples**
+        **Examples:**
 
         >>> a.shape
         (73, 96)
@@ -110,7 +110,7 @@ class FileArray(Array):
     def size(self):
         """Number of elements in the array.
 
-        **Examples**
+        **Examples:**
 
         >>> a.shape
         (73, 96)
@@ -140,7 +140,7 @@ class FileArray(Array):
     def filename(self):
         """The name of the file containing the array.
 
-        **Examples**
+        **Examples:**
 
         >>> a.filename()
         'file.nc'
@@ -157,7 +157,7 @@ class FileArray(Array):
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples**
+        **Examples:**
 
         >>> n = numpy.asanyarray(a)
         >>> isinstance(n, numpy.ndarray)
@@ -181,7 +181,7 @@ class FileArray(Array):
     def get_filename(self):
         """Return the name of the file containing the array.
 
-        **Examples**
+        **Examples:**
 
         >>> a.get_filename()
         'file.nc'

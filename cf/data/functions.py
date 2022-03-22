@@ -30,7 +30,7 @@ def _open_netcdf_file(filename, mode, fmt="NETCDF4"):  # set_auto_mask=True):
         `netCDF4.Dataset`
             A netCDF4.Dataset instance for the netCDF file.
 
-    **Examples**
+    **Examples:**
 
     >>> nc1 = _open_netcdf_file('file.nc')
     >>> nc1
