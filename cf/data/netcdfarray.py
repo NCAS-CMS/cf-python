@@ -85,7 +85,7 @@ class NetCDFArray(cfdm.NetCDFArray, abstract.FileArray):
 
                 .. versionadded:: 3.4.0
 
-        **Examples:**
+        **Examples**
 
         >>> import netCDF4
         >>> nc = netCDF4.Dataset('file.nc', 'r')
@@ -142,7 +142,7 @@ class NetCDFArray(cfdm.NetCDFArray, abstract.FileArray):
 #
 #        `None`
 #
-#    **Examples:**
+#    **Examples**
 #
 #    >>> f.close()
 #
@@ -157,7 +157,7 @@ class NetCDFArray(cfdm.NetCDFArray, abstract.FileArray):
 #
 #        `netCDF4.Dataset`
 #
-#    **Examples:**
+#    **Examples**
 #
 #    >>> f.open()
 #    <netCDF4.Dataset at 0x115a4d0>
