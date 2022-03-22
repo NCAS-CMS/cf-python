@@ -2423,6 +2423,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
+        TODODASK
+
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -9054,28 +9056,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return YMDhms(self, "second")
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         """Uncompress the underlying data.
 
-        Compression saves space by identifying and removing unwanted
-        missing data. Such compression techniques store the data more
-        efficiently and result in no precision loss.
+        Data that is already uncompressed will be returned as is.
+
+        Data that is compressed will marked as uncompressed, but the
+        decompression will only occur when the data is accessed.
 
         Whether or not the data is compressed does not alter its
         functionality nor external appearance.
 
-        Data that is already uncompressed will be returned uncompressed.
+        The following type of compression are catered for:
 
-        The following type of compression are available:
-
-            * Ragged arrays for discrete sampling geometries (DSG). Three
-              different types of ragged array representation are
-              supported.
-
-            ..
+            * Ragged arrays for discrete sampling geometries (DSG) and
+              simple geometry cel definitions.
 
             * Compression by gathering.
+
+            * Compression by coordinate subsampling.
 
         .. versionadded:: 3.0.6
 
@@ -9091,7 +9092,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The uncompressed data, or `None` of the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d.get_compression_type()
         'ragged contiguous'
@@ -9101,20 +9102,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        if not d.get_compression_type():
-            if inplace:
-                d = None
-            return d
-
-        config = d.partition_configuration(readonly=False)
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            _ = partition.array
-            partition.close()
-
-        d._del_Array(None)
+        if d.get_compression_type():
+            d._del_Array(None)
 
         return d
 
