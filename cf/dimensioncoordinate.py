@@ -97,7 +97,7 @@ class DimensionCoordinate(
             `bool`
                 Whether or not the coordinate is increasing.
 
-        **Examples:**
+        **Examples**
 
         >>> c.array
         array([  0  30  60])
@@ -154,7 +154,7 @@ class DimensionCoordinate(
     #        `Data`
     #            The size for each cell.
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    >>> print(c.bounds)
     #    <CF Bounds: latitude(3, 2) degrees_north>
@@ -207,7 +207,7 @@ class DimensionCoordinate(
             `bool`
                 Whether or not the coordinate is decreasing.
 
-        **Examples:**
+        **Examples**
 
         >>> c.decreasing
         False
@@ -236,7 +236,7 @@ class DimensionCoordinate(
             `bool`
                 Whether or not the coordinate is increasing.
 
-        **Examples:**
+        **Examples**
 
         >>> c.decreasing
         False
@@ -252,7 +252,7 @@ class DimensionCoordinate(
     #
     #    .. seealso:: `bounds`, `upper_bounds`
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    >>> print(c.bounds.array)
     #    [[ 5  3]
@@ -285,7 +285,7 @@ class DimensionCoordinate(
     #
     #    .. seealso:: `bounds`, `lower_bounds`
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    >>> print(c.bounds.array)
     #    [[ 5  3]
@@ -327,7 +327,7 @@ class DimensionCoordinate(
             `bool`
                 Whether or not the coordinate is increasing.
 
-        **Examples:**
+        **Examples**
 
         >>> c.array
         array([  0  30  60])
@@ -499,7 +499,7 @@ class DimensionCoordinate(
             `Bounds`
                 The newly-created coordinate cell bounds object.
 
-        **Examples:**
+        **Examples**
 
         >>> c.create_bounds()
         >>> c.create_bounds(bound=-9000.0)
@@ -710,7 +710,7 @@ class DimensionCoordinate(
             `Bounds`
                 The bounds.
 
-        **Examples:**
+        **Examples**
 
         >>> b = Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
         >>> c.set_bounds(b)
@@ -760,7 +760,7 @@ class DimensionCoordinate(
     #
     #       `bool`
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    >>> f.autocyclic()
     #

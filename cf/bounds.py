@@ -91,7 +91,7 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
              `bool`
                  Whether or not the cells are contiguous.
 
-         **Examples:**
+         **Examples**
 
          >>> c.has_bounds()
          False
@@ -269,7 +269,7 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> b.inherited_properties()
         {'foo': 'bar',

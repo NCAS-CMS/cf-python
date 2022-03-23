@@ -350,7 +350,7 @@ class Query:
     def attr(self):
         """The object attribute on which to apply the query condition.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.Query('ge', 4)
         >>> print(q.attr)
@@ -368,7 +368,7 @@ class Query:
 
         Compound conditions return `None`.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.Query('ge', 4)
         >>> q.operator
@@ -386,7 +386,7 @@ class Query:
 
         An exception is raised for compound conditions.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.Query('ge', 4)
         >>> q.value
@@ -419,7 +419,7 @@ class Query:
             `Query`
                 The new query object.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.eq(2001)
         >>> q
@@ -457,7 +457,7 @@ class Query:
 
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> r = q.copy()
 
@@ -563,7 +563,7 @@ class Query:
                 The result of the query. The nature of the result is
                 dependent on the object type of *x*.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.Query('lt', 5.5)
         >>> q.evaluate(6)
@@ -773,7 +773,7 @@ def lt(value, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> c = cf.lt(5)
     >>> c == 2
@@ -834,7 +834,7 @@ def le(value, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.le(5)
     >>> q
@@ -878,7 +878,7 @@ def gt(value, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.gt(5)
     >>> q
@@ -922,7 +922,7 @@ def ge(value, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.ge(5)
     >>> q
@@ -977,7 +977,7 @@ def eq(value, units=None, attr=None, exact=True):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.eq(5)
     >>> q
@@ -1037,7 +1037,7 @@ def ne(value, units=None, attr=None, exact=True):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.ne(5)
     >>> q
@@ -1089,7 +1089,7 @@ def wi(value0, value1, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.wi(5, 7)
     >>> q
@@ -1136,7 +1136,7 @@ def wo(value0, value1, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.wo(5)
     >>> q
@@ -1183,7 +1183,7 @@ def set(values, units=None, attr=None, exact=True):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> c = cf.set([3, 5])
     >>> c == 4
@@ -1227,7 +1227,7 @@ def contains(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.contains(8)
     <CF Query: [lower_bounds(le 8) & upper_bounds(ge 8)]>
@@ -1271,7 +1271,7 @@ def year(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16)
     >>> d == cf.year(2002)
@@ -1307,7 +1307,7 @@ def month(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16)
     >>> d == cf.month(6)
@@ -1343,7 +1343,7 @@ def day(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16)
     >>> d == cf.day(16)
@@ -1400,7 +1400,7 @@ def hour(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16, 18)
     >>> d == cf.hour(18)
@@ -1436,7 +1436,7 @@ def minute(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16, 18, 30, 0)
     >>> d == cf.minute(30)
@@ -1472,7 +1472,7 @@ def second(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16, 18, 30, 0)
     >>> d == cf.second(0)
@@ -1514,7 +1514,7 @@ def cellsize(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellsize(cf.lt(5, 'km'))
     <CF Query: cellsize(lt <CF Data: 5 km>)>
@@ -1556,7 +1556,7 @@ def cellwi(value0, value1, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellwi(cf.Data(5, 'km'), cf.Data(10, 'km'))
     <CF Query: [lower_bounds(ge 5 km) & upper_bounds(le 10 km)]>
@@ -1597,7 +1597,7 @@ def cellwo(value0, value1, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellwo(cf.Data(5, 'km'), cf.Data(10, 'km'))
     <CF Query: [lower_bounds(lt 5 km) & upper_bounds(gt 10 km)]>
@@ -1639,7 +1639,7 @@ def cellgt(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellgt(cf.Data(300, 'K'))
     <CF Query: lower_bounds(gt 300 K)>
@@ -1678,7 +1678,7 @@ def cellge(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellge(cf.Data(300, 'K'))
     <CF Query: lower_bounds(ge 300 K)>
@@ -1716,7 +1716,7 @@ def celllt(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.celllt(cf.Data(300, 'K'))
     <CF Query: upper_bounds(lt 300 K)>
@@ -1754,7 +1754,7 @@ def cellle(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellle(cf.Data(300, 'K'))
     <CF Query: upper_bounds(le 300 K)>
@@ -1782,7 +1782,7 @@ def jja():
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
@@ -1808,7 +1808,7 @@ def son():
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
@@ -1834,7 +1834,7 @@ def djf():
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
@@ -1861,7 +1861,7 @@ def mam():
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
@@ -1903,7 +1903,7 @@ def seasons(n=4, start=12):
         `list` of `Query`
             The query objects.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.seasons()
     [<CF Query: month[(ge 12) | (le 2)]>,

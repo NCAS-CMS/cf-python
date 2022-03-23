@@ -47,7 +47,7 @@ class UMFileArray(FileArray):
 
         byte_ordering: `str`, optional
 
-    **Examples:**
+    **Examples**
 
     >>> a = UMFileArray(file='file.pp', header_offset=3156,
     ...                 data_offset=3420,
@@ -163,7 +163,7 @@ class UMFileArray(FileArray):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.close()
 
@@ -177,7 +177,7 @@ class UMFileArray(FileArray):
 
             `um.umread.umfile.File`
 
-        **Examples:**
+        **Examples**
 
         >>> f.open()
 

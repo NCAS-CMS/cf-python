@@ -267,7 +267,7 @@ def histogram(*digitized):
         `Field`
             The field construct containing the histogram.
 
-    **Examples:**
+    **Examples**
 
     Create a one-dimensional histogram based on 10 equally-sized bins
     that exactly span the data range:

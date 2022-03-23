@@ -126,7 +126,7 @@ class Constructs(cfdm.Constructs):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c.close()
 

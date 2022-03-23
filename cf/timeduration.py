@@ -312,7 +312,7 @@ class TimeDuration:
                   (cftime.DatetimeGregorian(1999-12-30 00:00:00),
                    cftime.DatetimeGregorian(2000-01-30 00:00:00))
 
-        **Examples:**
+        **Examples**
 
         >>> t = cf.TimeDuration(cf.Data(3 , 'calendar_years'))
         >>> t = cf.TimeDuration(cf.Data(12 , 'hours'))
@@ -900,7 +900,7 @@ class TimeDuration:
 
         .. versionadded:: 1.0
 
-        **Examples:**
+        **Examples**
 
         >>> cf.TimeDuration(45, 'days').iso
         'P45D'
@@ -939,7 +939,7 @@ class TimeDuration:
 
         .. versionadded:: 1.0
 
-        **Examples:**
+        **Examples**
 
         >>> cf.TimeDuration(2, 'hours').isint
         True
@@ -963,7 +963,7 @@ class TimeDuration:
 
         .. versionadded:: 1.0
 
-        **Examples:**
+        **Examples**
 
         >>> cf.TimeDuration(3, 'days').Units
         <CF Units: days>
@@ -1004,7 +1004,7 @@ class TimeDuration:
 
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> u = t.copy()
 
@@ -1050,7 +1050,7 @@ class TimeDuration:
             `int`
                 The number of days in the specified month.
 
-        **Examples:**
+        **Examples**
 
         >>> cf.TimeDuration.days_in_month(2004, 2, calendar='360_day')
         30
@@ -1147,7 +1147,7 @@ class TimeDuration:
             `bool`
                 Whether or not the two instances are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> t = cf.TimeDuration(36, 'calendar_months')
         >>> u = cf.TimeDuration(3, 'calendar_years')
@@ -1250,7 +1250,7 @@ class TimeDuration:
             `bool`
                 Whether or not the two instances logically equivalent.
 
-        **Examples:**
+        **Examples**
 
         >>> t = cf.TimeDuration(36, 'calendar_months')
         >>> u = cf.TimeDuration(3, 'calendar_years')
@@ -1360,7 +1360,7 @@ class TimeDuration:
                 date-time. If *iso* has been set then an ISO 8601 time
                 interval string is returned instead of a tuple.
 
-        **Examples:**
+        **Examples**
 
         >>> t = cf.TimeDuration(6, 'calendar_months')
         >>> t
@@ -1547,7 +1547,7 @@ class TimeDuration:
             `tuple`
                 The two bounds.
 
-        **Examples:**
+        **Examples**
 
         >>> t = cf.M()
         >>> t.bounds(cf.dt(2000, 1, 1))
@@ -1601,7 +1601,7 @@ class TimeDuration:
 
             `bool`
 
-        **Examples:**
+        **Examples**
 
         >>> cf.TimeDuration(0.5, 'days').is_day_factor()
         True
@@ -1688,7 +1688,7 @@ def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):
         `TimeDuration`
             The new `cf.TimeDuration` object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.Y()
     <CF TimeDuration: P1Y (Y-01-01 00:00:00)>
@@ -1741,7 +1741,7 @@ def M(duration=1, month=1, day=1, hour=0, minute=0, second=0):
         `TimeDuration`
             The new `cf.TimeDuration` object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.M()
     <CF TimeDuration: P1M (Y-M-01 00:00:00)>
@@ -1792,7 +1792,7 @@ def D(duration=1, month=1, day=1, hour=0, minute=0, second=0):
         `TimeDuration`
             The new `cf.TimeDuration` object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.D()
     <CF TimeDuration: P1D (Y-M-D 00:00:00)>
@@ -1846,7 +1846,7 @@ def h(duration=1, month=1, day=1, hour=0, minute=0, second=0):
         `TimeDuration`
             The new `cf.TimeDuration` object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.h()
     <CF TimeDuration: PT1H (Y-M-D h:00:00)>
@@ -1900,7 +1900,7 @@ def m(duration=1, month=1, day=1, hour=0, minute=0, second=0):
         `TimeDuration`
             The new `cf.TimeDuration` object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.m()
     <CF TimeDuration: PT1M (Y-M-D h:m:00)>
@@ -1954,7 +1954,7 @@ def s(duration=1, month=1, day=1, hour=0, minute=0, second=0):
         `TimeDuration`
             The new `cf.TimeDuration` object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.s()
     <CF TimeDuration: PT1S (Y-M-D h:m:s)>
