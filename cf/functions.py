@@ -23,11 +23,7 @@ from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
 
 import cfdm
-
-# import cPickle
 import netCDF4
-from numpy import __file__ as _numpy__file__
-from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
 from numpy import ascontiguousarray as _numpy_ascontiguousarray
@@ -1876,17 +1872,16 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
         return a == b
 
 
-# TODODASK - sort out the "numpy" environment
-
-
 def parse_indices(shape, indices, cyclic=False, keepdims=True):
-    """TODODASK.
+    """Parse indices for array access and assignment.
 
     :Parameters:
 
         shape: sequence of `ints`
+            The shape of the array.
 
-        indices: `tuple` (not a `list`!)
+        indices: `tuple`
+            The indices to be applied.
 
         keepdims: `bool`, optional
             If True then an integral index is converted to a
@@ -1899,12 +1894,20 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
             is also returned that contains the parameters needed to
             interpret any cyclic slices.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.parse_indices((5, 8), ([1, 2, 4, 6],))
-    [array([1, 2, 4, 6]), slice(0, 8, 1)]
+    [array([1, 2, 4, 6]), slice(None, None, None)]
     >>> cf.parse_indices((5, 8), (Ellipsis, [2, 4, 6]))
-    [slice(0, 5, 1), slice(2, 7, 2)]
+    [slice(None, None, None), [2, 4, 6]]
+    >>> cf.parse_indices((5, 8), (Ellipsis, 4))
+    [slice(None, None, None), slice(4, 5, 1)]
+    >>> cf.parse_indices((5, 8), (Ellipsis, 4), keepdims=False)
+    [slice(None, None, None), 4]
+    >>> cf.parse_indices((5, 8), (slice(-2, 2)), cyclic=False)
+    [slice(-2, 2, None), slice(None, None, None)]
+    >>> cf.parse_indices((5, 8), (slice(-2, 2)), cyclic=True)
+    ([slice(0, 4, 1), slice(None, None, None)], {0: 2})
 
     """
     parsed_indices = []
@@ -3102,7 +3105,7 @@ def environment(display=True, paths=True):
         "Python": (platform.python_version(), sys.executable),
         "netCDF4": _get_module_info("netCDF4"),
         "cftime": _get_module_info("cftime"),
-        "numpy": (_numpy__version__, _os_path_abspath(_numpy__file__)),
+        "numpy": _get_module_info("numpy"),
         "psutil": _get_module_info("psutil"),
         "scipy": _get_module_info("scipy", try_except=True),
         "matplotlib": _get_module_info("matplotlib", try_except=True),

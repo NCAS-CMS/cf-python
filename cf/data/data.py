@@ -1005,7 +1005,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 "elements is ambiguous. Use d.any() or d.all()"
             )
 
-        return bool(self.array)
+        return bool(self._get_dask())
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -4291,6 +4291,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """TODO."""
         return (self < value[0]) | (self > value[1])
 
+    def _parse_indices(self, *args, **kwargs):
+        raise NotImplementedError("Use cf.parse_indices instead")
+
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
         """Join a sequence of data arrays together.
@@ -7160,56 +7163,69 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    def all(self):
+    @daskified(_DASKIFIED_VERBOSE)
+    def all(self, axis=None, keepdims=True, split_every=None):
         """Test whether all data array elements evaluate to True.
-
-        Performs a logical ``and`` over the data array and returns the
-        result. Masked values are considered as True during computation.
 
         .. seealso:: `allclose`, `any`, `isclose`
 
+        :Parameters:
+
+            axis: (sequence of) `int`, optional
+                Axis or axes along which a logical AND reduction is
+                performed.  The default (`None`) is to perform a
+                logical AND over all the dimensions of the input
+                array. *axis* may be negative, in which case it counts
+                from the last to the first axis.
+
+            {{collapse keepdims: `bool`, optional}}
+
+            {{split_every: `int` or `dict`, optional}}
+
         :Returns:
 
-            `bool`
+            `Data`
                 Whether or not all data array elements evaluate to True.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([[1, 3, 2]])
-        >>> print(d.array)
-        [[1 3 2]]
+        >>> d = cf.Data([[1, 2], [3, 4]])
         >>> d.all()
-        True
+        <CF Data(1, 1): [[True]]>
+        >>> d.all(keepdims=False)
+        <CF Data(1, 1): True>
+        >>> d.all(axis=0)
+        <CF Data(1, 2): [[True, True]]>
+        >>> d.all(axis=1)
+        <CF Data(2, 1): [[True, True]]>
+        >>> d.all(axis=())
+        <CF Data(2, 2): [[True, ..., True]]>
         >>> d[0, 2] = cf.masked
         >>> print(d.array)
         [[1 3 --]]
-        >>> d.all()
+        >>> bool(d.all())
         True
         >>> d[0, 0] = 0
         >>> print(d.array)
         [[0 3 --]]
-        >>> d.all()
+        >>> bool(d.all())
         False
         >>> d[...] = cf.masked
         >>> print(d.array)
         [[-- -- --]]
-        >>> d.all()
+        >>> bool(d.all())
         True
+        >>> bool(d.all(keepdims=False))
+        False
 
         """
-        config = self.partition_configuration(readonly=True)
-
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            a = array.all()
-            if not a and a is not np.ma.masked:
-                partition.close()
-                return False
-
-            partition.close()
-
-        return True
+        d = self.copy(array=False)
+        dx = self._get_dask()
+        dx = da.all(dx, axis=axis, keepdims=keepdims, split_every=split_every)
+        d._set_dask(dx, reset_mask_hardness=False)
+        d.hardmask = _DEFAULT_HARDMASK
+        d.override_units(_units_None, inplace=True)
+        return d
 
     def allclose(self, y, rtol=None, atol=None):
         """Returns True if two broadcastable arrays have equal values,
@@ -7265,7 +7281,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self.isclose(y, rtol=rtol, atol=atol).all()
 
-    def any(self):
+    def any(self, split_every=None):
         """Test whether any data array elements evaluate to True.
 
         Performs a logical or over the data array and returns the
@@ -7273,7 +7289,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. seealso:: `all`, `allclose`, `isclose`
 
-        **Examples:**
+        :Parameters:
+
+            {{split_every: `int` or `dict`, optional}}
+
+        **Examples**
 
         >>> d = cf.Data([[0, 0, 0]])
         >>> d.any()
@@ -7291,22 +7311,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> print(d.array)
         [[-- -- --]]
-        >>> d.any()
+        >>> bool(d.any())
         False
 
         """
-        config = self.partition_configuration(readonly=True)
+        # TODODASK: Consider if a Data object should be returned, and
+        #           if the returned type should be Data rather than
+        #           bool. In the former case, we can use the axis and
+        #           keepdims parameters.
 
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            if array.any():
-                partition.close()
-                return True
-
-            partition.close()
-
-        return False
+        # TODODASK: numpy/dask to *not* consider masked values as True
+        dx = self._get_dask()
+        dx = da.any(dx, axis=None, keepdims=False, split_every=split_every)
+        return bool(dx)
 
     @_inplace_enabled(default=False)
     def apply_masking(

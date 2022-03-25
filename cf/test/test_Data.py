@@ -1435,33 +1435,34 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.outerproduct(e, inplace=True))
         self.assertEqual(d.shape, (40, 30, 5), d.shape)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_all(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data([[1, 2], [3, 4]], 'm')
+        e = d.all()
+        self.assertIsInstance(e, cf.Data)
+        self.assertEqual(e.shape, (1, 1))
+        self.assertEqual(e.Units, cf.Units())
+        self.assertTrue(e)
 
-        d = cf.Data(np.array([[0] * 1000]))
-        self.assertTrue(not d.all())
-        d[-1, -1] = 1
+        e = d.all(keepdims=False)
+        self.assertEqual(e.shape, ())
+        self.assertTrue(e)
+
+        d[0, 0] = 0
         self.assertFalse(d.all())
-        d[...] = 1
-        self.assertTrue(d.all())
+        
         d[...] = cf.masked
         self.assertTrue(d.all())
+        self.assertFalse(d.all(keepdims=False))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_any(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        d = cf.Data(np.array([[0] * 1000]))
+        d = cf.Data([[1, 2], [3, 4]])
+        self.assertTrue(d.any())
+        d[0, 0] = 0
+        self.assertTrue(d.any())
+        d[...] = 0
         self.assertFalse(d.any())
-        d[-1, -1] = 1
-        self.assertTrue(d.any())
-        d[...] = 1
-        self.assertTrue(d.any())
         d[...] = cf.masked
-        self.assertFalse(d.any())
+        self.assertFalse(bool(d.any()))
 
     def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
