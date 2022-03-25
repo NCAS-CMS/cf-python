@@ -11218,23 +11218,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         print(cf_inspect(self))  # pragma: no cover
 
-#    def to_dask_array(self):
- #       return self._get_dask()
-        
+    def to_dask_array(self):
+        return self._get_dask()
+
     @daskified(_DASKIFIED_VERBOSE)
     def isclose(self, y, rtol=None, atol=None):
-        """Return where data are element-wise equal to other,
-        broadcastable data.
+        """Return where data are element-wise equal within a tolerance.
 
         {{equals tolerance}}
 
         For numeric data arrays, ``d.isclose(e, rtol, atol)`` is
-        equivalent to ``abs(d - e) <= ``atol + rtol*abs(e)``, otherwise it
-        is equivalent to ``d == e``.
+        equivalent to ``abs(d - e) <= ``atol + rtol*abs(e)``,
+        otherwise it is equivalent to ``d == e``.
 
         :Parameters:
 
             y: data_like
+                The array to compare.
 
             atol: `float`, optional
                 The absolute tolerance for all numerical comparisons. By
@@ -11247,8 +11247,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
              `bool`
+                 A boolean array of where the data are close to *y*.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([1000, 2500], 'metre')
         >>> e = cf.Data([1, 2.5], 'km')
@@ -11276,39 +11277,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if rtol is None:
             rtol = self._rtol
 
-#        units0 = self.Units
-#        units1 = getattr(y, "Units", _units_None)
-#        if units0.isreftime and units1.isreftime:
-#            if not units0.equals(units1):
-#                if not units0.equivalent(units1):
-#                    pass
-#
-#            x = self.override_units(_units_1)
-#            y = y.copy()
-#            y.Units = units0
-#            y.override_units(_units_1, inplace=True)
-#        else:
-#            x = self
-
-        y = conform_units(y, self.Units)
-            
         a = np.array(0, dtype=self.dtype)
-        b = np.array(0, dtype=getattr(y, "dtype", type(y)))
+        b = np.array(0, dtype=getattr(y, "dtype", None))
 
         try:
+            # Check if a numerical isclose is possible
             np.isclose(a, b)
         except TypeError:
             # self and y do not have suitable numeric data types
-            # (e.g. both are strings).
+            # (e.g. both are strings
             return self == y
         else:
             # self and y have suitable numeric data types
+            y = conform_units(y, self.Units)
+
             d = self.copy()
-            dx = d._get_dask()
-            print(repr(y))
-            dx = da.isclose(dx, y, atol=atol, rtol=rtol)
+            dx = da.isclose(d, y, atol=atol, rtol=rtol)
             d._set_dask(dx, reset_mask_hardness=False)
             d.hardmask = True
+            d.override_units(_units_None, inplace=True)
             return d
 
     @daskified(_DASKIFIED_VERBOSE)

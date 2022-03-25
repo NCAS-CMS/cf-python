@@ -3927,32 +3927,31 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __eq__")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __eq__ and to_dask_array")
     def test_Data_isclose(self):
+        d = cf.Data(1, "m")
+        for x in (1, [1], np.array([[1]]), da.from_array(1), cf.Data(1)):
+            self.assertTrue(d.isclose(x).array)
 
-        d = cf.Data(1)
-        self.assertTrue(d.isclose(1).array ==  True)
-        self.assertTrue(d.isclose(np.array(1)).array ==  True)
-        self.assertTrue(d.isclose(da.from_array(1)).array ==  True)
-        self.assertTrue(d.isclose(cf.Data(1)).array ==  True)
+        self.assertFalse(d.isclose(1.1))
 
-        d = cf.Data(1, 'metre')
-        self.assertTrue(d.isclose(1).array ==  True)
-
-        d = cf.Data([[1000, 2500]], 'metre')
-        e = cf.Data([1, 2.5], 'km')
+        d = cf.Data([[1000, 2500]], "m")
+        e = cf.Data([1, 2.5], "km")
         f = d.isclose(e)
         self.assertEqual(f.shape, d.shape)
         self.assertTrue((f.array == True).all())
 
         # Incompatible units
-        e = cf.Data([1, 2.5], 's')
+        e = cf.Data([1, 2.5], "s")
         with self.assertRaises(ValueError):
             d.isclose(e)
-               
-        d = cf.Data(['a', 'bc'])
-        self.assertTrue((d.isclose(['a', 'bc']).array == True).all())
-         
+
+        d = cf.Data([1], "days since 2000-01-01")
+        e = cf.Data([0], "days since 2000-01-02")
+        self.assertTrue(d.isclose(e).array)
+
+        d = cf.Data(["foo", "bar"])
+        self.assertTrue((d.isclose(["foo", "bar"]).array == True).all())
 
 
 if __name__ == "__main__":
