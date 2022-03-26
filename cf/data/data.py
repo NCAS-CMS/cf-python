@@ -7200,19 +7200,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 1): [[True, True]]>
         >>> d.all(axis=())
         <CF Data(2, 2): [[True, ..., True]]>
-        >>> d[0, 2] = cf.masked
+
+        >>> d[0] = cf.masked
+        >>> d[0, 1] = 0
         >>> print(d.array)
-        [[1 3 --]]
-        >>> bool(d.all())
-        True
-        >>> d[0, 0] = 0
-        >>> print(d.array)
-        [[0 3 --]]
-        >>> bool(d.all())
-        False
+        [[-- --]
+         [0 4]]
+        >>> d.all(axis=0)
+        <CF Data(1, 2): [[False, True]]>
+        >>> d.all(axis=1)
+        <CF Data(2, 1): [[--, False]]>
+
         >>> d[...] = cf.masked
-        >>> print(d.array)
-        [[-- -- --]]
+        >>> d.all()
+        <CF Data(1, 1): [[--]]>
         >>> bool(d.all())
         True
         >>> bool(d.all(keepdims=False))
@@ -7255,7 +7256,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `bool`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([1000, 2500], 'metre')
         >>> e = cf.Data([1, 2.5], 'km')
@@ -7300,24 +7301,34 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             {{split_every: `int` or `dict`, optional}}
 
         **Examples**
-        TODODASK
-        >>> d = cf.Data([[0, 0, 0]])
-        >>> d.any()
-        False
-        >>> d[0, 0] = cf.masked
-        >>> print(d.array)
-        [[-- 0 0]]
-        >>> d.any()
-        False
-        >>> d[0, 1] = 3
-        >>> print(d.array)
-        [[0 3 0]]
-        >>> d.any()
-        True
 
+        >>> d = cf.Data([[0, 2], [0, 4]])
+        >>> d.any()
+        <CF Data(1, 1): [[True]]>
+        >>> d.any(keepdims=False)
+        <CF Data(1, 1): True>
+        >>> d.any(axis=0)
+        <CF Data(1, 2): [[False, True]]>
+        >>> d.any(axis=1)
+        <CF Data(2, 1): [[True, True]]>
+        >>> d.any(axis=())
+        <CF Data(2, 2): [[False, ..., True]]>
+
+        >>> d[0] = cf.masked
         >>> print(d.array)
-        [[-- -- --]]
+        [[-- --]
+         [0 4]]
+        >>> d.any(axis=0)
+        <CF Data(1, 2): [[False, True]]>
+        >>> d.any(axis=1)
+        <CF Data(2, 1): [[--, True]]>
+
+        >>> d[...] = cf.masked
+        >>> d.any()
+        <CF Data(1, 1): [[--]]>
         >>> bool(d.any())
+        False
+        >>> bool(d.any(keepdims=False))
         False
 
         """
