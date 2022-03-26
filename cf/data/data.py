@@ -7281,20 +7281,26 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self.isclose(y, rtol=rtol, atol=atol).all()
 
-    def any(self, split_every=None):
+    def any(self, axis=None, keepdims=True, split_every=None):
         """Test whether any data array elements evaluate to True.
-
-        Performs a logical or over the data array and returns the
-        result. Masked values are considered as False during computation.
 
         .. seealso:: `all`, `allclose`, `isclose`
 
         :Parameters:
 
+            axis: (sequence of) `int`, optional
+                Axis or axes along which a logical OR reduction is
+                performed.  The default (`None`) is to perform a
+                logical AND over all the dimensions of the input
+                array. *axis* may be negative, in which case it counts
+                from the last to the first axis.
+
+            {{collapse keepdims: `bool`, optional}}
+
             {{split_every: `int` or `dict`, optional}}
 
         **Examples**
-
+        TODODASK
         >>> d = cf.Data([[0, 0, 0]])
         >>> d.any()
         False
@@ -7315,15 +7321,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         False
 
         """
-        # TODODASK: Consider if a Data object should be returned, and
-        #           if the returned type should be Data rather than
-        #           bool. In the former case, we can use the axis and
-        #           keepdims parameters.
-
-        # TODODASK: numpy/dask to *not* consider masked values as True
+        d = self.copy(array=False)
         dx = self._get_dask()
-        dx = da.any(dx, axis=None, keepdims=False, split_every=split_every)
-        return bool(dx)
+        dx = da.any(dx, axis=axis, keepdims=keepdims, split_every=split_every)
+        d._set_dask(dx, reset_mask_hardness=False)
+        d.hardmask = _DEFAULT_HARDMASK
+        d.override_units(_units_None, inplace=True)
+        return d
 
     @_inplace_enabled(default=False)
     def apply_masking(
