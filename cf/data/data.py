@@ -6547,14 +6547,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         (12, 73, 96)
 
         """
-        mask_data_obj = self.copy()
+        mask_data_obj = self.copy(array=False)
 
         dx = self._get_dask()
         mask = da.ma.getmaskarray(dx)
 
         mask_data_obj._set_dask(mask, reset_mask_hardness=False)
         mask_data_obj.override_units(_units_None, inplace=True)
-        mask_data_obj.hardmask = True
+        mask_data_obj.hardmask = _DEFAULT_HARDMASK
 
         return mask_data_obj
 
@@ -7202,7 +7202,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2, 2): [[True, ..., True]]>
 
         >>> d[0] = cf.masked
-        >>> d[0, 1] = 0
+        >>> d[1, 0] = 0
         >>> print(d.array)
         [[-- --]
          [0 4]]
