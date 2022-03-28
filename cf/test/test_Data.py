@@ -3927,6 +3927,13 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_flat(self):
+        d = cf.Data([[1, 2], [3, 4]], mask=[[0, 1], [0, 0]])
+        self.assertEqual(list(d.flat()), [1, 3, 4])
+        self.assertEqual(
+            list(d.flat(ignore_masked=False)), [1, np.ma.masked, 3, 4]
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
