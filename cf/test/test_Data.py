@@ -3927,6 +3927,33 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_varray(self):
+        # Scalar numeric array
+        d = cf.Data(9, "km")
+        a = d.varray
+        self.assertIsInstance(a, np.ndarray)
+        self.assertEqual(a.shape, ())
+        self.assertEqual(a, 9)
+        a[()] = 8
+        self.assertEqual(d.array, 8)
+
+        # Non-scalar numeric array
+        b = np.arange(24).reshape(2, 1, 3, 4)
+        d = cf.Data(b, "km", fill_value=-123)
+        a = d.varray
+        a[0, 0, 0, 0] = -999
+        a2 = d.array
+        self.assertFalse((a2 == b).all())
+        self.assertTrue((a2 == a).all())
+
+        # Fill value
+        d[0, 0, 0, 0] = cf.masked
+        self.assertEqual(d.varray.fill_value, d.fill_value)
+
+        # Date-time array
+        d = cf.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
+        self.assertEqual(d.varray, 2.5)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

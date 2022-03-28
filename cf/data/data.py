@@ -6510,16 +6510,30 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @property
     @daskified(_DASKIFIED_VERBOSE)
     def varray(self):
-        """A numpy array view of the data array.
+        """A numpy array view the data array.
 
-        Deprecated at version TODODASK.
+        Note that making changes to elements of the returned view
+        changes the underlying data.
 
         .. seealso:: `array`, `datetime_array`, `compute`, `persist`
 
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2, 3, 4], 'm')
+        >>> a = d.varray
+        >>> type(a)
+        <type 'numpy.ndarray'>
+        >>> print(a)
+        [0 1 2 3 4]
+        >>> a[0] = 999
+        >>> print(d.array)
+        [999   1   2   3   4]
+
         """
-        raise NotImplementedError(
-            "The varray method was deprecated at version TODODASK"
-        )
+        array = self.array
+        dx = da.from_array(array)
+        self._set_dask(dx, reset_mask_hardness=False)
+        return array
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
