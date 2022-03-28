@@ -1,3 +1,5 @@
+from .abstract import FileArray
+
 from .cachedarray import CachedArray
 from .netcdfarray import NetCDFArray
 from .umarray import UMArray

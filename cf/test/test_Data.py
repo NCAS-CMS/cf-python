@@ -3927,6 +3927,9 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_get_filenames(self):
+        raise ValueError("need updated NetCDFArray to test")
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
