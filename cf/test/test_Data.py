@@ -2364,32 +2364,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = int(cf.Data([1, 2]))
 
-    def test_Data__round__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        for ndigits in ([], [0], [1], [2], [3]):
-            for x in (
-                -1.9123,
-                -1.5789,
-                -1.4123,
-                -1.789,
-                0,
-                1.123,
-                1.0234,
-                1.412,
-                1.9345,
-            ):
-                self.assertEqual(
-                    round(cf.Data(x), *ndigits), round(x, *ndigits)
-                )
-                self.assertEqual(
-                    round(cf.Data(x), *ndigits), round(x, *ndigits)
-                )
-
-        with self.assertRaises(Exception):
-            _ = round(cf.Data([1, 2]))
-
     def test_Data_argmax(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

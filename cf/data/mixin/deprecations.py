@@ -7,6 +7,22 @@ from ...functions import (
 class DataClassDeprecationsMixin:
     """Deprecated attributes and methods for the Data class."""
 
+    def __round__(self, *ndigits):
+        """Called to implement the built-in function `round`
+
+        Deprecated at version TODODASK, use method `round` instead.
+
+        x.__round__(*ndigits) <==> round(x, *ndigits)
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "__round__",
+            "Use method 'round' instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     @property
     def Data(self):
         """Deprecated at version 3.0.0, use attribute `data` instead."""
