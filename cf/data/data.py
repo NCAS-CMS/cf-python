@@ -4291,6 +4291,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """TODO."""
         return (self < value[0]) | (self > value[1])
 
+    def _parse_indices(self, *args, **kwargs):
+        """'cf.Data._parse_indices' is not available.
+
+        Use function `cf.parse_indices` instead.
+
+        """
+        raise NotImplementedError(
+            "'cf.Data._parse_indices' is not available. "
+            "Use function 'cf.parse_indices' instead."
+        )
+
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
         """Join a sequence of data arrays together.
