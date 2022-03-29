@@ -11206,6 +11206,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             removed_at="5.0.0",
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     def inspect(self):
         """Inspect the object for debugging.
 
@@ -11215,8 +11216,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
+        **Examples**
+
+        >>> d = cf.Data([9], 'm')
+        >>> d.inspect()
+        <CF Data(1): [9] m>
+        -------------------
+        _components: {'custom': {'_Units': <Units: m>, '_hardmask': True, '_cyclic': set(), '_axes': ('dim0',), 'dask': dask.array<cf_harden_mask, shape=(1,), dtype=int64, chunksize=(1,), chunktype=numpy.ndarray>}, 'netcdf': {}}
+
         """
-        print(cf_inspect(self))  # pragma: no cover
+        cf_inspect(self)
 
     def isclose(self, y, rtol=None, atol=None):
         """Return where data are element-wise equal to other,
