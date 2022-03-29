@@ -8744,96 +8744,110 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    def count(self):
+    @daskified(_DASKIFIED_VERBOSE)
+    def count(self, axis=None, keepdims=False, split_every=None):
         """Count the non-masked elements of the data.
 
         .. seealso:: `count_masked`
 
+        :Parameters:
+
+            axis: (sequence of) `int`, optional
+                Axis or axes along which the count is performed. The
+                default (`None`) performs the count over all the
+                dimensions of the input array. *axis* may be negative,
+                in which case it counts from the last to the first
+                axis.
+
+            {{collapse keepdims: `bool`, optional}}
+
+            {{split_every: `int` or `dict`, optional}}
+
         :Returns:
 
-            ``int``
+            `Data`
+                The count of non-missing elements.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data(numpy.arange(24).reshape(3, 4))
+        >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
         >>> print(d.array)
         [[ 0  1  2  3]
          [ 4  5  6  7]
          [ 8  9 10 11]]
         >>> d.count()
-        12
+        <CF Data(): 12>
+
         >>> d[0, :] = cf.masked
         >>> print(d.array)
         [[-- -- -- --]
          [ 4  5  6  7]
          [ 8  9 10 11]]
         >>> d.count()
-        8
+        <CF Data(): 8>
 
         >>> print(d.count(0).array)
         [2 2 2 2]
         >>> print(d.count(1).array)
         [0 4 4]
-        >>> print(d.count((0, 1)))
+        >>> print(d.count([0, 1]))
         8
 
         """
-        # TODODASK - daskify, previously parallelise=mpi_on (not =False)
-        config = self.partition_configuration(readonly=True)
-
-        n = 0
-
-        #        self._flag_partitions_for_processing(parallelise=mpi_on)
-
-        processed_partitions = []
-        for pmindex, partition in self.partitions.ndenumerate():
-            if partition._process_partition:
-                partition.open(config)
-                partition._pmindex = pmindex
-                array = partition.array
-                n += np.ma.count(array)
-                partition.close()
-                processed_partitions.append(partition)
-            # --- End: if
-        # --- End: for
-
-        # processed_partitions contains a list of all the partitions
-        # that have been processed on this rank. In the serial case
-        # this is all of them and this line of code has no
-        # effect. Otherwise the processed partitions from each rank
-        # are distributed to every rank and processed_partitions now
-        # contains all the processed partitions from every rank.
-        processed_partitions = self._share_partitions(
-            processed_partitions, parallelise=False
+        d = self.copy(array=False)
+        dx = self._get_dask()
+        dx = da.ma.count(
+            dx, axis=axis, keepdims=keepdims, split_every=split_every
         )
+        d._set_dask(dx, reset_mask_hardness=False)
+        d.hardmask = _DEFAULT_HARDMASK
+        d.override_units(_units_None, inplace=True)
+        return d
 
-        # Put the processed partitions back in the partition matrix
-        # according to each partitions _pmindex attribute set above.
-        pm = self.partitions.matrix
-        for partition in processed_partitions:
-            pm[partition._pmindex] = partition
-        # --- End: for
-
-        # Share the lock files created by each rank for each partition
-        # now in a temporary file so that __del__ knows which lock
-        # files to check if present
-        self._share_lock_files(parallelise=False)
-
-        # Aggregate the results on each process and return on all
-        # processes
-        # if mpi_on:
-        #     n = mpi_comm.allreduce(n, op=mpi_sum)
-        # --- End: if
-
-        return n
-
-    def count_masked(self):
+    @daskified(_DASKIFIED_VERBOSE)
+    def count_masked(self, split_every=None):
         """Count the masked elements of the data.
 
         .. seealso:: `count`
 
+        :Parameters:
+
+            {{split_every: `int` or `dict`, optional}}
+
+        :Returns:
+
+            `Data`
+                The count of missing elements.
+
+        **Examples**
+
+        >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
+        >>> print(d.array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> d.count_masked()
+        <CF Data(): 0>
+
+        >>> d[0, :] = cf.masked
+        >>> print(d.array)
+        [[-- -- -- --]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> d.count()
+        <CF Data(): 4>
+
+        >>> print(d.count(0).array)
+        [1 1 1 1]
+        >>> print(d.count(1).array)
+        [4 0 0]
+        >>> print(d.count([0, 1]))
+        4
+
         """
-        return self._size - self.count()
+        # TODODASK: Make a PR for da.ma.count_masked and follow the
+        #           pattern of cf.data.count
+        return self.size - self.count(split_every=split_every)
 
     @daskified(_DASKIFIED_VERBOSE)
     def cyclic(self, axes=None, iscyclic=True):
