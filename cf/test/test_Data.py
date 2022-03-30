@@ -3927,6 +3927,14 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_to_dask_array(self):
+        d = cf.Data([1, 2, 3, 4], "m")
+        d.Units = cf.Units("km")
+        dx = d.to_dask_array()
+        self.assertIsInstance(dx, da.Array)
+        self.assertTrue((d.array == dx.compute()).all())
+        self.assertIs(da.asanyarray(d), dx)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
