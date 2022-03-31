@@ -671,40 +671,40 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((a_diff == d_diff).all())
                 self.assertTrue((a_diff.mask == d_diff.mask).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_compressed(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = np.ma.arange(12).reshape(3, 4)
+        d = cf.Data(a, "m", chunks=2)
+        e = d.compressed(inplace=True)
+        self.assertIsNone(d.compressed(inplace=True))
+        self.assertEqual(d.shape, (a.size,))
+        self.assertEqual(d.Units, cf.Units("m"))
+        self.assertEqual(d.dtype, a.dtype)
 
-        d = cf.Data(a)
-        self.assertTrue((d.array == a).all())
-        self.assertTrue((a.compressed() == d.compressed()).all())
+        d = cf.Data(a, "m", chunks=2)
+        self.assertTrue((d.compressed().array == a.compressed()).all())
 
-        e = d.copy()
-        x = e.compressed(inplace=True)
-        self.assertIsNone(x)
-        self.assertTrue(e.equals(d.compressed()))
+        a[2] = np.ma.masked
+        d = cf.Data(a, "m", chunks=2)
+        self.assertTrue((d.compressed().array == a.compressed()).all())
 
-        a[1, 1] = np.ma.masked
-        a[2, 3] = np.ma.masked
+        a[...] = np.ma.masked
+        d = cf.Data(a, "m", chunks=2)
+        e = d.compressed()
+        self.assertEqual(e.shape, (0,))
+        self.assertTrue((e.array == a.compressed()).all())
 
-        d = cf.Data(a)
-        self.assertTrue((d.array == a).all())
-        self.assertTrue((d.mask.array == a.mask).all())
-        self.assertTrue((a.compressed() == d.compressed()).all())
+        # Scalar arrays
+        a = np.ma.array(9)
+        d = cf.Data(a, "m")
+        e = d.compressed()
+        self.assertEqual(e.shape, (1,))
+        self.assertTrue((e.array == a.compressed()).all())
 
-        e = d.copy()
-        x = e.compressed(inplace=True)
-        self.assertIsNone(x)
-        self.assertTrue(e.equals(d.compressed()))
-
-        d = cf.Data(self.a, "km")
-        self.assertTrue((self.a.flatten() == d.compressed()).all())
-
-        d = cf.Data(self.ma, "km")
-        self.assertTrue((self.ma.compressed() == d.compressed()).all())
+        a = np.ma.array(9, mask=True)
+        d = cf.Data(a, "m")
+        e = d.compressed()
+        self.assertEqual(e.shape, (0,))
+        self.assertTrue((e.array == a.compressed()).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
     def test_Data_stats(self):

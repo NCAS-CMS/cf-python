@@ -976,7 +976,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self._get_dask()
         if math.isnan(dx.size):
-            logger.warning("Computing data len: Performance may be degraded")
+            logger.debug("Computing data len: Performance may be degraded")
             dx.compute_chunk_sizes()
 
         return len(dx)
@@ -6274,9 +6274,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self._get_dask()
         if math.isnan(dx.size):
-            logger.warning(
-                "Computing data nbytes: Performance may be degraded"
-            )
+            logger.debug("Computing data nbytes: Performance may be degraded")
             dx.compute_chunk_sizes()
 
         return dx.nbytes
@@ -6343,7 +6341,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self._get_dask()
         if math.isnan(dx.size):
-            logger.warning("Computing data shape: Performance may be degraded")
+            logger.debug("Computing data shape: Performance may be degraded")
             dx.compute_chunk_sizes()
 
         return dx.shape
@@ -6384,7 +6382,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = self._get_dask()
         size = dx.size
         if math.isnan(size):
-            logger.warning("Computing data size: Performance may be degraded")
+            logger.debug("Computing data size: Performance may be degraded")
             dx.compute_chunk_sizes()
             size = dx.size
 
@@ -8590,6 +8588,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         for partition in self.partitions.matrix.flat:
             partition.file_close()
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def compressed(self, inplace=False):
         """Return all non-masked values in a one dimensional data array.
@@ -8613,7 +8612,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
-        >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
+        >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
         >>> print(d.array)
         [[ 0  1  2  3]
          [ 4  5  6  7]
@@ -8630,58 +8629,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [ 0  1  2  3  4  6  7  8  9 10]
 
         >>> d = cf.Data(9)
-        >>> print(d.array)
-        9
         >>> print(d.compressed().array)
-        9
+        [9]
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        ndim = d.ndim
-
-        if ndim != 1:
-            d.flatten(inplace=True)
-
-        n_non_missing = d.count()
-        if n_non_missing == d.size:
-            return d
-
-        comp = self.empty(
-            shape=(n_non_missing,), dtype=self.dtype, units=self.Units
+        dx = d._get_dask().ravel()
+        dx = da.blockwise(
+            np.ma.compressed,
+            "i",
+            dx.ravel(),
+            "i",
+            adjust_chunks={"i": lambda n: np.nan},
+            dtype=dx.dtype,
+            meta=np.array((), dtype=dx.dtype),
         )
 
-        # Find the number of array elements that fit in one chunk
-        n = int(cf_chunksize() // (self.dtype.itemsize + 1.0))
-
-        # Loop around each chunk's worth of elements and assign the
-        # non-missing values to the compressed data
-        i = 0
-        start = 0
-        for _ in range(1 + d.size // n):
-            if i >= d.size:
-                break
-
-            array = d[i : i + n].array
-            if np.ma.isMA(array):
-                array = array.compressed()
-
-            size = array.size
-            if size >= 1:
-                end = start + size
-                comp[start:end] = array
-                start = end
-
-            i += n
-
-        if not d.ndim:
-            comp.squeeze(inplace=True)
-
-        if inplace:
-            d.__dict__ = comp.__dict__
-        else:
-            d = comp
-
+        d._set_dask(dx, reset_mask_hardness=False)
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
