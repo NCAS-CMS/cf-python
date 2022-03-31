@@ -3927,6 +3927,30 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_allclose(self):
+        d = cf.Data([1000, 2500], "metre")
+        e = cf.Data([1, 2.5], "km")
+        self.assertTrue(d.allclose(e))
+
+        d = cf.Data([[1000, 2500], [1000, 2500]], "metre")
+        self.assertTrue(d.allclose(e))
+
+        d = cf.Data(["ab", "cdef"])
+        e = [[["ab", "cdef"]]]
+        self.assertTrue(d.allclose(e))
+
+        d = cf.Data([1, 1, 1], "s")
+        e = 1
+        self.assertTrue(d.allclose(e))
+
+        # Incompatible units
+        e = cf.Data([1, 1, 1], "m")
+        self.assertFalse(d.allclose(e))
+
+        # Not broadcastable
+        with self.assertRaises(ValueError):
+            d.allclose([1, 2])
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
