@@ -1494,24 +1494,17 @@ class DataTest(unittest.TestCase):
         d = cf.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
         self.assertEqual(d.array, 2.5)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_binary_mask(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data([[0, 1, 2, 3.0]], "m")
+        m = d.binary_mask
+        self.assertEqual(m.shape, d.shape)
+        self.assertEqual(m.Units, cf.Units("1"))
+        self.assertEqual(m.dtype, "int32")
+        self.assertTrue((m.array == [[0, 0, 0, 0]]).all())
 
-        a = np.ma.ones((1000,), dtype="int32")
-        a[[1, 900]] = np.ma.masked
-        a[[0, 10, 910]] = 0
-
-        d = cf.Data(np.arange(1000.0), "radians")
-        d[[1, 900]] = cf.masked
-        d[[10, 910]] = 0
-
-        b = d.binary_mask
-
-        self.assertEqual(b.Units, cf.Units("1"))
-        self.assertEqual(b.dtype, np.dtype("int32"))
-        self.assertTrue((b.array == a).all())
+        d[0, 1] = cf.masked
+        m = d.binary_mask
+        self.assertTrue((d.binary_mask.array == [[0, 1, 0, 0]]).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_clip(self):

@@ -8389,10 +8389,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def binary_mask(self):
         """A binary (0 and 1) mask of the data array.
 
-        The binary mask's data array comprises dimensionless 8-bit
+        The binary mask's data array comprises dimensionless 32-bit
         integers and has 0 where the data array has missing data and 1
         otherwise.
 
@@ -8403,42 +8404,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data`
                 The binary mask.
 
-        **Examples:**
+        **Examples**
 
-        >>> print(d.mask.array)
-        [[ True False  True False]]
-        >>> b = d.binary_mask.array
-        >>> print(b)
-        [[0 1 0 1]]
+        >>> d = cf.Data([[0, 1, 2, 3]], 'm')
+        >>> m = d.binary_mask
+        >>> m
+        <CF Data(1, 4): [[0, ..., 0]] 1>
+        >>> print(m.array)
+        [[0 0 0 0]]
+        >>> d[0, 1] = cf.masked
+        >>> print(d.binary_mask.array)
+        [[0 1 0 0]]
 
         """
-        self.to_memory()
-
-        binary_mask = self.copy()
-
-        config = binary_mask.partition_configuration(readonly=False)
-
-        for partition in binary_mask.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-
-            array = array.astype(bool)
-            if partition.masked:
-                # data is masked
-                partition.subarray = np.ma.array(array, "int32")
-            else:
-                # data is not masked
-                partition.subarray = np.array(array, "int32")
-
-            partition.Units = _units_1
-
-            partition.close()
-        # --- End: for
-
-        binary_mask.Units = _units_1
-        binary_mask.dtype = "int32"
-
-        return binary_mask
+        m = self.mask
+        m.dtype = "int32"
+        m.override_units(_units_1, inplace=True)
+        return m
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
