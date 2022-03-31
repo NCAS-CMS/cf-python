@@ -3944,8 +3944,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.allclose(e))
 
         # Incompatible units
-        e = cf.Data([1, 1, 1], "m")
-        self.assertFalse(d.allclose(e))
+        with self.assertRaises(ValueError):
+            d.allclose(cf.Data([1, 1, 1], "m"))
 
         # Not broadcastable
         with self.assertRaises(ValueError):
