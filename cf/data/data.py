@@ -8571,25 +8571,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return data
 
-    def close(self):
-        """Close all files referenced by the data array.
-
-        Note that a closed file will be automatically reopened if its
-        contents are subsequently required.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> d.close()
-
-        """
-        print("TODODASK - is this still needed/valid? Not needed")
-        for partition in self.partitions.matrix.flat:
-            partition.file_close()
-
     @_inplace_enabled(default=False)
     def compressed(self, inplace=False):
         """Return all non-masked values in a one dimensional data array.
