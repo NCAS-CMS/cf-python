@@ -3927,8 +3927,9 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs updated NetCDFArray to test")
     def test_Data_get_filenames(self):
-        raise ValueError("need updated NetCDFArray to test")
+        pass
 
 
 if __name__ == "__main__":
