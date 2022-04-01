@@ -2622,7 +2622,7 @@ def hash_array(array, algorithm=hashlib.sha1):
         array: `numpy.ndarray`
             The numpy array to be hashed. May be a masked array.
 
-        algorthim: `hashlib` constructor function
+        algorithm: `hashlib` constructor function
             Constructor function for the desired hash algorithm,
             e.g. `hashlib.md5`, `hashlib.sha256`, etc.
 
