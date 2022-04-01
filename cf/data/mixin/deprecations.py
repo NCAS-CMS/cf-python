@@ -63,7 +63,8 @@ class DataClassDeprecationsMixin:
         _DEPRECATION_ERROR_METHOD(
             self,
             "__hash__",
-            message="Consider using 'cf.hash_array' instead.",
+            message="Consider using 'cf.hash_array' on the underlying "
+            "array instead.",
             version="TODODASK",
             removed_at="5.0.0",
         )
