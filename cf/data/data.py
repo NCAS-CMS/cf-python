@@ -8440,24 +8440,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return binary_mask
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         """Clip (limit) the values in the data array in place.
 
-        Given an interval, values outside the interval are clipped to the
-        interval edges. For example, if an interval of [0, 1] is specified
-        then values smaller than 0 become 0 and values larger than 1
-        become 1.
+        Given an interval, values outside the interval are clipped to
+        the interval edges. For example, if an interval of [0, 1] is
+        specified then values smaller than 0 become 0 and values
+        larger than 1 become 1.
 
         :Parameters:
 
-            a_min:
+            a_min: number
                 Minimum value. If `None`, clipping is not performed on
                 lower interval edge. Not more than one of `a_min` and
                 `a_max` may be `None`.
 
-            a_max:
+            a_max: number
                 Maximum value. If `None`, clipping is not performed on
                 upper interval edge. Not more than one of `a_min` and
                 `a_max` may be `None`.
@@ -8483,8 +8484,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> g = f.clip(-90, 90, 'degrees_north')
 
         """
-        d = _inplace_enabled_define_and_cleanup(self)
-
         if units is not None:
             # Convert the limits to the same units as the data array
             units = Units(units)
@@ -8492,16 +8491,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             if self_units != units:
                 a_min = Units.conform(a_min, units, self_units)
                 a_max = Units.conform(a_max, units, self_units)
-        # --- End: if
 
-        config = d.partition_configuration(readonly=False)
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            array.clip(a_min, a_max, out=array)
-            partition.close()
-
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = self._get_data()
+        dx = da.clip(dx, a_min, a_max)
+        d._set_dask(dx, reset_mask_hardness=False)
         return d
 
     @classmethod
