@@ -8,7 +8,7 @@ class DataClassDeprecationsMixin:
     """Deprecated attributes and methods for the Data class."""
 
     def __hash__(self):
-        """The built-in function `hash`
+        """The built-in function `hash`.
 
         Depreacted at version TODODASK. Consider using the
         `cf.hash_array` function instead.
