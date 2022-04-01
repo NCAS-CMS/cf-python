@@ -11609,6 +11609,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
@@ -11632,7 +11633,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The data with swapped axis positions.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[[1, 2, 3], [4, 5, 6]]])
         >>> d
@@ -11648,15 +11649,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        axis0 = d._parse_axes((axis0,))[0]
-        axis1 = d._parse_axes((axis1,))[0]
-
-        if axis0 != axis1:
-            iaxes = list(range(d._ndim))
-            iaxes[axis1], iaxes[axis0] = axis0, axis1
-            d.transpose(iaxes, inplace=True)
-
+        dx = self._get_dask()
+        dx = da.swapaxes(dx, axis0, axis1)
+        d._set_dask(dx, reset_mask_hardness=False)
         return d
 
     def save_to_disk(self, itemsize=None):
