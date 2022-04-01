@@ -12441,26 +12441,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def tolist(self):
-        """Return the array as a (possibly nested) list.
+        """Return the data as a scalar or (nested) list.
 
-        Return a copy of the array data as a (nested) Python list. Data
-        items are converted to the nearest compatible Python type.
+        Returns the data as an ``N``-levels deep nested list of Python
+        scalars, where ``N`` is the number of data dimensions.
+
+        If ``N`` is 0 then, since the depth of the nested list is 0,
+        it will not be a list at all, but a simple Python scalar.
 
         :Returns:
 
-            `list`
-                The possibly nested list of array elements.
+            `list` or scalar
+                The (nested) list of array elements, or a scalar if
+                the data has 0 dimensions.
 
         **Examples:**
+
+        >>> d = cf.Data(9)
+        >>> d.tolist()
+        9
 
         >>> d = cf.Data([1, 2])
         >>> d.tolist()
         [1, 2]
 
         >>> d = cf.Data(([[1, 2], [3, 4]]))
-        >>> list(d)
-        [array([1, 2]), array([3, 4])]      # DCH CHECK
         >>> d.tolist()
         [[1, 2], [3, 4]]
 
