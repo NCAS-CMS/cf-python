@@ -10,7 +10,7 @@ class DataClassDeprecationsMixin:
     def __hash__(self):
         """The built-in function `hash`.
 
-        Depreacted at version TODODASK. Consider using the
+        Deprecated at version TODODASK. Consider using the
         `cf.hash_array` function instead.
 
         Generating the hash temporarily realizes the entire array in
