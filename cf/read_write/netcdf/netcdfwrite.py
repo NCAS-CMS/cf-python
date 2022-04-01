@@ -1,6 +1,6 @@
 import json
 import random
-from os.path import isfile
+from os.path import dirname, isfile
 from string import hexdigits
 
 import cfdm
@@ -419,7 +419,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         base = g["cfa_options"].get("base", None)
         if base is not None:
-            cfa_array["base"] = base
+            if base == "":
+                cfa_array["base"] = dirname(self.write_vars["filename"])
+            else:
+                cfa_array["base"] = base
 
         convert_dtype = g["datatype"]
 
@@ -589,6 +592,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     attrs["subarray"]["file"], cfa_array["base"]
                 )
         # --- End: for
+
+        if base == "":
+            cfa_array["base"] = base
 
         # Add the description (as a JSON string) of the partition array to
         # the netcdf attributes.

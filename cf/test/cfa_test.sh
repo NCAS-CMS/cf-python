@@ -43,3 +43,11 @@ cfa -n -o $test_file $sample_files/* 2>&1 || exit 10
 
 #echo 3
 rm -fr $test_dir $test_file $sample_files
+
+# Test base="" for CFA fragment paths
+mkdir $test_dir
+cp test_file.nc $test_dir
+cfa --cfa_base="" -f CFA4 -o $test_dir/test_file.nca $test_dir/test_file.nc
+cp -a $test_dir ${test_dir}2
+cfa -f NETCDF4 -o $test_file ${test_dir}2/test_file.nca
+rm -fr $test_file $test_dir ${test_dir}2
