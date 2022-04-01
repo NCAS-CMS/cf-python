@@ -9475,7 +9475,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `set`
                 The file names in normalized, absolute form. If the
-                data is are memory then an empty `set` is returned.
+                data is in memory then an empty `set` is returned.
 
         **Examples**
 
