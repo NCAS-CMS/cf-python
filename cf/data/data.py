@@ -40,7 +40,7 @@ from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
 from ..functions import default_netCDF_fillvals
 from ..functions import fm_threshold as cf_fm_threshold
-from ..functions import free_memory, hash_array
+from ..functions import free_memory
 from ..functions import inspect as cf_inspect
 from ..functions import log_level, parse_indices, pathjoin
 from ..functions import rtol as cf_rtol
@@ -812,58 +812,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def __data__(self):
         """Returns a new reference to self."""
         return self
-
-    def __hash__(self):
-        """The built-in function `hash`
-
-        Generating the hash temporarily realizes the entire array in
-        memory, which may not be possible for large arrays.
-
-        The hash value is dependent on the data-type and shape of the data
-        array. If the array is a masked array then the hash value is
-        independent of the fill value and of data array values underlying
-        any masked elements.
-
-        The hash value may be different if regenerated after the data
-        array has been changed in place.
-
-        The hash value is not guaranteed to be portable across versions of
-        Python, numpy and cf.
-
-        :Returns:
-
-            `int`
-                The hash value.
-
-        **Examples:**
-
-        >>> print(d.array)
-        [[0 1 2 3]]
-        >>> d.hash()
-        -8125230271916303273
-        >>> d[1, 0] = numpy.ma.masked
-        >>> print(d.array)
-        [[0 -- 2 3]]
-        >>> hash(d)
-        791917586613573563
-        >>> d.hardmask = False
-        >>> d[0, 1] = 999
-        >>> d[0, 1] = numpy.ma.masked
-        >>> d.hash()
-        791917586613573563
-        >>> d.squeeze()
-        >>> print(d.array)
-        [0 -- 2 3]
-        >>> hash(d)
-        -7007538450787927902
-        >>> d.dtype = float
-        >>> print(d.array)
-        [0.0 -- 2.0 3.0]
-        >>> hash(d)
-        -4816859207969696442
-
-        """
-        return hash_array(self.array)
 
     @daskified(_DASKIFIED_VERBOSE)
     def __float__(self):
@@ -11668,6 +11616,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
@@ -11691,7 +11640,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The data with swapped axis positions.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[[1, 2, 3], [4, 5, 6]]])
         >>> d
@@ -11707,15 +11656,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        axis0 = d._parse_axes((axis0,))[0]
-        axis1 = d._parse_axes((axis1,))[0]
-
-        if axis0 != axis1:
-            iaxes = list(range(d._ndim))
-            iaxes[axis1], iaxes[axis0] = axis0, axis1
-            d.transpose(iaxes, inplace=True)
-
+        dx = self._get_dask()
+        dx = da.swapaxes(dx, axis0, axis1)
+        d._set_dask(dx, reset_mask_hardness=False)
         return d
 
     def save_to_disk(self, itemsize=None):
@@ -12505,26 +12448,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def tolist(self):
-        """Return the array as a (possibly nested) list.
+        """Return the data as a scalar or (nested) list.
 
-        Return a copy of the array data as a (nested) Python list. Data
-        items are converted to the nearest compatible Python type.
+        Returns the data as an ``N``-levels deep nested list of Python
+        scalars, where ``N`` is the number of data dimensions.
+
+        If ``N`` is 0 then, since the depth of the nested list is 0,
+        it will not be a list at all, but a simple Python scalar.
 
         :Returns:
 
-            `list`
-                The possibly nested list of array elements.
+            `list` or scalar
+                The (nested) list of array elements, or a scalar if
+                the data has 0 dimensions.
 
         **Examples:**
+
+        >>> d = cf.Data(9)
+        >>> d.tolist()
+        9
 
         >>> d = cf.Data([1, 2])
         >>> d.tolist()
         [1, 2]
 
         >>> d = cf.Data(([[1, 2], [3, 4]]))
-        >>> list(d)
-        [array([1, 2]), array([3, 4])]      # DCH CHECK
         >>> d.tolist()
         [[1, 2], [3, 4]]
 
