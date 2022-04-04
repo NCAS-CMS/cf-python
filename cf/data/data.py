@@ -10307,6 +10307,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._set_dask(da.floor(dx), reset_mask_hardness=False)
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
     def outerproduct(self, e, inplace=False, i=False):
         """Compute the outer product with another data array.
@@ -10332,12 +10334,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([1, 2, 3], 'metre')
         >>> o = d.outerproduct([4, 5, 6, 7])
         >>> o
-        <CF Data: [[4, ..., 21]] m>
+        <CF Data(3, 4): [[4, ..., 21]] m>
         >>> print(o.array)
         [[ 4  5  6  7]
          [ 8 10 12 14]
@@ -10346,9 +10348,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> e = cf.Data([[4, 5, 6, 7], [6, 7, 8, 9]], 's-1')
         >>> o = d.outerproduct(e)
         >>> o
-        <CF Data: [[[4, ..., 27]]] m.s-1>
-        >>> print(d.shape, e.shape, o.shape)
-        (3,) (2, 4) (3, 2, 4)
+        <CF Data(3, 2, 4): [[[4, ..., 27]]] m.s-1>
         >>> print(o.array)
         [[[ 4  5  6  7]
           [ 6  7  8  9]]
@@ -10358,23 +10358,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
           [18 21 24 27]]]
 
         """
-        e_ndim = np.ndim(e)
-        if e_ndim:
-            if inplace:
-                d = self
-            else:
-                d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
+        e = self.asdata(e)
 
-            for j in range(np.ndim(e)):
-                d.insert_dimension(-1, inplace=True)
-        else:
-            d = self
-
-        d = d * e
-
-        if inplace:
-            self.__dict__ = d.__dict__
-            d = None
+        d.reshape(d.shape + (1,) * e.ndim, inplace=True)
+        d *= e
 
         return d
 
@@ -11245,6 +11233,54 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             return abs(x - y) <= float(atol) + float(rtol) * abs(y)
         except (TypeError, NotImplementedError, IndexError):
             return self == y
+
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
+    def reshape(self, newshape, inplace=False):
+        """Gives a new shape to an array without changing its data.
+
+        .. versionadded:: TODODASK
+
+        .. seealso:: `insert_dimension`, `squeeze`, `transpose`
+
+        :Parameters:
+
+            newshape: (sequence of) `int`
+                The new shape, which should be compatible with the
+                original shape. If an integer, then the result will be
+                a 1-d array of that length. One shape dimension can be
+                -1. In this case, the value is inferred from the
+                length of the array and remaining dimensions.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The reshaped data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2, 3, 4, 5], 'm')
+        >>> e = d.reshape((2, 3))
+        >>> e
+        <CF Data(2, 3): [[0, ..., 5]] m>
+        >>> print(e.array)
+        [[0 1 2]
+         [3 4 5]]
+
+        >>> print(d.reshape((1, 3, -1)).array)
+        [[[0 1]
+          [2 3]
+          [4 5]]]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d._get_dask()
+        dx = dx.reshape(newshape)
+        d._set_dask(dx, reset_mask_hardness=False)
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")

@@ -1408,32 +1408,28 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             d[[1], [0, 4, 1]] = 9
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_outerproduct(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        d = cf.Data(np.arange(1200).reshape(40, 30))
+        d = cf.Data(np.arange(12).reshape(4, 3))
 
         e = cf.Data(np.arange(5))
         f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30, 5))
+        self.assertEqual(f.shape, (4, 3, 5))
 
         e = cf.Data(np.arange(5).reshape(5, 1))
         f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30, 5, 1))
+        self.assertEqual(f.shape, (4, 3, 5, 1))
 
         e = cf.Data(np.arange(30).reshape(6, 5))
         f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30, 6, 5))
+        self.assertEqual(f.shape, (4, 3, 6, 5))
 
         e = cf.Data(7)
         f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30), f.shape)
+        self.assertEqual(f.shape, (4, 3))
 
         e = cf.Data(np.arange(5))
         self.assertIsNone(d.outerproduct(e, inplace=True))
-        self.assertEqual(d.shape, (40, 30, 5), d.shape)
+        self.assertEqual(d.shape, (4, 3, 5))
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_all(self):
@@ -3932,6 +3928,30 @@ class DataTest(unittest.TestCase):
             e = d.tolist()
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
+
+    def test_Data_reshape(self):
+        a = np.arange(6)
+        d = cf.Data(a, "m")
+
+        a = a.reshape((2, 3))
+        self.assertIsNone(d.reshape((2, 3), inplace=True))
+        self.assertEqual(d.shape, a.shape)
+        self.assertTrue((d.array == a).all())
+
+        a = a.reshape((6, 1))
+        d = d.reshape((6, 1))
+        self.assertEqual(d.shape, a.shape)
+        self.assertTrue((d.array == a).all())
+
+        a = a.reshape((1, 2, -1))
+        d = d.reshape((1, 2, -1))
+        self.assertEqual(d.shape, a.shape)
+        self.assertTrue((d.array == a).all())
+
+        a = a.reshape(6)
+        d = d.reshape(6)
+        self.assertEqual(d.shape, a.shape)
+        self.assertTrue((d.array == a).all())
 
 
 if __name__ == "__main__":
