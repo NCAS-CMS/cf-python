@@ -47,6 +47,7 @@ from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
 from . import (  # GatheredSubarray,; RaggedContiguousSubarray,; RaggedIndexedContiguousSubarray,; RaggedIndexedSubarray,
+    FileArray,
     NetCDFArray,
     UMArray,
 )
@@ -9414,37 +9415,43 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_filenames(self):
         """Return the names of files containing parts of the data array.
 
         :Returns:
 
             `set`
-                The file names in normalized, absolute form. If the data
-                is are memory then an empty `set` is returned.
+                The file names in normalized, absolute form. If the
+                data is in memory then an empty `set` is returned.
 
-        **Examples:**
+        **Examples**
 
-        >>> f = cf.read('../file[123]')[0]
-        >>> f.get_filenames()
-        {'/data/user/file1',
-         '/data/user/file2',
-         '/data/user/file3'}
-        >>> a = f.array
-        >>> f.get_filenames()
+        >>> f = cf.NetCDFArray(TODODASK)
+        >>> d = cf.Data(f)
+        >>> d.get_filenames()
+        {TODODASK}
+
+        >>> d = cf.Data([1, 2, 3])
+        >>> d.get_filenames()
         set()
 
         """
-        print("TODODASK - is this still possible?")
-        out = set(
-            [
-                abspath(p.subarray.get_filename())
-                for p in self.partitions.matrix.flat
-                if p.in_file
-            ]
-        )
-        out.discard(None)
+        out = set()
 
+        dx = self._get_dask()
+        hlg = dx.dask
+        dsk = hlg.to_dict()
+        for key, value in hlg.get_all_dependencies().items():
+            if value:
+                continue
+
+            # This key has no dependencies, and so is raw data.
+            a = dsk[key]
+            if isinstance(a, FileArray):
+                out.add(abspath(a.get_filename()))
+
+        out.discard(None)
         return out
 
     @daskified(_DASKIFIED_VERBOSE)

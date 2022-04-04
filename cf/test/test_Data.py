@@ -3922,6 +3922,10 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs updated NetCDFArray to test")
+    def test_Data_get_filenames(self):
+        pass
+
     def test_Data_tolist(self):
         for x in (1, [1, 2], [[1, 2], [3, 4]]):
             d = cf.Data(x)
