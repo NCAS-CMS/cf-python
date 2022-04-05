@@ -492,9 +492,6 @@ class DataTest(unittest.TestCase):
             d.halo(4)
 
     def test_Data_mask(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # TODODASK: once test_Data_apply_masking is passing after daskification
         # of apply_masking, might make sense to combine this test with that?
 
@@ -531,53 +528,52 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d3.mask.hardmask)
         self.assertTrue(d3.mask.array[1], True)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_apply_masking(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.ma.arange(12).reshape(3, 4)
+        a[1, 1] = np.ma.masked
+        d = cf.Data(a, units="m", chunks=2)
 
-        a = self.ma
-        d = cf.Data(a, units="m")
+        self.assertIsNone(d.apply_masking(inplace=True))
 
-        b = a.copy()
+        b = a
         e = d.apply_masking()
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a == 0, np.ma.masked, a)
+        b = np.ma.masked_where(a == 0, a)
         e = d.apply_masking(fill_values=[0])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a == 0) | (a == 11), np.ma.masked, a)
+        b = np.ma.masked_where((a == 0) | (a == 11), a)
         e = d.apply_masking(fill_values=[0, 11])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a < 30, np.ma.masked, a)
-        e = d.apply_masking(valid_min=30)
+        b = np.ma.masked_where(a < 3, a)
+        e = d.apply_masking(valid_min=3)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a > -60, np.ma.masked, a)
-        e = d.apply_masking(valid_max=-60)
+        b = np.ma.masked_where(a > 8, a)
+        e = d.apply_masking(valid_max=8)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a < -20) | (a > 80), np.ma.masked, a)
-        e = d.apply_masking(valid_range=[-20, 80])
+        b = np.ma.masked_where((a < 2) | (a > 8), a)
+        e = d.apply_masking(valid_range=[2, 8])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        d.set_fill_value(70)
+        d.set_fill_value(7)
 
-        b = np.ma.where(a == 70, np.ma.masked, a)
+        b = np.ma.masked_where(a == 7, a)
         e = d.apply_masking(fill_values=True)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a == 70) | (a < 20) | (a > 80), np.ma.masked, a)
-        e = d.apply_masking(fill_values=True, valid_range=[20, 80])
+        b = np.ma.masked_where((a == 7) | (a < 2) | (a > 8), a)
+        e = d.apply_masking(fill_values=True, valid_range=[2, 8])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 

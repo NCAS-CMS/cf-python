@@ -7250,6 +7250,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return False
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def apply_masking(
         self,
@@ -7277,8 +7278,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 elements exactly equal to any of the values are set to
                 missing data.
 
-                If True then the value returned by the `get_fill_value`
-                method, if such a value exists, is used.
+                If True then the value returned by the
+                `get_fill_value` method, if such a value exists, is
+                used.
 
                 Zero or more values may be provided in a sequence of
                 scalars.
@@ -7299,21 +7301,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                   ``fill_value=[]``
 
             valid_min: number, optional
-                A scalar specifying the minimum valid value. Data elements
-                strictly less than this number will be set to missing
-                data.
+                A scalar specifying the minimum valid value. Data
+                elements strictly less than this number will be set to
+                missing data.
 
             valid_max: number, optional
-                A scalar specifying the maximum valid value. Data elements
-                strictly greater than this number will be set to missing
-                data.
+                A scalar specifying the maximum valid value. Data
+                elements strictly greater than this number will be set
+                to missing data.
 
             valid_range: (number, number), optional
-                A vector of two numbers specifying the minimum and maximum
-                valid values, equivalent to specifying values for both
-                *valid_min* and *valid_max* parameters. The *valid_range*
-                parameter must not be set if either *valid_min* or
-                *valid_max* is defined.
+                A vector of two numbers specifying the minimum and
+                maximum valid values, equivalent to specifying values
+                for both *valid_min* and *valid_max* parameters. The
+                *valid_range* parameter must not be set if either
+                *valid_min* or *valid_max* is defined.
 
                 *Parameter example:*
                   ``valid_range=[-999, 10000]`` is equivalent to setting
@@ -7327,54 +7329,52 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The data with masked values. If the operation was in-place
                 then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> import numpy
-        >>> d = Data(numpy.arange(12).reshape(3, 4), 'm')
-        >>> d[1, 1] = masked
+        >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
-        [[0  1  2  3]
-         [4 --  6  7]
-         [8  9 10 11]]
-
+        [[0 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 11]]
         >>> print(d.apply_masking().array)
-        [[0  1  2  3]
-         [4 --  6  7]
-         [8  9 10 11]]
+        [[0 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 11]]
         >>> print(d.apply_masking(fill_values=[0]).array)
-        [[--  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 11]]
+        [[-- 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 11]]
         >>> print(d.apply_masking(fill_values=[0, 11]).array)
-        [[--  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 --]]
-
+        [[-- 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 --]]
         >>> print(d.apply_masking(valid_min=3).array)
-        [[-- -- --  3]
-         [ 4 --  6  7]
-         [ 8  9 10 11]]
+        [[-- -- -- 3]
+         [4 -- 6 7]
+         [8 9 10 11]]
         >>> print(d.apply_masking(valid_max=6).array)
-        [[ 0  1  2  3]
-         [ 4 --  6 --]
+        [[0 1 2 3]
+         [4 -- 6 --]
          [-- -- -- --]]
         >>> print(d.apply_masking(valid_range=[2, 8]).array)
-        [[-- --  2  3]
-         [ 4 --  6  7]
-         [ 8 -- -- --]]
-
+        [[-- -- 2 3]
+         [4 -- 6 7]
+         [8 -- -- --]]
         >>> d.set_fill_value(7)
         >>> print(d.apply_masking(fill_values=True).array)
-        [[0  1  2  3]
-         [4 --  6 --]
-         [8  9 10 11]]
+        [[0 1 2 3]
+         [4 -- 6 --]
+         [8 9 10 11]]
         >>> print(d.apply_masking(fill_values=True,
         ...                       valid_range=[2, 8]).array)
-        [[-- --  2  3]
-         [ 4 --  6 --]
-         [ 8 -- -- --]]
+        [[-- -- 2 3]
+         [4 -- 6 --]
+         [8 -- -- --]]
 
         """
+        # Parse valid_range
         if valid_range is not None:
             if valid_min is not None or valid_max is not None:
                 raise ValueError(
@@ -7396,8 +7396,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             valid_min, valid_max = valid_range
 
-        d = _inplace_enabled_define_and_cleanup(self)
-
+        # Parse fill_values
         if fill_values is None:
             fill_values = False
 
@@ -7412,45 +7411,45 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 fill_values = ()
         else:
             try:
-                _ = iter(fill_values)
+                iter(fill_values)
             except TypeError:
                 raise TypeError(
                     "'fill_values' parameter must be a sequence or "
-                    "of type bool. Got type {}".format(type(fill_values))
+                    f"of type bool. Got type {type(fill_values)}"
                 )
             else:
                 if isinstance(fill_values, str):
                     raise TypeError(
                         "'fill_values' parameter must be a sequence or "
-                        "of type bool. Got type {}".format(type(fill_values))
+                        f"of type bool. Got type {type(fill_values)}"
                     )
-        # --- End: if
+
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = self._get_dask()
 
         mask = None
-
         if fill_values:
-            mask = d == fill_values[0]
+            mask = dx == fill_values[0]
 
             for fill_value in fill_values[1:]:
-                mask |= d == fill_value
-        # --- End: for
+                mask |= dx == fill_value
 
         if valid_min is not None:
             if mask is None:
-                mask = d < valid_min
+                mask = dx < valid_min
             else:
-                mask |= d < valid_min
-        # --- End: if
+                mask |= dx < valid_min
 
         if valid_max is not None:
             if mask is None:
-                mask = d > valid_max
+                mask = dx > valid_max
             else:
-                mask |= d > valid_max
-        # --- End: if
+                mask |= dx > valid_max
 
         if mask is not None:
-            d.where(mask, cf_masked, inplace=True)
+            dx = da.ma.masked_where(mask, dx)
+
+        d._set_dask(dx, reset_mask_hardness=True)
 
         return d
 
