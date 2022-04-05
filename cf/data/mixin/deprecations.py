@@ -7,6 +7,68 @@ from ...functions import (
 class DataClassDeprecationsMixin:
     """Deprecated attributes and methods for the Data class."""
 
+    def __hash__(self):
+        """The built-in function `hash`.
+
+        Deprecated at version TODODASK. Consider using the
+        `cf.hash_array` function instead.
+
+        Generating the hash temporarily realizes the entire array in
+        memory, which may not be possible for large arrays.
+
+        The hash value is dependent on the data-type and shape of the data
+        array. If the array is a masked array then the hash value is
+        independent of the fill value and of data array values underlying
+        any masked elements.
+
+        The hash value may be different if regenerated after the data
+        array has been changed in place.
+
+        The hash value is not guaranteed to be portable across versions of
+        Python, numpy and cf.
+
+        :Returns:
+
+            `int`
+                The hash value.
+
+        **Examples**
+
+        >>> print(d.array)
+        [[0 1 2 3]]
+        >>> d.hash()
+        -8125230271916303273
+        >>> d[1, 0] = numpy.ma.masked
+        >>> print(d.array)
+        [[0 -- 2 3]]
+        >>> hash(d)
+        791917586613573563
+        >>> d.hardmask = False
+        >>> d[0, 1] = 999
+        >>> d[0, 1] = numpy.ma.masked
+        >>> d.hash()
+        791917586613573563
+        >>> d.squeeze()
+        >>> print(d.array)
+        [0 -- 2 3]
+        >>> hash(d)
+        -7007538450787927902
+        >>> d.dtype = float
+        >>> print(d.array)
+        [0.0 -- 2.0 3.0]
+        >>> hash(d)
+        -4816859207969696442
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "__hash__",
+            message="Consider using 'cf.hash_array' on the underlying "
+            "array instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )
+
     @property
     def Data(self):
         """Deprecated at version 3.0.0, use attribute `data` instead."""
@@ -78,7 +140,7 @@ class DataClassDeprecationsMixin:
     def ispartitioned(self):
         """True if the data array is partitioned.
 
-        **Examples**
+        **Examples:**
 
         >>> d._pmsize
         1
@@ -111,7 +173,7 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.chunk()
         >>> d.chunk(100000)
@@ -209,7 +271,7 @@ class DataClassDeprecationsMixin:
 
         TODODASK
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> print(d.ismasked)
@@ -232,7 +294,7 @@ class DataClassDeprecationsMixin:
 
         .. seealso:: `array`, `datetime_array`
 
-        **Examples**
+        **Examples:**
 
         >>> a = d.varray
         >>> type(a)
@@ -261,7 +323,7 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.add_partitions(    )
 
@@ -278,7 +340,7 @@ class DataClassDeprecationsMixin:
 
             `dict`
 
-        **Examples**
+        **Examples:**
 
         """
         _DEPRECATION_ERROR_METHOD(

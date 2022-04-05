@@ -39,13 +39,14 @@ from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
 from ..functions import default_netCDF_fillvals
 from ..functions import fm_threshold as cf_fm_threshold
-from ..functions import free_memory, hash_array
+from ..functions import free_memory
 from ..functions import inspect as cf_inspect
 from ..functions import log_level, parse_indices, pathjoin
 from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
 from . import (  # GatheredSubarray,; RaggedContiguousSubarray,; RaggedIndexedContiguousSubarray,; RaggedIndexedSubarray,
+    FileArray,
     NetCDFArray,
     UMArray,
 )
@@ -454,7 +455,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             chunk: deprecated at version TODODASK
                 Use the *chunks* parameter instead.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data(5)
         >>> d = cf.Data([1,2,3], units='K')
@@ -811,58 +812,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """Returns a new reference to self."""
         return self
 
-    def __hash__(self):
-        """The built-in function `hash`
-
-        Generating the hash temporarily realizes the entire array in
-        memory, which may not be possible for large arrays.
-
-        The hash value is dependent on the data-type and shape of the data
-        array. If the array is a masked array then the hash value is
-        independent of the fill value and of data array values underlying
-        any masked elements.
-
-        The hash value may be different if regenerated after the data
-        array has been changed in place.
-
-        The hash value is not guaranteed to be portable across versions of
-        Python, numpy and cf.
-
-        :Returns:
-
-            `int`
-                The hash value.
-
-        **Examples**
-
-        >>> print(d.array)
-        [[0 1 2 3]]
-        >>> d.hash()
-        -8125230271916303273
-        >>> d[1, 0] = numpy.ma.masked
-        >>> print(d.array)
-        [[0 -- 2 3]]
-        >>> hash(d)
-        791917586613573563
-        >>> d.hardmask = False
-        >>> d[0, 1] = 999
-        >>> d[0, 1] = numpy.ma.masked
-        >>> d.hash()
-        791917586613573563
-        >>> d.squeeze()
-        >>> print(d.array)
-        [0 -- 2 3]
-        >>> hash(d)
-        -7007538450787927902
-        >>> d.dtype = float
-        >>> print(d.array)
-        [0.0 -- 2.0 3.0]
-        >>> hash(d)
-        -4816859207969696442
-
-        """
-        return hash_array(self.array)
-
     @daskified(_DASKIFIED_VERBOSE)
     def __float__(self):
         """Called to implement the built-in function `float`
@@ -1044,7 +993,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data`
                 The subspace of the data.
 
-        **Examples**
+        **Examples:**
 
         >>> import numpy
         >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
@@ -1238,7 +1187,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. seealso:: `__getitem__`, `cf.masked`, `hardmask`, `where`
 
-        **Examples**
+        **Examples:**
 
         """
         indices, roll = parse_indices(
@@ -1522,7 +1471,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `dask.array.Array`
                 The removed dask array.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1, 2, 3])
         >>> dx = d._del_dask()
@@ -1581,7 +1530,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `dask.array.Array`
                 The updated dask array.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1, 2, 3])
         >>> dx = d._map_blocks(lambda x: x / 2)
@@ -2489,7 +2438,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `dict`
                 The serialization.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2, 3]], 'm')
         >>> d.dumpd()
@@ -2672,7 +2621,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d = Data([[1, 2, 3]], 'm')
         >>> e = Data([6, 7, 8, 9], 's')
@@ -2964,7 +2913,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The ceiling of the data. If the operation was in-place
                 then `None` is returned.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
         >>> print(d.array)
@@ -3528,7 +3477,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`, `Data` or `None`, `Units`
 
-        **Examples**
+        **Examples:**
 
         >>> d._combined_units(e, '__sub__')
         >>> d._combined_units(e, '__imul__')
@@ -3924,7 +3873,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 A new data object, or if the operation was in place, the
                 same data object.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([0, 1, 2, 3])
         >>> e = cf.Data([1, 1, 3, 4])
@@ -4288,6 +4237,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """TODO."""
         return (self < value[0]) | (self > value[1])
 
+    def _parse_indices(self, *args, **kwargs):
+        """'cf.Data._parse_indices' is not available.
+
+        Use function `cf.parse_indices` instead.
+
+        """
+        raise NotImplementedError(
+            "'cf.Data._parse_indices' is not available. "
+            "Use function 'cf.parse_indices' instead."
+        )
+
+    def _set_subspace(self, *args, **kwargs):
+        """'cf.Data._set_subspace' is unavailable."""
+        raise NotImplementedError("'cf.Data._set_subspace' is unavailable.")
+
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
         """Join a sequence of data arrays together.
@@ -4320,7 +4284,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data`
                 The concatenated data.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2], [3, 4]], 'km')
         >>> e = cf.Data([[5.0, 6.0]], 'metre')
@@ -4630,7 +4594,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data`
                 A new Data array.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2, -3, -4, -5]])
 
@@ -5446,7 +5410,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `list`
 
-        **Examples**
+        **Examples:**
 
         """
 
@@ -5689,7 +5653,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `numpy array or `None`
 
-        **Examples**
+        **Examples:**
 
         """
         array_shape = array.shape
@@ -5987,7 +5951,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. seealso `override_units`, `override_calendar`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1, 2, 3], units='m')
         >>> d.Units
@@ -6046,7 +6010,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def data(self):
         """The data as an object identity.
 
-        **Examples**
+        **Examples:**
 
         >>> d.data is d
         True
@@ -6059,7 +6023,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def dtype(self):
         """The `numpy` data-type of the data.
 
-        **Examples**
+        **Examples:**
 
         TODODASK
         >>> d = cf.Data([0.5, 1.5, 2.5])
@@ -6111,7 +6075,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         Deleting this attribute is equivalent to setting it to None, so
         this attribute is guaranteed to always exist.
 
-        **Examples**
+        **Examples:**
 
         >>> d.fill_value = 9999.0
         >>> d.fill_value
@@ -6154,7 +6118,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         .. seealso:: `harden_mask`, `soften_mask`, `where`,
                      `__setitem__`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1, 2, 3])
         >>> d.hardmask
@@ -6191,7 +6155,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         `is_masked` causes all delayed operations to be executed.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> print(d.is_masked)
@@ -6226,7 +6190,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def isscalar(self):
         """True if the data array is a 0-d scalar array.
 
-        **Examples**
+        **Examples:**
 
         >>> d.ndim
         0
@@ -6253,7 +6217,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         If the number of bytes is unknown then it is calculated
         immediately by executing all delayed operations.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 1.5, 2]])
         >>> d.dtype
@@ -6283,7 +6247,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def ndim(self):
         """Number of dimensions in the data array.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> d.ndim
@@ -6319,7 +6283,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         If the shape of the data is unknown then it is calculated
         immediately by executing all delayed operations.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> d.shape
@@ -6355,7 +6319,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         If the size of the data is unknown then it is calculated
         immediately by executing all delayed operations.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> d.size
@@ -6530,7 +6494,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data`
 
-        **Examples**
+        **Examples:**
 
         >>> d.shape
         (12, 73, 96)
@@ -6587,7 +6551,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The behaviour prior to the change, or the current
                 behaviour if no new value was specified.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([0., 1])
         >>> e = cf.Data([1., 2])
@@ -6697,7 +6661,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The behaviour prior to the change, or the current
                 behaviour if no new values are specified.
 
-        **Examples**
+        **Examples:**
 
         Set treatment for all types of floating-point errors to
         ``'raise'`` and then reset to the previous behaviours:
@@ -6818,7 +6782,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> print(d.array)
         [[0.5 0.7]
@@ -6883,7 +6847,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     #
     #        `Data`
     #
-    #    **Examples**
+    #    **Examples:**
     #
     #        '''
     #        return cls(numpy_arctan2(y, x), units=_units_radians)
@@ -6907,7 +6871,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> print(d.array)
         [[0.5 0.7]
@@ -6962,7 +6926,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> print(d.array)
         [[0.5 0.7]
@@ -7017,7 +6981,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> print(d.array)
         [[0.5 0.7]
@@ -7066,7 +7030,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> print(d.array)
         [[0.5 0.7]
@@ -7121,7 +7085,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> print(d.array)
         [[0.5 0.7]
@@ -7170,7 +7134,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `bool`
                 Whether or not all data array elements evaluate to True.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 3, 2]])
         >>> print(d.array)
@@ -7236,7 +7200,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `bool`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1000, 2500], 'metre')
         >>> e = cf.Data([1, 2.5], 'km')
@@ -7270,7 +7234,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. seealso:: `all`, `allclose`, `isclose`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[0, 0, 0]])
         >>> d.any()
@@ -7382,7 +7346,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The data with masked values. If the operation was in-place
                 then `None` is returned.
 
-        **Examples**
+        **Examples:**
 
         >>> import numpy
         >>> d = Data(numpy.arange(12).reshape(3, 4), 'm')
@@ -7558,7 +7522,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data`
                 The resulting reconstructed Data object.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data(numpy.arange(120).reshape(2, 3, 4, 5))
         >>> x = d.section([1, 3])
@@ -7749,7 +7713,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 The calendar.
 
-        **Examples**
+        **Examples:**
 
         >>> d.set_calendar('julian')
         >>> d.get_calendar
@@ -7853,7 +7817,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples**
+        **Examples:**
 
         """
         # TODODASK: Placeholder for the real thing, that takes into
@@ -7897,7 +7861,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The collapsed data, or `None` if the operation was
                 in-place.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
         >>> d.maximum_absolute_value()
@@ -7952,7 +7916,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. seealso:: `maximum`, `mean`, `mid_range`, `sum`, `sd`, `var`
 
-        **Examples**
+        **Examples:**
 
         """
         return self._collapse(
@@ -7995,7 +7959,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The collapsed data, or `None` if the operation was
                 in-place.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
         >>> d.minimum_absolute_value()
@@ -8088,7 +8052,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
                      `var`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2, 4], [1, 4, 9]], 'm')
         >>> print(d.array)
@@ -8229,7 +8193,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The collapsed data, or `None` if the operation was
                 in-place.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
         >>> d.mean_absolute_value()
@@ -8318,7 +8282,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
                      `var`
 
-        **Examples**
+        **Examples:**
 
         """
         if weights is None:
@@ -8397,7 +8361,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data`
                 The binary mask.
 
-        **Examples**
+        **Examples:**
 
         >>> print(d.mask.array)
         [[ True False  True False]]
@@ -8471,7 +8435,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 `None` is returned.
 
 
-        **Examples**
+        **Examples:**
 
         >>> g = f.clip(-90, 90)
         >>> g = f.clip(-90, 90, 'degrees_north')
@@ -8575,7 +8539,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.close()
 
@@ -8703,7 +8667,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.Units
         <Units: degrees_east>
@@ -8747,7 +8711,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             ``int``
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data(numpy.arange(24).reshape(3, 4))
         >>> print(d.array)
@@ -9085,7 +9049,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The uncompressed data, or `None` of the operation was
                 in-place.
 
-        **Examples**
+        **Examples:**
 
         >>> d.get_compression_type()
         'ragged contiguous'
@@ -9118,7 +9082,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         Returns a new object with the sorted unique elements in a one
         dimensional array.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[4, 2, 1], [1, 2, 3]], 'metre')
         >>> d.unique()
@@ -9285,7 +9249,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `bool`
                 Whether or not the two instances are equal.
 
-        **Examples**
+        **Examples:**
 
         >>> d.equals(d)
         True
@@ -9386,7 +9350,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -9428,7 +9392,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -9460,37 +9424,43 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_filenames(self):
         """Return the names of files containing parts of the data array.
 
         :Returns:
 
             `set`
-                The file names in normalized, absolute form. If the data
-                is are memory then an empty `set` is returned.
+                The file names in normalized, absolute form. If the
+                data is in memory then an empty `set` is returned.
 
         **Examples**
 
-        >>> f = cf.read('../file[123]')[0]
-        >>> f.get_filenames()
-        {'/data/user/file1',
-         '/data/user/file2',
-         '/data/user/file3'}
-        >>> a = f.array
-        >>> f.get_filenames()
+        >>> f = cf.NetCDFArray(TODODASK)
+        >>> d = cf.Data(f)
+        >>> d.get_filenames()
+        {TODODASK}
+
+        >>> d = cf.Data([1, 2, 3])
+        >>> d.get_filenames()
         set()
 
         """
-        print("TODODASK - is this still possible?")
-        out = set(
-            [
-                abspath(p.subarray.get_filename())
-                for p in self.partitions.matrix.flat
-                if p.in_file
-            ]
-        )
-        out.discard(None)
+        out = set()
 
+        dx = self._get_dask()
+        hlg = dx.dask
+        dsk = hlg.to_dict()
+        for key, value in hlg.get_all_dependencies().items():
+            if value:
+                continue
+
+            # This key has no dependencies, and so is raw data.
+            a = dsk[key]
+            if isinstance(a, FileArray):
+                out.add(abspath(a.get_filename()))
+
+        out.discard(None)
         return out
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -9612,7 +9582,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The expanded data, or `None` if the operation was
                 in-place.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
         >>> d[-1, -1] = cf.masked
@@ -9841,7 +9811,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. seealso:: `hardmask`, `soften_mask`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1, 2, 3], hardmask=False)
         >>> d.hardmask
@@ -9936,7 +9906,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. seealso:: `hardmask`, `harden_mask`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1, 2, 3])
         >>> d.hardmask
@@ -9978,7 +9948,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The filled data, or `None` if the operation was in-place.
 
-        **Examples**
+        **Examples:**
 
         >>> d = {{package}}.Data([[1, 2, 3]])
         >>> print(d.filled().array)
@@ -10032,7 +10002,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 The first element of the data
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2], [3, 4]])
         >>> d.first_element()
@@ -10073,7 +10043,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 The second element of the data
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2], [3, 4]])
         >>> d.second_element()
@@ -10114,7 +10084,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 The last element of the data
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[1, 2], [3, 4]])
         >>> d.last_element()
@@ -10147,7 +10117,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             generator
                 An iterator over elements of the data array.
 
-        **Examples**
+        **Examples:**
 
         >>> print(d.array)
         [[1 -- 3]]
@@ -10332,7 +10302,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
         >>> print(d.array)
@@ -10371,7 +10341,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1, 2, 3], 'metre')
         >>> o = d.outerproduct([4, 5, 6, 7])
@@ -10510,7 +10480,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data(1012.0, 'hPa')
         >>> d.override_units('km')
@@ -10554,7 +10524,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -10572,7 +10542,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.to_disk()
 
@@ -10608,7 +10578,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.to_memory()
         >>> d.to_memory(regardless=True)
@@ -10642,7 +10612,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         :Returns:
 
-        **Examples**
+        **Examples:**
 
         >>> d.in_memory
 
@@ -10713,7 +10683,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 A copy of the specified element of the array as a suitable
                 Python scalar.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data(2)
         >>> d.datum()
@@ -10830,7 +10800,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([0., 1])
         >>> e = cf.Data([1., 2])
@@ -10999,7 +10969,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data`
                 The new data array having all elements masked.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data.masked_all((96, 73))
 
@@ -11046,7 +11016,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples**
+        **Examples:**
 
         """
         return self._collapse(
@@ -11084,7 +11054,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.flip()
         >>> d.flip(1)
@@ -11158,7 +11128,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
              `bool`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1000, 2500], 'metre')
         >>> e = cf.Data([1, 2.5], 'km')
@@ -11227,7 +11197,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The rounded data. If the operation was in-place then
                 `None` is returned.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
         >>> print(d.array)
@@ -11305,7 +11275,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         .. seealso:: `maximum`, `minimum`, `mid_range`, `range`, `sum`, `sd`,
                      `var`
 
-        **Examples**
+        **Examples:**
 
         """
         return self._collapse(
@@ -11353,7 +11323,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([-1.81, -1.41, -1.01, -0.91, 0.09, 1.09, 1.19, 1.59, 1.99])
         >>> print(d.array)
@@ -11484,7 +11454,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `dict`
                 The statistics.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
         >>> print(d.array)
@@ -11575,6 +11545,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
@@ -11614,15 +11585,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        axis0 = d._parse_axes((axis0,))[0]
-        axis1 = d._parse_axes((axis1,))[0]
-
-        if axis0 != axis1:
-            iaxes = list(range(d._ndim))
-            iaxes[axis1], iaxes[axis0] = axis0, axis1
-            d.transpose(iaxes, inplace=True)
-
+        dx = self._get_dask()
+        dx = da.swapaxes(dx, axis0, axis1)
+        d._set_dask(dx, reset_mask_hardness=False)
         return d
 
     def save_to_disk(self, itemsize=None):
@@ -11649,7 +11614,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `bool`
 
-        **Examples**
+        **Examples:**
 
         >>> print(d.fits_in_memory(8))
         False
@@ -11959,7 +11924,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.Units
         <Units: degrees_north>
@@ -12020,7 +11985,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.Units
         <Units: degrees_north>
@@ -12079,7 +12044,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.Units
         <Units: degrees_north>
@@ -12141,7 +12106,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.Units
         <Units: degrees_north>
@@ -12248,7 +12213,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The squeezed data array.
 
-        **Examples**
+        **Examples:**
 
         >>> v.shape
         (1,)
@@ -12348,7 +12313,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.Units
         <Units: degrees_north>
@@ -12383,26 +12348,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def tolist(self):
-        """Return the array as a (possibly nested) list.
+        """Return the data as a scalar or (nested) list.
 
-        Return a copy of the array data as a (nested) Python list. Data
-        items are converted to the nearest compatible Python type.
+        Returns the data as an ``N``-levels deep nested list of Python
+        scalars, where ``N`` is the number of data dimensions.
+
+        If ``N`` is 0 then, since the depth of the nested list is 0,
+        it will not be a list at all, but a simple Python scalar.
 
         :Returns:
 
-            `list`
-                The possibly nested list of array elements.
+            `list` or scalar
+                The (nested) list of array elements, or a scalar if
+                the data has 0 dimensions.
 
-        **Examples**
+        **Examples:**
+
+        >>> d = cf.Data(9)
+        >>> d.tolist()
+        9
 
         >>> d = cf.Data([1, 2])
         >>> d.tolist()
         [1, 2]
 
         >>> d = cf.Data(([[1, 2], [3, 4]]))
-        >>> list(d)
-        [array([1, 2]), array([3, 4])]      # DCH CHECK
         >>> d.tolist()
         [[1, 2], [3, 4]]
 
@@ -12436,7 +12408,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.shape
         (19, 73, 96)
@@ -12502,7 +12474,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
         >>> print(d.array)
@@ -12784,7 +12756,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d.Units
         <Units: radians>
@@ -12875,7 +12847,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples**
+        **Examples:**
 
         """
         return self._collapse(
@@ -12975,7 +12947,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples**
+        **Examples:**
 
         """
         return self._collapse(
@@ -13021,7 +12993,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The collapsed data, or `None` if the operation was
                 in-place.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
         >>> d.sum_of_squares()
@@ -13080,7 +13052,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples**
+        **Examples:**
 
         """
         if weights is None:
@@ -13143,7 +13115,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples**
+        **Examples:**
 
         """
         if weights is None:
@@ -13307,7 +13279,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `Data` or `None`
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data([1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4])
         >>> e = cf.Data([1, 2, 3, 4])
@@ -13375,7 +13347,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The collapsed array.
 
-        **Examples**
+        **Examples:**
 
         """
         units = self.Units
@@ -13449,7 +13421,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 The dictionary of m dimensional sections of the Data
                 object.
 
-        **Examples**
+        **Examples:**
 
         >>> d = cf.Data(np.arange(120).reshape(2, 6, 10))
         >>> d
@@ -13598,7 +13570,7 @@ def _size_of_index(index, size=None):
         `int`
             The length of the sequence resulting from applying the index.
 
-    **Examples**
+    **Examples:**
 
     >>> _size_of_index(slice(None, None, -2), 10)
     5
@@ -13637,7 +13609,7 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
         numpy array
             A numpy array of cf.Partition objects.
 
-    **Examples**
+    **Examples:**
 
     >>> type(f.Data)
     <class 'cf.data.Data'>

@@ -1,6 +1,7 @@
 import atexit
 import csv
 import ctypes.util
+import hashlib
 import importlib
 import os
 import platform
@@ -10,9 +11,9 @@ import sys
 import urllib.parse
 import warnings
 from collections.abc import Iterable
-from hashlib import md5 as hashlib_md5
 from itertools import product
-from marshal import dumps as marshal_dumps
+from marshal import dumps
+from math import ceil as math_ceil
 from numbers import Integral
 from os import getpid, listdir, mkdir
 from os.path import abspath as _os_path_abspath
@@ -23,16 +24,14 @@ from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
 
 import cfdm
-
-# import cPickle
 import netCDF4
 from dask import config
 from dask.utils import parse_bytes
+import numpy as np
 from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
-from numpy import ascontiguousarray as _numpy_ascontiguousarray
 from numpy import isclose as _x_numpy_isclose
 from numpy import shape as _numpy_shape
 from numpy import take as _numpy_take
@@ -2601,69 +2600,66 @@ def pathjoin(path1, path2):
     return _os_path_join(path1, path2)
 
 
-def hash_array(array):
-    """Return the hash value of a numpy array.
+def hash_array(array, algorithm=hashlib.sha1):
+    """Return a hash value of a numpy array.
 
-    The hash value is dependent on the data type, shape of the data
+    The hash value is dependent on the data type and the shape of the
     array. If the array is a masked array then the hash value is
     independent of the fill value and of data array values underlying
     any masked elements.
-
-    The hash value is not guaranteed to be portable across versions of
-    Python, numpy and cf.
 
     :Parameters:
 
         array: `numpy.ndarray`
             The numpy array to be hashed. May be a masked array.
 
+        algorithm: `hashlib` constructor function
+            Constructor function for the desired hash algorithm,
+            e.g. `hashlib.md5`, `hashlib.sha256`, etc.
+
+            .. versionadded:: TODODASK
+
     :Returns:
 
         `int`
             The hash value.
 
-    **Examples:**
+    **Examples**
 
-    >>> print(array)
-    [[0 1 2 3]]
+    >>> a = np.array([[0, 1, 2, 3]])
+    >>> cf.hash_array(a)
+    -5620332080097671134
+
+    >>> a = np.ma.array([[0, 1, 2, 3]], mask=[[0, 1, 0, 0]])
     >>> cf.hash_array(array)
-    -8125230271916303273
-    >>> array[1, 0] = numpy.ma.masked
-    >>> print(array)
+    8372868545804866378
+
+    >>> a[0, 1] = 999
+    >>> a[0, 1] = np.ma.masked
+    >>> print(a)
     [[0 -- 2 3]]
-    >>> cf.hash_array(array)
-    791917586613573563
-    >>> array.hardmask = False
-    >>> array[0, 1] = 999
-    >>> array[0, 1] = numpy.ma.masked
-    >>> cf.hash_array(array)
-    791917586613573563
-    >>> array.squeeze()
-    >>> print(array)
-    [0 -- 2 3]
-    >>> cf.hash_array(array)
-    -7007538450787927902
-    >>> array.dtype = float
-    >>> print(array)
-    [0.0 -- 2.0 3.0]
-    >>> cf.hash_array(array)
-    -4816859207969696442
+    >>> print(a.data)
+    [[  0 999   2   3]]
+    >>> cf.hash_array(a)
+    8372868545804866378
+
+    >>> a = a.astype(float)
+    >>> cf.hash_array(a)
+    5950106833921144220
 
     """
-    h = hashlib_md5()
+    h = algorithm()
 
-    h_update = h.update
+    h.update(dumps(array.dtype.name))
+    h.update(dumps(array.shape))
 
-    h_update(marshal_dumps(array.dtype.name))
-    h_update(marshal_dumps(array.shape))
-
-    if _numpy_ma_isMA(array):
-        if _numpy_ma_is_masked(array):
+    if np.ma.isMA(array):
+        if np.ma.is_masked(array):
             mask = array.mask
             if not mask.flags.c_contiguous:
-                mask = _numpy_ascontiguousarray(mask)
+                mask = np.ascontiguousarray(mask)
 
-            h_update(mask)
+            h.update(mask)
             array = array.copy()
             array.set_fill_value()
             array = array.filled()
@@ -2671,10 +2667,9 @@ def hash_array(array):
             array = array.data
 
     if not array.flags.c_contiguous:
-        # array = array.copy()
-        array = _numpy_ascontiguousarray(array)
+        array = np.ascontiguousarray(array)
 
-    h_update(array)
+    h.update(array)
 
     return hash(h.digest())
 
