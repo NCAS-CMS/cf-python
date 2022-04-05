@@ -1942,22 +1942,21 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, d.shape)
         self.assertTrue(f.equals(d, verbose=2))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_swapaxes(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-
-        d = cf.Data(a.copy())
+        a = np.ma.arange(24).reshape(2, 3, 4)
+        a[1, 1] = np.ma.masked
+        d = cf.Data(a, chunks=(-1, -1, 2))
 
         for i in range(-a.ndim, a.ndim):
             for j in range(-a.ndim, a.ndim):
-                b = np.swapaxes(a.copy(), i, j)
+                b = np.swapaxes(a, i, j)
                 e = d.swapaxes(i, j)
-                message = "cf.Data.swapaxes({}, {}) failed".format(i, j)
-                self.assertEqual(b.shape, e.shape, message)
-                self.assertTrue((b == e.array).all(), message)
+                self.assertEqual(b.shape, e.shape)
+                self.assertTrue((b == e.array).all())
+
+        # Bad axes
+        with self.assertRaises(IndexError):
+            d.swapaxes(3, -3)
 
     def test_Data_transpose(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1971,12 +1970,8 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(indices):
                 a = np.transpose(a, axes)
                 d.transpose(axes, inplace=True)
-                message = (
-                    "cf.Data.transpose({}) failed: "
-                    "d.shape={}, a.shape={}".format(axes, d.shape, a.shape)
-                )
-                self.assertEqual(d.shape, a.shape, message)
-                self.assertTrue((d.array == a).all(), message)
+                self.assertEqual(d.shape, a.shape)
+                self.assertTrue((d.array == a).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_unique(self):
@@ -3343,21 +3338,33 @@ class DataTest(unittest.TestCase):
         d.to_disk()
         self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'select'")
     def test_Data_section(self):
+        d = cf.Data(np.arange(24).reshape(2, 3, 4))
+
+        e = d.section(-1)
+        self.assertIsInstance(e, dict)
+        self.assertEqual(len(e), 6)
+
+        e = d.section([0, 2], min_step=2)
+        self.assertEqual(len(e), 2)
+        f = e[(None, 0, None)]
+        self.assertEqual(f.shape, (2, 2, 4))
+        f = e[(None, 2, None)]
+        self.assertEqual(f.shape, (2, 1, 4))
+
+        e = d.section([0, 1, 2])
+        self.assertEqual(len(e), 1)
+        key, value = e.popitem()
+        self.assertEqual(key, (None, None, None))
+        self.assertTrue(value.equals(d))
+
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs reconstruct_sectioned_data")
+    def test_Data_reconstruct_sectioned_data(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename6)[0]
-        self.assertEqual(
-            list(sorted(f.data.section((1, 2)).keys())),
-            [(x, None, None) for x in range(1800)],
-        )
-        d = cf.Data(np.arange(120).reshape(2, 3, 4, 5))
-        x = d.section([1, 3])
-        self.assertEqual(len(x), 8)
-        e = cf.Data.reconstruct_sectioned_data(x)
-        self.assertTrue(e.equals(d))
+        # TODODASK: Write when Data.reconstruct_sectioned_data is
+        #           daskified
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_count(self):
@@ -3941,6 +3948,17 @@ class DataTest(unittest.TestCase):
         # Can't set to Units that are not equivalent
         with self.assertRaises(ValueError):
             d.set_units("km")
+
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs updated NetCDFArray to test")
+    def test_Data_get_filenames(self):
+        pass
+
+    def test_Data_tolist(self):
+        for x in (1, [1, 2], [[1, 2], [3, 4]]):
+            d = cf.Data(x)
+            e = d.tolist()
+            self.assertEqual(e, np.array(x).tolist())
+            self.assertTrue(d.equals(cf.Data(e)))
 
 
 if __name__ == "__main__":
