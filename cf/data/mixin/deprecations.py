@@ -70,7 +70,7 @@ class DataClassDeprecationsMixin:
         )
 
     def __round__(self, *ndigits):
-        """Called to implement the built-in function `round`
+        """Called to implement the built-in function `round`.
 
         Deprecated at version TODODASK, use method `round` instead.
 
