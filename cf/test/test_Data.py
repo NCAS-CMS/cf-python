@@ -3323,21 +3323,33 @@ class DataTest(unittest.TestCase):
         d.to_disk()
         self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'select'")
     def test_Data_section(self):
+        d = cf.Data(np.arange(24).reshape(2, 3, 4))
+
+        e = d.section(-1)
+        self.assertIsInstance(e, dict)
+        self.assertEqual(len(e), 6)
+
+        e = d.section([0, 2], min_step=2)
+        self.assertEqual(len(e), 2)
+        f = e[(None, 0, None)]
+        self.assertEqual(f.shape, (2, 2, 4))
+        f = e[(None, 2, None)]
+        self.assertEqual(f.shape, (2, 1, 4))
+
+        e = d.section([0, 1, 2])
+        self.assertEqual(len(e), 1)
+        key, value = e.popitem()
+        self.assertEqual(key, (None, None, None))
+        self.assertTrue(value.equals(d))
+
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs reconstruct_sectioned_data")
+    def test_Data_reconstruct_sectioned_data(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename6)[0]
-        self.assertEqual(
-            list(sorted(f.data.section((1, 2)).keys())),
-            [(x, None, None) for x in range(1800)],
-        )
-        d = cf.Data(np.arange(120).reshape(2, 3, 4, 5))
-        x = d.section([1, 3])
-        self.assertEqual(len(x), 8)
-        e = cf.Data.reconstruct_sectioned_data(x)
-        self.assertTrue(e.equals(d))
+        # TODODASK: Write when Data.reconstruct_sectioned_data is
+        #           daskified
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_count(self):
