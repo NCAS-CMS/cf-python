@@ -7173,7 +7173,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             axis: (sequence of) `int`, optional
                 Axis or axes along which a logical AND reduction is
-                performed.  The default (`None`) is to perform a
+                performed. The default (`None`) is to perform a
                 logical AND over all the dimensions of the input
                 array. *axis* may be negative, in which case it counts
                 from the last to the first axis.
@@ -7291,14 +7291,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             axis: (sequence of) `int`, optional
                 Axis or axes along which a logical OR reduction is
-                performed.  The default (`None`) is to perform a
-                logical AND over all the dimensions of the input
+                performed. The default (`None`) is to perform a
+                logical OR over all the dimensions of the input
                 array. *axis* may be negative, in which case it counts
                 from the last to the first axis.
 
             {{collapse keepdims: `bool`, optional}}
 
             {{split_every: `int` or `dict`, optional}}
+
+        :Returns:
+
+            `Data`
+                Whether or any data array elements evaluate to True.
 
         **Examples**
 
