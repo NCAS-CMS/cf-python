@@ -145,7 +145,7 @@ class DataClassDeprecationsMixin:
                 When no positional argument is provided, the HDF chunk
                 sizes are unchanged.
 
-                If `None` then the HDF chunks sizes for each dimension
+                If `None` then the HDF chunk sizes for each dimension
                 are cleared, so that the HDF default chunk size value
                 will be used when writing data to disk.
 

@@ -13437,7 +13437,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 sectioning into slices of size 1 along the dimensions that
                 are being sectioned.
 
-                Deprecated at version TODODASK. Use `rechunk` instead.
 
             min_step: `int`, optional
                 The minimum step size when making chunks. By default this

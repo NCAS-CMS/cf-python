@@ -200,7 +200,7 @@ _docstring_substitution_definitions = {
 
                 By default, ``"auto"`` is used to specify the array
                 chunking, which uses a chunk size in bytes defined by
-                the `cf.chunksize` function, prefering square-like
+                the `cf.chunksize` function, preferring square-like
                 chunk shapes.
 
                 *Parameter example:*

@@ -2914,7 +2914,7 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     if chunks:
         raise DeprecationError(
             "The 'chunks' keyword of cf._section() was deprecated at "
-            "version TODODASK and is no longer available Consider using "
+            "version TODODASK and is no longer available. Consider using "
             "cf.Data.rechunk instead."
         )
 
