@@ -4240,6 +4240,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """TODO."""
         return (self < value[0]) | (self > value[1])
 
+    def _parse_indices(self, *args, **kwargs):
+        """'cf.Data._parse_indices' is not available.
+
+        Use function `cf.parse_indices` instead.
+
+        """
+        raise NotImplementedError(
+            "'cf.Data._parse_indices' is not available. "
+            "Use function 'cf.parse_indices' instead."
+        )
+
     def _set_subspace(self, *args, **kwargs):
         """'cf.Data._set_subspace' is unavailable."""
         raise NotImplementedError("'cf.Data._set_subspace' is unavailable.")
