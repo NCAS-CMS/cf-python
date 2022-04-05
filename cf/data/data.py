@@ -11156,10 +11156,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # self and y have suitable numeric data types
             y = conform_units(y, self.Units)
 
-            d = self.copy()
+            d = self.copy(array=False)
             dx = da.isclose(d, y, atol=atol, rtol=rtol)
             d._set_dask(dx, reset_mask_hardness=False)
-            d.hardmask = True
+            d.hardmask = _DEFAULT_HARDMASK
             d.override_units(_units_None, inplace=True)
             return d
 
