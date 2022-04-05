@@ -3,6 +3,8 @@ import sys
 from enum import Enum, auto
 from tempfile import gettempdir
 
+from dask import config
+from dask.utils import parse_bytes
 from numpy.ma import masked as numpy_ma_masked
 from psutil import virtual_memory
 
@@ -16,6 +18,10 @@ from .units import Units
 # Find the total amount of memory, in bytes
 # --------------------------------------------------------------------
 _TOTAL_MEMORY = float(virtual_memory().total)
+
+_CHUNKSIZE = "128 MiB"
+config.set({"array.chunk-size": _CHUNKSIZE})
+
 # if platform == 'darwin':
 #     # MacOS
 #    _MemTotal = float(virtual_memory().total)
@@ -48,7 +54,7 @@ in cf.
     TOTAL_MEMORY: `float`
       Find the total amount of physical memory (in bytes).
 
-    CHUNKSIZE: `float`
+    CHUNKSIZE: `int`
       The chunk size (in bytes) for data storage and processing.
 
     FM_THRESHOLD: `float`
@@ -73,8 +79,7 @@ in cf.
       disabled.
 
     FREE_MEMORY_FACTOR: `int`
-      Factor to divide the free memory by. It is equal to 1 and is
-      ignored in any case.
+      Factor to divide the free memory by.
 
     COLLAPSE_PARALLEL_MODE: `int`
       The mode to use when parallelising collapse. By default this is
@@ -101,6 +106,7 @@ CONSTANTS = {
     "RELAXED_IDENTITIES": False,
     "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
     "BOUNDS_COMBINATION_MODE": "AND",
+    "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
 }
 
 CONSTANTS["FM_THRESHOLD"] = (
@@ -108,10 +114,6 @@ CONSTANTS["FM_THRESHOLD"] = (
 )
 
 CONSTANTS["MIN_TOTAL_MEMORY"] = CONSTANTS["TOTAL_MEMORY"]
-
-CONSTANTS["CHUNKSIZE"] = (
-    CONSTANTS["FREE_MEMORY_FACTOR"] * CONSTANTS["MIN_TOTAL_MEMORY"]
-) / (CONSTANTS["WORKSPACE_FACTOR_1"] + CONSTANTS["WORKSPACE_FACTOR_2"])
 
 masked = numpy_ma_masked
 # nomask = numpy_ma_nomask
