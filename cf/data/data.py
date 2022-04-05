@@ -4218,25 +4218,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             return self
 
-    def __query_set__(self, values):
-        """Implements the “member of set” condition."""
-        i = iter(values)
-        v = next(i)
-
-        out = self == v
-        for v in i:
-            out |= self == v
-
-        return out
-
-    def __query_wi__(self, value):
-        """Implements the “within a range” condition."""
-        return (self >= value[0]) & (self <= value[1])
-
-    def __query_wo__(self, value):
-        """TODO."""
-        return (self < value[0]) | (self > value[1])
-
     def _parse_indices(self, *args, **kwargs):
         """'cf.Data._parse_indices' is not available.
 
