@@ -1,6 +1,7 @@
 import atexit
 import csv
 import ctypes.util
+import hashlib
 import importlib
 import os
 import platform
@@ -10,8 +11,8 @@ import sys
 import urllib.parse
 import warnings
 from collections.abc import Iterable
-from hashlib import md5 as hashlib_md5
-from marshal import dumps as marshal_dumps
+from itertools import product
+from marshal import dumps
 from math import ceil as math_ceil
 from numbers import Integral
 from os import getpid, listdir, mkdir
@@ -23,14 +24,14 @@ from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
 
 import cfdm
-
-# import cPickle
 import netCDF4
+from dask import config
+from dask.utils import parse_bytes
+import numpy as np
 from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
-from numpy import ascontiguousarray as _numpy_ascontiguousarray
 from numpy import isclose as _x_numpy_isclose
 from numpy import shape as _numpy_shape
 from numpy import take as _numpy_take
@@ -43,7 +44,7 @@ from numpy.ma import masked as _numpy_ma_masked
 from numpy.ma import take as _numpy_ma_take
 from psutil import Process, virtual_memory
 
-from . import __file__, __version__, mpi_size
+from . import __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
@@ -799,27 +800,25 @@ class relaxed_identities(ConstantAccess):
 
 
 class chunksize(ConstantAccess):
-    r"""Set the chunksize used by LAMA for partitioning the data array.
+    """Set the default chunksize used by `dask` arrays.
 
-    This must be smaller than an upper limit determined by the free
-    memory factor, which is the fraction of memory kept free as a
-    temporary workspace, otherwise an error is raised. If called with
-    None as the argument then the chunksize is set to its upper
-    limit. If called without any arguments the existing chunksize is
+    If called without any arguments then the existing chunksize is
     returned.
 
-    The upper limit to the chunksize is given by:
-
-    .. math:: upper\_chunksize = \dfrac{f \cdot total\_memory}{mpi\_size
-                                 \cdot w_1 + w_2}
-
-    where :math:`f` is the *free memory factor* and :math:`w_1` and
-    :math:`w_2` the *workspace factors* *1* and *2* respectively.
+    .. note:: Setting the chunksize will change the `dask` global
+              configuration value ``'array.chunk-size'``. If
+              `chunksize` is used a context manager then the `dask`
+              configuration value is only altered within that context.
 
     :Parameters:
 
-        arg: `float` or `Constant`, optional
-            The chunksize in bytes.
+        arg: `float` or `str` or `Constant`, optional
+            The chunksize in bytes. Any size accepted by
+            `dask.utils.parse_bytes` is accepted.
+
+            *Parameter example:*
+               A chunksize of 2 MiB may be specified as ``2097152`` or
+               ``'2 MiB'``
 
     :Returns:
 
@@ -850,20 +849,8 @@ class chunksize(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        upper_chunksize = (free_memory_factor() * min_total_memory()) / (
-            (mpi_size * _WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()
-        )
-
-        arg = float(arg)
-        if arg > upper_chunksize and mpi_size > 1:
-            raise ValueError(
-                f"Specified chunk size ({arg}) is too large for the given "
-                f"free memory factor ({upper_chunksize})"
-            )
-        elif arg <= 0:
-            raise ValueError(f"Chunk size ({arg}) must be positive")
-
-        return arg
+        config.set({"array.chunk-size": arg})
+        return parse_bytes(arg)
 
 
 class tempdir(ConstantAccess):
@@ -1037,6 +1024,8 @@ class free_memory_factor(ConstantAccess):
             new value was specified.
 
     """
+
+    # TODODASK: Review how all this free memory stuff works with dask
 
     _name = "FREE_MEMORY_FACTOR"
 
@@ -2611,69 +2600,66 @@ def pathjoin(path1, path2):
     return _os_path_join(path1, path2)
 
 
-def hash_array(array):
-    """Return the hash value of a numpy array.
+def hash_array(array, algorithm=hashlib.sha1):
+    """Return a hash value of a numpy array.
 
-    The hash value is dependent on the data type, shape of the data
+    The hash value is dependent on the data type and the shape of the
     array. If the array is a masked array then the hash value is
     independent of the fill value and of data array values underlying
     any masked elements.
-
-    The hash value is not guaranteed to be portable across versions of
-    Python, numpy and cf.
 
     :Parameters:
 
         array: `numpy.ndarray`
             The numpy array to be hashed. May be a masked array.
 
+        algorithm: `hashlib` constructor function
+            Constructor function for the desired hash algorithm,
+            e.g. `hashlib.md5`, `hashlib.sha256`, etc.
+
+            .. versionadded:: TODODASK
+
     :Returns:
 
         `int`
             The hash value.
 
-    **Examples:**
+    **Examples**
 
-    >>> print(array)
-    [[0 1 2 3]]
+    >>> a = np.array([[0, 1, 2, 3]])
+    >>> cf.hash_array(a)
+    -5620332080097671134
+
+    >>> a = np.ma.array([[0, 1, 2, 3]], mask=[[0, 1, 0, 0]])
     >>> cf.hash_array(array)
-    -8125230271916303273
-    >>> array[1, 0] = numpy.ma.masked
-    >>> print(array)
+    8372868545804866378
+
+    >>> a[0, 1] = 999
+    >>> a[0, 1] = np.ma.masked
+    >>> print(a)
     [[0 -- 2 3]]
-    >>> cf.hash_array(array)
-    791917586613573563
-    >>> array.hardmask = False
-    >>> array[0, 1] = 999
-    >>> array[0, 1] = numpy.ma.masked
-    >>> cf.hash_array(array)
-    791917586613573563
-    >>> array.squeeze()
-    >>> print(array)
-    [0 -- 2 3]
-    >>> cf.hash_array(array)
-    -7007538450787927902
-    >>> array.dtype = float
-    >>> print(array)
-    [0.0 -- 2.0 3.0]
-    >>> cf.hash_array(array)
-    -4816859207969696442
+    >>> print(a.data)
+    [[  0 999   2   3]]
+    >>> cf.hash_array(a)
+    8372868545804866378
+
+    >>> a = a.astype(float)
+    >>> cf.hash_array(a)
+    5950106833921144220
 
     """
-    h = hashlib_md5()
+    h = algorithm()
 
-    h_update = h.update
+    h.update(dumps(array.dtype.name))
+    h.update(dumps(array.shape))
 
-    h_update(marshal_dumps(array.dtype.name))
-    h_update(marshal_dumps(array.shape))
-
-    if _numpy_ma_isMA(array):
-        if _numpy_ma_is_masked(array):
+    if np.ma.isMA(array):
+        if np.ma.is_masked(array):
             mask = array.mask
             if not mask.flags.c_contiguous:
-                mask = _numpy_ascontiguousarray(mask)
+                mask = np.ascontiguousarray(mask)
 
-            h_update(mask)
+            h.update(mask)
             array = array.copy()
             array.set_fill_value()
             array = array.filled()
@@ -2681,10 +2667,9 @@ def hash_array(array):
             array = array.data
 
     if not array.flags.c_contiguous:
-        # array = array.copy()
-        array = _numpy_ascontiguousarray(array)
+        array = np.ascontiguousarray(array)
 
-    h_update(array)
+    h.update(array)
 
     return hash(h.digest())
 
@@ -2838,9 +2823,7 @@ def allclose(x, y, rtol=None, atol=None):
     return _numpy_allclose(x, y, rtol=rtol, atol=atol)
 
 
-def _section(
-    x, axes=None, data=False, stop=None, chunks=False, min_step=1, **kwargs
-):
+def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     """Return a list of m dimensional sections of a Field of n
     dimensions or a dictionary of m dimensional sections of a Data
     object of n dimensions, where m <= n.
@@ -2879,10 +2862,15 @@ def _section(
             passed. By default it is False.
 
         stop: `int`, optional
+            Deprecated at version TODODASK.
+
             Stop after taking this number of sections and return. If
             stop is None all sections are taken.
 
         chunks: `bool`, optional
+            Deprecated at version TODODASK. Consider using
+            `cf.Data.rechunk` instead.
+
             If True return sections that are of the maximum possible
             size that will fit in one chunk of memory instead of
             sectioning into slices of size 1 along the dimensions that
@@ -2899,126 +2887,62 @@ def _section(
             The list of m dimensional sections of the Field or the
             dictionary of m dimensional sections of the Data object.
 
-    **Examples:**
+    **Examples**
 
-    Section a field into 2D longitude/time slices, checking the units:
-
-    >>> _section(f, {None: 'longitude', units: 'radians'},
-    ...             {None: 'time',
-    ...              'units': 'days since 2006-01-01 00:00:00'})
-
-    Section a field into 2D longitude/latitude slices, requiring exact
-    names:
-
-    >>> _section(f, ['latitude', 'longitude'], exact=True)
+    >>> d = cf.Data(np.arange(120).reshape(2, 6, 10))
+    >>> d
+    <CF Data(2, 6, 10): [[[0, ..., 119]]]>
+    >>> d.section([0, 1], min_step=2)
+    {(None, None, 0): <CF Data(2, 6, 2): [[[0, ..., 111]]]>,
+     (None, None, 2): <CF Data(2, 6, 2): [[[2, ..., 113]]]>,
+     (None, None, 4): <CF Data(2, 6, 2): [[[4, ..., 115]]]>,
+     (None, None, 6): <CF Data(2, 6, 2): [[[6, ..., 117]]]>,
+     (None, None, 8): <CF Data(2, 6, 2): [[[8, ..., 119]]]>}
 
     """
-
-    def loop_over_index(x, current_index, axis_indices, indices):
-        """Expects an index to loop over in the list indices.
-
-        If this is less than 0 the horizontal slice defined by indices
-        is appended to the FieldList fl, if it is the specified axis
-        indices the value in indices is left as slice(None) and it calls
-        itself recursively with the next index, otherwise each index is
-        looped over. In this loop the routine is called recursively with
-        the next index. If the count of the number of slices taken is
-        greater than or equal to stop it returns before taking any more
-        slices.
-
-        """
-        if current_index < 0:
-            if data:
-                d[tuple([x.start for x in indices])] = x[tuple(indices)]
-            else:
-                fl.append(x[tuple(indices)])
-
-            nl_vars["count"] += 1
-            return
-
-        if current_index in axis_indices:
-            loop_over_index(x, current_index - 1, axis_indices, indices)
-            return
-
-        for i in range(0, sizes[current_index], steps[current_index]):
-            if stop is not None and nl_vars["count"] >= stop:
-                return
-
-            indices[current_index] = slice(i, i + steps[current_index])
-            loop_over_index(x, current_index - 1, axis_indices, indices)
-
-    # Retrieve the index of each axis defining the sections
-    if data:
-        if isinstance(axes, int):
-            axes = (axes,)
-
-        if not axes:
-            axis_indices = tuple(range(x.ndim))
-        else:
-            axis_indices = axes
-    else:
-        axis_keys = [x.domain_axis(axis, key=True) for axis in axes]
-        axis_indices = list()
-        for key in axis_keys:
-            try:
-                axis_indices.append(x.get_data_axes().index(key))
-            except ValueError:
-                pass
-
-    # find the size of each dimension
-    sizes = x.shape
+    if stop is not None:
+        raise DeprecationError(
+            "The 'stop' keyword of cf._section() was deprecated at "
+            "version TODODASK and is no longer available"
+        )
 
     if chunks:
-        steps = list(sizes)
+        raise DeprecationError(
+            "The 'chunks' keyword of cf._section() was deprecated at "
+            "version TODODASK and is no longer available. Consider using "
+            "cf.Data.rechunk instead."
+        )
 
-        # Define the factor which, when multiplied by the size of the
-        # data array, determines how many chunks are in the data
-        # array.
-        #
-        # I.e. factor = 1/(the number of words per chunk)
-        factor = (x.dtype.itemsize + 1.0) / chunksize()
+    if axes is None:
+        axes = list(range(x.ndim))
 
-        # n_chunks = number of equal sized bits the partition needs to
-        #            be split up into so that each bit's size is less
-        #            than the chunk size.
-        n_chunks = int(math_ceil(x.size * factor))
+    axes = x.data._parse_axes(axes)
 
-        for (index, axis_size) in enumerate(sizes):
-            if index in axis_indices:
-                # Do not attempt to "chunk" non-sectioned axes
-                continue
+    ndim = x.ndim
+    shape = x.shape
 
-            if int(math_ceil(float(axis_size) / min_step)) <= n_chunks:
-                n_chunks = int(
-                    math_ceil(n_chunks / float(axis_size) * min_step)
-                )
-                steps[index] = min_step
+    # TODODASK: For v4.0.0, redefine axes by removing the next
+    #           line. I.e. the specified axes would be those that you
+    #           want to be chopped, not those that you want to remain
+    #           whole.
+    axes = [i for i in range(ndim) if i not in axes]
 
-            else:
-                steps[index] = int(axis_size / n_chunks)
-                break
-    else:
-        steps = [
-            size if i in axis_indices else 1 for i, size in enumerate(sizes)
-        ]
+    indices = [
+        (slice(j, j + min_step) for j in range(0, n, min_step))
+        if i in axes
+        else [slice(None)]
+        for i, n in enumerate(shape)
+    ]
 
-    # Use recursion to slice out each section
-    if data:
-        d = dict()
-    else:
-        fl = []
+    keys = [
+        range(0, n, min_step) if i in axes else [None]
+        for i, n in enumerate(shape)
+    ]
 
-    indices = [slice(None)] * len(sizes)
-
-    nl_vars = {"count": 0}
-
-    current_index = len(sizes) - 1
-    loop_over_index(x, current_index, axis_indices, indices)
-
-    if data:
-        return d
-    else:
-        return fl
+    out = {
+        key: x[index] for key, index in zip(product(*keys), product(*indices))
+    }
+    return out
 
 
 def _get_module_info(module, try_except=False):

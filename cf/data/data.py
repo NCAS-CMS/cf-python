@@ -30,7 +30,6 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
-    _DEPRECATION_ERROR_METHOD,
     _numpy_isclose,
     _section,
     abspath,
@@ -40,13 +39,14 @@ from ..functions import broadcast_array
 from ..functions import chunksize as cf_chunksize
 from ..functions import default_netCDF_fillvals
 from ..functions import fm_threshold as cf_fm_threshold
-from ..functions import free_memory, hash_array
+from ..functions import free_memory
 from ..functions import inspect as cf_inspect
 from ..functions import log_level, parse_indices, pathjoin
 from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
 from . import (  # GatheredSubarray,; RaggedContiguousSubarray,; RaggedIndexedContiguousSubarray,; RaggedIndexedSubarray,
+    FileArray,
     NetCDFArray,
     UMArray,
 )
@@ -811,58 +811,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def __data__(self):
         """Returns a new reference to self."""
         return self
-
-    def __hash__(self):
-        """The built-in function `hash`
-
-        Generating the hash temporarily realizes the entire array in
-        memory, which may not be possible for large arrays.
-
-        The hash value is dependent on the data-type and shape of the data
-        array. If the array is a masked array then the hash value is
-        independent of the fill value and of data array values underlying
-        any masked elements.
-
-        The hash value may be different if regenerated after the data
-        array has been changed in place.
-
-        The hash value is not guaranteed to be portable across versions of
-        Python, numpy and cf.
-
-        :Returns:
-
-            `int`
-                The hash value.
-
-        **Examples:**
-
-        >>> print(d.array)
-        [[0 1 2 3]]
-        >>> d.hash()
-        -8125230271916303273
-        >>> d[1, 0] = numpy.ma.masked
-        >>> print(d.array)
-        [[0 -- 2 3]]
-        >>> hash(d)
-        791917586613573563
-        >>> d.hardmask = False
-        >>> d[0, 1] = 999
-        >>> d[0, 1] = numpy.ma.masked
-        >>> d.hash()
-        791917586613573563
-        >>> d.squeeze()
-        >>> print(d.array)
-        [0 -- 2 3]
-        >>> hash(d)
-        -7007538450787927902
-        >>> d.dtype = float
-        >>> print(d.array)
-        [0.0 -- 2.0 3.0]
-        >>> hash(d)
-        -4816859207969696442
-
-        """
-        return hash_array(self.array)
 
     @daskified(_DASKIFIED_VERBOSE)
     def __float__(self):
@@ -2293,10 +2241,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if interpolation is not None:
             _DEPRECATION_ERROR_KWARGS(
                 self,
-                "interpolation",
+                "percentile",
                 {"interpolation": None},
                 message="Use the 'method' parameter instead.",
-                version="4.0.0",
+                version="TODODASK",
+                removed_at="5.0.0",
             )  # pragma: no cover
 
         d = _inplace_enabled_define_and_cleanup(self)
@@ -3347,15 +3296,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 `dask.array.rechunk` for details.
 
             block_size_limit: `int`, optional
-                The maximum block size (in bytes) we want to produce.
-                Defaults to the configuration value
-                ``dask.config.get('array.chunk-size')``. See
-                `dask.array.rechunk` for details.
+                The maximum block size (in bytes) we want to produce,
+                as defined by the `cf.chunksize` function.
 
             balance: `bool`, optional
                 If True, try to make each chunk the same size. By
-                default this is not attempted. See
-                `dask.array.rechunk` for details.
+                default this is not attempted.
 
                 This means ``balance=True`` will remove any small
                 leftover chunks, so using ``d.rechunk(chunks=len(d) //
@@ -3387,15 +3333,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
 
-        If a chunk size does not divide the dimension then rechunk will
-        leave any unevenness to the last chunk.
+        If a chunk size does not divide the dimension then rechunk
+        will leave any unevenness to the last chunk.
 
         >>> x.rechunk(chunks=(400, -1)).chunks
         ((400, 400, 200), (1000,))
 
-        However if you want more balanced chunks, and don't mind Dask
-        choosing a different chunksize for you then you can use the
-        ``balance=True`` option.
+        However if you want more balanced chunks, and don't mind
+        `dask` choosing a different chunksize for you then you can use
+        the ``balance=True`` option.
 
         >>> x.rechunk(chunks=(400, -1), balance=True).chunks
         ((500, 500), (1000,))
@@ -4271,6 +4217,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self.__dict__ = data0.__dict__
 
             return self
+
+    def _parse_indices(self, *args, **kwargs):
+        """'cf.Data._parse_indices' is not available.
+
+        Use function `cf.parse_indices` instead.
+
+        """
+        raise NotImplementedError(
+            "'cf.Data._parse_indices' is not available. "
+            "Use function 'cf.parse_indices' instead."
+        )
+
+    def _set_subspace(self, *args, **kwargs):
+        """'cf.Data._set_subspace' is unavailable."""
+        raise NotImplementedError("'cf.Data._set_subspace' is unavailable.")
 
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
@@ -7573,7 +7534,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                         out.hardmask = hardmask
 
                     return out
-            # --- End: if
 
             if keys[0][i] is not None:
                 new_sections = {}
@@ -7588,11 +7548,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                         )
                         new_key = k[:i]
                         data_list = [sections[k]]
-                # --- End: for
 
                 new_sections[new_key] = cls.concatenate_data(data_list, i)
                 sections = new_sections
-        # --- End: for
 
     def argmax(self, axis=None, unravel=False):
         """Return the indices of the maximum values along an axis.
@@ -9447,37 +9405,43 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_filenames(self):
         """Return the names of files containing parts of the data array.
 
         :Returns:
 
             `set`
-                The file names in normalized, absolute form. If the data
-                is are memory then an empty `set` is returned.
+                The file names in normalized, absolute form. If the
+                data is in memory then an empty `set` is returned.
 
-        **Examples:**
+        **Examples**
 
-        >>> f = cf.read('../file[123]')[0]
-        >>> f.get_filenames()
-        {'/data/user/file1',
-         '/data/user/file2',
-         '/data/user/file3'}
-        >>> a = f.array
-        >>> f.get_filenames()
+        >>> f = cf.NetCDFArray(TODODASK)
+        >>> d = cf.Data(f)
+        >>> d.get_filenames()
+        {TODODASK}
+
+        >>> d = cf.Data([1, 2, 3])
+        >>> d.get_filenames()
         set()
 
         """
-        print("TODODASK - is this still possible?")
-        out = set(
-            [
-                abspath(p.subarray.get_filename())
-                for p in self.partitions.matrix.flat
-                if p.in_file
-            ]
-        )
-        out.discard(None)
+        out = set()
 
+        dx = self._get_dask()
+        hlg = dx.dask
+        dsk = hlg.to_dict()
+        for key, value in hlg.get_all_dependencies().items():
+            if value:
+                continue
+
+            # This key has no dependencies, and so is raw data.
+            a = dsk[key]
+            if isinstance(a, FileArray):
+                out.add(abspath(a.get_filename()))
+
+        out.discard(None)
         return out
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -11107,86 +11071,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    def HDF_chunks(self, *chunks):
-        """Get or set HDF chunk sizes.
-
-        The HDF chunk sizes may be used by external code that allows
-        `Data` objects to be written to netCDF files.
-
-        Deprecated at version TODODASK and is no longer available. Use
-        the methods `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
-        and `nc_set_hdf5_chunksizes` instead.
-
-        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
-                     `nc_set_hdf5_chunksizes`
-
-        :Parameters:
-
-            chunks: `dict` or `None`, *optional*
-                Specify HDF chunk sizes.
-
-                When no positional argument is provided, the HDF chunk
-                sizes are unchanged.
-
-                If `None` then the HDF chunks sizes for each dimension
-                are cleared, so that the HDF default chunk size value
-                will be used when writing data to disk.
-
-                If a `dict` then it defines for a subset of the
-                dimensions, defined by their integer positions, the
-                corresponding HDF chunk sizes. The HDF chunk sizes are
-                set as a number of elements along the dimension.
-
-        :Returns:
-
-            `dict`
-                The HDF chunks for each dimension prior to the change,
-                or the current HDF chunks if no new values are
-                specified. A value of `None` is an indication that the
-                default chunk size should be used for that dimension.
-
-        **Examples**
-
-        >>> d = cf.Data(np.arange(30).reshape(5, 6))
-        >>> d.HDF_chunks()
-        {0: None, 1: None}
-        >>> d.HDF_chunks({1: 2})
-        {0: None, 1: None}
-        >>> d.HDF_chunks()
-        {0: None, 1: 2}
-        >>> d.HDF_chunks({1:None})
-        {0: None, 1: 2}
-        >>> d.HDF_chunks()
-        {0: None, 1: None}
-        >>> d.HDF_chunks({0: 3, 1: 6})
-        {0: None, 1: None}
-        >>> d.HDF_chunks()
-        {0: 3, 1: 6}
-        >>> d.HDF_chunks({1: 4})
-        {0: 3, 1: 6}
-        >>> d.HDF_chunks()
-        {0: 3, 1: 4}
-        >>> d.HDF_chunks({1: 999})
-        {0: 3, 1: 4}
-        >>> d.HDF_chunks()
-        {0: 3, 1: 999}
-        >>> d.HDF_chunks(None)
-        {0: 3, 1: 999}
-        >>> d.HDF_chunks()
-        {0: None, 1: None}
-
-        """
-        _DEPRECATION_ERROR_METHOD(
-            self,
-            "HDF_chunks",
-            message="Use the methods 'nc_clear_hdf5_chunksizes', "
-            "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
-            "instead.",
-            version="TODODASK",
-            removed_at="5.0.0",
-        )
-
     def inspect(self):
         """Inspect the object for debugging.
 
@@ -11642,6 +11526,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
@@ -11665,7 +11550,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `Data` or `None`
                 The data with swapped axis positions.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[[1, 2, 3], [4, 5, 6]]])
         >>> d
@@ -11681,15 +11566,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        axis0 = d._parse_axes((axis0,))[0]
-        axis1 = d._parse_axes((axis1,))[0]
-
-        if axis0 != axis1:
-            iaxes = list(range(d._ndim))
-            iaxes[axis1], iaxes[axis0] = axis0, axis1
-            d.transpose(iaxes, inplace=True)
-
+        dx = self._get_dask()
+        dx = da.swapaxes(dx, axis0, axis1)
+        d._set_dask(dx, reset_mask_hardness=False)
         return d
 
     def save_to_disk(self, itemsize=None):
@@ -11727,35 +11606,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # including space for a full boolean mask
         # ------------------------------------------------------------
         return self.size * (itemsize + 1) <= free_memory() - cf_fm_threshold()
-
-    def fits_in_one_chunk_in_memory(self, itemsize):
-        """Return True if the master array is small enough to be
-        retained in memory.
-
-        :Parameters:
-
-            itemsize: `int`
-                The number of bytes per word of the master data array.
-
-        :Returns:
-
-            `bool`
-
-        **Examples:**
-
-        >>> print(d.fits_one_chunk_in_memory(8))
-        False
-
-        """
-        # ------------------------------------------------------------
-        # Note that self._size*(itemsize+1) is the array size in bytes
-        # including space for a full boolean mask
-        # ------------------------------------------------------------
-        return (
-            cf_chunksize()
-            >= self._size * (itemsize + 1)
-            <= free_memory() - cf_fm_threshold()
-        )
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
@@ -12479,26 +12329,33 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def tolist(self):
-        """Return the array as a (possibly nested) list.
+        """Return the data as a scalar or (nested) list.
 
-        Return a copy of the array data as a (nested) Python list. Data
-        items are converted to the nearest compatible Python type.
+        Returns the data as an ``N``-levels deep nested list of Python
+        scalars, where ``N`` is the number of data dimensions.
+
+        If ``N`` is 0 then, since the depth of the nested list is 0,
+        it will not be a list at all, but a simple Python scalar.
 
         :Returns:
 
-            `list`
-                The possibly nested list of array elements.
+            `list` or scalar
+                The (nested) list of array elements, or a scalar if
+                the data has 0 dimensions.
 
         **Examples:**
+
+        >>> d = cf.Data(9)
+        >>> d.tolist()
+        9
 
         >>> d = cf.Data([1, 2])
         >>> d.tolist()
         [1, 2]
 
         >>> d = cf.Data(([[1, 2], [3, 4]]))
-        >>> list(d)
-        [array([1, 2]), array([3, 4])]      # DCH CHECK
         >>> d.tolist()
         [[1, 2], [3, 4]]
 
@@ -13492,10 +13349,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             _preserve_partitions=_preserve_partitions,
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"
     ):
-        """Returns a dictionary of sections of the Data object.
+        """Returns a dictionary of sections of the `Data` object.
 
         Specifically, returns a dictionary of Data objects which are the
         m-dimensional sections of this n-dimensional Data object, where
@@ -13518,14 +13376,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 sectioned.
 
             stop: `int`, optional
+                Deprecated at version TODODASK.
+
                 Stop after this number of sections and return. If stop is
                 None all sections are taken.
 
             chunks: `bool`, optional
+                Depreated at version TODODASK. Consider using
+                `cf.Data.rechunk` instead.
+
                 If True return sections that are of the maximum possible
                 size that will fit in one chunk of memory instead of
                 sectioning into slices of size 1 along the dimensions that
                 are being sectioned.
+
 
             min_step: `int`, optional
                 The minimum step size when making chunks. By default this
@@ -13540,14 +13404,40 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples:**
 
-        Section a Data object into 2D slices:
-
-        >>> d.section((0, 1))
+        >>> d = cf.Data(np.arange(120).reshape(2, 6, 10))
+        >>> d
+        <CF Data(2, 6, 10): [[[0, ..., 119]]]>
+        >>> d.section([1, 2])
+        {(0, None, None): <CF Data(1, 6, 10): [[[0, ..., 59]]]>,
+         (1, None, None): <CF Data(1, 6, 10): [[[60, ..., 119]]]>}
+        >>> d.section([0, 1], min_step=2)
+        {(None, None, 0): <CF Data(2, 6, 2): [[[0, ..., 111]]]>,
+         (None, None, 2): <CF Data(2, 6, 2): [[[2, ..., 113]]]>,
+         (None, None, 4): <CF Data(2, 6, 2): [[[4, ..., 115]]]>,
+         (None, None, 6): <CF Data(2, 6, 2): [[[6, ..., 117]]]>,
+         (None, None, 8): <CF Data(2, 6, 2): [[[8, ..., 119]]]>}
 
         """
-        return _section(
-            self, axes, data=True, stop=stop, chunks=chunks, min_step=min_step
-        )
+        if chunks:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "section",
+                {"chunks": chunks},
+                message="Consider using Data.rechunk() instead.",
+                version="TODODASK",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
+        if stop is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "section",
+                {"stop": stop},
+                version="TODODASK",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
+        return _section(self, axes, min_step=min_step)
 
     # ----------------------------------------------------------------
     # Alias
