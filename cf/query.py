@@ -690,13 +690,6 @@ class Query:
 
             return (x < value[0]) | (x > value[1])
 
-        #        if operator == 'contains':
-        #            _contain = getattr(x, '__query_contains__', None)
-        #            if _contain is not None:
-        #                return _contain(value)
-        #            else:
-        #                return x == value
-
         if operator == "set":
             if isinstance(x, str):
                 for v in value:
