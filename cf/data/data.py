@@ -8980,24 +8980,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
-        """Uncompress the underlying data.
+        """Uncompress the data.
 
-        Data that is already uncompressed will be returned as is.
+        Only affects data that is compressed by convention, i.e.
 
-        Data that is compressed will marked as uncompressed, but the
-        decompression will only occur when the data is accessed.
+          * Ragged arrays for discrete sampling geometries (DSG) and
+            simple geometry cel definitions.
 
-        Whether or not the data is compressed does not alter its
-        functionality nor external appearance.
+          * Compression by gathering.
 
-        The following type of compression are catered for:
+          * Compression by coordinate subsampling.
 
-            * Ragged arrays for discrete sampling geometries (DSG) and
-              simple geometry cel definitions.
-
-            * Compression by gathering.
-
-            * Compression by coordinate subsampling.
+        Data that is already uncompressed is returned
+        unchanged. Whether the data is compressed or not does not
+        alter its functionality nor external appearance, but may
+        affect how the data are written to a dataset on disk.
 
         .. versionadded:: 3.0.6
 

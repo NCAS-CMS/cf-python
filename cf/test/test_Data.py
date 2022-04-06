@@ -3938,6 +3938,21 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
 
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs PR #354")
+    def test_Data_uncompress(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        a = f.data.array
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+
+        self.assertTrue(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
+        self.assertIsNone(d.uncompress(inplace=None))
+        self.assertFalse(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
