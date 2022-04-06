@@ -9105,25 +9105,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if prefix is None:
             prefix = self.__class__.__name__
 
-        string = ["{0}.shape = {1}".format(prefix, self._shape)]
+        string = [f"{prefix}.shape = {self.shape}"]
 
-        if self._size == 1:
-            string.append(
-                "{0}.first_datum = {1}".format(prefix, self.datum(0))
-            )
+        if self.size == 1:
+            string.append(f"{prefix}.first_datum = {self.datum(0)}")
         else:
-            string.append(
-                "{0}.first_datum = {1}".format(prefix, self.datum(0))
-            )
-            string.append(
-                "{0}.last_datum  = {1}".format(prefix, self.datum(-1))
-            )
+            string.append(f"{prefix}.first_datum = {self.datum(0)}")
+            string.append(f"{prefix}.last_datum  = {self.datum(-1)}")
 
         for attr in ("fill_value", "Units"):
-            string.append(
-                "{0}.{1} = {2!r}".format(prefix, attr, getattr(self, attr))
-            )
-        # --- End: for
+            string.append(f"{prefix}.{attr} = {getattr(self, attr)!r}")
 
         return "\n".join(string)
 

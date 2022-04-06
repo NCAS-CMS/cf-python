@@ -3938,6 +3938,10 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
 
+    def test_Data_dump(self):
+        d = cf.Data([1, 2], "m")
+        self.assertIsInstance(d.dump(display=False), str)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
