@@ -2279,45 +2279,6 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(de.shape, ab.shape)
                 self.assertTrue((de.array == ab).all())
 
-    def test_Data_ERROR(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        return  # !!!!!!
-
-        d = cf.Data([0.0, 1])
-        e = cf.Data([1.0, 2])
-
-        oldm = cf.Data.mask_fpe(False)
-        olds = cf.Data.seterr("raise")
-
-        with self.assertRaises(FloatingPointError):
-            _ = e / d
-
-        with self.assertRaises(FloatingPointError):
-            _ = e ** 123456
-
-        cf.Data.mask_fpe(True)
-        cf.Data.seterr(all="raise")
-
-        g = cf.Data([-99, 2.0])
-        g[0] = cf.masked
-        f = e / d
-        self.assertTrue(f.equals(g, verbose=2))
-
-        g = cf.Data([1.0, -99])
-        g[1] = cf.masked
-        f = e ** 123456
-        self.assertTrue(f.equals(g, verbose=2))
-
-        cf.Data.mask_fpe(True)
-        cf.Data.seterr(all="ignore")
-        f = e / d
-        f = e ** 123456
-
-        cf.Data.mask_fpe(oldm)
-        cf.Data.seterr(**olds)
-
     def test_Data__len__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

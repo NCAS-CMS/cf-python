@@ -332,6 +332,80 @@ class DataClassDeprecationsMixin:
             "TODODASK Consider using rechunk instead"
         )  # pragma: no cover
 
+    @staticmethod
+    def mask_fpe(*arg):
+        """Masking of floating-point errors in the results of arithmetic
+        operations.
+
+        Deprecated at version TODODASK. It is currently not possible
+        to control how floating-point errors are handled, due to the
+        use of `dask` for handling all array manipulations. This may
+        change in the future (see
+        https://github.com/dask/dask/issues/3245 for more details).
+
+        If masking is allowed then only floating-point errors which would
+        otherwise be raised as `FloatingPointError` exceptions are
+        masked. Whether `FloatingPointError` exceptions may be raised is
+        determined by `cf.Data.seterr`.
+
+        If called without an argument then the current behaviour is
+        returned.
+
+        Note that if the raising of `FloatingPointError` exceptions has
+        suppressed then invalid values in the results of arithmetic
+        operations may be subsequently converted to masked values with the
+        `mask_invalid` method.
+
+        .. seealso:: `cf.Data.seterr`, `mask_invalid`
+
+        :Parameters:
+
+            arg: `bool`, optional
+                The new behaviour. True means that `FloatingPointError`
+                exceptions are suppressed and replaced with masked
+                values. False means that `FloatingPointError` exceptions
+                are raised. The default is not to change the current
+                behaviour.
+
+        :Returns:
+
+            `bool`
+                The behaviour prior to the change, or the current
+                behaviour if no new value was specified.
+
+        **Examples:**
+
+        >>> d = cf.Data([0., 1])
+        >>> e = cf.Data([1., 2])
+
+        >>> old = cf.Data.mask_fpe(False)
+        >>> old = cf.Data.seterr('raise')
+        >>> e/d
+        FloatingPointError: divide by zero encountered in divide
+        >>> e**123456
+        FloatingPointError: overflow encountered in power
+
+        >>> old = cf.Data.mask_fpe(True)
+        >>> old = cf.Data.seterr('raise')
+        >>> e/d
+        <CF Data: [--, 2.0] >
+        >>> e**123456
+        <CF Data: [1.0, --] >
+
+        >>> old = cf.Data.mask_fpe(True)
+        >>> old = cf.Data.seterr('ignore')
+        >>> e/d
+        <CF Data: [inf, 2.0] >
+        >>> e**123456
+        <CF Data: [1.0, inf] >
+
+        """
+        raise DeprecationError(
+            "Data method 'mask_fpe' has been deprecated at version TODODASK "
+            "and is not available.\n\n"
+            "It is currently not possible to control how floating-point errors are handled, due to the use of `dask` for handling all array manipulations. This may change in the future (see https://github.com/dask/dask/issues/3245 for more details)."
+        )
+
     def partition_boundaries(self):
         """Return the partition boundaries for each partition matrix
         dimension.
