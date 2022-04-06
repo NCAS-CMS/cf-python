@@ -10733,25 +10733,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return cf_masked
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur (NaN or inf).
 
-        Note that:
-
-        * Invalid values in the results of arithmetic operations may only
-          occur if the raising of `FloatingPointError` exceptions has been
-          suppressed by `cf.Data.seterr`.
-
-        * If the raising of `FloatingPointError` exceptions has been
-          allowed then invalid values in the results of arithmetic
-          operations it is possible for them to be automatically converted
-          to masked values, depending on the setting of
-          `cf.Data.mask_fpe`. In this case, such automatic conversion
-          might be faster than calling `mask_invalid`.
-
-        .. seealso:: `cf.Data.mask_fpe`, `cf.Data.seterr`
+        .. seealso:: `where`
 
         :Parameters:
 
@@ -10762,50 +10750,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
+                The masked data, or `None` if the operation was
+                in-place.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cf.Data([0., 1])
-        >>> e = cf.Data([1., 2])
-        >>> old = cf.Data.seterr('ignore')
-
-        >>> f = e/d
+        >>> d = cf.Data([0, 1, 2])
+        >>> e = cf.Data([0, 2, 0])
+        >>> f = d / e
         >>> f
-        <CF Data: [inf, 2.0] >
-        >>> f.mask_invalid()
-        <CF Data: [--, 2.0] >
-
-        >>> f=e**12345
-        >>> f
-        <CF Data: [1.0, inf] >
-        >>> f.mask_invalid()
-        <CF Data: [1.0, --] >
-
-        >>> old = cf.Data.seterr('raise')
-        >>> old = cf.Data.mask_fpe(True)
-        >>> e/d
-        <CF Data: [--, 2.0] >
-        >>> e**12345
-        <CF Data: [1.0, --] >
+        <CF Data(3): [nan, 0.5, inf]>
+        >>> f.masked_invalid()
+        <CF Data(3): [--, 0.5, --]>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        config = d.partition_configuration(readonly=False)
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-
-            array = np.ma.masked_invalid(array, copy=False)
-            array.shrink_mask()
-            if array.mask is np.ma.nomask:
-                array = array.data
-
-            partition.subarray = array
-
-            partition.close()
-
+        dx = self._get_dask()
+        dx = da.ma.masked_invalid(dx)
+        d.set_dask(dx, reset_mask_hardness=False)
         return d
 
     def del_calendar(self, default=ValueError()):

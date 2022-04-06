@@ -3938,6 +3938,26 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
 
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __div__")
+    def test_Data_masked_invalid(self):
+        a = np.array([0, 1, 2])
+        b = np.array([0, 2, 0])
+
+        d = cf.Data(a, "m")
+        e = cf.Data(b, "m")
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            c = np.ma.masked_invalid(a / b)
+            f = (d / e).masked_invalid().array
+
+        self.assertTrue((f.mask == c.mask).all())
+        self.assertTrue((f == c).all())
+
+        d0 = d.copy()
+        self.assertIsNone(d.masked_invalid(inplace=True))
+        self.assertTrue(d.equals(d0))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
