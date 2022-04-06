@@ -3353,8 +3353,8 @@ class DataTest(unittest.TestCase):
         d[0, :] = cf.masked
         self.assertEqual(d.count().array, 8)
         self.assertEqual(d.count([0, 1]).array, 8)
-        self.assertTrue((d.count(0).array == [2, 2, 2, 2]).all())
-        self.assertTrue((d.count(1).array == [0, 4, 4]).all())
+        self.assertTrue((d.count(0).array == [[2, 2, 2, 2]]).all())
+        self.assertTrue((d.count(1).array == [[0], [4], [4]]).all())
 
         self.assertEqual(d.count(keepdims=False).shape, ())
 
@@ -3367,11 +3367,6 @@ class DataTest(unittest.TestCase):
 
         d[0, :] = cf.masked
         self.assertEqual(d.count_masked().array, 4)
-        self.assertEqual(d.count_masked([0, 1]).array, 4)
-        self.assertTrue((d.count_masked(0).array == [1, 1, 1, 1]).all())
-        self.assertTrue((d.count_masked(1).array == [4, 0, 0]).all())
-
-        self.assertEqual(d.count_masked(keepdims=False).shape, ())
 
     def test_Data_exp(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -3391,7 +3386,6 @@ class DataTest(unittest.TestCase):
             # self.assertTrue((d.array==c).all()) so need a
             # check which accounts for floating point calcs:
             np.testing.assert_allclose(d.array, c)
-        # --- End: for
 
         d = cf.Data(a, "m")
         with self.assertRaises(Exception):

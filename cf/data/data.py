@@ -8666,7 +8666,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
-    def count(self, axis=None, keepdims=False, split_every=None):
+    def count(self, axis=None, keepdims=True, split_every=None):
         """Count the non-masked elements of the data.
 
         .. seealso:: `count_masked`
@@ -8697,7 +8697,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [ 4  5  6  7]
          [ 8  9 10 11]]
         >>> d.count()
-        <CF Data(): 12>
+        <CF Data(1, 1): [[12]]>
 
         >>> d[0, :] = cf.masked
         >>> print(d.array)
@@ -8705,13 +8705,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [ 4  5  6  7]
          [ 8  9 10 11]]
         >>> d.count()
-        <CF Data(): 8>
+        <CF Data(1, 1): [[8]]>
 
         >>> print(d.count(0).array)
-        [2 2 2 2]
+        [[2 2 2 2]]
         >>> print(d.count(1).array)
-        [0 4 4]
-        >>> print(d.count([0, 1]))
+        [[0]
+         [4]
+         [4]]
+        >>> print(d.count([0, 1], keepdims=False).array)
         8
 
         """
@@ -8748,26 +8750,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [ 4  5  6  7]
          [ 8  9 10 11]]
         >>> d.count_masked()
-        <CF Data(): 0>
+        <CF Data(1, 1): [[0]]>
 
         >>> d[0, :] = cf.masked
         >>> print(d.array)
         [[-- -- -- --]
          [ 4  5  6  7]
          [ 8  9 10 11]]
-        >>> d.count()
-        <CF Data(): 4>
-
-        >>> print(d.count(0).array)
-        [1 1 1 1]
-        >>> print(d.count(1).array)
-        [4 0 0]
-        >>> print(d.count([0, 1]))
-        4
+        >>> d.count_masked()
+        <CF Data(1, 1): [[4]]>
 
         """
-        # TODODASK: Make a PR for da.ma.count_masked and follow the
-        #           pattern of cf.data.count
         return self.size - self.count(split_every=split_every)
 
     @daskified(_DASKIFIED_VERBOSE)
