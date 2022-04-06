@@ -5988,11 +5988,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def data(self):
         """The data as an object identity.
 
-        **Examples:**
+        **Examples**
 
+        >>> d = cf.Data([1, 2], 'm')
         >>> d.data is d
         True
 
