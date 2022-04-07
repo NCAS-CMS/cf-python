@@ -641,10 +641,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # Reset the units
             self._Units = units
 
-        # Bring the data into memory
-        if persist:
-            array = array.persist()
-
         # Store the dask array
         self._set_dask(array, delete_source=False, reset_mask_hardness=False)
 
