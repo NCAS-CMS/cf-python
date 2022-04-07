@@ -303,7 +303,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         copy=True,
         dtype=None,
         mask=None,
-        to_memory=False,
+        persist=False,
         init_options=None,
         _use_array=True,
     ):
@@ -424,24 +424,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 .. versionadded:: TODODASK
 
-            to_memory: `bool optional
-                If True then attempt to read the data that defines
-                *array* from disk prior to assigning it to the
-                underlying dask array. This is done by replacing
-                *array* with the output of its ``to_memory()`` method,
-                if it has one. Reading data from disk during
-                initialisation will slow down the initialisation
-                process, but can considerably improve downstream
-                performance by avoiding the need for independent reads
-                on every dask chunk. By default, data of *array* that
-                is on disk remains there until the required.
+            persist: `bool`, optional
+                If True then persist the underlying array into memory,
+                equivalent to calling `persist` on the data
+                immediately after initialisation.
 
-                If *array* has no ``to_memory()`` method then no
-                action is taken.
-                
-                TODODASK: This keyword needs a review (name and implementation). 
-                          New commit to follow
-                          
+                If the original data are on disk then reading data
+                into memory during initialisation will slow down the
+                initialisation process, but can considerably improve
+                downstream performance by avoiding the need for
+                independent reads for every dask chunk, each time the
+                data are computed.
+
                 .. versionadded:: TODODASK
 
             init_options: `dict`, optional
@@ -582,13 +576,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Still here? Then create a dask array and store it.
 
-        # Attempt to read data from disk
-        if to_memory:
-            try:
-                array = array.to_memory()
-            except AttributeError:
-                pass
-
         # Find out if the data is compressed
         try:
             compressed = array.get_compression_type()
@@ -654,6 +641,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # Reset the units
             self._Units = units
 
+        # Bring the data into memory
+        if persist:
+            array = array.persist()
+
         # Store the dask array
         self._set_dask(array, delete_source=False, reset_mask_hardness=False)
 
@@ -667,6 +658,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Apply a mask
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
+
+        # Bring the data into memory
+        if persist:
+            self.persist(inplace=True)
 
     #    @property#
     #    def dask_array(s#elf):
@@ -2398,7 +2393,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):
-        """Persist the underlaying dask array into memory.
+        """Persist the underlying dask array into memory.
 
         This turns an underlying lazy dask array into a equivalent
         chunked dask array, but now with the results fully computed.
@@ -2435,7 +2430,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = self.get_dask(copy=False)
         dx = dx.persist()
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
         return d
 
@@ -6441,7 +6436,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         366
         >>> print(d.datetime_array)
         2000-12-01 00:00:00
-        
+
         """
         return self.compute().copy()
 
