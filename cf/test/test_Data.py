@@ -1506,30 +1506,19 @@ class DataTest(unittest.TestCase):
         m = d.binary_mask
         self.assertTrue((d.binary_mask.array == [[0, 1, 0, 0]]).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_clip(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.arange(12).reshape(3, 4)
+        d = cf.Data(a, "m", chunks=2)
 
-        c0 = -53.234
-        c1 = 34.345456567
+        self.assertIsNone(d.clip(-1, 12, inplace=True))
 
-        a = self.a + 0.34567
-        ac = np.clip(a, c0, c1)
+        b = np.clip(a, 2, 10)
+        e = d.clip(2, 10)
+        self.assertTrue((e.array == b).all())
 
-        d = cf.Data(a, "km")
-        self.assertIsNotNone(d.clip(c0, c1))
-        self.assertIsNone(d.clip(c0, c1, inplace=True))
-
-        d = cf.Data(a, "km")
-        e = d.clip(c0, c1)
-        self.assertTrue((e.array == ac).all())
-
-        e = d.clip(c0 * 1000, c1 * 1000, units="m")
-        self.assertTrue((e.array == ac).all())
-
-        d.clip(c0 * 100, c1 * 100, units="10m", inplace=True)
-        self.assertTrue(d.allclose(ac, rtol=1e-05, atol=1e-08))
+        b = np.clip(a, 3, 9)
+        e = d.clip(0.003, 0.009, "km")
+        self.assertTrue((e.array == b).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_months_years(self):
