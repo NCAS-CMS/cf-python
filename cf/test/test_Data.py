@@ -3940,7 +3940,11 @@ class DataTest(unittest.TestCase):
 
     def test_Data_dump(self):
         d = cf.Data([1, 2], "m")
-        self.assertIsInstance(d.dump(display=False), str)
+        x = (
+            "Data.shape = (2,)\nData.first_datum = 1\nData.last_datum  = 2\n"
+            "Data.fill_value = None\nData.Units = <Units: m>"
+        )
+        self.assertEqual(d.dump(display=False), x)
 
 
 if __name__ == "__main__":
