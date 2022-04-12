@@ -1902,7 +1902,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{inplace: `bool`, optional}}
 
@@ -1968,7 +1968,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
                 TODODASK - note that mtol only applies to the
                            calculation of the upper decile, not the
@@ -2142,7 +2142,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 is guaranteed to broadcast correctly against the original
                 data.
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -7036,7 +7036,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -7105,7 +7105,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -7175,7 +7175,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -7243,7 +7243,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -7316,7 +7316,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -7394,7 +7394,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -7471,7 +7471,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -7563,7 +7563,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -10299,7 +10299,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -10614,7 +10614,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -12204,7 +12204,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -12327,7 +12327,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -12406,7 +12406,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -12491,7 +12491,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -12590,7 +12590,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -12685,7 +12685,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{ddof: number}}
 
@@ -12773,7 +12773,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{ddof: number}}
 
