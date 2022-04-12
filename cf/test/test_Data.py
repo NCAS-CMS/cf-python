@@ -3967,6 +3967,16 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
 
+    def test_Data_data(self):
+        for d in [
+            cf.Data(1),
+            cf.Data([1, 2], fill_value=0),
+            cf.Data([1, 2], "m"),
+            cf.Data([1, 2], mask=[1,0], units="m"),
+            cf.Data([[0, 1, 2], [3, 4, 5]], chunks=2),
+        ]:
+            self.assertIs(d.data, d)
+
     def test_Data_dump(self):
         d = cf.Data([1, 2], "m")
         x = (
