@@ -492,12 +492,6 @@ class DataTest(unittest.TestCase):
             d.halo(4)
 
     def test_Data_mask(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # TODODASK: once test_Data_apply_masking is passing after daskification
-        # of apply_masking, might make sense to combine this test with that?
-
         # Test for a masked Data object (having some masked points)
         a = self.ma
         d = cf.Data(a, units="m")
@@ -531,53 +525,52 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d3.mask.hardmask)
         self.assertTrue(d3.mask.array[1], True)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_apply_masking(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.ma.arange(12).reshape(3, 4)
+        a[1, 1] = np.ma.masked
+        d = cf.Data(a, units="m", chunks=2)
 
-        a = self.ma
-        d = cf.Data(a, units="m")
+        self.assertIsNone(d.apply_masking(inplace=True))
 
-        b = a.copy()
+        b = a
         e = d.apply_masking()
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a == 0, np.ma.masked, a)
+        b = np.ma.masked_where(a == 0, a)
         e = d.apply_masking(fill_values=[0])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a == 0) | (a == 11), np.ma.masked, a)
+        b = np.ma.masked_where((a == 0) | (a == 11), a)
         e = d.apply_masking(fill_values=[0, 11])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a < 30, np.ma.masked, a)
-        e = d.apply_masking(valid_min=30)
+        b = np.ma.masked_where(a < 3, a)
+        e = d.apply_masking(valid_min=3)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a > -60, np.ma.masked, a)
-        e = d.apply_masking(valid_max=-60)
+        b = np.ma.masked_where(a > 8, a)
+        e = d.apply_masking(valid_max=8)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a < -20) | (a > 80), np.ma.masked, a)
-        e = d.apply_masking(valid_range=[-20, 80])
+        b = np.ma.masked_where((a < 2) | (a > 8), a)
+        e = d.apply_masking(valid_range=[2, 8])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        d.set_fill_value(70)
+        d.set_fill_value(7)
 
-        b = np.ma.where(a == 70, np.ma.masked, a)
+        b = np.ma.masked_where(a == 7, a)
         e = d.apply_masking(fill_values=True)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a == 70) | (a < 20) | (a > 80), np.ma.masked, a)
-        e = d.apply_masking(fill_values=True, valid_range=[20, 80])
+        b = np.ma.masked_where((a == 7) | (a < 2) | (a > 8), a)
+        e = d.apply_masking(fill_values=True, valid_range=[2, 8])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
@@ -1494,49 +1487,31 @@ class DataTest(unittest.TestCase):
         d = cf.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
         self.assertEqual(d.array, 2.5)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_binary_mask(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data([[0, 1, 2, 3.0]], "m")
+        m = d.binary_mask
+        self.assertEqual(m.shape, d.shape)
+        self.assertEqual(m.Units, cf.Units("1"))
+        self.assertEqual(m.dtype, "int32")
+        self.assertTrue((m.array == [[0, 0, 0, 0]]).all())
 
-        a = np.ma.ones((1000,), dtype="int32")
-        a[[1, 900]] = np.ma.masked
-        a[[0, 10, 910]] = 0
+        d[0, 1] = cf.masked
+        m = d.binary_mask
+        self.assertTrue((d.binary_mask.array == [[0, 1, 0, 0]]).all())
 
-        d = cf.Data(np.arange(1000.0), "radians")
-        d[[1, 900]] = cf.masked
-        d[[10, 910]] = 0
-
-        b = d.binary_mask
-
-        self.assertEqual(b.Units, cf.Units("1"))
-        self.assertEqual(b.dtype, np.dtype("int32"))
-        self.assertTrue((b.array == a).all())
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_clip(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.arange(12).reshape(3, 4)
+        d = cf.Data(a, "m", chunks=2)
 
-        c0 = -53.234
-        c1 = 34.345456567
+        self.assertIsNone(d.clip(-1, 12, inplace=True))
 
-        a = self.a + 0.34567
-        ac = np.clip(a, c0, c1)
+        b = np.clip(a, 2, 10)
+        e = d.clip(2, 10)
+        self.assertTrue((e.array == b).all())
 
-        d = cf.Data(a, "km")
-        self.assertIsNotNone(d.clip(c0, c1))
-        self.assertIsNone(d.clip(c0, c1, inplace=True))
-
-        d = cf.Data(a, "km")
-        e = d.clip(c0, c1)
-        self.assertTrue((e.array == ac).all())
-
-        e = d.clip(c0 * 1000, c1 * 1000, units="m")
-        self.assertTrue((e.array == ac).all())
-
-        d.clip(c0 * 100, c1 * 100, units="10m", inplace=True)
-        self.assertTrue(d.allclose(ac, rtol=1e-05, atol=1e-08))
+        b = np.clip(a, 3, 9)
+        e = d.clip(0.003, 0.009, "km")
+        self.assertTrue((e.array == b).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_months_years(self):
@@ -1927,22 +1902,21 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, d.shape)
         self.assertTrue(f.equals(d, verbose=2))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_swapaxes(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-
-        d = cf.Data(a.copy())
+        a = np.ma.arange(24).reshape(2, 3, 4)
+        a[1, 1] = np.ma.masked
+        d = cf.Data(a, chunks=(-1, -1, 2))
 
         for i in range(-a.ndim, a.ndim):
             for j in range(-a.ndim, a.ndim):
-                b = np.swapaxes(a.copy(), i, j)
+                b = np.swapaxes(a, i, j)
                 e = d.swapaxes(i, j)
-                message = "cf.Data.swapaxes({}, {}) failed".format(i, j)
-                self.assertEqual(b.shape, e.shape, message)
-                self.assertTrue((b == e.array).all(), message)
+                self.assertEqual(b.shape, e.shape)
+                self.assertTrue((b == e.array).all())
+
+        # Bad axes
+        with self.assertRaises(IndexError):
+            d.swapaxes(3, -3)
 
     def test_Data_transpose(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1956,12 +1930,8 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(indices):
                 a = np.transpose(a, axes)
                 d.transpose(axes, inplace=True)
-                message = (
-                    "cf.Data.transpose({}) failed: "
-                    "d.shape={}, a.shape={}".format(axes, d.shape, a.shape)
-                )
-                self.assertEqual(d.shape, a.shape, message)
-                self.assertTrue((d.array == a).all(), message)
+                self.assertEqual(d.shape, a.shape)
+                self.assertTrue((d.array == a).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_unique(self):
@@ -3328,21 +3298,33 @@ class DataTest(unittest.TestCase):
         d.to_disk()
         self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'select'")
     def test_Data_section(self):
+        d = cf.Data(np.arange(24).reshape(2, 3, 4))
+
+        e = d.section(-1)
+        self.assertIsInstance(e, dict)
+        self.assertEqual(len(e), 6)
+
+        e = d.section([0, 2], min_step=2)
+        self.assertEqual(len(e), 2)
+        f = e[(None, 0, None)]
+        self.assertEqual(f.shape, (2, 2, 4))
+        f = e[(None, 2, None)]
+        self.assertEqual(f.shape, (2, 1, 4))
+
+        e = d.section([0, 1, 2])
+        self.assertEqual(len(e), 1)
+        key, value = e.popitem()
+        self.assertEqual(key, (None, None, None))
+        self.assertTrue(value.equals(d))
+
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs reconstruct_sectioned_data")
+    def test_Data_reconstruct_sectioned_data(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename6)[0]
-        self.assertEqual(
-            list(sorted(f.data.section((1, 2)).keys())),
-            [(x, None, None) for x in range(1800)],
-        )
-        d = cf.Data(np.arange(120).reshape(2, 3, 4, 5))
-        x = d.section([1, 3])
-        self.assertEqual(len(x), 8)
-        e = cf.Data.reconstruct_sectioned_data(x)
-        self.assertTrue(e.equals(d))
+        # TODODASK: Write when Data.reconstruct_sectioned_data is
+        #           daskified
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_count(self):
@@ -3725,6 +3707,46 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
         self.assertTrue((e.array == a).all())
 
+    def test_Data__init__compression(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        import cfdm
+
+        # Ragged
+        for f in cfdm.read("DSG_timeSeries_contiguous.nc"):
+            f = f.data
+            d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        for f in cfdm.read("DSG_timeSeries_indexed.nc"):
+            f = f.data
+            d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        for f in cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc"):
+            f = f.data
+            d = cf.Data(cf.RaggedIndexedContiguousArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        # Ragged bounds
+        f = cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc")[0]
+        f = f.construct("long_name=height above mean sea level").bounds.data
+        d = cf.Data(cf.RaggedIndexedContiguousArray(source=f.source()))
+        self.assertTrue((d.array == f.array).all())
+
+        # Gathered
+        for f in cfdm.read("gathered.nc"):
+            f = f.data
+            d = cf.Data(cf.GatheredArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        # Subsampled
+        f = cfdm.read("subsampled_2.nc")[-3]
+        f = f.construct("longitude").data
+        d = cf.Data(cf.SubsampledArray(source=f.source()))
+        self.assertTrue((d.array == f.array).all())
+
     def test_Data_empty(self):
         for shape, dtype_in, dtype_out in zip(
             [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
@@ -3926,6 +3948,35 @@ class DataTest(unittest.TestCase):
         # Can't set to Units that are not equivalent
         with self.assertRaises(ValueError):
             d.set_units("km")
+
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs updated NetCDFArray to test")
+    def test_Data_get_filenames(self):
+        pass
+
+    def test_Data_tolist(self):
+        for x in (1, [1, 2], [[1, 2], [3, 4]]):
+            d = cf.Data(x)
+            e = d.tolist()
+            self.assertEqual(e, np.array(x).tolist())
+            self.assertTrue(d.equals(cf.Data(e)))
+
+    def test_Data_data(self):
+        for d in [
+            cf.Data(1),
+            cf.Data([1, 2], fill_value=0),
+            cf.Data([1, 2], "m"),
+            cf.Data([1, 2], mask=[1,0], units="m"),
+            cf.Data([[0, 1, 2], [3, 4, 5]], chunks=2),
+        ]:
+            self.assertIs(d.data, d)
+
+    def test_Data_dump(self):
+        d = cf.Data([1, 2], "m")
+        x = (
+            "Data.shape = (2,)\nData.first_datum = 1\nData.last_datum  = 2\n"
+            "Data.fill_value = None\nData.Units = <Units: m>"
+        )
+        self.assertEqual(d.dump(display=False), x)
 
 
 if __name__ == "__main__":
