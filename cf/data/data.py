@@ -10144,8 +10144,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         Any delayed operations and/or disk interactions will be
         executed during *each* iteration, possibly leading to poor
         performance. If possible, consider bringing the values into
-        memory first with `persist`, or better still using
-        ``d.array.flat``.
+        memory first with `persist` or using ``d.array.flat``.
 
         .. seealso:: `flatten`, `persist`
 
@@ -10169,7 +10168,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [3 4]]
         >>> list(d.flat())
         [1, 3, 4]
-        list(d.flat(ignore_masked=False))
+        >>> list(d.flat(ignore_masked=False))
         [1, masked, 3, 4]
 
         """
