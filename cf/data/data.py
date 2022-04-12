@@ -7394,7 +7394,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             {{collapse squeeze: `bool`, optional}}
 
-            {{mtol: number, optional}
+            {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
 
