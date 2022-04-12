@@ -3933,7 +3933,7 @@ class DataTest(unittest.TestCase):
             cf.Data(1),
             cf.Data([1, 2], fill_value=0),
             cf.Data([1, 2], "m"),
-            cf.Data([1, 2], mask=[1,0], units="m"),
+            cf.Data([1, 2], mask=[1, 0], units="m"),
             cf.Data([[0, 1, 2], [3, 4, 5]], chunks=2),
         ]:
             self.assertIs(d.data, d)

@@ -1,6 +1,7 @@
 from ...functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_METHOD,
+    DeprecationError,
 )
 
 
