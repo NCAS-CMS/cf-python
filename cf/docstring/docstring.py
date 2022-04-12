@@ -245,7 +245,7 @@ _docstring_substitution_definitions = {
                 collapsed, resulting in output with size 1. Each axis
                 is identified by its integer position. If *axes* is an
                 empty sequence then the collapse is applied to each
-                scalar element and the reuslt has the same shape as
+                scalar element and the result has the same shape as
                 the input data.""",
     # collapse squeeze
     "{{collapse squeeze: `bool`, optional}}": """squeeze: `bool`, optional

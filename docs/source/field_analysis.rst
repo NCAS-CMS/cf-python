@@ -147,7 +147,7 @@ Method                        Description                               Cell met
 
                               .. math:: \max\{|x_0|, \ldots, |x_N|\}
                           
-``'minimum_absolute_value'``  The minimum of the absolute absolute      ``minimum_absolute_value``
+``'minimum_absolute_value'``  The minimum of the non-missing absolute   ``minimum_absolute_value``
                               values.
 
                               .. math:: \min\{|x_0|, \ldots, |x_N|\}
