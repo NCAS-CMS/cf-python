@@ -16,7 +16,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
     """
 
-    def _ncdimensions(self, ncvar, ncdimensions=None):
+    def _ncdimensions(self, ncvar, ncdimensions=None, parent_ncvar=None):
         """Return a list of the netCDF dimensions corresponding to a
         netCDF variable.
 
@@ -43,6 +43,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
                 .. versionadded:: 3.11.0
 
+            parent_ncvar: `str`, optional
+                TODO
+
+                .. versionadded:: TODO
+
         :Returns:
 
             `list`
@@ -52,6 +57,25 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         >>> n._ncdimensions('humidity')
         ['time', 'lat', 'lon']
+
+        For a variable compressed by gathering:
+
+           dimensions:
+             lat=73;
+             lon=96;
+             landpoint=2381;
+             depth=4;
+           variables:
+             int landpoint(landpoint);
+               landpoint:compress="lat lon";
+             float landsoilt(depth,landpoint);
+               landsoilt:long_name="soil temperature";
+               landsoilt:units="K";
+
+        we would have
+
+        >>> n._ncdimensions('landsoilt')
+        ['depth', 'lat', 'lon']
 
         """
         g = self.read_vars
@@ -64,7 +88,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         )
 
         if not cfa:
-            return super()._ncdimensions(ncvar, ncdimensions=ncdimensions)
+            return super()._ncdimensions(
+                ncvar, ncdimensions=ncdimensions, parent_ncvar=parent_ncvar
+            )
 
         # Still here? Then we have a CFA variable.
         ncdimensions = (
@@ -73,7 +99,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return list(map(str, ncdimensions))
 
-    def _get_domain_axes(self, ncvar, allow_external=False):
+    def _get_domain_axes(self, ncvar, allow_external=False, parent_ncvar=None):
         """Return the domain axis identifiers that correspond to a
         netCDF variable's netCDF dimensions.
 
@@ -88,6 +114,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             allow_external: `bool`
                 If `True` and *ncvar* is an external variable then return an
                 empty list.
+
+            parent_ncvar: `str`, optional
+                TODO
+
+                .. versionadded:: TODO
 
         :Returns:
 
@@ -113,7 +144,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         if not cfa:
             return super()._get_domain_axes(
-                ncvar=ncvar, allow_external=allow_external
+                ncvar=ncvar,
+                allow_external=allow_external,
+                parent_ncvar=parent_ncvar,
             )
 
         # Still here?
@@ -137,6 +170,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         unpacked_dtype=False,
         uncompress_override=None,
         parent_ncvar=None,
+        coord_ncvar=None,
     ):
         """Create data for a netCDF or CFA-netCDF variable.
 
@@ -152,6 +186,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             unpacked_dtype: `False` or `numpy.dtype`, optional
 
             uncompress_override: `bool`, optional
+
+            parent_ncvar: `str`, optional
+
+            coord_ncvar: `str`, optional
+
+                .. versionadded:: TODO
 
         :Returns:
 
@@ -175,6 +215,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 unpacked_dtype=unpacked_dtype,
                 uncompress_override=uncompress_override,
                 parent_ncvar=parent_ncvar,
+                coord_ncvar=coord_ncvar,
             )
 
         # ------------------------------------------------------------
