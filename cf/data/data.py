@@ -43,7 +43,6 @@ from ..functions import log_level, parse_indices, pathjoin
 from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
-
 from . import NetCDFArray, UMArray
 from .collapse import Collapse
 from .creation import (
@@ -9112,7 +9111,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
-        self._set_dask(dx, reset_mask_hardness=False)
+        self._set_dask(dx, delete_source=False, reset_mask_hardness=False)
         self._hardmask = True
 
     def has_calendar(self):
@@ -9209,7 +9208,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
-        self._set_dask(dx, reset_mask_hardness=False)
+        self._set_dask(dx, delete_source=False, reset_mask_hardness=False)
         self._hardmask = False
 
     @daskified(_DASKIFIED_VERBOSE)
