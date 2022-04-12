@@ -492,9 +492,6 @@ class DataTest(unittest.TestCase):
             d.halo(4)
 
     def test_Data_mask(self):
-        # TODODASK: once test_Data_apply_masking is passing after daskification
-        # of apply_masking, might make sense to combine this test with that?
-
         # Test for a masked Data object (having some masked points)
         a = self.ma
         d = cf.Data(a, units="m")
