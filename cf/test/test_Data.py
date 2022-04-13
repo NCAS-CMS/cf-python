@@ -3750,6 +3750,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.dtype, "i4")
         self.assertTrue(e.dtype, "f4")
 
+        # Cases for which both d and e collapse to a result of the
+        # same data type
         for x, r in zip((d, e), ("i4", "f4")):
             for func in (
                 x.min,
@@ -3760,6 +3762,8 @@ class DataTest(unittest.TestCase):
             ):
                 self.assertEqual(func().dtype, r)
 
+        # Cases for which both d and e collapse to a result of the
+        # double of same data type
         for x, r in zip((d, e), ("i8", "f8")):
             for func in (
                 x.integral,
@@ -3768,6 +3772,8 @@ class DataTest(unittest.TestCase):
             ):
                 self.assertEqual(func().dtype, r)
 
+        # Cases for which both d and e collapse to a result of double
+        # float data type
         for x, r in zip((d, e), ("f8", "f8")):
             for func in (
                 x.mean,
