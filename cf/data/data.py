@@ -5111,23 +5111,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self._custom["_cyclic"] = _empty_set
 
     @property
-    def _HDF_chunks(self):
-        """The HDF chunksizes.
-
-        DO NOT CHANGE IN PLACE.
-
-        """
-        return self._custom["_HDF_chunks"]
-
-    @_HDF_chunks.setter
-    def _HDF_chunks(self, value):
-        self._custom["_HDF_chunks"] = value
-
-    @_HDF_chunks.deleter
-    def _HDF_chunks(self):
-        del self._custom["_HDF_chunks"]
-
-    @property
     @daskified(_DASKIFIED_VERBOSE)
     def _hardmask(self):
         """Storage for the mask hardness.
