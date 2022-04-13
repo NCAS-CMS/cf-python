@@ -13128,7 +13128,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         i=False,
     ):
         """Alias for `std`"""
-        return self.sdt(
+        return self.std(
             axes=axes,
             squeeze=squeeze,
             weights=weights,
