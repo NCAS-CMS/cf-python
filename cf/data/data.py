@@ -9822,7 +9822,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def to_dask_array(self):
         """Store the data array on disk.
 
-        There is no change to partition's whose sub-arrays are already on
+        There is no change to partitions whose sub-arrays are already on
         disk.
 
         :Returns:
