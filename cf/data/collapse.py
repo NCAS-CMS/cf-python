@@ -1573,7 +1573,7 @@ def cf_range_agg(
 # root mean square
 # --------------------------------------------------------------------
 def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
-    """Chunk calculations for the root mean square (RMS)..
+    """Chunk calculations for the root mean square (RMS).
 
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
