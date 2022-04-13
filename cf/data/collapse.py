@@ -821,7 +821,7 @@ def double_precision_dtype(a, default=None, bool_type="i"):
 
         a: `dask.array.Array` or `None`
             The data. If `None` then the value of *default* is
-            returned*
+            returned*.
 
         default: `str`, optional
             If *a* is `None`, then return this data type.
