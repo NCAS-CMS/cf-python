@@ -5191,7 +5191,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @property
     def force_compute(self):
-        """TODODASK See also confg settings."""
+        """TODODASK See also config settings."""
         return self._custom.get("force_compute", False)
 
     @force_compute.setter
