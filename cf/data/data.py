@@ -12946,7 +12946,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def square(self, dtype=None, inplace=False):
-        """Calculate the non-negative square root.
+        """Calculate the element-wise square.
 
         .. versionadded:: TODODASK
 
