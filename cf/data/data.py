@@ -13027,7 +13027,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> print(e.array)
         [[0.0 1.0 1.4142135623730951 -- 2.0]]
 
-        Negative values raise a warning but nonetheless result in NaN
+        Negative input values raise a warning but nonetheless result in NaN
         or, if there are already missing values, missing data:
 
         >>> import warnings
