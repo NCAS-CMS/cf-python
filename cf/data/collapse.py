@@ -863,7 +863,7 @@ def double_precision_dtype(a, default=None, bool_type="i"):
     if kind in "fi":
         return kind + "8"
 
-    raise TypeError("Can't collapse data with {a.dtype!r}")
+    raise TypeError(f"Can't collapse data with {a.dtype!r}")
 
 
 def mask_small_sample_size(x, N, axis, mtol, original_shape):
