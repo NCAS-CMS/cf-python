@@ -1,7 +1,9 @@
 import cfdm
 
+from .mixin import ArrayMixin
 
-class RaggedIndexedArray(cfdm.RaggedIndexedArray):
+
+class RaggedIndexedArray(ArrayMixin, cfdm.RaggedIndexedArray):
     """An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array
@@ -13,10 +15,21 @@ class RaggedIndexedArray(cfdm.RaggedIndexedArray):
     "index variable" that specifies the feature that each element of
     the sample dimension belongs to.
 
+    It is assumed that the compressed dimension is the left-most
+    dimension in the compressed array.
+
+    See CF section 9 "Discrete Sampling Geometries".
+
     .. versionadded:: 3.0.0
 
     """
 
-    @property
-    def dask_asarray(self):
-        return False
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        .. versionadded:: 3.0.0
+
+        """
+        return super().__repr__().replace("<", "<CF ", 1)

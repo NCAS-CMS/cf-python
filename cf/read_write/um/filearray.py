@@ -148,7 +148,7 @@ class UMFileArray(FileArray):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.close()
 
@@ -162,7 +162,7 @@ class UMFileArray(FileArray):
 
             `um.umread.umfile.File`
 
-        **Examples:**
+        **Examples**
 
         >>> f.open()
 
