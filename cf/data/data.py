@@ -13040,7 +13040,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         units = d.Units
         if units:
-            d.override_units(units ** 0.5, inplace=True)
+            try:
+                d.override_units(units ** 0.5, inplace=True)
+            except ValueError as e:
+                raise type(e)(
+                    f"Incompatible units for taking a square root: {units!r}"
+                )
 
         return d
 

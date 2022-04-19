@@ -3223,6 +3223,11 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.dtype, asqrt.dtype)
         self.assertTrue((e.array == asqrt).all())
 
+        # Incompatible units
+        d = cf.Data(a, "m")
+        with self.assertRaises(ValueError):
+            d.sqrt()
+
     def test_Data_integral(self):
         # Masked array, non-masked weights
         a = self.ma
