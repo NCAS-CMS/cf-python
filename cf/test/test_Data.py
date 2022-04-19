@@ -3949,6 +3949,13 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_flat(self):
+        d = cf.Data([[1, 2], [3, 4]], mask=[[0, 1], [0, 0]])
+        self.assertEqual(list(d.flat()), [1, 3, 4])
+        self.assertEqual(
+            list(d.flat(ignore_masked=False)), [1, np.ma.masked, 3, 4]
+        )
+
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs updated NetCDFArray to test")
     def test_Data_get_filenames(self):
         pass
@@ -3965,7 +3972,7 @@ class DataTest(unittest.TestCase):
             cf.Data(1),
             cf.Data([1, 2], fill_value=0),
             cf.Data([1, 2], "m"),
-            cf.Data([1, 2], mask=[1,0], units="m"),
+            cf.Data([1, 2], mask=[1, 0], units="m"),
             cf.Data([[0, 1, 2], [3, 4, 5]], chunks=2),
         ]:
             self.assertIs(d.data, d)

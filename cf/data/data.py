@@ -10134,40 +10134,43 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             "setting the log level to 'DEBUG'."
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     def flat(self, ignore_masked=True):
         """Return a flat iterator over elements of the data array.
+
+        **Performance**
+
+        Any delayed operations and/or disk interactions will be
+        executed during *each* iteration, possibly leading to poor
+        performance. If possible, consider bringing the values into
+        memory first with `persist` or using ``d.array.flat``.
+
+        .. seealso:: `flatten`, `persist`
 
         :Parameters:
 
             ignore_masked: `bool`, optional
                 If False then masked and unmasked elements will be
-                returned. By default only unmasked elements are returned
+                returned. By default only unmasked elements are
+                returned
 
         :Returns:
 
             generator
                 An iterator over elements of the data array.
 
-        **Examples:**
+        **Examples**
 
+        >>> d = cf.Data([[1, 2], [3,4]], mask=[[0, 1], [0, 0]])
         >>> print(d.array)
-        [[1 -- 3]]
-        >>> for x in d.flat():
-        ...     print(x)
-        ...
-        1
-        3
-
-        >>> for x in d.flat(ignore_masked=False):
-        ...     print(x)
-        ...
-        1
-        --
-        3
+        [[1 --]
+         [3 4]]
+        >>> list(d.flat())
+        [1, 3, 4]
+        >>> list(d.flat(ignore_masked=False))
+        [1, masked, 3, 4]
 
         """
-        self.to_memory()
-
         mask = self.mask
 
         if ignore_masked:
