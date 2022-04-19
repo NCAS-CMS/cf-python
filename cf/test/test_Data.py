@@ -492,12 +492,6 @@ class DataTest(unittest.TestCase):
             d.halo(4)
 
     def test_Data_mask(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # TODODASK: once test_Data_apply_masking is passing after daskification
-        # of apply_masking, might make sense to combine this test with that?
-
         # Test for a masked Data object (having some masked points)
         a = self.ma
         d = cf.Data(a, units="m")
@@ -531,53 +525,52 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d3.mask.hardmask)
         self.assertTrue(d3.mask.array[1], True)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_apply_masking(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.ma.arange(12).reshape(3, 4)
+        a[1, 1] = np.ma.masked
+        d = cf.Data(a, units="m", chunks=2)
 
-        a = self.ma
-        d = cf.Data(a, units="m")
+        self.assertIsNone(d.apply_masking(inplace=True))
 
-        b = a.copy()
+        b = a
         e = d.apply_masking()
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a == 0, np.ma.masked, a)
+        b = np.ma.masked_where(a == 0, a)
         e = d.apply_masking(fill_values=[0])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a == 0) | (a == 11), np.ma.masked, a)
+        b = np.ma.masked_where((a == 0) | (a == 11), a)
         e = d.apply_masking(fill_values=[0, 11])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a < 30, np.ma.masked, a)
-        e = d.apply_masking(valid_min=30)
+        b = np.ma.masked_where(a < 3, a)
+        e = d.apply_masking(valid_min=3)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a > -60, np.ma.masked, a)
-        e = d.apply_masking(valid_max=-60)
+        b = np.ma.masked_where(a > 8, a)
+        e = d.apply_masking(valid_max=8)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a < -20) | (a > 80), np.ma.masked, a)
-        e = d.apply_masking(valid_range=[-20, 80])
+        b = np.ma.masked_where((a < 2) | (a > 8), a)
+        e = d.apply_masking(valid_range=[2, 8])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        d.set_fill_value(70)
+        d.set_fill_value(7)
 
-        b = np.ma.where(a == 70, np.ma.masked, a)
+        b = np.ma.masked_where(a == 7, a)
         e = d.apply_masking(fill_values=True)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a == 70) | (a < 20) | (a > 80), np.ma.masked, a)
-        e = d.apply_masking(fill_values=True, valid_range=[20, 80])
+        b = np.ma.masked_where((a == 7) | (a < 2) | (a > 8), a)
+        e = d.apply_masking(fill_values=True, valid_range=[2, 8])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
@@ -1506,30 +1499,19 @@ class DataTest(unittest.TestCase):
         m = d.binary_mask
         self.assertTrue((d.binary_mask.array == [[0, 1, 0, 0]]).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_clip(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.arange(12).reshape(3, 4)
+        d = cf.Data(a, "m", chunks=2)
 
-        c0 = -53.234
-        c1 = 34.345456567
+        self.assertIsNone(d.clip(-1, 12, inplace=True))
 
-        a = self.a + 0.34567
-        ac = np.clip(a, c0, c1)
+        b = np.clip(a, 2, 10)
+        e = d.clip(2, 10)
+        self.assertTrue((e.array == b).all())
 
-        d = cf.Data(a, "km")
-        self.assertIsNotNone(d.clip(c0, c1))
-        self.assertIsNone(d.clip(c0, c1, inplace=True))
-
-        d = cf.Data(a, "km")
-        e = d.clip(c0, c1)
-        self.assertTrue((e.array == ac).all())
-
-        e = d.clip(c0 * 1000, c1 * 1000, units="m")
-        self.assertTrue((e.array == ac).all())
-
-        d.clip(c0 * 100, c1 * 100, units="10m", inplace=True)
-        self.assertTrue(d.allclose(ac, rtol=1e-05, atol=1e-08))
+        b = np.clip(a, 3, 9)
+        e = d.clip(0.003, 0.009, "km")
+        self.assertTrue((e.array == b).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_months_years(self):
@@ -3725,6 +3707,46 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
         self.assertTrue((e.array == a).all())
 
+    def test_Data__init__compression(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        import cfdm
+
+        # Ragged
+        for f in cfdm.read("DSG_timeSeries_contiguous.nc"):
+            f = f.data
+            d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        for f in cfdm.read("DSG_timeSeries_indexed.nc"):
+            f = f.data
+            d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        for f in cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc"):
+            f = f.data
+            d = cf.Data(cf.RaggedIndexedContiguousArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        # Ragged bounds
+        f = cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc")[0]
+        f = f.construct("long_name=height above mean sea level").bounds.data
+        d = cf.Data(cf.RaggedIndexedContiguousArray(source=f.source()))
+        self.assertTrue((d.array == f.array).all())
+
+        # Gathered
+        for f in cfdm.read("gathered.nc"):
+            f = f.data
+            d = cf.Data(cf.GatheredArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        # Subsampled
+        f = cfdm.read("subsampled_2.nc")[-3]
+        f = f.construct("longitude").data
+        d = cf.Data(cf.SubsampledArray(source=f.source()))
+        self.assertTrue((d.array == f.array).all())
+
     def test_Data_empty(self):
         for shape, dtype_in, dtype_out in zip(
             [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
@@ -3927,6 +3949,13 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_flat(self):
+        d = cf.Data([[1, 2], [3, 4]], mask=[[0, 1], [0, 0]])
+        self.assertEqual(list(d.flat()), [1, 3, 4])
+        self.assertEqual(
+            list(d.flat(ignore_masked=False)), [1, np.ma.masked, 3, 4]
+        )
+
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs updated NetCDFArray to test")
     def test_Data_get_filenames(self):
         pass
@@ -3937,6 +3966,24 @@ class DataTest(unittest.TestCase):
             e = d.tolist()
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
+
+    def test_Data_data(self):
+        for d in [
+            cf.Data(1),
+            cf.Data([1, 2], fill_value=0),
+            cf.Data([1, 2], "m"),
+            cf.Data([1, 2], mask=[1, 0], units="m"),
+            cf.Data([[0, 1, 2], [3, 4, 5]], chunks=2),
+        ]:
+            self.assertIs(d.data, d)
+
+    def test_Data_dump(self):
+        d = cf.Data([1, 2], "m")
+        x = (
+            "Data.shape = (2,)\nData.first_datum = 1\nData.last_datum  = 2\n"
+            "Data.fill_value = None\nData.Units = <Units: m>"
+        )
+        self.assertEqual(d.dump(display=False), x)
 
 
 if __name__ == "__main__":
