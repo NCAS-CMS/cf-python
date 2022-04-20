@@ -155,6 +155,21 @@ class DataClassDeprecationsMixin:
         """
         _DEPRECATION_ERROR_METHOD("TODODASK")  # pragma: no cover
 
+    def close(self):
+        """Close all files referenced by the data array.
+
+        Deprecated at version TODODASK. All files are now automatically
+        closed when not being accessed.
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
 
