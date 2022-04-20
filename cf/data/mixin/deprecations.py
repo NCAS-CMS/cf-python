@@ -353,7 +353,7 @@ class DataClassDeprecationsMixin:
         returned.
 
         Note that if the raising of `FloatingPointError` exceptions has
-        suppressed then invalid values in the results of arithmetic
+        been suppressed then invalid values in the results of arithmetic
         operations may be subsequently converted to masked values with the
         `mask_invalid` method.
 
