@@ -9052,7 +9052,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         Only affects data that is compressed by convention, i.e.
 
           * Ragged arrays for discrete sampling geometries (DSG) and
-            simple geometry cel definitions.
+            simple geometry cell definitions.
 
           * Compression by gathering.
 
