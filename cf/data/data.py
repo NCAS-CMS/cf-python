@@ -8625,7 +8625,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d._get_dask().ravel()
+        dx = d._get_dask()
         dx = da.blockwise(
             np.ma.compressed,
             "i",
