@@ -303,7 +303,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         copy=True,
         dtype=None,
         mask=None,
-        persist=False,
+        to_memory=False,
         init_options=None,
         _use_array=True,
     ):
@@ -424,17 +424,25 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
                 .. versionadded:: TODODASK
 
-            persist: `bool`, optional
-                If True then persist the underlying array into memory,
-                equivalent to calling `persist` on the data
-                immediately after initialisation.
+            to_memory: `bool`, optional
+                If True then ensure that the original data are in
+                memory, rather than on disk.
 
-                If the original data are on disk then reading data
+                If the original data are on disk, then reading data
                 into memory during initialisation will slow down the
                 initialisation process, but can considerably improve
                 downstream performance by avoiding the need for
                 independent reads for every dask chunk, each time the
                 data are computed.
+
+                In geneal, setting *to_memory* to True is not the same
+                as calling the `persist` of the newly created `Data`
+                object, which also decompresses data compressed by
+                convention and computes any data type, mask and
+                date-time modifications.
+
+                If the input *array* is a `dask.array.Array` object
+                then *to_memory* is ignored.
 
                 .. versionadded:: TODODASK
 
@@ -597,11 +605,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "for compressed input arrays"
                 )
 
+            # Bring the compressed data into memory without
+            # decompressing it
+            if to_memory:
+                try:
+                    array = array.to_memory()
+                except AttributeError:
+                    pass
+
             # Save the input compressed array, as this will contain
             # extra information, such as a count or index variable.
             self._set_Array(array)
 
             array = compressed_to_dask(array, chunks)
+
         elif not is_dask_collection(array):
             # Turn the data into a dask array
             kwargs = init_options.get("from_array", {})
@@ -611,6 +628,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "initialisation options. "
                     "Use the 'chunks' parameter instead."
                 )
+
+            # Bring the data into memory
+            if to_memory:
+                try:
+                    array = array.to_memory()
+                except AttributeError:
+                    pass
 
             array = to_dask(array, chunks, **kwargs)
 
@@ -654,21 +678,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Apply a mask
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
-
-        # Bring the data into memory
-        if persist:
-            self.persist(inplace=True)
-
-    #    @property#
-    #    def dask_array(s#elf):
-    #        """TODODASK.##
-    #
-    #        :Returns:
-    #
-    #            `dask.array.Array`##
-    #
-    #        """
-    #        return self.get_dask(copy=True)
 
     @property
     def dask_compressed_array(self):
@@ -10547,99 +10556,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    def to_disk(self):
-        """Store the data array on disk.
-
-        There is no change to partition's whose sub-arrays are already on
-        disk.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> d.to_disk()
-
-        """
-        print("TODODASK - ???")
-        config = self.partition_configuration(readonly=True, to_disk=True)
-
-        for partition in self.partitions.matrix.flat:
-            if partition.in_memory:
-                partition.open(config)
-                partition.array
-                partition.close()
-
-    def to_memory(self, regardless=False, parallelise=False):
-        """Store each partition's data in memory in place if the master
-        array is smaller than the chunk size.
-
-        There is no change to partitions with data that are already in memory.
-
-        :Parameters:
-
-            regardless: `bool`, optional
-                If True then store all partitions' data in memory
-                regardless of the size of the master array. By default
-                only store all partitions' data in memory if the master
-                array is smaller than the chunk size.
-
-            parallelise: `bool`, optional
-                If True than only move those partitions to memory that are
-                flagged for processing on this rank.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> d.to_memory()
-        >>> d.to_memory(regardless=True)
-
-        """
-        print("TODODASK - ???")
-        config = self.partition_configuration(readonly=True)
-        fm_threshold = cf_fm_threshold()
-
-        # If parallelise is False then all partitions are flagged for
-        # processing on this rank, otherwise only a subset are
-        self._flag_partitions_for_processing(parallelise)
-
-        for partition in self.partitions.matrix.flat:
-            if partition._process_partition:
-                # Only move the partition to memory if it is flagged
-                # for processing
-                partition.open(config)
-                if (
-                    partition.on_disk
-                    and partition.nbytes <= free_memory() - fm_threshold
-                ):
-                    partition.array
-
-                partition.close()
-        # --- End: for
-
-    @property
-    def in_memory(self):
-        """True if the array is retained in memory.
-
-        :Returns:
-
-        **Examples:**
-
-        >>> d.in_memory
-
-        """
-        print("TODODASK - ???")
-        for partition in self.partitions.matrix.flat:
-            if not partition.in_memory:
-                return False
-        # --- End: for
-
-        return True
-
     @daskified(_DASKIFIED_VERBOSE)
     def datum(self, *index):
         """Return an element of the data array as a standard Python
@@ -11604,17 +11520,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = da.swapaxes(dx, axis0, axis1)
         d._set_dask(dx, reset_mask_hardness=False)
         return d
-
-    def save_to_disk(self, itemsize=None):
-        """cf.Data.save_to_disk is dead.
-
-        Use not cf.Data.fits_in_memory instead.
-
-        """
-        raise NotImplementedError(
-            "cf.Data.save_to_disk is dead. Use not "
-            "cf.Data.fits_in_memory instead."
-        )
 
     def fits_in_memory(self, itemsize):
         """Return True if the master array is small enough to be

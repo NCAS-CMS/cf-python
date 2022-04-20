@@ -81,8 +81,29 @@ class DataClassDeprecationsMixin:
         """Deprecated at version 3.0.0."""
         _DEPRECATION_ERROR_ATTRIBUTE(self, "dtvarray")  # pragma: no cover
 
+    @property
+    def in_memory(self):
+        """True if the array is retained in memory.
+
+        Deprecated at version TODODASK.
+
+        :Returns:
+
+        **Examples**
+
+        >>> d.in_memory
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "in_memory",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_` instead."""
+        """Deprecated at version 3.4.0, use method `get_filenames`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
@@ -360,4 +381,76 @@ class DataClassDeprecationsMixin:
         """
         _DEPRECATION_ERROR_METHOD(
             "TODODASK - consider using 'chunks' instead"
+        )  # pragma: no cover
+
+    def save_to_disk(self, itemsize=None):
+        """Deprecated."""
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "save_to_disk",
+            removed_at="4.0.0",
+        )  # pragma: no cover
+
+    def to_disk(self):
+        """Store the data array on disk.
+
+        Deprecated at version TODODASK.
+
+        There is no change to partition's whose sub-arrays are already
+        on disk.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.to_disk()
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "to_disk",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def to_memory(self, regardless=False, parallelise=False):
+        """Store each partition's data in memory in place if the master
+        array is smaller than the chunk size.
+
+        Deprecated at version TODODASK. Consider using `persist`
+        instead.
+
+        There is no change to partitions with data that are already in
+        memory.
+
+        :Parameters:
+
+            regardless: `bool`, optional
+                If True then store all partitions' data in memory
+                regardless of the size of the master array. By default
+                only store all partitions' data in memory if the
+                master array is smaller than the chunk size.
+
+            parallelise: `bool`, optional
+                If True than only move those partitions to memory that
+                are flagged for processing on this rank.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.to_memory()
+        >>> d.to_memory(regardless=True)
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "to_memory",
+            message="Consider using 'persist' instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
         )  # pragma: no cover
