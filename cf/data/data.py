@@ -45,7 +45,7 @@ from ..functions import log_level, parse_indices, pathjoin
 from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
-from . import NetCDFArray, UMArray
+from . import FileArray, NetCDFArray, UMArray
 from .collapse_functions import (  # max_f,; max_ffinalise,; max_fpartial,
     max_abs_f,
     max_abs_ffinalise,
