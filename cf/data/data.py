@@ -9074,7 +9074,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
-                The uncompressed data, or `None` of the operation was
+                The uncompressed data, or `None` if the operation was
                 in-place.
 
         **Examples**
