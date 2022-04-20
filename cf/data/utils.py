@@ -515,7 +515,7 @@ def dask_compatible(a):
 
     """
     try:
-        return a.data._get_dask()
+        return a.data.get_dask(copy=False)
     except AttributeError:
         return a
 
