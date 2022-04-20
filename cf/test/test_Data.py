@@ -667,7 +667,6 @@ class DataTest(unittest.TestCase):
     def test_Data_compressed(self):
         a = np.ma.arange(12).reshape(3, 4)
         d = cf.Data(a, "m", chunks=2)
-        e = d.compressed(inplace=True)
         self.assertIsNone(d.compressed(inplace=True))
         self.assertEqual(d.shape, (a.size,))
         self.assertEqual(d.Units, cf.Units("m"))
