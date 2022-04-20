@@ -170,10 +170,6 @@ class DataClassDeprecationsMixin:
             removed_at="5.0.0",
         )  # pragma: no cover
 
-        print("TODODASK - is this still needed/valid? Not needed")
-        for partition in self.partitions.matrix.flat:
-            partition.file_close()
-
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
 
