@@ -3835,6 +3835,20 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
 
+    def test_Data_uncompress(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        a = f.data.array
+        d = cf.Data(cf.RaggedContiguousArray(source=f.data.source()))
+
+        self.assertTrue(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
+        self.assertIsNone(d.uncompress(inplace=True))
+        self.assertFalse(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
     def test_Data_data(self):
         for d in [
             cf.Data(1),

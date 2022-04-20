@@ -2378,6 +2378,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
+        TODODASK
+
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -8254,28 +8256,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return YMDhms(self, "second")
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
-        """Uncompress the underlying data.
+        """Uncompress the data.
 
-        Compression saves space by identifying and removing unwanted
-        missing data. Such compression techniques store the data more
-        efficiently and result in no precision loss.
+        Only affects data that is compressed by convention, i.e.
 
-        Whether or not the data is compressed does not alter its
-        functionality nor external appearance.
+          * Ragged arrays for discrete sampling geometries (DSG) and
+            simple geometry cell definitions.
 
-        Data that is already uncompressed will be returned uncompressed.
+          * Compression by gathering.
 
-        The following type of compression are available:
+          * Compression by coordinate subsampling.
 
-            * Ragged arrays for discrete sampling geometries (DSG). Three
-              different types of ragged array representation are
-              supported.
-
-            ..
-
-            * Compression by gathering.
+        Data that is already uncompressed is returned
+        unchanged. Whether the data is compressed or not does not
+        alter its functionality nor external appearance, but may
+        affect how the data are written to a dataset on disk.
 
         .. versionadded:: 3.0.6
 
@@ -8288,7 +8286,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
-                The uncompressed data, or `None` of the operation was
+                The uncompressed data, or `None` if the operation was
                 in-place.
 
         **Examples**
@@ -8301,20 +8299,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        if not d.get_compression_type():
-            if inplace:
-                d = None
-            return d
-
-        config = d.partition_configuration(readonly=False)
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            _ = partition.array
-            partition.close()
-
-        d._del_Array(None)
+        if d.get_compression_type():
+            d._del_Array(None)
 
         return d
 
