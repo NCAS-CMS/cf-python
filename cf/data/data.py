@@ -6112,6 +6112,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self._set_dask(dx, reset_mask_hardness=False)
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def fill_value(self):
         """The data array missing data value.
 

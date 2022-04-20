@@ -3985,6 +3985,14 @@ class DataTest(unittest.TestCase):
         )
         self.assertEqual(d.dump(display=False), x)
 
+    def test_Data_fill_value(self):
+        d = cf.Data([1, 2], "m")
+        self.assertIsNone(d.fill_value)
+        d.fill_value = 999
+        self.assertEqual(d.fill_value, 999)
+        del d.fill_value
+        self.assertIsNone(d.fill_value)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
