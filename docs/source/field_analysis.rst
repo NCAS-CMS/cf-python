@@ -125,8 +125,9 @@ Collapse methods
 ^^^^^^^^^^^^^^^^
 
 The following collapse methods are available, over any subset of the
-domain axes. The "Cell method" column in the table gives the method of
-the new cell method construct (if one is created).
+domain axes. The "Cell method" column in the table gives the method
+name, defined by the CF conventions, of the new cell method construct
+(if one is created).
 
 ============================  ========================================  ==========================
 Method                        Description                               Cell method
