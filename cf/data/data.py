@@ -793,19 +793,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return float(self._get_dask())
 
-    def __round__(self, *ndigits):
-        """Called to implement the built-in function `round`
-
-        x.__round__(*ndigits) <==> round(x, *ndigits)
-
-        """
-        if self.size != 1:
-            raise TypeError(
-                "only length-1 arrays can be converted to Python scalars"
-            )
-
-        return round(self.datum(), *ndigits)
-
     @daskified(_DASKIFIED_VERBOSE)
     def __int__(self):
         """Called to implement the built-in function `int`
