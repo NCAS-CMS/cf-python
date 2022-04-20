@@ -70,6 +70,31 @@ class DataClassDeprecationsMixin:
         )
 
     @property
+    def _HDF_chunks(self):
+        """The HDF chunksizes.
+
+        Deprecated at version TODODASK.
+
+        DO NOT CHANGE IN PLACE.
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @_HDF_chunks.setter
+    def _HDF_chunks(self, value):
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @_HDF_chunks.deleter
+    def _HDF_chunks(self):
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @property
     def Data(self):
         """Deprecated at version 3.0.0, use attribute `data` instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
