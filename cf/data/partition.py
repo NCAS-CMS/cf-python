@@ -96,7 +96,7 @@ def _remove_temporary_files(filename=None):
 
         `None`
 
-    **Examples:**
+    **Examples**
 
     >>> _remove_temporary_files()
 
@@ -241,7 +241,7 @@ class Partition:
                 The units of the partition's subarray. DO NOT UPDATE
                 INPLACE.
 
-        **Examples:**
+        **Examples**
 
         >>> p = Partition(subarray   = numpy.arange(20).reshape(2,5,1),
         ...               location   = [(0, 6), (1, 3), (4, 5)],
@@ -352,7 +352,7 @@ class Partition:
     #        `dict`
     #            A dictionary of the instance's attributes
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #        '''
     #        return dict([(attr, getattr(self, attr))
@@ -465,7 +465,7 @@ class Partition:
 
             `None`
 
-        **:Examples:**
+        **:Examples**
 
         >>> p._configure_auxiliary_mask([mask_component1, mask_component2])
 
@@ -506,7 +506,7 @@ class Partition:
                 A tuple of slice objects or, if the master data array is a
                 scalar array, an empty tuple.
 
-        **Examples:**
+        **Examples**
 
         >>> p.location
         [(0, 5), (2, 9)]
@@ -526,7 +526,7 @@ class Partition:
         """True if and only if the partition's subarray is in memory as
         opposed to on disk.
 
-        **Examples:**
+        **Examples**
 
         >>> p.in_memory
         False
@@ -542,7 +542,7 @@ class Partition:
     #
     #    .. seealso:: `array`, `in_memory`, `on_disk`, `to_shared_memory`
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    >>> p.in_shared_memory
     #    True
@@ -561,7 +561,7 @@ class Partition:
         .. seealso:: `array`, `in_memory`, `in_shared_memory`, `on_disk`,
                      `to_disk`
 
-        **Examples:**
+        **Examples**
 
         >>> p.in_cached_file
         False
@@ -574,7 +574,7 @@ class Partition:
         """True if and only if the partition's subarray is on disk as
         opposed to in memory.
 
-        **Examples:**
+        **Examples**
 
         >>> p.on_disk
         True
@@ -590,7 +590,7 @@ class Partition:
         """True if and only if the partition's subarray is on disk as
         opposed to in memory.
 
-        **Examples:**
+        **Examples**
 
         >>> p.on_disk
         True
@@ -611,7 +611,7 @@ class Partition:
         """True if and only if the partition's data array is a scalar
         array.
 
-        **Examples:**
+        **Examples**
 
         >>> p.axes
         []
@@ -657,7 +657,7 @@ class Partition:
         """Number of elements in the partition's data array (not its
         subarray).
 
-        **Examples:**
+        **Examples**
 
         >>> p.shape
         (73, 48)
@@ -691,7 +691,7 @@ class Partition:
     #
     #    True if and only if the partition's subarray is in an external file.
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    >>> p.subarray_in_external_file
     #    False
@@ -715,7 +715,7 @@ class Partition:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> p.axes
         ['dim0', 'dim1']
@@ -770,7 +770,7 @@ class Partition:
 
             None
 
-        **Examples:**
+        **Examples**
 
         >>> p.array(...)
         >>> p.close()
@@ -951,7 +951,7 @@ class Partition:
 
                 A deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> q = p.copy()
 
@@ -1231,7 +1231,7 @@ class Partition:
     def isdt(self):
         """True if the subarray contains date-time objects.
 
-        **Examples:**
+        **Examples**
 
         >>> p.Units.isreftime
         True
@@ -1250,7 +1250,7 @@ class Partition:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> p.file_close()
 
@@ -1271,7 +1271,7 @@ class Partition:
     #        generator
     #            An iterator that yields the partition itself.
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    >>> type(p.flat())
     #    <generator object flat at 0x519a0a0>
@@ -1297,7 +1297,7 @@ class Partition:
     #        generator
     #            An iterator over indices of the partition's data array.
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    >>> p.shape
     #    [2, 1, 3]
@@ -1330,7 +1330,7 @@ class Partition:
 
             None
 
-        **Examples:**
+        **Examples**
 
         >>> f.inspect()
 
@@ -1347,7 +1347,7 @@ class Partition:
                 An iterator over indices of the master array which are
                 spanned by the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> p.location
         [(3, 5), (0, 1), (0, 3)]
@@ -1382,7 +1382,7 @@ class Partition:
 
             None
 
-        **Examples:**
+        **Examples**
 
         >>> p.new_part(indices, dim2position, master_flip)
 
@@ -1673,7 +1673,7 @@ class Partition:
                 partition's shape as a list. Otherwise return `None`,
                 `None`.
 
-        **Examples:**
+        **Examples**
 
         >>> indices = (slice(None), slice(5, 1, -2), [1, 3, 4, 8])
         >>> p.overlaps(indices)
@@ -1773,7 +1773,7 @@ class Partition:
             `bool`
                 True if the subarray was moved to disk, False otherwise.
 
-        **Examples:**
+        **Examples**
 
         >>> p.to_disk()
         >>> p.to_disk(reopen=False)
@@ -1850,7 +1850,7 @@ class Partition:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> p.revert()
 
@@ -1884,7 +1884,7 @@ class Partition:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> p.update_inplace_from(q)
 
