@@ -42,6 +42,10 @@ _relational_methods = (
 logger = logging.getLogger(__name__)
 
 
+class DeprecationError(Exception):
+    pass
+
+
 class PropertiesData(Properties):
     """Mixin class for a data array with metadata."""
 

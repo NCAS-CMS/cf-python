@@ -1,6 +1,7 @@
 from ...functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_METHOD,
+    DeprecationError,
 )
 
 
@@ -68,6 +69,31 @@ class DataClassDeprecationsMixin:
             version="TODODASK",
             removed_at="5.0.0",
         )
+
+    @property
+    def _HDF_chunks(self):
+        """The HDF chunksizes.
+
+        Deprecated at version TODODASK.
+
+        DO NOT CHANGE IN PLACE.
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @_HDF_chunks.setter
+    def _HDF_chunks(self, value):
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @_HDF_chunks.deleter
+    def _HDF_chunks(self):
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
 
     @property
     def Data(self):
@@ -140,7 +166,7 @@ class DataClassDeprecationsMixin:
     def ispartitioned(self):
         """True if the data array is partitioned.
 
-        **Examples:**
+        **Examples**
 
         >>> d._pmsize
         1
@@ -154,6 +180,21 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD("TODODASK")  # pragma: no cover
+
+    def close(self):
+        """Close all files referenced by the data array.
+
+        Deprecated at version TODODASK. All files are now automatically
+        closed when not being accessed.
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
@@ -173,7 +214,7 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.chunk()
         >>> d.chunk(100000)
@@ -271,7 +312,7 @@ class DataClassDeprecationsMixin:
 
         TODODASK
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> print(d.ismasked)
@@ -294,7 +335,7 @@ class DataClassDeprecationsMixin:
 
         .. seealso:: `array`, `datetime_array`
 
-        **Examples:**
+        **Examples**
 
         >>> a = d.varray
         >>> type(a)
@@ -323,13 +364,129 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.add_partitions(    )
 
         """
         _DEPRECATION_ERROR_METHOD(
             "TODODASK Consider using rechunk instead"
+        )  # pragma: no cover
+
+    @staticmethod
+    def mask_fpe(*arg):
+        """Masking of floating-point errors in the results of arithmetic
+        operations.
+
+        Deprecated at version TODODASK. It is currently not possible
+        to control how floating-point errors are handled, due to the
+        use of `dask` for handling all array manipulations. This may
+        change in the future (see
+        https://github.com/dask/dask/issues/3245 for more details).
+
+        If masking is allowed then only floating-point errors which would
+        otherwise be raised as `FloatingPointError` exceptions are
+        masked. Whether `FloatingPointError` exceptions may be raised is
+        determined by `cf.Data.seterr`.
+
+        If called without an argument then the current behaviour is
+        returned.
+
+        Note that if the raising of `FloatingPointError` exceptions has
+        been suppressed then invalid values in the results of arithmetic
+        operations may be subsequently converted to masked values with the
+        `mask_invalid` method.
+
+        .. seealso:: `cf.Data.seterr`, `mask_invalid`
+
+        :Parameters:
+
+            arg: `bool`, optional
+                The new behaviour. True means that `FloatingPointError`
+                exceptions are suppressed and replaced with masked
+                values. False means that `FloatingPointError` exceptions
+                are raised. The default is not to change the current
+                behaviour.
+
+        :Returns:
+
+            `bool`
+                The behaviour prior to the change, or the current
+                behaviour if no new value was specified.
+
+        **Examples:**
+
+        >>> d = cf.Data([0., 1])
+        >>> e = cf.Data([1., 2])
+
+        >>> old = cf.Data.mask_fpe(False)
+        >>> old = cf.Data.seterr('raise')
+        >>> e/d
+        FloatingPointError: divide by zero encountered in divide
+        >>> e**123456
+        FloatingPointError: overflow encountered in power
+
+        >>> old = cf.Data.mask_fpe(True)
+        >>> old = cf.Data.seterr('raise')
+        >>> e/d
+        <CF Data: [--, 2.0] >
+        >>> e**123456
+        <CF Data: [1.0, --] >
+
+        >>> old = cf.Data.mask_fpe(True)
+        >>> old = cf.Data.seterr('ignore')
+        >>> e/d
+        <CF Data: [inf, 2.0] >
+        >>> e**123456
+        <CF Data: [1.0, inf] >
+
+        """
+        raise DeprecationError(
+            "Data method 'mask_fpe' has been deprecated at version TODODASK "
+            "and is not available.\n\n"
+            "It is currently not possible to control how floating-point errors "
+            "are handled, due to the use of `dask` for handling all array "
+            "manipulations. This may change in the future (see "
+            "https://github.com/dask/dask/issues/3245 for more details)."
+        )
+
+    def mask_invalid(self, *args, **kwargs):
+        """Mask the array where invalid values occur (NaN or inf).
+
+        Deprecated at veriosn TODODASK. Use the method
+        `masked_invalid` instead.
+
+        .. seealso:: `where`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The masked data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2])
+        >>> e = cf.Data([0, 2, 0])
+        >>> f = d / e
+        >>> f
+        <CF Data(3): [nan, 0.5, inf]>
+        >>> f.mask_invalid()
+        <CF Data(3): [--, 0.5, --]>
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "mask_invalid",
+            message="Use the method 'masked_invalid' instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     def partition_boundaries(self):
@@ -340,7 +497,7 @@ class DataClassDeprecationsMixin:
 
             `dict`
 
-        **Examples:**
+        **Examples**
 
         """
         _DEPRECATION_ERROR_METHOD(

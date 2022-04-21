@@ -16,7 +16,6 @@ from netCDF4 import date2num as netCDF4_date2num
 from ... import __Conventions__, __version__
 from ...constants import _stash2standard_name
 from ...data import UMArray
-from ...data.creation import get_lock
 from ...data.data import Data
 from ...data.functions import _close_um_file, _open_um_file
 from ...decorators import (
@@ -1832,12 +1831,9 @@ class UMField:
         # Initialise a dask graph for the uncompressed array, and some
         # dask.array.core.getter arguments
         token = tokenize((nt, nz) + yx_shape, uuid4())
-        name = ("UMArray-" + token,)
+        name = (UMArray.__class__.__name__ + "-" + token,)
         dsk = {}
         full_slice = Ellipsis
-        asarray = getattr(UMArray, "_dask_asarray", False)
-        if getattr(UMArray, "_dask_lock", True):
-            lock = get_lock()
 
         if len(recs) == 1:
             # --------------------------------------------------------
@@ -1868,7 +1864,7 @@ class UMField:
                 byte_ordering=self.byte_ordering,
             )
 
-            dsk[name + (0,)] = (getter, subarray, full_slice, asarray, lock)
+            dsk[name + (0, 0)] = (getter, subarray, full_slice, False, False)
 
             dtype = np.result_type(*file_data_types)
             chunks = normalize_chunks((-1, -1), shape=data_shape, dtype=dtype)
@@ -1892,6 +1888,10 @@ class UMField:
                     pmaxes = [_axis["t"]]
                     data_shape = (nt, LBROW, LBNPT)
 
+                fmt = self.fmt
+                word_size = self.word_size
+                byte_ordering = self.byte_ordering
+
                 for i, rec in enumerate(recs):
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
@@ -1908,17 +1908,17 @@ class UMField:
                         header_offset=rec.hdr_offset,
                         data_offset=rec.data_offset,
                         disk_length=rec.disk_length,
-                        fmt=self.fmt,
-                        word_size=self.word_size,
-                        byte_ordering=self.byte_ordering,
+                        fmt=fmt,
+                        word_size=word_size,
+                        byte_ordering=byte_ordering,
                     )
 
                     dsk[name + (i, 0, 0)] = (
                         getter,
                         subarray,
                         full_slice,
-                        asarray,
-                        lock,
+                        False,
+                        False,
                     )
 
                 dtype = np.result_type(*file_data_types)
@@ -1931,6 +1931,10 @@ class UMField:
                 # ----------------------------------------------------
                 pmaxes = [_axis["t"], _axis[self.z_axis]]
                 data_shape = (nt, nz, LBROW, LBNPT)
+
+                fmt = self.fmt
+                word_size = self.word_size
+                byte_ordering = self.byte_ordering
 
                 for i, rec in enumerate(recs):
                     # Find T and Z axis indices
@@ -1951,17 +1955,17 @@ class UMField:
                         header_offset=rec.hdr_offset,
                         data_offset=rec.data_offset,
                         disk_length=rec.disk_length,
-                        fmt=self.fmt,
-                        word_size=self.word_size,
-                        byte_ordering=self.byte_ordering,
+                        fmt=fmt,
+                        word_size=word_size,
+                        byte_ordering=byte_ordering,
                     )
 
                     dsk[name + (t, z, 0, 0)] = (
                         getter,
                         subarray,
                         full_slice,
-                        asarray,
-                        lock,
+                        False,
+                        False,
                     )
 
                 dtype = np.result_type(*file_data_types)
