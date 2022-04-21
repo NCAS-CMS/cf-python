@@ -13,7 +13,6 @@ import warnings
 from collections.abc import Iterable
 from itertools import product
 from marshal import dumps
-from math import ceil as math_ceil
 from numbers import Integral
 from os import getpid, listdir, mkdir
 from os.path import abspath as _os_path_abspath
@@ -25,9 +24,9 @@ from os.path import relpath as _os_path_relpath
 
 import cfdm
 import netCDF4
+import numpy as np
 from dask import config
 from dask.utils import parse_bytes
-import numpy as np
 from numpy import __file__ as _numpy__file__
 from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
