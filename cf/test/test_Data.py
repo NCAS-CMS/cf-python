@@ -3801,11 +3801,11 @@ class DataTest(unittest.TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
             i = a / b
-        
+
         d = cf.Data(i, "m")
         e = d.masked_invalid().array
         c = np.ma.masked_invalid(i)
-        
+
         self.assertTrue((e.mask == c.mask).all())
         self.assertTrue((e == c).all())
 

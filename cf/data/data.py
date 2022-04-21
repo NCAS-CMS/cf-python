@@ -34,7 +34,6 @@ from ..functions import (
     abspath,
 )
 from ..functions import atol as cf_atol
-from ..functions import chunksize as cf_chunksize
 from ..functions import default_netCDF_fillvals
 from ..functions import fm_threshold as cf_fm_threshold
 from ..functions import free_memory
