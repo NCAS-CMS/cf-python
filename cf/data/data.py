@@ -34,7 +34,6 @@ from ..functions import (
     abspath,
 )
 from ..functions import atol as cf_atol
-from ..functions import chunksize as cf_chunksize
 from ..functions import default_netCDF_fillvals
 from ..functions import fm_threshold as cf_fm_threshold
 from ..functions import free_memory
@@ -9575,6 +9574,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
@@ -9598,27 +9598,28 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
+                The new data, or `None` if the operation was in-place.
 
         **Examples**
 
         >>> d = cf.Data(1012.0, 'hPa')
-        >>> d.override_units('km')
-        >>> d.Units
+        >>> e = d.override_units('km')
+        >>> e.Units
         <Units: km>
-        >>> d.datum(0)
+        >>> e.datum()
         1012.0
-        >>> d.override_units(Units('watts'))
+        >>> d.override_units(cf.Units('watts'), inplace=True)
         >>> d.Units
         <Units: watts>
-        >>> d.datum(0)
+        >>> d.datum()
         1012.0
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d._Units = Units(units)
-
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
@@ -9642,13 +9643,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
+                The new data, or `None` if the operation was in-place.
 
         **Examples**
+
+        >>> d = cf.Data(1, 'days since 2020-02-28')
+        >>> d
+        <CF Data(): 2020-02-29 00:00:00>
+        >>> d.datum()
+        1
+        >>> e = d.override_calendar('noleap')
+        <CF Data(): 2020-03-01 00:00:00 noleap>
+        >>> e.datum()
+        1
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d._Units = Units(d.Units._units, calendar)
-
         return d
 
     def to_dask_array(self):
