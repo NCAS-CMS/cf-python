@@ -70,6 +70,31 @@ class DataClassDeprecationsMixin:
         )
 
     @property
+    def _HDF_chunks(self):
+        """The HDF chunksizes.
+
+        Deprecated at version TODODASK.
+
+        DO NOT CHANGE IN PLACE.
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @_HDF_chunks.setter
+    def _HDF_chunks(self, value):
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @_HDF_chunks.deleter
+    def _HDF_chunks(self):
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @property
     def Data(self):
         """Deprecated at version 3.0.0, use attribute `data` instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -140,7 +165,7 @@ class DataClassDeprecationsMixin:
     def ispartitioned(self):
         """True if the data array is partitioned.
 
-        **Examples:**
+        **Examples**
 
         >>> d._pmsize
         1
@@ -188,7 +213,7 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.chunk()
         >>> d.chunk(100000)
@@ -286,7 +311,7 @@ class DataClassDeprecationsMixin:
 
         TODODASK
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> print(d.ismasked)
@@ -309,7 +334,7 @@ class DataClassDeprecationsMixin:
 
         .. seealso:: `array`, `datetime_array`
 
-        **Examples:**
+        **Examples**
 
         >>> a = d.varray
         >>> type(a)
@@ -338,7 +363,7 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.add_partitions(    )
 
@@ -355,7 +380,7 @@ class DataClassDeprecationsMixin:
 
             `dict`
 
-        **Examples:**
+        **Examples**
 
         """
         _DEPRECATION_ERROR_METHOD(
