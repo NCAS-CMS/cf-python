@@ -43,7 +43,7 @@ from ..functions import log_level, parse_indices, pathjoin
 from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
-from . import NetCDFArray, UMArray
+from . import FileArray, NetCDFArray, UMArray
 from .collapse import Collapse
 from .creation import (
     compressed_to_dask,
@@ -5305,6 +5305,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self._set_dask(dx, reset_mask_hardness=False)
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def fill_value(self):
         """The data array missing data value.
 
