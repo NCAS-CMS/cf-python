@@ -155,13 +155,6 @@ for key, value in _seterr.items():
         _seterr_raise_to_ignore[key] = "ignore"
 # --- End: for
 
-# --------------------------------------------------------------------
-# _mask_fpe[0] = Whether or not to automatically set
-#                FloatingPointError exceptions to masked values in
-#                arimthmetic.
-# --------------------------------------------------------------------
-_mask_fpe = [False]
-
 _empty_set = set()
 
 _units_None = Units()
@@ -5753,75 +5746,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         mask_data_obj.hardmask = True
 
         return mask_data_obj
-
-    @staticmethod
-    def mask_fpe(*arg):
-        """Masking of floating-point errors in the results of arithmetic
-        operations.
-
-        If masking is allowed then only floating-point errors which would
-        otherwise be raised as `FloatingPointError` exceptions are
-        masked. Whether `FloatingPointError` exceptions may be raised is
-        determined by `cf.Data.seterr`.
-
-        If called without an argument then the current behaviour is
-        returned.
-
-        Note that if the raising of `FloatingPointError` exceptions has
-        suppressed then invalid values in the results of arithmetic
-        operations may be subsequently converted to masked values with the
-        `mask_invalid` method.
-
-        .. seealso:: `cf.Data.seterr`, `mask_invalid`
-
-        :Parameters:
-
-            arg: `bool`, optional
-                The new behaviour. True means that `FloatingPointError`
-                exceptions are suppressed and replaced with masked
-                values. False means that `FloatingPointError` exceptions
-                are raised. The default is not to change the current
-                behaviour.
-
-        :Returns:
-
-            `bool`
-                The behaviour prior to the change, or the current
-                behaviour if no new value was specified.
-
-        **Examples**
-
-        >>> d = cf.Data([0., 1])
-        >>> e = cf.Data([1., 2])
-
-        >>> old = cf.Data.mask_fpe(False)
-        >>> old = cf.Data.seterr('raise')
-        >>> e/d
-        FloatingPointError: divide by zero encountered in divide
-        >>> e**123456
-        FloatingPointError: overflow encountered in power
-
-        >>> old = cf.Data.mask_fpe(True)
-        >>> old = cf.Data.seterr('raise')
-        >>> e/d
-        <CF Data: [--, 2.0] >
-        >>> e**123456
-        <CF Data: [1.0, --] >
-
-        >>> old = cf.Data.mask_fpe(True)
-        >>> old = cf.Data.seterr('ignore')
-        >>> e/d
-        <CF Data: [inf, 2.0] >
-        >>> e**123456
-        <CF Data: [1.0, inf] >
-
-        """
-        old = _mask_fpe[0]
-
-        if arg:
-            _mask_fpe[0] = bool(arg[0])
-
-        return old
 
     @staticmethod
     def seterr(all=None, divide=None, over=None, under=None, invalid=None):
