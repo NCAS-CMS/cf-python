@@ -533,5 +533,8 @@ class DataClassDeprecationsMixin:
         raise DeprecationError(
             "Data method 'seterr' has been deprecated at version TODODASK "
             "and is not available.\n\n"
-            "It is currently not possible to control how floating-point errors are handled, due to the use of `dask` for handling all array manipulations. This may change in the future (see https://github.com/dask/dask/issues/3245 for more details)."
+            "It is currently not possible to control how floating-point errors "
+            "are handled, due to the use of `dask` for handling all array "
+            "manipulations. This may change in the future (see "
+            "https://github.com/dask/dask/issues/3245 for more details)."
         )
