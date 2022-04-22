@@ -11574,6 +11574,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return self.array.tolist()
 
     @daskified(_DASKIFIED_VERBOSE)
+    def to_memory(self):
+        """Bring data on disk into memory.
+
+        Not implemented. Consider using `persist` instead.
+
+        """
+        raise NotImplementedError(
+            "'Data.to_memory' is not available. "
+            "Consider using 'Data.persist' instead."
+        )
+    
+    @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False, i=False):
