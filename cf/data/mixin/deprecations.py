@@ -112,8 +112,6 @@ class DataClassDeprecationsMixin:
 
         Deprecated at version TODODASK.
 
-        :Returns:
-
         **Examples**
 
         >>> d.in_memory
