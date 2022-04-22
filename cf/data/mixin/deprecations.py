@@ -418,7 +418,7 @@ class DataClassDeprecationsMixin:
 
         Deprecated at version TODODASK.
 
-        There is no change to partition's whose sub-arrays are already
+        There is no change to partitions whose sub-arrays are already
         on disk.
 
         :Returns:
