@@ -5,6 +5,8 @@ import platform
 import sys
 import unittest
 
+import numpy as np
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -311,6 +313,23 @@ class functionTest(unittest.TestCase):
             f"Python: {platform.python_version()}",
         ]:
             self.assertIn(component, ep)
+
+    def test_hash_array(self):
+        import hashlib
+
+        a = np.ma.array([[0, 1, 2, 3], [0, 1, 2, 3]])
+        a[0, 0] = np.ma.masked
+        a = a.transpose()
+
+        self.assertFalse(a.flags.c_contiguous)
+        self.assertFalse(a.mask.flags.c_contiguous)
+
+        h = cf.hash_array(a)
+        self.assertIsInstance(h, int)
+        self.assertNotEqual(cf.hash_array(a, algorithm=hashlib.sha256), h)
+
+        a.set_fill_value(a.fill_value + 1)
+        self.assertEqual(cf.hash_array(a), h)
 
 
 if __name__ == "__main__":

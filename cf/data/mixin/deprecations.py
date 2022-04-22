@@ -1,11 +1,99 @@
 from ...functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_METHOD,
+    DeprecationError,
 )
 
 
 class DataClassDeprecationsMixin:
     """Deprecated attributes and methods for the Data class."""
+
+    def __hash__(self):
+        """The built-in function `hash`.
+
+        Deprecated at version TODODASK. Consider using the
+        `cf.hash_array` function instead.
+
+        Generating the hash temporarily realizes the entire array in
+        memory, which may not be possible for large arrays.
+
+        The hash value is dependent on the data-type and shape of the data
+        array. If the array is a masked array then the hash value is
+        independent of the fill value and of data array values underlying
+        any masked elements.
+
+        The hash value may be different if regenerated after the data
+        array has been changed in place.
+
+        The hash value is not guaranteed to be portable across versions of
+        Python, numpy and cf.
+
+        :Returns:
+
+            `int`
+                The hash value.
+
+        **Examples**
+
+        >>> print(d.array)
+        [[0 1 2 3]]
+        >>> d.hash()
+        -8125230271916303273
+        >>> d[1, 0] = numpy.ma.masked
+        >>> print(d.array)
+        [[0 -- 2 3]]
+        >>> hash(d)
+        791917586613573563
+        >>> d.hardmask = False
+        >>> d[0, 1] = 999
+        >>> d[0, 1] = numpy.ma.masked
+        >>> d.hash()
+        791917586613573563
+        >>> d.squeeze()
+        >>> print(d.array)
+        [0 -- 2 3]
+        >>> hash(d)
+        -7007538450787927902
+        >>> d.dtype = float
+        >>> print(d.array)
+        [0.0 -- 2.0 3.0]
+        >>> hash(d)
+        -4816859207969696442
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "__hash__",
+            message="Consider using 'cf.hash_array' on the underlying "
+            "array instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )
+
+    @property
+    def _HDF_chunks(self):
+        """The HDF chunksizes.
+
+        Deprecated at version TODODASK.
+
+        DO NOT CHANGE IN PLACE.
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @_HDF_chunks.setter
+    def _HDF_chunks(self, value):
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
+
+    @_HDF_chunks.deleter
+    def _HDF_chunks(self):
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+        )  # pragma: no cover
 
     @property
     def Data(self):
@@ -46,11 +134,39 @@ class DataClassDeprecationsMixin:
             version="3.0.0",
         )  # pragma: no cover
 
+    def fits_in_one_chunk_in_memory(self, itemsize):
+        """Return True if the master array is small enough to be
+        retained in memory.
+
+        Deprecated at version TODODASK.
+
+        :Parameters:
+
+            itemsize: `int`
+                The number of bytes per word of the master data array.
+
+        :Returns:
+
+            `bool`
+
+        **Examples**
+
+        >>> print(d.fits_one_chunk_in_memory(8))
+        False
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "fits_in_one_chunk_in_memory",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     @property
     def ispartitioned(self):
         """True if the data array is partitioned.
 
-        **Examples:**
+        **Examples**
 
         >>> d._pmsize
         1
@@ -63,7 +179,22 @@ class DataClassDeprecationsMixin:
         False
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK")
+        _DEPRECATION_ERROR_METHOD("TODODASK")  # pragma: no cover
+
+    def close(self):
+        """Close all files referenced by the data array.
+
+        Deprecated at version TODODASK. All files are now automatically
+        closed when not being accessed.
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
@@ -83,7 +214,7 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.chunk()
         >>> d.chunk(100000)
@@ -92,7 +223,88 @@ class DataClassDeprecationsMixin:
         >>> d.chunk(100000, omit_axes=[3, 4])
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK. Use 'rechunk' instead")
+        _DEPRECATION_ERROR_METHOD(
+            "TODODASK. Use 'rechunk' instead"
+        )  # pragma: no cover
+
+    def HDF_chunks(self, *chunks):
+        """Get or set HDF chunk sizes.
+
+        The HDF chunk sizes may be used by external code that allows
+        `Data` objects to be written to netCDF files.
+
+        Deprecated at version TODODASK and is no longer available. Use
+        the methods `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+        and `nc_set_hdf5_chunksizes` instead.
+
+        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`
+
+        :Parameters:
+
+            chunks: `dict` or `None`, *optional*
+                Specify HDF chunk sizes.
+
+                When no positional argument is provided, the HDF chunk
+                sizes are unchanged.
+
+                If `None` then the HDF chunk sizes for each dimension
+                are cleared, so that the HDF default chunk size value
+                will be used when writing data to disk.
+
+                If a `dict` then it defines for a subset of the
+                dimensions, defined by their integer positions, the
+                corresponding HDF chunk sizes. The HDF chunk sizes are
+                set as a number of elements along the dimension.
+
+        :Returns:
+
+            `dict`
+                The HDF chunks for each dimension prior to the change,
+                or the current HDF chunks if no new values are
+                specified. A value of `None` is an indication that the
+                default chunk size should be used for that dimension.
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(30).reshape(5, 6))
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({1: 2})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: None, 1: 2}
+        >>> d.HDF_chunks({1:None})
+        {0: None, 1: 2}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+        >>> d.HDF_chunks({0: 3, 1: 6})
+        {0: None, 1: None}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks({1: 4})
+        {0: 3, 1: 6}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks({1: 999})
+        {0: 3, 1: 4}
+        >>> d.HDF_chunks()
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks(None)
+        {0: 3, 1: 999}
+        >>> d.HDF_chunks()
+        {0: None, 1: None}
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "HDF_chunks",
+            message="Use the methods 'nc_clear_hdf5_chunksizes', "
+            "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
+            "instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @property
     def ismasked(self):
@@ -100,7 +312,7 @@ class DataClassDeprecationsMixin:
 
         TODODASK
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
         >>> print(d.ismasked)
@@ -110,7 +322,9 @@ class DataClassDeprecationsMixin:
         True
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK use is_masked instead")
+        _DEPRECATION_ERROR_METHOD(
+            "TODODASK use is_masked instead"
+        )  # pragma: no cover
 
     @property
     def varray(self):
@@ -121,7 +335,7 @@ class DataClassDeprecationsMixin:
 
         .. seealso:: `array`, `datetime_array`
 
-        **Examples:**
+        **Examples**
 
         >>> a = d.varray
         >>> type(a)
@@ -133,7 +347,7 @@ class DataClassDeprecationsMixin:
         array([999, 1, 2, 3, 4])
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK")
+        _DEPRECATION_ERROR_METHOD("TODODASK")  # pragma: no cover
 
     def add_partitions(self, extra_boundaries, pdim):
         """Add partition boundaries.
@@ -150,12 +364,91 @@ class DataClassDeprecationsMixin:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.add_partitions(    )
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK Consider using rechunk instead")
+        _DEPRECATION_ERROR_METHOD(
+            "TODODASK Consider using rechunk instead"
+        )  # pragma: no cover
+
+    @staticmethod
+    def mask_fpe(*arg):
+        """Masking of floating-point errors in the results of arithmetic
+        operations.
+
+        Deprecated at version TODODASK. It is currently not possible
+        to control how floating-point errors are handled, due to the
+        use of `dask` for handling all array manipulations. This may
+        change in the future (see
+        https://github.com/dask/dask/issues/3245 for more details).
+
+        If masking is allowed then only floating-point errors which would
+        otherwise be raised as `FloatingPointError` exceptions are
+        masked. Whether `FloatingPointError` exceptions may be raised is
+        determined by `cf.Data.seterr`.
+
+        If called without an argument then the current behaviour is
+        returned.
+
+        Note that if the raising of `FloatingPointError` exceptions has
+        been suppressed then invalid values in the results of arithmetic
+        operations may be subsequently converted to masked values with the
+        `mask_invalid` method.
+
+        .. seealso:: `cf.Data.seterr`, `mask_invalid`
+
+        :Parameters:
+
+            arg: `bool`, optional
+                The new behaviour. True means that `FloatingPointError`
+                exceptions are suppressed and replaced with masked
+                values. False means that `FloatingPointError` exceptions
+                are raised. The default is not to change the current
+                behaviour.
+
+        :Returns:
+
+            `bool`
+                The behaviour prior to the change, or the current
+                behaviour if no new value was specified.
+
+        **Examples:**
+
+        >>> d = cf.Data([0., 1])
+        >>> e = cf.Data([1., 2])
+
+        >>> old = cf.Data.mask_fpe(False)
+        >>> old = cf.Data.seterr('raise')
+        >>> e/d
+        FloatingPointError: divide by zero encountered in divide
+        >>> e**123456
+        FloatingPointError: overflow encountered in power
+
+        >>> old = cf.Data.mask_fpe(True)
+        >>> old = cf.Data.seterr('raise')
+        >>> e/d
+        <CF Data: [--, 2.0] >
+        >>> e**123456
+        <CF Data: [1.0, --] >
+
+        >>> old = cf.Data.mask_fpe(True)
+        >>> old = cf.Data.seterr('ignore')
+        >>> e/d
+        <CF Data: [inf, 2.0] >
+        >>> e**123456
+        <CF Data: [1.0, inf] >
+
+        """
+        raise DeprecationError(
+            "Data method 'mask_fpe' has been deprecated at version TODODASK "
+            "and is not available.\n\n"
+            "It is currently not possible to control how floating-point errors "
+            "are handled, due to the use of `dask` for handling all array "
+            "manipulations. This may change in the future (see "
+            "https://github.com/dask/dask/issues/3245 for more details)."
+        )
 
     def partition_boundaries(self):
         """Return the partition boundaries for each partition matrix
@@ -165,7 +458,160 @@ class DataClassDeprecationsMixin:
 
             `dict`
 
-        **Examples:**
+        **Examples**
 
         """
-        _DEPRECATION_ERROR_METHOD("TODODASK - consider using 'chunks' instead")
+        _DEPRECATION_ERROR_METHOD(
+            "TODODASK - consider using 'chunks' instead"
+        )  # pragma: no cover
+
+    @staticmethod
+    def seterr(all=None, divide=None, over=None, under=None, invalid=None):
+        """Set how floating-point errors in the results of arithmetic
+        operations are handled.
+
+        Deprecated at version TODODASK. It is currently not possible
+        to control how floating-point errors are handled, due to the
+        use of `dask` for handling all array manipulations. This may
+        change in the future (see
+        https://github.com/dask/dask/issues/3245 for more details).
+
+        The options for handling floating-point errors are:
+
+        ============  ========================================================
+        Treatment     Action
+        ============  ========================================================
+        ``'ignore'``  Take no action. Allows invalid values to occur in the
+                      result data array.
+
+        ``'warn'``    Print a `RuntimeWarning` (via the Python `warnings`
+                      module). Allows invalid values to occur in the result
+                      data array.
+
+        ``'raise'``   Raise a `FloatingPointError` exception.
+        ============  ========================================================
+
+        The different types of floating-point errors are:
+
+        =================  =================================  =================
+        Error              Description                        Default treatment
+        =================  =================================  =================
+        Division by zero   Infinite result obtained from      ``'warn'``
+                           finite numbers.
+
+        Overflow           Result too large to be expressed.  ``'warn'``
+
+        Invalid operation  Result is not an expressible       ``'warn'``
+                           number, typically indicates that
+                           a NaN was produced.
+
+        Underflow          Result so close to zero that some  ``'ignore'``
+                           precision was lost.
+        =================  =================================  =================
+
+        Note that operations on integer scalar types (such as int16) are
+        handled like floating point, and are affected by these settings.
+
+        If called without any arguments then the current behaviour is
+        returned.
+
+        .. seealso:: `cf.Data.mask_fpe`, `mask_invalid`
+
+        :Parameters:
+
+            all: `str`, optional
+                Set the treatment for all types of floating-point errors
+                at once. The default is not to change the current
+                behaviour.
+
+            divide: `str`, optional
+                Set the treatment for division by zero. The default is not
+                to change the current behaviour.
+
+            over: `str`, optional
+                Set the treatment for floating-point overflow. The default
+                is not to change the current behaviour.
+
+            under: `str`, optional
+                Set the treatment for floating-point underflow. The
+                default is not to change the current behaviour.
+
+            invalid: `str`, optional
+                Set the treatment for invalid floating-point
+                operation. The default is not to change the current
+                behaviour.
+
+        :Returns:
+
+            `dict`
+                The behaviour prior to the change, or the current
+                behaviour if no new values are specified.
+
+        **Examples:**
+
+        Set treatment for all types of floating-point errors to
+        ``'raise'`` and then reset to the previous behaviours:
+
+        >>> cf.Data.seterr()
+        {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
+        >>> old = cf.Data.seterr('raise')
+        >>> cf.Data.seterr(**old)
+        {'divide': 'raise', 'invalid': 'raise', 'over': 'raise', 'under': 'raise'}
+        >>> cf.Data.seterr()
+        {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
+
+        Set the treatment of division by zero to ``'ignore'`` and overflow
+        to ``'warn'`` without changing the treatment of underflow and
+        invalid operation:
+
+        >>> cf.Data.seterr(divide='ignore', over='warn')
+        {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
+        >>> cf.Data.seterr()
+        {'divide': 'ignore', 'invalid': 'warn', 'over': 'ignore', 'under': 'ignore'}
+
+        Some examples with data arrays:
+
+        >>> d = cf.Data([0., 1])
+        >>> e = cf.Data([1., 2])
+
+        >>> old = cf.Data.seterr('ignore')
+        >>> e/d
+        <CF Data: [inf, 2.0] >
+        >>> e**12345
+        <CF Data: [1.0, inf] >
+
+        >>> cf.Data.seterr(divide='warn')
+        {'divide': 'ignore', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
+        >>> e/d
+        RuntimeWarning: divide by zero encountered in divide
+        <CF Data: [inf, 2.0] >
+        >>> e**12345
+        <CF Data: [1.0, inf] >
+
+        >>> old = cf.Data.mask_fpe(False)
+        >>> cf.Data.seterr(over='raise')
+        {'divide': 'warn', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
+        >>> e/d
+        RuntimeWarning: divide by zero encountered in divide
+        <CF Data: [inf, 2.0] >
+        >>> e**12345
+        FloatingPointError: overflow encountered in power
+
+        >>> cf.Data.mask_fpe(True)
+        False
+        >>> cf.Data.seterr(divide='ignore')
+        {'divide': 'warn', 'invalid': 'ignore', 'over': 'raise', 'under': 'ignore'}
+        >>> e/d
+        <CF Data: [inf, 2.0] >
+        >>> e**12345
+        <CF Data: [1.0, --] >
+
+        """
+        raise DeprecationError(
+            "Data method 'seterr' has been deprecated at version TODODASK "
+            "and is not available.\n\n"
+            "It is currently not possible to control how floating-point errors "
+            "are handled, due to the use of `dask` for handling all array "
+            "manipulations. This may change in the future (see "
+            "https://github.com/dask/dask/issues/3245 for more details)."
+        )
