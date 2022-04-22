@@ -111,9 +111,6 @@ class DataClassDeprecationsMixin:
         """True if the array is retained in memory.
 
         Deprecated at version TODODASK.
-        **Examples**
-
-        >>> d.in_memory
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
