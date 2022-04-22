@@ -386,7 +386,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 independent reads for every dask chunk, each time the
                 data are computed.
 
-                In geneal, setting *to_memory* to True is not the same
+                In general, setting *to_memory* to True is not the same
                 as calling the `persist` of the newly created `Data`
                 object, which also decompresses data compressed by
                 convention and computes any data type, mask and
