@@ -227,6 +227,87 @@ class DataClassDeprecationsMixin:
             "TODODASK. Use 'rechunk' instead"
         )  # pragma: no cover
 
+    def dumpd(self):
+        """Return a serialization of the data array.
+
+        Deprecated at version TODODASK. Consider inspecting the dask
+        array returned by `to_dask_array` instead.
+
+        .. seealso:: `loadd`, `loads`
+
+        :Returns:
+
+            `dict`
+                The serialization.
+
+        **Examples**
+
+        >>> d = cf.Data([[1, 2, 3]], 'm')
+        >>> d.dumpd()
+        {'Partitions': [{'location': [(0, 1), (0, 3)],
+                         'subarray': array([[1, 2, 3]])}],
+         'units': 'm',
+         '_axes': ['dim0', 'dim1'],
+         '_pmshape': (),
+         'dtype': dtype('int64'),
+         'shape': (1, 3)}
+
+        >>> d.flip(1)
+        >>> d.transpose()
+        >>> d.Units *= 1000
+        >>> d.dumpd()
+        {'Partitions': [{'units': 'm',
+                         'axes': ['dim0', 'dim1'],
+                         'location': [(0, 3), (0, 1)],
+                         'subarray': array([[1, 2, 3]])}],
+        ` 'units': '1000 m',
+         '_axes': ['dim1', 'dim0'],
+         '_flip': ['dim1'],
+         '_pmshape': (),
+         'dtype': dtype('int64'),
+         'shape': (3, 1)}
+
+        >>> d.dumpd()
+        {'Partitions': [{'units': 'm',
+                         'location': [(0, 1), (0, 3)],
+                         'subarray': array([[1, 2, 3]])}],
+         'units': '10000 m',
+         '_axes': ['dim0', 'dim1'],
+         '_flip': ['dim1'],
+         '_pmshape': (),
+         'dtype': dtype('int64'),
+         'shape': (1, 3)}
+
+        >>> e = cf.Data(loadd=d.dumpd())
+        >>> e.equals(d)
+        True
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "dumpd",
+            message="Consider inspecting the dask array returned "
+            "by 'to_dask_array' instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def dumps(self):
+        """Return a JSON string serialization of the data array.
+
+        Deprecated at version TODODASK. Consider inspecting the dask
+        array returned by `to_dask_array` instead.
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "dumps",
+            message="Consider inspecting the dask array returned "
+            "by 'to_dask_array' instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     def HDF_chunks(self, *chunks):
         """Get or set HDF chunk sizes.
 
@@ -302,6 +383,85 @@ class DataClassDeprecationsMixin:
             message="Use the methods 'nc_clear_hdf5_chunksizes', "
             "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
             "instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def loadd(self, d, chunk=True):
+        """Reset the data in place from a dictionary serialization.
+
+        Deprecated at version TODODASK. Consider inspecting the dask
+        array returned by `to_dask_array` instead.
+
+        .. seealso:: `dumpd`, `loads`
+
+        :Parameters:
+
+            d: `dict`
+                A dictionary serialization of a `cf.Data` object, such as
+                one as returned by the `dumpd` method.
+
+            chunk: `bool`, optional
+                If True (the default) then the reset data array will be
+                re-partitioned according the current chunk size, as
+                defined by the `cf.chunksize` function.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d = Data([[1, 2, 3]], 'm')
+        >>> e = Data([6, 7, 8, 9], 's')
+        >>> e.loadd(d.dumpd())
+        >>> e.equals(d)
+        True
+        >>> e is d
+        False
+
+        >>> e = Data(loadd=d.dumpd())
+        >>> e.equals(d)
+        True
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "loadd",
+            message="Consider inspecting the dask array returned "
+            "by 'to_dask_array' instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def loads(self, j, chunk=True):
+        """Reset the data in place from a string serialization.
+
+        Deprecated at version TODODASK. Consider inspecting the dask
+        array returned by `to_dask_array` instead.
+
+        .. seealso:: `dumpd`, `loadd`
+
+        :Parameters:
+
+            j: `str`
+                A JSON document string serialization of a `cf.Data` object.
+
+            chunk: `bool`, optional
+                If True (the default) then the reset data array will be
+                re-partitioned according the current chunk size, as defined
+                by the `cf.chunksize` function.
+
+        :Returns:
+
+            `None`
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "loads",
+            message="Consider inspecting the dask array returned "
+            "by 'to_dask_array' instead.",
             version="TODODASK",
             removed_at="5.0.0",
         )  # pragma: no cover
