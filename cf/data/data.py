@@ -7997,166 +7997,57 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     def unique(self, split_every=None):
-        """The unique elements of the array.
+        """The unique elements of the data.
 
-        Returns a new object with the sorted unique elements in a one
-        dimensional array.
+        Returns the sorted unique elements of the array.
+
+        :Parameters:
+
+            {{split_every: `int` or `dict`, optional}}
+
+        :Returns:
+
+            `Data`
+                The unique values in a 1-d array.
 
         **Examples**
 
         >>> d = cf.Data([[4, 2, 1], [1, 2, 3]], 'metre')
-        >>> d.unique()
-        <CF Data: [1, 2, 3, 4] metre>
-        >>> d[1, -1] = cf.masked
-        >>> d.unique()
-        <CF Data: [1, 2, 4] metre>
+        >>> print(d.array)
+        [[4 2 1]
+         [1 2 3]]
+        >>> e = d.unique()
+        >>> e
+        <CF Data(4): [1, ..., 4] metre>
+        >>> print(e.array)
+        [1 2 3 4]
+        >>> d[0, 0] = cf.masked
+        >>> print(d.array)
+        [[-- 2 1]
+         [1 2 3]]
+        >>> e = d.unique()
+        >>> print(e.array)
+        [1 2 3 --]
 
         """
-        from dask.array.reductions import reduction
-        from dask.utils import deepmap
-        from dask.array.utils import meta_from_array
-        from dask.array.core import _concatenate2
+        d = self.copy()
+        hardmask = d.hardmask
+        if hardmask:
+            # Soften a hardmask so that the result doesn't contain a
+            # seperate missing value for each input chunk that
+            # contains missing values. For any number greater than 0
+            # of missing values in the original data, we only want one
+            # missing value in the result.
+            d.soften_mask()
 
-        def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
-            """Chunk calculations for the maximum.
-            
-            This function is passed to `dask.array.reduction` as its *chunk*
-            parameter.
-            
-            .. versionadded:: TODODASK
-            
-            :Parameters:
-            
-            See `dask.array.reductions` for details of the parameters.
-            
-            :Returns:
-            
-            `dict`
-            Dictionary with the keys:
-            
-            * N: The sample size.
-            * max: The maximum of `x``.
-            
-            """
-            if computing_meta:
-                return x
+        dx = d.to_dask_array()
+        dx = Collapse.unique(dx, split_every=split_every)
 
-            return np.ma.unique(x)
-            d = {"unique": np.ma.unique(x)}
-            print('\nd=', d)
-            return  d
-        
-        def cf_unique_agg(
-                pairs,
-                axis=None,
-                computing_meta=False,
-                mtol=None,
-                original_shape=None,
-                **kwargs,
-        ):
-            """Aggregation calculations for the maximum.
-            
-            This function is passed to `dask.array.reduction` as its
-            *aggregate* parameter.
-            
-            .. versionadded:: TODODASK
-            
-            :Parameters:
-            
-            mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-            
-            original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-            
-            See `dask.array.reductions` for details of the other
-            parameters.
-            
-            :Returns:
-            
-            `dask.array.Array`
-            The collapsed array.
-            
-            """
-            x = deepmap(lambda pair: pair['unique'], pairs) if not computing_meta else pairs
-            if computing_meta:
-                return x
+        d._set_dask(dx, reset_mask_hardness=False)
+        if hardmask:
+            d.harden_mask()
 
-            x = _concatenate2(x, axes=0) #axis)
-            return np.ma.unique(x)
-
-        def unique_no_structured_arr(
-            ar, return_index=False, return_inverse=False, return_counts=False
-        ):
-            # A simplified version of `unique`, that allows computing unique for array
-            # types that don't support structured arrays (such as cupy.ndarray), but
-            # can only compute values at the moment.
-        
-            if (
-                return_index is not False
-                or return_inverse is not False
-                or return_counts is not False
-            ):
-                raise ValueError(
-                    "dask.array.unique does not support `return_index`, `return_inverse` "
-                    "or `return_counts` with array types that don't support structured "
-                    "arrays."
-                )
-        
-            ar = ar.ravel()
-        
-            args = [ar, "i"]
-            meta = meta_from_array(ar)
-        
-            out = da.blockwise(np.unique, "i", *args, meta=meta)
-            out._chunks = tuple((np.nan,) * len(c) for c in out.chunks)
-        
-            out_parts = [out]
-        
-            name = "unique-aggregate-" + out.name
-            dsk = {
-                (name, 0): (
-                    (np.unique,)
-                    + tuple(
-                        (np.concatenate, o.__dask_keys__())
-                        if hasattr(o, "__dask_keys__")
-                        else o
-                        for o in out_parts
-                    )
-                )
-            }
-        
-            dependencies = [o for o in out_parts if hasattr(o, "__dask_keys__")]
-            graph = HighLevelGraph.from_collections(name, dsk, dependencies=dependencies)
-            chunks = ((np.nan,),)
-            out = Array(graph, name, chunks, meta=meta)
-        
-            result = [out]
-        
-            if len(result) == 1:
-                result = result[0]
-            else:
-                result = tuple(result)
-        
-            return result
-
-        dx = self.to_dask_array()
-        return unique_no_structured_arr(dx)
-        dtype = dx.dtype
-        dx = reduction(
-            dx.flatten(),
-            cf_unique_chunk,
-            cf_unique_chunk,
-            dtype=dtype,
-            split_every=split_every,
-            concatenate=True,
-            meta=np.array((), dtype=dtype),
-        )
-
-     
-        return type(self)(dx, units=self.Units)
+        return d
 
     @_display_or_return
     def dump(self, display=True, prefix=None):

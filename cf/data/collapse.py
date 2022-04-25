@@ -787,6 +787,47 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
+    @classmethod
+    def unique(cls, a, split_every=None):
+        """Return unique elements of the data.
+
+        .. versionadded:: TODODASK
+
+        :Parameters:
+
+            a: `dask.array.Array`
+                The array to be collapsed.
+
+            {{split_every: `int` or `dict`, optional}}
+
+        :Returns:
+
+            `dask.array.Array`
+                The unique values in a 1-d array.
+
+        """
+        check_input_dtype(a, "fibUS")
+
+        # Flatten the array so that it has the same number of
+        # dimensions as the result (i.e. 1). This ensures that the
+        # combination of `keepdims=True, output_size=np.nan` will
+        # result in a correct output chunk size `np.nan`. See
+        # `dask.array.reduction` for details.
+        a = a.flatten()
+
+        dtype = a.dtype
+        return reduction(
+            a,
+            cf_unique_chunk,
+            cf_unique_agg,
+            keepdims=True,
+            output_size=np.nan,
+            dtype=dtype,
+            split_every=split_every,
+            concatenate=False,
+            meta=np.array((), dtype=dtype),
+        )
+
 
 def check_input_dtype(a, allowed="fib"):
     """Check that data has a data type allowed by a collapse method.
@@ -1915,6 +1956,67 @@ def cf_sum_of_weights_chunk(
     )
 
     return d
+
+
+# --------------------------------------------------------------------
+# unique
+# --------------------------------------------------------------------
+def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
+    """Chunk calculations for the unique values.
+
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
+
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+    See `dask.array.reductions` for details of the parameters.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * unique: The unique values.
+
+    """
+    if computing_meta:
+        return x
+
+    return {"unique": np.unique(x)}
+
+
+def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
+    """Aggregation calculations for the unique values.
+
+    This function is passed to `dask.array.reduction` as its
+    *aggregate* parameter.
+
+    It is assumed that the arrays are one-dimensional.
+
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+    See `dask.array.reductions` for details of the parameters.
+
+    :Returns:
+
+        `dask.array.Array`
+            The unique values.
+
+    """
+    x = (
+        deepmap(lambda pair: pair["unique"], pairs)
+        if not computing_meta
+        else pairs
+    )
+    if computing_meta:
+        return x
+
+    x = _concatenate2(x, axes=[0])
+    return np.unique(x)
 
 
 # --------------------------------------------------------------------
