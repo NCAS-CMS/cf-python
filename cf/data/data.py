@@ -43,7 +43,7 @@ from ..functions import log_level, parse_indices, pathjoin
 from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
-from . import NetCDFArray, UMArray
+from . import FileArray, NetCDFArray, UMArray
 from .collapse import Collapse
 from .creation import (
     compressed_to_dask,
@@ -130,37 +130,6 @@ def daskified(apply_temp_log_level=None):
 # --------------------------------------------------------------------
 _year_length = 365.242198781
 _month_length = _year_length / 12
-
-# --------------------------------------------------------------------
-# _seterr = How floating-point errors in the results of arithmetic
-#           operations are handled. These defaults are those of
-#           numpy 1.10.1.
-# --------------------------------------------------------------------
-_seterr = {
-    "divide": "warn",
-    "invalid": "warn",
-    "over": "warn",
-    "under": "ignore",
-}
-
-# --------------------------------------------------------------------
-# _seterr_raise_to_ignore = As _seterr but with any values of 'raise'
-#                           changed to 'ignore'.
-# --------------------------------------------------------------------
-_seterr_raise_to_ignore = _seterr.copy()
-
-
-for key, value in _seterr.items():
-    if value == "raise":
-        _seterr_raise_to_ignore[key] = "ignore"
-# --- End: for
-
-# --------------------------------------------------------------------
-# _mask_fpe[0] = Whether or not to automatically set
-#                FloatingPointError exceptions to masked values in
-#                arimthmetic.
-# --------------------------------------------------------------------
-_mask_fpe = [False]
 
 _empty_set = set()
 
@@ -877,7 +846,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self.to_dask_array()
         if math.isnan(dx.size):
-            logger.warning("Computing data len: Performance may be degraded")
+            logger.debug("Computing data len: Performance may be degraded")
             dx.compute_chunk_sizes()
 
         return len(dx)
@@ -2344,6 +2313,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 `None` is returned.
 
         **Examples**
+
+        TODODASK
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -5278,6 +5249,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self._set_dask(dx, reset_mask_hardness=False)
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def fill_value(self):
         """The data array missing data value.
 
@@ -5447,7 +5419,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self.to_dask_array()
         if math.isnan(dx.size):
-            logger.warning("Computing nbytes: Performance may be degraded")
+            logger.debug("Computing data nbytes: Performance may be degraded")
             dx.compute_chunk_sizes()
 
         return dx.nbytes
@@ -5514,7 +5486,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self.to_dask_array()
         if math.isnan(dx.size):
-            logger.warning("Computing data shape: Performance may be degraded")
+            logger.debug("Computing data shape: Performance may be degraded")
             dx.compute_chunk_sizes()
 
         return dx.shape
@@ -5555,7 +5527,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = self.to_dask_array()
         size = dx.size
         if math.isnan(size):
-            logger.warning("Computing data size: Performance may be degraded")
+            logger.debug("Computing data size: Performance may be degraded")
             dx.compute_chunk_sizes()
             size = dx.size
 
@@ -5725,251 +5697,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         mask_data_obj.hardmask = True
 
         return mask_data_obj
-
-    @staticmethod
-    def mask_fpe(*arg):
-        """Masking of floating-point errors in the results of arithmetic
-        operations.
-
-        If masking is allowed then only floating-point errors which would
-        otherwise be raised as `FloatingPointError` exceptions are
-        masked. Whether `FloatingPointError` exceptions may be raised is
-        determined by `cf.Data.seterr`.
-
-        If called without an argument then the current behaviour is
-        returned.
-
-        Note that if the raising of `FloatingPointError` exceptions has
-        suppressed then invalid values in the results of arithmetic
-        operations may be subsequently converted to masked values with the
-        `mask_invalid` method.
-
-        .. seealso:: `cf.Data.seterr`, `mask_invalid`
-
-        :Parameters:
-
-            arg: `bool`, optional
-                The new behaviour. True means that `FloatingPointError`
-                exceptions are suppressed and replaced with masked
-                values. False means that `FloatingPointError` exceptions
-                are raised. The default is not to change the current
-                behaviour.
-
-        :Returns:
-
-            `bool`
-                The behaviour prior to the change, or the current
-                behaviour if no new value was specified.
-
-        **Examples**
-
-        >>> d = cf.Data([0., 1])
-        >>> e = cf.Data([1., 2])
-
-        >>> old = cf.Data.mask_fpe(False)
-        >>> old = cf.Data.seterr('raise')
-        >>> e/d
-        FloatingPointError: divide by zero encountered in divide
-        >>> e**123456
-        FloatingPointError: overflow encountered in power
-
-        >>> old = cf.Data.mask_fpe(True)
-        >>> old = cf.Data.seterr('raise')
-        >>> e/d
-        <CF Data: [--, 2.0] >
-        >>> e**123456
-        <CF Data: [1.0, --] >
-
-        >>> old = cf.Data.mask_fpe(True)
-        >>> old = cf.Data.seterr('ignore')
-        >>> e/d
-        <CF Data: [inf, 2.0] >
-        >>> e**123456
-        <CF Data: [1.0, inf] >
-
-        """
-        old = _mask_fpe[0]
-
-        if arg:
-            _mask_fpe[0] = bool(arg[0])
-
-        return old
-
-    @staticmethod
-    def seterr(all=None, divide=None, over=None, under=None, invalid=None):
-        """Set how floating-point errors in the results of arithmetic
-        operations are handled.
-
-        The options for handling floating-point errors are:
-
-        ============  ========================================================
-        Treatment     Action
-        ============  ========================================================
-        ``'ignore'``  Take no action. Allows invalid values to occur in the
-                      result data array.
-
-        ``'warn'``    Print a `RuntimeWarning` (via the Python `warnings`
-                      module). Allows invalid values to occur in the result
-                      data array.
-
-        ``'raise'``   Raise a `FloatingPointError` exception.
-        ============  ========================================================
-
-        The different types of floating-point errors are:
-
-        =================  =================================  =================
-        Error              Description                        Default treatment
-        =================  =================================  =================
-        Division by zero   Infinite result obtained from      ``'warn'``
-                           finite numbers.
-
-        Overflow           Result too large to be expressed.  ``'warn'``
-
-        Invalid operation  Result is not an expressible       ``'warn'``
-                           number, typically indicates that
-                           a NaN was produced.
-
-        Underflow          Result so close to zero that some  ``'ignore'``
-                           precision was lost.
-        =================  =================================  =================
-
-        Note that operations on integer scalar types (such as int16) are
-        handled like floating point, and are affected by these settings.
-
-        If called without any arguments then the current behaviour is
-        returned.
-
-        .. seealso:: `cf.Data.mask_fpe`, `mask_invalid`
-
-        :Parameters:
-
-            all: `str`, optional
-                Set the treatment for all types of floating-point errors
-                at once. The default is not to change the current
-                behaviour.
-
-            divide: `str`, optional
-                Set the treatment for division by zero. The default is not
-                to change the current behaviour.
-
-            over: `str`, optional
-                Set the treatment for floating-point overflow. The default
-                is not to change the current behaviour.
-
-            under: `str`, optional
-                Set the treatment for floating-point underflow. The
-                default is not to change the current behaviour.
-
-            invalid: `str`, optional
-                Set the treatment for invalid floating-point
-                operation. The default is not to change the current
-                behaviour.
-
-        :Returns:
-
-            `dict`
-                The behaviour prior to the change, or the current
-                behaviour if no new values are specified.
-
-        **Examples**
-
-        Set treatment for all types of floating-point errors to
-        ``'raise'`` and then reset to the previous behaviours:
-
-        >>> cf.Data.seterr()
-        {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
-        >>> old = cf.Data.seterr('raise')
-        >>> cf.Data.seterr(**old)
-        {'divide': 'raise', 'invalid': 'raise', 'over': 'raise', 'under': 'raise'}
-        >>> cf.Data.seterr()
-        {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
-
-        Set the treatment of division by zero to ``'ignore'`` and overflow
-        to ``'warn'`` without changing the treatment of underflow and
-        invalid operation:
-
-        >>> cf.Data.seterr(divide='ignore', over='warn')
-        {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
-        >>> cf.Data.seterr()
-        {'divide': 'ignore', 'invalid': 'warn', 'over': 'ignore', 'under': 'ignore'}
-
-        Some examples with data arrays:
-
-        >>> d = cf.Data([0., 1])
-        >>> e = cf.Data([1., 2])
-
-        >>> old = cf.Data.seterr('ignore')
-        >>> e/d
-        <CF Data: [inf, 2.0] >
-        >>> e**12345
-        <CF Data: [1.0, inf] >
-
-        >>> cf.Data.seterr(divide='warn')
-        {'divide': 'ignore', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
-        >>> e/d
-        RuntimeWarning: divide by zero encountered in divide
-        <CF Data: [inf, 2.0] >
-        >>> e**12345
-        <CF Data: [1.0, inf] >
-
-        >>> old = cf.Data.mask_fpe(False)
-        >>> cf.Data.seterr(over='raise')
-        {'divide': 'warn', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
-        >>> e/d
-        RuntimeWarning: divide by zero encountered in divide
-        <CF Data: [inf, 2.0] >
-        >>> e**12345
-        FloatingPointError: overflow encountered in power
-
-        >>> cf.Data.mask_fpe(True)
-        False
-        >>> cf.Data.seterr(divide='ignore')
-        {'divide': 'warn', 'invalid': 'ignore', 'over': 'raise', 'under': 'ignore'}
-        >>> e/d
-        <CF Data: [inf, 2.0] >
-        >>> e**12345
-        <CF Data: [1.0, --] >
-
-        """
-        old = _seterr.copy()
-
-        if all:
-            _seterr.update(
-                {"divide": all, "invalid": all, "under": all, "over": all}
-            )
-            if all == "raise":
-                _seterr_raise_to_ignore.update(
-                    {
-                        "divide": "ignore",
-                        "invalid": "ignore",
-                        "under": "ignore",
-                        "over": "ignore",
-                    }
-                )
-
-        else:
-            if divide:
-                _seterr["divide"] = divide
-                if divide == "raise":
-                    _seterr_raise_to_ignore["divide"] = "ignore"
-
-            if over:
-                _seterr["over"] = over
-                if over == "raise":
-                    _seterr_raise_to_ignore["over"] = "ignore"
-
-            if under:
-                _seterr["under"] = under
-                if under == "raise":
-                    _seterr_raise_to_ignore["under"] = "ignore"
-
-            if invalid:
-                _seterr["invalid"] = invalid
-                if invalid == "raise":
-                    _seterr_raise_to_ignore["invalid"] = "ignore"
-        # --- End: if
-
-        return old
 
     # `arctan2`, AT2 seealso
     @daskified(_DASKIFIED_VERBOSE)
@@ -7787,7 +7514,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
-        >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
+        >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
         >>> print(d.array)
         [[ 0  1  2  3]
          [ 4  5  6  7]
@@ -7804,58 +7531,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [ 0  1  2  3  4  6  7  8  9 10]
 
         >>> d = cf.Data(9)
-        >>> print(d.array)
-        9
         >>> print(d.compressed().array)
-        9
+        [9]
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        ndim = d.ndim
-
-        if ndim != 1:
-            d.flatten(inplace=True)
-
-        n_non_missing = d.count()
-        if n_non_missing == d.size:
-            return d
-
-        comp = self.empty(
-            shape=(n_non_missing,), dtype=self.dtype, units=self.Units
+        dx = d._get_dask()
+        dx = da.blockwise(
+            np.ma.compressed,
+            "i",
+            dx.ravel(),
+            "i",
+            adjust_chunks={"i": lambda n: np.nan},
+            dtype=dx.dtype,
+            meta=np.array((), dtype=dx.dtype),
         )
 
-        # Find the number of array elements that fit in one chunk
-        n = int(cf_chunksize() // (self.dtype.itemsize + 1.0))
-
-        # Loop around each chunk's worth of elements and assign the
-        # non-missing values to the compressed data
-        i = 0
-        start = 0
-        for _ in range(1 + d.size // n):
-            if i >= d.size:
-                break
-
-            array = d[i : i + n].array
-            if np.ma.isMA(array):
-                array = array.compressed()
-
-            size = array.size
-            if size >= 1:
-                end = start + size
-                comp[start:end] = array
-                start = end
-
-            i += n
-
-        if not d.ndim:
-            comp.squeeze(inplace=True)
-
-        if inplace:
-            d.__dict__ = comp.__dict__
-        else:
-            d = comp
-
+        d._set_dask(dx, reset_mask_hardness=False)
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -8229,28 +7922,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return YMDhms(self, "second")
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
-        """Uncompress the underlying data.
+        """Uncompress the data.
 
-        Compression saves space by identifying and removing unwanted
-        missing data. Such compression techniques store the data more
-        efficiently and result in no precision loss.
+        Only affects data that is compressed by convention, i.e.
 
-        Whether or not the data is compressed does not alter its
-        functionality nor external appearance.
+          * Ragged arrays for discrete sampling geometries (DSG) and
+            simple geometry cell definitions.
 
-        Data that is already uncompressed will be returned uncompressed.
+          * Compression by gathering.
 
-        The following type of compression are available:
+          * Compression by coordinate subsampling.
 
-            * Ragged arrays for discrete sampling geometries (DSG). Three
-              different types of ragged array representation are
-              supported.
-
-            ..
-
-            * Compression by gathering.
+        Data that is already uncompressed is returned
+        unchanged. Whether the data is compressed or not does not
+        alter its functionality nor external appearance, but may
+        affect how the data are written to a dataset on disk.
 
         .. versionadded:: 3.0.6
 
@@ -8263,7 +7952,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
-                The uncompressed data, or `None` of the operation was
+                The uncompressed data, or `None` if the operation was
                 in-place.
 
         **Examples**
@@ -8276,20 +7965,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        if not d.get_compression_type():
-            if inplace:
-                d = None
-            return d
-
-        config = d.partition_configuration(readonly=False)
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            _ = partition.array
-            partition.close()
-
-        d._del_Array(None)
+        if d.get_compression_type():
+            d._del_Array(None)
 
         return d
 

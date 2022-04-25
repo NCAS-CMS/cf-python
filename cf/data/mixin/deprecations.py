@@ -1,6 +1,7 @@
 from ...functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_METHOD,
+    DeprecationError,
 )
 
 
@@ -372,6 +373,83 @@ class DataClassDeprecationsMixin:
             "TODODASK Consider using rechunk instead"
         )  # pragma: no cover
 
+    @staticmethod
+    def mask_fpe(*arg):
+        """Masking of floating-point errors in the results of arithmetic
+        operations.
+
+        Deprecated at version TODODASK. It is currently not possible
+        to control how floating-point errors are handled, due to the
+        use of `dask` for handling all array manipulations. This may
+        change in the future (see
+        https://github.com/dask/dask/issues/3245 for more details).
+
+        If masking is allowed then only floating-point errors which would
+        otherwise be raised as `FloatingPointError` exceptions are
+        masked. Whether `FloatingPointError` exceptions may be raised is
+        determined by `cf.Data.seterr`.
+
+        If called without an argument then the current behaviour is
+        returned.
+
+        Note that if the raising of `FloatingPointError` exceptions has
+        been suppressed then invalid values in the results of arithmetic
+        operations may be subsequently converted to masked values with the
+        `mask_invalid` method.
+
+        .. seealso:: `cf.Data.seterr`, `mask_invalid`
+
+        :Parameters:
+
+            arg: `bool`, optional
+                The new behaviour. True means that `FloatingPointError`
+                exceptions are suppressed and replaced with masked
+                values. False means that `FloatingPointError` exceptions
+                are raised. The default is not to change the current
+                behaviour.
+
+        :Returns:
+
+            `bool`
+                The behaviour prior to the change, or the current
+                behaviour if no new value was specified.
+
+        **Examples:**
+
+        >>> d = cf.Data([0., 1])
+        >>> e = cf.Data([1., 2])
+
+        >>> old = cf.Data.mask_fpe(False)
+        >>> old = cf.Data.seterr('raise')
+        >>> e/d
+        FloatingPointError: divide by zero encountered in divide
+        >>> e**123456
+        FloatingPointError: overflow encountered in power
+
+        >>> old = cf.Data.mask_fpe(True)
+        >>> old = cf.Data.seterr('raise')
+        >>> e/d
+        <CF Data: [--, 2.0] >
+        >>> e**123456
+        <CF Data: [1.0, --] >
+
+        >>> old = cf.Data.mask_fpe(True)
+        >>> old = cf.Data.seterr('ignore')
+        >>> e/d
+        <CF Data: [inf, 2.0] >
+        >>> e**123456
+        <CF Data: [1.0, inf] >
+
+        """
+        raise DeprecationError(
+            "Data method 'mask_fpe' has been deprecated at version TODODASK "
+            "and is not available.\n\n"
+            "It is currently not possible to control how floating-point errors "
+            "are handled, due to the use of `dask` for handling all array "
+            "manipulations. This may change in the future (see "
+            "https://github.com/dask/dask/issues/3245 for more details)."
+        )
+
     def partition_boundaries(self):
         """Return the partition boundaries for each partition matrix
         dimension.
@@ -386,3 +464,154 @@ class DataClassDeprecationsMixin:
         _DEPRECATION_ERROR_METHOD(
             "TODODASK - consider using 'chunks' instead"
         )  # pragma: no cover
+
+    @staticmethod
+    def seterr(all=None, divide=None, over=None, under=None, invalid=None):
+        """Set how floating-point errors in the results of arithmetic
+        operations are handled.
+
+        Deprecated at version TODODASK. It is currently not possible
+        to control how floating-point errors are handled, due to the
+        use of `dask` for handling all array manipulations. This may
+        change in the future (see
+        https://github.com/dask/dask/issues/3245 for more details).
+
+        The options for handling floating-point errors are:
+
+        ============  ========================================================
+        Treatment     Action
+        ============  ========================================================
+        ``'ignore'``  Take no action. Allows invalid values to occur in the
+                      result data array.
+
+        ``'warn'``    Print a `RuntimeWarning` (via the Python `warnings`
+                      module). Allows invalid values to occur in the result
+                      data array.
+
+        ``'raise'``   Raise a `FloatingPointError` exception.
+        ============  ========================================================
+
+        The different types of floating-point errors are:
+
+        =================  =================================  =================
+        Error              Description                        Default treatment
+        =================  =================================  =================
+        Division by zero   Infinite result obtained from      ``'warn'``
+                           finite numbers.
+
+        Overflow           Result too large to be expressed.  ``'warn'``
+
+        Invalid operation  Result is not an expressible       ``'warn'``
+                           number, typically indicates that
+                           a NaN was produced.
+
+        Underflow          Result so close to zero that some  ``'ignore'``
+                           precision was lost.
+        =================  =================================  =================
+
+        Note that operations on integer scalar types (such as int16) are
+        handled like floating point, and are affected by these settings.
+
+        If called without any arguments then the current behaviour is
+        returned.
+
+        .. seealso:: `cf.Data.mask_fpe`, `mask_invalid`
+
+        :Parameters:
+
+            all: `str`, optional
+                Set the treatment for all types of floating-point errors
+                at once. The default is not to change the current
+                behaviour.
+
+            divide: `str`, optional
+                Set the treatment for division by zero. The default is not
+                to change the current behaviour.
+
+            over: `str`, optional
+                Set the treatment for floating-point overflow. The default
+                is not to change the current behaviour.
+
+            under: `str`, optional
+                Set the treatment for floating-point underflow. The
+                default is not to change the current behaviour.
+
+            invalid: `str`, optional
+                Set the treatment for invalid floating-point
+                operation. The default is not to change the current
+                behaviour.
+
+        :Returns:
+
+            `dict`
+                The behaviour prior to the change, or the current
+                behaviour if no new values are specified.
+
+        **Examples:**
+
+        Set treatment for all types of floating-point errors to
+        ``'raise'`` and then reset to the previous behaviours:
+
+        >>> cf.Data.seterr()
+        {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
+        >>> old = cf.Data.seterr('raise')
+        >>> cf.Data.seterr(**old)
+        {'divide': 'raise', 'invalid': 'raise', 'over': 'raise', 'under': 'raise'}
+        >>> cf.Data.seterr()
+        {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
+
+        Set the treatment of division by zero to ``'ignore'`` and overflow
+        to ``'warn'`` without changing the treatment of underflow and
+        invalid operation:
+
+        >>> cf.Data.seterr(divide='ignore', over='warn')
+        {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
+        >>> cf.Data.seterr()
+        {'divide': 'ignore', 'invalid': 'warn', 'over': 'ignore', 'under': 'ignore'}
+
+        Some examples with data arrays:
+
+        >>> d = cf.Data([0., 1])
+        >>> e = cf.Data([1., 2])
+
+        >>> old = cf.Data.seterr('ignore')
+        >>> e/d
+        <CF Data: [inf, 2.0] >
+        >>> e**12345
+        <CF Data: [1.0, inf] >
+
+        >>> cf.Data.seterr(divide='warn')
+        {'divide': 'ignore', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
+        >>> e/d
+        RuntimeWarning: divide by zero encountered in divide
+        <CF Data: [inf, 2.0] >
+        >>> e**12345
+        <CF Data: [1.0, inf] >
+
+        >>> old = cf.Data.mask_fpe(False)
+        >>> cf.Data.seterr(over='raise')
+        {'divide': 'warn', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
+        >>> e/d
+        RuntimeWarning: divide by zero encountered in divide
+        <CF Data: [inf, 2.0] >
+        >>> e**12345
+        FloatingPointError: overflow encountered in power
+
+        >>> cf.Data.mask_fpe(True)
+        False
+        >>> cf.Data.seterr(divide='ignore')
+        {'divide': 'warn', 'invalid': 'ignore', 'over': 'raise', 'under': 'ignore'}
+        >>> e/d
+        <CF Data: [inf, 2.0] >
+        >>> e**12345
+        <CF Data: [1.0, --] >
+
+        """
+        raise DeprecationError(
+            "Data method 'seterr' has been deprecated at version TODODASK "
+            "and is not available.\n\n"
+            "It is currently not possible to control how floating-point errors "
+            "are handled, due to the use of `dask` for handling all array "
+            "manipulations. This may change in the future (see "
+            "https://github.com/dask/dask/issues/3245 for more details)."
+        )

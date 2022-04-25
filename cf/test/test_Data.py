@@ -675,40 +675,39 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((a_diff == d_diff).all())
                 self.assertTrue((a_diff.mask == d_diff.mask).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_compressed(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = np.ma.arange(12).reshape(3, 4)
+        d = cf.Data(a, "m", chunks=2)
+        self.assertIsNone(d.compressed(inplace=True))
+        self.assertEqual(d.shape, (a.size,))
+        self.assertEqual(d.Units, cf.Units("m"))
+        self.assertEqual(d.dtype, a.dtype)
 
-        d = cf.Data(a)
-        self.assertTrue((d.array == a).all())
-        self.assertTrue((a.compressed() == d.compressed()).all())
+        d = cf.Data(a, "m", chunks=2)
+        self.assertTrue((d.compressed().array == a.compressed()).all())
 
-        e = d.copy()
-        x = e.compressed(inplace=True)
-        self.assertIsNone(x)
-        self.assertTrue(e.equals(d.compressed()))
+        a[2] = np.ma.masked
+        d = cf.Data(a, "m", chunks=2)
+        self.assertTrue((d.compressed().array == a.compressed()).all())
 
-        a[1, 1] = np.ma.masked
-        a[2, 3] = np.ma.masked
+        a[...] = np.ma.masked
+        d = cf.Data(a, "m", chunks=2)
+        e = d.compressed()
+        self.assertEqual(e.shape, (0,))
+        self.assertTrue((e.array == a.compressed()).all())
 
-        d = cf.Data(a)
-        self.assertTrue((d.array == a).all())
-        self.assertTrue((d.mask.array == a.mask).all())
-        self.assertTrue((a.compressed() == d.compressed()).all())
+        # Scalar arrays
+        a = np.ma.array(9)
+        d = cf.Data(a, "m")
+        e = d.compressed()
+        self.assertEqual(e.shape, (1,))
+        self.assertTrue((e.array == a.compressed()).all())
 
-        e = d.copy()
-        x = e.compressed(inplace=True)
-        self.assertIsNone(x)
-        self.assertTrue(e.equals(d.compressed()))
-
-        d = cf.Data(self.a, "km")
-        self.assertTrue((self.a.flatten() == d.compressed()).all())
-
-        d = cf.Data(self.ma, "km")
-        self.assertTrue((self.ma.compressed() == d.compressed()).all())
+        a = np.ma.array(9, mask=True)
+        d = cf.Data(a, "m")
+        e = d.compressed()
+        self.assertEqual(e.shape, (0,))
+        self.assertTrue((e.array == a.compressed()).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __eq__")
     def test_Data_stats(self):
@@ -2244,45 +2243,6 @@ class DataTest(unittest.TestCase):
                 de = d * e
                 self.assertEqual(de.shape, ab.shape)
                 self.assertTrue((de.array == ab).all())
-
-    def test_Data_ERROR(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        return  # !!!!!!
-
-        d = cf.Data([0.0, 1])
-        e = cf.Data([1.0, 2])
-
-        oldm = cf.Data.mask_fpe(False)
-        olds = cf.Data.seterr("raise")
-
-        with self.assertRaises(FloatingPointError):
-            _ = e / d
-
-        with self.assertRaises(FloatingPointError):
-            _ = e ** 123456
-
-        cf.Data.mask_fpe(True)
-        cf.Data.seterr(all="raise")
-
-        g = cf.Data([-99, 2.0])
-        g[0] = cf.masked
-        f = e / d
-        self.assertTrue(f.equals(g, verbose=2))
-
-        g = cf.Data([1.0, -99])
-        g[1] = cf.masked
-        f = e ** 123456
-        self.assertTrue(f.equals(g, verbose=2))
-
-        cf.Data.mask_fpe(True)
-        cf.Data.seterr(all="ignore")
-        f = e / d
-        f = e ** 123456
-
-        cf.Data.mask_fpe(oldm)
-        cf.Data.seterr(**olds)
 
     def test_Data__len__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -3843,6 +3803,20 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
 
+    def test_Data_uncompress(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        a = f.data.array
+        d = cf.Data(cf.RaggedContiguousArray(source=f.data.source()))
+
+        self.assertTrue(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
+        self.assertIsNone(d.uncompress(inplace=True))
+        self.assertFalse(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
     def test_Data_data(self):
         for d in [
             cf.Data(1),
@@ -3860,6 +3834,14 @@ class DataTest(unittest.TestCase):
             "Data.fill_value = None\nData.Units = <Units: m>"
         )
         self.assertEqual(d.dump(display=False), x)
+
+    def test_Data_fill_value(self):
+        d = cf.Data([1, 2], "m")
+        self.assertIsNone(d.fill_value)
+        d.fill_value = 999
+        self.assertEqual(d.fill_value, 999)
+        del d.fill_value
+        self.assertIsNone(d.fill_value)
 
 
 if __name__ == "__main__":
