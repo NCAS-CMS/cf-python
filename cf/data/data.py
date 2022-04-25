@@ -69,7 +69,6 @@ from .utils import (  # is_small,; is_very_small,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
-    dask_compatible,
     first_non_missing_value,
     new_axis_identifier,
     scalar_masked_array,
@@ -429,7 +428,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             if _use_array:
                 try:
-                    array = source.get_dask(copy=False)
+                    array = source.to_dask_array()
                 except (AttributeError, TypeError):
                     pass
                 else:
@@ -580,17 +579,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if persist:
             self.persist(inplace=True)
 
-    #    @property#
-    #    def dask_array(s#elf):
-    #        """TODODASK.##
-    #
-    #        :Returns:
-    #
-    #            `dask.array.Array`##
-    #
-    #        """
-    #        return self.get_dask(copy=True)
-
     @property
     def dask_compressed_array(self):
         """TODODASK.
@@ -605,7 +593,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if ca is None or not ca.get_compression_type():
             raise ValueError("not compressed: can't get compressed dask array")
 
-        return ca.get_dask(copy=False).copy()
+        return ca.to_dask_array()
 
     @daskified(_DASKIFIED_VERBOSE)
     def __contains__(self, value):
@@ -699,9 +687,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 # are incompatible
                 return False
 
-            value = value.get_dask(copy=False)
+            value = value.to_dask_array()
 
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
 
         out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
@@ -760,7 +748,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         1.
 
         """
-        return float(self._get_dask())
+        return float(self.to_dask_array())
 
     @daskified(_DASKIFIED_VERBOSE)
     def __int__(self):
@@ -774,7 +762,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         the dask array size is already known to be greater than 1.
 
         """
-        return int(self._get_dask())
+        return int(self.to_dask_array())
 
     def __iter__(self):
         """Called when an iterator is required.
@@ -844,7 +832,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         TypeError: len() of unsized object
 
         """
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         if math.isnan(dx.size):
             logger.debug("Computing data len: Performance may be degraded")
             dx.compute_chunk_sizes()
@@ -971,10 +959,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             new = self.roll(
                 axis=tuple(roll.keys()), shift=tuple(roll.values())
             )
-            dx = new.get_dask(copy=False)
+            dx = new.to_dask_array()
         else:
             new = self.copy(array=False)
-            dx = self.get_dask(copy=False)
+            dx = self.to_dask_array()
 
         # ------------------------------------------------------------
         # Subspace the dask array
@@ -1159,8 +1147,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         value = conform_units(value, self.Units)
 
         # Do the assignment
-        dx = self.get_dask(copy=False)
-        dx[indices] = dask_compatible(value)
+        dx = self.to_dask_array()
+        dx[indices] = value
 
         # Unroll any axes that were rolled to enable a cyclic
         # assignment
@@ -1295,39 +1283,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    def _get_dask(self):
-        """Not sure where I'm going with the API here.
-
-        So both work for now!
-
-        TODODASK: sort this out! See https://github.com/NCAS-CMS/cf-python/pull/354#discussion_r831176499
-
-        """
-        return self.get_dask(copy=False)
-
-    def get_dask(self, copy=True):
-        """Get the underlying dask array.
-
-        .. versionadded:: TODODASK
-
-        :Parameters:
-
-            copy: `bool`, optional
-                If False then return the actual dask array. By default
-                a copy is returned.
-
-        :Returns:
-
-            `dask.array.Array`
-                The dask array.
-
-        """
-        da = self._custom["dask"]
-        if copy:
-            da = da.copy()
-
-        return da
-
     def _set_dask(
         self, array, copy=False, delete_source=True, reset_mask_hardness=True
     ):
@@ -1335,7 +1290,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. versionadded:: TODODASK
 
-        .. seealso:: `_del_dask`, `get_dask`, `_reset_mask_hardness`
+        .. seealso:: `to_dask_array`, `_del_dask`, `_reset_mask_hardness`
 
         :Parameters:
 
@@ -1395,7 +1350,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. versionadded:: TODODASK
 
-        .. seealso:: `_set_dask`, `get_dask`
+        .. seealso:: `_set_dask`, `to_dask_array`
 
         :Parameters:
 
@@ -1541,7 +1496,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         dx = da.diff(dx, axis=axis, n=n)
         d._set_dask(dx, reset_mask_hardness=False)
 
@@ -1852,7 +1807,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             delete_bins.append(bins.size)
 
         # Digitise the array
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         dx = da.digitize(dx, bins, right=upper)
         d._set_dask(dx, reset_mask_hardness=True)
         d.override_units(_units_None, inplace=True)
@@ -2241,7 +2196,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             axes = tuple(sorted(d._parse_axes(axes)))
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         dtype = dx.dtype
         shape = dx.shape
 
@@ -2352,7 +2307,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
         dx = dx.persist()
         d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
@@ -2820,7 +2775,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # TODODASK: Always return True for now, to aid development.
         return True
 
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
 
         # TODODASK fits in memory.
 
@@ -2905,7 +2860,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.ceil(dx), reset_mask_hardness=False)
         return d
 
@@ -2942,7 +2897,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         array([1., 2., 3.])
 
         """
-        a = self._get_dask().compute()
+        a = self.to_dask_array().compute()
 
         if np.ma.isMA(a):
             if self.hardmask:
@@ -3129,7 +3084,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         depth += abs(origin)
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
 
         # Cast to float to ensure that NaNs can be stored (as required
         # by cf_convolve1d)
@@ -3242,7 +3197,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         dx = dx.cumsum(axis=axis, method=method)
 
         # Note: The dask cumsum method resets the mask hardness to the
@@ -3331,7 +3286,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d.get_dask(copy=False)
+        dx = d.to_dask_array()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
         d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
@@ -4580,7 +4535,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         out = self.copy(array=False)
 
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
         dx = getattr(operator, operation)(dx)
 
         out._set_dask(dx, reset_mask_hardness=False)
@@ -5127,8 +5082,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     # ----------------------------------------------------------------
     @property
     def chunks(self):
-        """TODODASK."""
-        return self._get_dask().chunks
+        """The chunk sizes for each dimension.
+
+        **Examples**
+
+        >>> d = cf.Data.ones((4, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2), (4, 1))
+
+        """
+        return self.to_dask_array().chunks
 
     @property
     def force_compute(self):
@@ -5260,12 +5223,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [ 0.5  1.5  2.5]
 
         """
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
         return dx.dtype
 
     @dtype.setter
     def dtype(self, value):
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
 
         # Only change the datatype if it's different to that of the
         # dask array
@@ -5379,7 +5342,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             out = np.ma.is_masked(a)
             return np.array(out).reshape((1,) * a.ndim)
 
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
 
         out_ind = tuple(range(dx.ndim))
         dx_ind = out_ind
@@ -5442,7 +5405,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         24
 
         """
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
         if math.isnan(dx.size):
             logger.debug("Computing data nbytes: Performance may be degraded")
             dx.compute_chunk_sizes()
@@ -5477,7 +5440,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         0
 
         """
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
         return dx.ndim
 
     @property
@@ -5509,7 +5472,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         ()
 
         """
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
         if math.isnan(dx.size):
             logger.debug("Computing data shape: Performance may be degraded")
             dx.compute_chunk_sizes()
@@ -5549,7 +5512,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         1
 
         """
-        dx = self.get_dask(copy=False)
+        dx = self.to_dask_array()
         size = dx.size
         if math.isnan(size):
             logger.debug("Computing data size: Performance may be degraded")
@@ -5660,7 +5623,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             d = self
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         dx = convert_to_datetime(dx, d.Units)
 
         a = dx.compute()
@@ -5714,7 +5677,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         mask_data_obj = self.copy()
 
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         mask = da.ma.getmaskarray(dx)
 
         mask_data_obj._set_dask(mask, reset_mask_hardness=False)
@@ -5766,7 +5729,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.arctan(dx), reset_mask_hardness=False)
 
         d.override_units(_units_radians, inplace=True)
@@ -5965,7 +5928,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.arcsinh(dx), reset_mask_hardness=False)
 
         d.override_units(_units_radians, inplace=True)
@@ -6406,7 +6369,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     )
 
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = self._get_dask()
+        dx = self.to_dask_array()
 
         mask = None
         if fill_values:
@@ -6603,7 +6566,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         <CF Data(2): [2, 1]>
 
         """
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         a = dx.argmax(axis=axis)
 
         if unravel and (axis is None or self.ndim <= 1):
@@ -7444,7 +7407,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 a_max = Units.conform(np.asanyarray(a_max), units, self_units)
 
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         dx = da.clip(dx, a_min, a_max)
         d._set_dask(dx, reset_mask_hardness=False)
         return d
@@ -7562,7 +7525,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         dx = da.blockwise(
             np.ma.compressed,
             "i",
@@ -7629,7 +7592,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.cos(dx), reset_mask_hardness=False)
 
         d.override_units(_units_1, inplace=True)
@@ -8201,8 +8164,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
             return False
 
-        self_dx = self._get_dask()
-        other_dx = other._get_dask()
+        self_dx = self.to_dask_array()
+        other_dx = other.to_dask_array()
 
         # Now check that corresponding elements are equal within a tolerance.
         # We assume that all inputs are masked arrays. Note we compare the
@@ -8275,7 +8238,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units:
             d.Units = _units_1
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.exp(dx), reset_mask_hardness=False)
 
         return d
@@ -8322,7 +8285,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         shape = list(d.shape)
         shape.insert(position, 1)
 
-        dx = d.get_dask(copy=False)
+        dx = d.to_dask_array()
         dx = dx.reshape(shape)
         d._set_dask(dx, reset_mask_hardness=False)
 
@@ -8358,7 +8321,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         out = set()
 
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         hlg = dx.dask
         dsk = hlg.to_dict()
         for key, value in hlg.get_all_dependencies().items():
@@ -8651,7 +8614,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             tripolar = Y_axis in depth
 
         # Create the halo
-        dx = d._get_dask()
+        dx = d.to_dask_array()
 
         indices = [slice(None)] * ndim
         for axis, size in sorted(depth.items()):
@@ -8697,7 +8660,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             indices2 = indices1[:]
             indices2[X_axis] = slice(None, None, -1)
 
-            dx = d._get_dask()
+            dx = d.to_dask_array()
             dx[tuple(indices1)] = dx[tuple(indices2)]
 
             d._set_dask(dx, reset_mask_hardness=False)
@@ -9175,7 +9138,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if n_axes <= 1:
             return d
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
 
         # It is important that the first axis in the list is the
         # left-most flattened axis.
@@ -9231,7 +9194,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.floor(dx), reset_mask_hardness=False)
         return d
 
@@ -9452,21 +9415,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return d
 
     def to_dask_array(self):
-        """Store the data array on disk.
-
-        There is no change to partitions whose sub-arrays are already on
-        disk.
+        """Convert the data to a `dask` array.
 
         :Returns:
 
-            `None`
+            `dask.array.Array`
+                The dask array contained within the `Data` instance.
 
         **Examples**
 
-        >>> d.to_disk()
+        >>> d = cf.Data([1, 2, 3, 4], 'm')
+        >>> dx = d.to_dask_array()
+        >>> dx
+        >>> dask.array<cf_harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+        >>> dask.array.asanyarray(d) is dx
+        True
 
         """
-        return self._get_dask()
+        return self._custom["dask"]
 
     def to_disk(self):
         """Store the data array on disk.
@@ -10045,7 +10011,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             for i in range(d.ndim)
         ]
 
-        dx = d.get_dask(copy=False)
+        dx = d.to_dask_array()
         dx = dx[tuple(index)]
         d._set_dask(dx, reset_mask_hardness=False)
 
@@ -10196,7 +10162,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
         d._set_dask(dx, reset_mask_hardness=True)
         return d
@@ -10233,7 +10199,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.rint(dx), reset_mask_hardness=False)
         return d
 
@@ -10358,7 +10324,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.round(dx, decimals=decimals), reset_mask_hardness=False)
         return d
 
@@ -10594,7 +10560,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         dx = da.swapaxes(dx, axis0, axis1)
         d._set_dask(dx, reset_mask_hardness=False)
         return d
@@ -10839,7 +10805,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
 
         units = d.Units
-        dx = d.get_dask(copy=False)
+        dx = d.to_dask_array()
 
         # Parse condition
         if getattr(condition, "isquery", False):
@@ -10892,13 +10858,13 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                         f"are not equivalent to data units {units!r}"
                     )
 
-            xy.append(arg.get_dask(copy=False))
+            xy.append(arg.to_dask_array())
 
         x, y = xy
 
         # Apply the where operation
         dx = da.core.elemwise(
-            cf_where, dx, dask_compatible(condition), x, y, d.hardmask
+            cf_where, dx, da.asanyarray(condition), x, y, d.hardmask
         )
         d._set_dask(dx)
 
@@ -10961,7 +10927,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.sin(dx), reset_mask_hardness=False)
 
         d.override_units(_units_1, inplace=True)
@@ -11022,7 +10988,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.sinh(dx), reset_mask_hardness=False)
 
         d.override_units(_units_1, inplace=True)
@@ -11081,7 +11047,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.cosh(dx), reset_mask_hardness=False)
 
         d.override_units(_units_1, inplace=True)
@@ -11143,7 +11109,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.tanh(dx), reset_mask_hardness=False)
 
         d.override_units(_units_1, inplace=True)
@@ -11170,7 +11136,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
+        dx = d.to_dask_array()
 
         if base is None:
             dx = da.log(dx)
@@ -11286,7 +11252,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
-        dx = d.get_dask(copy=False)
+        dx = d.to_dask_array()
         dx = dx.squeeze(axis=tuple(axes))
         d._set_dask(dx, reset_mask_hardness=False)
 
@@ -11350,7 +11316,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d.Units.equivalent(_units_radians):
             d.Units = _units_radians
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.tan(dx), reset_mask_hardness=False)
 
         d.override_units(_units_1, inplace=True)
@@ -11448,7 +11414,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         data_axes = d._axes
         d._axes = [data_axes[i] for i in iaxes]
 
-        dx = d.get_dask(copy=False)
+        dx = d.to_dask_array()
         try:
             dx = da.transpose(dx, axes=axes)
         except ValueError:
@@ -11493,7 +11459,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         d._set_dask(da.trunc(dx), reset_mask_hardness=False)
         return d
 
@@ -11799,7 +11765,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
+        dx = d.to_dask_array()
 
         # TODODASK: Steps to preserve invalid values shown, taking same
         # approach as pre-daskification, but maybe we can now change approach
@@ -11941,7 +11907,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d.get_dask(copy=False)
+        dx = d.to_dask_array()
         dx = da.roll(dx, shift, axis=axis)
         d._set_dask(dx, reset_mask_hardness=False)
 
