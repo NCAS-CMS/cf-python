@@ -504,22 +504,6 @@ def is_very_small(array, threshold=None):
     return is_small(array, threshold)
 
 
-def dask_compatible(a):
-    """Convert an object to one which is dask compatible.
-
-    The object is returned unchanged unless it is a cf object
-    containing data, in which case the dask array of the data is
-    returned instead.
-
-    .. versionadded:: 4.0.0
-
-    """
-    try:
-        return a.data.get_dask(copy=False)
-    except AttributeError:
-        return a
-
-
 def scalar_masked_array(dtype=float):
     """Return a scalar masked array.
 

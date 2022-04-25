@@ -69,7 +69,6 @@ from .utils import (  # is_small,; is_very_small,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
-    dask_compatible,
     first_non_missing_value,
     new_axis_identifier,
     scalar_masked_array,
@@ -579,17 +578,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Bring the data into memory
         if persist:
             self.persist(inplace=True)
-
-    #    @property#
-    #    def dask_array(s#elf):
-    #        """TODODASK.##
-    #
-    #        :Returns:
-    #
-    #            `dask.array.Array`##
-    #
-    #        """
-    #        return self.get_dask(copy=True)
 
     @property
     def dask_compressed_array(self):
@@ -1160,7 +1148,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Do the assignment
         dx = self.to_dask_array()
-        dx[indices] = dask_compatible(value)
+        dx[indices] = value
 
         # Unroll any axes that were rolled to enable a cyclic
         # assignment
@@ -7537,7 +7525,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         dx = da.blockwise(
             np.ma.compressed,
             "i",
@@ -8333,7 +8321,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         out = set()
 
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         hlg = dx.dask
         dsk = hlg.to_dict()
         for key, value in hlg.get_all_dependencies().items():
@@ -10174,7 +10162,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
+        dx = d.to_dask_array()
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
         d._set_dask(dx, reset_mask_hardness=True)
         return d
