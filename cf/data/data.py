@@ -208,8 +208,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         fill_value=None,
         hardmask=_DEFAULT_HARDMASK,
         chunks=_DEFAULT_CHUNKS,
-        loadd=None,
-        loads=None,
         dt=False,
         source=None,
         copy=True,
@@ -318,16 +316,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 given by the *array* parameter are re-interpreted as
                 date-time objects. By default they are not.
 
-            loadd: `dict`, optional
-                Initialise the data from a dictionary serialization of a
-                `cf.Data` object. All other arguments are ignored. See the
-                `dumpd` and `loadd` methods.
-
-            loads: `str`, optional
-                Initialise the data array from a string serialization of a
-                `Data` object. All other arguments are ignored. See the
-                `dumps` and `loads` methods.
-
             copy: `bool`, optional
                 If False then do not deep copy input parameters prior to
                 initialization. By default arguments are deep copied.
@@ -396,19 +384,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             init_options = {}
 
         if source is not None:
-            if loadd is not None:
-                raise ValueError(
-                    "Can't set the 'source' and 'loadd' parameters "
-                    "at the same time"
-                )
-
-            if loads is not None:
-                raise ValueError(
-                    "Can't set the 'source' and 'loads' parameters "
-                    "at the same time"
-                )
-
-        if source is not None:
             try:
                 array = source._get_Array(None)
             except AttributeError:
@@ -441,14 +416,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             return
 
         super().__init__(array=array, fill_value=fill_value, _use_array=False)
-
-        if loadd is not None:
-            self.loadd(loadd)
-            return
-
-        if loads is not None:
-            self.loads(loads)
-            return
 
         # Set the units
         units = Units(units, calendar=calendar)
