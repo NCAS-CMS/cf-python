@@ -2428,20 +2428,6 @@ class DataTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 d.percentile(q).array
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'select'")
-    def test_Data_dumpd_loadd_dumps(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        d = cf.read(self.filename)[0].data
-
-        dumpd = d.dumpd()
-        self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
-        self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
-
-        d.to_disk()
-        self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
-
     def test_Data_section(self):
         d = cf.Data(np.arange(24).reshape(2, 3, 4))
 

@@ -3,8 +3,6 @@ import math
 import operator
 from functools import partial, reduce, wraps
 from itertools import product
-from json import dumps as json_dumps
-from json import loads as json_loads
 from numbers import Integral
 from operator import mul
 
@@ -38,18 +36,13 @@ from ..functions import default_netCDF_fillvals
 from ..functions import fm_threshold as cf_fm_threshold
 from ..functions import free_memory
 from ..functions import inspect as cf_inspect
-from ..functions import log_level, parse_indices, pathjoin
+from ..functions import log_level, parse_indices
 from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
-from . import FileArray, NetCDFArray, UMArray
+from . import FileArray
 from .collapse import Collapse
-from .creation import (
-    compressed_to_dask,
-    convert_to_builtin_type,
-    generate_axis_identifiers,
-    to_dask,
-)
+from .creation import compressed_to_dask, generate_axis_identifiers, to_dask
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -215,8 +208,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         fill_value=None,
         hardmask=_DEFAULT_HARDMASK,
         chunks=_DEFAULT_CHUNKS,
-        loadd=None,
-        loads=None,
         dt=False,
         source=None,
         copy=True,
@@ -325,16 +316,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 given by the *array* parameter are re-interpreted as
                 date-time objects. By default they are not.
 
-            loadd: `dict`, optional
-                Initialise the data from a dictionary serialization of a
-                `cf.Data` object. All other arguments are ignored. See the
-                `dumpd` and `loadd` methods.
-
-            loads: `str`, optional
-                Initialise the data array from a string serialization of a
-                `Data` object. All other arguments are ignored. See the
-                `dumps` and `loads` methods.
-
             copy: `bool`, optional
                 If False then do not deep copy input parameters prior to
                 initialization. By default arguments are deep copied.
@@ -403,19 +384,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             init_options = {}
 
         if source is not None:
-            if loadd is not None:
-                raise ValueError(
-                    "Can't set the 'source' and 'loadd' parameters "
-                    "at the same time"
-                )
-
-            if loads is not None:
-                raise ValueError(
-                    "Can't set the 'source' and 'loads' parameters "
-                    "at the same time"
-                )
-
-        if source is not None:
             try:
                 array = source._get_Array(None)
             except AttributeError:
@@ -448,14 +416,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             return
 
         super().__init__(array=array, fill_value=fill_value, _use_array=False)
-
-        if loadd is not None:
-            self.loadd(loadd)
-            return
-
-        if loads is not None:
-            self.loads(loads)
-            return
 
         # Set the units
         units = Units(units, calendar=calendar)
@@ -1501,30 +1461,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    def dumps(self):
-        """Return a JSON string serialization of the data array."""
-        d = self.dumpd()
-
-        # Change a set to a list
-        if "_cyclic" in d:
-            d["_cyclic"] = list(d["_cyclic"])
-
-        # Change numpy.dtype object to a data-type string
-        if "dtype" in d:
-            d["dtype"] = str(d["dtype"])
-
-        # Change a Units object to a units string
-        if "Units" in d:
-            d["units"] = str(d.pop("Units"))
-
-        #
-        for p in d["Partitions"]:
-            if "Units" in p:
-                p["units"] = str(p.pop("Units"))
-        # --- End: for
-
-        return json_dumps(d, default=convert_to_builtin_type)
-
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def digitize(
@@ -2311,406 +2247,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
 
         return d
-
-    def loads(self, j, chunk=True):
-        """Reset the data in place from a string serialization.
-
-        .. seealso:: `dumpd`, `loadd`
-
-        :Parameters:
-
-            j: `str`
-                A JSON document string serialization of a `cf.Data` object.
-
-            chunk: `bool`, optional
-                If True (the default) then the reset data array will be
-                re-partitioned according the current chunk size, as defined
-                by the `cf.chunksize` function.
-
-        :Returns:
-
-            `None`
-
-        """
-        d = json_loads(j)
-
-        # Convert _cyclic to a set
-        if "_cyclic" in d:
-            d["_cyclic"] = set(d["_cyclic"])
-
-        # Convert dtype to numpy.dtype
-        if "dtype" in d:
-            d["dtype"] = np.dtype(d["dtype"])
-
-        # Convert units to Units
-        if "units" in d:
-            d["Units"] = Units(d.pop("units"))
-
-        # Convert partition location elements to tuples
-        for p in d["Partitions"]:
-            p["location"] = [tuple(x) for x in p["location"]]
-
-            if "units" in p:
-                p["Units"] = Units(p.pop("units"))
-        # --- End: for
-
-        self.loadd(d, chunk=chunk)
-
-    def dumpd(self):
-        """Return a serialization of the data array.
-
-        The serialization may be used to reconstruct the data array as it
-        was at the time of the serialization creation.
-
-        .. seealso:: `loadd`, `loads`
-
-        :Returns:
-
-            `dict`
-                The serialization.
-
-        **Examples**
-
-        >>> d = cf.Data([[1, 2, 3]], 'm')
-        >>> d.dumpd()
-        {'Partitions': [{'location': [(0, 1), (0, 3)],
-                         'subarray': array([[1, 2, 3]])}],
-         'units': 'm',
-         '_axes': ['dim0', 'dim1'],
-         '_pmshape': (),
-         'dtype': dtype('int64'),
-         'shape': (1, 3)}
-
-        >>> d.flip(1)
-        >>> d.transpose()
-        >>> d.Units *= 1000
-        >>> d.dumpd()
-        {'Partitions': [{'units': 'm',
-                         'axes': ['dim0', 'dim1'],
-                         'location': [(0, 3), (0, 1)],
-                         'subarray': array([[1, 2, 3]])}],
-        ` 'units': '1000 m',
-         '_axes': ['dim1', 'dim0'],
-         '_flip': ['dim1'],
-         '_pmshape': (),
-         'dtype': dtype('int64'),
-         'shape': (3, 1)}
-
-        >>> d.dumpd()
-        {'Partitions': [{'units': 'm',
-                         'location': [(0, 1), (0, 3)],
-                         'subarray': array([[1, 2, 3]])}],
-         'units': '10000 m',
-         '_axes': ['dim0', 'dim1'],
-         '_flip': ['dim1'],
-         '_pmshape': (),
-         'dtype': dtype('int64'),
-         'shape': (1, 3)}
-
-        >>> e = cf.Data(loadd=d.dumpd())
-        >>> e.equals(d)
-        True
-
-        """
-        axes = self._axes
-        units = self.Units
-        dtype = self.dtype
-
-        cfa_data = {
-            "dtype": dtype,
-            "Units": str(units),
-            "shape": self._shape,
-            "_axes": axes[:],
-            "_pmshape": self._pmshape,
-        }
-
-        pmaxes = self._pmaxes
-        if pmaxes:
-            cfa_data["_pmaxes"] = pmaxes[:]
-
-        #        flip = self._flip
-        flip = self._flip()
-        if flip:
-            cfa_data["_flip"] = flip[:]
-
-        fill_value = self.get_fill_value(None)
-        if fill_value is not None:
-            cfa_data["fill_value"] = fill_value
-
-        cyclic = self._cyclic
-        if cyclic:
-            cfa_data["_cyclic"] = cyclic.copy()
-
-        cfa_data["_HDF_chunks"] = self.HDF_chunks()
-
-        partitions = []
-        for index, partition in self.partitions.ndenumerate():
-
-            attrs = {}
-
-            p_subarray = partition.subarray
-            p_dtype = p_subarray.dtype
-
-            # Location in partition matrix
-            if index:
-                attrs["index"] = index
-
-            # Sub-array location
-            attrs["location"] = partition.location[:]
-
-            # Sub-array part
-            p_part = partition.part
-            if p_part:
-                attrs["part"] = p_part[:]
-
-            # Sub-array axes
-            p_axes = partition.axes
-            if p_axes != axes:
-                attrs["axes"] = p_axes[:]
-
-            # Sub-array units
-            p_Units = partition.Units
-            if p_Units != units:
-                attrs["Units"] = str(p_Units)
-
-            # Sub-array flipped axes
-            p_flip = partition.flip
-            if p_flip:
-                attrs["flip"] = p_flip[:]
-
-            # --------------------------------------------------------
-            # File format specific stuff
-            # --------------------------------------------------------
-            if isinstance(p_subarray, NetCDFArray):
-                # if isinstance(p_subarray.array, NetCDFFileArray):
-                # ----------------------------------------------------
-                # NetCDF File Array
-                # ----------------------------------------------------
-                attrs["format"] = "netCDF"
-
-                subarray = {}
-
-                subarray["file"] = p_subarray.get_filename()
-                subarray["shape"] = p_subarray.shape
-
-                subarray["ncvar"] = p_subarray.get_ncvar()
-                subarray["varid"] = p_subarray.get_varid()
-
-                if p_dtype != dtype:
-                    subarray["dtype"] = p_dtype
-
-                attrs["subarray"] = subarray
-
-            elif isinstance(p_subarray, UMArray):
-                # elif isinstance(p_subarray.array, UMFileArray):
-                # ----------------------------------------------------
-                # UM File Array
-                # ----------------------------------------------------
-                attrs["format"] = "UM"
-
-                # TODOCFA: CFA only allows for one address. Surely(?)
-                #          we only need the "header_offset", from
-                #          which the "data_offset" and "disk_length"
-                #          can be derived at read time.
-
-                subarray = {}
-                for attr in (
-                    "filename",
-                    "shape",
-                    "header_offset",
-                    "data_offset",
-                    "disk_length",
-                ):
-                    subarray[attr] = getattr(p_subarray, attr)
-
-                if p_dtype != dtype:
-                    subarray["dtype"] = p_dtype
-
-                attrs["subarray"] = subarray
-            else:
-                attrs["subarray"] = p_subarray
-
-            partitions.append(attrs)
-        # --- End: for
-
-        cfa_data["Partitions"] = partitions
-
-        return cfa_data
-
-    def loadd(self, d, chunk=True):
-        """Reset the data in place from a dictionary serialization.
-
-        .. seealso:: `dumpd`, `loads`
-
-        :Parameters:
-
-            d: `dict`
-                A dictionary serialization of a `cf.Data` object, such as
-                one as returned by the `dumpd` method.
-
-            chunk: `bool`, optional
-                If True (the default) then the reset data array will be
-                re-partitioned according the current chunk size, as
-                defined by the `cf.chunksize` function.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d = Data([[1, 2, 3]], 'm')
-        >>> e = Data([6, 7, 8, 9], 's')
-        >>> e.loadd(d.dumpd())
-        >>> e.equals(d)
-        True
-        >>> e is d
-        False
-
-        >>> e = Data(loadd=d.dumpd())
-        >>> e.equals(d)
-        True
-
-        """
-        axes = list(d.get("_axes", ()))
-        shape = tuple(d.get("shape", ()))
-
-        units = d.get("Units", None)
-        if units is None:
-            units = Units()
-        else:
-            units = Units(units)
-
-        dtype = d["dtype"]
-        self._dtype = dtype
-        self.Units = units
-        self._axes = axes
-
-        self._flip(list(d.get("_flip", ())))
-        self.set_fill_value(d.get("fill_value", None))
-
-        self._shape = shape
-        self._ndim = len(shape)
-        self._size = reduce(mul, shape, 1)
-
-        cyclic = d.get("_cyclic", None)
-        # Never change the value of the _cyclic attribute in-place
-        if cyclic:
-            self._cyclic = cyclic.copy()
-        else:
-            self._cyclic = _empty_set
-
-        HDF_chunks = d.get("_HDF_chunks")
-        if HDF_chunks:
-            self.HDF_chunks(HDF_chunks)
-
-        filename = d.get("file", None)
-
-        base = d.get("base", None)
-
-        # ------------------------------------------------------------
-        # Initialise an empty partition array
-        # ------------------------------------------------------------
-        partition_matrix = None  # PartitionMatrix(
-        #            np.empty(d.get("_pmshape", ()), dtype=object),
-        #            list(d.get("_pmaxes", ())),
-        #        )
-        pmndim = partition_matrix.ndim
-
-        # ------------------------------------------------------------
-        # Fill the partition array with partitions
-        # ------------------------------------------------------------
-        for attrs in d["Partitions"]:
-
-            # Find the position of this partition in the partition
-            # matrix
-            if "index" in attrs:
-                index = attrs["index"]
-                if len(index) == 1:
-                    index = index[0]
-                else:
-                    index = tuple(index)
-            else:
-                index = (0,) * pmndim
-
-            location = attrs.get("location", None)
-            if location is not None:
-                location = location[:]
-            else:
-                # Default location
-                location = [[0, i] for i in shape]
-
-            p_units = attrs.get("p_units", None)
-            if p_units is None:
-                p_units = units
-            else:
-                p_units = Units(p_units)
-
-            partition = None  # Partition(
-            #                location=location,
-            #                axes=attrs.get("axes", axes)[:],
-            #                flip=attrs.get("flip", [])[:],
-            #                Units=p_units,
-            #                part=attrs.get("part", [])[:],
-            #            )
-
-            fmt = attrs.get("format", None)
-            if fmt is None:
-                # ----------------------------------------------------
-                # Subarray is effectively a numpy array in memory
-                # ----------------------------------------------------
-                partition.subarray = attrs["subarray"]
-
-            else:
-                # ----------------------------------------------------
-                # Subarray is in a file on disk
-                # ----------------------------------------------------
-                partition.subarray = attrs["subarray"]
-                if fmt not in ("netCDF", "UM"):
-                    raise TypeError(
-                        "Don't know how to load sub-array from file "
-                        "format {!r}".format(fmt)
-                    )
-
-                # Set the 'subarray' attribute
-                kwargs = attrs["subarray"].copy()
-
-                kwargs["shape"] = tuple(kwargs["shape"])
-
-                kwargs["ndim"] = len(kwargs["shape"])
-                kwargs["size"] = reduce(mul, kwargs["shape"], 1)
-
-                kwargs.setdefault("dtype", dtype)
-
-                if "file" in kwargs:
-                    f = kwargs["file"]
-                    if f == "":
-                        kwargs["filename"] = filename
-                    else:
-                        if base is not None:
-                            f = pathjoin(base, f)
-
-                        kwargs["filename"] = f
-                else:
-                    kwargs["filename"] = filename
-
-                del kwargs["file"]
-
-                if fmt == "netCDF":
-                    partition.subarray = NetCDFArray(**kwargs)
-                elif fmt == "UM":
-                    partition.subarray = UMArray(**kwargs)
-            # --- End: if
-
-            # Put the partition into the partition array
-            partition_matrix[index] = partition
-        # --- End: for
-
-        # Save the partition array
-        self.partitions = partition_matrix
-
-        if chunk:
-            self.chunk()
 
     def can_compute(self, functions=None, log_levels=None, override=False):
         """TODODASK - this method is premature - needs thinking about as part
