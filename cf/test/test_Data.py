@@ -3843,6 +3843,22 @@ class DataTest(unittest.TestCase):
         del d.fill_value
         self.assertIsNone(d.fill_value)
 
+    def test_Data_override_units(self):
+        d = cf.Data(1012, "hPa")
+        e = d.override_units("km")
+        self.assertEqual(e.Units, cf.Units("km"))
+        self.assertEqual(e.datum(), d.datum())
+
+        self.assertIsNone(d.override_units(cf.Units("watts"), inplace=True))
+
+    def test_Data_override_calendar(self):
+        d = cf.Data(1, "days since 2020-02-28")
+        e = d.override_calendar("noleap")
+        self.assertEqual(e.Units, cf.Units("days since 2020-02-28", "noleap"))
+        self.assertEqual(e.datum(), d.datum())
+
+        self.assertIsNone(d.override_calendar("all_leap", inplace=True))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
