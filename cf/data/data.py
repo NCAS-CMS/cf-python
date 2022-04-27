@@ -4894,18 +4894,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return bool(dx.any())
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def isscalar(self):
-        """True if the data array is a 0-d scalar array.
+        """True if the data is a 0-d scalar array.
 
         **Examples**
 
-        >>> d.ndim
-        0
+        >>> d = cf.Data(9, 'm')
         >>> d.isscalar
         True
-
-        >>> d.ndim >= 1
-        True
+        >>> d = cf.Data([9], 'm')
+        >>> d.isscalar
+        False
+        >>> d = cf.Data([9, 10], 'm')
         >>> d.isscalar
         False
 

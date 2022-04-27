@@ -3845,6 +3845,11 @@ class DataTest(unittest.TestCase):
 
         self.assertIsNone(d.override_calendar("all_leap", inplace=True))
 
+    def test_Data_isscalar(self):
+        self.assertTrue(cf.Data(9, "m").isscalar)
+        self.assertFalse(cf.Data([9], "m").isscalar)
+        self.assertFalse(cf.Data([9, 10], "m").isscalar)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
