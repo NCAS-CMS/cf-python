@@ -3845,6 +3845,18 @@ class DataTest(unittest.TestCase):
 
         self.assertIsNone(d.override_calendar("all_leap", inplace=True))
 
+    def test_Data_atol(self):
+        d = cf.Data(1)
+        self.assertEqual(d._atol, cf.atol())
+        cf.atol(0.001)
+        self.assertEqual(d._atol, 0.001)
+
+    def test_Data_rtol(self):
+        d = cf.Data(1)
+        self.assertEqual(d._rtol, cf.rtol())
+        cf.rtol(0.001)
+        self.assertEqual(d._rtol, 0.001)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
