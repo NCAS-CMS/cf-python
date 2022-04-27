@@ -2612,7 +2612,7 @@ class DataTest(unittest.TestCase):
                         a = np.sin(a.data)
 
                 c = getattr(np.ma, method)(a)
-                for units in (None, "", "1", "radians", "K"):
+                for units in (None, "", "1", "radians", "m"):
                     d = cf.Data(a, units=units)
                     # Suppress warnings that some values are
                     # invalid (NaN, +/- inf) or there is
@@ -3145,7 +3145,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3162,7 +3162,7 @@ class DataTest(unittest.TestCase):
     def test_Data_max(self):
         # Masked array
         a = self.ma
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3178,7 +3178,7 @@ class DataTest(unittest.TestCase):
     def test_Data_maximum_absolute_value(self):
         # Masked array
         a = self.ma
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3195,7 +3195,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3213,7 +3213,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3230,7 +3230,7 @@ class DataTest(unittest.TestCase):
     def test_Data_mid_range(self):
         # Masked array, non-masked weights
         a = self.ma
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3249,7 +3249,7 @@ class DataTest(unittest.TestCase):
     def test_Data_min(self):
         # Masked array
         a = self.ma
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3265,7 +3265,7 @@ class DataTest(unittest.TestCase):
     def test_Data_minimum_absolute_value(self):
         # Masked array
         a = self.ma
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3282,7 +3282,7 @@ class DataTest(unittest.TestCase):
         # Masked array
         a = self.ma
 
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3302,7 +3302,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3319,7 +3319,7 @@ class DataTest(unittest.TestCase):
     def test_Data_sample_size(self):
         # Masked array
         a = self.ma
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3334,7 +3334,7 @@ class DataTest(unittest.TestCase):
 
         # Non-masked array
         a = self.a
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3350,7 +3350,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         std = d.std(weights=weights, ddof=1)
         var = d.var(weights=weights, ddof=1)
@@ -3361,7 +3361,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3379,7 +3379,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3397,7 +3397,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         # Weights=None
         for axis in axis_combinations(a):
@@ -3428,7 +3428,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         # Weights=None
         for axis in axis_combinations(a):
@@ -3453,7 +3453,7 @@ class DataTest(unittest.TestCase):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         # Weighted ddof = 0
         for axis in axis_combinations(a):
@@ -3508,12 +3508,11 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __lt__ and __le__")
     def test_Data_mean_of_upper_decile(self):
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
-        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+        d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
 
         for axis in axis_combinations(a):
             b = reshape_array(a, axis)
@@ -3546,9 +3545,18 @@ class DataTest(unittest.TestCase):
             self.assertTrue((e.mask == b.mask).all())
             self.assertTrue(np.allclose(e, b))
 
+        # mtol
+        a[0, 0] = cf.masked
+        d = cf.Data(a, "m", chunks=3)
+        e = d.mean_of_upper_decile(mtol=0)
+        self.assertEqual(e.array.mask, True)
+
+        # Inplace
+        self.assertIsNone(d.mean_of_upper_decile(inplace=True))
+
     def test_Data_collapse_mtol(self):
         # Data with exactly half of its elements masked
-        d = cf.Data(np.arange(6), "K", mask=[0, 1, 0, 1, 0, 1], chunks=2)
+        d = cf.Data(np.arange(6), "m", mask=[0, 1, 0, 1, 0, 1], chunks=2)
 
         for func in (
             d.integral,
@@ -3573,10 +3581,8 @@ class DataTest(unittest.TestCase):
             self.assertTrue(func(mtol=0.4).array.mask)
             self.assertFalse(func(mtol=0.5).array.mask)
 
-        # TODODASK - add in mean_of_upper_decile when it's daskified
-
     def test_Data_collapse_units(self):
-        d = cf.Data([1, 2], "K")
+        d = cf.Data([1, 2], "m")
 
         self.assertEqual(d.sample_size().Units, cf.Units())
 
@@ -3594,6 +3600,7 @@ class DataTest(unittest.TestCase):
             d.root_mean_square,
             d.std,
             d.sum,
+            d.mean_of_upper_decile,
         ):
             self.assertEqual(func().Units, d.Units)
 
@@ -3625,8 +3632,6 @@ class DataTest(unittest.TestCase):
         ):
             self.assertEqual(func().Units, cf.Units())
 
-        # TODODASK - add in mean_of_upper_decile when it's daskified
-
     def test_Data_collapse_keepdims(self):
         d = cf.Data(np.arange(6).reshape(2, 3))
 
@@ -3649,6 +3654,7 @@ class DataTest(unittest.TestCase):
             d.sum_of_weights,
             d.sum_of_weights2,
             d.var,
+            d.mean_of_upper_decile,
         ):
             for axis in axis_combinations(d):
                 e = func(axes=axis, squeeze=False)
@@ -3659,8 +3665,6 @@ class DataTest(unittest.TestCase):
                 e = func(axes=axis, squeeze=True)
                 s = [n for i, n in enumerate(d.shape) if i not in axis]
                 self.assertEqual(e.shape, tuple(s))
-
-        # TODODASK - add in mean_of_upper_decile
 
     def test_Data_collapse_dtype(self):
         d = cf.Data([1, 2, 3, 4], dtype="i4", chunks=2)
@@ -3701,6 +3705,7 @@ class DataTest(unittest.TestCase):
                 x.root_mean_square,
                 x.std,
                 x.var,
+                x.mean_of_upper_decile,
             ):
                 self.assertEqual(func().dtype, r)
 
@@ -3723,8 +3728,6 @@ class DataTest(unittest.TestCase):
                 d.sum_of_weights2,
             ):
                 self.assertTrue(func(weights=w).dtype, r)
-
-        # TODODASK - add in mean_of_upper_decile
 
     def test_Data_get_units(self):
         for units in ("", "m", "days since 2000-01-01"):
