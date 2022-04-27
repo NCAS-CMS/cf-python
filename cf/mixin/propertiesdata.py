@@ -42,6 +42,10 @@ _relational_methods = (
 logger = logging.getLogger(__name__)
 
 
+class DeprecationError(Exception):
+    pass
+
+
 class PropertiesData(Properties):
     """Mixin class for a data array with metadata."""
 
@@ -819,40 +823,6 @@ class PropertiesData(Properties):
     #                matches.append({None: m})
     #
     #        return matches
-
-    def __query_set__(self, values):
-        """Implements the “member of set” condition."""
-        new = self.copy()
-        new.set_data(self.data.__query_set__(values), copy=False)
-        return new
-
-    #    def _query_contain(self, value):
-    #        '''TODO#
-    #
-    #        '''
-    #        new = self.copy()
-    #        new.set_data(self.data._query_contain(value), copy=False)
-    #        return new
-
-    #    def _query_contains(self, value):
-    #        '''TODO
-    #
-    #        '''
-    #        new = self.copy()
-    #        new.set_data(self.data._query_contains(value), copy=False)
-    #        return new
-
-    def __query_wi__(self, value):
-        """Implements the “within a range” condition."""
-        new = self.copy()
-        new.set_data(self.data.__query_wi__(value), copy=False)
-        return new
-
-    def __query_wo__(self, value):
-        """Implements the “without a range” condition."""
-        new = self.copy()
-        new.set_data(self.data.__query_wo__(value), copy=False)
-        return new
 
     def _unary_operation(self, method):
         """Implement unary arithmetic operations on the data array.
