@@ -1958,6 +1958,12 @@ class DataTest(unittest.TestCase):
         e = d.unique().array
         self.assertTrue((e.mask == b.mask).all())
 
+        # Data types
+        for dtype in "fibUS":
+            a = np.array([1, 2], dtype=dtype)
+            d = cf.Data(a)
+            self.assertTrue((d.unique().array == np.unique(a)).all())
+
     def test_Data_year_month_day_hour_minute_second(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
