@@ -1916,15 +1916,53 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(d.shape, a.shape)
                 self.assertTrue((d.array == a).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_unique(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        for chunks in ((-1, -1), (2, 1), (1, 2)):
+            # No masked points
+            a = np.ma.array([[4, 2, 1], [1, 2, 3]])
+            b = np.unique(a)
+            d = cf.Data(a, "metre", chunks=chunks)
+            e = d.unique()
+            self.assertEqual(e.shape, b.shape)
+            self.assertTrue((e.array == b).all())
+            self.assertEqual(e.Units, cf.Units("m"))
 
-        d = cf.Data([[4, 2, 1], [1, 2, 3]], "metre")
-        self.assertTrue((d.unique() == cf.Data([1, 2, 3, 4], "metre")).all())
-        d[1, -1] = cf.masked
-        self.assertTrue((d.unique() == cf.Data([1, 2, 4], "metre")).all())
+            # Some masked points
+            a[0, -1] = np.ma.masked
+            a[1, 0] = np.ma.masked
+            b = np.unique(a)
+            d = cf.Data(a, "metre", chunks=chunks)
+            e = d.unique().array
+            self.assertTrue((e == b).all())
+            self.assertTrue((e.mask == b.mask).all())
+
+            # All masked points
+            a[...] = np.ma.masked
+            d = cf.Data(a, "metre", chunks=chunks)
+            b = np.unique(a)
+            e = d.unique().array
+            self.assertEqual(e.size, 1)
+            self.assertTrue((e.mask == b.mask).all())
+
+        # Scalar
+        a = np.ma.array(9)
+        b = np.unique(a)
+        d = cf.Data(a, "metre")
+        e = d.unique().array
+        self.assertEqual(e.shape, b.shape)
+        self.assertTrue((e == b).all())
+
+        a = np.ma.array(9, mask=True)
+        b = np.unique(a)
+        d = cf.Data(a, "metre")
+        e = d.unique().array
+        self.assertTrue((e.mask == b.mask).all())
+
+        # Data types
+        for dtype in "fibUS":
+            a = np.array([1, 2], dtype=dtype)
+            d = cf.Data(a)
+            self.assertTrue((d.unique().array == np.unique(a)).all())
 
     def test_Data_year_month_day_hour_minute_second(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

@@ -7493,46 +7493,59 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
-    def unique(self):
-        """The unique elements of the array.
+    @daskified(_DASKIFIED_VERBOSE)
+    def unique(self, split_every=None):
+        """The unique elements of the data.
 
-        Returns a new object with the sorted unique elements in a one
-        dimensional array.
+        Returns the sorted unique elements of the array.
+
+        :Parameters:
+
+            {{split_every: `int` or `dict`, optional}}
+
+        :Returns:
+
+            `Data`
+                The unique values in a 1-d array.
 
         **Examples**
 
         >>> d = cf.Data([[4, 2, 1], [1, 2, 3]], 'metre')
-        >>> d.unique()
-        <CF Data: [1, 2, 3, 4] metre>
-        >>> d[1, -1] = cf.masked
-        >>> d.unique()
-        <CF Data: [1, 2, 4] metre>
+        >>> print(d.array)
+        [[4 2 1]
+         [1 2 3]]
+        >>> e = d.unique()
+        >>> e
+        <CF Data(4): [1, ..., 4] metre>
+        >>> print(e.array)
+        [1 2 3 4]
+        >>> d[0, 0] = cf.masked
+        >>> print(d.array)
+        [[-- 2 1]
+         [1 2 3]]
+        >>> e = d.unique()
+        >>> print(e.array)
+        [1 2 3 --]
 
         """
-        config = self.partition_configuration(readonly=True)
+        d = self.copy()
+        hardmask = d.hardmask
+        if hardmask:
+            # Soften a hardmask so that the result doesn't contain a
+            # seperate missing value for each input chunk that
+            # contains missing values. For any number greater than 0
+            # of missing values in the original data, we only want one
+            # missing value in the result.
+            d.soften_mask()
 
-        u = []
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            array = np.unique(array)
+        dx = d.to_dask_array()
+        dx = Collapse.unique(dx, split_every=split_every)
 
-            if partition.masked:
-                # Note that compressing a masked array may result in
-                # an array with zero size
-                array = array.compressed()
+        d._set_dask(dx, reset_mask_hardness=False)
+        if hardmask:
+            d.harden_mask()
 
-            size = array.size
-            if size > 1:
-                u.extend(array)
-            elif size == 1:
-                u.append(array.item())
-
-            partition.close()
-
-        u = np.unique(np.array(u, dtype=self.dtype))
-
-        return type(self)(u, units=self.Units)
+        return d
 
     @_display_or_return
     def dump(self, display=True, prefix=None):
