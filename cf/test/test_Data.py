@@ -2428,20 +2428,6 @@ class DataTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 d.percentile(q).array
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'select'")
-    def test_Data_dumpd_loadd_dumps(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        d = cf.read(self.filename)[0].data
-
-        dumpd = d.dumpd()
-        self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
-        self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
-
-        d.to_disk()
-        self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
-
     def test_Data_section(self):
         d = cf.Data(np.arange(24).reshape(2, 3, 4))
 
@@ -3777,6 +3763,14 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_to_dask_array(self):
+        d = cf.Data([1, 2, 3, 4], "m")
+        d.Units = cf.Units("km")
+        dx = d.to_dask_array()
+        self.assertIsInstance(dx, da.Array)
+        self.assertTrue((d.array == dx.compute()).all())
+        self.assertIs(da.asanyarray(d), dx)
+
     def test_Data_flat(self):
         d = cf.Data([[1, 2], [3, 4]], mask=[[0, 1], [0, 0]])
         self.assertEqual(list(d.flat()), [1, 3, 4])
@@ -3834,6 +3828,22 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.fill_value, 999)
         del d.fill_value
         self.assertIsNone(d.fill_value)
+
+    def test_Data_override_units(self):
+        d = cf.Data(1012, "hPa")
+        e = d.override_units("km")
+        self.assertEqual(e.Units, cf.Units("km"))
+        self.assertEqual(e.datum(), d.datum())
+
+        self.assertIsNone(d.override_units(cf.Units("watts"), inplace=True))
+
+    def test_Data_override_calendar(self):
+        d = cf.Data(1, "days since 2020-02-28")
+        e = d.override_calendar("noleap")
+        self.assertEqual(e.Units, cf.Units("days since 2020-02-28", "noleap"))
+        self.assertEqual(e.datum(), d.datum())
+
+        self.assertIsNone(d.override_calendar("all_leap", inplace=True))
 
 
 if __name__ == "__main__":
