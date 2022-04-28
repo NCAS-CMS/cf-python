@@ -30,14 +30,14 @@ from ..functions import (
     _numpy_isclose,
     _section,
     abspath,
+    atol,
+    default_netCDF_fillvals,
+    fm_threshold,
+    free_memory,
+    log_level,
+    parse_indices,
+    rtol,
 )
-from ..functions import atol as cf_atol
-from ..functions import default_netCDF_fillvals
-from ..functions import fm_threshold as cf_fm_threshold
-from ..functions import free_memory
-from ..functions import inspect as cf_inspect
-from ..functions import log_level, parse_indices
-from ..functions import rtol as cf_rtol
 from ..mixin_container import Container
 from ..units import Units
 from . import FileArray
@@ -687,14 +687,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return bool(dx.any())
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def _atol(self):
-        """Return the current value of the `atol` function."""
-        return cf_atol().value
+        """Return the current value of the `cf.atol` function."""
+        return atol().value
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def _rtol(self):
-        """Return the current value of the `rtol` function."""
-        return cf_rtol().value
+        """Return the current value of the `cf.rtol` function."""
+        return rtol().value
 
     def _is_abstract_Array_subclass(self, array):
         """Whether or not an array is a type of abstract Array.
@@ -710,6 +712,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return isinstance(array, cfdm.Array)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __data__(self):
         """Returns a new reference to self."""
         return self
@@ -9514,7 +9517,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             `None`
 
         """
-        print(cf_inspect(self))  # pragma: no cover
+        from ..functions import inspect
+
+        print(inspect(self))  # pragma: no cover
 
     def isclose(self, y, rtol=None, atol=None):
         """Return where data are element-wise equal to other,
@@ -10075,7 +10080,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
-        return self.size * (itemsize + 1) <= free_memory() - cf_fm_threshold()
+        return self.size * (itemsize + 1) <= free_memory() - fm_threshold()
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
