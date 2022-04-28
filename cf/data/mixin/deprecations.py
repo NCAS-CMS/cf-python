@@ -107,8 +107,23 @@ class DataClassDeprecationsMixin:
         """Deprecated at version 3.0.0."""
         _DEPRECATION_ERROR_ATTRIBUTE(self, "dtvarray")  # pragma: no cover
 
+    @property
+    def in_memory(self):
+        """True if the array is retained in memory.
+
+        Deprecated at version TODODASK.
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "in_memory",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_` instead."""
+        """Deprecated at version 3.4.0, use method `get_filenames`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
@@ -625,6 +640,38 @@ class DataClassDeprecationsMixin:
             "TODODASK - consider using 'chunks' instead"
         )  # pragma: no cover
 
+    def save_to_disk(self, itemsize=None):
+        """Deprecated."""
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "save_to_disk",
+            removed_at="4.0.0",
+        )  # pragma: no cover
+
+    def to_disk(self):
+        """Store the data array on disk.
+
+        Deprecated at version TODODASK.
+
+        There is no change to partitions whose sub-arrays are already
+        on disk.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.to_disk()
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "to_disk",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+        
     @staticmethod
     def seterr(all=None, divide=None, over=None, under=None, invalid=None):
         """Set how floating-point errors in the results of arithmetic

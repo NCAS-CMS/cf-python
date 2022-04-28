@@ -3220,11 +3220,11 @@ def _DEPRECATION_ERROR_ATTRIBUTE(
 ):
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
-
-    warnings.warn(
+    
+    raise DeprecationError(
         f"{instance.__class__.__name__} attribute {attribute!r} has been "
-        f"deprecated at version {version}{removed_at}. {message}",
-        DeprecationWarning,
+        f"deprecated at version {version} and will be removed at version "
+        f"{removed_at}. {message}"
     )
 
 
