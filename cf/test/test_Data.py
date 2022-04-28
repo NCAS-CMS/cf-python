@@ -2,6 +2,7 @@ import contextlib
 import datetime
 import faulthandler
 import inspect
+import io
 import itertools
 import os
 import unittest
@@ -3848,11 +3849,11 @@ class DataTest(unittest.TestCase):
 
     def test_Data_inspect(self):
         d = cf.Data([9], "m")
-        with open(os.devnull, "w") as devnull:
-            with contextlib.redirect_stdout(devnull):
-                self.assertIsNone(d.inspect())
 
-
+        f = io.StringIO()
+        with contextlib.redirect_stdout(f):
+            self.assertIsNone(d.inspect())
+            
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
