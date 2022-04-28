@@ -7003,6 +7003,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             return data
 
+        # d does have a Data interface
         data = data()
         if copy:
             data = data.copy()
@@ -8749,21 +8750,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
-    def outerproduct(self, e, inplace=False, i=False):
+    def outerproduct(self, a, inplace=False, i=False):
         """Compute the outer product with another data array.
 
         The axes of result will be the combined axes of the two input
-        arrays:
+        arrays.
 
-          >>> d.outerproduct(e).ndim == d.ndim + e.ndim
-          True
-          >>> d.outerproduct(e).shape == d.shape + e.shape
-          True
+        .. seealso :: `np.multiply.outer`
 
         :Parameters:
 
-            e: data-like
-                The data array with which to form the outer product.
+            a: array_like
+                The data with which to form the outer product.
 
             {{inplace: `bool`, optional}}
 
@@ -8772,36 +8770,54 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
+                The outer product, or `None` if the operation was
+                in-place.
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3], 'metre')
-        >>> o = d.outerproduct([4, 5, 6, 7])
-        >>> o
+        >>> d = cf.Data([1, 2, 3], 'm')
+        >>> d
+        <CF Data(3): [1, 2, 3] m>
+        >>> f = d.outerproduct([4, 5, 6, 7])
+        >>> f
         <CF Data(3, 4): [[4, ..., 21]] m>
-        >>> print(o.array)
+        >>> print(f.array)
         [[ 4  5  6  7]
          [ 8 10 12 14]
          [12 15 18 21]]
 
         >>> e = cf.Data([[4, 5, 6, 7], [6, 7, 8, 9]], 's-1')
-        >>> o = d.outerproduct(e)
-        >>> o
+        >>> e
+        <CF Data(2, 4): [[4, ..., 9]] s-1>
+        >>> f = d.outerproduct(e)
+        >>> f
         <CF Data(3, 2, 4): [[[4, ..., 27]]] m.s-1>
-        >>> print(o.array)
+        >>> print(f.array)
         [[[ 4  5  6  7]
           [ 6  7  8  9]]
+
          [[ 8 10 12 14]
           [12 14 16 18]]
+
          [[12 15 18 21]
           [18 21 24 27]]]
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        e = self.asdata(e)
 
-        d.reshape(d.shape + (1,) * e.ndim, inplace=True)
-        d *= e
+        # Cast 'a' as a Data object so that it definitely has sensible
+        # Units
+        a = self.asdata(a)
+        try:
+            a = conform_units(a, d.Units)
+        except ValueError:
+            pass
+
+        dx = d.to_dask_array()
+        dx = da.ufunc.multiply.outer(dx, a)
+        d._set_dask(dx, reset_mask_hardness=False)
+
+        d.override_units(d.Units * a.Units, inplace=True)
 
         return d
 
@@ -9655,6 +9671,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):
         """Change the shape of the data without changing its values.
 
+        It assumes that the array is stored in row-major order, and
+        only allows for reshapings that collapse or merge dimensions
+        like ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
+
         :Parameters:
 
             shape: `tuple` of `int`, or any number of `int`
@@ -9675,9 +9695,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             limit: int, optional
                 The maximum block size to target in bytes. If no limit
-                is provided, it defaults to the configuration value
-                ``dask.config.get('array.chunk-size')``. See
-                `dask.array.reshape` for details.
+                is provided, it defaults to a size in bytes defined by
+                the `cf.chunksize` function.
 
         :Returns:
 
@@ -9713,54 +9732,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = d.to_dask_array()
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
         d._set_dask(dx, reset_mask_hardness=True)
-        return d
-
-    @daskified(_DASKIFIED_VERBOSE)
-    @_inplace_enabled(default=False)
-    def reshape(self, newshape, inplace=False):
-        """Gives a new shape to an array without changing its data.
-
-        .. versionadded:: TODODASK
-
-        .. seealso:: `insert_dimension`, `squeeze`, `transpose`
-
-        :Parameters:
-
-            newshape: (sequence of) `int`
-                The new shape, which should be compatible with the
-                original shape. If an integer, then the result will be
-                a 1-d array of that length. One shape dimension can be
-                -1. In this case, the value is inferred from the
-                length of the array and remaining dimensions.
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `Data` or `None`
-                The reshaped data, or `None` if the operation was
-                in-place.
-
-        **Examples**
-
-        >>> d = cf.Data([0, 1, 2, 3, 4, 5], 'm')
-        >>> e = d.reshape((2, 3))
-        >>> e
-        <CF Data(2, 3): [[0, ..., 5]] m>
-        >>> print(e.array)
-        [[0 1 2]
-         [3 4 5]]
-
-        >>> print(d.reshape((1, 3, -1)).array)
-        [[[0 1]
-          [2 3]
-          [4 5]]]
-
-        """
-        d = _inplace_enabled_define_and_cleanup(self)
-        dx = d._get_dask()
-        dx = dx.reshape(newshape)
-        d._set_dask(dx, reset_mask_hardness=False)
         return d
 
     @daskified(_DASKIFIED_VERBOSE)

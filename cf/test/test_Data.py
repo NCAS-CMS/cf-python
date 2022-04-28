@@ -1421,27 +1421,21 @@ class DataTest(unittest.TestCase):
             d[[1], [0, 4, 1]] = 9
 
     def test_Data_outerproduct(self):
-        d = cf.Data(np.arange(12).reshape(4, 3))
+        a = np.arange(12).reshape(4, 3)
+        d = cf.Data(a, "m", chunks=2)
 
-        e = cf.Data(np.arange(5))
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (4, 3, 5))
+        for b in (9, [1, 2, 3, 4, 5], np.arange(30).reshape(6, 5)):
+            c = np.multiply.outer(a, b)
+            f = d.outerproduct(b)
+            self.assertEqual(f.shape, c.shape)
+            self.assertTrue((f.array == c).all())
+            self.assertEqual(d.Units, cf.Units("m"))
 
-        e = cf.Data(np.arange(5).reshape(5, 1))
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (4, 3, 5, 1))
-
-        e = cf.Data(np.arange(30).reshape(6, 5))
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (4, 3, 6, 5))
-
-        e = cf.Data(7)
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (4, 3))
-
-        e = cf.Data(np.arange(5))
+        # In-place
+        e = cf.Data([1, 2, 3, 4, 5], "s-1")
         self.assertIsNone(d.outerproduct(e, inplace=True))
         self.assertEqual(d.shape, (4, 3, 5))
+        self.assertEqual(d.Units, cf.Units("m.s-1"))
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_all(self):
@@ -3077,9 +3071,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(d))
 
     def test_Data_reshape(self):
-        a = self.ma
+        a = np.arange(12).reshape(3, 4)
         d = cf.Data(a)
-
         self.assertIsNone(d.reshape(*d.shape, inplace=True))
         self.assertEqual(d.shape, a.shape)
 
@@ -3822,30 +3815,6 @@ class DataTest(unittest.TestCase):
             e = d.tolist()
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
-
-    def test_Data_reshape(self):
-        a = np.arange(6)
-        d = cf.Data(a, "m")
-
-        a = a.reshape((2, 3))
-        self.assertIsNone(d.reshape((2, 3), inplace=True))
-        self.assertEqual(d.shape, a.shape)
-        self.assertTrue((d.array == a).all())
-
-        a = a.reshape((6, 1))
-        d = d.reshape((6, 1))
-        self.assertEqual(d.shape, a.shape)
-        self.assertTrue((d.array == a).all())
-
-        a = a.reshape((1, 2, -1))
-        d = d.reshape((1, 2, -1))
-        self.assertEqual(d.shape, a.shape)
-        self.assertTrue((d.array == a).all())
-
-        a = a.reshape(6)
-        d = d.reshape(6)
-        self.assertEqual(d.shape, a.shape)
-        self.assertTrue((d.array == a).all())
 
     def test_Data_uncompress(self):
         import cfdm
