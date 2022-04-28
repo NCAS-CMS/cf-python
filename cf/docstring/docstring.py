@@ -28,14 +28,8 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Class description susbstitutions (1 level of indentation)
     # ----------------------------------------------------------------
-    "{{formula terms links}}": """See the parametric vertical coordinate sections of the CF
-    conventions for more details:
-
-    `4.3.3. Parametric Vertical Coordinate
-    <https://cfconventions.org/Data/cf-conventions/cf-conventions-{{VN}}/cf-conventions.html#parametric-vertical-coordinate>`_
-
-    `Appendix D: Parametric Vertical Coordinates
-    <https://cfconventions.org/Data/cf-conventions/cf-conventions-{{VN}}/cf-conventions.html#parametric-v-coord>`_""",
+    "{{formula terms links}}": """See CF section 4.3.3 "Parametric Vertical Coordinate" and CF
+    Appendix D "Parametric Vertical Coordinates" for details.""",
     # ----------------------------------------------------------------
     # Class description susbstitutions (1 level of indentation)
     # ----------------------------------------------------------------
@@ -200,9 +194,8 @@ _docstring_substitution_definitions = {
 
                 By default, ``"auto"`` is used to specify the array
                 chunking, which uses a chunk size in bytes defined by
-                the configuration value
-                ``dask.config.get("array.chunk-size")``,
-                prefering square-like chunk shapes.
+                the `cf.chunksize` function, preferring square-like
+                chunk shapes.
 
                 *Parameter example:*
                   A blocksize like ``1000``.
@@ -246,6 +239,108 @@ _docstring_substitution_definitions = {
                   domain axis. If the vertical axis does not appear in
                   the computed non-parametric coodinates then this an
                   empty tuple.""",
+    # collapse axes
+    "{{collapse axes: (sequence of) `int`, optional}}": """axes: (sequence of) `int`, optional
+                The axes to be collapsed. By default all axes are
+                collapsed, resulting in output with size 1. Each axis
+                is identified by its integer position. If *axes* is an
+                empty sequence then the collapse is applied to each
+                scalar element and the result has the same shape as
+                the input data.""",
+    # collapse squeeze
+    "{{collapse squeeze: `bool`, optional}}": """squeeze: `bool`, optional
+                By default, the axes which are collapsed are left in
+                the result as dimensions with size one, so that the
+                result will broadcast correctly against the input
+                array. If set to True then collapsed axes are removed
+                from the data.""",
+    # collapse keepdims
+    "{{collapse keepdims: `bool`, optional}}": """keepdims: `bool`, optional
+                By default, the axes which are collapsed are left in
+                the result as dimensions with size one, so that the
+                result will broadcast correctly against the input
+                array. If set to False then collapsed axes are removed
+                from the data.""",
+    # weights
+    "{{weights: data_like, `dict`, or `None`, optional}}": """weights: data_like, `dict`, or `None`, optional
+                Weights associated with values of the data. By default
+                *weights* is `None`, meaning that all non-missing
+                elements of the data have a weight of 1 and all
+                missing elements have a weight of 0.
+
+                If *weights* is a data_like object then it must be
+                broadcastable to the array.
+
+                If *weights* is a dictionary then each key specifies
+                axes of the data (an `int` or `tuple` of `int`), with
+                a corresponding value of data_like weights for those
+                axes. The dimensions of a weights value must
+                correspond to its key axes in the same order. Not all
+                of the axes need weights assigned to them. The weights
+                that will be used will be an outer product of the
+                dictionary's values.
+
+                However they are specified, the weights are internally
+                broadcast to the shape of the data, and those weights
+                that are missing data, or that correspond to the
+                missing elements of the data, are assigned a weight of
+                0.""",
+    # collapse mtol
+    "{{mtol: number, optional}}": """mtol: number, optional
+                The sample size threshold below which collapsed values
+                are set to missing data. It is defined as a fraction
+                (between 0 and 1 inclusive) of the contributing input
+                data values.
+
+                The default of *mtol* is 1, meaning that a missing
+                datum in the output array occurs whenever all of its
+                contributing input array elements are missing data.
+
+                For other values, a missing datum in the output array
+                occurs whenever more than ``100*mtol%`` of its
+                contributing input array elements are missing data.
+
+                Note that for non-zero values of *mtol*, different
+                collapsed elements may have different sample sizes,
+                depending on the distribution of missing data in the
+                input data.""",
+    # ddof
+    "{{ddof: number}}": """ddof: number
+                The delta degrees of freedom, a non-negative
+                number. The number of degrees of freedom used in the
+                calculation is (N-*ddof*) where N represents the
+                number of non-missing elements. A value of 1 applies
+                Bessel's correction. If the calculation is weighted
+                then *ddof* can only be 0 or 1.""",
+    # split_every
+    "{{split_every: `int` or `dict`, optional}}": """split_every: `int` or `dict`, optional
+                Determines the depth of the recursive aggregation. If
+                set to or more than the number of input chunks, the
+                aggregation will be performed in two steps, one
+                partial collapse per input chunk and a single
+                aggregation at the end. If set to less than that, an
+                intermediate aggregation step will be used, so that
+                any of the intermediate or final aggregation steps
+                operates on no more than ``split_every`` inputs. The
+                depth of the aggregation graph will be
+                :math:`log_{split_every}(input chunks along reduced
+                axes)`. Setting to a low value can reduce cache size
+                and network transfers, at the cost of more CPU and a
+                larger dask graph.
+
+                By default, `dask` heuristically decides on a good
+                value. A default can also be set globally with the
+                ``split_every`` key in `dask.config`. See
+                `dask.array.reduction` for details.""",
+    # Collapse weights
+    "{{Collapse weights: data_like or `None`, optional}}": """weights: data_like or `None`, optional
+                Weights associated with values of the array. By
+                default *weights* is `None`, meaning that all
+                non-missing elements of the array are assumed to have
+                a weight equal to one.
+
+                When *weights* is a data_like object then it must have
+                the same shape as the array.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

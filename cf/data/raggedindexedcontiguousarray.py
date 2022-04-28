@@ -1,7 +1,11 @@
 import cfdm
 
+from .mixin import ArrayMixin
 
-class RaggedIndexedContiguousArray(cfdm.RaggedIndexedContiguousArray):
+
+class RaggedIndexedContiguousArray(
+    ArrayMixin, cfdm.RaggedIndexedContiguousArray
+):
     """An underlying indexed contiguous ragged array.
 
     A collection of features, each of which is sequence of (vertical)
@@ -16,10 +20,21 @@ class RaggedIndexedContiguousArray(cfdm.RaggedIndexedContiguousArray):
     "index variable" that specifies the feature that each profile
     belongs to.
 
+    It is assumed that the compressed dimensions are the two left-most
+    dimensions in the compressed array.
+
+    See CF section 9 "Discrete Sampling Geometries".
+
     .. versionadded:: 3.0.0
 
     """
 
-    @property
-    def dask_asarray(self):
-        return False
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        .. versionadded:: 3.0.0
+
+        """
+        return super().__repr__().replace("<", "<CF ", 1)
