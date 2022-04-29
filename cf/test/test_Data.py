@@ -1447,33 +1447,48 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.outerproduct(e, inplace=True))
         self.assertEqual(d.shape, (40, 30, 5), d.shape)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_all(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        d = cf.Data(np.array([[0] * 1000]))
-        self.assertTrue(not d.all())
-        d[-1, -1] = 1
-        self.assertFalse(d.all())
-        d[...] = 1
+        d = cf.Data([[1, 2], [3, 4]], "m")
         self.assertTrue(d.all())
+        self.assertEqual(d.all(keepdims=False).shape, ())
+        self.assertEqual(d.all(axis=()).shape, d.shape)
+        self.assertTrue((d.all(axis=0).array == [True, True]).all())
+        self.assertTrue((d.all(axis=1).array == [True, True]).all())
+        self.assertEqual(d.all().Units, cf.Units())
+
+        d[0] = cf.masked
+        d[1, 0] = 0
+        self.assertTrue((d.all(axis=0).array == [False, True]).all())
+        self.assertTrue(
+            (
+                d.all(axis=1).array == np.ma.array([True, False], mask=[1, 0])
+            ).all()
+        )
+
         d[...] = cf.masked
         self.assertTrue(d.all())
+        self.assertFalse(d.all(keepdims=False))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_any(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data([[0, 2], [0, 4]])
+        self.assertTrue(d.any())
+        self.assertEqual(d.any(keepdims=False).shape, ())
+        self.assertEqual(d.any(axis=()).shape, d.shape)
+        self.assertTrue((d.any(axis=0).array == [False, True]).all())
+        self.assertTrue((d.any(axis=1).array == [True, True]).all())
+        self.assertEqual(d.any().Units, cf.Units())
 
-        d = cf.Data(np.array([[0] * 1000]))
-        self.assertFalse(d.any())
-        d[-1, -1] = 1
-        self.assertTrue(d.any())
-        d[...] = 1
-        self.assertTrue(d.any())
+        d[0] = cf.masked
+        self.assertTrue((d.any(axis=0).array == [False, True]).all())
+        self.assertTrue(
+            (
+                d.any(axis=1).array == np.ma.array([True, True], mask=[1, 0])
+            ).all()
+        )
+
         d[...] = cf.masked
         self.assertFalse(d.any())
+        self.assertFalse(d.any(keepdims=False))
 
     def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1916,15 +1931,53 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(d.shape, a.shape)
                 self.assertTrue((d.array == a).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_unique(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        for chunks in ((-1, -1), (2, 1), (1, 2)):
+            # No masked points
+            a = np.ma.array([[4, 2, 1], [1, 2, 3]])
+            b = np.unique(a)
+            d = cf.Data(a, "metre", chunks=chunks)
+            e = d.unique()
+            self.assertEqual(e.shape, b.shape)
+            self.assertTrue((e.array == b).all())
+            self.assertEqual(e.Units, cf.Units("m"))
 
-        d = cf.Data([[4, 2, 1], [1, 2, 3]], "metre")
-        self.assertTrue((d.unique() == cf.Data([1, 2, 3, 4], "metre")).all())
-        d[1, -1] = cf.masked
-        self.assertTrue((d.unique() == cf.Data([1, 2, 4], "metre")).all())
+            # Some masked points
+            a[0, -1] = np.ma.masked
+            a[1, 0] = np.ma.masked
+            b = np.unique(a)
+            d = cf.Data(a, "metre", chunks=chunks)
+            e = d.unique().array
+            self.assertTrue((e == b).all())
+            self.assertTrue((e.mask == b.mask).all())
+
+            # All masked points
+            a[...] = np.ma.masked
+            d = cf.Data(a, "metre", chunks=chunks)
+            b = np.unique(a)
+            e = d.unique().array
+            self.assertEqual(e.size, 1)
+            self.assertTrue((e.mask == b.mask).all())
+
+        # Scalar
+        a = np.ma.array(9)
+        b = np.unique(a)
+        d = cf.Data(a, "metre")
+        e = d.unique().array
+        self.assertEqual(e.shape, b.shape)
+        self.assertTrue((e == b).all())
+
+        a = np.ma.array(9, mask=True)
+        b = np.unique(a)
+        d = cf.Data(a, "metre")
+        e = d.unique().array
+        self.assertTrue((e.mask == b.mask).all())
+
+        # Data types
+        for dtype in "fibUS":
+            a = np.array([1, 2], dtype=dtype)
+            d = cf.Data(a)
+            self.assertTrue((d.unique().array == np.unique(a)).all())
 
     def test_Data_year_month_day_hour_minute_second(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -3844,6 +3897,18 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.datum(), d.datum())
 
         self.assertIsNone(d.override_calendar("all_leap", inplace=True))
+
+    def test_Data_atol(self):
+        d = cf.Data(1)
+        self.assertEqual(d._atol, cf.atol())
+        cf.atol(0.001)
+        self.assertEqual(d._atol, 0.001)
+
+    def test_Data_rtol(self):
+        d = cf.Data(1)
+        self.assertEqual(d._rtol, cf.rtol())
+        cf.rtol(0.001)
+        self.assertEqual(d._rtol, 0.001)
 
 
 if __name__ == "__main__":
