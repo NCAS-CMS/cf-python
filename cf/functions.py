@@ -1864,17 +1864,16 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
         return a == b
 
 
-# TODODASK - sort out the "numpy" environment
-
-
 def parse_indices(shape, indices, cyclic=False, keepdims=True):
-    """TODODASK.
+    """Parse indices for array access and assignment.
 
     :Parameters:
 
         shape: sequence of `ints`
+            The shape of the array.
 
-        indices: `tuple` (not a `list`!)
+        indices: `tuple`
+            The indices to be applied.
 
         keepdims: `bool`, optional
             If True then an integral index is converted to a
@@ -1887,12 +1886,20 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
             is also returned that contains the parameters needed to
             interpret any cyclic slices.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.parse_indices((5, 8), ([1, 2, 4, 6],))
-    [array([1, 2, 4, 6]), slice(0, 8, 1)]
+    [array([1, 2, 4, 6]), slice(None, None, None)]
     >>> cf.parse_indices((5, 8), (Ellipsis, [2, 4, 6]))
-    [slice(0, 5, 1), slice(2, 7, 2)]
+    [slice(None, None, None), [2, 4, 6]]
+    >>> cf.parse_indices((5, 8), (Ellipsis, 4))
+    [slice(None, None, None), slice(4, 5, 1)]
+    >>> cf.parse_indices((5, 8), (Ellipsis, 4), keepdims=False)
+    [slice(None, None, None), 4]
+    >>> cf.parse_indices((5, 8), (slice(-2, 2)), cyclic=False)
+    [slice(-2, 2, None), slice(None, None, None)]
+    >>> cf.parse_indices((5, 8), (slice(-2, 2)), cyclic=True)
+    ([slice(0, 4, 1), slice(None, None, None)], {0: 2})
 
     """
     parsed_indices = []
@@ -3025,7 +3032,7 @@ def environment(display=True, paths=True):
         "Python": (platform.python_version(), sys.executable),
         "netCDF4": _get_module_info("netCDF4"),
         "cftime": _get_module_info("cftime"),
-        "numpy": (_numpy__version__, _os_path_abspath(_numpy__file__)),
+        "numpy": _get_module_info("numpy"),
         "psutil": _get_module_info("psutil"),
         "scipy": _get_module_info("scipy", try_except=True),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
@@ -3107,10 +3114,13 @@ def _DEPRECATION_ERROR_ARG(
     version="3.0.0",
     removed_at="4.0.0",
 ):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     raise DeprecationError(
         f"Argument {arg!r} of method '{instance.__class__.__name__}.{method}' "
-        f"has been deprecated at version {version} and is no longer available "
-        f"and will be removed at version {removed_at}. {message}"
+        f"has been deprecated at version {version} and is no longer available"
+        f"{removed_at}. {message}"
     )
 
 
@@ -3124,6 +3134,9 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
     version="3.0.0",
     removed_at="4.0.0",
 ):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     # Unsafe to set mutable '{}' as default in the func signature.
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}
@@ -3137,8 +3150,8 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
     for key in kwargs.keys():
         raise DeprecationError(
             f"Keyword {key!r} of function '{func}' has been deprecated at "
-            f"version {version} and is no longer available and will be "
-            f"removed at version {removed_at}. {message}"
+            f"version {version} and is no longer available{removed_at}. "
+            f"{message}"
         )
 
 
@@ -3156,6 +3169,9 @@ def _DEPRECATION_ERROR_KWARGS(
     version="3.0.0",
     removed_at="4.0.0",
 ):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     # Unsafe to set mutable '{}' as default in the func signature.
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}
@@ -3169,8 +3185,8 @@ def _DEPRECATION_ERROR_KWARGS(
         raise DeprecationError(
             f"Keyword {key!r} of method "
             f"'{instance.__class__.__name__}.{method}' has been deprecated "
-            f"at version {version} and is no longer available and will be "
-            f"removed at version {removed_at}. {message}"
+            f"at version {version} and is no longer available{removed_at}. "
+            f"{message}"
         )
 
 
@@ -3183,67 +3199,83 @@ def _DEPRECATION_ERROR_KWARG_VALUE(
     version="3.0.0",
     removed_at="4.0.0",
 ):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     raise DeprecationError(
         f"Value {value!r} of keyword {kwarg!r} of method "
         f"'{instance.__class__.__name__}.{method}' has been deprecated at "
-        f"version {version} and is no longer available and will be removed "
-        f"at version {removed_at}. {message}"
+        f"version {version} and is no longer available{removed_at}. {message}"
     )
 
 
 def _DEPRECATION_ERROR_METHOD(
-    instance, method, message="", version="3.0.0", removed_at="4.0.0"
+    instance, method, message="", version="3.0.0", removed_at=""
 ):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     raise DeprecationError(
         f"{instance.__class__.__name__} method {method!r} has been deprecated "
-        f"at version {version} and is no longer available and will be "
-        f"removed at version {removed_at}. {message}"
+        f"at version {version} and is no longer available{removed_at}. "
+        f"{message}"
     )
 
 
 def _DEPRECATION_ERROR_ATTRIBUTE(
-    instance, attribute, message="", version="3.0.0", removed_at="4.0.0"
+    instance, attribute, message="", version="3.0.0", removed_at=""
 ):
-    warnings.warn(
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+    
+    raise DeprecationError(
         f"{instance.__class__.__name__} attribute {attribute!r} has been "
         f"deprecated at version {version} and will be removed at version "
-        f"{removed_at}. {message}",
-        DeprecationWarning,
+        f"{removed_at}. {message}"
     )
 
 
 def _DEPRECATION_ERROR_FUNCTION(
     func, message="", version="3.0.0", removed_at="4.0.0"
 ):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     raise DeprecationError(
         f"Function {func!r} has been deprecated at version {version} and is "
-        f"no longer available and will be removed at version {removed_at}. "
-        f"{message}"
+        f"no longer available{removed_at}. {message}"
     )
 
 
 def _DEPRECATION_ERROR_CLASS(
     cls, message="", version="3.0.0", removed_at="4.0.0"
 ):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     raise DeprecationError(
         f"Class {cls!r} has been deprecated at version {version} and is no "
-        f"longer available and will be removed at version {removed_at}. "
-        f"{message}"
+        f"longer available{removed_at}. {message}"
     )
 
 
 def _DEPRECATION_WARNING_METHOD(
     instance, method, message="", new=None, version="3.0.0", removed_at="4.0.0"
 ):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     warnings.warn(
         f"{instance.__class__.__name__} method {method!r} has been deprecated "
-        f"at version {version} and will be removed at version {removed_at}. "
-        f"{message}",
+        f"at version {version}{removed_at}. {message}",
         DeprecationWarning,
     )
 
 
 def _DEPRECATION_ERROR_DICT(message="", version="3.0.0", removed_at="4.0.0"):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
         f"version {version} and is no longer available and will be removed "
@@ -3254,9 +3286,8 @@ def _DEPRECATION_ERROR_DICT(message="", version="3.0.0", removed_at="4.0.0"):
 def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0", removed_at="4.0.0"):
     raise DeprecationError(
         f"Use of a {instance.__class__.__name__!r} to identify constructs "
-        f"has been deprecated at version {version} and is no longer available "
-        "and will be removed at version {removed_at}. "
-        "Use the * operator to unpack the arguments instead."
+        f"has been deprecated at version {version} and is no longer available"
+        f"{removed_at}. Use the * operator to unpack the arguments instead."
     )
 
 
