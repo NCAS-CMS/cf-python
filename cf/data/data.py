@@ -845,7 +845,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 "elements is ambiguous. Use d.any() or d.all()"
             )
 
-        return bool(self._get_dask())
+        return bool(self.to_dask_array())
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -5665,7 +5665,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = self.copy(array=False)
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         dx = da.all(dx, axis=axis, keepdims=keepdims, split_every=split_every)
         d._set_dask(dx, reset_mask_hardness=False)
         d.hardmask = _DEFAULT_HARDMASK
@@ -5782,7 +5782,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = self.copy(array=False)
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         dx = da.any(dx, axis=axis, keepdims=keepdims, split_every=split_every)
         d._set_dask(dx, reset_mask_hardness=False)
         d.hardmask = _DEFAULT_HARDMASK
