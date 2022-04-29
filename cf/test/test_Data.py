@@ -1447,33 +1447,48 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.outerproduct(e, inplace=True))
         self.assertEqual(d.shape, (40, 30, 5), d.shape)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_all(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        d = cf.Data(np.array([[0] * 1000]))
-        self.assertTrue(not d.all())
-        d[-1, -1] = 1
-        self.assertFalse(d.all())
-        d[...] = 1
+        d = cf.Data([[1, 2], [3, 4]], "m")
         self.assertTrue(d.all())
+        self.assertEqual(d.all(keepdims=False).shape, ())
+        self.assertEqual(d.all(axis=()).shape, d.shape)
+        self.assertTrue((d.all(axis=0).array == [True, True]).all())
+        self.assertTrue((d.all(axis=1).array == [True, True]).all())
+        self.assertEqual(d.all().Units, cf.Units())
+
+        d[0] = cf.masked
+        d[1, 0] = 0
+        self.assertTrue((d.all(axis=0).array == [False, True]).all())
+        self.assertTrue(
+            (
+                d.all(axis=1).array == np.ma.array([True, False], mask=[1, 0])
+            ).all()
+        )
+
         d[...] = cf.masked
         self.assertTrue(d.all())
+        self.assertFalse(d.all(keepdims=False))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_any(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data([[0, 2], [0, 4]])
+        self.assertTrue(d.any())
+        self.assertEqual(d.any(keepdims=False).shape, ())
+        self.assertEqual(d.any(axis=()).shape, d.shape)
+        self.assertTrue((d.any(axis=0).array == [False, True]).all())
+        self.assertTrue((d.any(axis=1).array == [True, True]).all())
+        self.assertEqual(d.any().Units, cf.Units())
 
-        d = cf.Data(np.array([[0] * 1000]))
-        self.assertFalse(d.any())
-        d[-1, -1] = 1
-        self.assertTrue(d.any())
-        d[...] = 1
-        self.assertTrue(d.any())
+        d[0] = cf.masked
+        self.assertTrue((d.any(axis=0).array == [False, True]).all())
+        self.assertTrue(
+            (
+                d.any(axis=1).array == np.ma.array([True, True], mask=[1, 0])
+            ).all()
+        )
+
         d[...] = cf.masked
         self.assertFalse(d.any())
+        self.assertFalse(d.any(keepdims=False))
 
     def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
