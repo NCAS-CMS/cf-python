@@ -628,7 +628,7 @@ class DataClassDeprecationsMixin:
     def mask_invalid(self, *args, **kwargs):
         """Mask the array where invalid values occur (NaN or inf).
 
-        Deprecated at veriosn TODODASK. Use the method
+        Deprecated at version TODODASK. Use the method
         `masked_invalid` instead.
 
         .. seealso:: `where`
