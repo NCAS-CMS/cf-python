@@ -2891,9 +2891,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array == a).all())
 
     def test_Data__init__compression(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         import cfdm
 
         # Ragged
@@ -3911,6 +3908,19 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d._rtol, 0.001)
 
 
+    def test_Data_compressed_array(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+        self.assertTrue((d.compressed_array == f.compressed_array).all())
+
+        d = cf.Data([1, 2, 3], 'm')
+        with self.assertRaises(Exception):
+            d.compressed_array
+            
+        
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
