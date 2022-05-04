@@ -4769,9 +4769,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         .. note:: Setting the `hardmask` attribute does not
                   immediately change the mask hardness, rather its
-                  value indicates to other methods (such as `where`)
-                  whether or not the mask needs hardening or softening
-                  prior to an operation being defined.
+                  value indicates to other methods (such as `where`,
+                  `transpose`, etc.) whether or not the mask needs
+                  hardening or softening prior to an operation being
+                  defined, and those methods will reset the mask
+                  hardness if required.
 
                   By contrast, the `harden_mask` and `soften_mask`
                   methods immediately reset the mask hardness of the
@@ -4789,7 +4791,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d[0] = cf.masked
         >>> print(d.array)
         [-- 2 3]
-        >>> d[...]= 999
+        >>> d[...] = 999
         >>> print(d.array)
         [-- 999 999]
         >>> d.hardmask = False
