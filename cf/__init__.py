@@ -185,7 +185,7 @@ if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     )
 
 # Check the version of dask
-_minimum_vn = "2019.03.0"
+_minimum_vn = "2022.03.0"
 if LooseVersion(dask.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         f"Bad dask version: cf requires dask>={_minimum_vn}. "
