@@ -3732,9 +3732,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """'cf.Data._set_subspace' is unavailable."""
         raise NotImplementedError("'cf.Data._set_subspace' is unavailable.")
 
-    def _parse_indices(self, *args, **kwargs):
-        raise NotImplementedError("Use cf.parse_indices instead")
-
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
         """Join a sequence of data arrays together.
