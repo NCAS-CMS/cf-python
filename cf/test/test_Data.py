@@ -3923,7 +3923,6 @@ class DataTest(unittest.TestCase):
         cf.rtol(0.001)
         self.assertEqual(d._rtol, 0.001)
 
-
     def test_Data_compressed_array(self):
         import cfdm
 
@@ -3932,11 +3931,16 @@ class DataTest(unittest.TestCase):
         d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
         self.assertTrue((d.compressed_array == f.compressed_array).all())
 
-        d = cf.Data([1, 2, 3], 'm')
+        d = cf.Data([1, 2, 3], "m")
         with self.assertRaises(Exception):
             d.compressed_array
-            
-        
+
+        # TODO: when cfdm>1.9.0.3 is released (i.e. a release that
+        #       includes https://github.com/NCAS-CMS/cfdm/pull/184),
+        #       we can replace the loose "(Exception)" with the tight
+        #       "(ValueError)"
+
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

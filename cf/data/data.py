@@ -10844,7 +10844,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             "'Data.to_memory' is not available. "
             "Consider using 'Data.persist' instead."
         )
-    
+
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
