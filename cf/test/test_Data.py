@@ -2874,7 +2874,7 @@ class DataTest(unittest.TestCase):
             (e.array == [[-999, -999, -999], [5, -999, -999], [6, 7, 8]]).all()
         )
 
-        d.soften_mask()
+        d.hardmask = False
         e = d.where(a > 5, None, -999)
         self.assertTrue(e.shape == d.shape)
         self.assertTrue((e.array.mask == False).all())
