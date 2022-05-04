@@ -625,6 +625,45 @@ class DataClassDeprecationsMixin:
             "https://github.com/dask/dask/issues/3245 for more details)."
         )
 
+    def mask_invalid(self, *args, **kwargs):
+        """Mask the array where invalid values occur (NaN or inf).
+
+        Deprecated at version TODODASK. Use the method
+        `masked_invalid` instead.
+
+        .. seealso:: `where`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `Data` or `None`
+                The masked data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2])
+        >>> e = cf.Data([0, 2, 0])
+        >>> f = d / e
+        >>> f
+        <CF Data(3): [nan, 0.5, inf]>
+        >>> f.mask_invalid()
+        <CF Data(3): [--, 0.5, --]>
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "mask_invalid",
+            message="Use the method 'masked_invalid' instead.",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     def partition_boundaries(self):
         """Return the partition boundaries for each partition matrix
         dimension.
