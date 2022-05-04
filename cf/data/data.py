@@ -9191,7 +9191,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array()
         dx = da.ma.masked_invalid(dx)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
         return d
 
     def del_calendar(self, default=ValueError()):
