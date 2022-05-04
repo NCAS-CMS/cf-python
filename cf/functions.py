@@ -27,8 +27,6 @@ import netCDF4
 import numpy as np
 from dask import config
 from dask.utils import parse_bytes
-from numpy import __file__ as _numpy__file__
-from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
 from numpy import isclose as _x_numpy_isclose
@@ -3227,7 +3225,7 @@ def _DEPRECATION_ERROR_ATTRIBUTE(
 ):
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
-    
+
     raise DeprecationError(
         f"{instance.__class__.__name__} attribute {attribute!r} has been "
         f"deprecated at version {version} and will be removed at version "

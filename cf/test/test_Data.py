@@ -3910,6 +3910,33 @@ class DataTest(unittest.TestCase):
         cf.rtol(0.001)
         self.assertEqual(d._rtol, 0.001)
 
+    def test_Data_hardmask(self):
+        d = cf.Data([1, 2, 3])
+        d.hardmask = True
+        self.assertTrue(d.hardmask)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 1)
+
+        d[0] = cf.masked
+        self.assertTrue((d.array.mask == [True, False, False]).all())
+        d[...] = 999
+        self.assertTrue((d.array.mask == [True, False, False]).all())
+        d.hardmask = False
+        self.assertFalse(d.hardmask)
+        d[...] = -1
+        self.assertTrue((d.array.mask == [False, False, False]).all())
+
+    def test_Data_harden_mask(self):
+        d = cf.Data([1, 2, 3], hardmask=False)
+        d.harden_mask()
+        self.assertTrue(d.hardmask)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+
+    def test_Data_soften_mask(self):
+        d = cf.Data([1, 2, 3], hardmask=True)
+        d.soften_mask()
+        self.assertFalse(d.hardmask)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
