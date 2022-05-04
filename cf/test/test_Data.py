@@ -3839,6 +3839,22 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e, np.array(x).tolist())
             self.assertTrue(d.equals(cf.Data(e)))
 
+    def test_Data_masked_invalid(self):
+        a = np.array([0, 1, 2])
+        b = np.array([0, 2, 0])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            i = a / b
+
+        d = cf.Data(i, "m")
+        e = d.masked_invalid().array
+        c = np.ma.masked_invalid(i)
+
+        self.assertTrue((e.mask == c.mask).all())
+        self.assertTrue((e == c).all())
+
+        self.assertIsNone(d.masked_invalid(inplace=True))
+
     def test_Data_uncompress(self):
         import cfdm
 
