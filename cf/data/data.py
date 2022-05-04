@@ -5374,7 +5374,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.arctanh(inplace=True)
         >>> print(d.array)
         [nan inf 1.0986122886681098 0.6931471805599453 --]
-        >>> d.mask_invalid(inplace=True)
+        >>> d.masked_invalid(inplace=True)
         >>> print(d.array)
         [-- -- 1.0986122886681098 0.6931471805599453 --]
 
@@ -5429,7 +5429,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.arcsin(inplace=True)
         >>> print(d.array)
         [nan 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
-        >>> d.mask_invalid(inplace=True)
+        >>> d.masked_invalid(inplace=True)
         >>> print(d.array)
         [-- 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
 
@@ -5533,7 +5533,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.arccos(inplace=True)
         >>> print(d.array)
         [nan 0.0 0.6435011087932843 0.9272952180016123 --]
-        >>> d.mask_invalid(inplace=True)
+        >>> d.masked_invalid(inplace=True)
         >>> print(d.array)
         [-- 0.0 0.6435011087932843 0.9272952180016123 --]
 
@@ -5588,7 +5588,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.arccosh(inplace=True)
         >>> print(d.array)
         [0.6223625037147786 0.0 nan nan --]
-        >>> d.mask_invalid(inplace=True)
+        >>> d.masked_invalid(inplace=True)
         >>> print(d.array)
         [0.6223625037147786 0.0 -- -- --]
 
