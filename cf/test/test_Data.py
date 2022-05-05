@@ -1694,12 +1694,12 @@ class DataTest(unittest.TestCase):
                     )
 
                     try:
-                        d ** x
+                        d**x
                     except Exception:
                         pass
                     else:
                         message = "Failed in {!r}**{!r}".format(d, x)
-                        self.assertTrue((d ** x).all(), message)
+                        self.assertTrue((d**x).all(), message)
             # --- End: for
 
             for a0 in arrays:
@@ -1735,7 +1735,7 @@ class DataTest(unittest.TestCase):
                     )
                     message = "Failed in {!r}**{}".format(d, x)
                     self.assertTrue(
-                        (d ** x).equals(cf.Data(a0 ** x, "m2"), verbose=1),
+                        (d**x).equals(cf.Data(a0**x, "m2"), verbose=1),
                         message,
                     )
                     message = "Failed in {!r}.__truediv__{}".format(d, x)
@@ -1782,12 +1782,12 @@ class DataTest(unittest.TestCase):
                     )
 
                     try:
-                        x ** d
+                        x**d
                     except Exception:
                         pass
                     else:
                         message = "Failed in {}**{!r}".format(x, d)
-                        self.assertTrue((x ** d).all(), message)
+                        self.assertTrue((x**d).all(), message)
 
                     a = a0.copy()
                     try:
@@ -1905,12 +1905,12 @@ class DataTest(unittest.TestCase):
                     )
 
                     try:
-                        d ** x
+                        d**x
                     except Exception:
                         pass
                     else:
                         self.assertTrue(
-                            (x ** d).all(), "{}**{}".format(x, repr(d))
+                            (x**d).all(), "{}**{}".format(x, repr(d))
                         )
 
                     self.assertTrue(
@@ -1976,7 +1976,7 @@ class DataTest(unittest.TestCase):
             _ = e / d
 
         with self.assertRaises(FloatingPointError):
-            _ = e ** 123456
+            _ = e**123456
 
         cf.Data.mask_fpe(True)
         cf.Data.seterr(all="raise")
@@ -1988,13 +1988,13 @@ class DataTest(unittest.TestCase):
 
         g = cf.Data([1.0, -99])
         g[1] = cf.masked
-        f = e ** 123456
+        f = e**123456
         self.assertTrue(f.equals(g, verbose=2))
 
         cf.Data.mask_fpe(True)
         cf.Data.seterr(all="ignore")
         f = e / d
-        f = e ** 123456
+        f = e**123456
 
         cf.Data.mask_fpe(oldm)
         cf.Data.seterr(**olds)
@@ -2186,7 +2186,7 @@ class DataTest(unittest.TestCase):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.a, axes)
                         if h == "sum_of_squares":
-                            b = b ** 2
+                            b = b**2
 
                         b = np(b, axis=-1)
                         e = getattr(d, h)(
@@ -2207,7 +2207,7 @@ class DataTest(unittest.TestCase):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.ma, axes)
                         if h == "sum_of_squares":
-                            b = b ** 2
+                            b = b**2
 
                         b = np(b, axis=-1)
                         b = numpy.ma.asanyarray(b)
@@ -2984,7 +2984,7 @@ class DataTest(unittest.TestCase):
                             if h == "sd":
                                 self.assertEqual(e.Units, d.Units)
                             else:
-                                self.assertEqual(e.Units, d.Units ** 2)
+                                self.assertEqual(e.Units, d.Units**2)
 
                             self.assertTrue(
                                 (e.mask.array == b.mask).all(),

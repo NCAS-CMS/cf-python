@@ -671,9 +671,9 @@ def _make_external_files():
             eastward_wind = nc.createVariable(
                 dimensions=("grid_latitude", "grid_longitude"),
                 datatype="f8",
-                varname=u"eastward_wind",
+                varname="eastward_wind",
             )
-            eastward_wind.coordinates = u"latitude longitude"
+            eastward_wind.coordinates = "latitude longitude"
             eastward_wind.standard_name = "eastward_wind"
             eastward_wind.cell_methods = (
                 "grid_longitude: mean (interval: 1 day comment: ok) "

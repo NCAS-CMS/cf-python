@@ -632,7 +632,7 @@ def root_mean_square_f(a, axis=None, weights=None, masked=False):
     """
     a = double_precision(a)
 
-    return mean_f(a ** 2, axis=axis, weights=weights, masked=masked)
+    return mean_f(a**2, axis=axis, weights=weights, masked=masked)
 
 
 root_mean_square_fpartial = mean_fpartial
@@ -997,7 +997,7 @@ def sum_of_squares_f(a, axis=None, weights=None, masked=False):
 
     """
     a = double_precision(a)
-    return sum_f(a ** 2, axis=axis, weights=weights, masked=masked)
+    return sum_f(a**2, axis=axis, weights=weights, masked=masked)
 
 
 sum_of_squares_fpartial = sum_fpartial

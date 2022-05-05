@@ -4477,13 +4477,13 @@ class Data(Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data0.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units1 ** p
+                        return data0, data1, units1**p
                     elif units0.isdimensionless:
                         # units0 is dimensionless
                         if not units0.equals(_units_1):
@@ -4495,17 +4495,17 @@ class Data(Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data0.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units1 ** p
+                        return data0, data1, units1**p
                 # --- End: if
 
                 # This will deliberately raise an exception
-                units1 ** units0
+                units1**units0
             else:
                 # -----------------------------------------------------
                 # Operator is __pow__
@@ -4553,13 +4553,13 @@ class Data(Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data1.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units0 ** p
+                        return data0, data1, units0**p
                     elif units1.isdimensionless:
                         # units1 is dimensionless
                         if not units1.equals(_units_1):
@@ -4570,17 +4570,17 @@ class Data(Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data1.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units0 ** p
+                        return data0, data1, units0**p
                 # --- End: if
 
                 # This will deliberately raise an exception
-                units0 ** units1
+                units0**units1
             # --- End: if
         # --- End: if
 
@@ -14857,7 +14857,7 @@ class Data(Container, cfdm.Data):
         """
         units = self.Units
         if units:
-            units = units ** 2
+            units = units**2
 
         return self._collapse(
             sum_of_squares_f,
@@ -14982,7 +14982,7 @@ class Data(Container, cfdm.Data):
                 for w in weights.values():
                     weights_units = getattr(w, "Units", None)
                     if weights_units is not None:
-                        units = units * (weights_units ** 2)
+                        units = units * (weights_units**2)
         # --- End: if
 
         return self._collapse(
@@ -15205,7 +15205,7 @@ class Data(Container, cfdm.Data):
         """
         units = self.Units
         if units:
-            units = units ** 2
+            units = units**2
 
         return self._collapse(
             var_f,

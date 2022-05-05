@@ -3405,7 +3405,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         f"property: {positive!r}."
                     )
 
-            areas *= r ** 2
+            areas *= r**2
 
         if return_areas:
             return areas
@@ -3489,7 +3489,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             delta_x = x.diff(axis=-1)
             delta_y = y.diff(axis=-1)
 
-            all_lengths = (delta_x ** 2 + delta_y ** 2) ** 0.5
+            all_lengths = (delta_x**2 + delta_y**2) ** 0.5
             all_lengths = all_lengths.sum(-1, squeeze=True)
 
         elif x.Units.equivalent(_units_radians) and y.Units.equivalent(
@@ -3666,7 +3666,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 #    [actual_area/(4*pi*r**2)]
                 #    * (4/3)*pi*[(r+delta_z)**3 - r**3)]
                 volumes *= (
-                    delta_z ** 3 / (3 * r ** 2) + delta_z ** 2 / r + delta_z
+                    delta_z**3 / (3 * r**2) + delta_z**2 / r + delta_z
                 )
         else:
             raise ValueError(
@@ -4896,7 +4896,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             sin_theta = theta.sin()
 
             r = f.radius(default=radius)
-            r2_sin_theta = sin_theta * r ** 2
+            r2_sin_theta = sin_theta * r**2
 
             d2f_dphi2 = f.derivative(
                 x_key,
