@@ -192,7 +192,7 @@ class DataClassDeprecationsMixin:
 
     @property
     def varray(self):
-        """A numpy array view the data array.
+        """A numpy array view of the data array.
 
         Deprecated at version TODODASK. Data are now stored as `dask`
         arrays for which, in general, a numpy array view is not
