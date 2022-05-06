@@ -235,7 +235,7 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_` instead."""
+        """Deprecated at version 3.4.0, use method `get_filenames` instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
