@@ -1420,32 +1420,22 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             d[[1], [0, 4, 1]] = 9
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_outerproduct(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.arange(12).reshape(4, 3)
+        d = cf.Data(a, "m", chunks=2)
 
-        d = cf.Data(np.arange(1200).reshape(40, 30))
+        for b in (9, [1, 2, 3, 4, 5], np.arange(30).reshape(6, 5)):
+            c = np.multiply.outer(a, b)
+            f = d.outerproduct(b)
+            self.assertEqual(f.shape, c.shape)
+            self.assertTrue((f.array == c).all())
+            self.assertEqual(d.Units, cf.Units("m"))
 
-        e = cf.Data(np.arange(5))
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30, 5))
-
-        e = cf.Data(np.arange(5).reshape(5, 1))
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30, 5, 1))
-
-        e = cf.Data(np.arange(30).reshape(6, 5))
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30, 6, 5))
-
-        e = cf.Data(7)
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30), f.shape)
-
-        e = cf.Data(np.arange(5))
+        # In-place
+        e = cf.Data([1, 2, 3, 4, 5], "s-1")
         self.assertIsNone(d.outerproduct(e, inplace=True))
-        self.assertEqual(d.shape, (40, 30, 5), d.shape)
+        self.assertEqual(d.shape, (4, 3, 5))
+        self.assertEqual(d.Units, cf.Units("m.s-1"))
 
     def test_Data_all(self):
         d = cf.Data([[1, 2], [3, 4]], "m")
@@ -3096,9 +3086,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(d))
 
     def test_Data_reshape(self):
-        a = self.ma
+        a = np.arange(12).reshape(3, 4)
         d = cf.Data(a)
-
         self.assertIsNone(d.reshape(*d.shape, inplace=True))
         self.assertEqual(d.shape, a.shape)
 
