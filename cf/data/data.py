@@ -8756,7 +8756,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         The axes of result will be the combined axes of the two input
         arrays.
 
-        .. seealso :: `np.multiply.outer`
+        .. seealso:: `np.multiply.outer`
 
         :Parameters:
 
