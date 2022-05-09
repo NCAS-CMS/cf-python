@@ -9419,7 +9419,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
          [-- --]]
 
         >>> d = cf.Data.masked_all((), dtype=bool)
-        >>> print(d.array)
+        >>> d.array
         masked_array(data=--,
                      mask=True,
                fill_value=True,
