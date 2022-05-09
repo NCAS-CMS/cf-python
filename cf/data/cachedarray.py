@@ -29,7 +29,7 @@ class CachedArray(abstract.FileArray):
             array: numpy array
                 The array to be stored on disk in a temporary file.
 
-        **Examples:**
+        **Examples**
 
         >>> f = CachedArray(numpy.array([1, 2, 3, 4, 5]))
         >>> f = CachedArray(numpy.ma.array([1, 2, 3, 4, 5]))

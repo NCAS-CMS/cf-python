@@ -1,12 +1,11 @@
-import numpy
+import numpy as np
 
 from ..functions import get_subspace, parse_indices
 from ..umread_lib.umfile import File, Rec
-from . import abstract
-from .functions import _close_um_file  # , _open_um_file
+from .abstract import FileArray
 
 
-class UMArray(abstract.FileArray):
+class UMArray(FileArray):
     """A sub-array stored in a PP or UM fields file."""
 
     def __init__(
@@ -33,19 +32,12 @@ class UMArray(abstract.FileArray):
             dtype: `numpy.dtype`
                 The data type of the data array on disk.
 
-            ndim: `int`
-                The number of dimensions in the unpacked data
-                array. Must match up with th *shape* parameter.
-
             shape: `tuple`
                 The shape of the unpacked data array. Note that this
                 is the shape as required by the object containing the
                 `UMArray` object, and so may contain extra size one
                 dimensions. When read, the data on disk is reshaped to
                 *shape*.
-
-            size: `int`
-                The number of elements in the unpacked data array.
 
             header_offset: `int`
                 The start position in the file of the header.
@@ -64,7 +56,19 @@ class UMArray(abstract.FileArray):
 
             byte_ordering: `str`, optional
 
-        **Examples:**
+            size: `int`
+                Deprecated at version 1.9.TODO.0. If set will be
+                ignored.
+
+                Number of elements in the uncompressed array.
+
+            ndim: `int`
+                Deprecated at version 1.9.TODO.0. If set will be
+                ignored.
+
+                The number of uncompressed array dimensions.
+
+        **Examples**
 
         >>> a = UMFileArray(file='file.pp', header_offset=3156,
         ...                 data_offset=3420,
@@ -83,9 +87,7 @@ class UMArray(abstract.FileArray):
         super().__init__(
             filename=filename,
             dtype=dtype,
-            ndim=ndim,
             shape=shape,
-            size=size,
             header_offset=header_offset,
             data_offset=data_offset,
             disk_length=disk_length,
@@ -95,12 +97,14 @@ class UMArray(abstract.FileArray):
         )
 
         # By default, close the UM file after data array access
-        self._close = True
+        self._set_component("close", True, copy=False)
 
     def __getitem__(self, indices):
-        """x.__getitem__(indices) <==> x[indices]
+        """Return a subspace of the array.
 
-        Returns a numpy array.
+        x.__getitem__(indices) <==> x[indices]
+
+        Returns a subspace of the array as an independent numpy array.
 
         """
         f = self.open()
@@ -112,7 +116,6 @@ class UMArray(abstract.FileArray):
         int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
 
-        #        array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
         array = rec.get_data().reshape(self.shape)
 
         if indices is not Ellipsis:
@@ -142,8 +145,7 @@ class UMArray(abstract.FileArray):
             # Mask any missing values
             mask = array == fill_value
             if mask.any():
-                array = numpy.ma.masked_where(mask, array, copy=False)
-        # --- End: if
+                array = np.ma.masked_where(mask, array, copy=False)
 
         # ------------------------------------------------------------
         # Unpack the array using the scale_factor and add_offset, if
@@ -165,8 +167,7 @@ class UMArray(abstract.FileArray):
 
             array += add_offset
 
-        if self._close:
-            self.close()
+        self.close(f)
 
         # Return the numpy array
         return array
@@ -182,12 +183,20 @@ class UMArray(abstract.FileArray):
         return f"{self.header_offset}{self.shape} in {self.filename}"
 
     @property
-    def file_pointer(self):
-        """The file pointer starting at the position of the header.
+    def file_address(self):
+        """The file name and address.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
-            2-`tuple`
+            `tuple`
+                The file name and file address.
+
+        **Examples**
+
+        >>> a.file_address()
+        ('file.pp', 234835)
 
         """
         return (self.filename, self.header_offset)
@@ -261,30 +270,32 @@ class UMArray(abstract.FileArray):
         """
         return self._get_component("word_size")
 
-    def close(self):
-        """Close the file containing the data array.
+    def close(self, um):
+        """Close the dataset containing the data.
 
-        If the file is not open then no action is taken.
+        :Parameters:
+
+            um: `umfile_lib.File`
+                The UM or PP dataset to be be closed.
+
+                .. versionadded:: TODODASK
 
         :Returns:
 
             `None`
 
-        **Examples:**
-
-        >>> f.close()
-
         """
-        _close_um_file(self.filename)
+        if self._get_component("close"):
+            um.close_fd()
 
     def open(self):
-        """Open the file containing the data array.
+        """Returns an open dataset containing the data array.
 
         :Returns:
 
             `umfile_lib.File`
 
-        **Examples:**
+        **Examples**
 
         >>> f.open()
 
