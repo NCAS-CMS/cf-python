@@ -31,7 +31,7 @@ def _is_numeric_dtype(array):
             `bool`
                 Whether or not the array holds numeric elements.
 
-    **Examples:**
+    **Examples**
 
     >>> a = np.array([0, 1, 2])
     >>> cf.data.utils._is_numeric_dtype(a)
@@ -377,7 +377,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
         `str`
             The new axis idenfifier.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.data.utils.new_axis_identifier()
     'dim0'
@@ -502,22 +502,6 @@ def is_very_small(array, threshold=None):
         threshold = 0.125 * 2 ** 90  # TODODASK - True for now!
 
     return is_small(array, threshold)
-
-
-def dask_compatible(a):
-    """Convert an object to one which is dask compatible.
-
-    The object is returned unchanged unless it is a cf object
-    containing data, in which case the dask array of the data is
-    returned instead.
-
-    .. versionadded:: 4.0.0
-
-    """
-    try:
-        return a.data.get_dask(copy=False)
-    except AttributeError:
-        return a
 
 
 def scalar_masked_array(dtype=float):
@@ -668,6 +652,8 @@ def YMDhms(d, attr):
         raise ValueError(f"Can't get {attr}s from data with {units!r}")
 
     d = d._asdatetime()
-    d._map_blocks(partial(cf_YMDhms, attr=attr), dtype=int)
+    dx = d.to_dask_array()
+    dx = dx.map_blocks(partial(cf_YMDhms, attr=attr), dtype=int)
+    d._set_dask(dx, reset_mask_hardness=False)
     d.override_units(Units(None), inplace=True)
     return d

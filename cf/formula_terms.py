@@ -1,6 +1,6 @@
 import logging
 
-import cfdm
+from cfdm.core import DocstringRewriteMeta
 
 from .constants import (
     formula_terms_computed_standard_names,
@@ -16,7 +16,7 @@ from .units import Units
 logger = logging.getLogger(__name__)
 
 
-class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
+class FormulaTerms(metaclass=DocstringRewriteMeta):
     """Functions for computing non-parametric vertical coordinates from
     the formula defined by a coordinate reference construct.
 
@@ -64,13 +64,13 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring
+        """Return the package depth for "package" docstring
         substitutions.
 
         See `_docstring_package_depth` for details.
 
         """
-        return 1
+        return 0
 
     # ----------------------------------------------------------------
     # Private methods
@@ -224,8 +224,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
     def _computed_standard_name(f, standard_name, coordinate_reference):
         """Find the standard name of the computed non-parametric
         vertical coordinates.
-
-        {{formula terms links}}
 
         .. versionadded:: 3.8.0
 
@@ -558,8 +556,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         s-coordinate, the ocean_sigma over z coordinate, and the ocean
         double sigma coordinate.
 
-        {{formula terms links}}
-
         .. versionadded:: 3.8.0
 
         :Parameters:
@@ -680,8 +676,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         """Compute non-parametric vertical coordinates from
         atmosphere_ln_pressure_coordinate parametric coordinates.
 
-        {{formula terms links}}
-
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
                   coordinates, if applicable.
@@ -760,8 +754,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
     ):
         """Compute non-parametric vertical coordinates from
         atmosphere_sigma_coordinate parametric coordinates.
-
-        {{formula terms links}}
 
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
@@ -857,8 +849,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         """Compute non-parametric vertical coordinates from
         atmosphere_hybrid_sigma_pressure_coordinate parametric
         coordinates.
-
-        {{formula terms links}}
 
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
@@ -989,8 +979,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         """Compute non-parametric vertical coordinates from
         atmosphere_hybrid_height_coordinate parametric coordinates.
 
-        {{formula terms links}}
-
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
                   coordinates, if applicable.
@@ -1086,8 +1074,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
     ):
         """Compute non-parametric vertical coordinates from
         atmosphere_sleve_coordinate parametric coordinates.
-
-        {{formula terms links}}
 
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
@@ -1242,8 +1228,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         """Compute non-parametric vertical coordinates from
         ocean_sigma_coordinate parametric coordinates.
 
-        {{formula terms links}}
-
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
                   coordinates, if applicable.
@@ -1346,8 +1330,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
     ):
         """Compute non-parametric vertical coordinates from
         ocean_s_coordinate parametric coordinates.
-
-        {{formula terms links}}
 
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
@@ -1489,8 +1471,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         """Compute non-parametric vertical coordinates from
         ocean_s_coordinate_g1 parametric coordinates.
 
-        {{formula terms links}}
-
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
                   coordinates, if applicable.
@@ -1618,8 +1598,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         """Compute non-parametric vertical coordinates from
         ocean_s_coordinate_g2 parametric coordinates.
 
-        {{formula terms links}}
-
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
                   coordinates, if applicable.
@@ -1746,8 +1724,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
     ):
         """Compute non-parametric vertical coordinates from
         ocean_sigma_z_coordinate parametric coordinates.
-
-        {{formula terms links}}
 
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
@@ -1896,8 +1872,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
     ):
         """Compute non-parametric vertical coordinates from
         ocean_double_sigma_coordinate parametric coordinates.
-
-        {{formula terms links}}
 
         .. note:: The vertical axis is the last (rightmost) dimension of
                   the returned computed non-parametric vertical
@@ -2050,8 +2024,6 @@ class FormulaTerms(metaclass=cfdm.core.DocstringRewriteMeta):
         cls, f, coordinate_reference, default_to_zero=True, strict=True
     ):
         """Compute non-parametric vertical coordinates.
-
-        {{formula terms links}}
 
         Dimensional vertical auxiliary coordinate values are computed from
         parametric vertical coordinate values (usually dimensionless) and
