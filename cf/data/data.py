@@ -4917,26 +4917,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
-    def isscalar(self):
-        """True if the data is a 0-d scalar array.
-
-        **Examples**
-
-        >>> d = cf.Data(9, 'm')
-        >>> d.isscalar
-        True
-        >>> d = cf.Data([9], 'm')
-        >>> d.isscalar
-        False
-        >>> d = cf.Data([9, 10], 'm')
-        >>> d.isscalar
-        False
-
-        """
-        return not self.ndim
-
-    @property
-    @daskified(_DASKIFIED_VERBOSE)
     def nbytes(self):
         """Total number of bytes consumed by the elements of the array.
 
@@ -10876,7 +10856,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             "'Data.to_memory' is not available. "
             "Consider using 'Data.persist' instead."
         )
-    
+
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)

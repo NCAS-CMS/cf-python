@@ -3905,11 +3905,6 @@ class DataTest(unittest.TestCase):
 
         self.assertIsNone(d.override_calendar("all_leap", inplace=True))
 
-    def test_Data_isscalar(self):
-        self.assertTrue(cf.Data(9, "m").isscalar)
-        self.assertFalse(cf.Data([9], "m").isscalar)
-        self.assertFalse(cf.Data([9, 10], "m").isscalar)
-
     def test_Data_masked_all(self):
         # shape
         for shape in ((), (2,), (2, 3)):
@@ -3923,7 +3918,7 @@ class DataTest(unittest.TestCase):
             a = np.ma.masked_all((), dtype=dtype)
             d = cf.Data.masked_all((), dtype=dtype)
             self.assertEqual(d.dtype, a.dtype)
-            
+
     def test_Data_atol(self):
         d = cf.Data(1)
         self.assertEqual(d._atol, cf.atol())
@@ -3935,15 +3930,15 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d._rtol, cf.rtol())
         cf.rtol(0.001)
         self.assertEqual(d._rtol, 0.001)
-        
+
     def test_Data_inspect(self):
         d = cf.Data([9], "m")
-      
+
         f = io.StringIO()
         with contextlib.redirect_stdout(f):
             self.assertIsNone(d.inspect())
-            
-            
+
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
