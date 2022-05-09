@@ -3903,6 +3903,20 @@ class DataTest(unittest.TestCase):
 
         self.assertIsNone(d.override_calendar("all_leap", inplace=True))
 
+    def test_Data_masked_all(self):
+        # shape
+        for shape in ((), (2,), (2, 3)):
+            a = np.ma.masked_all(shape)
+            d = cf.Data.masked_all(shape)
+            self.assertEqual(d.shape, a.shape)
+            self.assertTrue((d.array.mask == a.mask).all())
+
+        # dtype
+        for dtype in "fibUS":
+            a = np.ma.masked_all((), dtype=dtype)
+            d = cf.Data.masked_all((), dtype=dtype)
+            self.assertEqual(d.dtype, a.dtype)
+            
     def test_Data_atol(self):
         d = cf.Data(1)
         self.assertEqual(d._atol, cf.atol())

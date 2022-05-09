@@ -53,7 +53,6 @@ from .dask_utils import (
     cf_soften_mask,
     cf_where,
 )
-from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
 from .utils import (  # is_small,; is_very_small,
     YMDhms,
@@ -4917,18 +4916,19 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         return bool(dx.any())
 
     @property
+    @daskified(_DASKIFIED_VERBOSE)
     def isscalar(self):
-        """True if the data array is a 0-d scalar array.
+        """True if the data is a 0-d scalar array.
 
         **Examples**
 
-        >>> d.ndim
-        0
+        >>> d = cf.Data(9, 'm')
         >>> d.isscalar
         True
-
-        >>> d.ndim >= 1
-        True
+        >>> d = cf.Data([9], 'm')
+        >>> d.isscalar
+        False
+        >>> d = cf.Data([9, 10], 'm')
         >>> d.isscalar
         False
 
@@ -9321,43 +9321,68 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
 
     @classmethod
-    def masked_all(cls, shape, dtype=None, units=None, chunk=True):
-        """Return a new data array of given shape and type with all
-        elements masked.
+    def masked_all(
+        cls,
+        shape,
+        dtype=None,
+        units=None,
+        calendar=None,
+        chunks=_DEFAULT_CHUNKS,
+    ):
+        """Return an empty masked array with all elements masked.
 
-        .. seealso:: `empty`, `ones`, `zeros`
+        .. seealso:: `empty`, `ones`, `zeros`, `masked_invalid`
 
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array.
+                The shape of the new array. e.g. ``(2, 3)`` or ``2``.
 
             dtype: data-type
-                The data-type of the new array. By default the data-type
-                is ``float``.
+                The desired output data-type for the array, e.g.
+                `numpy.int8`. The default is `numpy.float64`.
 
             units: `str` or `Units`
                 The units for the new data array.
 
+            calendar: `str`, optional
+                The calendar for reference time units.
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+                .. versionadded:: 4.0.0
+
         :Returns:
 
             `Data`
-                The new data array having all elements masked.
+                A masked array with all data masked.
 
         **Examples**
 
-        >>> d = cf.Data.masked_all((96, 73))
+        >>> d = cf.Data.masked_all((2, 2))
+        >>> print(d.array)
+        [[-- --]
+         [-- --]]
+
+        >>> d = cf.Data.masked_all((), dtype=bool)
+        >>> d.array
+        masked_array(data=--,
+                     mask=True,
+               fill_value=True,
+                    dtype=bool)
 
         """
-        array = FilledArray(
-            shape=tuple(shape),
-            size=reduce(mul, shape, 1),
-            ndim=len(shape),
-            dtype=np.dtype(dtype),
-            fill_value=cf_masked,
+        d = cls.empty(
+            shape=shape,
+            dtype=dtype,
+            units=units,
+            calendar=calendar,
+            chunks=chunks,
         )
-
-        return cls(array, units=units, chunk=chunk)
+        dx = d.to_dask_array()
+        dx = dx.map_blocks(partial(np.ma.array, mask=True, copy=False))
+        d._set_dask(dx, reset_mask_hardness=False)
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
