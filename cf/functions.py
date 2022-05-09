@@ -2686,14 +2686,17 @@ def inspect(self):
         `None`
 
     """
-    name = repr(self)
-    out = [name, "".ljust(len(name), "-")]
+    from pprint import pprint
+
+    try:
+        name = repr(self)
+    except Exception:
+        name = self.__class__.__name__
+
+    print("\n".join([name, "".ljust(len(name), "-")]))
 
     if hasattr(self, "__dict__"):
-        for key, value in sorted(self.__dict__.items()):
-            out.append(f"{key}: {value!r}")
-
-    print("\n".join(out))
+        pprint(self.__dict__)
 
 
 def broadcast_array(array, shape):
