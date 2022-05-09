@@ -5198,20 +5198,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
-    def varray(self):
-        """A numpy array view of the data array.
-
-        Deprecated at version TODODASK.
-
-        .. seealso:: `array`, `datetime_array`, `compute`, `persist`
-
-        """
-        raise NotImplementedError(
-            "The varray method was deprecated at version TODODASK"
-        )
-
-    @property
-    @daskified(_DASKIFIED_VERBOSE)
     def mask(self):
         """The Boolean missing data mask of the data array.
 
