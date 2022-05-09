@@ -27,8 +27,6 @@ import netCDF4
 import numpy as np
 from dask import config
 from dask.utils import parse_bytes
-from numpy import __file__ as _numpy__file__
-from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
 from numpy import isclose as _x_numpy_isclose
@@ -2688,14 +2686,17 @@ def inspect(self):
         `None`
 
     """
-    name = repr(self)
-    out = [name, "".ljust(len(name), "-")]
+    from pprint import pprint
+
+    try:
+        name = repr(self)
+    except Exception:
+        name = self.__class__.__name__
+
+    print("\n".join([name, "".ljust(len(name), "-")]))
 
     if hasattr(self, "__dict__"):
-        for key, value in sorted(self.__dict__.items()):
-            out.append(f"{key}: {value!r}")
-
-    print("\n".join(out))
+        pprint(self.__dict__)
 
 
 def broadcast_array(array, shape):

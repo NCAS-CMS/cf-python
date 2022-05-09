@@ -53,7 +53,6 @@ from .dask_utils import (
     cf_soften_mask,
     cf_where,
 )
-from .filledarray import FilledArray
 from .mixin import DataClassDeprecationsMixin
 from .utils import (  # is_small,; is_very_small,
     YMDhms,
@@ -845,7 +844,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 "elements is ambiguous. Use d.any() or d.all()"
             )
 
-        return bool(self._get_dask())
+        return bool(self.to_dask_array())
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -3732,9 +3731,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """'cf.Data._set_subspace' is unavailable."""
         raise NotImplementedError("'cf.Data._set_subspace' is unavailable.")
 
-    def _parse_indices(self, *args, **kwargs):
-        raise NotImplementedError("Use cf.parse_indices instead")
-
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
         """Join a sequence of data arrays together.
@@ -5202,20 +5198,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
-    def varray(self):
-        """A numpy array view of the data array.
-
-        Deprecated at version TODODASK.
-
-        .. seealso:: `array`, `datetime_array`, `compute`, `persist`
-
-        """
-        raise NotImplementedError(
-            "The varray method was deprecated at version TODODASK"
-        )
-
-    @property
-    @daskified(_DASKIFIED_VERBOSE)
     def mask(self):
         """The Boolean missing data mask of the data array.
 
@@ -5375,7 +5357,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.arctanh(inplace=True)
         >>> print(d.array)
         [nan inf 1.0986122886681098 0.6931471805599453 --]
-        >>> d.mask_invalid(inplace=True)
+        >>> d.masked_invalid(inplace=True)
         >>> print(d.array)
         [-- -- 1.0986122886681098 0.6931471805599453 --]
 
@@ -5430,7 +5412,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.arcsin(inplace=True)
         >>> print(d.array)
         [nan 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
-        >>> d.mask_invalid(inplace=True)
+        >>> d.masked_invalid(inplace=True)
         >>> print(d.array)
         [-- 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
 
@@ -5534,7 +5516,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.arccos(inplace=True)
         >>> print(d.array)
         [nan 0.0 0.6435011087932843 0.9272952180016123 --]
-        >>> d.mask_invalid(inplace=True)
+        >>> d.masked_invalid(inplace=True)
         >>> print(d.array)
         [-- 0.0 0.6435011087932843 0.9272952180016123 --]
 
@@ -5589,7 +5571,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d.arccosh(inplace=True)
         >>> print(d.array)
         [0.6223625037147786 0.0 nan nan --]
-        >>> d.mask_invalid(inplace=True)
+        >>> d.masked_invalid(inplace=True)
         >>> print(d.array)
         [0.6223625037147786 0.0 -- -- --]
 
@@ -5666,7 +5648,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = self.copy(array=False)
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         dx = da.all(dx, axis=axis, keepdims=keepdims, split_every=split_every)
         d._set_dask(dx, reset_mask_hardness=False)
         d.hardmask = _DEFAULT_HARDMASK
@@ -5783,7 +5765,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = self.copy(array=False)
-        dx = self._get_dask()
+        dx = self.to_dask_array()
         dx = da.any(dx, axis=axis, keepdims=keepdims, split_every=split_every)
         d._set_dask(dx, reset_mask_hardness=False)
         d.hardmask = _DEFAULT_HARDMASK
@@ -7064,6 +7046,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             return data
 
+        # d does have a Data interface
         data = data()
         if copy:
             data = data.copy()
@@ -8807,22 +8790,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._set_dask(da.floor(dx), reset_mask_hardness=False)
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
+    @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i")
-    def outerproduct(self, e, inplace=False, i=False):
+    def outerproduct(self, a, inplace=False, i=False):
         """Compute the outer product with another data array.
 
         The axes of result will be the combined axes of the two input
-        arrays:
+        arrays.
 
-          >>> d.outerproduct(e).ndim == d.ndim + e.ndim
-          True
-          >>> d.outerproduct(e).shape == d.shape + e.shape
-          True
+        .. seealso:: `np.multiply.outer`
 
         :Parameters:
 
-            e: data-like
-                The data array with which to form the outer product.
+            a: array_like
+                The data with which to form the outer product.
 
             {{inplace: `bool`, optional}}
 
@@ -8831,50 +8813,54 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         :Returns:
 
             `Data` or `None`
+                The outer product, or `None` if the operation was
+                in-place.
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3], 'metre')
-        >>> o = d.outerproduct([4, 5, 6, 7])
-        >>> o
-        <CF Data: [[4, ..., 21]] m>
-        >>> print(o.array)
+        >>> d = cf.Data([1, 2, 3], 'm')
+        >>> d
+        <CF Data(3): [1, 2, 3] m>
+        >>> f = d.outerproduct([4, 5, 6, 7])
+        >>> f
+        <CF Data(3, 4): [[4, ..., 21]] m>
+        >>> print(f.array)
         [[ 4  5  6  7]
          [ 8 10 12 14]
          [12 15 18 21]]
 
         >>> e = cf.Data([[4, 5, 6, 7], [6, 7, 8, 9]], 's-1')
-        >>> o = d.outerproduct(e)
-        >>> o
-        <CF Data: [[[4, ..., 27]]] m.s-1>
-        >>> print(d.shape, e.shape, o.shape)
-        (3,) (2, 4) (3, 2, 4)
-        >>> print(o.array)
+        >>> e
+        <CF Data(2, 4): [[4, ..., 9]] s-1>
+        >>> f = d.outerproduct(e)
+        >>> f
+        <CF Data(3, 2, 4): [[[4, ..., 27]]] m.s-1>
+        >>> print(f.array)
         [[[ 4  5  6  7]
           [ 6  7  8  9]]
+
          [[ 8 10 12 14]
           [12 14 16 18]]
+
          [[12 15 18 21]
           [18 21 24 27]]]
 
         """
-        e_ndim = np.ndim(e)
-        if e_ndim:
-            if inplace:
-                d = self
-            else:
-                d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
-            for j in range(np.ndim(e)):
-                d.insert_dimension(-1, inplace=True)
-        else:
-            d = self
+        # Cast 'a' as a Data object so that it definitely has sensible
+        # Units
+        a = self.asdata(a)
+        try:
+            a = conform_units(a, d.Units)
+        except ValueError:
+            pass
 
-        d = d * e
+        dx = d.to_dask_array()
+        dx = da.ufunc.multiply.outer(dx, a)
+        d._set_dask(dx, reset_mask_hardness=False)
 
-        if inplace:
-            self.__dict__ = d.__dict__
-            d = None
+        d.override_units(d.Units * a.Units, inplace=True)
 
         return d
 
@@ -9200,79 +9186,38 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return cf_masked
 
-    @_deprecated_kwarg_check("i")
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    def mask_invalid(self, inplace=False, i=False):
+    def masked_invalid(self, inplace=False):
         """Mask the array where invalid values occur (NaN or inf).
 
-        Note that:
-
-        * Invalid values in the results of arithmetic operations may only
-          occur if the raising of `FloatingPointError` exceptions has been
-          suppressed by `cf.Data.seterr`.
-
-        * If the raising of `FloatingPointError` exceptions has been
-          allowed then invalid values in the results of arithmetic
-          operations it is possible for them to be automatically converted
-          to masked values, depending on the setting of
-          `cf.Data.mask_fpe`. In this case, such automatic conversion
-          might be faster than calling `mask_invalid`.
-
-        .. seealso:: `cf.Data.mask_fpe`, `cf.Data.seterr`
+        .. seealso:: `where`
 
         :Parameters:
 
             {{inplace: `bool`, optional}}
 
-            {{i: deprecated at version 3.0.0}}
-
         :Returns:
 
             `Data` or `None`
+                The masked data, or `None` if the operation was
+                in-place.
 
         **Examples**
 
-        >>> d = cf.Data([0., 1])
-        >>> e = cf.Data([1., 2])
-        >>> old = cf.Data.seterr('ignore')
-
-        >>> f = e/d
+        >>> d = cf.Data([0, 1, 2])
+        >>> e = cf.Data([0, 2, 0])
+        >>> f = d / e
         >>> f
-        <CF Data: [inf, 2.0] >
-        >>> f.mask_invalid()
-        <CF Data: [--, 2.0] >
-
-        >>> f=e**12345
-        >>> f
-        <CF Data: [1.0, inf] >
-        >>> f.mask_invalid()
-        <CF Data: [1.0, --] >
-
-        >>> old = cf.Data.seterr('raise')
-        >>> old = cf.Data.mask_fpe(True)
-        >>> e/d
-        <CF Data: [--, 2.0] >
-        >>> e**12345
-        <CF Data: [1.0, --] >
+        <CF Data(3): [nan, 0.5, inf]>
+        >>> f.masked_invalid()
+        <CF Data(3): [--, 0.5, --]>
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        config = d.partition_configuration(readonly=False)
-
-        for partition in d.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-
-            array = np.ma.masked_invalid(array, copy=False)
-            array.shrink_mask()
-            if array.mask is np.ma.nomask:
-                array = array.data
-
-            partition.subarray = array
-
-            partition.close()
-
+        dx = self.to_dask_array()
+        dx = da.ma.masked_invalid(dx)
+        d._set_dask(dx, reset_mask_hardness=False)
         return d
 
     def del_calendar(self, default=ValueError()):
@@ -9376,43 +9321,68 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
 
     @classmethod
-    def masked_all(cls, shape, dtype=None, units=None, chunk=True):
-        """Return a new data array of given shape and type with all
-        elements masked.
+    def masked_all(
+        cls,
+        shape,
+        dtype=None,
+        units=None,
+        calendar=None,
+        chunks=_DEFAULT_CHUNKS,
+    ):
+        """Return an empty masked array with all elements masked.
 
-        .. seealso:: `empty`, `ones`, `zeros`
+        .. seealso:: `empty`, `ones`, `zeros`, `masked_invalid`
 
         :Parameters:
 
             shape: `int` or `tuple` of `int`
-                The shape of the new array.
+                The shape of the new array. e.g. ``(2, 3)`` or ``2``.
 
             dtype: data-type
-                The data-type of the new array. By default the data-type
-                is ``float``.
+                The desired output data-type for the array, e.g.
+                `numpy.int8`. The default is `numpy.float64`.
 
             units: `str` or `Units`
                 The units for the new data array.
 
+            calendar: `str`, optional
+                The calendar for reference time units.
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+                .. versionadded:: 4.0.0
+
         :Returns:
 
             `Data`
-                The new data array having all elements masked.
+                A masked array with all data masked.
 
         **Examples**
 
-        >>> d = cf.Data.masked_all((96, 73))
+        >>> d = cf.Data.masked_all((2, 2))
+        >>> print(d.array)
+        [[-- --]
+         [-- --]]
+
+        >>> d = cf.Data.masked_all((), dtype=bool)
+        >>> d.array
+        masked_array(data=--,
+                     mask=True,
+               fill_value=True,
+                    dtype=bool)
 
         """
-        array = FilledArray(
-            shape=tuple(shape),
-            size=reduce(mul, shape, 1),
-            ndim=len(shape),
-            dtype=np.dtype(dtype),
-            fill_value=cf_masked,
+        d = cls.empty(
+            shape=shape,
+            dtype=dtype,
+            units=units,
+            calendar=calendar,
+            chunks=chunks,
         )
-
-        return cls(array, units=units, chunk=chunk)
+        dx = d.to_dask_array()
+        dx = dx.map_blocks(partial(np.ma.array, mask=True, copy=False))
+        d._set_dask(dx, reset_mask_hardness=False)
+        return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -9545,6 +9515,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def inspect(self):
         """Inspect the object for debugging.
 
@@ -9554,10 +9525,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             `None`
 
+        **Examples**
+
+        >>> d = cf.Data([9], 'm')
+        >>> d.inspect()
+        <CF Data(1): [9] m>
+        -------------------
+        {'_components': {'custom': {'_Units': <Units: m>,
+                                    '_axes': ('dim0',),
+                                    '_cyclic': set(),
+                                    '_hardmask': True,
+                                    'dask': dask.array<cf_harden_mask, shape=(1,), dtype=int64, chunksize=(1,), chunktype=numpy.ndarray>},
+                         'netcdf': {}}}
+
         """
         from ..functions import inspect
 
-        print(inspect(self))  # pragma: no cover
+        inspect(self)
 
     def isclose(self, y, rtol=None, atol=None):
         """Return where data are element-wise equal to other,
@@ -9637,6 +9621,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):
         """Change the shape of the data without changing its values.
 
+        It assumes that the array is stored in row-major order, and
+        only allows for reshapings that collapse or merge dimensions
+        like ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
+
         :Parameters:
 
             shape: `tuple` of `int`, or any number of `int`
@@ -9657,9 +9645,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             limit: int, optional
                 The maximum block size to target in bytes. If no limit
-                is provided, it defaults to the configuration value
-                ``dask.config.get('array.chunk-size')``. See
-                `dask.array.reshape` for details.
+                is provided, it defaults to a size in bytes defined by
+                the `cf.chunksize` function.
 
         :Returns:
 
