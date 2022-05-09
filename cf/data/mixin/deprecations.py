@@ -64,8 +64,7 @@ class DataClassDeprecationsMixin:
         _DEPRECATION_ERROR_METHOD(
             self,
             "__hash__",
-            message="Consider using 'cf.hash_array' on the underlying "
-            "array instead.",
+            message="Consider using 'cf.hash_array' function array instead.",
             version="TODODASK",
             removed_at="5.0.0",
         )
@@ -99,13 +98,22 @@ class DataClassDeprecationsMixin:
     def Data(self):
         """Deprecated at version 3.0.0, use attribute `data` instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "Data", "Use attribute 'data' instead."
+            self,
+            "Data",
+            "Use attribute 'data' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
     def dtvarray(self):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_ATTRIBUTE(self, "dtvarray")  # pragma: no cover
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "dtvarray",
+            version="3.0.0",
+            removed_at="4.0.0",
+        )  # pragma: no cover
 
     @property
     def in_memory(self):
@@ -121,22 +129,99 @@ class DataClassDeprecationsMixin:
             removed_at="5.0.0",
         )  # pragma: no cover
 
-    def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames`
-        instead."""
-        _DEPRECATION_ERROR_METHOD(
+    @property
+    def ismasked(self):
+        """True if the data array has any masked values.
+
+        Deprecated at version TODODASK. Use the `is_masked` attribute
+        instead.
+
+        **Examples**
+
+        >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
+        >>> print(d.ismasked)
+        False
+        >>> d[0, ...] = cf.masked
+        >>> d.ismasked
+        True
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
             self,
-            "files",
-            "Use method `get_filenames` instead.",
-            version="3.4.0",
+            "ismasked",
+            message="Use the 'is_masked' attribute instead",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    @property
+    def ispartitioned(self):
+        """True if the data array is partitioned.
+
+        **Examples**
+
+        >>> d._pmsize
+        1
+        >>> d.ispartitioned
+        False
+
+        >>> d._pmsize
+        2
+        >>> d.ispartitioned
+        False
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "ispartitioned", version="TODODASK", removed_at="5.0.0"
         )  # pragma: no cover
 
     @property
     def unsafe_array(self):
-        """Deprecated at version 3.0.0, use `array` attribute
-        instead."""
+        """Deprecated at version 3.0.0.
+
+        Use the `array` attribute instead.
+
+        """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "unsafe_array", "Use 'array' attribute instead."
+            self,
+            "unsafe_array",
+            message="Use the 'array' attribute instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
+        )  # pragma: no cover
+
+    @property
+    def varray(self):
+        """A numpy array view of the data array.
+
+        Deprecated at version TODODASK. Data are now stored as `dask`
+        arrays for which, in general, a numpy array view is not
+        robust.
+
+        Note that making changes to elements of the returned view changes
+        the underlying data.
+
+        .. seealso:: `array`, `to_dask_array`, `datetime_array`
+
+        **Examples**
+
+        >>> a = d.varray
+        >>> type(a)
+        <type 'numpy.ndarray'>
+        >>> a
+        array([0, 1, 2, 3, 4])
+        >>> a[0] = 999
+        >>> d.varray
+        array([999, 1, 2, 3, 4])
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "varray",
+            message="Data are now stored as `dask` arrays for which, "
+            "in general, a numpy array view is not robust.",
+            version="TODODASK",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
@@ -147,6 +232,16 @@ class DataClassDeprecationsMixin:
             "expand_dims",
             "Use method 'insert_dimension' instead.",
             version="3.0.0",
+        )  # pragma: no cover
+
+    def files(self):
+        """Deprecated at version 3.4.0, use method `get_filenames` instead."""
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "files",
+            "Use method `get_filenames` instead.",
+            version="3.4.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def fits_in_one_chunk_in_memory(self, itemsize):
@@ -176,25 +271,6 @@ class DataClassDeprecationsMixin:
             version="TODODASK",
             removed_at="5.0.0",
         )  # pragma: no cover
-
-    @property
-    def ispartitioned(self):
-        """True if the data array is partitioned.
-
-        **Examples**
-
-        >>> d._pmsize
-        1
-        >>> d.ispartitioned
-        False
-
-        >>> d._pmsize
-        2
-        >>> d.ispartitioned
-        False
-
-        """
-        _DEPRECATION_ERROR_METHOD("TODODASK")  # pragma: no cover
 
     def close(self):
         """Close all files referenced by the data array.
@@ -480,49 +556,6 @@ class DataClassDeprecationsMixin:
             version="TODODASK",
             removed_at="5.0.0",
         )  # pragma: no cover
-
-    @property
-    def ismasked(self):
-        """True if the data array has any masked values.
-
-        TODODASK
-
-        **Examples**
-
-        >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
-        >>> print(d.ismasked)
-        False
-        >>> d[0, ...] = cf.masked
-        >>> d.ismasked
-        True
-
-        """
-        _DEPRECATION_ERROR_METHOD(
-            "TODODASK use is_masked instead"
-        )  # pragma: no cover
-
-    @property
-    def varray(self):
-        """A numpy array view the data array.
-
-        Note that making changes to elements of the returned view changes
-        the underlying data.
-
-        .. seealso:: `array`, `datetime_array`
-
-        **Examples**
-
-        >>> a = d.varray
-        >>> type(a)
-        <type 'numpy.ndarray'>
-        >>> a
-        array([0, 1, 2, 3, 4])
-        >>> a[0] = 999
-        >>> d.varray
-        array([999, 1, 2, 3, 4])
-
-        """
-        _DEPRECATION_ERROR_METHOD("TODODASK")  # pragma: no cover
 
     def add_partitions(self, extra_boundaries, pdim):
         """Add partition boundaries.
