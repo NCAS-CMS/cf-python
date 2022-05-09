@@ -235,7 +235,8 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames` instead."""
+        """Deprecated at version 3.4.0, use method `get_filenames`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
@@ -743,7 +744,7 @@ class DataClassDeprecationsMixin:
             version="TODODASK",
             removed_at="5.0.0",
         )  # pragma: no cover
-        
+
     @staticmethod
     def seterr(all=None, divide=None, over=None, under=None, invalid=None):
         """Set how floating-point errors in the results of arithmetic

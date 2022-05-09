@@ -10082,30 +10082,57 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._set_dask(dx, reset_mask_hardness=False)
         return d
 
-    def fits_in_memory(self, itemsize):
-        """Return True if the master array is small enough to be
-        retained in memory.
+    def fits_in_memory(self):
+        """Return True if the array is small enough to be retained in
+        memory.
+
+        Returns True if the size of the array with all delayed
+        operations computed, including a space for a full boolean
+        mask, is small enough to be retained in available memory.
+
+        The available memory is the actual free memory less the amount
+        reserved as a temporary work space, i.e. ``cf.free_memory() -
+        cf.fm_threshold()``
+
+        The delayed operations are actually not computed by
+        `fits_in_memory`, so it is possible that an intermediate
+        operation may exceed the available memory, even if the final
+        array does not.
+
+        .. seealso:: `array`, `compute`, `persist`, `cf.free_memory`,
+                     `cf.fm_threshold`
 
         :Parameters:
 
-            itemsize: `int`
+            itemsize: deprecated at version TODODASK
                 The number of bytes per word of the master data array.
 
         :Returns:
 
             `bool`
+                Whether or not the computed array fits in memory.
 
         **Examples**
 
-        >>> print(d.fits_in_memory(8))
+        >>> d = cf.Data(9, 'm')
+        >>> d.fits_in_memory()
+        True
+
+        >>> size = int(2 * cf.free_memory() / 8)
+        >>> d = cf.Data.empty((size,), dtype=float, chunks=-1)
+        >>> d.fits_in_memory()
         False
 
         """
-        # ------------------------------------------------------------
-        # Note that self._size*(itemsize+1) is the array size in bytes
-        # including space for a full boolean mask
-        # ------------------------------------------------------------
-        return self.size * (itemsize + 1) <= free_memory() - fm_threshold()
+        # TODODASK: Review the role of cf.fm_threshold() - is it just
+        #           a relic of the LAMA age, or does it still have
+        #           relevance in the dask age? Now that partitions.py
+        #           has been removed, this is now the only place in cf
+        #           that cf.fm_threshold() is used.
+        return (
+            self.size * (self.dtype.itemsize + 1)
+            <= free_memory() - fm_threshold()
+        )
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
@@ -10876,7 +10903,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             "'Data.to_memory' is not available. "
             "Consider using 'Data.persist' instead."
         )
-    
+
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
