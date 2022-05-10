@@ -4916,26 +4916,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
-    def isscalar(self):
-        """True if the data is a 0-d scalar array.
-
-        **Examples**
-
-        >>> d = cf.Data(9, 'm')
-        >>> d.isscalar
-        True
-        >>> d = cf.Data([9], 'm')
-        >>> d.isscalar
-        False
-        >>> d = cf.Data([9, 10], 'm')
-        >>> d.isscalar
-        False
-
-        """
-        return not self.ndim
-
-    @property
-    @daskified(_DASKIFIED_VERBOSE)
     def nbytes(self):
         """Total number of bytes consumed by the elements of the array.
 

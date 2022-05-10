@@ -2883,9 +2883,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array == a).all())
 
     def test_Data__init__compression(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         import cfdm
 
         # Ragged
@@ -3930,6 +3927,23 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d._rtol, cf.rtol())
         cf.rtol(0.001)
         self.assertEqual(d._rtol, 0.001)
+
+    def test_Data_compressed_array(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+        self.assertTrue((d.compressed_array == f.compressed_array).all())
+
+        d = cf.Data([1, 2, 3], "m")
+        with self.assertRaises(Exception):
+            d.compressed_array
+
+        # TODO: when cfdm>1.9.0.3 is released (i.e. a release that
+        #       includes https://github.com/NCAS-CMS/cfdm/pull/184),
+        #       we can replace the loose "(Exception)" with the tight
+        #       "(ValueError)"
 
     def test_Data_inspect(self):
         d = cf.Data([9], "m")
