@@ -32,7 +32,6 @@ from ..functions import (
     abspath,
     atol,
     default_netCDF_fillvals,
-    fm_threshold,
     free_memory,
     log_level,
     parse_indices,
@@ -10062,30 +10061,50 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._set_dask(dx, reset_mask_hardness=False)
         return d
 
-    def fits_in_memory(self, itemsize):
-        """Return True if the master array is small enough to be
-        retained in memory.
+    def fits_in_memory(self):
+        """Return True if the array is small enough to be retained in
+        memory.
+
+        Returns True if the size of the array with all delayed
+        operations computed, always including space for a full boolean
+        mask, is small enough to be retained in available memory.
+
+        .. note:: The delayed operations are actually not computed by
+                  `fits_in_memory`, so it is possible that an
+                  intermediate operation may require more than the
+                  available memory, even if the final array does not.
+
+        .. seealso:: `array`, `compute`, `nbytes`, `persist`,
+                     `cf.free_memory`
 
         :Parameters:
 
-            itemsize: `int`
+            itemsize: deprecated at version TODODASK
                 The number of bytes per word of the master data array.
 
         :Returns:
 
             `bool`
+                Whether or not the computed array fits in memory.
 
         **Examples**
 
-        >>> print(d.fits_in_memory(8))
+        >>> d = cf.Data([1], 'm')
+        >>> d.fits_in_memory()
+        True
+
+        Create a double precision (8 bytes per word) array that is
+        approximately twice the size of the available memory:
+
+        >>> size = int(2 * cf.free_memory() / 8)
+        >>> d = cf.Data.empty((size,), dtype=float)
+        >>> d.fits_in_memory()
         False
+        >>> d.nbytes * (1 + 1/8) > cf.free_memory()
+        True
 
         """
-        # ------------------------------------------------------------
-        # Note that self._size*(itemsize+1) is the array size in bytes
-        # including space for a full boolean mask
-        # ------------------------------------------------------------
-        return self.size * (itemsize + 1) <= free_memory() - fm_threshold()
+        return self.size * (self.dtype.itemsize + 1) <= free_memory()
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
