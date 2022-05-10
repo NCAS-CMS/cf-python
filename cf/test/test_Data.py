@@ -3940,11 +3940,11 @@ class DataTest(unittest.TestCase):
 
     def test_Data_fits_in_memory(self):
         size = int(0.1 * cf.free_memory() / 8)
-        d = cf.Data.empty((size,), dtype=float, chunks=-1)
+        d = cf.Data.empty((size,), dtype=float)
         self.assertTrue(d.fits_in_memory())
 
         size = int(2 * cf.free_memory() / 8)
-        d = cf.Data.empty((size,), dtype=float, chunks=-1)
+        d = cf.Data.empty((size,), dtype=float)
         self.assertFalse(d.fits_in_memory())
 
 

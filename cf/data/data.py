@@ -32,7 +32,6 @@ from ..functions import (
     abspath,
     atol,
     default_netCDF_fillvals,
-    fm_threshold,
     free_memory,
     log_level,
     parse_indices,
@@ -10087,20 +10086,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         memory.
 
         Returns True if the size of the array with all delayed
-        operations computed, including a space for a full boolean
+        operations computed, always including space for a full boolean
         mask, is small enough to be retained in available memory.
 
-        The available memory is the actual free memory less the amount
-        reserved as a temporary work space, i.e. ``cf.free_memory() -
-        cf.fm_threshold()``
+        .. note:: The delayed operations are actually not computed by
+                  `fits_in_memory`, so it is possible that an
+                  intermediate operation may require more than the
+                  available memory, even if the final array does not.
 
-        The delayed operations are actually not computed by
-        `fits_in_memory`, so it is possible that an intermediate
-        operation may exceed the available memory, even if the final
-        array does not.
-
-        .. seealso:: `array`, `compute`, `persist`, `cf.free_memory`,
-                     `cf.fm_threshold`
+        .. seealso:: `array`, `compute`, `nbytes`, `persist`,
+                     `cf.free_memory`
 
         :Parameters:
 
@@ -10114,25 +10109,22 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
-        >>> d = cf.Data(9, 'm')
+        >>> d = cf.Data([1], 'm')
         >>> d.fits_in_memory()
         True
 
+        Create a double precision (8 bytes per word) array that is
+        approximately twice the size of the available memory:
+
         >>> size = int(2 * cf.free_memory() / 8)
-        >>> d = cf.Data.empty((size,), dtype=float, chunks=-1)
+        >>> d = cf.Data.empty((size,), dtype=float)
         >>> d.fits_in_memory()
         False
+        >>> d.nbytes * (1 + 1/8) > cf.free_memory()
+        True
 
         """
-        # TODODASK: Review the role of cf.fm_threshold() - is it just
-        #           a relic of the LAMA age, or does it still have
-        #           relevance in the dask age? Now that partitions.py
-        #           has been removed, this is now the only place in cf
-        #           that cf.fm_threshold() is used.
-        return (
-            self.size * (self.dtype.itemsize + 1)
-            <= free_memory() - fm_threshold()
-        )
+        return self.size * (self.dtype.itemsize + 1) <= free_memory()
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
