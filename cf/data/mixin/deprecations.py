@@ -155,6 +155,33 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     @property
+    def isscalar(self):
+        """True if the data is a 0-d scalar array.
+
+        Deprecated at version TODODASK. Use `d.ndim == 0`` instead.
+
+        **Examples**
+
+        >>> d = cf.Data(9, 'm')
+        >>> d.isscalar
+        True
+        >>> d = cf.Data([9], 'm')
+        >>> d.isscalar
+        False
+        >>> d = cf.Data([9, 10], 'm')
+        >>> d.isscalar
+        False
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "isscalar",
+            message="Use 'd.ndim == 0' instead",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    @property
     def ispartitioned(self):
         """True if the data array is partitioned.
 
@@ -235,7 +262,8 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames` instead."""
+        """Deprecated at version 3.4.0, use method `get_filenames`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
