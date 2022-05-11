@@ -3961,6 +3961,29 @@ class DataTest(unittest.TestCase):
         d = cf.Data.empty((size,), dtype=float)
         self.assertFalse(d.fits_in_memory())
 
+    def test_Data_get_compressed(self):
+        import cfdm
+
+        # Compressed
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+
+        self.assertEqual(d.get_compressed_axes(), f.get_compressed_axes())
+        self.assertEqual(d.get_compression_type(), f.get_compression_type())
+        self.assertEqual(
+            d.get_compressed_dimension(), f.get_compressed_dimension()
+        )
+
+        # Uncompressed
+        d = cf.Data(9)
+
+        self.assertEqual(d.get_compressed_axes(), [])
+        self.assertEqual(d.get_compression_type(), "")
+
+        with self.assertRaises(ValueError):
+            d.get_compressed_dimension()
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
