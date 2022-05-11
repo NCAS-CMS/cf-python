@@ -3961,6 +3961,10 @@ class DataTest(unittest.TestCase):
         d = cf.Data.empty((size,), dtype=float)
         self.assertFalse(d.fits_in_memory())
 
+    def test_Data_get_data(self):
+        d = cf.Data(9)
+        self.assertIs(d, d.get_data())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

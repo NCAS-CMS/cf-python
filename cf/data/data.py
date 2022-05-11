@@ -6132,6 +6132,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return type(self)(a)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
@@ -6144,6 +6145,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_units(self, default=ValueError()):
         """Return the units.
 
@@ -6177,6 +6179,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         except AttributeError:
             return super().get_units(default=default)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_calendar(self, default=ValueError()):
         """Return the calendar.
 
@@ -6210,6 +6213,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         except (AttributeError, KeyError):
             return super().get_calendar(default=default)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def set_calendar(self, calendar):
         """Set the calendar.
 
@@ -6239,6 +6243,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         self.Units = Units(self.get_units(default=None), calendar)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def set_units(self, value):
         """Set the units.
 
