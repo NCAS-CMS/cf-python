@@ -3961,6 +3961,22 @@ class DataTest(unittest.TestCase):
         d = cf.Data.empty((size,), dtype=float)
         self.assertFalse(d.fits_in_memory())
 
+    def test_Data_Units(self):
+        d = cf.Data(100, "m")
+        self.assertEqual(d.Units, cf.Units("m"))
+
+        d.Units = cf.Units("km")
+        self.assertEqual(d.Units, cf.Units("km"))
+        self.assertEqual(d.array, 0.1)
+
+        # Assign non-equivalent units
+        with self.assertRaises(ValueError):
+            d.Units = cf.Units("watt")
+
+        # Delete units
+        with self.assertRaises(ValueError):
+            del d.Units
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

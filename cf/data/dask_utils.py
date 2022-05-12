@@ -14,8 +14,7 @@ from dask.core import flatten
 from ..cfdatetime import dt2rt, rt2dt
 from ..functions import atol as cf_atol
 from ..functions import rtol as cf_rtol
-
-# from dask.utils import deepmap  # Apply function inside nested lists
+from ..units import Units
 
 
 def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
@@ -594,3 +593,40 @@ def cf_dt2rt(a, units):
 
     """
     return dt2rt(a, units_out=units, units_in=None)
+
+
+def cf_units(a, from_units, to_units):
+    """Convert array values to have different equivalent units.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `cf.Data.Units`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array.
+
+        from_units: `Units`
+            The existing units of the array.
+
+        to_units: `Units`
+            The units that the array should be converted to. Must be
+            equivalent to *from_units*.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An array containing values in the new units.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> a = np.array([1, 2])
+    >>> print(cf.data.dask_utils.cf_units(a, cf.Units('km'), cf.Units('m')))
+    [1000. 2000.]
+
+    """
+    return Units.conform(
+        a, from_units=from_units, to_units=to_units, inplace=False
+    )
