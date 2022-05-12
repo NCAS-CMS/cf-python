@@ -3977,6 +3977,10 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             del d.Units
 
+    def test_Data_get_data(self):
+        d = cf.Data(9)
+        self.assertIs(d, d.get_data())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
