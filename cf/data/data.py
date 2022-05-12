@@ -72,7 +72,6 @@ logger = logging.getLogger(__name__)
 daskified_log_level = 0
 
 
-
 def daskified(apply_temp_log_level=None):
     def decorator(method):
         """Temporary decorator to mark and log methods migrated to Dask.

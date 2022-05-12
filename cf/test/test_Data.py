@@ -3965,6 +3965,42 @@ class DataTest(unittest.TestCase):
         d = cf.Data(9)
         self.assertIs(d, d.get_data())
 
+    def test_Data_get_count(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+        self.assertIsInstance(d.get_count(), cfdm.Count)
+
+        d = cf.Data(9, "m")
+        with self.assertRaises(ValueError):
+            d.get_count()
+
+    def test_Data_get_index(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_indexed.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
+        self.assertIsInstance(d.get_index(), cfdm.Index)
+
+        d = cf.Data(9, "m")
+        with self.assertRaises(ValueError):
+            d.get_index()
+
+    def test_Data_get_list(self):
+        import cfdm
+
+        f = cfdm.read("gathered.nc")[0]
+        f = f.data
+        d = cf.Data(cf.GatheredArray(source=f.source()))
+        self.assertIsInstance(d.get_list(), cfdm.List)
+
+        d = cf.Data(9, "m")
+        with self.assertRaises(ValueError):
+            d.get_list()
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
