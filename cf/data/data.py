@@ -50,6 +50,7 @@ from .dask_utils import (
     cf_percentile,
     cf_rt2dt,
     cf_soften_mask,
+    cf_units,
     cf_where,
 )
 from .mixin import DataClassDeprecationsMixin
@@ -4699,11 +4700,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "Consider using the override_units method instead."
                 )
 
-            if not old_units:
-                self.override_units(value, inplace=True)
-                return
-
-            if self.Units.equals(value):
+            if not old_units or self.Units.equals(value):
+                self._Units = value
                 return
 
         dtype = self.dtype
@@ -4713,13 +4711,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 dtype = _dtype_float
 
-        def cf_Units(x):
-            return Units.conform(
-                x=x, from_units=old_units, to_units=value, inplace=False
-            )
-
         dx = self.to_dask_array()
-        dx = dx.map_blocks(cf_Units, dtype=dtype)
+        dx = dx.map_blocks(
+            partial(cf_units, from_units=old_units, to_units=value),
+            dtype=dtype,
+        )
         self._set_dask(dx, reset_mask_hardness=False)
 
         self._Units = value
