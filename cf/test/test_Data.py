@@ -2866,7 +2866,7 @@ class DataTest(unittest.TestCase):
             (e.array == [[-999, -999, -999], [5, -999, -999], [6, 7, 8]]).all()
         )
 
-        d.soften_mask()
+        d.hardmask = False
         e = d.where(a > 5, None, -999)
         self.assertTrue(e.shape == d.shape)
         self.assertTrue((e.array.mask == False).all())
@@ -3928,6 +3928,33 @@ class DataTest(unittest.TestCase):
         cf.rtol(0.001)
         self.assertEqual(d._rtol, 0.001)
 
+    def test_Data_hardmask(self):
+        d = cf.Data([1, 2, 3])
+        d.hardmask = True
+        self.assertTrue(d.hardmask)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 1)
+
+        d[0] = cf.masked
+        self.assertTrue((d.array.mask == [True, False, False]).all())
+        d[...] = 999
+        self.assertTrue((d.array.mask == [True, False, False]).all())
+        d.hardmask = False
+        self.assertFalse(d.hardmask)
+        d[...] = -1
+        self.assertTrue((d.array.mask == [False, False, False]).all())
+
+    def test_Data_harden_mask(self):
+        d = cf.Data([1, 2, 3], hardmask=False)
+        d.harden_mask()
+        self.assertTrue(d.hardmask)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+
+    def test_Data_soften_mask(self):
+        d = cf.Data([1, 2, 3], hardmask=True)
+        d.soften_mask()
+        self.assertFalse(d.hardmask)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+        
     def test_Data_compressed_array(self):
         import cfdm
 
