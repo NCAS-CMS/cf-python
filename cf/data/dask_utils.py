@@ -617,7 +617,12 @@ def cf_units(a, from_units, to_units):
     :Returns:
 
         `numpy.ndarray`
-            An array containing values in the new units.
+            An array containing values in the new units. In order to
+            represent the new units, the returned data type may be
+            different from that of the input array. For instance, if
+            *a* has an integer data type, *from_units* are kilometres,
+            and *to_units* are ``'miles'`` then the returned array
+            will have a float data type.
 
     **Examples**
 
