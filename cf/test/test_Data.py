@@ -2883,9 +2883,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array == a).all())
 
     def test_Data__init__compression(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         import cfdm
 
         # Ragged
@@ -3918,7 +3915,7 @@ class DataTest(unittest.TestCase):
             a = np.ma.masked_all((), dtype=dtype)
             d = cf.Data.masked_all((), dtype=dtype)
             self.assertEqual(d.dtype, a.dtype)
-            
+
     def test_Data_atol(self):
         d = cf.Data(1)
         self.assertEqual(d._atol, cf.atol())
@@ -3958,14 +3955,119 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.hardmask)
         self.assertEqual(len(d.to_dask_array().dask.layers), 2)
         
+    def test_Data_compressed_array(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+        self.assertTrue((d.compressed_array == f.compressed_array).all())
+
+        d = cf.Data([1, 2, 3], "m")
+        with self.assertRaises(Exception):
+            d.compressed_array
+
+        # TODO: when cfdm>1.9.0.3 is released (i.e. a release that
+        #       includes https://github.com/NCAS-CMS/cfdm/pull/184),
+        #       we can replace the loose "(Exception)" with the tight
+        #       "(ValueError)"
+
     def test_Data_inspect(self):
         d = cf.Data([9], "m")
-      
+
         f = io.StringIO()
         with contextlib.redirect_stdout(f):
             self.assertIsNone(d.inspect())
-            
-            
+
+    def test_Data_fits_in_memory(self):
+        size = int(0.1 * cf.free_memory() / 8)
+        d = cf.Data.empty((size,), dtype=float)
+        self.assertTrue(d.fits_in_memory())
+
+        size = int(2 * cf.free_memory() / 8)
+        d = cf.Data.empty((size,), dtype=float)
+        self.assertFalse(d.fits_in_memory())
+
+    def test_Data_get_compressed(self):
+        import cfdm
+
+        # Compressed
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+
+        self.assertEqual(d.get_compressed_axes(), f.get_compressed_axes())
+        self.assertEqual(d.get_compression_type(), f.get_compression_type())
+        self.assertEqual(
+            d.get_compressed_dimension(), f.get_compressed_dimension()
+        )
+
+        # Uncompressed
+        d = cf.Data(9)
+
+        self.assertEqual(d.get_compressed_axes(), [])
+        self.assertEqual(d.get_compression_type(), "")
+
+        with self.assertRaises(ValueError):
+            d.get_compressed_dimension()
+
+    def test_Data_Units(self):
+        d = cf.Data(100, "m")
+        self.assertEqual(d.Units, cf.Units("m"))
+
+        d.Units = cf.Units("km")
+        self.assertEqual(d.Units, cf.Units("km"))
+        self.assertEqual(d.array, 0.1)
+
+        # Assign non-equivalent units
+        with self.assertRaises(ValueError):
+            d.Units = cf.Units("watt")
+
+        # Delete units
+        with self.assertRaises(ValueError):
+            del d.Units
+
+    def test_Data_get_data(self):
+        d = cf.Data(9)
+        self.assertIs(d, d.get_data())
+
+    def test_Data_get_count(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+        self.assertIsInstance(d.get_count(), cfdm.Count)
+
+        d = cf.Data(9, "m")
+        with self.assertRaises(ValueError):
+            d.get_count()
+
+    def test_Data_get_index(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_indexed.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
+        self.assertIsInstance(d.get_index(), cfdm.Index)
+
+        d = cf.Data(9, "m")
+        with self.assertRaises(ValueError):
+            d.get_index()
+
+    def test_Data_get_list(self):
+        import cfdm
+
+        f = cfdm.read("gathered.nc")[0]
+        f = f.data
+        d = cf.Data(cf.GatheredArray(source=f.source()))
+        self.assertIsInstance(d.get_list(), cfdm.List)
+
+        d = cf.Data(9, "m")
+        with self.assertRaises(ValueError):
+            d.get_list()
+
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

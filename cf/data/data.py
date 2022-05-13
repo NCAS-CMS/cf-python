@@ -32,7 +32,6 @@ from ..functions import (
     abspath,
     atol,
     default_netCDF_fillvals,
-    fm_threshold,
     free_memory,
     log_level,
     parse_indices,
@@ -51,6 +50,7 @@ from .dask_utils import (
     cf_percentile,
     cf_rt2dt,
     cf_soften_mask,
+    cf_units,
     cf_where,
 )
 from .mixin import DataClassDeprecationsMixin
@@ -4629,11 +4629,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "Consider using the override_units method instead."
                 )
 
-            if not old_units:
-                self.override_units(value, inplace=True)
-                return
-
-            if self.Units.equals(value):
+            if not old_units or self.Units.equals(value):
+                self._Units = value
                 return
 
         dtype = self.dtype
@@ -4643,13 +4640,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 dtype = _dtype_float
 
-        def cf_Units(x):
-            return Units.conform(
-                x=x, from_units=old_units, to_units=value, inplace=False
-            )
-
         dx = self.to_dask_array()
-        dx = dx.map_blocks(cf_Units, dtype=dtype)
+        dx = dx.map_blocks(
+            partial(cf_units, from_units=old_units, to_units=value),
+            dtype=dtype,
+        )
         self._set_dask(dx)
 
         self._Units = value
@@ -4846,26 +4841,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
 
         return bool(dx.any())
-
-    @property
-    @daskified(_DASKIFIED_VERBOSE)
-    def isscalar(self):
-        """True if the data is a 0-d scalar array.
-
-        **Examples**
-
-        >>> d = cf.Data(9, 'm')
-        >>> d.isscalar
-        True
-        >>> d = cf.Data([9], 'm')
-        >>> d.isscalar
-        False
-        >>> d = cf.Data([9, 10], 'm')
-        >>> d.isscalar
-        False
-
-        """
-        return not self.ndim
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
@@ -6086,6 +6061,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return type(self)(a)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
@@ -6098,6 +6074,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_units(self, default=ValueError()):
         """Return the units.
 
@@ -6131,6 +6108,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         except AttributeError:
             return super().get_units(default=default)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_calendar(self, default=ValueError()):
         """Return the calendar.
 
@@ -6164,6 +6142,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         except (AttributeError, KeyError):
             return super().get_calendar(default=default)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def set_calendar(self, calendar):
         """Set the calendar.
 
@@ -6193,6 +6172,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         self.Units = Units(self.get_units(default=None), calendar)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def set_units(self, value):
         """Set the units.
 
@@ -10046,30 +10026,50 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._set_dask(dx)
         return d
 
-    def fits_in_memory(self, itemsize):
-        """Return True if the master array is small enough to be
-        retained in memory.
+    def fits_in_memory(self):
+        """Return True if the array is small enough to be retained in
+        memory.
+
+        Returns True if the size of the array with all delayed
+        operations computed, always including space for a full boolean
+        mask, is small enough to be retained in available memory.
+
+        .. note:: The delayed operations are actually not computed by
+                  `fits_in_memory`, so it is possible that an
+                  intermediate operation may require more than the
+                  available memory, even if the final array does not.
+
+        .. seealso:: `array`, `compute`, `nbytes`, `persist`,
+                     `cf.free_memory`
 
         :Parameters:
 
-            itemsize: `int`
+            itemsize: deprecated at version TODODASK
                 The number of bytes per word of the master data array.
 
         :Returns:
 
             `bool`
+                Whether or not the computed array fits in memory.
 
         **Examples**
 
-        >>> print(d.fits_in_memory(8))
+        >>> d = cf.Data([1], 'm')
+        >>> d.fits_in_memory()
+        True
+
+        Create a double precision (8 bytes per word) array that is
+        approximately twice the size of the available memory:
+
+        >>> size = int(2 * cf.free_memory() / 8)
+        >>> d = cf.Data.empty((size,), dtype=float)
+        >>> d.fits_in_memory()
         False
+        >>> d.nbytes * (1 + 1/8) > cf.free_memory()
+        True
 
         """
-        # ------------------------------------------------------------
-        # Note that self._size*(itemsize+1) is the array size in bytes
-        # including space for a full boolean mask
-        # ------------------------------------------------------------
-        return self.size * (itemsize + 1) <= free_memory() - fm_threshold()
+        return self.size * (self.dtype.itemsize + 1) <= free_memory()
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
