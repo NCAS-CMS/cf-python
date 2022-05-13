@@ -8770,7 +8770,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d.to_dask_array()
         dx = da.ufunc.multiply.outer(dx, a)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         d.override_units(d.Units * a.Units, inplace=True)
 
@@ -9325,7 +9325,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
         dx = d.to_dask_array()
         dx = dx.map_blocks(partial(np.ma.array, mask=True, copy=False))
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
