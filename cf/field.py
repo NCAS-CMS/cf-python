@@ -15774,6 +15774,201 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h2 = f2.regrids(op)
 
         """
+        # manager -> destroy after
+        f = self.copy()
+        
+        regrid_check_use_src_mask(use_src_mask, method)
+        
+        if isinstance(dst, RegridOperator):       
+            create_regrid_operator = False
+
+            operator = dst
+            if return_operator:
+                return operator.copy()
+
+            # Replace input arguments with those stored in the regrid
+            # operator
+            dst = operator.get_parameter("dst")
+
+            method = operator.get_parameter("method")
+            dst_axes = operator.get_parameter("dst_axes")
+            dst_cyclic = operator.get_parameter("dst_cyclic")
+            dst_mask = operator.get_parameter("dst_mask")
+            use_src_mask = operator.get_parameter("use_src_mask")
+            ignore_degenerate = operator.get_parameter("ignore_degenerate")
+        else:
+            create_regrid_operator = True
+            check_operator = False          
+
+        regrid_check_method(method)
+
+        dst_is_field = isinstance(dst, self.__class__)
+        dst_is_dict = isinstance(dst, dict)
+
+        if not create_regrid_operator or not (dst_is_field or dst_is_dict):
+            raise TypeError(
+                "'dst' parameter must be of type Field, dict, "
+                f"or RegridOperator. Got: {type(dst)}"
+        )
+
+        # ------------------------------------------------------------
+        # Source spherical grid
+        # ------------------------------------------------------------
+        src_grid = None
+        if src_cyclic is None:
+            src_cyclic = f.iscyclic(src_axis_keys[0])
+            
+        (
+            src_axis_keys,
+            src_axis_sizes,
+            src_coords,
+            src_bounds,
+            src_coord_order,
+        ) = regrid_get_latlon(f, "source", method, src_cyclic,
+                              axes=src_axes)
+
+        # Get the axis indices and their order for the source field
+        src_axis_indices = regrid_get_axis_indices(
+            f, src_axis_keys, spherical=True
+        )
+
+        if create_regrid_operator: # or check_operator:
+            # Create source ESMF.Grid
+            src_coords = [c.to_dask_array() for c in src_coords]
+            src_bounds = [b.to_dask_array() for b in src_bounds]
+            src_grid = delayed(create_spherical_Grid, pure=True)(
+                src_coords,
+                src_bounds,
+                cyclic=src_cyclic,
+                coord_order=src_coord_order,
+            )
+        else:
+            # Check source grid
+            if src_cyclic != operator.src_cyclic:
+                raise ValueError("TODODASK")                
+                              
+            s = [f.shape[i] for i in src_axis_indices]
+            if s != operator.src_shape:
+                 raise ValueError("TODODASK")                
+                   
+        # ------------------------------------------------------------
+        # Destination spherical grid
+        # ------------------------------------------------------------
+        dst_grid = None
+        dst_mask = None
+        if dst_is_field and dst_cyclic is None:
+            dst_cyclic = dst.iscyclic(dst_axis_keys[0])
+            
+        (                
+            dst_axis_keys,
+            dst_axis_sizes,
+            dst_coords,
+            dst_bounds,
+            dst_coord_order,
+        ) = regrid_get_latlon(dst, "destination", method,
+                              dst_cyclic, axes=dst_axes)
+    
+        if create_regrid_operator:           
+            # Destination ESMF.Grid 
+            dst_coords = [c.to_dask_array() for c in dst_coords]
+            dst_bounds = [b.to_dask_array() for b in dst_bounds]
+            dst_grid = delayed(create_spherical_Grid, pure=True)(
+                dst_coords,
+                dst_bounds,
+                cyclic=dst_cyclic,
+                coord_order=dst_coord_order,
+            )
+
+            if dst_is_field:
+                # Get the axis indices and their order for the
+                # destination field
+                dst = dst.copy()
+                dst_axis_indices = regrid_get_axis_indices(
+                    dst, dst_axis_keys, shperical=True
+                )
+
+                # Destination grid mask
+                if use_dst_mask:
+                    dst_mask = regrid_get_destination_mask(
+                        dst, dst_axis_indices
+                    )
+
+        # ------------------------------------------------------------
+        # Apply spherical regridding operation
+        # ------------------------------------------------------------
+        regridded_axes_shape = regridded_axes_shape(
+            src_axis_indices, dst_axis_sizes
+        )
+
+        make_op(method, src_grid, dst_grid,
+                unmapped_action=unmapped_action,
+                ignore_degenerate=ignore_degenerate)
+        
+        
+        data = f.data._regrid(
+            regrid_operator=regrid_operator,
+            dst_mask=dst_mask,
+            regrid_axes=src_axis_indices, # in the order expected by the op
+            regridded_axes_shape=regridded_axes_shape,
+        )
+
+        
+        if create_regrid_operator:
+            # Create a RegridOperator object from the new regrid
+            # operator
+            parameters = {
+                "dst": dst.copy(),
+                "method": method,
+                "src_cyclic": src_cyclic,
+                "dst_cyclic": dst_cyclic,
+                "dst_axes": dst_axes,
+                "dst_mask": dst_mask,
+                "use_src_mask": use_src_mask,
+                "ignore_degenerate": ignore_degenerate,
+            }
+            operator = RegridOperator(
+                regrid_operator, f"regrids: {method}", **parameters
+            )
+            if return_operator:
+                return operator
+
+        f = _inplace_enabled_define_and_cleanup(f)
+
+        # Update non-coordinate metadata of the new field
+        if dst_is_field:
+            regrid_update_non_coordinates(
+                f,
+                operator,
+                src_axis_keys=src_axis_keys,
+                dst_axis_keys=dst_axis_keys,
+                dst_axis_sizes=dst_axis_sizes,
+            )
+
+        # Update coordinates of new the field
+        regrid_update_coordinates(
+            f,
+            dst,
+            src_axis_keys=src_axis_keys,
+            dst_axis_keys=dst_axis_keys,
+            dst_coords=dst_coords,
+            dst_axis_sizes=dst_axis_sizes,
+            dst_coord_order=dst_coord_order,
+        )
+
+        # Insert regridded data into the new field
+        f.set_data(new_data, axes=f.get_data_axes(), copy=False)
+
+        # Set the cyclicity of the longitudeaxis of the new field
+        key, x = f.dimension_coordinate("X", default=(None, None), item=True)
+        if x is not None and x.Units.equivalent(Units("degrees")):
+            f.cyclic(
+                key,
+                iscyclic=dst_cyclic,
+                config={"coord": x, "period": Data(360.0, "degrees")},
+            )
+
+        return f
+
         # Initialise ESMF for regridding
         regrid_initialize()
 

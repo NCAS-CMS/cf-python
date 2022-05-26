@@ -3685,6 +3685,128 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             "Use function 'cf.parse_indices' instead."
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
+    def _regrid(
+        self,
+        operator=None,
+        regrid_axes=None,
+        regridded_axes_shape=None,
+    ):
+        """Regrid the data.
+        https://earthsystemmodeling.org/esmpy_doc/release/latest/ESMPy.pdf
+        .. versionadded:: TODODASK
+        :Parameters:
+            operator: `ESMF.Regrid` or dask delayed, optional
+  
+            dst_mask: array_like or `None`, optional
+                Ignored if *operator* has been set.
+                The mask of the destination grid.
+                If *use_dst_mask* is False then *dst_mask* is ignored
+                and the destination grid is unmasked.
+                If `None` (the default) then the destination grid is
+                unmasked.
+                If it is an array then it must have a number of
+                dimensions equal to the number of regridding axes in
+                the source data, and in the same relative order. The
+                array may be a boolean array, or else its implied
+                boolean mask is used instead, for which True signifies
+                a masked point.
+        
+                For instance, if the source data has shape ``(12, 64,
+                19, 128)``, and the dimensions with sizes ``64`` and
+                ``128`` are to be regridded to dimensions with
+                corresponding sizes ``73`` and ``96``, then the mask
+                array must have shape ``(73, 96)``.
+        
+        :Returns:
+
+            `Data` or `None`
+
+        **Examples**
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d.to_dask_array()
+
+#        if operator is None:
+#            # Parse the destination grid mask
+#            if use_dst_mask:
+#                if dst_mask is not None:
+#                    dst_mask = da.asanyarray(dst_mask)
+#                    shape = tuple(
+#                        regridded_axes_shape[i] for i in sorted(regrid_axes)
+#                    )
+#                    if dst_mask.shape != shape:
+#                        raise ValueError(
+#                            f"Invalid 'dst_mask' shape. Expected {shape}, "
+#                            f"got {dst_mask.shape}"
+#                        )
+#
+#                    # Re-order the axes to how the ESMF likes them
+#                    dst_mask = da.transpose(dst_mask, regrid_axes_order)
+#            else:
+#                dst_mask = None
+#
+#            # Create the regrid operator as a dask delayed object
+#            operator = delayed(regrid_operator, pure=True)(
+#                method,
+#                src_grid,
+#                dst_grid=dst_grid,
+#                src_mask=base_src_mask,
+#                dst_mask=dst_mask,
+#                ignore_degenerate=bool(ignore_degenerate),
+#                unmapped_action=unmapped_action,
+#            )
+#
+#        if not return_data:
+#            # Return the base regrid operator, with no regridded data.
+#            return operator, None
+
+        # ------------------------------------------------------------
+        # Still here? Then apply the regridding operator
+        # ------------------------------------------------------------
+        
+        # Rechunk so that each chunk contains data as expected by the
+        # regrid operator, i.e. the regrid axes all have chunksize -1.
+        chunks = [
+            (-1,) if i in regrid_axes else c
+            for i, c in enumerate(dx.chunks)
+        ]
+        dx = dx.rechunk(chunks)
+
+        # Set the output data type
+        if method in ("nearest_dtos", "nearest_stod"):
+            dtype = dx.dtype # check int32, int64
+        else:
+            dtype = float # check float32, float64
+
+        # Define the regridded chunksizes
+        chunks = tuple(
+            (regridded_axes_shape[i],) if i in regridded_axes_shape else c
+            for i, c in enumerate(dx.chunks)            
+        )
+        
+        non_regrid_axes = [i for i in range(d.ndim) if i not in regrid_axes]
+        
+        r = partial(
+            regrid,
+            regrid_axes=regrid_axes,
+            axis_order=non_regrid_axes + list(regrid_axes)
+        )
+
+        dx = dx.map_blocks(
+            r,
+            operator=dask.delayed(operator),
+            chunks=chunks,
+            dtype=dtype,
+            meta=np.array((), dtype=dtype),
+        )
+
+        d._set_dask(dx)
+
+        return d
+
     def _set_subspace(self, *args, **kwargs):
         """'cf.Data._set_subspace' is unavailable."""
         raise NotImplementedError("'cf.Data._set_subspace' is unavailable.")
