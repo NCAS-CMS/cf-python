@@ -3728,52 +3728,17 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
-
-#        if operator is None:
-#            # Parse the destination grid mask
-#            if use_dst_mask:
-#                if dst_mask is not None:
-#                    dst_mask = da.asanyarray(dst_mask)
-#                    shape = tuple(
-#                        regridded_axes_shape[i] for i in sorted(regrid_axes)
-#                    )
-#                    if dst_mask.shape != shape:
-#                        raise ValueError(
-#                            f"Invalid 'dst_mask' shape. Expected {shape}, "
-#                            f"got {dst_mask.shape}"
-#                        )
-#
-#                    # Re-order the axes to how the ESMF likes them
-#                    dst_mask = da.transpose(dst_mask, regrid_axes_order)
-#            else:
-#                dst_mask = None
-#
-#            # Create the regrid operator as a dask delayed object
-#            operator = delayed(regrid_operator, pure=True)(
-#                method,
-#                src_grid,
-#                dst_grid=dst_grid,
-#                src_mask=base_src_mask,
-#                dst_mask=dst_mask,
-#                ignore_degenerate=bool(ignore_degenerate),
-#                unmapped_action=unmapped_action,
-#            )
-#
-#        if not return_data:
-#            # Return the base regrid operator, with no regridded data.
-#            return operator, None
-
-        # ------------------------------------------------------------
-        # Still here? Then apply the regridding operator
-        # ------------------------------------------------------------
         
         # Rechunk so that each chunk contains data as expected by the
         # regrid operator, i.e. the regrid axes all have chunksize -1.
-        chunks = [
-            (-1,) if i in regrid_axes else c
-            for i, c in enumerate(dx.chunks)
-        ]
-        dx = dx.rechunk(chunks)
+        chunks = dx.chunks
+        shape = dx.shape
+        if not all(chunks[i] == (shape[i],) for i in regrid_axes):
+            chunks = [
+                (-1,) if i in regrid_axes else c
+                for i, c in enumerate(chunks)
+            ]
+            dx = dx.rechunk(chunks)
 
         # Set the output data type
         if method in ("nearest_dtos", "nearest_stod"):
@@ -3782,15 +3747,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             dtype = float # check float32, float64
 
         # Define the regridded chunksizes
-        chunks = tuple(
+        regridded_chunks = tuple(
             (regridded_axes_shape[i],) if i in regridded_axes_shape else c
             for i, c in enumerate(dx.chunks)            
         )
+
+        regrid_weights = dask.delayed(weights)(operator.sparse_weights)
         
         non_regrid_axes = [i for i in range(d.ndim) if i not in regrid_axes]
         
         r = partial(
             regrid,
+            regridded_shape=operator.regridded_shape,
             regrid_axes=regrid_axes,
             axis_order=non_regrid_axes + list(regrid_axes)
         )
@@ -3798,8 +3766,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = dx.map_blocks(
             r,
             operator=dask.delayed(operator),
-            chunks=chunks,
-            dtype=dtype,
+            chunks=regridded_chunks,
             meta=np.array((), dtype=dtype),
         )
 
