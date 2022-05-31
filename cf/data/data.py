@@ -3724,9 +3724,18 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
-        """
+        """   
+        src_shape = operator.src_shape
+        shape = self.shape
+        in_shape = tuple(shape[i] for i in regrid_axes):
+        if src_shape != in_shape:
+            raise ValueError(
+                f"Regrid axes shape {in_shape} does not match "
+                f"that of the regrid operator {src_shape}"
+            )
+        
         d = _inplace_enabled_define_and_cleanup(self)
-
+    
         dx = d.to_dask_array()
         
         # Rechunk so that each chunk contains data as expected by the
@@ -3752,20 +3761,34 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             for i, c in enumerate(dx.chunks)            
         )
 
-        regrid_weights = dask.delayed(weights)(operator.sparse_weights)
-        
         non_regrid_axes = [i for i in range(d.ndim) if i not in regrid_axes]
-        
-        r = partial(
+
+        regrid_func = partial(
             regrid,
-            regridded_shape=operator.regridded_shape,
-            regrid_axes=regrid_axes,
+            method=method,
+            src_shape=src_shape,
+            dst_shape=operator.dst_shape,
+            dst_dtype=dtype,
             axis_order=non_regrid_axes + list(regrid_axes)
         )
 
+        # Check graph - do we want to make weights positional?
+        # https://dask.discourse.group/t/prevent-dask-array-from-compute-behavior/464/6
+        # I don't think so, but should check some graphs for "finalize"
+        # entries.
+        weights = dask.delayed(regrid_weights, pure=True)(
+            weights=operator.weights,
+            row=operator.row,
+            col=operator.col,
+            src_shape=src_shape,
+            dst_shape=operator.dst_shape,
+            dst_mask=operator.dst_mask,
+            dense=True,
+        )
+        
         dx = dx.map_blocks(
-            r,
-            operator=dask.delayed(operator),
+            regrid_func,
+            weights=weights,
             chunks=regridded_chunks,
             meta=np.array((), dtype=dtype),
         )

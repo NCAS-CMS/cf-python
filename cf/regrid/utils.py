@@ -73,10 +73,10 @@ def regrid_get_latlon_dict(d, name, method, cyclic, axes=None):
         
         if axis_order == ("X", "Y"):
             axis_sizes = coords[0].shape
-            coord_order = [[0, 1], [0, 1]]
+            coord_ESMF_order = [[0, 1], [0, 1]]
         elif axis_order == ("Y", "X"):
             axis_sizes = coords[0].shape[::-1]
-            coord_order = [[1, 0], [1, 0]]
+            coord_ESMF_order = [[1, 0], [1, 0]]
         else:
             raise ValueError(
                 "Keyword 'axes' must either be ('X', 'Y') or ('Y', 'X')."
@@ -107,14 +107,18 @@ def regrid_get_latlon_dict(d, name, method, cyclic, axes=None):
         # cyclicity
         bounds = get_bounds([coords[0]])
         
-    return (axis_keys, axis_sizes, coord_keys, coords, bounds,
-            coord_order)
+    return (axis_keys[::-1], axis_sizes[::-1], coord_keys, coords,
+            bounds, coord_ESMF_order)
 
 
 def get_bounds(coords):
     """TODODASK"""
-    bounds = [c.get_bounds(None) for c in coords]
-    return [b for b in bounds if b is not None)
+#    bounds = [c.get_bounds(None) for c in coords]
+#    return [b for b in bounds if b is not None)
+
+    bounds = {key: c.get_bounds(None) for key, c in coords.items()}
+    bounds = {key: b for key, b in bounds if b is not None}
+    return bounds
 
 
 def regrid_get_latlon_field(f, name, method,cyclic,  axes=None):
@@ -340,10 +344,10 @@ def regrid_get_latlon_field(f, name, method,cyclic,  axes=None):
             f"field {f!r} can be of size 1 for {method!r} regridding."
         )
 
-    coord_keys = [x_key, y_key]
-    coords = [x.copy(), y.copy()]
+    coord_keys = {'lon': x_key, 'lat': y_key} #[x_key, y_key]
+    coords = {'lon': x.copy(), 'lat': y.copy()} #[x.copy(), y.copy()]
 
-    coord_order = regrid_get_coord_order(f, axis_keys, coord_keys)
+    coord_ESMF_order = regrid_get_coord_ESMF_order(f, axis_keys, coord_keys)
     
     if regridding_is_conservative(method):
         bounds = get_bounds(coords)
@@ -351,11 +355,16 @@ def regrid_get_latlon_field(f, name, method,cyclic,  axes=None):
             raise ValueError("TODO")
     elif cyclic is None and coords_1D:
         # Get longitude bounds for determining cyclicity
-        bounds = get_bounds([coords[0]])
+        bounds = get_bounds({'lon': coords['lon']})
     else:
-        bounds = ()
-        
-    return axis_keys, axis_sizes, coords, bounds, coord_order
+        bounds = {}
+
+    # Reverse axis keys and sizes, as up to now they've been in ESMF
+    # order.
+    axis_keys = axis_keys[::-1]
+    axis_sizes = axis_sizes[::-1]
+    
+    return axis_keys, axis_sizes, coords, bounds, coord_ESMF_order
 
 
 def get_Cartesian_coords(dst, name, axes, extra=False):
@@ -478,9 +487,6 @@ def regrid_get_axis_indices(f, axis_keys, spherical=False):
     data_axes = f.get_data_axes()    
     axis_indices = [data_axes.index(key) for key in axis_keys]
 
-    if spherical:
-        axis_indices = axis_indices[::-1]
-
     # Indices to reorder the regridding axes to the order expected by
     # `ESMF`
     #
@@ -495,16 +501,16 @@ def regrid_get_axis_indices(f, axis_keys, spherical=False):
     return axis_indices, order 
 
 
-def regrid_get_coord_order(f, axis_keys, coord_keys):
+def regrid_get_coord_ESMF_order(f, axis_keys, coord_keys, spherical=False):
     """Get the ordering of the axes for each N-d auxiliary coordinate.
 
     :Parameters:
 
-         f: `Field`
+        f: `Field`
             The source or destination field.
 
         axis_keys: sequence
-            A sequence of axis keys.
+            A sequence of axis keys. The regrid axes in ESMF order.
 
         coord_keys: sequence
             A sequence of keys for each of the N-d auxiliary
@@ -517,12 +523,13 @@ def regrid_get_coord_order(f, axis_keys, coord_keys):
             each N-d auxiliary coordinate.
 
     """
-    coord_axes = [f.get_data_axes(coord_key) for coord_key in coord_keys]
-    coord_order = [
-        [coord_axis.index(axis_key) for axis_key in axis_keys]
-        for coord_axis in coord_axes
-    ]
-
+    coord_order = {}
+    for key, coord_key in  coord_keys.items():
+        coord_axes = f.get_data_axes(coord_key)
+        coord_order[key] = [
+            coord_axes.index(axis_key) for axis_key in axis_keys
+        ]
+        
     return coord_order
 
 
@@ -618,9 +625,9 @@ def regrid_get_destination_mask(
 
     """
 
-    dst_mask = f.to_dask_array()
-    
     index = [slice(None) if i in dst_axes else 0 for i in range(f.ndim)]
+
+    dst_mask = da.ma.getmaskarray(f)
     dst_mask = dst_mask[tuple(index)]
 
     # Reorder the mask axes to match those of the source data
@@ -991,17 +998,52 @@ def check_source_grid(f, src_grid, operator, src_cyclic):
     srcgrid.destroy()    
 
 
-def create_Cartesian_Grid(
+def destroy_Regrid(regrid, src=True, dst=True):
+    """Release the memory allocated to an `ESMF.Regrid` operator.
+    It does not matter if the base regrid operator has already been
+    destroyed.
+    .. versionadded:: TODODASK
+    :Parameters:
+        regrid: `ESMF.Regrid`
+            The regrid operator to be destroyed.
+        src: `bool`
+            By default the source fields and grid are destroyed. If
+            False then they are not.
+        dst: `bool`
+            By default the destination fields and grid are
+            destroyed. If False then they are not.
+    :Returns:
+    
+        `None`
+    """
+    if src:
+        regrid.srcfield.grid.destroy()
+        regrid.srcfield.destroy()
+        regrid.src_frac_field.destroy()
+        
+    if dst:
+        regrid.dstfield.grid.destroy()
+        regrid.dstfield.destroy()
+        regrid.dst_frac_field.destroy()
+  
+    regrid.destroy()
+    
+def create_Cartesian_ESMF_grid(
     coords,
     bounds=None,
+    mask=None,
 ):
     """Create an `ESMF` Grid.
 
     :Parameters:
 
-        coords: sequence
-            The coordinates if not Cartesian it is assume that the
-            first is longitude and the second is latitude.
+        coords: `dict`
+            With keys
+            X, Y and Z (or some subset thereof)
+
+        bounds: `dict`
+            With keys
+            X, Y and Z (or some subset thereof)
 
     :Returns:
 
@@ -1010,10 +1052,10 @@ def create_Cartesian_Grid(
 
     """
     n_axes = len(coords)
-    
-    # Parse coordinates for the Grid, and get its shape.
-    shape = [c.size for c in coords]
-    coords = list(coords)
+        
+    # Parse coordinates for the Grid, and get its shape in XYZ order.
+    coords =[c for key, c in sorted(coords.items())] 
+    shape = [c.size for c in ccords]
     for dim, c in enumerate(coords):
         coords[dim] = c.reshape(
             [c.size if i == dim else 1 for i in range(0, n_axes)]
@@ -1026,8 +1068,8 @@ def create_Cartesian_Grid(
                 f"coordinates must have contiguous, non-overlapping "
                 "bounds for {method} regridding."
             )
-        
-        bounds = list(bounds)
+
+        bounds = [b.array for key, c in sorted(bounds.items())]  # XYZ order
         for dim, b in enumerate(bounds):
             n = b.shape[0]
             if n > 1:
@@ -1071,7 +1113,7 @@ def create_Cartesian_Grid(
                 dim, staggerloc=ESMF.StaggerLoc.CENTER_VCENTER
             )
 
-        gridCentre[...] = c
+        gridCentre[...] = c.array
 
     # Populate Grid corners
     if bounds:
@@ -1084,15 +1126,19 @@ def create_Cartesian_Grid(
             gridCorner = grid.get_coords(dim, staggerloc=staggerloc)
             gridCorner[...] = b
             
+    # Add a mask
+    add_mask(grid, mask)
+
     return grid
 
-def create_spherical_Grid(
+def create_spherical_ESMF_grid(
     coords,
     bounds=None,
     cyclic=None,
+    mask=None,
     coord_order=None,
 ):
-    """Create an `ESMF` Grid.
+    """Create a speherical `ESMF` Grid.
 
     :Parameters:
 
@@ -1119,8 +1165,9 @@ def create_spherical_Grid(
             The `ESMF` grid.
 
     """
-    lon, lat = coords
-    coords_1D = lat.ndim == 1
+    lon = coords['lon']
+    lat = coords['lat']
+    coords_1D = lon.ndim == 1
 
     period = 360
 
@@ -1130,9 +1177,8 @@ def create_spherical_Grid(
         lon = lon.reshape(lon.size, 1)
         lat = lat.reshape(1, lat.size)
     else:
-        x_order, y_order = coord_order
-        lon = lon.transpose(x_order)
-        lat = lat.transpose(y_order)
+        lon = lon.transpose(coord_order['lon'])
+        lat = lat.transpose(coord_order['lat'])
         shape = lon.shape
         if lat.shape != shape:
             raise ValueError(
@@ -1141,11 +1187,12 @@ def create_spherical_Grid(
             )      
 
     # Set cyclicity of longitude axis
+    lon_bounds = None
     if cyclic is None:
         if bounds and coords_1D:
-            x_bounds = bounds[0]
-            cyclic = abs(x_bounds.item(-1) - x_bounds.item(0)) == period
-            if len(bounds) == 1:
+            lon_bounds = bounds['lon'].array
+            cyclic = abs(lon_bounds.item(-1) - lon_bounds.item(0)) == period
+            if 'lat' not in bounds:
                 # Only 1-d longitude bounds were given, so the
                 # intention was to *not* provide bounds to the Grid.
                 bounds = None
@@ -1159,40 +1206,43 @@ def create_spherical_Grid(
                 f"{name} coordinates must have contiguous, "
                 f"non-overlapping bounds for {method} regridding."
             )
-        
-        x_bounds, y_bounds = bounds
-        y_bounds = np.clip(y_bounds, -90, 90)
+        if lon_bounds is None:
+            lon_bounds = bounds['lon'].array
+            
+        lat_bounds = bounds['lat'].array
+        lat_bounds = np.clip(lat_bounds, -90, 90)
             
         if coords_1D:
             if cyclic:
-                x_bounds = x_bounds[:, 0:1]
+                lon_bounds = lon_bounds[:, 0:1]
             else:
-                n = x_bounds.shape[0]
+                n = lon_bounds.shape[0]
                 x = np.empty((n + 1, 1), dtype=x_bounds.dtype)
-                x[:n, 0] = x_bounds[:, 0]
-                x[n, 0] = x_bounds[-1, 1]
+                x[:n, 0] = lon_bounds[:, 0]
+                x[n, 0] = lon_bounds[-1, 1]
         
-            m = y_bounds.shape[0]
+            m = lat_bounds.shape[0]
             y = np.empty((1, m + 1), dtype=y_bounds.dtype)
-            y[0, :m] = y_bounds[:, 0]
-            y[0, m] = y_bounds[-1, 1]
+            y[0, :m] = lat_bounds[:, 0]
+            y[0, m] = lat_bounds[-1, 1]
         else:
+            # TODODASK: what about cyclic here?
             n, m = x_bounds.shape[0:2]
             
             x = np.empty((n + 1, m + 1), dtype=x_bounds.dtype)
-            x[:n, :m] = x_bounds[:, :, 0]
-            x[:n, m] = x_bounds[:, -1, 1]
-            x[n, :m] = x_bounds[-1, :, 3]
-            x[n, m] = x_bounds[-1, -1, 2]
+            x[:n, :m] =lon_bounds[:, :, 0]
+            x[:n, m] = lon_bounds[:, -1, 1]
+            x[n, :m] = lon_bounds[-1, :, 3]
+            x[n, m] =  lon_bounds[-1, -1, 2]
         
             y = np.empty((n + 1, m + 1), dtype=y_bounds.dtype)
-            y[:n, :m] = y_bounds[:, :, 0]
-            y[:n, m] = y_bounds[:, -1, 1]
-            y[n, :m] = y_bounds[-1, :, 3]
-            y[n, m] = y_bounds[-1, -1, 2]
+            y[:n, :m] =lat_bounds[:, :, 0]
+            y[:n, m] = lat_bounds[:, -1, 1]
+            y[n, :m] = lat_bounds[-1, :, 3]
+            y[n, m] =  lat_bounds[-1, -1, 2]
         
-        x_bounds = x
-        y_bounds = y
+        lon_bounds = x
+        lat_bounds = y
 
     # Create empty Grid
     max_index = np.array(shape, dtype="int32")
@@ -1212,23 +1262,91 @@ def create_spherical_Grid(
 
     # Populate Grid centres
     c = grid.get_coords(X, staggerloc=ESMF.StaggerLoc.CENTER)
-    c[...] = lon
+    c[...] = lon.array
     c = grid.get_coords(Y, staggerloc=ESMF.StaggerLoc.CENTER)
-    c[...] = lat
+    c[...] = lat.array
 
     # Populate Grid corners
     if bounds:
         c = grid.get_coords(X, staggerloc=ESMF.StaggerLoc.CORNER]
-        c[...] = x_bounds
+        c[...] = lon_bounds
         c = grid.get_coords(Y, staggerloc=ESMF.StaggerLoc.CORNER]
-        c[...] = y_bounds
+        c[...] = lat_bounds
+
+    # Add a mask
+    add_mask(grid, mask)
 
     return grid
 
 
+def add_mask(grid, mask):
+    """Add a mask to an `ESMF.Grid`.
+
+    .. versionadded:: TODODASK
+    
+    :Parameters:
+
+        grid: `ESMF.Grid`
+            An `ESMF` grid.
+
+        mask: `np.ndarray` or `None`
+            The mask to add to the grid. If `None` then no mask is
+            added. If an array, then it must either be masked array,
+            in which case it is replaced by its mask, or a boolean
+            array. If the mask contains no True elements then no mask
+            is added.
+
+    :Returns:
+
+        `None`
+
+    """
+    if mask is None:
+        return
+
+    mask = np.asanyarray(mask)
+    
+    m = None
+    if mask.dtype == bool:
+        m = mask
+    elif np.ma.is_masked(mask):
+        m = mask.mask
+        
+    if m is not None and np.any(m):
+        grid_mask = grid.add_item(ESMF.GridItem.MASK)
+        grid_mask[...] = convert_mask_to_ESMF(m)
+
+
+def convert_mask_to_ESMF(mask):
+    """Convert a numpy boolean mask to an ESMF binary mask.
+
+    .. versionadded:: TODODASK
+    
+    :Parameters:
+    
+        mask: boolean array_like
+            The numpy mask. Must be of boolean data type, but this is
+            not checked.
+
+    :Returns:
+
+        `numpy.ndarray`
+
+    **Examples**
+    
+    >>> cf.regrid.utils.convert_mask_to_ESMF([True, False])
+    array([0, 1], dtype=int32)
+
+    """
+    return np.invert(mask).astype('int32')
+
+
 def contiguous_bounds(bounds, cyclic=False, period=None):
     """TODODASK"""
-   for b in bounds:
+    if not bounds:
+        return True
+    
+    for b in bounds.values():
         ndim = b.ndim - 1
         if ndim == 1:
             # 1-d cells
@@ -2638,6 +2756,106 @@ def create_Regrid(
         unmapped_action=ESMF.UnmappedAction.IGNORE,
         ignore_degenerate=ignore_degenerate,
     )
+
+
+def create_weights( method, src_grid, dst_grid, unmapped_action,
+                    ignore_degenerate ):
+    """Create an `ESMF` regrid operator.
+
+    :Parameters:
+
+        srcfield: `ESMF.Field`
+            The source Field with an associated grid to be used
+            for regridding.
+
+        dstfield: `ESMF.Field`
+            The destination Field with an associated grid to be
+            used for regridding.
+
+        srcfracfield: `ESMF.Field`
+            A Field to hold the fraction of the source field that
+            contributes to conservative regridding.
+
+        dstfracfield: `ESMF.Field`
+            A Field to hold the fraction of the source field that
+            contributes to conservative regridding.
+
+        method: `str`
+            Setting as follows gives a corresponding result of:
+
+            ===================  =================================
+            *method*             Description
+            ===================  =================================
+            'conservative_1st'   Use first-order conservative
+                                 regridding.
+
+            'conservative'       Alias for 'conservative_1st'.
+
+            'conservative_2nd'   Use second-order conservative
+                                 regridding.
+
+            'linear'             Use (multi)linear interpolation.
+
+            'bilinear'           Deprecated alias for 'linear'.
+
+            'patch'              Use higher-order patch recovery.
+
+            'nearest_stod'       Use nearest source to
+                                 destination interpolation.
+
+            'nearest_dtos'       Use nearest destination to
+                                 source interpolation.
+            ===================  =================================
+
+        ignore_degenerate: `bool`
+            Whether to check for degenerate points.
+
+    :Returns:
+
+        `ESMF.Regrid`
+            The `ESMF` regrid operator.
+
+    """
+    manager = initialize_ESMF() # ??
+    
+    method = regrid_method_map.get(method)
+    if method is None:
+        raise ValueError("TODO")
+    
+    if unmapped_action == "ignore" or unmapped_action is None:
+        unmapped_action = ESMF.UnmappedAction.IGNORE
+    elif unmapped_action == "error":
+        unmapped_action = ESMF.UnmappedAction.ERROR
+
+    # Add a mask to the source grid and create the source field
+    src_field = ESMF.Field(src_grid, "src")
+    dst_field = ESMF.Field(dst_grid, "dst")
+    
+    # Create the regrid operator
+    r = ESMF.Regrid(
+        src_field,
+        dst_field,
+        regrid_method=method,
+        unmapped_action=unmapped_action,
+        ignore_degenerate=bool(ignore_degenerate),
+        dst_mask_values=np.array([0], dtype="int32"),
+        norm_type=ESMF.api.constants.NormType.FRACAREA,
+        factors=True,        
+    )
+
+    weights = r.get_weights_dict(deep_copy=True)
+#    row = weights_dict['row_dst'] - 1
+#    col = weights_dict['col_src'] - 1
+#    weights = weights_dict['weights']
+#    sparse_weights = sps.coo_matrix(
+#        (weights, (row, col)),
+#        shape=[dst_field.data.size, src_field.data.size]
+#    )
+    
+    destroy_Regrid(r)
+    del manager # necessary?
+
+    return weights["weights"], weights["row_dst"], weights["col_src"]
 
 
 def create_Grid(
