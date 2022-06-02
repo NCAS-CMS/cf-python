@@ -15597,7 +15597,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_cyclic: `bool`, optional
                 Specifies whether the longitude for the source grid is
                 periodic or not. If `None` then, if possible, this is
-                determined automatically otherwise it defaults to
+                determined automatically otherwise it defaults to1
                 False.
 
             dst_cyclic: `bool`, optional
@@ -15859,10 +15859,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 dst_axis_indices = regrid_get_axis_indices(
                     dst, dst_axis_keys, shperical=True
                 )
+                # TODODASK: check that dst_mask has correct axis order
                 dst_mask = regrid_get_destination_mask(
                     dst, dst_axis_indices
                 )
-                if method == "nearest_dtos": # ? stod ?
+                if method == "nearest_stod":
+                    # For nearest source to desination regridding, the
+                    # desination mask needs to be taken into account
+                    # during the calculation of the regrid
+                    # weights. (For other methods, the destination
+                    # mask gets applied during the compute of
+                    # `cf.data.dask_regrid.regrid_weights`.)
                     grid_mask = dst_mask
                     dst_mask = None
             

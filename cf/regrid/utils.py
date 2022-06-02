@@ -630,7 +630,8 @@ def regrid_get_destination_mask(
     dst_mask = da.ma.getmaskarray(f)
     dst_mask = dst_mask[tuple(index)]
 
-    # Reorder the mask axes to match those of the source data
+    # Reorder the destination mask axes to match those of the
+    # reordered source data TODODASK - is the following line right?
     dst_mask = da.transpose(dst_mask, np.argsort(dst_axes))
 #    dst_mask = da.transpose(dst_mask, src_order)    
     
