@@ -15869,7 +15869,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     # during the calculation of the regrid
                     # weights. (For other methods, the destination
                     # mask gets applied during the compute of
-                    # `cf.data.dask_regrid.regrid_weights`.)
+                    # `Data._regrid`.)
                     grid_mask = dst_mask
                     dst_mask = None
             
