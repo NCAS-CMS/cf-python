@@ -1,10 +1,15 @@
 """Regridding functions executed during a dask compute."""
+from functools import partial, reduce
+from operator import mul
+
 import numpy as np
 
 
+
 def regrid(
-    a,
+    a,        
     weights=None,
+    method=None,
     src_shape=None,
     dst_shape=None,
     dst_dtype=None,
@@ -36,9 +41,9 @@ def regrid(
     """
     # Convert the array into a form suitable for the regridding dot
     # product
-    a = a.transpose(a, axis_order)
-    non_regrid_shape = a.shape[: -len(src_shape)]
-    src_size = reduce(mul, src_shape)
+    a = a.transpose(axis_order)
+    non_regrid_shape = a.shape[:a.ndim - len(src_shape)]
+    dst_size, src_size = weights.shape
     a = a.reshape(-1, src_size)
     a = a.T
 
@@ -66,15 +71,16 @@ def regrid(
         #
         # If the mask of this slice is the same as the mask of the
         # previous slice then we don't need to re-adjust the weights.
+        n_slices = a.shape[1]
         r = np.ma.empty(
-            (w.shape[0], a.shape[1]), dtype=dst_dtype, order="F"
+            (dst_size, n_slices), dtype=dst_dtype, order="F"
         )
         prev_weights, prev_mask = None, None
-        for n in range(a.shape[1]):
+        for n in range(n_slices):
             n = slice(n, n + 1)
             data = a[:, n]
             regridded_data, prev_weights, prev_mask = _regrid(
-                data, weights, data.mask, method, prev_weights, prev_mask
+                data, weights, method, data.mask, prev_weights, prev_mask
             )
             r[:, n] = regridded_data
 
@@ -83,7 +89,7 @@ def regrid(
     else:
         # Source data is not masked or the source mask is same for all
         # slices => regrid all slices simultaneously.
-        a, _, _ = _regrid(a, weights, src_mask, method)
+        a, _, _ = _regrid(a, weights, method, src_mask)
         del _
 
     a = a.T
@@ -99,7 +105,7 @@ def regrid(
 # https://earthsystemmodeling.org/esmpy_doc/nightly/develop/html/
 
 
-def _regrid(a, weights, src_mask, method, prev_weights=None, prev_mask=None):
+def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
     """Worker function for `regrid`.
 
     Adjusts the weights matrix to account for missing data in *a*, and
@@ -236,7 +242,7 @@ def regrid_weights(
     src_shape=None,
     dst_shape=None,
     dst_mask=None,
-    dense=True,
+    sparse=False,
     order="C",
 ):
     """TODODASK
@@ -253,7 +259,9 @@ def regrid_weights(
     dst_size = reduce(mul, dst_shape)
     w = coo_array((weights, (row - 1, col - 1)), shape=[dst_size, src_size])
 
-    if dense:
+    if sparse:
+        raise NotImplementedError("sparse=True not yet implemented")
+    else
         # Convert the sparse array to a dense array
         w = w.toarray(order=order)
 
@@ -268,7 +276,5 @@ def regrid_weights(
 
         if mask.any():
             w = np.ma.where(mask, np.ma.masked, w)
-    else:
-        raise NotImplementedError("dense=False not yet implemented")
 
     return w
