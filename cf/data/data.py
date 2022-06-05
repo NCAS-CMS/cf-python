@@ -3751,9 +3751,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Set the output data type
         if method in ("nearest_dtos", "nearest_stod"):
-            dtype = dx.dtype # check int32, int64
+            dst_dtype = dx.dtype # check int32, int64
         else:
-            dtype = float # check float32, float64
+            dst_dtype = float # check float32, float64
 
         # Define the regridded chunksizes
         regridded_chunks = tuple(
@@ -3768,7 +3768,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             method=method,
             src_shape=src_shape,
             dst_shape=operator.dst_shape,
-            dst_dtype=dtype,
+            dst_dtype=dst_dtype,
             axis_order=non_regrid_axes + list(regrid_axes)
         )
 
@@ -3776,21 +3776,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # https://dask.discourse.group/t/prevent-dask-array-from-compute-behavior/464/6
         # I don't think so, but should check some graphs for "finalize"
         # entries.
-        weights = dask.delayed(regrid_weights, pure=True)(
-            weights=operator.weights,
-            row=operator.row,
-            col=operator.col,
-            src_shape=src_shape,
-            dst_shape=operator.dst_shape,
-            dst_mask=operator.dst_mask,
-            dense=True,
+        dst_mask = operator.dst_mask
+        if dst_mask is not None:
+            dst_mask = da.asanyarray(dst_mask)
+
+        weights_func = partial(regrid_weights
+                               src_shape=src_shape,
+                               dst_shape=operator.dst_shape,
+                               sparse=False,)
+                               
+        weights = dask.delayed(weights_func, pure=True)(
+            weights=da.asanyarray(operator.weights),
+            row=da.asanyarray(operator.row),
+            col=da.asanyarray(operator.col),
+            dst_mask=dst_mask,
         )
         
         dx = dx.map_blocks(
             regrid_func,
             weights=weights,
             chunks=regridded_chunks,
-            meta=np.array((), dtype=dtype),
+            meta=np.array((), dtype=dst_dtype),
         )
 
         d._set_dask(dx)
