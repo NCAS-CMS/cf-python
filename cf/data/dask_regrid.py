@@ -5,9 +5,8 @@ from operator import mul
 import numpy as np
 
 
-
 def regrid(
-    a,        
+    a,
     weights=None,
     method=None,
     src_shape=None,
@@ -42,7 +41,7 @@ def regrid(
     # Convert the array into a form suitable for the regridding dot
     # product
     a = a.transpose(axis_order)
-    non_regrid_shape = a.shape[:a.ndim - len(src_shape)]
+    non_regrid_shape = a.shape[: a.ndim - len(src_shape)]
     dst_size, src_size = weights.shape
     a = a.reshape(-1, src_size)
     a = a.T
@@ -72,9 +71,7 @@ def regrid(
         # If the mask of this slice is the same as the mask of the
         # previous slice then we don't need to re-adjust the weights.
         n_slices = a.shape[1]
-        r = np.ma.empty(
-            (dst_size, n_slices), dtype=dst_dtype, order="F"
-        )
+        r = np.ma.empty((dst_size, n_slices), dtype=dst_dtype, order="F")
         prev_weights, prev_mask = None, None
         for n in range(n_slices):
             n = slice(n, n + 1)
@@ -169,7 +166,7 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
         # Source data is masked and we need to adjust the weights
         # accordingly
         #
-        # First-order Conservative
+        # First-order Conservative (ASLO 2nd ORDER?)
         # ------------------------
         #
         # If source grid cell i is masked then w_ij are set to zero
@@ -180,7 +177,7 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
         #     D_j = 1 - w_i1j - ... - wiNj
         #
         # where w_iXj is the unmasked weight for source cell i and
-        # desination cell j. Note that most 
+        # desination cell j. Note that most
         #
         # All other methods
         # -----------------
@@ -221,7 +218,7 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
                 where = np.ma.where
             else:
                 w = np.ma.array(weights, copy=True)
-                where = np.where 
+                where = np.where
 
             j = np.unique(where((weights > 0) & (src_mask))[0])
             w[j, :] = np.ma.masked
@@ -261,7 +258,7 @@ def regrid_weights(
 
     if sparse:
         raise NotImplementedError("sparse=True not yet implemented")
-    else
+    else:
         # Convert the sparse array to a dense array
         w = w.toarray(order=order)
 
