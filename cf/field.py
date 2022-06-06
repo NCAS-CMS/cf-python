@@ -15774,35 +15774,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h2 = f2.regrids(op)
 
         """
-        # Initialise ESMF for regridding
-        regrid_initialize()
+        f = _inplace_enabled_define_and_cleanup(self)
 
-        # manager -> destroy after ???
-        
-        f = self.copy()
-        
         regrid_check_use_src_mask(use_src_mask, method)
         
+        create_regrid_operator = True
         if isinstance(dst, RegridOperator):       
             create_regrid_operator = False
 
-            operator = dst
+            regrid_operator = dst
             if return_operator:
-                return operator.copy()
+                return regrid_operator
 
             # Replace input arguments with those stored in the regrid
             # operator
-            dst = operator.get_parameter("dst")
-
-            method = operator.get_parameter("method")
-            dst_axes = operator.get_parameter("dst_axes")
-            dst_cyclic = operator.get_parameter("dst_cyclic")
-            dst_mask = operator.get_parameter("dst_mask")
-            use_src_mask = operator.get_parameter("use_src_mask")
-            ignore_degenerate = operator.get_parameter("ignore_degenerate")
-        else:
-            create_regrid_operator = True
-            check_operator = False          
+            dst = regrid_operator.get_parameter("dst")
+            method = regrid_operator.get_parameter("method")
+            dst_axes = regrid_operator.get_parameter("dst_axes")
+            dst_cyclic = regrid_operator.dst_cyclic
 
         regrid_check_method(method)
 
@@ -15811,24 +15800,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         if not create_regrid_operator or not (dst_is_field or dst_is_dict):
             raise TypeError(
-                "'dst' parameter must be of type Field, dict, "
+                "'dst' parameter must be of type Field, dict "
                 f"or RegridOperator. Got: {type(dst)}"
         )
 
         # ------------------------------------------------------------
         # 
         # ------------------------------------------------------------
-        if dst_is_field and dst_cyclic is None:
-            dst_cyclic = dst.iscyclic(dst_axis_keys[0])
-
-        if src_cyclic is None:
-            src_cyclic = f.iscyclic(src_axis_keys[0])
-             
+        if dst_is_dict:
+            # Create a field containing the destination grid
+            dst, dst_axes = regrid_dict_to_field(d, dst_cyclic, field=f)
+            use_dst_mask = False
+            
         (                
             dst_axis_keys,
             dst_axis_sizes,
             dst_coords,
             dst_bounds,
+            dst_cyclic,
             dst_coord_ESMF_order,
         ) = regrid_get_latlon(dst, "destination", method,
                               dst_cyclic, axes=dst_axes)
@@ -15838,6 +15827,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_axis_sizes,
             src_coords,
             src_bounds,
+            src_cyclic,
             src_coord_ESMF_order,
         ) = regrid_get_latlon(f, "source", method, src_cyclic,
                               axes=src_axes)
@@ -15847,46 +15837,48 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f, src_axis_keys, spherical=True
         )
    
+        if not create_regrid_operator and src_cyclic != regrid_operator.src_cyclic:
+            # Check source grid against the provided regrid operator
+            raise ValueError("TODODASK")
+
         if create_regrid_operator:
             # --------------------------------------------------------
             # 
             # --------------------------------------------------------
+            regrid_initialize()
+            
             dst_mask = None
             grid_mask = None
-            if use_dst_mask and dst_is_field:
+            if use_dst_mask:
                 # Get the destination grid mask
                 dst = dst.copy()
-                dst_axis_indices = regrid_get_axis_indices(
-                    dst, dst_axis_keys, shperical=True
-                )
-                # TODODASK: check that dst_mask has correct axis order
-                dst_mask = regrid_get_destination_mask(
-                    dst, dst_axis_indices
-                )
+                dst_axis_indices = regrid_get_axis_indices(dst, dst_axis_keys)
+                
+                dst_mask = regrid_get_destination_mask(dst, dst_axis_indices)
                 if method == "nearest_stod":
                     # For nearest source to desination regridding, the
-                    # desination mask needs to be taken into account
-                    # during the calculation of the regrid
-                    # weights. (For other methods, the destination
-                    # mask gets applied during the compute of
-                    # `Data._regrid`.)
-                    grid_mask = dst_mask
+                    # desination mask, in ESMF axis order, needs to be
+                    # taken into account during the calculation of the
+                    # regrid weights. (For other methods, the
+                    # destination mask gets applied during the compute
+                    # of `Data._regrid`.)
+                    grid_mask = dst_mask.transpose()
                     dst_mask = None
             
             # Create destination ESMF.Grid 
             dst_grid = create_spherical_ESMF_grid(
                 dst_coords,
-                dst_bounds,
-                cyclic=dst_cyclic,
-                mask=grid_mask,
+                dst_cyclic,
+                bounds=dst_bounds,
                 coord_order=dst_coord_ESMF_order,
+                mask=grid_mask,
             )
 
             # Create source ESMF.Grid
             src_grid = create_spherical_ESMF_grid(
                 src_coords,
-                src_bounds,
-                cyclic=src_cyclic,                
+                src_cyclic,                
+                bounds=src_bounds,
                 coord_order=src_coord_ESMF_order,
             )
             
@@ -15897,15 +15889,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 ignore_degenerate=ignore_degenerate
             )
 
-            parameters = {
-                "dst": dst.copy(),
-                "dst_axes": dst_axes,
-                "use_src_mask": use_src_mask,
-                "ignore_degenerate": ignore_degenerate,
-            }
-
             regrid_operator = RegridOperator(
-                weights, row, col,
+                weights=weights,
+                row=row,
+                col=col,
                 method=method,
                 src_shape=src_shape,
                 dst_shape=dst_shape,
@@ -15913,20 +15900,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 dst_cyclic=dst_cyclic,
                 dst_mask=dst_mask,
                 name=f"regrids: {method}",
-                parameters=parameters
+                parameters= {
+                    "dst": dst.copy(),
+                    "dst_axes": dst_axes,
+                },
             )
-        else:
-            # Check source grid against the provided regrid operator
-            if src_cyclic != operator.src_cyclic:
-                raise ValueError("TODODASK")                
-                   
+
         if return_operator:
             return regrid_operator
-        
+
         # ------------------------------------------------------------
-        # Apply spherical regridding operation
+        # Still here? Then do the spherical regridding 
         # ------------------------------------------------------------
-        regridded_axes_shape = regridded_axes_shape(
+        regridded_axes_shape = regridded_axes_sizes(
             src_axis_indices, dst_axis_sizes
         )
 
@@ -15939,13 +15925,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         # Set regridded data and metadata
         # ------------------------------------------------------------
-        f = _inplace_enabled_define_and_cleanup(f)
+        f = _inplace_enabled_define_and_cleanup(self)
 
         # Update non-coordinate metadata of the new field
         if dst_is_field:
             regrid_update_non_coordinates(
                 f,
-                operator,
+                regrid_operator,
                 src_axis_keys=src_axis_keys,
                 dst_axis_keys=dst_axis_keys,
                 dst_axis_sizes=dst_axis_sizes,
@@ -15959,7 +15945,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dst_axis_keys=dst_axis_keys,
             dst_coords=dst_coords,
             dst_axis_sizes=dst_axis_sizes,
-            dst_coord_order=dst_coord_order,
+            dst_coord_order=dst_coord_ESMF_order,
         )
 
         # Insert regridded data into the new field

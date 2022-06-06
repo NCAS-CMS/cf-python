@@ -1,6 +1,5 @@
 """Regridding functions executed during a dask compute."""
-from functools import partial, reduce
-from operator import mul
+from functools import partial
 
 import numpy as np
 
@@ -38,7 +37,7 @@ def regrid(
             regridded data.
 
     """
-    # Convert the array into a form suitable for the regridding dot
+    # Reshape the array into a form suitable for the regridding dot
     # product
     a = a.transpose(axis_order)
     non_regrid_shape = a.shape[: a.ndim - len(src_shape)]
@@ -89,6 +88,7 @@ def regrid(
         a, _, _ = _regrid(a, weights, method, src_mask)
         del _
 
+    # Reshape the regridded data back to its original axis order
     a = a.T
     a = a.reshape(non_regrid_shape + tuple(dst_shape))
 
@@ -165,28 +165,20 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
         # ------------------------------------------------------------
         # Source data is masked and we need to adjust the weights
         # accordingly
-        #
-        # First-order Conservative (ASLO 2nd ORDER?)
-        # ------------------------
-        #
-        # If source grid cell i is masked then w_ij are set to zero
-        # for all destination cells j, and the remaining non-zero w_ij
-        # are divided by D_j, the fraction of destination cell j that
-        # intersects with unmasked cells of the source grid.
-        #
-        #     D_j = 1 - w_i1j - ... - wiNj
-        #
-        # where w_iXj is the unmasked weight for source cell i and
-        # desination cell j. Note that most
-        #
-        # All other methods
-        # -----------------
-        #
-        # Mask out each row j of 'weights' that contains any masked
-        # source cell i with a corresonponding positive w_ij.
-        #
         # ------------------------------------------------------------
-        if method == "conservative":
+        if method in ("conservative", 'conservative_1st'):
+            # First-order consevative method:
+            #
+            # If source grid cell i is masked then w_ij are set to
+            # zero for all destination cells j, and the remaining
+            # non-zero w_ij are divided by D_j, the fraction of
+            # destination cell j that intersects with unmasked cells
+            # of the source grid.
+            #
+            #     D_j = 1 - w_i1j - ... - wiNj
+            #
+            # where w_iXj is the unmasked weight for masked source
+            # cell i and desination cell j.            
             D = 1 - weights[:, src_mask].sum(axis=1, keepdims=True)
 
             # Get rid of values that are approximately zero, or
@@ -210,24 +202,44 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
             w = np.ma.where(
                 np.count_nonzero(w, axis=1, keepdims=True), w, np.ma.masked
             )
-        else:
-            # Mask out each row of 'weights' that contains any masked
-            # source cell with a corresonponding positive w_ij
+        elif method in ("linear", 'nearest_stod', 'nearest_dtos'):
+            # Linear and nearest neighbour methods:
+            #
+            # Mask out any destination cell with a positive w_ij that
+            # corresponds to a masked source cell. I.e. set row j of
+            # 'weights' to all missing data if it contains a positive
+            # w_ij that corresponds to a masked source cell.
             if np.ma.isMA(weights):
-                w = weights.copy()
                 where = np.ma.where
             else:
-                w = np.ma.array(weights, copy=True)
-                where = np.where
+                where = np.where 
 
             j = np.unique(where((weights > 0) & (src_mask))[0])
-            w[j, :] = np.ma.masked
+
+            if j.size:
+                if np.ma.isMA(weights):
+                    w = weights.copy()
+                else:
+                    w = np.ma.array(weights, copy=True)
+
+                w[j, :] = np.ma.masked
+            else:
+                w = weights
+        elif method in ("patch", "conservative_2d"):
+            # Patch recovery and and second-order consevative methods:
+            #
+            # Don't yet know how to adjust the weights matrix for
+            # source missing data.
+            raise ValueError(
+                f"Can't regrid masked data with the {method!} method"
+            )
 
     # ----------------------------------------------------------------
     # Regrid the data by calculating the dot product of the weights
     # matrix with the source data
     # ----------------------------------------------------------------
-    a = w.dot(np.ma.getdata(a))
+    a = np.ma.getdata(a)
+    a = w.dot(a)
 
     return a, weights, src_mask
 
@@ -239,7 +251,7 @@ def regrid_weights(
     src_shape=None,
     dst_shape=None,
     dst_mask=None,
-    sparse=False,
+        dense=True,
     order="C",
 ):
     """TODODASK
@@ -249,29 +261,37 @@ def regrid_weights(
     .. seealso:: `regrid`, `_regrid`
 
     """
+    from math import prod
     from scipy.sparse import coo_array
-
+    
     # Create a sparse array for the weights
-    src_size = reduce(mul, src_shape)
-    dst_size = reduce(mul, dst_shape)
+    src_size = prod(src_shape)
+    dst_size = prod(dst_shape)
     w = coo_array((weights, (row - 1, col - 1)), shape=[dst_size, src_size])
 
-    if sparse:
-        raise NotImplementedError("sparse=True not yet implemented")
-    else:
+    if dense:
         # Convert the sparse array to a dense array
         w = w.toarray(order=order)
 
         # Mask out rows that correspond to masked destination
         # cells. Such a row will have all zero values, or be
         # identified by 'dst_mask'.
-        mask = np.count_nonzero(w, axis=1, keepdims=True)
-        mask = ~mask.astype(bool)
-        if dst_mask is not None:
-            dst_mask = dst_mask.reshape(dst_mask.size, 1)
-            mask |= dst_mask
+#        mask = np.count_nonzero(w, axis=1, keepdims=True)
+#        mask = ~mask.astype(bool)
+#        if dst_mask is not None:
+#            dst_mask = dst_mask.reshape(dst_mask.size, 1)
+#            mask |= dst_mask
+#
+#        if mask.any():
+#            w = np.ma.where(mask, np.ma.masked, w)
 
-        if mask.any():
-            w = np.ma.where(mask, np.ma.masked, w)
+        not_masked = np.count_nonzero(w, axis=1, keepdims=True)
+        if dst_mask is not None:
+            not_masked = not_masked.astype(bool, copy=False)
+            not_masked &= ~dst_mask.reshape(dst_mask.size, 1)
+
+        if not not_masked.all():
+            # Some destination cells are masked
+            w = np.ma.where(not_masked, w, np.ma.masked)
 
     return w

@@ -3693,10 +3693,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         regridded_axes_shape=None,
     ):
         """Regrid the data.
+
         https://earthsystemmodeling.org/esmpy_doc/release/latest/ESMPy.pdf
+
         .. versionadded:: TODODASK
+
         :Parameters:
-            operator: `ESMF.Regrid` or dask delayed, optional
+
+            operator: `RegridOperator`
   
             dst_mask: array_like or `None`, optional
                 Ignored if *operator* has been set.
@@ -3720,22 +3724,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         
         :Returns:
 
-            `Data` or `None`
+            `Data`
 
         **Examples**
 
         """   
-        src_shape = operator.src_shape
         shape = self.shape
-        in_shape = tuple(shape[i] for i in regrid_axes):
-        if src_shape != in_shape:
+        src_shape = tuple(shape[i] for i in regrid_axes):
+        if src_shape != operator.src_shape:
             raise ValueError(
-                f"Regrid axes shape {in_shape} does not match "
-                f"that of the regrid operator {src_shape}"
+                f"Regrid axes shape {src_shape} does not match "
+                f"the shape of the regrid operator: {operator.src_shape}"
             )
         
-        d = _inplace_enabled_define_and_cleanup(self)
-    
+        d = _inplace_enabled_define_and_cleanup(self)    
         dx = d.to_dask_array()
         
         # Rechunk so that each chunk contains data as expected by the
@@ -3776,15 +3778,15 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # https://dask.discourse.group/t/prevent-dask-array-from-compute-behavior/464/6
         # I don't think so, but should check some graphs for "finalize"
         # entries.
-        dst_mask = operator.dst_mask
-        if dst_mask is not None:
-            dst_mask = da.asanyarray(dst_mask)
-
         weights_func = partial(regrid_weights
                                src_shape=src_shape,
                                dst_shape=operator.dst_shape,
                                sparse=False,)
-                               
+                       
+        dst_mask = operator.dst_mask
+        if dst_mask is not None:
+            dst_mask = da.asanyarray(dst_mask)
+        
         weights = dask.delayed(weights_func, pure=True)(
             weights=da.asanyarray(operator.weights),
             row=da.asanyarray(operator.row),
