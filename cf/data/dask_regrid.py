@@ -12,6 +12,7 @@ def regrid(
     dst_shape=None,
     dst_dtype=None,
     axis_order=None,
+    ref_src_mask=None,
 ):
     """TODODASK
 
@@ -22,19 +23,43 @@ def regrid(
         a: `numpy.ndarray`
             The array to be regridded.
 
-        return_dict: `bool`, optional
-            If True then retun a dictionary containing the
-            *base_operator* and the `numpy` array of the regridded
-            data, with keys ``'base_operator'`` and ``'array``
-            respectively. By default the regridded data is returned as
-            a `numpy` array.
+        weights: `numpy.ndarray`
+            The weights matrix that defines the regridding operation.
+            
+            The weights matrix has J rows and I columns, where J and I
+            are the total number of cells in the destination and
+            source grids respectively. Each element w_ji is the
+            multiplicative weight that defines how much of V_si (the
+            value in source grid cell i) contributes to V_dj (the
+            value in destination grid cell j).
+
+            The final value of V_dj is the sum of w_ji * V_si for all
+            source grid cells i. Note that it is typical that for a
+            given j most w_ji will be zero, reflecting the fact only a
+            few source grid cells intersect a particular destination
+            grid cell. I.e. *weights* is typically a very sparse
+            matrix.
+        
+            If the destination grid has masked cells, either because
+            it spans areas outside of the definition of the source
+            grid, or by selection (such as ocean cells in a land-only
+            grid), then the corresponding rows in the weights matrix
+            must be be entirely missing data.
+        
+            For the patch recovery and second-order conservative
+            regridding methods, the weights matrix will have been
+            constructed taking the source grid mask into account,
+            which must match the mask of *a*.
+
+            For all other regridding methods, the weights matrix will
+            have been constructed assuming that no source grid cells
+            are masked. However, the weights matrix will be modified
+            on-the-fly to account for any masked elements of *a*.
 
     :Returns:
 
-        `numpy.ndarray` or `dict`
-            The regridded data or, if *return_dict* is True, a
-            dictionary containing the *base_operator* and the
-            regridded data.
+        `numpy.ndarray`
+            The regridded data.
 
     """
     # Reshape the array into a form suitable for the regridding dot
@@ -50,41 +75,63 @@ def regrid(
     if np.ma.is_masked(a):
         # Source data is masked for at least one slice
         mask = np.ma.getmaskarray(a)
-        if mask.shape[1] == 1 or set(np.unique(mask.sum(axis=1))).issubset(
+        if mask.shape[1] == 1 or set(mask.sum(axis=1).tolist()).issubset(
             (0, mask.shape[1])
         ):
-            # There is only one slice, or the source mask is same for
-            # all slices.
+            # The source mask is same for all slices
             src_mask = mask[:, 0]
+            if not src_mask.any():
+                src_mask = None
         else:
             # Source mask varies across slices
             variable_mask = True
 
         del mask
 
+    if ref_src_mask is not None:
+        # A reference source grid mask has already been incorporated
+        # into the weights matrix. Therefore, the mask for all slices
+        # of 'a' must be the same as this reference mask.
+        if variable_mask or (src_mask is None and ref_src_mask.any()):
+            raise ValueError(
+                "Can't regrid data with non-constant mask using the "
+                f"{method!r} method"
+            )
+
+        if src_mask is not None:
+            if ref_src_mask.size == src_mask.size:
+                ref_src_mask = ref_src_mask.reshape(src_mask.shape)
+
+            if (src_mask != ref_src_mask).any():
+                raise ValueError(
+                    "Can't regrid data with non-constant mask using the "
+                    f"{method!r} method"
+                )
+
     # Regrid the source data
     if variable_mask:
         # Source data is masked and the source mask varies across
-        # slices => regrid each slice sparately.
+        # slices => we have to regrid each slice separately.
         #
         # If the mask of this slice is the same as the mask of the
         # previous slice then we don't need to re-adjust the weights.
         n_slices = a.shape[1]
-        r = np.ma.empty((dst_size, n_slices), dtype=dst_dtype, order="F")
+        regridded_data = np.ma.empty(
+            (dst_size, n_slices), dtype=dst_dtype, order="F"
+        )
         prev_weights, prev_mask = None, None
         for n in range(n_slices):
             n = slice(n, n + 1)
             data = a[:, n]
-            regridded_data, prev_weights, prev_mask = _regrid(
+            regridded_data[:, n], prev_weights, prev_mask = _regrid(
                 data, weights, method, data.mask, prev_weights, prev_mask
             )
-            r[:, n] = regridded_data
 
-        a = r
+        a = regridded_data
         del data, regridded_data, prev_weights, prev_mask
     else:
         # Source data is not masked or the source mask is same for all
-        # slices => regrid all slices simultaneously.
+        # slices => we can regrid all slices simultaneously.
         a, _, _ = _regrid(a, weights, method, src_mask)
         del _
 
@@ -105,60 +152,53 @@ def regrid(
 def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
     """Worker function for `regrid`.
 
-    Adjusts the weights matrix to account for missing data in *a*, and
-    creates the regridded array by forming the dot product of the
-    (modified) weights and *a*.
-
-    **Definition of the weights matrix**
-            
-    The input *weights* is a j by i matrix where each element is the
-    multiplicative weight (between 0 and 1) that defines how much
-    V_si, the value in source grid cell i, contributes to V_dj, the
-    value in desintation grid j.
-
-        w_ij = f_ij * A_si / A_dj
-            
-    where f_ij is the fraction of source cell i that contributes to
-    destination cell j, A_si is the area of source cell i, and A_dj is
-    the rea of destination cell j.
-            
-    The final value of V_dj is the sum of w_ij * V_si for all source
-    grid cells i. Note that it is typical that, for a given j, most
-    w_ij are zero, because f_ij will be zero for those source grid
-    cells that do not intersect with the desination grid cell.
-
-    See
-    https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node1.html
-    for details (especially section 12.3 "Regridding Methods").
-
-    If the destination grid is masked, either because it spans areas
-    outside of the definition of the source grid, or by selection
-    (such as ocean cells), then the corresponding rows in the
-    'weights' matrix must be be entirely missing data.
-
-    The *weights* matrix will have been constructed assuming that no
-    source grid cells are masked. If the source data *a* do in fact
-    include masked elements, then this function adjusts the weights
-    on-th-fly to account for them.
+    Modifies the *weights* matrix to account for missing data in *a*,
+    and creates the regridded array by forming the dot product of the
+    modifiedx *weights* and *a*.
 
     .. versionadded:: TODODASK
 
-    .. seealso:: `weights`
+    .. seealso:: `regrid`, `regrid_weights`
 
+    :Parameters:
+
+        weights: `numpy.ndarray`
+            The weights matrix that defines the regridding
+            operation. Might be modified (not in-place) to account for
+            missing data in *a*.
+            
+            See `regrid` for details.
+
+        src_mask: `numpy.ndarray` or `None`
+
+        prev_weights: `numpy.ndarray`, optional
+            The weights matrix used by a previous call to `_regrid`,
+            possibly modifed to account for missing data. If set along
+            with `prev_mask` then, if appropriate, this weights matrix
+            will be used instead of creating a new one. Ignored if
+            `prev_mask` is `None`.
+
+        prev_mask: `numpy.ndarray`, optional
+            The source grid mask used by a previous call to `_regrid`.
 
    ALL THIS ASSUMES -2-d what about 3-d?
 
     """
-    if src_mask is None or not src_mask.any():
+    if src_mask is None:
+        # ------------------------------------------------------------
+        # Source data is not masked
+        # ------------------------------------------------------------
+        w = weights
+    elif not src_mask.any():
         # ------------------------------------------------------------
         # Source data is not masked
         # ------------------------------------------------------------
         w = weights
     elif prev_mask is not None and (prev_mask == src_mask).all():
         # ------------------------------------------------------------
-        # Source data is masked, but no need to re-calculate the
-        # weights since this source data's mask is the same as the
-        # previous slice.
+        # Source data is masked, but no need to modify the weights, as
+        # we have been provided with an already-modified weights
+        # matrix.
         # ------------------------------------------------------------
         w = prev_weights
     else:
@@ -166,19 +206,29 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
         # Source data is masked and we need to adjust the weights
         # accordingly
         # ------------------------------------------------------------
-        if method in ("conservative", 'conservative_1st'):
+        if method in ("conservative", "conservative_1st"):
             # First-order consevative method:
             #
-            # If source grid cell i is masked then w_ij are set to
+            #     w_ji = f_ji * A_si / A_dj
+            #
+            # where f_ji is the fraction of source cell i that
+            # contributes to destination cell j, A_si is the area of
+            # source cell i, and A_dj is the area of destination cell
+            # j.
+            #
+            # If source grid cell i is masked then w_ji are set to
             # zero for all destination cells j, and the remaining
-            # non-zero w_ij are divided by D_j, the fraction of
+            # non-zero w_ji are divided by D_j, the fraction of
             # destination cell j that intersects with unmasked cells
             # of the source grid.
             #
             #     D_j = 1 - w_i1j - ... - wiNj
             #
             # where w_iXj is the unmasked weight for masked source
-            # cell i and desination cell j.            
+            # cell i and desination cell j.
+            #
+            # See section 12.3 "Regridding Methods" of
+            # https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node1.html
             D = 1 - weights[:, src_mask].sum(axis=1, keepdims=True)
 
             # Get rid of values that are approximately zero, or
@@ -202,17 +252,15 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
             w = np.ma.where(
                 np.count_nonzero(w, axis=1, keepdims=True), w, np.ma.masked
             )
-        elif method in ("linear", 'nearest_stod', 'nearest_dtos'):
+        elif method in ("linear", "nearest_stod", "nearest_dtos"):
             # Linear and nearest neighbour methods:
             #
-            # Mask out any destination cell with a positive w_ij that
-            # corresponds to a masked source cell. I.e. set row j of
-            # 'weights' to all missing data if it contains a positive
-            # w_ij that corresponds to a masked source cell.
+            # Mask out any row j that contains at least one positive
+            # w_ji that corresponds to a masked source cell i.
             if np.ma.isMA(weights):
                 where = np.ma.where
             else:
-                where = np.where 
+                where = np.where
 
             j = np.unique(where((weights > 0) & (src_mask))[0])
 
@@ -225,14 +273,16 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
                 w[j, :] = np.ma.masked
             else:
                 w = weights
-        elif method in ("patch", "conservative_2d"):
-            # Patch recovery and and second-order consevative methods:
+        elif method in ("patch", "conservative_2nd"):
+            # Patch recovery and second-order consevative methods:
             #
-            # Don't yet know how to adjust the weights matrix for
-            # source missing data.
-            raise ValueError(
-                f"Can't regrid masked data with the {method!} method"
-            )
+            # A reference source data mask has already been
+            # incorporated into the weights matrix. The check that the
+            # mask of 'a' matches the reference mask has already been
+            # done in `regrid`.
+            w = weights
+        else:
+            raise ValueError(f"Unknown regrid method: {method!r}")
 
     # ----------------------------------------------------------------
     # Regrid the data by calculating the dot product of the weights
@@ -241,7 +291,7 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
     a = np.ma.getdata(a)
     a = w.dot(a)
 
-    return a, weights, src_mask
+    return a, w, src_mask
 
 
 def regrid_weights(
@@ -251,7 +301,8 @@ def regrid_weights(
     src_shape=None,
     dst_shape=None,
     dst_mask=None,
-        dense=True,
+    quarter=False,
+    dense=True,
     order="C",
 ):
     """TODODASK
@@ -262,29 +313,31 @@ def regrid_weights(
 
     """
     from math import prod
-    from scipy.sparse import coo_array
-    
+
     # Create a sparse array for the weights
     src_size = prod(src_shape)
     dst_size = prod(dst_shape)
-    w = coo_array((weights, (row - 1, col - 1)), shape=[dst_size, src_size])
+    shape = [dst_size, src_size]
+
+    if quarter:
+        # Quarter the weights matrix, choosing the top left quarter
+        # (which will be equivalent to the botoom right quarter).
+        from scipy.sparse import csr_array
+
+        w = csr_array((weights, (row - 1, col - 1)), shape=shape)
+        w = w[: dst_size / 2, : src_size / 2]
+    else:
+        from scipy.sparse import coo_array
+
+        w = coo_array((weights, (row - 1, col - 1)), shape=shape)
 
     if dense:
         # Convert the sparse array to a dense array
-        w = w.toarray(order=order)
+        w = w.todense(order=order)
 
         # Mask out rows that correspond to masked destination
         # cells. Such a row will have all zero values, or be
         # identified by 'dst_mask'.
-#        mask = np.count_nonzero(w, axis=1, keepdims=True)
-#        mask = ~mask.astype(bool)
-#        if dst_mask is not None:
-#            dst_mask = dst_mask.reshape(dst_mask.size, 1)
-#            mask |= dst_mask
-#
-#        if mask.any():
-#            w = np.ma.where(mask, np.ma.masked, w)
-
         not_masked = np.count_nonzero(w, axis=1, keepdims=True)
         if dst_mask is not None:
             not_masked = not_masked.astype(bool, copy=False)

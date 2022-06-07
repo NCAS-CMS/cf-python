@@ -3690,7 +3690,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         self,
         operator=None,
         regrid_axes=None,
-        regridded_axes_shape=None,
+        regridded_sizes=None,
     ):
         """Regrid the data.
 
@@ -3759,12 +3759,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Define the regridded chunksizes
         regridded_chunks = tuple(
-            (regridded_axes_shape[i],) if i in regridded_axes_shape else c
+            (regridded_sizes[i],) if i in regridded_sizes else c
             for i, c in enumerate(dx.chunks)            
         )
 
         non_regrid_axes = [i for i in range(d.ndim) if i not in regrid_axes]
 
+        # Check graph - do we want to make weights positional?
+        # https://dask.discourse.group/t/prevent-dask-array-from-compute-behavior/464/6
+        # I don't think so, but should check some graphs for "finalize"
+        # entries.
+        src_mask = operator.src_mask
+        if src_mask is not None:
+            src_mask = da.asanyarray(src_mask)
+               
+        dst_mask = operator.dst_mask
+        if dst_mask is not None:
+            dst_mask = da.asanyarray(dst_mask)
+        
         regrid_func = partial(
             regrid,
             method=method,
@@ -3774,29 +3786,23 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             axis_order=non_regrid_axes + list(regrid_axes)
         )
 
-        # Check graph - do we want to make weights positional?
-        # https://dask.discourse.group/t/prevent-dask-array-from-compute-behavior/464/6
-        # I don't think so, but should check some graphs for "finalize"
-        # entries.
         weights_func = partial(regrid_weights
                                src_shape=src_shape,
                                dst_shape=operator.dst_shape,
-                               sparse=False,)
-                       
-        dst_mask = operator.dst_mask
-        if dst_mask is not None:
-            dst_mask = da.asanyarray(dst_mask)
-        
+                               quarter=operator.quarter,
+        )
+                
         weights = dask.delayed(weights_func, pure=True)(
             weights=da.asanyarray(operator.weights),
             row=da.asanyarray(operator.row),
             col=da.asanyarray(operator.col),
             dst_mask=dst_mask,
         )
-        
+
         dx = dx.map_blocks(
             regrid_func,
             weights=weights,
+            ref_src_mask=src_mask,
             chunks=regridded_chunks,
             meta=np.array((), dtype=dst_dtype),
         )
