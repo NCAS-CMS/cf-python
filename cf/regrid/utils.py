@@ -31,26 +31,9 @@ def regrid_initialize():
     """
     if not ESMF_imported:
         raise RuntimeError(
-            "Regridding methods will not work unless "
+            "Regridding will not work unless "
             "the ESMF library is installed"
         )
-
-    return ESMF.Manager(debug=bool(regrid_logging()))
-
-
-def regrid_finalise(manager):
-    """Initialize `ESMF`.
-
-    Initialise the `ESMF` manager. Whether logging is enabled or not
-    is determined by `cf.regrid_logging`. If it is then logging takes
-    place after every call to `ESMF`.
-
-    :Returns:
-
-        `ESMF.Manager`
-            A singleton instance of the `ESMF` manager.
-
-    """
 
     return ESMF.Manager(debug=bool(regrid_logging()))
 
@@ -306,7 +289,8 @@ def regrid_get_Cartesian_coords(
             raise ValueError("TODO")
 
     if len(coords) == 1:
-        # dummy axis
+        # Create a dummy axis becuase ESMF doesn't like doing 1-d
+        # regridding
         data = np.array([np.finfo(float).epsneg, np.finfo(float).eps])
         if bounds:
             coords[1] = np.array([0.0])
