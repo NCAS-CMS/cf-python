@@ -3851,6 +3851,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         if inplace:
             # SB TODODASK perform 'method' operation in-place
+            #     -> until this is done, works up to 'iadd' line ~2195 in test
             pass
         else:
             try:
@@ -3877,6 +3878,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 raise TypeError(error)
 
         data0._set_dask(dx0, reset_mask_hardness=False)
+
         data0.override_units(new_Units, inplace=True)
 
         return data0
