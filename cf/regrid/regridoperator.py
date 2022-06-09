@@ -1,50 +1,10 @@
-from .. import _found_ESMF
-
-if _found_ESMF:
-    try:
-        import ESMF
-    except Exception:
-        _found_ESMF = False
-
-if _found_ESMF:
-    regrid_method_map = {
-        "linear": ESMF.RegridMethod.BILINEAR,  # see comment below...
-        "bilinear": ESMF.RegridMethod.BILINEAR,  # (for back compat)
-        "conservative": ESMF.RegridMethod.CONSERVE,
-        "conservative_1st": ESMF.RegridMethod.CONSERVE,
-        "conservative_2nd": ESMF.RegridMethod.CONSERVE_2ND,
-        "nearest_dtos": ESMF.RegridMethod.NEAREST_DTOS,
-        "nearest_stod": ESMF.RegridMethod.NEAREST_STOD,
-        "patch": ESMF.RegridMethod.PATCH,
-    }
-    # ... diverge from ESMF with respect to name for bilinear method
-    # by using 'linear' because 'bi' implies 2D linear interpolation,
-    # which could mislead or confuse for Cartesian regridding in 1D or
-    # 3D.
-else:
-    # Initialize a place holder that may be imported when ESMF is not
-    # installed
-    regrid_method_map = {}
-
-regrid_method_map_inverse = {v: k for k, v in regrid_method_map.items()}
-
-conservative_regridding_methods = (
-    "conservative",
-    "conservative_1st",
-    "conservative_2nd",
-)
-
-regridding_methods = (
-    "linear",  # prefer over 'bilinear' as of v3.2.0
-    "bilinear",  # only for backward compatibility, use & document 'linear'
-    "patch",
-    "nearest_stod",
-    "nearest_dtos",
-) + conservative_regridding_methods
+from copy import deepcopy
 
 
 class RegridOperator:
     """A regridding operator between two fields.
+
+    TODODASK
 
     Stores an `ESMF.Regrid` regridding operator and associated
     parameters that describe the complete coordinate system of the
@@ -52,7 +12,10 @@ class RegridOperator:
 
     """
 
-    def __init__(self, regrid, name, **parameters):
+    def __init__(self, weights, row, col, method=None, src_shape=None,
+                 dst_shape=None, src_cyclic=None, dst_cyclic=None,
+                 src_mask=None, dst_mask=None, src_coords=None,
+                 src_bounds=None, coord_sys=None, parameters=None):
         """**Initialization**
 
         :Parameters:
@@ -60,11 +23,11 @@ class RegridOperator:
             regrid: `ESMF.Regrid`
                 The `ESMF` regridding operator between two fields.
 
-            name: `str`
+            name: `str`, optional
                 A name that defines the context of the destination
                 grid parameters.
 
-            parameters: `dict`
+            parameters: `dict`, optional
                Parameters that describe the complete coordinate system
                of the destination grid.
 
@@ -74,47 +37,65 @@ class RegridOperator:
                instance.
 
         """
-        self._regrid = regrid
-        self._name = name
-        self._parameters = parameters
-
-    def __del__(self):
-        """Calls the `ESMF.Regrid` destroy method."""
-        self._regrid.destroy()
-
+        if parameters is None:
+            parameters = {}
+            
+        self._weights = weights
+        self._row = row
+        self._col = col
+        self._method = method
+        self._src_shape = tuple(src_shape)
+        self._dst_shape = tuple(dst_shape)
+        self._src_cyclic = bool(src_cyclic)
+        self._dst_cyclic = bool(dst_cyclic)
+        self._src_mask = src_mask
+        self._dst_mask = dst_mask
+        self._src_coords = tuple(src_coords)
+        self._src_bounds = tuple(src_bounds)
+        self._coord_sys = coord_sys
+        self._parameters = parameters.copy()
+    
     def __repr__(self):
         return (
-            f"<CF {self.__class__.__name__}: "
-            f"{self._name}, method={self.method}>"
+            f"<CF {self.__class__.__name__}: {self.coord_sys} {self.method}>"
         )
+
+    @property
+    def coord_sys(self):
+        """TODODASK
+
+        """
+        return self._coord_sys
+
+    @property
+    def dst_cyclic(self):
+        """TODODASK
+        """
+        return self._dst_cyclic
+
+    @property
+    def dst_mask(self):
+        """TODODASK
+        """
+        return self._dst_mask
+
+    @property
+    def dst_shape(self):
+        """TODODASK
+        """
+        return self._dst_shape
 
     @property
     def method(self):
         """The regridding method.
 
-        **Examples:**
+        **Examples**
 
         >>> r.method
-        'conservative'
+        'patch'
 
         """
-        method = regrid_method_map_inverse[self._regrid.regrid_method]
-        if method == "bilinear":
-            method = "linear"
-
-        return method
-
-    @property
-    def name(self):
-        """The name of the regrid method.
-
-        **Examples:**
-
-        >>> r.name
-        'regrids'
-
-        """
-        return self._name
+        return self._method
 
     @property
     def parameters(self):
@@ -124,106 +105,97 @@ class RegridOperator:
         that the these are well defined during the creation and
         subsequent use of a `RegridOperator` instance.
 
-        **Examples:**
+        **Examples**
 
         >>> type(r.parameters)
         dict
 
         """
-        return self._parameters
+        return self._parameters.copy()
 
     @property
-    def regrid(self):
+    def quarter(self):
+        """TODODASK
+        """
+        return self._quarter
+
+    @property
+    def src_bounds(self):
+        """TODODASK
+        """
+        return self._src_bounds
+
+    @property
+    def src_coords(self):
+        """TODODASK
+        """
+        return self._src_coords
+
+    @property
+    def src_cyclic(self):
+        """TODODASK
+        """
+        return self._src_cylcic
+
+    @property
+    def src_mask(self):
+        """TODODASK
+        """
+        return self._src_mask
+
+    @property
+    def src_shape(self):
+        """TODODASK
+        """
+        return self._src_shape
+
+    @property
+    def weights(self):
         """The contained regridding operator.
 
-        **Examples:**
-
-        >>> type(r.regrid)
-        ESMF.api.regrid.Regrid
-
         """
-        return self._regrid
-
-    def check_method(self, method):
-        """Whether the given method is equivalent to the regridding
-        method.
-
-        :Parameters:
-
-            method: `str`
-                A regridding method, such as ``'conservative'``.
-
-        :Returns:
-
-            `bool`
-                Whether or not method is equivalent to the regridding
-                method.
-
-        **Examples:**
-
-        >>> r.method
-        'conservative'
-        >>> r.check_method('conservative')
-        True
-        >>> r.check_method('conservative_1st')
-        True
-        >>> r.check_method('conservative_2nd')
-        False
-
-        """
-        return regrid_method_map.get(method) == self._regrid.regrid_method
+        return self._weights
 
     def copy(self):
-        """Return a copy.
-
-        The contained `ESMF.Regrid` instance (see `regrid`) is shallow
-        copied and the "dst" parameter, which is a `Field` or `dict`
-        instance, is copied with its `!copy` method.
+        """Return a deep copy.
 
         :Returns:
 
             `RegridOperator`
-                The copy.
-
-        **Examples:**
-
-        >>> s = r.copy()
 
         """
-        parameters = self._parameters
-        if "dst" in parameters:
-            parameters = parameters.copy()
-            parameters["dst"] = parameters["dst"].copy()
-
         return type(self)(
-            regrid=self._regrid.copy(), name=self._name, **parameters
+            self.weights.copy(),
+            self.row.copy(),
+            self.col.copy(),
+            method=self.method,
+            src_shape=self.src_shape,
+            dst_shape=self.dst_shape,
+            src_cyclic=self.src_cyclic,
+            dst_cyclic=self.dst_cyclic,
+            src_mask=deepcopy(self.src_mask)
+            dst_mask=deepcopy(self.dst_mask)
+            src_coords=deepcopy(self.src_coords)
+            src_bounds=deepcopy(self.src_bounds)
+            coord_sys=self.coord_sys,
+            quarter=self.quarter,
+            parameters=deepcopy(parameters),
         )
+    
+    def todense(self, order="C"):
+        """Return the weights in dense format.
+        
+        .. versionadded:: TODODASK
 
-    def destroy(self):
-        """Free the memory allocated by the `ESMF.Regrid` instance.
-
-        **Examples:**
-
-        >>> r.destroy()
+        .. seealso:: `tosparse`
 
         """
-        # explicitly release memory for source ESMF objects
-        self._regrid.srcfield.grid.destroy()
-        self._regrid.srcfield.destroy()
-        self._regrid.src_frac_field.destroy()
-
-        # explicitly release memory for destination ESMF objects
-        self._regrid.dstfield.grid.destroy()
-        self._regrid.dstfield.destroy()
-        self._regrid.dst_frac_field.destroy()
-
-        # explicitly release memory for ESMF Regrid
-        self._regrid.destroy()
-
+        return self.sparse_array().todense(order=order)
+ 
     def get_parameter(self, parameter):
         """Return a regrid operation parameter.
 
-        **Examples:**
+        **Examples**
 
         >>> r.get_parameter('ignore_degenerate')
         True
@@ -239,3 +211,33 @@ class RegridOperator:
             raise ValueError(
                 f"{self.__class__.__name__} has no {parameter!r} parameter"
             )
+
+    def tosparse(self):
+        """Return the weights in sparse COOrdinate format.
+        
+        .. versionadded:: TODODASK
+
+        .. seealso:: `todense`
+
+        """
+        from math import prod
+
+        data = self.weights
+        i = self.row - 1
+        j = self.col - 1
+
+        src_size = prod(self.src_shape)
+        dst_size = prod(self.dst_shape)
+        shape = [dst_size, src_size]
+
+        if self.quarter:
+             from scipy.sparse import csr_array
+
+             w = csr_array((data, (i, j)), shape=shape)
+             w = w[: dst_size / 2, : src_size / 2]
+        else:
+            from scipy.sparse import coo_array
+            
+            w = coo_array((data, (i, j)), shape=shape)
+
+        return w

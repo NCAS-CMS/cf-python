@@ -330,7 +330,8 @@ def regrid_weights(
         from scipy.sparse import coo_array
 
         w = coo_array((weights, (row - 1, col - 1)), shape=shape)
-
+        # if dense==False, convert to csr/csc?
+        
     if dense:
         # Convert the sparse array to a dense array
         w = w.todense(order=order)
@@ -346,5 +347,7 @@ def regrid_weights(
         if not not_masked.all():
             # Some destination cells are masked
             w = np.ma.where(not_masked, w, np.ma.masked)
-
+    else:
+        raise NotImplementedError("Can't yet use sparse arrays")
+    
     return w

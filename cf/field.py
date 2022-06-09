@@ -16682,9 +16682,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             # Create regrid operator
             regrid_operator = RegridOperator(
-                weights=weights,
-                row=row,
-                col=col,
+                weights,
+                row,
+                col,
                 method=method,
                 src_shape=src_shape,
                 dst_shape=dst_shape,
