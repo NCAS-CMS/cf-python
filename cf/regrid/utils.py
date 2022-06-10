@@ -31,8 +31,7 @@ def regrid_initialize():
     """
     if not ESMF_imported:
         raise RuntimeError(
-            "Regridding will not work unless "
-            "the ESMF library is installed"
+            "Regridding will not work unless " "the ESMF library is installed"
         )
 
     return ESMF.Manager(debug=bool(regrid_logging()))
@@ -289,13 +288,15 @@ def regrid_get_Cartesian_coords(
             raise ValueError("TODO")
 
     if len(coords) == 1:
-        # Create a dummy axis becuase ESMF doesn't like doing 1-d
+        # Create a dummy axis because ESMF doesn't like doing 1-d
         # regridding
         data = np.array([np.finfo(float).epsneg, np.finfo(float).eps])
         if bounds:
+            # Size 1
             coords[1] = np.array([0.0])
             bounds[1] = data
         else:
+            # Size 2
             coords[1] = data
 
     return axis_keys, axis_sizes, coords, bounds, bool(cyclic)
@@ -844,6 +845,84 @@ def regrid_create_ESMF_grid(
         add_mask(grid, mask)
 
     return grid
+
+
+def regrid_create_weights(
+    method,
+    src_grid,
+    dst_grid,
+    unmapped_action,
+    ignore_degenerate,
+    quarter=False,
+):
+    """Create an `ESMF` regrid operator.
+
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+        ignore_degenerate: `bool`
+            Whether to check for degenerate points.
+
+        quarter: `bool`, optional
+            If True then only return weights corresponding to the top
+            left hand corner of the weights matrix. This is necessary
+            for 1-d regridding when the weights were generated for a
+            2-d grid for which one of the dimensions is a size 2 dummy
+            dimension.
+
+            .. seealso:: `regrid_get_Cartesian_coords`
+
+    :Returns:
+
+        3-`tuple` of `numpy.ndarray`
+
+    """
+    method = regrid_method_map.get(method)
+    if method is None:
+        raise ValueError("TODO")
+
+    if unmapped_action == "ignore" or unmapped_action is None:
+        unmapped_action = ESMF.UnmappedAction.IGNORE
+    elif unmapped_action == "error":
+        unmapped_action = ESMF.UnmappedAction.ERROR
+
+    # Add a mask to the source grid and create the source field
+    src_field = ESMF.Field(src_grid, "src")
+    dst_field = ESMF.Field(dst_grid, "dst")
+
+    # Create the regrid operator
+    r = ESMF.Regrid(
+        src_field,
+        dst_field,
+        regrid_method=method,
+        unmapped_action=unmapped_action,
+        ignore_degenerate=bool(ignore_degenerate),
+        src_mask_values=np.array([0], dtype="int32"),
+        dst_mask_values=np.array([0], dtype="int32"),
+        norm_type=ESMF.api.constants.NormType.FRACAREA,
+        factors=True,
+    )
+
+    weights = r.get_weights_dict(deep_copy=True)
+    row = weights["row_dst"]
+    col = weights["col_src"]
+    weights = weights["weights"]
+
+    if quarter:
+        # Find the indices that define the weights for the just the
+        # top left corner of the weights matrix
+        index = np.where(
+            (row <= dst_field.data.size // 2)
+            & (col <= src_field.data.size // 2)
+        )
+        weights = weights[index]
+        row = row[index]
+        col = col[index]
+
+    destroy_Regrid(r)
+
+    return weights, row, col
 
 
 def add_mask(grid, mask):

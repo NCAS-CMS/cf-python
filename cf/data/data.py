@@ -406,11 +406,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(
-                        array,
-                        copy=copy,
-                        delete_source=False,
-                    )
+                    self._set_dask(array, copy=copy, delete_source=False)
             else:
                 self._del_dask(None)
 
@@ -1744,13 +1740,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("_preserve_partitions")
-    def median(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        inplace=False,
-    ):
+    def median(self, axes=None, squeeze=False, mtol=1, inplace=False):
         """Calculate median values.
 
         Calculates the median value or the median values along axes.
@@ -1792,11 +1782,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         return self.percentile(
-            50,
-            axes=axes,
-            squeeze=squeeze,
-            mtol=mtol,
-            inplace=inplace,
+            50, axes=axes, squeeze=squeeze, mtol=mtol, inplace=inplace
         )
 
     @_inplace_enabled(default=False)
@@ -1868,11 +1854,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
 
         p90 = d.percentile(
-            90,
-            axes=axes,
-            squeeze=False,
-            mtol=mtol,
-            inplace=False,
+            90, axes=axes, squeeze=False, mtol=mtol, inplace=False
         )
 
         with np.testing.suppress_warnings() as sup:
@@ -3686,12 +3668,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
 
     @daskified(_DASKIFIED_VERBOSE)
-    def _regrid(
-        self,
-        operator=None,
-        regrid_axes=None,
-        regridded_sizes=None,
-    ):
+    def _regrid(self, operator=None, regrid_axes=None, regridded_sizes=None):
         """Regrid the data.
 
         https://earthsystemmodeling.org/esmpy_doc/release/latest/ESMPy.pdf
@@ -3728,70 +3705,66 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         **Examples**
 
-        """   
+        """
         shape = self.shape
-        src_shape = tuple(shape[i] for i in regrid_axes):
+        src_shape = tuple(shape[i] for i in regrid_axes)
         if src_shape != operator.src_shape:
             raise ValueError(
                 f"Regrid axes shape {src_shape} does not match "
                 f"the shape of the regrid operator: {operator.src_shape}"
             )
-        
-        d = _inplace_enabled_define_and_cleanup(self)    
+
+        d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
-        
+
         # Rechunk so that each chunk contains data as expected by the
         # regrid operator, i.e. the regrid axes all have chunksize -1.
         chunks = dx.chunks
         shape = dx.shape
         if not all(chunks[i] == (shape[i],) for i in regrid_axes):
             chunks = [
-                (-1,) if i in regrid_axes else c
-                for i, c in enumerate(chunks)
+                (-1,) if i in regrid_axes else c for i, c in enumerate(chunks)
             ]
             dx = dx.rechunk(chunks)
 
         # Set the output data type
         if method in ("nearest_dtos", "nearest_stod"):
-            dst_dtype = dx.dtype # check int32, int64
+            dst_dtype = dx.dtype
         else:
-            dst_dtype = float # check float32, float64
+            dst_dtype = float
 
         # Define the regridded chunksizes
         regridded_chunks = tuple(
             (regridded_sizes[i],) if i in regridded_sizes else c
-            for i, c in enumerate(dx.chunks)            
+            for i, c in enumerate(dx.chunks)
         )
 
         non_regrid_axes = [i for i in range(d.ndim) if i not in regrid_axes]
 
-        # Check graph - do we want to make weights positional?
-        # https://dask.discourse.group/t/prevent-dask-array-from-compute-behavior/464/6
-        # I don't think so, but should check some graphs for "finalize"
-        # entries.
         src_mask = operator.src_mask
         if src_mask is not None:
             src_mask = da.asanyarray(src_mask)
-               
+
         dst_mask = operator.dst_mask
         if dst_mask is not None:
             dst_mask = da.asanyarray(dst_mask)
-        
+
         regrid_func = partial(
             regrid,
             method=method,
             src_shape=src_shape,
             dst_shape=operator.dst_shape,
-            dst_dtype=dst_dtype,
-            axis_order=non_regrid_axes + list(regrid_axes)
+            axis_order=non_regrid_axes + list(regrid_axes),
         )
 
-        weights_func = partial(regrid_weights
-                               src_shape=src_shape,
-                               dst_shape=operator.dst_shape,
-                               quarter=operator.quarter,
+        weights_func = partial(
+            regrid_weights,
+            src_shape=src_shape,
+            dst_shape=operator.dst_shape,
+            dtype=dst_dtype,
+            quarter=operator.quarter,
         )
-                
+
         weights = dask.delayed(weights_func, pure=True)(
             weights=da.asanyarray(operator.weights),
             row=da.asanyarray(operator.row),
@@ -6401,12 +6374,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def maximum_absolute_value(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
+        self, axes=None, squeeze=False, mtol=1, split_every=None, inplace=False
     ):
         """Calculate maximum absolute values.
 
@@ -6539,12 +6507,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def minimum_absolute_value(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
+        self, axes=None, squeeze=False, mtol=1, split_every=None, inplace=False
     ):
         """Calculate minimum absolute values.
 

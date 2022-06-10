@@ -173,10 +173,10 @@ class RegridOperator:
             dst_shape=self.dst_shape,
             src_cyclic=self.src_cyclic,
             dst_cyclic=self.dst_cyclic,
-            src_mask=deepcopy(self.src_mask)
-            dst_mask=deepcopy(self.dst_mask)
-            src_coords=deepcopy(self.src_coords)
-            src_bounds=deepcopy(self.src_bounds)
+            src_mask=deepcopy(self.src_mask),
+            dst_mask=deepcopy(self.dst_mask),
+            src_coords=deepcopy(self.src_coords),
+            src_bounds=deepcopy(self.src_bounds),
             coord_sys=self.coord_sys,
             quarter=self.quarter,
             parameters=deepcopy(parameters),
