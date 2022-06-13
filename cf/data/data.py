@@ -29,7 +29,6 @@ from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _numpy_isclose,
     _section,
-    abspath,
     atol,
     default_netCDF_fillvals,
     free_memory,
@@ -39,7 +38,6 @@ from ..functions import (
 )
 from ..mixin_container import Container
 from ..units import Units
-from . import FileArray
 from .collapse import Collapse
 from .creation import compressed_to_dask, generate_axis_identifiers, to_dask
 from .dask_utils import (
@@ -7800,45 +7798,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._axes = data_axes
 
         return d
-
-    @daskified(_DASKIFIED_VERBOSE)
-    def get_filenames(self):
-        """Return the names of files containing parts of the data array.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If the
-                data is in memory then an empty `set` is returned.
-
-        **Examples**
-
-        >>> f = cf.NetCDFArray(TODODASK)
-        >>> d = cf.Data(f)
-        >>> d.get_filenames()
-        {TODODASK}
-
-        >>> d = cf.Data([1, 2, 3])
-        >>> d.get_filenames()
-        set()
-
-        """
-        out = set()
-
-        dx = self.to_dask_array()
-        hlg = dx.dask
-        dsk = hlg.to_dict()
-        for key, value in hlg.get_all_dependencies().items():
-            if value:
-                continue
-
-            # This key has no dependencies, and so is raw data.
-            a = dsk[key]
-            if isinstance(a, FileArray):
-                out.add(abspath(a.get_filename()))
-
-        out.discard(None)
-        return out
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("size")
