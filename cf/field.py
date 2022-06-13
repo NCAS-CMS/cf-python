@@ -76,19 +76,6 @@ from .functions import (
 )
 from .functions import relaxed_identities as cf_relaxed_identities
 from .query import Query, eq, ge, gt, le, lt
-from .regrid import (
-    RegridOperator,
-    regrid_check_operator,
-    regrid_create_weights,
-    regrid_dict_to_field,
-    regrid_get_axis_indices,
-    regrid_get_coords,
-    regrid_get_mask,
-    regrid_create_ESMF_grid,
-    regrid_initialize,
-    regrid_update_coordinates,
-    regrid_update_non_coordinates,
-)
 from .subspacefield import SubspaceField
 from .timeduration import TimeDuration
 from .units import Units
@@ -15760,8 +15747,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h2 = f2.regrids(op)
 
         """
-        return self._regrid(
+        from .regrid import regrid
+   
+        return regrid(
             "spherical",
+            self,
             dst,
             method=method,
             src_cyclic=src_cyclic,
@@ -16260,27 +16250,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> h2 = f2.regridc(op)
 
         """
-        # Parse the axes
-        if axes is None:
-            raise ValueError("Must set the 'axes' parameter")
-
-        if isinstance(axes, str):
-            axes = (axes,)
-
-        n_axes = len(axes)
-        if not 1 <= n_axes <= 3:
-            raise ValueError(
-                "Between 1 and 3 axes must be individually specified."
-            )
-
-        if method == "patch" and n_axes != 2:
-            raise ValueError(
-                "The patch recovery method is only available for "
-                "2-d regridding."
-            )
-
-        return self._regrid(
+        from .regrid import regrid
+   
+        return regrid(
             "Cartesian",
+            self,
             dst,
             method=method,
             src_cyclic=False,
@@ -16505,262 +16479,265 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     #
     #        return f
 
-    @_inplace_enabled(default=False)
-    def _regrid(
-        self,
-        coord_system,
-        dst,
-        method=None,
-        src_cyclic=None,
-        dst_cyclic=None,
-        use_src_mask=True,
-        use_dst_mask=False,
-        src_axes=None,
-        dst_axes=None,
-        axes=None,
-        ignore_degenerate=True,
-        return_operator=False,
-        check_regrid_operator=False,
-        inplace=False,
-    ):
-        """TODODASK"""
-        if return_operator:
-            f = self.copy()
-        else:
-            f = _inplace_enabled_define_and_cleanup(self)
-
-        create_regrid_operator = True
-        if isinstance(dst, RegridOperator):
-            create_regrid_operator = False
-
-            regrid_operator = dst
-            dst = regrid_operator.get_parameter("dst")
-            dst_axes = regrid_operator.get_parameter("dst_axes")
-            dst_cyclic = regrid_operator.dst_cyclic
-            method = regrid_operator.method
-        else:
-            check_regrid_operator = False
-
-        regrid_check_method(method)
-        regrid_check_use_src_mask(use_src_mask, method)
-
-        if coord_system == "Cartesian":
-            src_axes = axes
-            if dst_axes is None:
-                dst_axes = axes
-
-        if isinstance(dst, dict):
-            # Convert a dictionary containing the destination grid
-            # to a Domain object
-            dst, dst_axes = regrid_dict_to_domain(
-                coord_system, dst, cyclic=dst_cyclic, axes=dst_axes, field=f
-            )
-            use_dst_mask = False
-        elif create_regrid_operator and not (
-            isinstance(dst, f.__class__)
-            or isinstance(dst, f._Domain.__class__)
-        ):
-            raise TypeError(
-                "'dst' parameter must be of type Field, Domain, dict "
-                f"or RegridOperator. Got: {type(dst)}"
-            )
-
-        (
-            dst_axis_keys,
-            dst_axis_sizes,
-            dst_coords,
-            dst_bounds,
-            dst_cyclic,
-        ) = regrid_get_coords(
-            coord_system, f, "destination", method, dst_cyclic, axes=dst_axes
-        )
-
-        (
-            src_axis_keys,
-            src_axis_sizes,
-            src_coords,
-            src_bounds,
-            src_cyclic,
-        ) = regrid_get_coords(
-            coord_system, f, "source", method, src_cyclic, axes=src_axes
-        )
-
-        # Check the consistency of the source and destination
-        # coordinate units.
-        regrid_check_coordinate_units(
-            coord_system, src_coords, src_bounds, dst_coords, dst_bounds
-        )
-
-        if check_regrid_operator:
-            # Check that the given regrid operator is compatable
-            regrid_check_operator(
-                coord_system,
-                f,
-                src_cyclic,
-                src_coords,
-                src_bounds,
-                regrid_operator,
-            )
-
-        # Get the axis indices and their order for the source field
-        src_axis_indices = regrid_get_axis_indices(f, src_axis_keys)
-
-        if create_regrid_operator:
-            # --------------------------------------------------------
-            #
-            # --------------------------------------------------------
-            ESMF_manager = regrid_initialize()
-
-            # Create a mask for the destination grid
-            dst_mask = None
-            grid_dst_mask = None
-            if use_dst_mask:
-                dst = dst.copy()
-                dst_axis_indices = regrid_get_axis_indices(dst, dst_axis_keys)
-                dst_mask = regrid_get_mask(dst, dst_axis_indices)
-                if method == "nearest_stod":
-                    # For nearest source to desination regridding, the
-                    # desination mask needs to be taken into account
-                    # during the ESMF calculation of the regrid
-                    # weights. For other methods, the destination mask
-                    # gets applied during the compute of
-                    # `Data._regrid`.
-                    grid_dst_mask = np.array(dst_mask.transpose())
-                    dst_mask = None
-
-            # Create a mask for the source grid
-            src_mask = None
-            grid_src_mask = None
-            if method in ("patch", "conservative_2d"):
-                # For patch recovery and second-order conservative
-                # regridding, the source mask needs to be taken into
-                # account during the ESMF calculation of the regrid
-                # weights. For other methods, the source mask gets
-                # applied during the compute of `Data._regrid`.
-                src_mask = regrid_get_mask(f, src_axis_indices)
-                grid_src_mask = np.array(src_mask.transpose())
-                if not grid_src_mask.any():
-                    # There are no masked source cells, so we can
-                    # collapse the mask that gets stored in the regrid
-                    # operator.
-                    src_mask = np.array(False)
-
-            # Create the destination ESMF.Grid
-            dst_grid = regrid_create_ESMF_grid(
-                coord_system,
-                name="destination",
-                method=method,
-                coords=dst_coords,
-                bounds=dst_bounds,
-                cyclic=dst_cyclic,
-                mask=grid_dst_mask,
-            )
-            del grid_dst_mask
-
-            # Create the source ESMF.Grid
-            src_grid = regrid_create_ESMF_grid(
-                coord_system,
-                name="source",
-                method=method,
-                coords=src_coords,
-                bounds=src_bounds,
-                cyclic=src_cyclic,
-                mask=grid_src_mask,
-            )
-            del grid_src_mask
-
-            # Create regrid weights matrix
-            quarter = (
-                coord_system == "Cartesian"
-                and n_axes == 1
-                and len(src_coords) == 2
-                and not src_bounds
-            )
-
-            weights, row, col = regrid_create_weights(
-                method,
-                src_grid,
-                dst_grid,
-                unmapped_action=unmapped_action,
-                ignore_degenerate=ignore_degenerate,
-                quarter=quarter,
-            )
-
-            # We've finished with ESMF, so finalise the ESMF
-            # manager. This is done to free up any Persistent
-            # Execution Threads (PETs) created by the ESMF Virtual
-            # Machine
-            # (https://earthsystemmodeling.org/esmpy_doc/release/latest/html/api.html#resource-allocation).
-            del ESMF_mananger
-
-            # Create regrid operator
-            regrid_operator = RegridOperator(
-                weights,
-                row,
-                col,
-                method=method,
-                src_shape=src_shape,
-                dst_shape=dst_shape,
-                src_cyclic=src_cyclic,
-                dst_cyclic=dst_cyclic,
-                src_mask=src_mask,
-                dst_mask=dst_mask,
-                src_coords=src_coords,
-                src_bounds=src_bounds,
-                coord_sys=coord_sys,
-                parameters={"dst": dst.copy(), "dst_axes": dst_axes},
-            )
-
-            if return_operator:
-                return regrid_operator
-
-        # ------------------------------------------------------------
-        # Still here? Then do the regridding
-        # ------------------------------------------------------------
-        regridded_sizes = regridded_axes_sizes(
-            src_axis_indices, dst_axis_sizes
-        )
-
-        data = f.data._regrid(
-            operator=regrid_operator,
-            regrid_axes=src_axis_indices,  # in the order expected by the op
-            regridded_sizes=regridded_sizes,
-        )
-
-        # Set regridded metadata
-        regrid_update_non_coordinates(
-            coord_system,
-            f,
-            regrid_operator,
-            src_axis_keys=src_axis_keys,
-            dst_axis_keys=dst_axis_keys,
-            dst_axis_sizes=dst_axis_sizes,
-        )
-
-        regrid_update_coordinates(
-            f,
-            dst,
-            src_axis_keys=src_axis_keys,
-            dst_axis_keys=dst_axis_keys,
-            dst_axis_sizes=dst_axis_sizes,
-        )
-
-        # Insert regridded data into the new field
-        f.set_data(new_data, axes=f.get_data_axes(), copy=False)
-
-        if coord_system == "spherical":
-            # Set the cyclicity of the longitude axis of the new field
-            key, x = f.dimension_coordinate(
-                "X", default=(None, None), item=True
-            )
-            if x is not None and x.Units.equivalent(Units("degrees")):
-                f.cyclic(
-                    key,
-                    iscyclic=dst_cyclic,
-                    config={"coord": x, "period": Data(360.0, "degrees")},
-                )
-
-        return f
+#    @_inplace_enabled(default=False)
+#    def _regrid(
+#        self,
+#        coord_system,
+#        dst,
+#        method=None,
+#        src_cyclic=None,
+#        dst_cyclic=None,
+#        use_src_mask=True,
+#        use_dst_mask=False,
+#        src_axes=None,
+#        dst_axes=None,
+#        axes=None,
+#        ignore_degenerate=True,
+#        return_operator=False,
+#        check_regrid_operator=False,
+#        inplace=False,
+#    ):
+#        """TODODASK"""
+#        if return_operator:
+#            f = self.copy()
+#        else:
+#            f = _inplace_enabled_define_and_cleanup(self)
+#
+#        create_regrid_operator = True
+#        if isinstance(dst, RegridOperator):
+#            create_regrid_operator = False
+#
+#            regrid_operator = dst
+#            dst = regrid_operator.get_parameter("dst").copy()
+#            dst_axes = regrid_operator.get_parameter("dst_axes")
+#            dst_cyclic = regrid_operator.dst_cyclic
+#            method = regrid_operator.method
+#        else:
+#            check_regrid_operator = False
+#
+#        regrid_check_method(method)
+#        regrid_check_use_src_mask(use_src_mask, method)
+#
+#        if coord_system == "Cartesian":
+#            src_axes = axes
+#            if dst_axes is None:
+#                dst_axes = axes
+#
+#        if isinstance(dst, dict):
+#            # Convert a dictionary containing the destination grid
+#            # to a Domain object
+#            dst, dst_axes = regrid_dict_to_domain(
+#                coord_system, dst, cyclic=dst_cyclic, axes=dst_axes, field=f
+#            )
+#            use_dst_mask = False
+#        elif create_regrid_operator and not (
+#            isinstance(dst, f.__class__)
+#            or isinstance(dst, f._Domain.__class__)
+#        ):
+#            raise TypeError(
+#                "'dst' parameter must be of type Field, Domain, dict "
+#                f"or RegridOperator. Got: {type(dst)}"
+#            )
+#
+#        (
+#            dst_axis_keys,
+#            dst_axis_sizes,
+#            dst_axis_indices,
+#            dst_coords,
+#            dst_bounds,
+#            dst_cyclic,
+#        ) = regrid_get_coords(
+#            coord_system, f, "destination", method, dst_cyclic, axes=dst_axes
+#        )
+#
+#        (
+#            src_axis_keys,
+#            src_axis_sizes,
+#            src_axis_indices,
+#            src_coords,
+#            src_bounds,
+#            src_cyclic,
+#        ) = regrid_get_coords(
+#            coord_system, f, "source", method, src_cyclic, axes=src_axes
+#        )
+#
+#        # Check the consistency of the source and destination
+#        # coordinate units.
+#        regrid_check_coordinate_units(
+#            coord_system, src_coords, src_bounds, dst_coords, dst_bounds
+#        )
+#
+#        if check_regrid_operator:
+#            # Check that the given regrid operator is compatable
+#            regrid_check_operator(
+#                coord_system,
+#                f,
+#                src_cyclic,
+#                src_coords,
+#                src_bounds,
+#                regrid_operator,
+#            )
+#
+##        # Get the axis indices and their order for the source field
+##        # (this might change 'f' in place).
+##        src_axis_indices = regrid_get_axis_indices(f, src_axis_keys)
+#
+#        if create_regrid_operator:
+#            # --------------------------------------------------------
+#            #
+#            # --------------------------------------------------------
+#            ESMF_manager = regrid_initialize()
+#
+#            # Create a mask for the destination grid
+#            dst_mask = None
+#            grid_dst_mask = None
+#            if use_dst_mask:
+#                dst = dst.copy()
+##                dst_axis_indices = regrid_get_axis_indices(dst, dst_axis_keys)
+#                dst_mask = regrid_get_mask(dst, dst_axis_indices)
+#                if method == "nearest_stod":
+#                    # For nearest source to desination regridding, the
+#                    # desination mask needs to be taken into account
+#                    # during the ESMF calculation of the regrid
+#                    # weights. For other methods, the destination mask
+#                    # gets applied during the compute of
+#                    # `Data._regrid`.
+#                    grid_dst_mask = np.array(dst_mask.transpose())
+#                    dst_mask = None
+#
+#            # Create a mask for the source grid
+#            src_mask = None
+#            grid_src_mask = None
+#            if method in ("patch", "conservative_2d"):
+#                # For patch recovery and second-order conservative
+#                # regridding, the source mask needs to be taken into
+#                # account during the ESMF calculation of the regrid
+#                # weights. For other methods, the source mask gets
+#                # applied during the compute of `Data._regrid`.
+#                src_mask = regrid_get_mask(f, src_axis_indices)
+#                grid_src_mask = np.array(src_mask.transpose())
+#                if not grid_src_mask.any():
+#                    # There are no masked source cells, so we can
+#                    # collapse the mask that gets stored in the regrid
+#                    # operator.
+#                    src_mask = np.array(False)
+#
+#            # Create the destination ESMF.Grid
+#            dst_grid = regrid_create_ESMF_grid(
+#                coord_system,
+#                name="destination",
+#                method=method,
+#                coords=dst_coords,
+#                bounds=dst_bounds,
+#                cyclic=dst_cyclic,
+#                mask=grid_dst_mask,
+#            )
+#            del grid_dst_mask
+#
+#            # Create the source ESMF.Grid
+#            src_grid = regrid_create_ESMF_grid(
+#                coord_system,
+#                name="source",
+#                method=method,
+#                coords=src_coords,
+#                bounds=src_bounds,
+#                cyclic=src_cyclic,
+#                mask=grid_src_mask,
+#            )
+#            del grid_src_mask
+#
+#            # Create regrid weights matrix
+#            quarter = (
+#                coord_system == "Cartesian"
+#                and n_axes == 1
+#                and len(src_coords) == 2
+#                and not src_bounds
+#            )
+#
+#            weights, row, col = regrid_create_weights(
+#                method,
+#                src_grid,
+#                dst_grid,
+#                unmapped_action=unmapped_action,
+#                ignore_degenerate=ignore_degenerate,
+#                quarter=quarter,
+#            )
+#
+#            # We've finished with ESMF, so finalise the ESMF
+#            # manager. This is done to free up any Persistent
+#            # Execution Threads (PETs) created by the ESMF Virtual
+#            # Machine
+#            # (https://earthsystemmodeling.org/esmpy_doc/release/latest/html/api.html#resource-allocation).
+#            del ESMF_mananger
+#
+#            # Create regrid operator
+#            regrid_operator = RegridOperator(
+#                weights,
+#                row,
+#                col,
+#                method=method,
+#                src_shape=src_shape,
+#                dst_shape=dst_shape,
+#                src_cyclic=src_cyclic,
+#                dst_cyclic=dst_cyclic,
+#                src_mask=src_mask,
+#                dst_mask=dst_mask,
+#                src_coords=src_coords,
+#                src_bounds=src_bounds,
+#                coord_sys=coord_sys,
+#                parameters={"dst": dst.copy(), "dst_axes": dst_axes},
+#            )
+#
+#            if return_operator:
+#                return regrid_operator
+#
+#        # ------------------------------------------------------------
+#        # Still here? Then do the regridding
+#        # ------------------------------------------------------------
+#        regridded_sizes = regridded_axes_sizes(
+#            src_axis_indices, dst_axis_sizes
+#        )
+#
+#        data = f.data._regrid(
+#            operator=regrid_operator,
+#            regrid_axes=src_axis_indices,  # in the order expected by the op
+#            regridded_sizes=regridded_sizes,
+#        )
+#
+#        # Set regridded metadata
+#        regrid_update_non_coordinates(
+#            coord_system,
+#            f,
+#            regrid_operator,
+#            src_axis_keys=src_axis_keys,
+#            dst_axis_keys=dst_axis_keys,
+#            dst_axis_sizes=dst_axis_sizes,
+#        )
+#
+#        regrid_update_coordinates(
+#            f,
+#            dst,
+#            src_axis_keys=src_axis_keys,
+#            dst_axis_keys=dst_axis_keys,
+#            dst_axis_sizes=dst_axis_sizes,
+#        )
+#
+#        # Insert regridded data into the new field
+#        f.set_data(new_data, axes=f.get_data_axes(), copy=False)
+#
+#        if coord_system == "spherical":
+#            # Set the cyclicity of the longitude axis of the new field
+#            key, x = f.dimension_coordinate(
+#                "X", default=(None, None), item=True
+#            )
+#            if x is not None and x.Units.equivalent(Units("degrees")):
+#                f.cyclic(
+#                    key,
+#                    iscyclic=dst_cyclic,
+#                    config={"coord": x, "period": Data(360.0, "degrees")},
+#                )
+#
+#        return f
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
