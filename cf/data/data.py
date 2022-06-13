@@ -3761,7 +3761,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
         )
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def _binary_operation(self, other, method):
         """Implement binary arithmetic and comparison operations with
         the numpy broadcasting rules.
@@ -3805,9 +3805,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         inplace = method[2] == "i"
-        method_type = method.strip("_")
-
-        comparison_method_types = ("_eq", "_ne", "_lt", "_le", "_gt", "_ge")
 
         # ------------------------------------------------------------
         # Ensure that other is an independent Data object
@@ -3850,12 +3847,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
         try:
-            if method == "__eq__":  # and data0.Units.isreftime:
+            if method == "__eq__":
                 result = _numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
             elif method == "__ne__":
                 result = ~_numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
             elif inplace:
-                # Find non in-place equivalent operator (remove 'i')
+                # Find non-in-place equivalent operator (remove 'i')
                 equiv_method = method[:2] + method[3:]
                 result = getattr(dx0, equiv_method)(dx1)
             else:
@@ -3885,7 +3882,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 raise TypeError(error)
 
-        if inplace:  # inplace so concerns original self
+        if inplace:  # in-place so concerns original self
             self._set_dask(result, reset_mask_hardness=False)
             self.override_units(new_Units, inplace=True)
             return self
