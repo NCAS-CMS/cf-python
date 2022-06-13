@@ -3849,39 +3849,50 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
-        if inplace:
-            # SB TODODASK perform 'method' operation in-place
-            #     -> until this is done, works up to 'iadd' line ~2195 in test
-            pass
-        else:
-            try:
-                if method == "__eq__":  # and data0.Units.isreftime:
-                    dx0 = _numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
-                elif method == "__ne__":
-                    dx0 = ~_numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
-                else:
-                    dx0 = getattr(dx0, method)(dx1)
+        try:
+            if method == "__eq__":  # and data0.Units.isreftime:
+                result = _numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
+            elif method == "__ne__":
+                result = ~_numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
+            elif inplace:
+                # Find non in-place equivalent operator (remove 'i')
+                equiv_method = method[:2] + method[3:]
+                result = getattr(dx0, equiv_method)(dx1)
+            else:
+                result = getattr(dx0, method)(dx1)
 
-            except FloatingPointError as error:
-                # Floating point point errors have been trapped
-                if _mask_fpe[0]:
-                    # Redo the calculation ignoring the errors and
-                    # then set invalid numbers to missing data
-                    np.seterr(**_seterr_raise_to_ignore)
-                    dx0 = getattr(dx0, method)(array1)
-                    dx0 = np.ma.masked_invalid(dx0, copy=False)
-                    np.seterr(**_seterr)
-                else:
-                    # Raise the floating point error exception
-                    raise FloatingPointError(error)
-            except TypeError as error:
+        except FloatingPointError as error:
+            # Floating point point errors have been trapped
+            if _mask_fpe[0]:
+                # Redo the calculation ignoring the errors and
+                # then set invalid numbers to missing data
+                np.seterr(**_seterr_raise_to_ignore)
+                result = getattr(dx0, method)(array1)
+                result = np.ma.masked_invalid(dx0, copy=False)
+                np.seterr(**_seterr)
+            else:
+                # Raise the floating point error exception
+                raise FloatingPointError(error)
+        except TypeError as error:
+            if inplace:
+                raise TypeError(
+                    "Incompatible result data-type ({0!r}) for "
+                    "in-place {1!r} arithmetic".format(
+                        np.result_type(dx0.dtype, dx1.dtype).name,
+                        dx0.dtype.name,
+                    )
+                )
+            else:
                 raise TypeError(error)
 
-        data0._set_dask(dx0, reset_mask_hardness=False)
-
-        data0.override_units(new_Units, inplace=True)
-
-        return data0
+        if inplace:  # inplace so concerns original self
+            self._set_dask(result, reset_mask_hardness=False)
+            self.override_units(new_Units, inplace=True)
+            return self
+        else:  # not, so concerns a new Data object copied from self, data0
+            data0._set_dask(result, reset_mask_hardness=False)
+            data0.override_units(new_Units, inplace=True)
+            return data0
 
     def __query_set__(self, values):
         """Implements the “member of set” condition."""
