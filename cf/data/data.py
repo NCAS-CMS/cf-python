@@ -3843,6 +3843,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx0 = data0._get_dask()
         dx1 = other._get_dask()
 
+        # Set if applicable the tolerance levels for the result
+        if method in ("__eq__", "__ne__"):  # what about l/g-t-e (x4)?
+            rtol = self._rtol
+            atol = self._atol
+
         # ------------------------------------------------------------
         # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
@@ -3864,7 +3869,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 # Redo the calculation ignoring the errors and
                 # then set invalid numbers to missing data
                 np.seterr(**_seterr_raise_to_ignore)
-                result = getattr(dx0, method)(array1)
+                result = getattr(dx0, method)(dx1)
                 result = np.ma.masked_invalid(dx0, copy=False)
                 np.seterr(**_seterr)
             else:
