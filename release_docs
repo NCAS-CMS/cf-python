@@ -93,16 +93,17 @@ fi
 if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
   cd $dir
   git add \
-	  *.html \
-	  */*.html \
-	  *.inv \
-	  *.js \
-	  _static \
-	  _templates \
-	  _downloads/cf_tutorial_files.zip \
-	  _downloads/tutorial.py \
-	  _downloads/field_analysis.py \
-	  _images/*.png
+          *.html \
+          */*.html \
+          *.inv \
+          *.js \
+          _static \
+          _templates \
+          _downloads/cf_tutorial_files.zip \
+          _downloads/tutorial.py \
+          _downloads/field_analysis.py \
+          _images/*.png \
+          _images/*.svg
 
   git commit -a -m "v$version $2 documentation"
 fi
