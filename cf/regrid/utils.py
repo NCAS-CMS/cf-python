@@ -27,9 +27,9 @@ ESMF_method_map = {}
 @_inplace_enabled(default=False)
 def regrid(
         f,
-        coord_system,
         dst,
-        method=None,
+        coord_system,
+        method,
         src_cyclic=None,
         dst_cyclic=None,
         use_src_mask=True,
@@ -42,7 +42,94 @@ def regrid(
         check_regrid_operator=False,
         inplace=False,
 ):
-    """TODODASK"""
+    """TODO.
+    
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+        f: `Field`
+
+        dst: `Field`, `Domain`, `dict` or `RegridOperator`
+
+        coord_system: `str`
+
+        method: `str`
+            Specify which interpolation method to use during
+            regridding.
+
+        src_cyclic: `None` or `bool`, optional
+            For spherical regridding, specifies whether or not the
+            source grid longitude axis is cyclic (i.e. the first and
+            last cells are adjacent). If `None` then the cyclicity
+            will be inferred from the source grid coordinates,
+            defaulting to `False` if it can not be determined.
+
+        dst_cyclic: `None` or `bool`, optional
+            For spherical regridding, specifies whether or not the
+            destination grid longitude axis is cyclic (i.e. the first
+            and last cells are adjacent). If `None` then the
+            cyclicity will be inferred from the destination grid
+            coordinates, defaulting to `False` if it can not be
+            determined.
+
+        use_src_mask: `bool`, optional    
+            For the ``"nearest_stod"`` regridding method, if True (the
+            default) then cells in the result that are nearest to a
+            masked source point are masked. Otherwise destination grid
+            cells are only mapped to from unmasked source cells.
+          
+            For all other regridding methods, *use_src_mask* must be
+            True, otherwise an exception is raised.
+
+            If *dst* is a regrid operator then *use_src_mask* is
+            ignored.
+
+        use_dst_mask: `bool`, optional
+            If *dst* is a `Field` and *use_dst_mask* is False (the
+            default) then the mask of data on the destination grid is
+            not taken into account when performing regridding. If
+            *use_dst_mask* is True then any masked cells in *dst* are
+            guaranteed to be transferred to the result. If *dst* has
+            more dimensions than are being regridded, then the mask of
+            the destination grid is taken as the subspace defined by
+            index ``0`` in all of the non-regridding dimensions.
+            
+            For any other type of *dst*, *use_dst_mask* is ignored.
+  
+        src_axes=None,
+
+        dst_axes=None,
+
+        axes=None,
+
+        ignore_degenerate: `bool`, optional
+            For conservative regridding methods, if True (the default)
+            then degenerate cells (those for which enough vertices
+            collapse to leave a cell either a line or a point) are
+            skipped, not producing a result. Otherwise an error will
+            be produced if degenerate cells are found, that will be
+            present in the ESMF log files if `cf.regrid_logging` is
+            set to True.
+
+            For all other regridding methods, degenerate cells are
+            always skipped, regardless of the value of
+            *ignore_degenerate*.
+
+            If *dst* is a regrid operator then *ignore_degenerate* is
+            ignored.
+
+        return_operator: `bool`, optional
+
+        check_regrid_operator: `bool`, optional
+
+            {{inplace: `bool`, optional}}
+
+    :Returns:
+
+        `Field`, `None` or `RegridOperator`
+
+    """
     if return_operator:
         f = s.copy()
     else:
@@ -66,7 +153,9 @@ def regrid(
     if coord_system == "Cartesian":
         # Parse the axes
         if axes is None:
-            raise ValueError("Must set the 'axes' parameter")
+            raise ValueError(
+                "Must set the 'axes' parameter for Cartesian regridding"
+            )
 
         if isinstance(axes, str):
             axes = (axes,)
@@ -128,9 +217,8 @@ def regrid(
 
     # Check the consistency of the source and destination coordinate
     # units.
-    check_coordinate_units(
-        coord_system, src_coords, src_bounds, dst_coords, dst_bounds
-    )
+    comform_coordinate_units( coord_system, src_coords, src_bounds,
+                              dst_coords, dst_bounds )
 
     if check_regrid_operator:
         # Check that the given regrid operator is compatable
@@ -699,8 +787,8 @@ def spherical_dict_to_domain(d, cyclic=None, domain_class=None):
             f.set_construct(coord, axes=axis_keys, copy=False)
 
     # Set X axis cyclicity
-    if cyclic:
-        f.cyclic(axis_keys[1], period=360)
+    if cyclic is not None:
+        f.cyclic(axis_keys[1], iscyclic=cyclic, period=360)
 
     if coords_1d:
         yx_axes = {}
@@ -892,16 +980,43 @@ def Cartesian_dict_to_domain(d, axes=None, domain_class=None):
 #    return grid
 
 
-def check_coordinate_units(
+def comform_coordinate_units(
     coord_system, src_coords, src_bounds, dst_coords, dst_bounds
 ):
-    """Check the source and destination coordinate units.
+    """Make the source and destination coordinates have the same units.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `get_coords`, `regrid`
+
+    :Parameters:
+
+        coord_system: `str`
+            The coordinate system of the source and destination grids.
+
+        src_coords: `dict`
+            The source grid coordinates, as returned by `get_coords`.
     
-    Note that for spherical coordinate systems, the coordinate units
-    have already been checked in `get_spherical_coords`.
+        src_bounds: `dict`
+            The source grid coordinate bounds, as returned by
+            `get_coords`.
+    
+        dst_coords: `dict`
+            The destination grid coordinates, as returned by
+            `get_coords`.
+   
+        dst_bounds: `dict`
+            The destination grid coordinate bounds, as returned by
+            `get_coords`.
+
+    :Returns:
+
+        `None`
 
     """
     if coord_system == "spherical":
+        # For spherical coordinate systems, the units have already
+        # been checked in `get_coords`.
         return
 
     for src, dst in zip((src_coords, src_bounds), (dst_coords, dst_bounds)):
@@ -910,7 +1025,6 @@ def check_coordinate_units(
 
             s_units = s.getattr("Units", None)
             d_units = d.getattr("Units", None)
-
             if s_units is None or d_units is None:
                 continue
 
@@ -1536,13 +1650,6 @@ def get_mask(f, regrid_axes):
         src_order: sequence, optional
             The order of the source axes.
 
-        Cartesian: `bool`, optional
-            Whether the regridding is Cartesian or spherical.
-
-        coords_ext: sequence, optional
-            In the case of Cartesian regridding, extension coordinates
-            (see _regrid_check_bounds for details).
-
     :Returns:
 
         `dask.array.Array`
@@ -1583,10 +1690,6 @@ def update_coordinates(
 
         dst_axis_keys: sequence
             The keys of the regridding axes in the destination field.
-
-        Cartesian: `bool`, optional
-            Whether regridding is Cartesian of spherical, False by
-            default.
 
         dst_axis_sizes: sequence, optional
             The sizes of the destination axes.
@@ -1652,9 +1755,6 @@ def update_non_coordinates(
 
         dst_axis_sizes: sequence, optional
             The sizes of the destination axes.
-
-        Cartesian: `bool`, optional
-            Whether to do Cartesian regridding or spherical
 
     :Returns:
 

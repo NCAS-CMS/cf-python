@@ -15521,98 +15521,104 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            dst: `Field` or `dict` or `RegridOperator`
-                The destination grid. Must be one of:
+            dst: `Field`, `Domain`, `dict` or `RegridOperator`
+                The definition of the destination grid on which to
+                regrid the field's data. One of:
 
                 * `Field`. The grid is defined by the field
                   construct's domain.
 
+                * `Domain`. The grid is defined by the domain
+                  construct.
+
                 * `dict`. The grid is defined by a dictionary with
                   keys ``'latitude'`` and ``'longitude'`` whose values
-                  are with either both 1-d dimension coordinates
+                  are with either both 1-d dimension coordinate
                   constructs, or both 2-d auxiliary coordinate
-                  constructs. In the 2-d case, both coordinate
-                  constructs must have their axes in the same order
-                  and this must be specified with the ``'axes'`` key
-                  as either of the tuples ``('X', 'Y')`` or ``('Y',
-                  'X')``.
+                  constructs, for teh latitude and longitude
+                  coordinates respectively.
+
+                  In the 2-d case, both coordinate constructs must
+                  have their axes in the same order and this must be
+                  specified with and addition ``'axes'`` dictionary
+                  key as either of the tuples ``('X', 'Y')`` or
+                  ``('Y', 'X')``.
 
                 * `RegridOperator`. The grid is defined by a regrid
                   operator that has been returned by a previous call
                   to `regrids` with ``return_operator=True``.
 
-                  This option can give large performance increases, as
-                  greatest computational expense is often the creation
-                  of the regrid operator, rather than running the
-                  regrid operator to regrid the data.
+                  Unlike the other options, for which the regrid
+                  weights need to be calculated, the regrid operator
+                  already contains the regrid weights. Therefore, for
+                  cases where multiple fields with the same source
+                  grids need to be regridded to the same destination
+                  grid, using a regrid operator can give performance
+                  improvements by avoiding having to calculate the
+                  weights for each source field. Note that for the
+                  other options, the calculation of the regrid weights
+                  is not a lazy operation.
 
-                  The regrid operator defines the source grid and the
-                  regridding weights, so the *method*, *axes*,
-                  *ignore_degenerate*, *use_src_mask*, and
-                  *use_dst_mask* parameters are not required and are
-                  ignored if set.
+                  As the use of a regrid operator is intended to
+                  improve performance, the source grid defined by the
+                  operator is, by default, not checked against that of
+                  the source field. Such a check will be carried out,
+                  however, if *check_regrid_operator* is True.
 
-                  An exception will be raised if the domain of the
-                  source field being regridded is inconsistent with
-                  source grid of the regrid operator.
+                  .. warning:: If the check is not carried out and the
+                               regrid operator and source field have
+                               different grids then the regriding
+                               might still work, but give incorrect
+                               results. Such a situation could occur
+                               if the unchecked grids have the same
+                               number of cells.
 
-                  The source field being regridded may, however, have
-                  a different data mask to that of the source grid in
-                  the regrid operator. In this case a new regrid
-                  operator is automatically created, with the
-                  associated loss in performance.
+            {{method: `str` or `None`, optional}}
 
-            {{method: `str`, optional}}
-
-            src_cyclic: `bool`, optional
-                Specifies whether the longitude for the source grid is
-                periodic or not. If `None` then, if possible, this is
-                determined automatically otherwise it defaults to1
-                False.
-
-            dst_cyclic: `bool`, optional
-                Specifies whether the longitude for the destination
-                grid is periodic of not. If `None` then, if possible,
-                this is determined automatically otherwise it defaults
-                to False.
-
-                .. note:: When *dst* is a regrid operator then
-                          *dst_cyclic* is ignored, and its value is
-                          set by the regrid operator's parameters.
+            src_cyclic: `None` or `bool`, optional
+                For spherical regridding, specifies whether or not the
+                source grid longitude axis is cyclic (i.e. the first
+                and last cells are adjacent). If `None` (the default)
+                then the cyclicity will be inferred from the source
+                grid coordinates, defaulting to `False` if it can not
+                be determined.
+    
+            dst_cyclic: `None` or `bool`, optional
+                For spherical regridding, specifies whether or not the
+                destination grid longitude axis is cyclic (i.e. the
+                first and last cells are adjacent). If `None` (the
+                default) then the cyclicity will be inferred from the
+                destination grid coordinates, defaulting to `False` if
+                it can not be determined.
 
             use_src_mask: `bool`, optional
-                For all methods other than 'nearest_stod', this must
-                be True as it does not make sense to set it to
-                False. For the 'nearest_stod' method if it is True
-                then points in the result that are nearest to a masked
-                source point are masked. Otherwise, if it is False,
-                then these points are interpolated to the nearest
-                unmasked source points.
-
-                .. note:: When *dst* is a regrid operator then
-                          *use_src_mask* is ignored, and its value is
-                          set by the regridding operator's parameters.
-
+                If *dst* is a `Field` and *use_dst_mask* is False (the
+                default) then the mask of data on the destination grid
+                is not taken into account when performing
+                regridding. If *use_dst_mask* is True then any masked
+                cells in *dst* are guaranteed to be transferred to the
+                result. If *dst* has more dimensions than are being
+                regridded, then the mask of the destination grid is
+                taken as the subspace defined by index ``0`` in all of
+                the non-regridding dimensions.
+            
+                For any other type of *dst*, *use_dst_mask* is
+                ignored.
+  
             use_dst_mask: `bool`, optional
-                By default the mask of the data on the destination
-                grid is not taken into account when performing
-                regridding. If this option is set to true then it
-                is. If the destination field has more than two
-                dimensions then the first 2-d slice in index space is
-                used for the mask e.g. for an field varying with (X,
-                Y, Z, T) the mask is taken from the slice (X, Y, 0,
-                0).
-
-                .. note:: When *dst* is a regrid operator then
-                          *use_dst_mask* is ignored, and its value is
-                          set by the regrid operator's parameters.
-
-            fracfield: `bool`, optional
-                If the method of regridding is conservative the
-                fraction of each destination grid cell involved in the
-                regridding is returned instead of the regridded data
-                if this is True. Otherwise this is ignored.
-
+                If *dst* is a `Field` and *use_dst_mask* is False (the
+                default) then the mask of data on the destination grid
+                is not taken into account when performing
+                regridding. If *use_dst_mask* is True then any masked
+                cells in *dst* are guaranteed to be transferred to the
+                result. If *dst* has more dimensions than are being
+                regridded, then the mask of the destination grid is
+                taken as the subspace defined by index ``0`` in all of
+                the non-regridding dimensions.
+            
+                For any other type of *dst*, *use_dst_mask* is
+                ignored.
+  
             src_axes: `dict`, optional
                 A dictionary specifying the axes of the 2-d latitude
                 and longitude coordinates of the source field when no
@@ -15653,20 +15659,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 minimise how frequently the mask changes. TODO.
 
             ignore_degenerate: `bool`, optional
-                True by default. Instructs ESMF to ignore degenerate
-                cells when checking the grids for errors. Regridding
-                will proceed and degenerate cells will be skipped, not
-                producing a result, when set to True. Otherwise an
-                error will be produced if degenerate cells are
-                found. This will be present in the ESMF log files if
-                `cf.regrid_logging` is set to True. As of ESMF 7.0.0
-                this only applies to conservative regridding.  Other
-                methods always skip degenerate cells.
+                For conservative regridding methods, if True (the
+                default) then degenerate cells (those for which enough
+                vertices collapse to leave a cell either a line or a
+                point) are skipped, not producing a result. Otherwise
+                an error will be produced if degenerate cells are
+                found, that will be present in the ESMF log files if
+                `cf.regrid_logging` is set to True.
 
-                .. note:: When *dst* is a regrid operator then
-                          *ignore_degenerate* is ignored, and its
-                          value is set by the regrid operator's
-                          parameters.
+                For all other regridding methods, degenerate cells are
+                always skipped, regardless of the value of
+                *ignore_degenerate*.
+
+                If *dst* is a `RegridOperator` then *ignore_degenerate*
+                is ignored.
 
             {{inplace: `bool`, optional}}
 
@@ -15689,6 +15695,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 `regrids`.
 
                 .. versionadded:: 3.10.0
+
+            fracfield: `bool`, optional
+                Deprecated at version TODODASK.
+
+                If the method of regridding is conservative the
+                fraction of each destination grid cell involved in the
+                regridding is returned instead of the regridded data
+                if this is True. Otherwise this is ignored.
 
             {{i: deprecated at version 3.0.0}}
 
@@ -16253,9 +16267,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         from .regrid import regrid
    
         return regrid(
-            "Cartesian",
             self,
             dst,
+            coords_sys="Cartesian",
             method=method,
             src_cyclic=False,
             dst_cyclic=False,

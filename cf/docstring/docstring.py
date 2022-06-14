@@ -63,116 +63,58 @@ _docstring_substitution_definitions = {
                 itself is returned. If *key* is True then *item* is
                 ignored.""",
     # method: `str`, optional
-    "{{method: `str`, optional}}": """method: `str`, optional
-                Specify the regridding method. This parameter must be
-                set unless the new grid is specified by a regridding
-                operator, which stores its own method. See the *dst*
-                parameter.
+    "{{method: `str` or `None`, optional}}": """method: `str` or `None`, optional
+                Specify the regridding interpolation method. This
+                parameter must be set unless *dst* is a
+                `RegridOperator`, when the *method* is ignored.
 
                 The *method* parameter may be one of the following:
 
-                ======================  ==============================
-                Method                  Description
-                ======================  ==============================
-                ``'linear'``            Bilinear interpolation.
+                * ``'linear'``: Bilinear interpolation.
 
-                ``'bilinear'``          Deprecated alias for
-                                        ``'linear'``.
+                * ``'bilinear'``: Deprecated alias for ``'linear'``.
 
-                ``'conservative_1st'``  First order conservative
-                                        interpolation.
+                * ``'conservative_1st'``: First order conservative
+                  interpolation. Preserves the area integral of the
+                  data across the interpolation from source to
+                  destination. It uses the proportion of the area of
+                  the overlapping source and destination cells to
+                  determine appropriate weights.
 
-                                        Preserve the area integral of
-                                        the data across the
-                                        interpolation from source to
-                                        destination. It uses the
-                                        proportion of the area of the
-                                        overlapping source and
-                                        destination cells to determine
-                                        appropriate weights.
+                * ``'conservative'``: Alias for ``'conservative_1st'``
 
-                                        In particular, the weight of a
-                                        source cell is the ratio of
-                                        the area of intersection of
-                                        the source and destination
-                                        cells to the area of the whole
-                                        destination cell.
+                * ``'conservative_2nd'``: Second-order conservative
+                  interpolation. As with first order conservative
+                  interpolatio, preserves the area integral of the
+                  field between source and destination using a
+                  weighted sum, with weights based on the
+                  proportionate area of intersection. In addition the
+                  second-order conservative method takes the source
+                  gradient into account, so it yields a smoother
+                  destination field that typically better matches the
+                  source data.
 
-                                        It does not account for the
-                                        field gradient across the
-                                        source cell, unlike the
-                                        second-order conservative
-                                        method (see below).
+                * ``'patch'`` Patch recovery interpolation. A second
+                  degree 2-d polynomial regridding method, which uses
+                  a least squares algorithm to calculate the
+                  polynomials. This method typically results in
+                  better approximations to values and derivatives when
+                  compared to bilinear interpolation.
 
-                ``'conservative_2nd'``  Second-order conservative
-                                        interpolation.
+                * ``'nearest_stod'``: Nearest neighbour interpolation
+                  for which each destination point is mapped to the
+                  closest source point. Useful for extrapolation of
+                  categorical data. Some destination cells may be
+                  unmapped.
 
-                                        As with first order (see
-                                        above), preserves the area
-                                        integral of the field between
-                                        source and destination using a
-                                        weighted sum, with weights
-                                        based on the proportionate
-                                        area of intersection.
+                * ``'nearest_dtos'``: Nearest neighbour interpolation
+                  for which each source point is mapped to the
+                  destination point. Useful for extrapolation of
+                  categorical data. All destination cells will be
+                  mapped.
 
-                                        Unlike first-order, the
-                                        second-order method
-                                        incorporates further terms to
-                                        take into consideration the
-                                        gradient of the field across
-                                        the source cell, thereby
-                                        typically producing a smoother
-                                        result of higher accuracy.
-
-                ``'conservative'``      Alias for
-                                        ``'conservative_1st'``
-
-                ``'patch'``             Higher-order patch recovery
-                                        interpolation.
-
-                                        A second degree polynomial
-                                        regridding method, which uses
-                                        a least squares algorithm to
-                                        calculate the polynomial.
-
-                                        This method gives better
-                                        derivatives in the resulting
-                                        destination data than the
-                                        linear method.
-
-                ``'nearest_stod'``      Nearest neighbour
-                                        interpolation for which each
-                                        destination point is mapped to
-                                        the closest source point.
-
-                                        Useful for extrapolation of
-                                        categorical data.
-
-                ``'nearest_dtos'``      Nearest neighbour
-                                        interpolation for which each
-                                        source point is mapped to the
-                                        destination point.
-
-                                        Useful for extrapolation of
-                                        categorical data.
-
-                                        A given destination point may
-                                        receive input from multiple
-                                        source points, but no source
-                                        point will map to more than
-                                        one destination point.
-
-                `None`                  This is the default and can
-                                        only be used the new grid is
-                                        specified by a regridding
-                                        operator, which stores its own
-                                        method.
-                ======================  ==============================
-
-                .. note:: When *dst* is a regrid operator then the
-                          *method* may still be set, but must have the
-                          value `None` or else agree with the
-                          regridding operator's method.""",
+                * `None`: This is the default and can only be used
+                  when *dst* is a `RegridOperator`.""",
     # radius: optional
     "{{radius: optional}}": """radius: optional
                 Specify the radius of the latitude-longitude plane

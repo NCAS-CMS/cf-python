@@ -12,10 +12,10 @@ class RegridOperator:
 
     """
 
-    def __init__(self, weights, row, col, method=None, src_shape=None,
-                 dst_shape=None, src_cyclic=None, dst_cyclic=None,
-                 src_mask=None, dst_mask=None, src_coords=None,
-                 src_bounds=None, coord_sys=None, parameters=None):
+    def __init__(self, weights, row, col, coord_sys=None, method=None,
+                 src_shape=None, dst_shape=None, src_cyclic=None,
+                 dst_cyclic=None, src_mask=None, dst_mask=None,
+                 src_coords=None, src_bounds=None, parameters=None):
         """**Initialization**
 
         :Parameters:
@@ -43,6 +43,7 @@ class RegridOperator:
         self._weights = weights
         self._row = row
         self._col = col
+        self._coord_sys = coord_sys
         self._method = method
         self._src_shape = tuple(src_shape)
         self._dst_shape = tuple(dst_shape)
@@ -50,11 +51,37 @@ class RegridOperator:
         self._dst_cyclic = bool(dst_cyclic)
         self._src_mask = src_mask
         self._dst_mask = dst_mask
-        self._src_coords = tuple(src_coords)
-        self._src_bounds = tuple(src_bounds)
-        self._coord_sys = coord_sys
+        self._src_coords = src_coords
+        self._src_bounds = src_bounds
         self._parameters = parameters.copy()
-    
+
+    def __call__(self, src, check_domain=False):
+        """Regrid a `Field` with the regrid operator.
+
+        :Parameters:
+
+            src: `Field`
+                The field to be regridded.
+
+            check_domain: `bool`, optional
+                If True then check that the source grid defined by the
+                regrid operator is compatible with the domain of
+                *src*. By default this is not checked.
+
+        :Returns:
+
+            `Field`
+                The regridded field.
+
+        """
+        coords_sys = self.coord_sys
+        if coord_sys == "spherical":
+            return src.regrids(self, check_regrid_operator=check_domain)
+        elif coord_sys == "Cartesian":
+            return src.regridc(self, check_regrid_operator=check_domain)
+        else:
+            raise ValueError(f"Unknown coordinate system: {coord_sys}")
+        
     def __repr__(self):
         return (
             f"<CF {self.__class__.__name__}: {self.coord_sys} {self.method}>"
