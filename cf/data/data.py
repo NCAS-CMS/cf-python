@@ -4284,7 +4284,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return out
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __add__(self, other):
         """The binary arithmetic operation ``+``
 
@@ -4293,7 +4293,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__add__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __iadd__(self, other):
         """The augmented arithmetic assignment ``+=``
 
@@ -4302,7 +4302,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__iadd__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __radd__(self, other):
         """The binary arithmetic operation ``+`` with reflected
         operands.
@@ -4312,7 +4312,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__radd__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __sub__(self, other):
         """The binary arithmetic operation ``-``
 
@@ -4321,7 +4321,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__sub__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __isub__(self, other):
         """The augmented arithmetic assignment ``-=``
 
@@ -4330,7 +4330,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__isub__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rsub__(self, other):
         """The binary arithmetic operation ``-`` with reflected
         operands.
@@ -4340,7 +4340,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rsub__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __mul__(self, other):
         """The binary arithmetic operation ``*``
 
@@ -4349,7 +4349,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__mul__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __imul__(self, other):
         """The augmented arithmetic assignment ``*=``
 
@@ -4358,7 +4358,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__imul__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rmul__(self, other):
         """The binary arithmetic operation ``*`` with reflected
         operands.
@@ -4368,7 +4368,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rmul__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __div__(self, other):
         """The binary arithmetic operation ``/``
 
@@ -4377,7 +4377,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__div__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __idiv__(self, other):
         """The augmented arithmetic assignment ``/=``
 
@@ -4386,7 +4386,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__idiv__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rdiv__(self, other):
         """The binary arithmetic operation ``/`` with reflected
         operands.
@@ -4396,7 +4396,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rdiv__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __floordiv__(self, other):
         """The binary arithmetic operation ``//``
 
@@ -4405,7 +4405,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__floordiv__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __ifloordiv__(self, other):
         """The augmented arithmetic assignment ``//=``
 
@@ -4414,7 +4414,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ifloordiv__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rfloordiv__(self, other):
         """The binary arithmetic operation ``//`` with reflected
         operands.
@@ -4424,7 +4424,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rfloordiv__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __truediv__(self, other):
         """The binary arithmetic operation ``/`` (true division)
 
@@ -4433,7 +4433,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__truediv__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __itruediv__(self, other):
         """The augmented arithmetic assignment ``/=`` (true division)
 
@@ -4442,7 +4442,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__itruediv__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rtruediv__(self, other):
         """The binary arithmetic operation ``/`` (true division) with
         reflected operands.
@@ -4452,7 +4452,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rtruediv__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __pow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow``
 
@@ -4468,7 +4468,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return self._binary_operation(other, "__pow__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __ipow__(self, other, modulo=None):
         """The augmented arithmetic assignment ``**=``
 
@@ -4484,7 +4484,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return self._binary_operation(other, "__ipow__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rpow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow`` with
         reflected operands.
@@ -4501,7 +4501,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return self._binary_operation(other, "__rpow__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __mod__(self, other):
         """The binary arithmetic operation ``%``
 
@@ -4510,7 +4510,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__mod__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __imod__(self, other):
         """The binary arithmetic operation ``%=``
 
@@ -4519,7 +4519,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__imod__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rmod__(self, other):
         """The binary arithmetic operation ``%`` with reflected
         operands.
@@ -4529,7 +4529,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rmod__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __eq__(self, other):
         """The rich comparison operator ``==``
 
@@ -4538,7 +4538,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__eq__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __ne__(self, other):
         """The rich comparison operator ``!=``
 
@@ -4547,7 +4547,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ne__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __ge__(self, other):
         """The rich comparison operator ``>=``
 
@@ -4556,7 +4556,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ge__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __gt__(self, other):
         """The rich comparison operator ``>``
 
@@ -4565,7 +4565,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__gt__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __le__(self, other):
         """The rich comparison operator ``<=``
 
@@ -4574,7 +4574,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__le__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __lt__(self, other):
         """The rich comparison operator ``<``
 
@@ -4583,7 +4583,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__lt__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __and__(self, other):
         """The binary bitwise operation ``&``
 
@@ -4592,7 +4592,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__and__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __iand__(self, other):
         """The augmented bitwise assignment ``&=``
 
@@ -4601,7 +4601,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__iand__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rand__(self, other):
         """The binary bitwise operation ``&`` with reflected operands.
 
@@ -4610,7 +4610,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rand__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __or__(self, other):
         """The binary bitwise operation ``|``
 
@@ -4619,7 +4619,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__or__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __ior__(self, other):
         """The augmented bitwise assignment ``|=``
 
@@ -4628,7 +4628,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ior__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __ror__(self, other):
         """The binary bitwise operation ``|`` with reflected operands.
 
@@ -4637,7 +4637,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ror__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __xor__(self, other):
         """The binary bitwise operation ``^``
 
@@ -4646,7 +4646,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__xor__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __ixor__(self, other):
         """The augmented bitwise assignment ``^=``
 
@@ -4655,7 +4655,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ixor__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rxor__(self, other):
         """The binary bitwise operation ``^`` with reflected operands.
 
@@ -4664,7 +4664,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rxor__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __lshift__(self, y):
         """The binary bitwise operation ``<<``
 
@@ -4673,7 +4673,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__lshift__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __ilshift__(self, y):
         """The augmented bitwise assignment ``<<=``
 
@@ -4682,7 +4682,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__ilshift__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rlshift__(self, y):
         """The binary bitwise operation ``<<`` with reflected operands.
 
@@ -4691,7 +4691,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__rlshift__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rshift__(self, y):
         """The binary bitwise operation ``>>``
 
@@ -4700,7 +4700,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__rshift__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __irshift__(self, y):
         """The augmented bitwise assignment ``>>=``
 
@@ -4709,7 +4709,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__irshift__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __rrshift__(self, y):
         """The binary bitwise operation ``>>`` with reflected operands.
 
@@ -4718,7 +4718,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__rrshift__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __abs__(self):
         """The unary arithmetic operation ``abs``
 
@@ -4727,7 +4727,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._unary_operation("__abs__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __neg__(self):
         """The unary arithmetic operation ``-``
 
@@ -4736,7 +4736,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._unary_operation("__neg__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __invert__(self):
         """The unary bitwise operation ``~``
 
@@ -4745,7 +4745,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._unary_operation("__invert__")
 
-    # SB @daskified(_DASKIFIED_VERBOSE)
+    @daskified(_DASKIFIED_VERBOSE)
     def __pos__(self):
         """The unary arithmetic operation ``+``
 
