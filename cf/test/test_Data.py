@@ -2493,6 +2493,19 @@ class DataTest(unittest.TestCase):
         self.assertEqual(key, (None, None, None))
         self.assertTrue(value.equals(d))
 
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
+    def test_Data_count(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cf.Data(ma)
+        self.assertEqual(d.count(), 284, d.count())
+        self.assertEqual(d.count_masked(), d.size - 284, d.count_masked())
+
+        d = cf.Data(a)
+        self.assertEqual(d.count(), d.size)
+        self.assertEqual(d.count_masked(), 0)
+
     def test_Data_exp(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
