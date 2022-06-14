@@ -102,7 +102,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  _downloads/cf_tutorial_files.zip \
 	  _downloads/tutorial.py \
 	  _downloads/field_analysis.py \
-	  _images/*.svg
+	  _images/*.png
 
   git commit -a -m "v$version $2 documentation"
 fi
