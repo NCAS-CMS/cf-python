@@ -133,7 +133,7 @@ _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
 
-class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
+class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
