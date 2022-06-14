@@ -315,6 +315,23 @@ class DataClassDeprecationsMixin:
             removed_at="5.0.0",
         )  # pragma: no cover
 
+    def get_filenames(self):
+        """Return the names of files containing parts of the data array.
+
+        Deprecated at version TODODASK.
+
+        :Returns:
+
+            `set`
+                The file names in normalized, absolute form. If the
+                data is in memory then an empty `set` is returned.
+
+        """
+        raise DeprecationError(
+            "Data method 'get_filenames' has been deprecated at "
+            "version TODODASK and is not available."
+        )  # pragma: no cover
+
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
 
