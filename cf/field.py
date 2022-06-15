@@ -15535,18 +15535,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   keys ``'latitude'`` and ``'longitude'`` whose values
                   are with either both 1-d dimension coordinate
                   constructs, or both 2-d auxiliary coordinate
-                  constructs, for teh latitude and longitude
+                  constructs, for the latitude and longitude
                   coordinates respectively.
 
                   In the 2-d case, both coordinate constructs must
                   have their axes in the same order and this must be
-                  specified with and addition ``'axes'`` dictionary
-                  key as either of the tuples ``('X', 'Y')`` or
-                  ``('Y', 'X')``.
+                  specified by the extra ``'axes'`` dictionary key as
+                  either of the tuples ``('X', 'Y')`` or ``('Y',
+                  'X')``.
 
                 * `RegridOperator`. The grid is defined by a regrid
                   operator that has been returned by a previous call
-                  to `regrids` with ``return_operator=True``.
+                  with the *return_operator* parameter set to True.
 
                   Unlike the other options, for which the regrid
                   weights need to be calculated, the regrid operator
@@ -15556,22 +15556,23 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   grid, using a regrid operator can give performance
                   improvements by avoiding having to calculate the
                   weights for each source field. Note that for the
-                  other options, the calculation of the regrid weights
-                  is not a lazy operation.
+                  other type of the *dst* parameter, the calculation
+                  of the regrid weights is not a lazy operation.
 
                   As the use of a regrid operator is intended to
-                  improve performance, the source grid defined by the
-                  operator is, by default, not checked against that of
-                  the source field. Such a check will be carried out,
-                  however, if *check_regrid_operator* is True.
+                  improve performance, the source grid coordinates
+                  defined by the operator are, by default, not checked
+                  against those of the source field. This check will
+                  be carried out, however, if *check_coordinates* is
+                  True.
 
-                  .. warning:: If the check is not carried out and the
-                               regrid operator and source field have
-                               different grids then the regriding
-                               might still work, but give incorrect
-                               results. Such a situation could occur
-                               if the unchecked grids have the same
-                               number of cells.
+                  .. warning:: In the event that the grids defined by
+                               the regrid operator and source field
+                               have the same shape but different
+                               coordinates, if the coordinates check
+                               is **not** carried out (which is the
+                               default) then the regriding will still
+                               work but give incorrect results.
 
             {{method: `str` or `None`, optional}}
 
@@ -15644,19 +15645,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                           *dst_axes* is ignored, and its value is
                           set by the regrid operator's parameters.
 
-            axis_order: sequence, optional
-
-                Deprecated at version TODODASK
-
-                A sequence of items specifying dimension coordinates
-                as retrieved by the `dim` method. These determine the
-                order in which to iterate over the other axes of the
-                field when regridding X-Y slices. The slowest moving
-                axis will be the first one specified. Currently the
-                regridding weights are recalculated every time the
-                mask of an X-Y slice changes with respect to the
-                previous one, so this option allows the user to
-                minimise how frequently the mask changes. TODO.
 
             ignore_degenerate: `bool`, optional
                 For conservative regridding methods, if True (the
@@ -15674,27 +15662,25 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 If *dst* is a `RegridOperator` then *ignore_degenerate*
                 is ignored.
 
-            {{inplace: `bool`, optional}}
-
-            _compute_field_mass: `dict`, optional
-                If this is a dictionary then the field masses of the
-                source and destination fields are computed and
-                returned within the dictionary. The keys of the
-                dictionary indicates the lat-long slice of the field
-                and the corresponding value is a tuple containing the
-                source field construct's mass and the destination
-                field construct's mass. The calculation is only done
-                if conservative regridding is being performed. This is
-                for debugging purposes.
-
             return_operator: `bool`, optional
                 If True then do not perform the regridding, rather
-                return a `RegridOperator` instance that defines the
-                regridding operation, including the destination grid,
-                and which can be used in subsequent calls to
-                `regrids`.
+                return the `RegridOperator` instance that defines the
+                regridding operation, and which can be used in
+                subsequent calls.
+
+                See the *dst* parameter for details.
 
                 .. versionadded:: 3.10.0
+
+            {{inplace: `bool`, optional}}
+ 
+            axis_order: sequence, optional
+                Deprecated at version TODODASK. Use a dictionary *dst*
+                parameter with an ``'axes'`` key instead.
+
+            _compute_field_mass: `dict`, optional
+                Deprecated at version TODODASK.
+
 
             fracfield: `bool`, optional
                 Deprecated at version TODODASK.
