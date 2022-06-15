@@ -3840,7 +3840,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         data0, other, new_Units = data0._combined_units(other, method, True)
 
         # Cast as dask arrays
-        dx0 = data0._get_dask()
+        dx0 = data0.to_dask_array()
         dx1 = other._get_dask()
 
         # Set if applicable the tolerance levels for the result
