@@ -3841,7 +3841,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         # Cast as dask arrays
         dx0 = data0.to_dask_array()
-        dx1 = other._get_dask()
+        dx1 = other.to_dask_array()
 
         # Set if applicable the tolerance levels for the result
         if method in ("__eq__", "__ne__"):  # what about l/g-t-e (x4)?
