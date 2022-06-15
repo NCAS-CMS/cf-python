@@ -3888,7 +3888,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 raise TypeError(error)
 
         if inplace:  # in-place so concerns original self
-            self._set_dask(result, reset_mask_hardness=False)
+            self._set_dask(result)
             self.override_units(new_Units, inplace=True)
             return self
         else:  # not, so concerns a new Data object copied from self, data0
