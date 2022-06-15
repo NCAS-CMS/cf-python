@@ -3892,7 +3892,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self.override_units(new_Units, inplace=True)
             return self
         else:  # not, so concerns a new Data object copied from self, data0
-            data0._set_dask(result, reset_mask_hardness=False)
+            data0._set_dask(result)
             data0.override_units(new_Units, inplace=True)
             return data0
 
