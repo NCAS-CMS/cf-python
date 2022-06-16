@@ -25,9 +25,9 @@ ESMF_method_map = {}
 
 @_inplace_enabled(default=False)
 def regrid(
-        f,
-        dst,
         coord_system,
+        src,
+        dst,
         method,
         src_cyclic=None,
         dst_cyclic=None,
@@ -133,9 +133,9 @@ def regrid(
     # Parse and check parameters
     # ----------------------------------------------------------------
     if return_operator:
-        f = f.copy()
+        src = src.copy()
     else:
-        f = _inplace_enabled_define_and_cleanup(f)
+        src = _inplace_enabled_define_and_cleanupsrcf)
 
     if isinstance(dst, RegridOperator):
         regrid_operator = dst
@@ -199,13 +199,13 @@ def regrid(
     if isinstance(dst, dict):
         # Convert a dictionary containing the destination grid to a
         # Domain object
-        dst, dst_axes = dict_to_domain(
-            coord_system, dst, cyclic=dst_cyclic, axes=dst_axes, field=f
+        dst, dst_axes = dict_to_domain( coord_system, dst,
+                                        cyclic=dst_cyclic, axes=dst_axes, domain_class=src._Domain
         )
         use_dst_mask = False
-    elif isinstance(dst, f._Domain.__class__):
+    elif isinstance(dst, src._Domain.__class__):
         use_dst_mask = False
-    elif create_regrid_operator and not isinstance(dst, f.__class__):
+    elif create_regrid_operator and not isinstance(dst, src.__class__):
         raise TypeError(
             "'dst' parameter must be of type Field, Domain, dict "
             f"or RegridOperator. Got: {type(dst)}"
@@ -218,7 +218,7 @@ def regrid(
         coord_system, dst, "destination", method, dst_cyclic, axes=dst_axes
     )
     src_grid = get_grid(
-        coord_system, f, "source", method, src_cyclic, axes=src_axes
+        coord_system, src, "source", method, src_cyclic, axes=src_axes
     )
 
     conform_coordinate_units(coord_system, src_grid, dst_grid)
@@ -255,7 +255,7 @@ def regrid(
             # weights, rather than the mask being applied
             # retrospectively to weights that have been calculated
             # assuming no source grid mask.
-            src_mask = get_mask(f, src_grid)
+            src_mask = get_mask(src, src_grid)
             grid_src_mask = np.array(src_mask.transpose())
             if not grid_src_mask.any():
                 # There are no masked source cells, so we can collapse
@@ -332,7 +332,7 @@ def regrid(
         # Check that the given regrid operator is compatible with the
         # field's source grid
         # ------------------------------------------------------------
-        check_operator(coord_system, f, src_grid, regrid_operator,
+        check_operator(coord_system, src, src_grid, regrid_operator,
                        coordinates=check_coordinates)
 
     # ----------------------------------------------------------------
@@ -343,7 +343,7 @@ def regrid(
         for axis, size in zip(src_grid["axis_indices"], dst_grid["shape"])
     }
 
-    data = f.data._regrid(
+    data = src.data._regrid(
         operator=regrid_operator,
         regrid_axes=src_grid["axis_indices"],
         regridded_sizes=regridded_axis_sizes,
@@ -354,41 +354,41 @@ def regrid(
     # ----------------------------------------------------------------
     update_non_coordinates(
         coord_system,
-        f,
+        src,
         regrid_operator,
         src_axis_keys=src_grid["axis_keys"],
         dst_axis_keys=dst_grid["axis_keys"],
     )
 
     update_coordinates(
-        f,
+        src,
         dst,
-        src_axis_keys=src_grid["axis_keys"],
-        dst_axis_keys=dst_grid["axis_keys"],
-        dst_shape=dst_grid["shape"],
+        src_grid=src_grid
+        dst_grid=dst_grid
     )
 
     # ----------------------------------------------------------------
     # Insert regridded data into the new field
     # ----------------------------------------------------------------
-    f.set_data(new_data, axes=f.get_data_axes(), copy=False)
+    src.set_data(new_data, axes=src.get_data_axes(), copy=False)
 
     if coord_system == "spherical":
         # Set the cyclicity of the longitude axis of the new field
-        key, x = f.dimension_coordinate(
+        key, x = src.dimension_coordinate(
             "X", default=(None, None), item=True
         )
         if x is not None and x.Units.equivalent(Units("degrees")):
-            f.cyclic(
+            src.cyclic(
                 key,
                 iscyclic=dst_grid["cyclic"],
                 config={"coord": x, "period": Data(360.0, "degrees")},
             )
 
-    return f
+    # Return the regridded source field
+    return src
 
 
-def dict_to_domain(coord_system, d, cyclic=None, axes=None, field=None):
+def dict_to_domain(coord_system, d, cyclic=None, axes=None, domain_class=None):
     """Convert a dictionary grid definition to a `Domain`.
 
     See `spherical_dict_to_domain` and `Cartesian_dict_to_domain` for
@@ -1096,7 +1096,7 @@ def conform_coordinate_units(coord_system, src_grid, dst_grid):
             src[dim] = s
 
 
-def check_operator( coord_system, f, src_grid, regrid_operator ,
+def check_operator( coord_system, src, src_grid, regrid_operator ,
                     coordinates=True):
     """TODO
 
@@ -1112,19 +1112,19 @@ def check_operator( coord_system, f, src_grid, regrid_operator ,
     """
     if coord_system != regrid_operator.coord_system:
         raise ValueError(
-            f"Can't regrid {f!r} with {regrid_operator!r}: "
+            f"Can't regrid {src!r} with {regrid_operator!r}: "
             "Coordinate system mismatch"
         )
 
     if src_grid["cyclic"] != regrid_operator.src_cyclic:
         raise ValueError(
-            f"Can't regrid {f!r} with {regrid_operator!r}: "
+            f"Can't regrid {src!r} with {regrid_operator!r}: "
             "Source grid cyclicity mismatch"
         )
 
     if src_grid["shape"] != regrid_operator.src_shape:
         raise ValueError(
-            f"Can't regrid {f!r} with {regrid_operator!r}: "
+            f"Can't regrid {src!r} with {regrid_operator!r}: "
             "Source grid shape mismatch: "
             f"{src_grid['shape']} != {regrid_operator.src_shape}"
         )
@@ -1134,7 +1134,7 @@ def check_operator( coord_system, f, src_grid, regrid_operator ,
 
     # Still here? Then check the coordinates.
     message = (
-        f"Can't regrid {f!r} with {regrid_operator!r}: "
+        f"Can't regrid {src!r} with {regrid_operator!r}: "
         "Source grid coordinates mismatch"
     )
 
@@ -1149,7 +1149,7 @@ def check_operator( coord_system, f, src_grid, regrid_operator ,
             raise ValueError(message)
         
     message = (
-        f"Can't regrid {f!r} with {regrid_operator!r}: "
+        f"Can't regrid {src!r} with {regrid_operator!r}: "
         "Source grid coordinate bounds mismatch"
     )
     
@@ -1605,7 +1605,25 @@ def destroy_Regrid(regrid, src=True, dst=True):
 
 
 def get_bounds(method, coords):
-    """TODODASK"""
+    """Get coordinate bounds needed for defining an `ESMF.Grid`.
+
+    .. versionadded:: TODODASK
+
+    :Patameters:
+
+        method: `str`
+            A valid regridding method.
+
+        coords: sequence of `Coordinate`
+            The coordinates that defining an `ESMF.Grid`.
+
+    :Returns:
+
+        `list`
+            The coordinate bounds. Will be an empty list if the
+            regridding method is not conservative.
+
+    """
     if conservative_regridding(method):
         bounds = [c.get_bounds(None) for c in coords]
         for b in bounds:
@@ -1618,7 +1636,21 @@ def get_bounds(method, coords):
 
 
 def conservative_regridding(method):
-    """TODODASK"""
+    """Whether or not a regridding method is conservative.
+
+    .. versionadded:: TODODASK
+
+    :Patameters:
+
+        method: `str`
+            A valid regridding method.
+
+    :Returns:
+
+        `bool`
+            True if the method is conservative. otherwise False.
+
+    """
     return method in ("conservative", "conservative_1st", "conservative_2nd")
 
 
@@ -1676,22 +1708,14 @@ def get_mask(f, grid):
     :Parameters:
 
         f: `Field`
-            The  field.
+            The field providing the mask.
 
-        dst_axis_keys: sequence of `int`
-            The positions of the regridding axes in the destination
-            field.
-
-        dst_order: sequence, optional
-            The order of the destination axes.
-
-        src_order: sequence, optional
-            The order of the source axes.
+        grid: `dict`
 
     :Returns:
 
         `dask.array.Array`
-            The mask.
+            The boolean mask.
 
     """
     regrid_axes = grid["axis_indices"]
@@ -1701,59 +1725,56 @@ def get_mask(f, grid):
     mask = da.ma.getmaskarray(f)
     mask = mask[tuple(index)]
 
-    # Reorder the destination mask axes to match those of the
-    # reordered source data
+    # Reorder the mask axes to grid['axes_keys']
     mask = da.transpose(mask, np.argsort(regrid_axes))
 
     return mask
 
 
-def update_coordinates(
-    f, dst, src_axis_keys=None, dst_axis_keys=None
-):
-    """Update the coordinates of the regridded field.
+def update_coordinates(src, dst, src_grid, dst_grid):
+    """Update the regrid axis coordinates.
+
+    Replace the exising coordinate contructs that span the regridding
+    axies with those from the destination grid.
 
     :Parameters:
 
-        f: `Field`
-            The regridded field. Updated in-place.
+        src: `Field`
+            The regridded source field. Updated in-place.
 
         dst: Field or `dict`
             The object containing the destination grid.
 
-        dst_coords: sequence
-            Ignored if *dst* is a `Field`. The destination
-            coordinates. Assumed to be copies of those in *dst*.
+        src_grid: `dict`
 
-        src_axis_keys: sequence
-            The keys of the regridding axes in the source field.
-
-        dst_axis_keys: sequence
-            The keys of the regridding axes in the destination field.
+        dst_grid: `dict`
 
     :Returns:
 
         `None`
 
     """
+    src_axis_keys = src_grid["axis_keys"]
+    dst_axis_keys = dst_grid["axis_keys"]
+    
     # Remove the source coordinates of new field
-    for key in f.coordinates(
+    for key in src.coordinates(
         filter_by_axis=src_axis_keys, axis_mode="or", todict=True
     ):
-        f.del_construct(key)
+        src.del_construct(key)
 
     # Domain axes
-    f_domain_axes = f.domain_axes(todict=True)
+    src_domain_axes = src.domain_axes(todict=True)
     dst_domain_axes = dst.domain_axes(todict=True)
     for src_axis, dst_axis in zip(src_axis_keys, dst_axis_keys):
-        f_domain_axis = f_domain_axes[src_axis]
+        src_domain_axis = src_domain_axes[src_axis]
         dst_domain_axis = dst_domain_axes[dst_axis]
 
-        f_domain_axis.set_size(dst_domain_axis.size)
+        src_domain_axis.set_size(dst_domain_axis.size)
 
         ncdim = dst_domain_axis.nc_get_dimension(None)
         if ncdim is not None:
-            f_domain_axis.nc_set_dimension(ncdim)
+            src_domain_axis.nc_set_dimension(ncdim)
 
     # Coordinates
     axis_map = {
@@ -1766,12 +1787,13 @@ def update_coordinates(
         filter_by_axis=dst_axis_keys, axis_mode="subset", todict=True
     ).items():
         axes = [axis_map[axis] for axis in dst_data_axes[key]]
-        f.set_construct(aux, axes=axes)
+        src.set_construct(aux, axes=axes)
 
 
 def update_non_coordinates(
     coord_system,
-    f,
+    src,
+        dst,
     regrid_operator,
     src_axis_keys=None,
     dst_axis_keys=None,
@@ -1780,7 +1802,7 @@ def update_non_coordinates(
 
     :Parameters:
 
-        f: `Field`
+        src: `Field`
             The regridded field. Updated in-place.
 
         regrid_operator:
@@ -1796,63 +1818,71 @@ def update_non_coordinates(
         `None`
 
     """
-    dst = operator.get_parameter("dst")
-
-    domain_ancillaries = f.domain_ancillaries(todict=True)
+    src_axis_keys = src_grid["axis_keys"]
+    dst_axis_keys = dst_grid["axis_keys"]
+    
+    domain_ancillaries = src.domain_ancillaries(todict=True)
 
     # Initialise cached value for domain_axes
     domain_axes = None
 
-    data_axes = f.constructs.data_axes()
+    data_axes = src.constructs.data_axes()
 
     # ----------------------------------------------------------------
     # Delete source coordinate references (and all of their domain
     # ancillaries) whose *coordinates* span any of the regridding
     # axes.
     # ----------------------------------------------------------------
-    for ref_key, ref in f.coordinate_references(todict=True).items():
+    for ref_key, ref in src.coordinate_references(todict=True).items():
         ref_axes = []
         for c_key in ref.coordinates():
             ref_axes.extend(data_axes[c_key])
 
         if set(ref_axes).intersection(src_axis_keys):
-            f.del_coordinate_reference(ref_key)
+            src.del_coordinate_reference(ref_key)
 
     # ----------------------------------------------------------------
     # Delete source cell measures and field ancillaries that span any
     # of the regridding axes
     # ----------------------------------------------------------------
-    for key in f.constructs(
+    for key in src.constructs(
         filter_by_type=("cell_measure", "field_ancillary"), todict=True
     ):
         if set(data_axes[key]).intersection(src_axis_keys):
-            f.del_construct(key)
+            src.del_construct(key)
 
     # ----------------------------------------------------------------
     # Regrid any remaining source domain ancillaries that span all of
     # the regridding axes
     # ----------------------------------------------------------------
     if coord_system == "spherical":
-        regrid = "regrids"
-        kwargs = {"src_cyclic": regrid_operator.src_cyclic}  # include others?
+        kwargs = {
+            "src_cyclic": regrid_operator.src_cyclic,
+            "src_axes": {"Y": src_axis_keys[0], "X": src_axis_keys[1]}, 
+        }
     else:
-        regrid = "regridc"
-        kwargs = {"axes": src_axis_keys}  ### ??? should this be 'axes'
+        kwargs = {"axes": src_axis_keys}
 
-    for da_key in f.domain_ancillaries(todict=True):
+    for da_key in src.domain_ancillaries(todict=True):
         da_axes = data_axes[da_key]
+
+        # Ignore any remaining source domain ancillary that spans none
+        # of the regidding axes
+        if not set(da_axes).intersection(src_axis_keys):
+            continue
+        
+        # Delete any any remaining source domain ancillary that spans
+        # some but not all of the regidding axes
         if not set(da_axes).issuperset(src_axis_keys):
-            # Delete any source domain ancillary that doesn't span all
-            # of the regidding axes
-            f.del_construct(da_key)
+            src.del_construct(da_key)
             continue
 
         # Convert the domain ancillary to a field, without any
         # non-coordinate metadata (to prevent them being unnecessarily
         # processed during the regridding of the domain ancillary
         # field, and especially to avoid potential
-        # regridding-of-domian-ancillaries infinite recursion).
-        da_field = f.convert(key)
+        # regridding-of-domain-ancillaries infinite recursion).
+        da_field = src.convert(key)
 
         for key in da_field.constructs(
             filter_by_type=(
@@ -1865,16 +1895,16 @@ def update_non_coordinates(
             da_field.del_construct(key)
 
         # Regrid the field containing the domain ancillary
-        getattr(da_field, regrid)(regrid_operator, inplace=True, **kwargs)
+        regrid(coord_system, da_field, regrid_operator, inplace=True, **kwargs)
 
         # Set sizes of regridded axes
-        domain_axes = f.domain_axes(cached=domain_axes, todict=True)
-        for axis, new_size in zip(src_axis_keys, dst_shape):
+        domain_axes = src.domain_axes(cached=domain_axes, todict=True)
+        for axis, new_size in zip(src_axis_keys, dst_grid["shape"]):
             domain_axes[axis].set_size(new_size)
 
         # Put the regridded domain ancillary back into the field
-        f.set_construct(
-            f._DomainAncillary(source=da_field),
+        src.set_construct(
+            src._DomainAncillary(source=da_field),
             key=da_key,
             axes=da_axes,
             copy=False,
@@ -1891,7 +1921,7 @@ def update_non_coordinates(
             axes.update(dst_data_axes[c_key])
 
         if axes and set(axes).issubset(dst_axis_keys):
-            f.set_coordinate_reference(ref, parent=dst, strict=True)
+            src.set_coordinate_reference(ref, parent=dst, strict=True)
 
 
 # def convert_mask_to_ESMF(mask):
