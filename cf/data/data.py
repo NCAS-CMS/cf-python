@@ -3807,11 +3807,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         inplace = method[2] == "i"
 
         # ------------------------------------------------------------
-        # Ensure that other is an independent Data object
+        # Ensure other is an independent Data object, for example
+        # so that combination with cf.Query objects works.
         # ------------------------------------------------------------
-        # TODODASK is this still needed? Comment below was left unfinished.
         if getattr(other, "_NotImplemented_RHS_Data_op", False):
-            # Make sure that
             return NotImplemented
 
         elif not isinstance(other, self.__class__):
