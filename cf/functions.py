@@ -31,7 +31,6 @@ from numpy import __version__ as _numpy__version__
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
 from numpy import ascontiguousarray as _numpy_ascontiguousarray
-from numpy import isclose as _x_numpy_isclose
 from numpy import shape as _numpy_shape
 from numpy import take as _numpy_take
 from numpy import tile as _numpy_tile
@@ -1841,39 +1840,6 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
                 return True
             else:
                 return out
-
-
-def _numpy_isclose(a, b, rtol=None, atol=None):
-    """Returns a boolean array where two broadcastable arrays are
-    element-wise equal within a tolerance.
-
-    The tolerance values are positive, typically very small numbers. The
-    relative difference (``rtol * abs(b)``) and the absolute difference
-    ``atol`` are added together to compare against the absolute difference
-    between ``a`` and ``b``.
-
-    :Parameters:
-
-        a, b: array_like
-            Input arrays to compare.
-
-        atol: `float`, optional
-            The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `atol` function is used.
-
-        rtol: `float`, optional
-            The relative tolerance for all numerical comparisons, By
-            default the value returned by the `rtol` function is used.
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    try:
-        return _x_numpy_isclose(a, b, rtol=rtol, atol=atol)
-    except (IndexError, NotImplementedError, TypeError):
-        return a == b
 
 
 # TODODASK - sort out the "numpy" environment
