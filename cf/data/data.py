@@ -3874,17 +3874,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 # Raise the floating point error exception
                 raise FloatingPointError(error)
-        except TypeError as error:
-            if inplace:
-                raise TypeError(
-                    "Incompatible result data-type ({0!r}) for "
-                    "in-place {1!r} arithmetic".format(
-                        np.result_type(dx0.dtype, dx1.dtype).name,
-                        dx0.dtype.name,
-                    )
-                )
-            else:
-                raise TypeError(error)
 
         if inplace:  # in-place so concerns original self
             self._set_dask(result)
