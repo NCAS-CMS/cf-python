@@ -3850,30 +3850,16 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
-        try:
-            if method == "__eq__":
-                result = _numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
-            elif method == "__ne__":
-                result = ~_numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
-            elif inplace:
-                # Find non-in-place equivalent operator (remove 'i')
-                equiv_method = method[:2] + method[3:]
-                result = getattr(dx0, equiv_method)(dx1)
-            else:
-                result = getattr(dx0, method)(dx1)
-
-        except FloatingPointError as error:
-            # Floating point point errors have been trapped
-            if _mask_fpe[0]:
-                # Redo the calculation ignoring the errors and
-                # then set invalid numbers to missing data
-                np.seterr(**_seterr_raise_to_ignore)
-                result = getattr(dx0, method)(dx1)
-                result = np.ma.masked_invalid(dx0, copy=False)
-                np.seterr(**_seterr)
-            else:
-                # Raise the floating point error exception
-                raise FloatingPointError(error)
+        if method == "__eq__":
+            result = _numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
+        elif method == "__ne__":
+            result = ~_numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
+        elif inplace:
+            # Find non-in-place equivalent operator (remove 'i')
+            equiv_method = method[:2] + method[3:]
+            result = getattr(dx0, equiv_method)(dx1)
+        else:
+            result = getattr(dx0, method)(dx1)
 
         if inplace:  # in-place so concerns original self
             self._set_dask(result)
