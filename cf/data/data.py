@@ -30,7 +30,6 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
-    _numpy_isclose,
     _section,
     abspath,
 )
@@ -3843,7 +3842,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx1 = other.to_dask_array()
 
         # Set if applicable the tolerance levels for the result
-        if method in ("__eq__", "__ne__"):  # what about l/g-t-e (x4)?
+        if method in ("__eq__", "__ne__"):
             rtol = self._rtol
             atol = self._atol
 
@@ -3851,9 +3850,9 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
         if method == "__eq__":
-            result = _numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
+            result = da.isclose(dx0, dx1, rtol=rtol, atol=atol)
         elif method == "__ne__":
-            result = ~_numpy_isclose(dx0, dx1, rtol=rtol, atol=atol)
+            result = ~da.isclose(dx0, dx1, rtol=rtol, atol=atol)
         elif inplace:
             # Find non-in-place equivalent operator (remove 'i')
             equiv_method = method[:2] + method[3:]
