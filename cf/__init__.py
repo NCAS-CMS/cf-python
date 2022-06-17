@@ -78,7 +78,7 @@ __Conventions__ = "CF-1.9"
 __date__ = "2022-01-18"
 __version__ = "4.0.0b0"
 
-_requires = ("numpy", "netCDF4", "cftime", "cfunits", "cfdm", "psutil")
+_requires = ("numpy", "netCDF4", "cftime", "cfunits", "cfdm", "psutil", "dask")
 
 x = ", ".join(_requires)
 _error0 = f"cf v{ __version__} requires the modules {x}. "
@@ -103,10 +103,6 @@ if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     )
 
 _found_ESMF = bool(importlib.util.find_spec("ESMF"))
-
-# TODODASK - Remove the next 2 lines when the move to dask is complete
-mpi_on = False
-mpi_size = 1
 
 try:
     import netCDF4
@@ -133,6 +129,11 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
+try:
+    import dask
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
 # Check the version of psutil
 _minimum_vn = "0.6.0"
 if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
@@ -150,7 +151,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cftime
-_minimum_vn = "1.5.0"
+_minimum_vn = "1.6.0"
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
@@ -175,12 +176,20 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of cfdm
 _minimum_vn = "1.9.0.1"
-_maximum_vn = "1.9.1.0"
+_maximum_vn = "1.9.2.0"
 _cfdm_version = LooseVersion(cfdm.__version__)
 if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
     raise RuntimeError(
         f"Bad cfdm version: cf requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
         f"Got {_cfdm_version} at {cfdm.__file__}"
+    )
+
+# Check the version of dask
+_minimum_vn = "2022.6.0"
+if LooseVersion(dask.__version__) < LooseVersion(_minimum_vn):
+    raise RuntimeError(
+        f"Bad dask version: cf requires dask>={_minimum_vn}. "
+        f"Got {dask.__version__} at {dask.__file__}"
     )
 
 from .constructs import Constructs
@@ -225,6 +234,7 @@ from .data import (
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SubsampledArray,
 )
 
 from .aggregate import aggregate

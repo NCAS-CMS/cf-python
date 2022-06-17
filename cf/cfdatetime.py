@@ -6,7 +6,7 @@ import numpy as np
 
 from .functions import _DEPRECATION_ERROR_CLASS
 
-_default_calendar = "gregorian"
+default_calendar = "gregorian"
 
 # --------------------------------------------------------------------
 # Mapping of CF calendars to cftime date-time objects
@@ -20,6 +20,21 @@ _datetime_object = {
     ("all_leap", "366_day"): cftime.DatetimeAllLeap,
     ("julian",): cftime.DatetimeJulian,
 }
+
+canonical_calendar = {
+    None: "standard",
+    "gregorian": "standard",
+    "standard": "standard",
+    "proleptic_gregorian": "proleptic_gregorian",
+    "julian": "julian",
+    "noleap": "noleap",
+    "365_day": "noleap",
+    "all_366_day": "all_leap",
+    "all_leap": "all_leap",
+    "": "",
+    "none": "",
+}
+
 
 _calendar_map = {None: "gregorian"}
 
@@ -138,7 +153,7 @@ def dt(
         (year, month, day, hour, minute, second) = arg.timetuple()[:6]
         microsecond = arg.microsecond
         if calendar == "":
-            calendar = _default_calendar
+            calendar = default_calendar
 
     else:
         year = arg
@@ -426,6 +441,9 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         array, units, calendar, only_use_cftime_datetimes=True
     )
 
+    if not isinstance(array, np.ndarray):
+        array = np.array(array, dtype=object)
+
     return array
 
 
@@ -462,15 +480,17 @@ def dt2rt(array, units_in, units_out, dummy1=None):
             An array of numbers with the same shape as *array*.
 
     """
-    ndim = np.ndim(array)
+    isscalar = np.ndim(array)
 
-    #    array = units_out._utime.date2num(array)
     array = cftime.date2num(
         array, units=units_out.units, calendar=units_out._utime.calendar
     )
 
-    if not ndim:
-        array = np.asanyarray(array)
+    if isscalar:
+        if array is np.ma.masked:
+            array = np.ma.masked_all(())
+        else:
+            array = np.asanyarray(array)
 
     return array
 

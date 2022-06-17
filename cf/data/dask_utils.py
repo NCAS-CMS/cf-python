@@ -14,8 +14,7 @@ from dask.core import flatten
 from ..cfdatetime import dt2rt, rt2dt
 from ..functions import atol as cf_atol
 from ..functions import rtol as cf_rtol
-
-# from dask.utils import deepmap  # Apply function inside nested lists
+from ..units import Units
 
 
 def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
@@ -262,16 +261,22 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
             original array *a*.
 
         mtol: number, optional
-            Set an upper limit of the amount input data values which
-            are allowed to be missing data when contributing to
-            individual output percentile values. It is defined as a
-            fraction (between 0 and 1 inclusive) of the contributing
-            input data values. The default is 1, meaning that a
-            missing datum in the output array only occurs when all of
-            its contributing input array elements are missing data. A
-            value of 0 means that a missing datum in the output array
-            occurs whenever any of its contributing input array
-            elements are missing data.
+            The sample size threshold below which collapsed values are
+            set to missing data. It is defined as a fraction (between
+            0 and 1 inclusive) of the contributing input data values.
+
+            The default of *mtol* is 1, meaning that a missing datum
+            in the output array occurs whenever all of its
+            contributing input array elements are missing data.
+
+            For other values, a missing datum in the output array
+            occurs whenever more than ``100*mtol%`` of its
+            contributing input array elements are missing data.
+
+            Note that for non-zero values of *mtol*, different
+            collapsed elements may have different sample sizes,
+            depending on the distribution of missing data in the input
+            data.
 
     :Returns:
 
@@ -299,7 +304,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
                 a, axis=axis, keepdims=keepdims
             )
             if n_missing.any():
-                mask = np.where(n_missing >= mtol * full_size, True, False)
+                mask = np.where(n_missing > mtol * full_size, True, False)
                 if q.ndim:
                     mask = np.expand_dims(mask, 0)
 
@@ -588,3 +593,45 @@ def cf_dt2rt(a, units):
 
     """
     return dt2rt(a, units_out=units, units_in=None)
+
+
+def cf_units(a, from_units, to_units):
+    """Convert array values to have different equivalent units.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `cf.Data.Units`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array.
+
+        from_units: `Units`
+            The existing units of the array.
+
+        to_units: `Units`
+            The units that the array should be converted to. Must be
+            equivalent to *from_units*.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An array containing values in the new units. In order to
+            represent the new units, the returned data type may be
+            different from that of the input array. For instance, if
+            *a* has an integer data type, *from_units* are kilometres,
+            and *to_units* are ``'miles'`` then the returned array
+            will have a float data type.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> a = np.array([1, 2])
+    >>> print(cf.data.dask_utils.cf_units(a, cf.Units('km'), cf.Units('m')))
+    [1000. 2000.]
+
+    """
+    return Units.conform(
+        a, from_units=from_units, to_units=to_units, inplace=False
+    )

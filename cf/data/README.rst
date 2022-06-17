@@ -194,3 +194,11 @@ Inheritance from `cfdm`
 
 Generally, how do we deal with optimisation for objects and logic inherited
 from `cfdm`, since the current plan is not to Daskify `cfdm.Data`?
+
+Returned Booleans
+-----------------
+
+When a method currently returns a Boolean (such as `Data.all`), should
+it in fact return a lazy size 1 `Data` object?. The numpy and dask
+`all` functions have an "axis" keyword that allows non-scalar outputs,
+and a keepdims argument.

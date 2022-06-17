@@ -1,6 +1,8 @@
+import contextlib
 import datetime
 import faulthandler
 import inspect
+import io
 import itertools
 import os
 import unittest
@@ -61,13 +63,22 @@ def reshape_array(a, axes):
     return b
 
 
-class DataTest(unittest.TestCase):
-
-    axes_combinations = [
+def axis_combinations(a):
+    return [
         axes
         for n in range(1, a.ndim + 1)
         for axes in itertools.combinations(range(a.ndim), n)
     ]
+
+
+class DataTest(unittest.TestCase):
+
+    axes_combinations = axis_combinations(a)
+    # [
+    #    axes
+    #    for n in range(1, a.ndim + 1)
+    #    for axes in itertools.combinations(range(a.ndim), n)
+    # ]
 
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
@@ -494,12 +505,6 @@ class DataTest(unittest.TestCase):
             d.halo(4)
 
     def test_Data_mask(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # TODODASK: once test_Data_apply_masking is passing after daskification
-        # of apply_masking, might make sense to combine this test with that?
-
         # Test for a masked Data object (having some masked points)
         a = self.ma
         d = cf.Data(a, units="m")
@@ -533,53 +538,52 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d3.mask.hardmask)
         self.assertTrue(d3.mask.array[1], True)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_apply_masking(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.ma.arange(12).reshape(3, 4)
+        a[1, 1] = np.ma.masked
+        d = cf.Data(a, units="m", chunks=2)
 
-        a = self.ma
-        d = cf.Data(a, units="m")
+        self.assertIsNone(d.apply_masking(inplace=True))
 
-        b = a.copy()
+        b = a
         e = d.apply_masking()
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a == 0, np.ma.masked, a)
+        b = np.ma.masked_where(a == 0, a)
         e = d.apply_masking(fill_values=[0])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a == 0) | (a == 11), np.ma.masked, a)
+        b = np.ma.masked_where((a == 0) | (a == 11), a)
         e = d.apply_masking(fill_values=[0, 11])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a < 30, np.ma.masked, a)
-        e = d.apply_masking(valid_min=30)
+        b = np.ma.masked_where(a < 3, a)
+        e = d.apply_masking(valid_min=3)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where(a > -60, np.ma.masked, a)
-        e = d.apply_masking(valid_max=-60)
+        b = np.ma.masked_where(a > 8, a)
+        e = d.apply_masking(valid_max=8)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a < -20) | (a > 80), np.ma.masked, a)
-        e = d.apply_masking(valid_range=[-20, 80])
+        b = np.ma.masked_where((a < 2) | (a > 8), a)
+        e = d.apply_masking(valid_range=[2, 8])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        d.set_fill_value(70)
+        d.set_fill_value(7)
 
-        b = np.ma.where(a == 70, np.ma.masked, a)
+        b = np.ma.masked_where(a == 7, a)
         e = d.apply_masking(fill_values=True)
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-        b = np.ma.where((a == 70) | (a < 20) | (a > 80), np.ma.masked, a)
-        e = d.apply_masking(fill_values=True, valid_range=[20, 80])
+        b = np.ma.masked_where((a == 7) | (a < 2) | (a > 8), a)
+        e = d.apply_masking(fill_values=True, valid_range=[2, 8])
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
@@ -673,51 +677,59 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((a_diff == d_diff).all())
                 self.assertTrue((a_diff.mask == d_diff.mask).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_compressed(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = np.ma.arange(12).reshape(3, 4)
+        d = cf.Data(a, "m", chunks=2)
+        self.assertIsNone(d.compressed(inplace=True))
+        self.assertEqual(d.shape, (a.size,))
+        self.assertEqual(d.Units, cf.Units("m"))
+        self.assertEqual(d.dtype, a.dtype)
 
-        d = cf.Data(a)
-        self.assertTrue((d.array == a).all())
-        self.assertTrue((a.compressed() == d.compressed()).all())
+        d = cf.Data(a, "m", chunks=2)
+        self.assertTrue((d.compressed().array == a.compressed()).all())
 
-        e = d.copy()
-        x = e.compressed(inplace=True)
-        self.assertIsNone(x)
-        self.assertTrue(e.equals(d.compressed()))
+        a[2] = np.ma.masked
+        d = cf.Data(a, "m", chunks=2)
+        self.assertTrue((d.compressed().array == a.compressed()).all())
 
-        a[1, 1] = np.ma.masked
-        a[2, 3] = np.ma.masked
+        a[...] = np.ma.masked
+        d = cf.Data(a, "m", chunks=2)
+        e = d.compressed()
+        self.assertEqual(e.shape, (0,))
+        self.assertTrue((e.array == a.compressed()).all())
 
-        d = cf.Data(a)
-        self.assertTrue((d.array == a).all())
-        self.assertTrue((d.mask.array == a.mask).all())
-        self.assertTrue((a.compressed() == d.compressed()).all())
+        # Scalar arrays
+        a = np.ma.array(9)
+        d = cf.Data(a, "m")
+        e = d.compressed()
+        self.assertEqual(e.shape, (1,))
+        self.assertTrue((e.array == a.compressed()).all())
 
-        e = d.copy()
-        x = e.compressed(inplace=True)
-        self.assertIsNone(x)
-        self.assertTrue(e.equals(d.compressed()))
+        a = np.ma.array(9, mask=True)
+        d = cf.Data(a, "m")
+        e = d.compressed()
+        self.assertEqual(e.shape, (0,))
+        self.assertTrue((e.array == a.compressed()).all())
 
-        d = cf.Data(self.a, "km")
-        self.assertTrue((self.a.flatten() == d.compressed()).all())
-
-        d = cf.Data(self.ma, "km")
-        self.assertTrue((self.ma.compressed() == d.compressed()).all())
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __eq__")
     def test_Data_stats(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data([1, 1])
 
-        d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
-
-        self.assertIsInstance(d.stats(), dict)
-        _ = d.stats(all=True)
-        _ = d.stats(mean_of_upper_decile=True, range=False)
+        self.assertEqual(
+            d.stats(sum=True, weights=1),
+            {
+                "minimum": 1,
+                "mean": 1.0,
+                "median": 1.0,
+                "maximum": 1,
+                "range": 0,
+                "mid_range": 1.0,
+                "standard_deviation": 0.0,
+                "root_mean_square": 1.0,
+                "sum": 2,
+                "sample_size": 2,
+            },
+        )
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
     def test_Data__init__dtype_mask(self):
@@ -1410,62 +1422,66 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             d[[1], [0, 4, 1]] = 9
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_outerproduct(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.arange(12).reshape(4, 3)
+        d = cf.Data(a, "m", chunks=2)
 
-        d = cf.Data(np.arange(1200).reshape(40, 30))
+        for b in (9, [1, 2, 3, 4, 5], np.arange(30).reshape(6, 5)):
+            c = np.multiply.outer(a, b)
+            f = d.outerproduct(b)
+            self.assertEqual(f.shape, c.shape)
+            self.assertTrue((f.array == c).all())
+            self.assertEqual(d.Units, cf.Units("m"))
 
-        e = cf.Data(np.arange(5))
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30, 5))
-
-        e = cf.Data(np.arange(5).reshape(5, 1))
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30, 5, 1))
-
-        e = cf.Data(np.arange(30).reshape(6, 5))
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30, 6, 5))
-
-        e = cf.Data(7)
-        f = d.outerproduct(e)
-        self.assertEqual(f.shape, (40, 30), f.shape)
-
-        e = cf.Data(np.arange(5))
+        # In-place
+        e = cf.Data([1, 2, 3, 4, 5], "s-1")
         self.assertIsNone(d.outerproduct(e, inplace=True))
-        self.assertEqual(d.shape, (40, 30, 5), d.shape)
+        self.assertEqual(d.shape, (4, 3, 5))
+        self.assertEqual(d.Units, cf.Units("m.s-1"))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_all(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        d = cf.Data(np.array([[0] * 1000]))
-        self.assertTrue(not d.all())
-        d[-1, -1] = 1
-        self.assertFalse(d.all())
-        d[...] = 1
+        d = cf.Data([[1, 2], [3, 4]], "m")
         self.assertTrue(d.all())
+        self.assertEqual(d.all(keepdims=False).shape, ())
+        self.assertEqual(d.all(axis=()).shape, d.shape)
+        self.assertTrue((d.all(axis=0).array == [True, True]).all())
+        self.assertTrue((d.all(axis=1).array == [True, True]).all())
+        self.assertEqual(d.all().Units, cf.Units())
+
+        d[0] = cf.masked
+        d[1, 0] = 0
+        self.assertTrue((d.all(axis=0).array == [False, True]).all())
+        self.assertTrue(
+            (
+                d.all(axis=1).array == np.ma.array([True, False], mask=[1, 0])
+            ).all()
+        )
+
         d[...] = cf.masked
         self.assertTrue(d.all())
+        self.assertFalse(d.all(keepdims=False))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_any(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data([[0, 2], [0, 4]])
+        self.assertTrue(d.any())
+        self.assertEqual(d.any(keepdims=False).shape, ())
+        self.assertEqual(d.any(axis=()).shape, d.shape)
+        self.assertTrue((d.any(axis=0).array == [False, True]).all())
+        self.assertTrue((d.any(axis=1).array == [True, True]).all())
+        self.assertEqual(d.any().Units, cf.Units())
 
-        d = cf.Data(np.array([[0] * 1000]))
-        self.assertFalse(d.any())
-        d[-1, -1] = 1
-        self.assertTrue(d.any())
-        d[...] = 1
-        self.assertTrue(d.any())
+        d[0] = cf.masked
+        self.assertTrue((d.any(axis=0).array == [False, True]).all())
+        self.assertTrue(
+            (
+                d.any(axis=1).array == np.ma.array([True, True], mask=[1, 0])
+            ).all()
+        )
+
         d[...] = cf.masked
         self.assertFalse(d.any())
+        self.assertFalse(d.any(keepdims=False))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "AssertionError: -999 != 0")
     def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1481,63 +1497,47 @@ class DataTest(unittest.TestCase):
         self.assertIs(a[()], np.ma.masked)
 
         # Non-scalar numeric array
-        b = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-        d = cf.Data(b, "km")
+        b = np.arange(24).reshape(2, 1, 3, 4)
+        d = cf.Data(b, "km", fill_value=-123)
         a = d.array
         a[0, 0, 0, 0] = -999
         a2 = d.array
-        self.assertEqual(a2[0, 0, 0, 0], 0)
-        self.assertEqual(a2.shape, b.shape)
         self.assertTrue((a2 == b).all())
         self.assertFalse((a2 == a).all())
 
+        # Fill value
+        d[0, 0, 0, 0] = cf.masked
+        self.assertEqual(d.array.fill_value, d.fill_value)
+
+        # Date-time array
         d = cf.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
-        a = d.array
-        self.assertTrue((a == np.array([[2.5]])).all())
+        self.assertEqual(d.array, 2.5)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_binary_mask(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data([[0, 1, 2, 3.0]], "m")
+        m = d.binary_mask
+        self.assertEqual(m.shape, d.shape)
+        self.assertEqual(m.Units, cf.Units("1"))
+        self.assertEqual(m.dtype, "int32")
+        self.assertTrue((m.array == [[0, 0, 0, 0]]).all())
 
-        a = np.ma.ones((1000,), dtype="int32")
-        a[[1, 900]] = np.ma.masked
-        a[[0, 10, 910]] = 0
+        d[0, 1] = cf.masked
+        m = d.binary_mask
+        self.assertTrue((d.binary_mask.array == [[0, 1, 0, 0]]).all())
 
-        d = cf.Data(np.arange(1000.0), "radians")
-        d[[1, 900]] = cf.masked
-        d[[10, 910]] = 0
-
-        b = d.binary_mask
-
-        self.assertEqual(b.Units, cf.Units("1"))
-        self.assertEqual(b.dtype, np.dtype("int32"))
-        self.assertTrue((b.array == a).all())
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_clip(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        a = np.arange(12).reshape(3, 4)
+        d = cf.Data(a, "m", chunks=2)
 
-        c0 = -53.234
-        c1 = 34.345456567
+        self.assertIsNone(d.clip(-1, 12, inplace=True))
 
-        a = self.a + 0.34567
-        ac = np.clip(a, c0, c1)
+        b = np.clip(a, 2, 10)
+        e = d.clip(2, 10)
+        self.assertTrue((e.array == b).all())
 
-        d = cf.Data(a, "km")
-        self.assertIsNotNone(d.clip(c0, c1))
-        self.assertIsNone(d.clip(c0, c1, inplace=True))
-
-        d = cf.Data(a, "km")
-        e = d.clip(c0, c1)
-        self.assertTrue((e.array == ac).all())
-
-        e = d.clip(c0 * 1000, c1 * 1000, units="m")
-        self.assertTrue((e.array == ac).all())
-
-        d.clip(c0 * 100, c1 * 100, units="10m", inplace=True)
-        self.assertTrue(d.allclose(ac, rtol=1e-05, atol=1e-08))
+        b = np.clip(a, 3, 9)
+        e = d.clip(0.003, 0.009, "km")
+        self.assertTrue((e.array == b).all())
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_months_years(self):
@@ -1613,7 +1613,6 @@ class DataTest(unittest.TestCase):
         )
         d *= 31
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "'NoneType' object is not callable")
     def test_Data_datetime_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1636,11 +1635,6 @@ class DataTest(unittest.TestCase):
             self.assertEqual(a.shape, ())
             self.assertEqual(a, x)
 
-            a = d.datetime_array
-            a = d.array
-            self.assertEqual(a.shape, ())
-            self.assertEqual(a, x)
-
         # Non-scalar array
         for d, x in zip(
             [
@@ -1649,12 +1643,6 @@ class DataTest(unittest.TestCase):
             ],
             ([[11292.5, 11293.5]], [[0, 1]]),
         ):
-            a = d.datetime_array
-            a = d.array
-            self.assertTrue((a == x).all())
-            a = d.datetime_array
-            a = d.array
-            self.assertTrue((a == x).all())
             a = d.datetime_array
             self.assertTrue(
                 (
@@ -1669,6 +1657,9 @@ class DataTest(unittest.TestCase):
                     )
                 ).all()
             )
+
+            a = d.array
+            self.assertTrue((a == x).all())
 
     def test_Data_asdatetime_asreftime_isdatetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1863,40 +1854,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e[0].max().array, 3 * 4 * 5)
         self.assertEqual(e[-1].max().array, 4 * 5)
 
-    #    def test_Data_max(self):
-    #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-    #            return
-    #
-    #        d = cf.Data([[4, 5, 6], [1, 2, 3]], "metre", chunks=2)
-    #        self.assertEqual(
-    #            d.max().array, cf.Data(6, "metre")
-    #        )
-    #        self.assertEqual(d.max().array.datum(), 6)
-    #        d[0, 2] = cf.masked
-    #        self.assertEqual(d.max().array, 5)
-    #        self.assertEqual(d.max().array.datum(), 5)
-    #        self.assertEqual(
-    #            d.maximum(_preserve_partitions=pp), cf.Data(0.005, "km")
-    #        )
-    #
-    #    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
-    #    def test_Data_min(self):
-    #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-    #            return
-    #
-    #        for pp in (False, True):
-    #            d = cf.Data([[4, 5, 6], [1, 2, 3]], "metre")
-    #            self.assertEqual(
-    #                d.minimum(_preserve_partitions=pp), cf.Data(1, "metre")
-    #            )
-    #            self.assertEqual(d.minimum(_preserve_partitions=pp).datum(), 1)
-    #            d[1, 0] = cf.masked
-    #            self.assertEqual(d.minimum(_preserve_partitions=pp), 2)
-    #            self.assertEqual(d.minimum(_preserve_partitions=pp).datum(), 2)
-    #            self.assertEqual(
-    #                d.minimum(_preserve_partitions=pp), cf.Data(0.002, "km")
-    #            )
-
     def test_Data_ndindex(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1909,7 +1866,6 @@ class DataTest(unittest.TestCase):
             for i, j in zip(d.ndindex(), np.ndindex(d.shape)):
                 self.assertEqual(i, j)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_pmshape'")
     def test_Data_roll(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1917,8 +1873,6 @@ class DataTest(unittest.TestCase):
         a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         d = cf.Data(a.copy())
-
-        _ = d._pmshape
 
         e = d.roll(0, 4)
         e.roll(2, 120, inplace=True)
@@ -1938,22 +1892,21 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, d.shape)
         self.assertTrue(f.equals(d, verbose=2))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_swapaxes(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-
-        d = cf.Data(a.copy())
+        a = np.ma.arange(24).reshape(2, 3, 4)
+        a[1, 1] = np.ma.masked
+        d = cf.Data(a, chunks=(-1, -1, 2))
 
         for i in range(-a.ndim, a.ndim):
             for j in range(-a.ndim, a.ndim):
-                b = np.swapaxes(a.copy(), i, j)
+                b = np.swapaxes(a, i, j)
                 e = d.swapaxes(i, j)
-                message = "cf.Data.swapaxes({}, {}) failed".format(i, j)
-                self.assertEqual(b.shape, e.shape, message)
-                self.assertTrue((b == e.array).all(), message)
+                self.assertEqual(b.shape, e.shape)
+                self.assertTrue((b == e.array).all())
+
+        # Bad axes
+        with self.assertRaises(IndexError):
+            d.swapaxes(3, -3)
 
     def test_Data_transpose(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1967,54 +1920,56 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(indices):
                 a = np.transpose(a, axes)
                 d.transpose(axes, inplace=True)
-                message = (
-                    "cf.Data.transpose({}) failed: "
-                    "d.shape={}, a.shape={}".format(axes, d.shape, a.shape)
-                )
-                self.assertEqual(d.shape, a.shape, message)
-                self.assertTrue((d.array == a).all(), message)
+                self.assertEqual(d.shape, a.shape)
+                self.assertTrue((d.array == a).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_unique(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        for chunks in ((-1, -1), (2, 1), (1, 2)):
+            # No masked points
+            a = np.ma.array([[4, 2, 1], [1, 2, 3]])
+            b = np.unique(a)
+            d = cf.Data(a, "metre", chunks=chunks)
+            e = d.unique()
+            self.assertEqual(e.shape, b.shape)
+            self.assertTrue((e.array == b).all())
+            self.assertEqual(e.Units, cf.Units("m"))
 
-        d = cf.Data([[4, 2, 1], [1, 2, 3]], "metre")
-        self.assertTrue((d.unique() == cf.Data([1, 2, 3, 4], "metre")).all())
-        d[1, -1] = cf.masked
-        self.assertTrue((d.unique() == cf.Data([1, 2, 4], "metre")).all())
+            # Some masked points
+            a[0, -1] = np.ma.masked
+            a[1, 0] = np.ma.masked
+            b = np.unique(a)
+            d = cf.Data(a, "metre", chunks=chunks)
+            e = d.unique().array
+            self.assertTrue((e == b).all())
+            self.assertTrue((e.mask == b.mask).all())
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "hits 'TODODASK - use harden_mask/soften_mask'"
-    )
-    def test_Data_varray(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+            # All masked points
+            a[...] = np.ma.masked
+            d = cf.Data(a, "metre", chunks=chunks)
+            b = np.unique(a)
+            e = d.unique().array
+            self.assertEqual(e.size, 1)
+            self.assertTrue((e.mask == b.mask).all())
 
-        # Scalar array
-        d = cf.Data(9, "km")
-        d.hardmask = False
-        a = d.varray
-        self.assertEqual(a.shape, ())
-        self.assertEqual(a, np.array(9))
-        d[...] = cf.masked
-        a = d.varray
-        self.assertEqual(a.shape, ())
-        self.assertIs(a[()], np.ma.masked)
-        a[()] = 18
-        self.assertEqual(a, np.array(18))
+        # Scalar
+        a = np.ma.array(9)
+        b = np.unique(a)
+        d = cf.Data(a, "metre")
+        e = d.unique().array
+        self.assertEqual(e.shape, b.shape)
+        self.assertTrue((e == b).all())
 
-        b = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-        d = cf.Data(b, "km")
-        e = d.copy()
-        v = e.varray
-        v[0, 0, 0, 0] = -999
-        v = e.varray
-        self.assertEqual(v[0, 0, 0, 0], -999)
-        self.assertEqual(v.shape, b.shape)
-        self.assertFalse((v == b).all())
-        v[0, 0, 0, 0] = 0
-        self.assertTrue((v == b).all())
+        a = np.ma.array(9, mask=True)
+        b = np.unique(a)
+        d = cf.Data(a, "metre")
+        e = d.unique().array
+        self.assertTrue((e.mask == b.mask).all())
+
+        # Data types
+        for dtype in "fibUS":
+            a = np.array([1, 2], dtype=dtype)
+            d = cf.Data(a)
+            self.assertTrue((d.unique().array == np.unique(a)).all())
 
     def test_Data_year_month_day_hour_minute_second(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2340,45 +2295,6 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(de.shape, ab.shape)
                 self.assertTrue((de.array == ab).all())
 
-    def test_Data_ERROR(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        return  # !!!!!!
-
-        d = cf.Data([0.0, 1])
-        e = cf.Data([1.0, 2])
-
-        oldm = cf.Data.mask_fpe(False)
-        olds = cf.Data.seterr("raise")
-
-        with self.assertRaises(FloatingPointError):
-            _ = e / d
-
-        with self.assertRaises(FloatingPointError):
-            _ = e ** 123456
-
-        cf.Data.mask_fpe(True)
-        cf.Data.seterr(all="raise")
-
-        g = cf.Data([-99, 2.0])
-        g[0] = cf.masked
-        f = e / d
-        self.assertTrue(f.equals(g, verbose=2))
-
-        g = cf.Data([1.0, -99])
-        g[1] = cf.masked
-        f = e ** 123456
-        self.assertTrue(f.equals(g, verbose=2))
-
-        cf.Data.mask_fpe(True)
-        cf.Data.seterr(all="ignore")
-        f = e / d
-        f = e ** 123456
-
-        cf.Data.mask_fpe(oldm)
-        cf.Data.seterr(**olds)
-
     def test_Data__len__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2413,32 +2329,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = int(cf.Data([1, 2]))
 
-    def test_Data__round__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        for ndigits in ([], [0], [1], [2], [3]):
-            for x in (
-                -1.9123,
-                -1.5789,
-                -1.4123,
-                -1.789,
-                0,
-                1.123,
-                1.0234,
-                1.412,
-                1.9345,
-            ):
-                self.assertEqual(
-                    round(cf.Data(x), *ndigits), round(x, *ndigits)
-                )
-                self.assertEqual(
-                    round(cf.Data(x), *ndigits), round(x, *ndigits)
-                )
-
-        with self.assertRaises(Exception):
-            _ = round(cf.Data([1, 2]))
-
     def test_Data_argmax(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2465,221 +2355,6 @@ class DataTest(unittest.TestCase):
         # Bad axis
         with self.assertRaises(Exception):
             d.argmax(axis=d.ndim)
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits 'NoneType' is not iterable")
-    def test_Data__collapse_SHAPE(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        a = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
-
-        for h in (
-            "sample_size",
-            "sum",
-            "min",
-            "max",
-            "mean",
-            "var",
-            "sd",
-            "mid_range",
-            "range",
-            "integral",
-            "maximum_absolute_value",
-            "minimum_absolute_value",
-            "sum_of_squares",
-            "root_mean_square",
-            "mean_absolute_value",
-            "median",
-            "mean_of_upper_decile",
-            "sum_of_weights",
-            "sum_of_weights2",
-        ):
-
-            d = cf.Data(a[(slice(None, None, -1),) * a.ndim].copy())
-            d.flip(inplace=True)
-            _ = cf.Data(self.w.copy())
-
-            shape = list(d.shape)
-
-            for axes in self.axes_combinations:
-                e = getattr(d, h)(
-                    axes=axes, squeeze=False, _preserve_partitions=False
-                )
-
-                shape = list(d.shape)
-                for i in axes:
-                    shape[i] = 1
-
-                shape = tuple(shape)
-                self.assertEqual(
-                    e.shape,
-                    shape,
-                    "{}, axes={}, not squeezed bad shape: {} != {}".format(
-                        h, axes, e.shape, shape
-                    ),
-                )
-
-            for axes in self.axes_combinations:
-                e = getattr(d, h)(
-                    axes=axes, squeeze=True, _preserve_partitions=False
-                )
-                shape = list(d.shape)
-                for i in sorted(axes, reverse=True):
-                    shape.pop(i)
-
-                shape = tuple(shape)
-                self.assertEqual(
-                    e.shape,
-                    shape,
-                    "{}, axes={}, squeezed bad shape: {} != {}".format(
-                        h, axes, e.shape, shape
-                    ),
-                )
-
-            e = getattr(d, h)(squeeze=True, _preserve_partitions=False)
-            shape = ()
-            self.assertEqual(
-                e.shape,
-                shape,
-                "{}, axes={}, squeezed bad shape: {} != {}".format(
-                    h, None, e.shape, shape
-                ),
-            )
-
-            e = getattr(d, h)(squeeze=False, _preserve_partitions=False)
-            shape = (1,) * d.ndim
-            self.assertEqual(
-                e.shape,
-                shape,
-                "{}, axes={}, not squeezed bad shape: {} != {}".format(
-                    h, None, e.shape, shape
-                ),
-            )
-        # --- End: for
-
-    def test_Data_max_min(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        msg = None
-
-        # unmasked
-        d = cf.Data(self.a, "m", chunks=(2, 3, 2, 5))
-        for _np, h in zip(
-            (np.amin, np.amax),
-            ("min", "max"),
-        ):
-            for axes in self.axes_combinations:
-                b = reshape_array(self.a, axes)
-                if h == "sum_of_squares":
-                    b = b ** 2
-
-                b = _np(b, axis=-1)
-                e = getattr(d, h)(axes=axes, squeeze=True)
-                if h == "sum_of_squares":
-                    self.assertEqual(e.Units, cf.Units("m2"))
-
-                # For debugging
-                # msg = (f"{h}, axis={axes}, unweighted, unmasked "
-                #        f"\ne={e.array}, \nb={b}")
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-        # masked
-        d = cf.Data(self.ma, "m", chunks=(2, 3, 2, 5))
-        for _np, h in zip(
-            (np.ma.amin, np.ma.amax),
-            ("min", "max"),
-        ):
-            for axes in self.axes_combinations:
-                b = reshape_array(self.ma, axes)
-                if h == "sum_of_squares":
-                    b = b ** 2
-
-                b = _np(b, axis=-1)
-                b = np.ma.asanyarray(b)
-                e = getattr(d, h)(axes=axes, squeeze=True)
-                if h == "sum_of_squares":
-                    self.assertEqual(e.Units, cf.Units("m2"))
-
-                # For debugging
-                # msg = (f"{h}, axis={axes}, unweighted, unmasked "
-                #        f"\ne.mask={e.mask.array}, \nb={b}")
-
-                self.assertTrue((e.mask.array == b.mask).all(), msg)
-
-                # For debugging
-                # msg = (f"{h}, axis={axes}, unweighted, unmasked "
-                #        f"\ne={e.array}, \nb={b}")
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-    def test_Data_sum_sum_of_squares(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        msg = None
-
-        # unweighted, unmasked
-        d = cf.Data(self.a, "m", chunks=(2, 3, 2, 5))
-        for _np, h in zip(
-            (np.sum, np.sum),
-            ("sum", "sum_of_squares"),
-        ):
-            for axes in self.axes_combinations:
-                b = reshape_array(self.a, axes)
-                if h == "sum_of_squares":
-                    b = b ** 2
-
-                b = _np(b, axis=-1)
-                e = getattr(d, h)(axes=axes, squeeze=True)
-                if h == "sum_of_squares":
-                    self.assertEqual(e.Units, cf.Units("m2"))
-
-                # For debugging
-                # msg = (f"{h}, axis={axes}, unweighted, unmasked "
-                #        f"\ne={e.array}, \nb={b}")
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-        # unweighted, masked
-        d = cf.Data(self.ma, "m", chunks=(2, 3, 2, 5))
-        for _np, h in zip(
-            (np.ma.sum, np.ma.sum),
-            ("sum", "sum_of_squares"),
-        ):
-            for axes in self.axes_combinations:
-                b = reshape_array(self.ma, axes)
-                if h == "sum_of_squares":
-                    b = b ** 2
-
-                b = _np(b, axis=-1)
-                b = np.ma.asanyarray(b)
-                e = getattr(d, h)(axes=axes, squeeze=True)
-                if h == "sum_of_squares":
-                    self.assertEqual(e.Units, cf.Units("m2"))
-
-                # For debugging
-                # msg = (f"{h}, axis={axes}, unweighted, unmasked "
-                #        f"\ne.mask={e.mask.array}, \nb={b}")
-
-                self.assertTrue((e.mask.array == b.mask).all(), msg)
-
-                # For debugging
-                # msg = (f"{h}, axis={axes}, unweighted, unmasked "
-                #        f"\ne={e.array}, \nb={b}")
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-        # Need to do weighted
 
     def test_Data_percentile_median(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2804,670 +2479,25 @@ class DataTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 d.percentile(q).array
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
-    def test_Data_mean_of_upper_decile(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        for pp in (True, False):
-            # unweighted, unmasked
-            d = cf.Data(self.a)
-            for axes in self.axes_combinations:
-                b = reshape_array(self.a, axes)
-                p = np.percentile(b, 90, axis=-1, keepdims=True)
-                b = np.ma.where(b < p, np.ma.masked, b)
-                b = np.average(b, axis=-1)
-
-                e = d.mean_of_upper_decile(
-                    axes=axes, squeeze=True, _preserve_partitions=pp
-                )
-
-                self.assertTrue(
-                    e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "mean_of_upper_decile, axis={}, unweighted, "
-                    "unmasked \ne={}, \nb={}".format(axes, e.array, b),
-                )
-
-            # unweighted, masked
-            d = cf.Data(self.ma)
-            for axes in self.axes_combinations:
-                b = reshape_array(self.ma, axes)
-                b = np.ma.filled(b, np.nan)
-                with np.testing.suppress_warnings() as sup:
-                    sup.filter(
-                        RuntimeWarning, message=".*All-NaN slice encountered"
-                    )
-                    p = np.nanpercentile(b, 90, axis=-1, keepdims=True)
-
-                b = np.ma.masked_where(np.isnan(b), b, copy=False)
-
-                p = np.where(np.isnan(p), b.max() + 1, p)
-
-                with np.testing.suppress_warnings() as sup:
-                    sup.filter(
-                        RuntimeWarning,
-                        message=".*invalid value encountered in less",
-                    )
-                    b = np.ma.where(b < p, np.ma.masked, b)
-
-                b = np.ma.average(b, axis=-1)
-                b = np.ma.asanyarray(b)
-
-                e = d.mean_of_upper_decile(
-                    axes=axes, squeeze=True, _preserve_partitions=pp
-                )
-
-                self.assertTrue(
-                    (e.mask.array == b.mask).all(),
-                    "mean_of_upper_decile, axis={}, \ne.mask={}, "
-                    "\nb.mask={}".format(axes, e.mask.array, b.mask),
-                )
-                self.assertTrue(
-                    e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "mean_of_upper_decile, axis={}, "
-                    "unweighted, masked "
-                    "\ne={}, \nb={}".format(axes, e.array, b),
-                )
-
-    def test_Data_range_mid_range(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        msg = None
-
-        # unweighted, unmasked
-        d = cf.Data(self.a, "m", chunks=(2, 3, 2, 5))
-        for h in ("range", "mid_range"):
-            for axes in self.axes_combinations:
-                b = reshape_array(self.a, axes)
-                mn = np.amin(b, axis=-1)
-                mx = np.amax(b, axis=-1)
-                if h == "range":
-                    b = mx - mn
-                elif h == "mid_range":
-                    b = (mx + mn) * 0.5
-
-                e = getattr(d, h)(axes=axes, squeeze=True)
-
-                # For debugging
-                # msg = (f"{h}, axis={axes}, unweighted, unmasked "
-                #        f"\ne={e.array}, \nb={b}")
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-        # unweighted, masked
-        d = cf.Data(self.ma, chunks=(2, 3, 2, 5))
-        for h in ("range", "mid_range"):
-            for axes in self.axes_combinations:
-                b = reshape_array(self.ma, axes)
-                mn = np.amin(b, axis=-1)
-                mx = np.amax(b, axis=-1)
-                if h == "range":
-                    b = mx - mn
-                elif h == "mid_range":
-                    b = (mx + mn) * 0.5
-
-                b = np.ma.asanyarray(b)
-
-                e = getattr(d, h)(axes=axes, squeeze=True)
-
-                # For debugging
-                # msg = (f"{h}, axis={axes}, \ne.mask={e.mask.array}, "
-                #        f "\nb.mask={b.mask}")
-
-                self.assertTrue((e.mask.array == b.mask).all(), msg)
-
-                # For debugging
-                # msg = (f"{h}, axis={axes}, unweighted, masked "
-                #        f"\ne={e.array}, \nb={b}")
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-    def test_Data_integral(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        msg = None
-
-        # unmasked
-        d = cf.Data(self.a, "m", chunks=(2, 3, 2, 5))
-        x = cf.Data(self.w, "kg")
-        for axes in self.axes_combinations:
-            b = reshape_array(self.a, axes)
-            v = reshape_array(self.w, axes)
-            b = np.sum(b * v, axis=-1)
-
-            e = d.integral(axes=axes, squeeze=True, weights=x)
-            self.assertTrue(e.Units, cf.Units("m kg"))
-
-            # For debugging
-            # msg = f"axis={axes}, masked \ne={e.array}, \nb={b}"
-
-            self.assertTrue(
-                np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-            )
-
-        # masked
-        d = cf.Data(self.ma, "m", chunks=(2, 3, 2, 5))
-        for axes in self.axes_combinations:
-            b = reshape_array(self.ma, axes)
-            v = reshape_array(self.w, axes)
-            b = np.sum(b * v, axis=-1)
-            b = np.ma.asanyarray(b)
-
-            e = d.integral(axes=axes, squeeze=True, weights=x)
-            self.assertTrue(e.Units, cf.Units("m kg"))
-
-            # For debugging
-            # msg = f"axis={axes}, masked \ne={e.mask.array}, \nb={b}"
-
-            self.assertTrue((e.mask.array == b.mask).all(), msg)
-
-            # For debugging
-            # msg = f"axis={axes}, masked \ne={e.array}, \nb={b}"
-
-            self.assertTrue(
-                np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-            )
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
-    def test_Data_sum_of_weights_sum_of_weights2(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        for pp in (True, False):
-            # unweighted, unmasked
-            d = cf.Data(self.a)
-            for h in ("sum_of_weights", "sum_of_weights2"):
-                for axes in self.axes_combinations:
-                    b = reshape_array(self.ones, axes)
-                    b = b.sum(axis=-1)
-                    e = getattr(d, h)(
-                        axes=axes, squeeze=True, _preserve_partitions=pp
-                    )
-
-                    self.assertTrue(
-                        e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "{}, axis={}, unweighted, unmasked, pp={}, "
-                        "\ne={}, \nb={}".format(h, axes, pp, e.array, b),
-                    )
-            # --- End: for
-
-            # unweighted, masked
-            d = cf.Data(self.ma)
-            for a, h in zip(
-                (self.mones, self.mones), ("sum_of_weights", "sum_of_weights2")
-            ):
-                for axes in self.axes_combinations:
-                    b = reshape_array(a, axes)
-                    b = np.ma.asanyarray(b.sum(axis=-1))
-                    e = getattr(d, h)(
-                        axes=axes, squeeze=True, _preserve_partitions=pp
-                    )
-
-                    self.assertTrue(
-                        (e.mask.array == b.mask).all(),
-                        "{}, axis={}, unweighted, masked, pp={}, "
-                        "\ne.mask={}, \nb.mask={}".format(
-                            h, axes, pp, e.mask.array, b.mask
-                        ),
-                    )
-                    self.assertTrue(
-                        e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "{}, axis={}, unweighted, masked, pp={}, "
-                        "\ne={}, \nb={}".format(h, axes, pp, e.array, b),
-                    )
-            # --- End: for
-
-            # weighted, masked
-            d = cf.Data(self.ma)
-            x = cf.Data(self.w)
-            for a, h in zip(
-                (self.mw, self.mw * self.mw),
-                ("sum_of_weights", "sum_of_weights2"),
-            ):
-                for axes in self.axes_combinations:
-                    a = a.copy()
-                    a.mask = self.ma.mask
-                    b = reshape_array(a, axes)
-                    b = np.ma.asanyarray(b.sum(axis=-1))
-                    e = getattr(d, h)(
-                        axes=axes,
-                        weights=x,
-                        squeeze=True,
-                        _preserve_partitions=pp,
-                    )
-                    self.assertTrue(
-                        (e.mask.array == b.mask).all(),
-                        "{}, axis={}, \ne.mask={}, "
-                        "\nb.mask={}".format(h, axes, e.mask.array, b.mask),
-                    )
-
-                    self.assertTrue(
-                        e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "{}, axis={}, \ne={}, \nb={}".format(
-                            h, axes, e.array, b
-                        ),
-                    )
-            # --- End: for
-
-            # weighted, unmasked
-            d = cf.Data(self.a)
-            for a, h in zip(
-                (self.w, self.w * self.w),
-                ("sum_of_weights", "sum_of_weights2"),
-            ):
-                for axes in self.axes_combinations:
-                    b = reshape_array(a, axes)
-                    b = b.sum(axis=-1)
-                    e = getattr(d, h)(
-                        axes=axes,
-                        weights=x,
-                        squeeze=True,
-                        _preserve_partitions=pp,
-                    )
-                    self.assertTrue(
-                        e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "{}, axis={}, \ne={}, \nb={}".format(
-                            h, axes, e.array, b
-                        ),
-                    )
-
-    def test_Data_sum_mean_mean_absolute_value(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        msg = None
-
-        for absolute in (False, True):
-            a = self.a
-            ma = self.ma
-            method = "mean"
-            if absolute:
-                a = np.absolute(a)
-                ma = np.absolute(ma)
-                method = "mean_absolute_value"
-
-            # unweighted, unmasked
-            d = cf.Data(self.a, "m", chunks=(2, 3, 2, 5))
-            for axes in self.axes_combinations:
-                b = reshape_array(a, axes)
-                b = np.mean(b, axis=-1)
-                e = getattr(d, method)(axes=axes, squeeze=True)
-
-                # For debugging
-                # msg = (f"{method} unweighted, unmasked, axis={axes}, "
-                #        f"\ne={e.array}, \nb={b}, \ndiff={e.array-b}")
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-            # weighted, unmasked
-            x = cf.Data(self.w)
-            for axes in self.axes_combinations:
-                b = reshape_array(a, axes)
-                v = reshape_array(self.w, axes)
-                b = np.average(b, axis=-1, weights=v)
-
-                e = getattr(d, method)(axes=axes, weights=x, squeeze=True)
-
-                # For debugging
-                # msg = (f"{method} weighted, unmasked, axis={axes}, "
-                #        f"\ne={e.array}, \nb={b}, \ndiff={e.array-b}")
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-            # unweighted, masked
-            d = cf.Data(self.ma, "m", chunks=(2, 3, 2, 5))
-            for axes in self.axes_combinations:
-                b = reshape_array(ma, axes)
-                b = np.ma.average(b, axis=-1)
-                b = np.ma.asanyarray(b)
-
-                e = getattr(d, method)(axes=axes, squeeze=True)
-
-                # For debugging
-                # msg = (f"{method} unweighted, masked, axis={axes}, "
-                #        f"\ne.mask={e.mask.array}, \nb={b}")
-
-                self.assertTrue((e.mask.array == b.mask).all(), msg)
-
-                # For debugging
-                # msg = (f"{method} unweighted, masked, axis={axes}, "
-                #        f"\ne={e.array}, \nb={b}, \ndiff={e.array-b}")
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-            # weighted, masked
-            for axes in self.axes_combinations:
-                print(axes)
-                b = reshape_array(ma, axes)
-                v = reshape_array(self.mw, axes)
-                b = np.ma.average(b, axis=-1, weights=v)
-                b = np.ma.asanyarray(b)
-
-                e = getattr(d, method)(axes=axes, weights=x, squeeze=True)
-
-                # For debugging
-                # msg = (f"{method} weighted, masked, axis={axes}, "
-                #        f"\ne.mask={e.mask.array}, \nb={b}")
-
-                self.assertTrue((e.mask.array == b.mask).all(), msg)
-
-                # For debugging
-                msg = (
-                    f"{method} weighted, masked, axis={axes}, "
-                    f"\ne={e.array}, \nb={b}, \ndiff={e.array-b}"
-                )
-
-                self.assertTrue(
-                    np.allclose(e.array, b, rtol=1e-05, atol=1e-08), msg
-                )
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
-    def test_Data_root_mean_square(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # unweighted, unmasked
-        d = cf.Data(self.a)
-        for axes in self.axes_combinations:
-            b = reshape_array(self.a, axes) ** 2
-            b = np.mean(b, axis=-1) ** 0.5
-            e = d.root_mean_square(axes=axes, squeeze=True)
-            self.assertTrue(
-                e.allclose(b, rtol=1e-05, atol=1e-08),
-                "axis={}, unweighted, unmasked \ne={}, "
-                "\nb={}".format(axes, e.array, b),
-            )
-        # --- End: for
-
-        # weighted, unmasked
-        x = cf.Data(self.w)
-        for axes in self.axes_combinations:
-            b = reshape_array(self.a, axes) ** 2
-            v = reshape_array(self.w, axes)
-            b = np.average(b, axis=-1, weights=v) ** 0.5
-
-            e = d.root_mean_square(axes=axes, weights=x, squeeze=True)
-
-            self.assertTrue(
-                e.allclose(b, rtol=1e-05, atol=1e-08),
-                "axis={}, weighted, unmasked \ne={}, "
-                "\nb={}".format(axes, e.array, b),
-            )
-        # --- End: for
-
-        # unweighted, masked
-        d = cf.Data(self.ma)
-        for axes in self.axes_combinations:
-            b = reshape_array(self.ma, axes) ** 2
-            b = np.ma.average(b, axis=-1)
-            b = np.ma.asanyarray(b) ** 0.5
-
-            e = d.root_mean_square(axes=axes, squeeze=True)
-
-            self.assertTrue(
-                (e.mask.array == b.mask).all(),
-                "axis={}, unweighted, masked \ne.mask={}, "
-                "\nb.mask={}, ".format(axes, e.mask.array, b.mask),
-            )
-            self.assertTrue(
-                e.allclose(b, rtol=1e-05, atol=1e-08),
-                "axis={}, unweighted, masked \ne={}, "
-                "\nb={}, ".format(axes, e.array, b),
-            )
-        # --- End: for
-
-        # weighted, masked
-        for axes in self.axes_combinations:
-            b = reshape_array(self.ma, axes) ** 2
-            v = reshape_array(self.mw, axes)
-            b = np.ma.average(b, axis=-1, weights=v)
-            b = np.ma.asanyarray(b) ** 0.5
-
-            e = d.root_mean_square(axes=axes, weights=x, squeeze=True)
-
-            self.assertTrue(
-                (e.mask.array == b.mask).all(),
-                "axis={}, weighted, masked \ne.mask={}, "
-                "\nb.mask={}, ".format(axes, e.mask.array, b.mask),
-            )
-            self.assertTrue(
-                e.allclose(b, rtol=1e-05, atol=1e-08),
-                "axis={}, weighted, masked \ne={}, \nb={}, ".format(
-                    axes, e.array, b
-                ),
-            )
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
-    def test_Data_sample_size(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # unmasked
-        d = cf.Data(self.a)
-        for axes in self.axes_combinations:
-            b = reshape_array(self.ones, axes)
-            b = b.sum(axis=-1)
-            e = d.sample_size(axes=axes, squeeze=True)
-
-            self.assertTrue(
-                e.allclose(b, rtol=1e-05, atol=1e-08),
-                "axis={}, \ne={}, \nb={}".format(axes, e.array, b),
-            )
-        # --- End: for
-
-        # masked
-        d = cf.Data(self.ma)
-        for axes in self.axes_combinations:
-            b = reshape_array(self.mones, axes)
-            b = b.sum(axis=-1)
-            e = d.sample_size(axes=axes, squeeze=True)
-
-            self.assertTrue(
-                e.allclose(b, rtol=1e-05, atol=1e-08),
-                "axis={}, \ne={}, \nb={}".format(axes, e.array, b),
-            )
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'axes_combinations'")
-    def test_Data_sd_var(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        ddofs = (0, 1)
-
-        for pp in (False, True):
-            # unweighted, unmasked
-            d = cf.Data(self.a, units="K")
-            for _np, h in zip((np.var, np.std), ("var", "sd")):
-                for ddof in ddofs:
-                    for axes in self.axes_combinations:
-                        b = reshape_array(self.a, axes)
-                        b = _np(b, axis=-1, ddof=ddof)
-                        e = getattr(d, h)(
-                            axes=axes,
-                            squeeze=True,
-                            ddof=ddof,
-                            _preserve_partitions=pp,
-                        )
-                        self.assertTrue(
-                            e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "{}, axis={}, unweighted, unmasked pp={}, "
-                            "\ne={}, \nb={}".format(h, axes, pp, e.array, b),
-                        )
-            # --- End: for
-
-            # unweighted, masked
-            d = cf.Data(self.ma, units="K")
-            for _np, h in zip((np.ma.var, np.ma.std), ("var", "sd")):
-                for ddof in ddofs:
-                    for axes in self.axes_combinations:
-                        b = reshape_array(self.ma, axes)
-                        b = _np(b, axis=-1, ddof=ddof)
-                        e = getattr(d, h)(
-                            axes=axes,
-                            squeeze=True,
-                            ddof=ddof,
-                            _preserve_partitions=pp,
-                        )
-                        self.assertTrue(
-                            e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "{}, axis={}, unweighted, masked, pp={}, "
-                            "\ne={}, \nb={}".format(h, axes, pp, e.array, b),
-                        )
-            # --- End: for
-
-            # weighted, unmasked
-            d = cf.Data(self.a, units="K")
-            x = cf.Data(self.w)
-            for h in ("var", "sd"):
-                for axes in self.axes_combinations:
-                    for ddof in (0, 1):
-                        b = reshape_array(self.a, axes)
-                        v = reshape_array(self.w, axes)
-
-                        avg = np.average(b, axis=-1, weights=v)
-                        if np.ndim(avg) < b.ndim:
-                            avg = np.expand_dims(avg, -1)
-
-                        b, V1 = np.average(
-                            (b - avg) ** 2, axis=-1, weights=v, returned=True
-                        )
-
-                        if ddof == 1:
-                            # Calculate the weighted unbiased
-                            # variance. The unbiased variance
-                            # weighted with _reliability_ weights
-                            # is [V1**2/(V1**2-V2)]*var.
-                            V2 = np.asanyarray((v * v).sum(axis=-1))
-                            b *= V1 * V1 / (V1 * V1 - V2)
-                        elif ddof == 0:
-                            pass
-
-                        if h == "sd":
-                            b **= 0.5
-
-                        b = np.ma.asanyarray(b)
-
-                        e = getattr(d, h)(
-                            axes=axes,
-                            weights=x,
-                            squeeze=True,
-                            ddof=ddof,
-                            _preserve_partitions=pp,
-                        )
-
-                        self.assertTrue(
-                            e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "{}, axis={}, weighted, unmasked, pp={}, "
-                            "ddof={}, \ne={}, \nb={}".format(
-                                h, axes, pp, ddof, e.array, b
-                            ),
-                        )
-            # --- End: for
-
-            # weighted, masked
-            d = cf.Data(self.ma, units="K")
-            x = cf.Data(self.w)
-            for h in ("var", "sd"):
-                for axes in self.axes_combinations:
-                    for ddof in (0, 1):
-                        b = reshape_array(self.ma, axes)
-                        v = reshape_array(self.mw, axes)
-
-                        not_enough_data = np.ma.count(b, axis=-1) <= ddof
-
-                        avg = np.ma.average(b, axis=-1, weights=v)
-                        if np.ndim(avg) < b.ndim:
-                            avg = np.expand_dims(avg, -1)
-
-                        b, V1 = np.ma.average(
-                            (b - avg) ** 2, axis=-1, weights=v, returned=True
-                        )
-
-                        b = np.ma.where(not_enough_data, np.ma.masked, b)
-
-                        if ddof == 1:
-                            # Calculate the weighted unbiased
-                            # variance. The unbiased variance
-                            # weighted with _reliability_ weights
-                            # is [V1**2/(V1**2-V2)]*var.
-                            V2 = np.asanyarray((v * v).sum(axis=-1))
-                            b *= V1 * V1 / (V1 * V1 - V2)
-                        elif ddof == 0:
-                            pass
-
-                        if h == "sd":
-                            b **= 0.5
-
-                        e = getattr(d, h)(
-                            axes=axes,
-                            weights=x,
-                            squeeze=True,
-                            ddof=ddof,
-                            _preserve_partitions=pp,
-                        )
-
-                        if h == "sd":
-                            self.assertEqual(e.Units, d.Units)
-                        else:
-                            self.assertEqual(e.Units, d.Units ** 2)
-
-                        self.assertTrue(
-                            (e.mask.array == b.mask).all(),
-                            "{}, axis={}, \ne.mask={}, "
-                            "\nb.mask={}, ".format(
-                                h, axes, e.mask.array, b.mask
-                            ),
-                        )
-                        self.assertTrue(
-                            e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "{}, axis={}, weighted, masked, pp={}, "
-                            "ddof={}, \ne={}, \nb={}".format(
-                                h, axes, pp, ddof, e.array, b
-                            ),
-                        )
-        # --- End: for
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'select'")
-    def test_Data_dumpd_loadd_dumps(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        d = cf.read(self.filename)[0].data
-
-        dumpd = d.dumpd()
-        self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
-        self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
-
-        d.to_disk()
-        self.assertTrue(d.equals(cf.Data(loadd=dumpd), verbose=2))
-
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "hits unexpected kwarg 'select'")
     def test_Data_section(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data(np.arange(24).reshape(2, 3, 4))
 
-        f = cf.read(self.filename6)[0]
-        self.assertEqual(
-            list(sorted(f.data.section((1, 2)).keys())),
-            [(x, None, None) for x in range(1800)],
-        )
-        d = cf.Data(np.arange(120).reshape(2, 3, 4, 5))
-        x = d.section([1, 3])
-        self.assertEqual(len(x), 8)
-        e = cf.Data.reconstruct_sectioned_data(x)
-        self.assertTrue(e.equals(d))
+        e = d.section(-1)
+        self.assertIsInstance(e, dict)
+        self.assertEqual(len(e), 6)
+
+        e = d.section([0, 2], min_step=2)
+        self.assertEqual(len(e), 2)
+        f = e[(None, 0, None)]
+        self.assertEqual(f.shape, (2, 2, 4))
+        f = e[(None, 2, None)]
+        self.assertEqual(f.shape, (2, 1, 4))
+
+        e = d.section([0, 1, 2])
+        self.assertEqual(len(e), 1)
+        key, value = e.popitem()
+        self.assertEqual(key, (None, None, None))
+        self.assertTrue(value.equals(d))
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_count(self):
@@ -3500,7 +2530,6 @@ class DataTest(unittest.TestCase):
             # self.assertTrue((d.array==c).all()) so need a
             # check which accounts for floating point calcs:
             np.testing.assert_allclose(d.array, c)
-        # --- End: for
 
         d = cf.Data(a, "m")
         with self.assertRaises(Exception):
@@ -3717,66 +2746,65 @@ class DataTest(unittest.TestCase):
         d = cf.Data(["a", "b", "c"], mask=[1, 0, 0])
         self.assertTrue((d.filled().array == ["", "b", "c"]).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "units-related problem")
     def test_Data_del_units(self):
         d = cf.Data(1)
         with self.assertRaises(ValueError):
             d.del_units()
 
-        d = cf.Data(1, "")
-        self.assertEqual(d.del_units(), "")
         d = cf.Data(1, "m")
         self.assertEqual(d.del_units(), "m")
+        with self.assertRaises(ValueError):
+            d.del_units()
 
         d = cf.Data(1, "days since 2000-1-1")
-        self.assertTrue(d.del_units(), "days since 2000-1-1")
+        self.assertEqual(d.del_units(), "days since 2000-1-1")
+        with self.assertRaises(ValueError):
+            d.del_units()
 
         d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        self.assertEqual(d.del_units(), "days since 2000-1-1")
+        self.assertEqual(d.Units, cf.Units(None, "noleap"))
         with self.assertRaises(ValueError):
             d.del_units()
 
     def test_Data_del_calendar(self):
-        d = cf.Data(1)
-        with self.assertRaises(ValueError):
-            d.del_calendar()
-
-        d = cf.Data(1, "")
-        with self.assertRaises(ValueError):
-            d.del_calendar()
-
-        d = cf.Data(1, "m")
-        with self.assertRaises(ValueError):
-            d.del_calendar()
-
-        d = cf.Data(1, "days since 2000-1-1")
-        with self.assertRaises(ValueError):
-            d.del_calendar()
+        for units in (None, "", "m", "days since 2000-1-1"):
+            d = cf.Data(1, units)
+            with self.assertRaises(ValueError):
+                d.del_calendar()
 
         d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
-        self.assertTrue(d.del_calendar(), "noleap")
+        self.assertEqual(d.del_calendar(), "noleap")
+        with self.assertRaises(ValueError):
+            d.del_calendar()
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "units-related problem")
+    def test_Data_get_calendar(self):
+        for units in (None, "", "m", "days since 2000-1-1"):
+            d = cf.Data(1, units)
+            with self.assertRaises(ValueError):
+                d.get_calendar()
+
+        d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
+        self.assertTrue(d.get_calendar(), "noleap")
+
     def test_Data_has_units(self):
+        d = cf.Data(1, "")
+        self.assertTrue(d.has_units())
+        d = cf.Data(1, "m")
+        self.assertTrue(d.has_units())
+
         d = cf.Data(1)
         self.assertFalse(d.has_units())
-        d = cf.Data(1, "")
-        self.assertTrue(d.has_units())
-        d = cf.Data(1, "m")
-        self.assertTrue(d.has_units())
+        d = cf.Data(1, calendar="noleap")
+        self.assertFalse(d.has_units())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "units-related problem")
     def test_Data_has_calendar(self):
-        d = cf.Data(1)
-        self.assertFalse(d.has_calendar())
-        d = cf.Data(1, "")
-        self.assertFalse(d.has_calendar())
-        d = cf.Data(1, "m")
-        self.assertFalse(d.has_calendar())
-
-        d = cf.Data(1, "days since 2000-1-1")
-        self.assertFalse(d.has_calendar())
         d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
         self.assertTrue(d.has_calendar())
+
+        for units in (None, "", "m", "days since 2000-1-1"):
+            d = cf.Data(1, units)
+            self.assertFalse(d.has_calendar())
 
     def test_Data_where(self):
         a = np.arange(10)
@@ -3835,7 +2863,7 @@ class DataTest(unittest.TestCase):
             (e.array == [[-999, -999, -999], [5, -999, -999], [6, 7, 8]]).all()
         )
 
-        d.soften_mask()
+        d.hardmask = False
         e = d.where(a > 5, None, -999)
         self.assertTrue(e.shape == d.shape)
         self.assertTrue((e.array.mask == False).all())
@@ -3850,6 +2878,43 @@ class DataTest(unittest.TestCase):
         e = d.where(a < 5, cf.masked)
         self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
         self.assertTrue((e.array == a).all())
+
+    def test_Data__init__compression(self):
+        import cfdm
+
+        # Ragged
+        for f in cfdm.read("DSG_timeSeries_contiguous.nc"):
+            f = f.data
+            d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        for f in cfdm.read("DSG_timeSeries_indexed.nc"):
+            f = f.data
+            d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        for f in cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc"):
+            f = f.data
+            d = cf.Data(cf.RaggedIndexedContiguousArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        # Ragged bounds
+        f = cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc")[0]
+        f = f.construct("long_name=height above mean sea level").bounds.data
+        d = cf.Data(cf.RaggedIndexedContiguousArray(source=f.source()))
+        self.assertTrue((d.array == f.array).all())
+
+        # Gathered
+        for f in cfdm.read("gathered.nc"):
+            f = f.data
+            d = cf.Data(cf.GatheredArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        # Subsampled
+        f = cfdm.read("subsampled_2.nc")[-3]
+        f = f.construct("longitude").data
+        d = cf.Data(cf.SubsampledArray(source=f.source()))
+        self.assertTrue((d.array == f.array).all())
 
     def test_Data_empty(self):
         for shape, dtype_in, dtype_out in zip(
@@ -3916,6 +2981,76 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             bool(cf.Data([1, 2]))
 
+    def test_Data_compute(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # Scalar numeric array
+        d = cf.Data(9, "km")
+        a = d.compute()
+        self.assertIsInstance(a, np.ndarray)
+        self.assertEqual(a.shape, ())
+        self.assertEqual(a, np.array(9))
+        d[...] = cf.masked
+        a = d.compute()
+        self.assertEqual(a.shape, ())
+        self.assertIs(a[()], np.ma.masked)
+
+        # Non-scalar numeric array
+        b = np.arange(24).reshape(2, 1, 3, 4)
+        d = cf.Data(b, "km", fill_value=-123)
+        a = d.compute()
+        self.assertTrue((a == b).all())
+
+        # Fill value
+        d[0, 0, 0, 0] = cf.masked
+        self.assertEqual(d.compute().fill_value, d.fill_value)
+
+        # Date-time array
+        d = cf.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
+        self.assertEqual(d.compute(), 2.5)
+
+    def test_Data_persist(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cf.Data(9, "km")
+        self.assertIsNone(d.persist(inplace=True))
+
+        # Scalar numeric array
+        d = cf.Data([1, 2, 3.0, 4], "km", mask=[0, 1, 0, 0], chunks=2)
+        e = d.persist()
+        self.assertIsInstance(e, cf.Data)
+        self.assertTrue(e.equals(d))
+
+    def test_Data_cyclic(self):
+        d = cf.Data(np.arange(12).reshape(3, 4))
+        self.assertEqual(d.cyclic(), set())
+        self.assertEqual(d.cyclic(0), set())
+        self.assertEqual(d.cyclic(), {0})
+        self.assertEqual(d.cyclic(1), {0})
+        self.assertEqual(d.cyclic(), {0, 1})
+        self.assertEqual(d.cyclic(0, iscyclic=False), {0, 1})
+        self.assertEqual(d.cyclic(), {1})
+        self.assertEqual(d.cyclic(1, iscyclic=False), {1})
+        self.assertEqual(d.cyclic(), set())
+        self.assertEqual(d.cyclic([0, 1]), set())
+        self.assertEqual(d.cyclic(), {0, 1})
+        self.assertEqual(d.cyclic([0, 1], iscyclic=False), {0, 1})
+        self.assertEqual(d.cyclic(), set())
+
+        # Invalid axis
+        with self.assertRaises(ValueError):
+            d.cyclic(2)
+
+        # Scalar data
+        d = cf.Data(9)
+        self.assertEqual(d.cyclic(), set())
+
+        # Scalar data invalid axis
+        with self.assertRaises(ValueError):
+            d.cyclic(0)
+
     def test_Data_change_calendar(self):
         d = cf.Data(
             [0, 1, 2, 3, 4], "days since 2004-02-27", calendar="standard"
@@ -3929,6 +3064,1001 @@ class DataTest(unittest.TestCase):
         # calendar).
         with self.assertRaises(ValueError):
             e = d.change_calendar("noleap").array
+
+    def test_Data_chunks(self):
+        dx = da.ones((4, 5), chunks=(2, 4))
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        self.assertEqual(d.chunks, dx.chunks)
+
+    def test_Data_rechunk(self):
+        dx = da.ones((4, 5), chunks=(2, 4)).rechunk(-1)
+        d = cf.Data.ones((4, 5), chunks=(2, 4)).rechunk(-1)
+        self.assertEqual(d.chunks, dx.chunks)
+
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        e = d.copy()
+        self.assertIsNone(e.rechunk(-1, inplace=True))
+        self.assertEqual(e.chunks, ((4,), (5,)))
+        self.assertTrue(e.equals(d))
+
+    def test_Data_reshape(self):
+        a = np.arange(12).reshape(3, 4)
+        d = cf.Data(a)
+        self.assertIsNone(d.reshape(*d.shape, inplace=True))
+        self.assertEqual(d.shape, a.shape)
+
+        for original_shape, new_shape, chunks in (
+            ((10,), (10,), (3, 3, 4)),
+            ((10,), (10, 1, 1), 5),
+            ((10,), (1, 10), 5),
+            ((24,), (2, 3, 4), 12),
+            ((1, 24), (2, 3, 4), 12),
+            ((2, 3, 4), (24,), (1, 3, 4)),
+            ((2, 3, 4), (24,), 4),
+            ((2, 3, 4), (24, 1), 4),
+            ((2, 3, 4), (1, 24), 4),
+            ((4, 4, 1), (4, 4), 2),
+            ((4, 4), (4, 4, 1), 2),
+            ((1, 4, 4), (4, 4), 2),
+            ((1, 4, 4), (4, 4, 1), 2),
+            ((1, 4, 4), (1, 1, 4, 4), 2),
+            ((4, 4), (1, 4, 4, 1), 2),
+            ((4, 4), (1, 4, 4), 2),
+            ((2, 3), (2, 3), (1, 2)),
+            ((2, 3), (3, 2), 3),
+            ((4, 2, 3), (4, 6), 4),
+            ((3, 4, 5, 6), (3, 4, 5, 6), (2, 3, 4, 5)),
+            ((), (1,), 1),
+            ((1,), (), 1),
+            ((24,), (3, 8), 24),
+            ((24,), (4, 6), 6),
+            ((24,), (4, 3, 2), 6),
+            ((24,), (4, 6, 1), 6),
+            ((24,), (4, 6), (6, 12, 6)),
+            ((64, 4), (8, 8, 4), (16, 2)),
+            ((4, 64), (4, 8, 4, 2), (2, 16)),
+            ((4, 8, 4, 2), (2, 1, 2, 32, 2), (2, 4, 2, 2)),
+            ((4, 1, 4), (4, 4), (2, 1, 2)),
+            ((0, 10), (0, 5, 2), (5, 5)),
+            ((5, 0, 2), (0, 10), (5, 2, 2)),
+            ((0,), (2, 0, 2), (4,)),
+            ((2, 0, 2), (0,), (4, 4, 4)),
+            ((2, 3, 4), -1, -1),
+        ):
+            a = np.random.randint(10, size=original_shape)
+            d = cf.Data(a, chunks=chunks)
+
+            a = a.reshape(new_shape)
+            d = d.reshape(new_shape)
+
+            self.assertEqual(d.shape, a.shape)
+            self.assertTrue((d.array == a).all())
+
+    def test_Data_square(self):
+        a = self.ma.astype(float)
+        asquare = np.square(a)
+
+        d = cf.Data(a)
+        self.assertIsNone(d.square(inplace=True))
+        self.assertTrue((d.array == asquare).all())
+        self.assertEqual(d.Units, cf.Units())
+
+        d = cf.Data(a, "m")
+        e = d.square()
+        self.assertEqual(e.dtype, asquare.dtype)
+        self.assertTrue((e.array == asquare).all())
+        self.assertEqual(e.Units, cf.Units("m2"))
+
+        asquare = np.square(a, dtype="float32")
+        e = d.square(dtype="float32")
+        self.assertEqual(e.dtype, asquare.dtype)
+        self.assertTrue((e.array == asquare).all())
+
+    def test_Data_sqrt(self):
+        a = self.ma.astype(float)
+        asqrt = np.sqrt(a)
+
+        d = cf.Data(a)
+        self.assertIsNone(d.sqrt(inplace=True))
+        self.assertTrue((d.array == asqrt).all())
+        self.assertEqual(d.Units, cf.Units())
+
+        d = cf.Data(a, "m2")
+        e = d.sqrt()
+        self.assertEqual(e.dtype, asqrt.dtype)
+        self.assertTrue((e.array == asqrt).all())
+        self.assertEqual(e.Units, cf.Units("m"))
+
+        asqrt = np.sqrt(a, dtype="float32")
+        e = d.sqrt(dtype="float32")
+        self.assertEqual(e.dtype, asqrt.dtype)
+        self.assertTrue((e.array == asqrt).all())
+
+        # Incompatible units
+        d = cf.Data(a, "m")
+        with self.assertRaises(ValueError):
+            d.sqrt()
+
+    def test_Data_integral(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            b = np.sum(b * w, axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.integral(axes=axis, weights=weights, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_max(self):
+        # Masked array
+        a = self.ma
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            b = np.max(b, axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.max(axes=axis, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_maximum_absolute_value(self):
+        # Masked array
+        a = self.ma
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            b = np.max(abs(b), axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.maximum_absolute_value(axes=axis, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_mean(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            b = np.ma.average(b, axis=-1, weights=w)
+            b = np.ma.asanyarray(b)
+
+            e = d.mean(axes=axis, weights=weights, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_mean_absolute_value(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            b = np.ma.average(abs(b), axis=-1, weights=w)
+            b = np.ma.asanyarray(b)
+
+            e = d.mean_absolute_value(axes=axis, weights=weights, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_mid_range(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            b = (np.max(b, axis=-1) + np.min(b, axis=-1)) / 2.0
+            b = np.ma.asanyarray(b)
+
+            e = d.mid_range(axes=axis, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+        with self.assertRaises(TypeError):
+            cf.Data([0, 1], dtype=bool).mid_range()
+
+    def test_Data_min(self):
+        # Masked array
+        a = self.ma
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            b = np.min(b, axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.min(axes=axis, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_minimum_absolute_value(self):
+        # Masked array
+        a = self.ma
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            b = np.min(abs(b), axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.minimum_absolute_value(axes=axis, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_range(self):
+        # Masked array
+        a = self.ma
+
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            b = np.max(b, axis=-1) - np.min(b, axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.range(axes=axis, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+        with self.assertRaises(TypeError):
+            cf.Data([0, 1], dtype=bool).range()
+
+    def test_Data_root_mean_square(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            b = np.ma.average(b * b, axis=-1, weights=w) ** 0.5
+            b = np.ma.asanyarray(b)
+
+            e = d.root_mean_square(axes=axis, weights=weights, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_sample_size(self):
+        # Masked array
+        a = self.ma
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            b = np.sum(np.ones_like(b), axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.sample_size(axes=axis, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+        # Non-masked array
+        a = self.a
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            b = np.sum(np.ones_like(b), axis=-1)
+            b = np.asanyarray(b)
+
+            e = d.sample_size(axes=axis, squeeze=True)
+            e = np.array(e.array)
+
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_std(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        std = d.std(weights=weights, ddof=1)
+        var = d.var(weights=weights, ddof=1)
+
+        self.assertTrue(std.equals(var.sqrt()))
+
+    def test_Data_sum(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            b = np.sum(b * w, axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.sum(axes=axis, weights=weights, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_sum_of_squares(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            b = np.sum(b * b * w, axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.sum_of_squares(axes=axis, weights=weights, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_sum_of_weights(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        # Weights=None
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            b = np.sum(np.ones_like(b), axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.sum_of_weights(axes=axis, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            w = np.ma.masked_where(b.mask, w)
+            b = np.sum(w, axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.sum_of_weights(axes=axis, weights=weights, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_sum_of_weights2(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        # Weights=None
+        for axis in axis_combinations(a):
+            e = d.sum_of_weights2(axes=axis)
+            f = d.sum_of_weights(axes=axis)
+            self.assertTrue(e.equals(f))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            w = np.ma.masked_where(b.mask, w)
+            b = np.sum(w * w, axis=-1)
+            b = np.ma.asanyarray(b)
+
+            e = d.sum_of_weights2(axes=axis, weights=weights, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_var(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        # Weighted ddof = 0
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            mu, V1 = np.ma.average(b, axis=-1, weights=w, returned=True)
+            mu = mu.reshape(mu.shape + (1,))
+            w = np.ma.masked_where(b.mask, w)
+
+            b = np.sum(w * (b - mu) ** 2, axis=-1)
+            b = b / V1
+            b = np.ma.asanyarray(b)
+
+            e = d.var(axes=axis, weights=weights, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b), f"e={e}\nb={b}\ne-b={e-b}")
+
+        #  Weighted ddof = 1
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            mu, V1 = np.ma.average(b, axis=-1, weights=w, returned=True)
+            mu = mu.reshape(mu.shape + (1,))
+            w = np.ma.masked_where(b.mask, w)
+            V2 = np.sum(w * w, axis=-1)
+
+            b = np.sum(w * (b - mu) ** 2, axis=-1)
+            b = b / (V1 - (V2 / V1))
+            b = np.ma.asanyarray(b)
+
+            e = d.var(axes=axis, weights=weights, ddof=1, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+        # Unweighted ddof = 1
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            mu, V1 = np.ma.average(b, axis=-1, returned=True)
+            mu = mu.reshape(mu.shape + (1,))
+
+            b = np.sum((b - mu) ** 2, axis=-1)
+            b = b / (V1 - 1)
+            b = np.ma.asanyarray(b)
+
+            e = d.var(axes=axis, ddof=1, squeeze=True)
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __lt__ and __le__")
+    def test_Data_mean_of_upper_decile(self):
+        # Masked array, non-masked weights
+        a = self.ma
+        weights = self.w
+        d = cf.Data(a, "K", chunks=(2, 3, 2, 5))
+
+        for axis in axis_combinations(a):
+            b = reshape_array(a, axis)
+            w = reshape_array(weights, axis)
+            b = np.ma.filled(b, np.nan)
+            with np.testing.suppress_warnings() as sup:
+                sup.filter(
+                    RuntimeWarning, message=".*All-NaN slice encountered"
+                )
+                p = np.nanpercentile(b, 90, axis=-1, keepdims=True)
+
+            b = np.ma.masked_where(np.isnan(b), b, copy=False)
+            p = np.where(np.isnan(p), b.max() + 1, p)
+
+            with np.testing.suppress_warnings() as sup:
+                sup.filter(
+                    RuntimeWarning,
+                    message=".*invalid value encountered in less",
+                )
+                b = np.ma.where(b < p, np.ma.masked, b)
+
+            b = np.ma.average(b, axis=-1, weights=w)
+            b = np.ma.asanyarray(b)
+
+            e = d.mean_of_upper_decile(
+                axes=axis, weights=weights, squeeze=True
+            )
+            e = np.ma.array(e.array)
+
+            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(np.allclose(e, b))
+
+    def test_Data_collapse_mtol(self):
+        # Data with exactly half of its elements masked
+        d = cf.Data(np.arange(6), "K", mask=[0, 1, 0, 1, 0, 1], chunks=2)
+
+        for func in (
+            d.integral,
+            d.mean,
+            d.mean_absolute_value,
+            d.median,
+            d.min,
+            d.mid_range,
+            d.minimum_absolute_value,
+            d.max,
+            d.maximum_absolute_value,
+            d.range,
+            d.root_mean_square,
+            d.sample_size,
+            d.std,
+            d.sum,
+            d.sum_of_squares,
+            d.sum_of_weights,
+            d.sum_of_weights2,
+            d.var,
+        ):
+            self.assertTrue(func(mtol=0.4).array.mask)
+            self.assertFalse(func(mtol=0.5).array.mask)
+
+        # TODODASK - add in mean_of_upper_decile when it's daskified
+
+    def test_Data_collapse_units(self):
+        d = cf.Data([1, 2], "K")
+
+        self.assertEqual(d.sample_size().Units, cf.Units())
+
+        for func in (
+            d.integral,
+            d.mean,
+            d.mean_absolute_value,
+            d.median,
+            d.min,
+            d.mid_range,
+            d.minimum_absolute_value,
+            d.max,
+            d.maximum_absolute_value,
+            d.range,
+            d.root_mean_square,
+            d.std,
+            d.sum,
+        ):
+            self.assertEqual(func().Units, d.Units)
+
+        for func in (
+            d.sum_of_squares,
+            d.var,
+        ):
+            self.assertEqual(func().Units, d.Units ** 2)
+
+        for func in (
+            d.sum_of_weights,
+            d.sum_of_weights2,
+        ):
+            self.assertEqual(func().Units, cf.Units())
+
+        # Weighted
+        w = cf.Data(1, "m")
+        self.assertEqual(d.integral(weights=w).Units, d.Units * w.Units)
+        self.assertEqual(d.sum_of_weights(weights=w).Units, w.Units)
+        self.assertEqual(d.sum_of_weights2(weights=w).Units, w.Units ** 2)
+
+        # Dimensionless data
+        d = cf.Data([1, 2])
+        self.assertEqual(d.integral(weights=w).Units, w.Units)
+
+        for func in (
+            d.sum_of_squares,
+            d.var,
+        ):
+            self.assertEqual(func().Units, cf.Units())
+
+        # TODODASK - add in mean_of_upper_decile when it's daskified
+
+    def test_Data_collapse_keepdims(self):
+        d = cf.Data(np.arange(6).reshape(2, 3))
+
+        for func in (
+            d.integral,
+            d.mean,
+            d.mean_absolute_value,
+            d.median,
+            d.min,
+            d.mid_range,
+            d.minimum_absolute_value,
+            d.max,
+            d.maximum_absolute_value,
+            d.range,
+            d.root_mean_square,
+            d.sample_size,
+            d.std,
+            d.sum,
+            d.sum_of_squares,
+            d.sum_of_weights,
+            d.sum_of_weights2,
+            d.var,
+        ):
+            for axis in axis_combinations(d):
+                e = func(axes=axis, squeeze=False)
+                s = [1 if i in axis else n for i, n in enumerate(d.shape)]
+                self.assertEqual(e.shape, tuple(s))
+
+            for axis in axis_combinations(d):
+                e = func(axes=axis, squeeze=True)
+                s = [n for i, n in enumerate(d.shape) if i not in axis]
+                self.assertEqual(e.shape, tuple(s))
+
+        # TODODASK - add in mean_of_upper_decile
+
+    def test_Data_collapse_dtype(self):
+        d = cf.Data([1, 2, 3, 4], dtype="i4", chunks=2)
+        e = cf.Data([1.0, 2, 3, 4], dtype="f4", chunks=2)
+        self.assertTrue(d.dtype, "i4")
+        self.assertTrue(e.dtype, "f4")
+
+        # Cases for which both d and e collapse to a result of the
+        # same data type
+        for x, r in zip((d, e), ("i4", "f4")):
+            for func in (
+                x.min,
+                x.minimum_absolute_value,
+                x.max,
+                x.maximum_absolute_value,
+                x.range,
+            ):
+                self.assertEqual(func().dtype, r)
+
+        # Cases for which both d and e collapse to a result of the
+        # double of same data type
+        for x, r in zip((d, e), ("i8", "f8")):
+            for func in (
+                x.integral,
+                x.sum,
+                x.sum_of_squares,
+            ):
+                self.assertEqual(func().dtype, r)
+
+        # Cases for which both d and e collapse to a result of double
+        # float data type
+        for x, r in zip((d, e), ("f8", "f8")):
+            for func in (
+                x.mean,
+                x.mean_absolute_value,
+                x.median,
+                x.mid_range,
+                x.root_mean_square,
+                x.std,
+                x.var,
+            ):
+                self.assertEqual(func().dtype, r)
+
+        x = d
+        for func in (
+            x.sum_of_weights,
+            x.sum_of_weights2,
+        ):
+            self.assertEqual(func().dtype, "i8")
+
+        # Weights
+        w_int = cf.Data(1, dtype="i4")
+        w_float = cf.Data(1.0, dtype="f4")
+        for w, r in zip((w_int, w_float), ("i8", "f8")):
+            for func in (
+                d.integral,
+                d.sum,
+                d.sum_of_squares,
+                d.sum_of_weights,
+                d.sum_of_weights2,
+            ):
+                self.assertTrue(func(weights=w).dtype, r)
+
+        # TODODASK - add in mean_of_upper_decile
+
+    def test_Data_get_units(self):
+        for units in ("", "m", "days since 2000-01-01"):
+            d = cf.Data(1, units)
+            self.assertEqual(d.get_units(), units)
+
+        d = cf.Data(1)
+        with self.assertRaises(ValueError):
+            d.get_units()
+
+    def test_Data_set_calendar(self):
+        d = cf.Data(1, "days since 2000-01-01")
+        d.set_calendar("standard")
+
+        with self.assertRaises(ValueError):
+            d.set_calendar("noleap")
+
+        d = cf.Data(1, "m")
+        d.set_calendar("noleap")
+        self.assertEqual(d.Units, cf.Units("m"))
+
+    def test_Data_set_units(self):
+        for units in (None, "", "m", "days since 2000-01-01"):
+            d = cf.Data(1, units)
+            self.assertEqual(d.Units, cf.Units(units))
+
+        d = cf.Data(1, "m")
+        d.set_units("km")
+        self.assertEqual(d.array, 0.001)
+
+        d = cf.Data(1, "days since 2000-01-01", calendar="noleap")
+        d.set_units("days since 1999-12-31")
+        self.assertEqual(d.array, 2)
+
+        # Can't set to Units that are not equivalent
+        with self.assertRaises(ValueError):
+            d.set_units("km")
+
+    def test_Data_to_dask_array(self):
+        d = cf.Data([1, 2, 3, 4], "m")
+        d.Units = cf.Units("km")
+        dx = d.to_dask_array()
+        self.assertIsInstance(dx, da.Array)
+        self.assertTrue((d.array == dx.compute()).all())
+        self.assertIs(da.asanyarray(d), dx)
+
+    def test_Data_flat(self):
+        d = cf.Data([[1, 2], [3, 4]], mask=[[0, 1], [0, 0]])
+        self.assertEqual(list(d.flat()), [1, 3, 4])
+        self.assertEqual(
+            list(d.flat(ignore_masked=False)), [1, np.ma.masked, 3, 4]
+        )
+
+    def test_Data_tolist(self):
+        for x in (1, [1, 2], [[1, 2], [3, 4]]):
+            d = cf.Data(x)
+            e = d.tolist()
+            self.assertEqual(e, np.array(x).tolist())
+            self.assertTrue(d.equals(cf.Data(e)))
+
+    def test_Data_masked_invalid(self):
+        a = np.array([0, 1, 2])
+        b = np.array([0, 2, 0])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            i = a / b
+
+        d = cf.Data(i, "m")
+        e = d.masked_invalid().array
+        c = np.ma.masked_invalid(i)
+
+        self.assertTrue((e.mask == c.mask).all())
+        self.assertTrue((e == c).all())
+
+        self.assertIsNone(d.masked_invalid(inplace=True))
+
+    def test_Data_uncompress(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        a = f.data.array
+        d = cf.Data(cf.RaggedContiguousArray(source=f.data.source()))
+
+        self.assertTrue(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
+        self.assertIsNone(d.uncompress(inplace=True))
+        self.assertFalse(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
+    def test_Data_data(self):
+        for d in [
+            cf.Data(1),
+            cf.Data([1, 2], fill_value=0),
+            cf.Data([1, 2], "m"),
+            cf.Data([1, 2], mask=[1, 0], units="m"),
+            cf.Data([[0, 1, 2], [3, 4, 5]], chunks=2),
+        ]:
+            self.assertIs(d.data, d)
+
+    def test_Data_dump(self):
+        d = cf.Data([1, 2], "m")
+        x = (
+            "Data.shape = (2,)\nData.first_datum = 1\nData.last_datum  = 2\n"
+            "Data.fill_value = None\nData.Units = <Units: m>"
+        )
+        self.assertEqual(d.dump(display=False), x)
+
+    def test_Data_fill_value(self):
+        d = cf.Data([1, 2], "m")
+        self.assertIsNone(d.fill_value)
+        d.fill_value = 999
+        self.assertEqual(d.fill_value, 999)
+        del d.fill_value
+        self.assertIsNone(d.fill_value)
+
+    def test_Data_override_units(self):
+        d = cf.Data(1012, "hPa")
+        e = d.override_units("km")
+        self.assertEqual(e.Units, cf.Units("km"))
+        self.assertEqual(e.datum(), d.datum())
+
+        self.assertIsNone(d.override_units(cf.Units("watts"), inplace=True))
+
+    def test_Data_override_calendar(self):
+        d = cf.Data(1, "days since 2020-02-28")
+        e = d.override_calendar("noleap")
+        self.assertEqual(e.Units, cf.Units("days since 2020-02-28", "noleap"))
+        self.assertEqual(e.datum(), d.datum())
+
+        self.assertIsNone(d.override_calendar("all_leap", inplace=True))
+
+    def test_Data_masked_all(self):
+        # shape
+        for shape in ((), (2,), (2, 3)):
+            a = np.ma.masked_all(shape)
+            d = cf.Data.masked_all(shape)
+            self.assertEqual(d.shape, a.shape)
+            self.assertTrue((d.array.mask == a.mask).all())
+
+        # dtype
+        for dtype in "fibUS":
+            a = np.ma.masked_all((), dtype=dtype)
+            d = cf.Data.masked_all((), dtype=dtype)
+            self.assertEqual(d.dtype, a.dtype)
+
+    def test_Data_atol(self):
+        d = cf.Data(1)
+        self.assertEqual(d._atol, cf.atol())
+        cf.atol(0.001)
+        self.assertEqual(d._atol, 0.001)
+
+    def test_Data_rtol(self):
+        d = cf.Data(1)
+        self.assertEqual(d._rtol, cf.rtol())
+        cf.rtol(0.001)
+        self.assertEqual(d._rtol, 0.001)
+
+    def test_Data_hardmask(self):
+        d = cf.Data([1, 2, 3])
+        d.hardmask = True
+        self.assertTrue(d.hardmask)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 1)
+
+        d[0] = cf.masked
+        self.assertTrue((d.array.mask == [True, False, False]).all())
+        d[...] = 999
+        self.assertTrue((d.array.mask == [True, False, False]).all())
+        d.hardmask = False
+        self.assertFalse(d.hardmask)
+        d[...] = -1
+        self.assertTrue((d.array.mask == [False, False, False]).all())
+
+    def test_Data_harden_mask(self):
+        d = cf.Data([1, 2, 3], hardmask=False)
+        d.harden_mask()
+        self.assertTrue(d.hardmask)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+
+    def test_Data_soften_mask(self):
+        d = cf.Data([1, 2, 3], hardmask=True)
+        d.soften_mask()
+        self.assertFalse(d.hardmask)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+
+    def test_Data_compressed_array(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+        self.assertTrue((d.compressed_array == f.compressed_array).all())
+
+        d = cf.Data([1, 2, 3], "m")
+        with self.assertRaises(Exception):
+            d.compressed_array
+
+        # TODO: when cfdm>1.9.0.3 is released (i.e. a release that
+        #       includes https://github.com/NCAS-CMS/cfdm/pull/184),
+        #       we can replace the loose "(Exception)" with the tight
+        #       "(ValueError)"
+
+    def test_Data_inspect(self):
+        d = cf.Data([9], "m")
+
+        f = io.StringIO()
+        with contextlib.redirect_stdout(f):
+            self.assertIsNone(d.inspect())
+
+    def test_Data_fits_in_memory(self):
+        size = int(0.1 * cf.free_memory() / 8)
+        d = cf.Data.empty((size,), dtype=float)
+        self.assertTrue(d.fits_in_memory())
+
+        size = int(2 * cf.free_memory() / 8)
+        d = cf.Data.empty((size,), dtype=float)
+        self.assertFalse(d.fits_in_memory())
+
+    def test_Data_get_compressed(self):
+        import cfdm
+
+        # Compressed
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+
+        self.assertEqual(d.get_compressed_axes(), f.get_compressed_axes())
+        self.assertEqual(d.get_compression_type(), f.get_compression_type())
+        self.assertEqual(
+            d.get_compressed_dimension(), f.get_compressed_dimension()
+        )
+
+        # Uncompressed
+        d = cf.Data(9)
+
+        self.assertEqual(d.get_compressed_axes(), [])
+        self.assertEqual(d.get_compression_type(), "")
+
+        with self.assertRaises(ValueError):
+            d.get_compressed_dimension()
+
+    def test_Data_Units(self):
+        d = cf.Data(100, "m")
+        self.assertEqual(d.Units, cf.Units("m"))
+
+        d.Units = cf.Units("km")
+        self.assertEqual(d.Units, cf.Units("km"))
+        self.assertEqual(d.array, 0.1)
+
+        # Assign non-equivalent units
+        with self.assertRaises(ValueError):
+            d.Units = cf.Units("watt")
+
+        # Delete units
+        with self.assertRaises(ValueError):
+            del d.Units
+
+    def test_Data_get_data(self):
+        d = cf.Data(9)
+        self.assertIs(d, d.get_data())
+
+    def test_Data_get_count(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedContiguousArray(source=f.source()))
+        self.assertIsInstance(d.get_count(), cfdm.Count)
+
+        d = cf.Data(9, "m")
+        with self.assertRaises(ValueError):
+            d.get_count()
+
+    def test_Data_get_index(self):
+        import cfdm
+
+        f = cfdm.read("DSG_timeSeries_indexed.nc")[0]
+        f = f.data
+        d = cf.Data(cf.RaggedIndexedArray(source=f.source()))
+        self.assertIsInstance(d.get_index(), cfdm.Index)
+
+        d = cf.Data(9, "m")
+        with self.assertRaises(ValueError):
+            d.get_index()
+
+    def test_Data_get_list(self):
+        import cfdm
+
+        f = cfdm.read("gathered.nc")[0]
+        f = f.data
+        d = cf.Data(cf.GatheredArray(source=f.source()))
+        self.assertIsInstance(d.get_list(), cfdm.List)
+
+        d = cf.Data(9, "m")
+        with self.assertRaises(ValueError):
+            d.get_list()
 
 
 if __name__ == "__main__":

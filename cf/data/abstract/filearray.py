@@ -3,149 +3,38 @@ from .array import Array
 
 
 class FileArray(Array):
-    """A sub-array stored in a file.
-
-    .. note:: Subclasses must define the following methods:
-    `!__getitem__`, `!__str__`, `!close` and `!open`.
-
-    """
+    """An array stored in a file."""
 
     def __getitem__(self, indices):
-        """TODO."""
-        pass
+        """Return a subspace of the array.
+
+        x.__getitem__(indices) <==> x[indices]
+
+        Returns a subspace of the array as an independent numpy array.
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.__getitem__"
+        )  # pragma: no cover
 
     def __str__(self):
         """x.__str__() <==> str(x)"""
-        return f"{self.shape} in {self.file}"
-
-    # ----------------------------------------------------------------
-    # Dask attributes
-    # ----------------------------------------------------------------
-    @property
-    def dask_lock(self):
-        return getattr(self._get_Array(), "dask_lock", False)
+        return f"<{self.__class__.__name__}: {self.shape} in {self.file}>"
 
     @property
-    def dask_asarray(self):
+    def _lock(self):
+        """TODODASK.
+
+        Concurrent reads are assumed to be supported.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
         return False
-
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    @property
-    def dtype(self):
-        """Data-type of the data elements.
-
-        **Examples:**
-
-        >>> a.dtype
-        dtype('float64')
-        >>> print(type(a.dtype))
-        <type 'numpy.dtype'>
-
-        """
-        return self._get_component("dtype")
-
-    @property
-    def ndim(self):
-        """Number of array dimensions.
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        return self._get_component("ndim")
-
-    @property
-    def shape(self):
-        """Tuple of array dimension sizes.
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        return self._get_component("shape")
-
-    @property
-    def size(self):
-        """Number of elements in the array.
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.size
-        7008
-        >>> a.ndim
-        2
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        return self._get_component("size")
 
     @property
     def filename(self):
-        """The name of the file containing the array.
-
-        **Examples:**
-
-        >>> a.filename()
-        'file.nc'
-
-        """
+        """The name of the file containing the array."""
         return self._get_component("filename")
 
     @property
@@ -157,7 +46,7 @@ class FileArray(Array):
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> n = numpy.asanyarray(a)
         >>> isinstance(n, numpy.ndarray)
@@ -165,6 +54,12 @@ class FileArray(Array):
 
         """
         return self[...]
+
+    def close(self):
+        """Close the dataset containing the data."""
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.close"
+        )  # pragma: no cover
 
     def inspect(self):
         """Inspect the object for debugging.
@@ -181,7 +76,12 @@ class FileArray(Array):
     def get_filename(self):
         """Return the name of the file containing the array.
 
-        **Examples:**
+        :Returns:
+
+            `str`
+                The file name.
+
+        **Examples**
 
         >>> a.get_filename()
         'file.nc'
@@ -189,8 +89,8 @@ class FileArray(Array):
         """
         return self._get_component("filename")
 
-    def close(self):
-        pass
-
     def open(self):
-        pass
+        """Returns an open dataset containing the data array."""
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.open"
+        )  # pragma: no cover

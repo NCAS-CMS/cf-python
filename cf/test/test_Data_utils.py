@@ -2,6 +2,7 @@ import datetime
 import faulthandler
 import unittest
 
+import cftime
 import dask.array as da
 import numpy as np
 
@@ -84,6 +85,191 @@ class DataUtilsTest(unittest.TestCase):
             np.empty(1, dtype=object),
         ]:
             self.assertFalse(_is_numeric_dtype(b))
+
+    def test_Data_Utils_convert_to_datetime(self):
+        """TODO."""
+        a = cftime.DatetimeGregorian(2000, 12, 3, 12)
+        for x in (2.5, [2.5]):
+            d = da.from_array(x)
+            e = cf.data.utils.convert_to_datetime(
+                d, cf.Units("days since 2000-12-01")
+            )
+            self.assertEqual(e.compute(), a)
+
+        a = [
+            cftime.DatetimeGregorian(2000, 12, 1),
+            cftime.DatetimeGregorian(2000, 12, 2),
+            cftime.DatetimeGregorian(2000, 12, 3),
+        ]
+        for x in ([0, 1, 2], [[0, 1, 2]]):
+            d = da.from_array([0, 1, 2], chunks=2)
+            e = cf.data.utils.convert_to_datetime(
+                d, cf.Units("days since 2000-12-01")
+            )
+            self.assertTrue((e.compute() == a).all())
+
+    def test_Data_Utils_convert_to_reftime(self):
+        """TODO."""
+        a = cftime.DatetimeGregorian(2000, 12, 3, 12)
+        d = da.from_array(np.array(a, dtype=object))
+
+        e, u = cf.data.utils.convert_to_reftime(d)
+        self.assertEqual(e.compute(), 0.5)
+        self.assertEqual(u, cf.Units("days since 2000-12-03", "standard"))
+
+        units = cf.Units("days since 2000-12-01")
+        e, u = cf.data.utils.convert_to_reftime(d, units=units)
+        self.assertEqual(e.compute(), 2.5)
+        self.assertEqual(u, units)
+
+        a = "2000-12-03T12:00"
+        d = da.from_array(np.array(a, dtype=str))
+
+        e, u = cf.data.utils.convert_to_reftime(d)
+        self.assertEqual(e.compute(), 0.5)
+        self.assertEqual(u, cf.Units("days since 2000-12-03", "standard"))
+
+        units = cf.Units("days since 2000-12-01")
+        e, u = cf.data.utils.convert_to_reftime(d, units=units)
+        self.assertEqual(e.compute(), 2.5)
+        self.assertEqual(u, units)
+
+        a = [
+            [
+                cftime.DatetimeGregorian(2000, 12, 1),
+                cftime.DatetimeGregorian(2000, 12, 2),
+                cftime.DatetimeGregorian(2000, 12, 3),
+            ]
+        ]
+        d = da.from_array(np.ma.array(a, mask=[[1, 0, 0]]), chunks=2)
+
+        e, u = cf.data.utils.convert_to_reftime(d)
+        self.assertTrue((e.compute() == [-99, 0, 1]).all())
+        self.assertEqual(u, cf.Units("days since 2000-12-02", "standard"))
+
+        units = cf.Units("days since 2000-12-03")
+        e, u = cf.data.utils.convert_to_reftime(d, units=units)
+        self.assertTrue((e.compute() == [-99, -1, 0]).all())
+        self.assertEqual(u, units)
+
+    def test_Data_Utils_unique_calendars(self):
+        """TODO."""
+        a = [
+            [
+                cftime.DatetimeGregorian(2000, 12, 1),
+                cftime.DatetimeGregorian(2000, 12, 2),
+                cftime.DatetimeGregorian(2000, 12, 3),
+            ]
+        ]
+        d = da.from_array(np.ma.array(a, mask=[[1, 0, 0]]), chunks=2)
+        c = cf.data.utils.unique_calendars(d)
+        self.assertIsInstance(c, set)
+        self.assertEqual(c, set(["standard"]))
+
+        a = cftime.DatetimeGregorian(2000, 12, 1)
+        d = da.from_array(np.array(a, dtype=object))
+        c = cf.data.utils.unique_calendars(d)
+        self.assertEqual(c, set(["standard"]))
+
+        d[()] = np.ma.masked
+        c = cf.data.utils.unique_calendars(d)
+        self.assertEqual(c, set())
+
+        a = [
+            cftime.DatetimeGregorian(2000, 12, 1),
+            cftime.DatetimeAllLeap(2000, 12, 2),
+            cftime.DatetimeGregorian(2000, 12, 3),
+        ]
+        d = da.from_array(np.ma.array(a, mask=[1, 0, 0]), chunks=2)
+        c = cf.data.utils.unique_calendars(d)
+        self.assertEqual(c, set(["all_leap", "standard"]))
+
+    def test_Data_Utils_first_non_missing_value(self):
+        """TODO."""
+        for method in ("index", "mask"):
+            # Scalar data
+            d = da.from_array(0)
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 0
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            d[()] = np.ma.masked
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), None
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            # 1-d data
+            d = da.arange(8)
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 0
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            d[0] = np.ma.masked
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 1
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            # 2-d data
+            d = da.arange(8).reshape(2, 4)
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 0
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            d[0] = np.ma.masked
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), 4
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+            d[...] = np.ma.masked
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(d, method=method), None
+            )
+            self.assertEqual(
+                cf.data.utils.first_non_missing_value(
+                    d, cached=99, method=method
+                ),
+                99,
+            )
+
+        # Bad method
+        with self.assertRaises(ValueError):
+            cf.data.utils.first_non_missing_value(d, method="bad")
 
 
 if __name__ == "__main__":

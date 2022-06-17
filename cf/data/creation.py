@@ -1,25 +1,12 @@
 """Functions used during the creation of `Data` objects."""
-from functools import lru_cache
-from uuid import uuid4
+from functools import lru_cache, partial
 
 import dask.array as da
 import numpy as np
-from dask.array.core import getter, normalize_chunks, slices_from_chunks
+from dask import config
+from dask.array.core import getter, normalize_chunks
 from dask.base import tokenize
-from dask.config import config
 from dask.utils import SerializableLock
-
-from . import (
-    FilledArray,
-    GatheredSubarray,
-    RaggedContiguousSubarray,
-    RaggedIndexedContiguousSubarray,
-    RaggedIndexedSubarray,
-)
-from .utils import chunk_positions, chunk_shapes
-
-# Cache of axis identities
-_cached_axes = {}
 
 
 def convert_to_builtin_type(x):
@@ -48,7 +35,7 @@ def convert_to_builtin_type(x):
 
             TODO
 
-    **Examples:**
+    **Examples**
 
     >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
     bool
@@ -70,329 +57,232 @@ def convert_to_builtin_type(x):
     raise TypeError(f"{type(x)!r} object is not JSON serializable: {x!r}")
 
 
-def to_dask(array, chunks, dask_from_array_options):
+def to_dask(array, chunks, **from_array_options):
     """TODODASK.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
+
+    :Parameters:
+
+        array: array_like
+
+        chunks: `int`, `tuple`, `dict` or `str`, optional
+            Specify the chunking of the returned dask array.
+
+            Any value accepted by the *chunks* parameter of the
+            `dask.array.from_array` function is allowed.
+
+        dask_from_array_options: `dict`
+            Keyword arguments to be passed to `dask.array.from_array`.
+
+    :Returns:
+
+        `dask.array.Array`
+
+    **Examples**
+
+    >>> to_dask([1, 2, 3])
+    dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.ndarray>
+    >>> to_dask([1, 2, 3], chunks=2)
+    dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
+    >>> to_dask([1, 2, 3], chunks=2, {'asarray': True})
+    dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
 
     """
-    if "chunks" in dask_from_array_options:
-        raise TypeError(
-            "Can't define chunks in the 'dask_from_array_options' "
-            "dictionary. Use the 'chunks' parameter instead"
-        )
-
-    kwargs = dask_from_array_options.copy()
+    kwargs = from_array_options
     kwargs.setdefault("asarray", getattr(array, "dask_asarray", None))
     kwargs.setdefault("lock", getattr(array, "dask_lock", False))
 
     return da.from_array(array, chunks=chunks, **kwargs)
 
 
-def compressed_to_dask(array):
-    """TODODASK Create and insert a partition matrix for a compressed
-    array.
+def compressed_to_dask(array, chunks):
+    """Create a dask array with `Subarray` chunks.
 
-    .. versionadded:: 4.0.0
-
-    .. seealso:: `_set_Array`, `_set_partition_matrix`, `compress`
+    .. versionadded:: TODODASK
 
     :Parameters:
 
-        array: subclass of `CompressedArray`
+        array: subclass of `Array`
+            The compressed array.
+
+        chunks: `int`, `tuple`, `dict` or `str`, optional
+            Specify the chunking of the returned dask array.
+
+            Any value accepted by the *chunks* parameter of the
+            `dask.array.from_array` function is allowed.
+
+            The chunk sizes implied by *chunks* for a dimension that
+            has been compressed are ignored and replaced with values
+            that are implied by the decompression algorithm, so their
+            specification is arbitrary.
 
     :Returns:
 
         `dask.array.Array`
 
     """
-    compressed_data = array.source()
-    compression_type = array.get_compression_type()
-    compressed_axes = array.get_compressed_axes()
-
-    dtype = array.dtype
-    uncompressed_shape = array.shape
-    uncompressed_ndim = array.ndim
-
-    # Initialise a dask graph for the uncompressed array, and some
-    # dask.array.core.getter arguments
-    token = tokenize(uncompressed_shape, uuid4())
-    name = (array.__class__.__name__ + "-" + token,)
+    # Initialise a dask graph for the uncompressed array
+    name = (array.__class__.__name__ + "-" + tokenize(array),)
     dsk = {}
     full_slice = Ellipsis
-    default_asarray = False
-    if getattr(compressed_data.source(), "dask_lock", True):
-        lock = get_lock()
 
-    if compression_type == "ragged contiguous":
-        # ------------------------------------------------------------
-        # Ragged contiguous
-        # ------------------------------------------------------------
-        asarray = getattr(
-            RaggedContiguousSubarray, "dask_asarray", default_asarray
-        )
+    # Create a context manager that is used to ensure that all data
+    # accessed from within a `Subarray` instance is done so
+    # synchronously, thereby avoiding any "compute within a compute"
+    # thread proliferation.
+    context = partial(config.set, scheduler="synchronous")
 
-        count = array.get_count().dask_array(copy=False)
+    compressed_dimensions = array.compressed_dimensions()
+    conformed_data = array.conformed_data()
+    compressed_data = conformed_data["data"]
 
-        # TODODASK: remove with #297 merge
-        # if is_small(count):
-        #     count = count.compute()
-
-        # Find the chunk sizes and positions of the uncompressed
-        # array. Each chunk will contain the data for one instance,
-        # padded with missing values if required.
-        chunks = normalize_chunks(
-            (1,) + (-1,) * (uncompressed_ndim - 1),
-            shape=uncompressed_shape,
-            dtype=dtype,
-        )
-        chunk_shape = chunk_shapes(chunks)
-        chunk_position = chunk_positions(chunks)
-
-        #        subarrays = []
-        start = 0
-        for n in count:
-            end = start + int(n)
-            subarray = RaggedContiguousSubarray(
-                array=compressed_data,
-                shape=next(chunk_shape),
-                compression={
-                    "instance_axis": 0,
-                    "instance_index": 0,
-                    "c_element_axis": 1,
-                    "c_element_indices": slice(start, end),
-                },
-            )
-
-            dsk[name + next(chunk_position)] = (
-                getter,
-                subarray,
-                full_slice,
-                asarray,
-                lock,
-            )
-
-            start += n
-
-    #            subarrays.append(
-    #                da.from_array(subarray, chunks=-1, asarray=asarray, lock=lock)
-    #            )
+    # ----------------------------------------------------------------
+    # Set the chunk sizes for the dask array.
     #
-    #       # Concatenate along the instance axis
-    #       dx = da.concatenate(subarrays, axis=0)
-    #       return dx
+    # Note: For a dimensions that have been compressed, the chunk
+    #       sizes implied by the input *chunks* parameter are
+    #       overwritten with those created by `array.subarray_shapes`.
+    #
+    #       For subsampled arrays, the compressed dimension chunks
+    #       created by `array.subarray_shapes` will be incorrect and
+    #       must be corrected later.
+    # ----------------------------------------------------------------
+    uncompressed_dtype = array.dtype
+    chunks = normalize_chunks(
+        array.subarray_shapes(chunks),
+        shape=array.shape,
+        dtype=uncompressed_dtype,
+    )
 
-    elif compression_type == "ragged indexed":
+    # Get the (cfdm) subarray class
+    Subarray = array.get_Subarray()
+
+    compression_type = array.get_compression_type()
+    if compression_type.startswith("ragged"):
         # ------------------------------------------------------------
-        # Ragged indexed
+        # Ragged
         # ------------------------------------------------------------
-        asarray = getattr(
-            RaggedIndexedSubarray, "dask_asarray", default_asarray
-        )
-
-        index = array.get_index().dask_array(copy=False)
-
-        _, inverse = da.unique(index, return_inverse=True)
-
-        # TODODASK: remove with #297 merge
-        # if is_very_small(index):
-        #     inverse = inverse.compute()
-
-        chunks = normalize_chunks(
-            (1,) + (-1,) * (uncompressed_ndim - 1),
-            shape=uncompressed_shape,
-            dtype=dtype,
-        )
-        chunk_shape = chunk_shapes(chunks)
-        chunk_position = chunk_positions(chunks)
-
-        for i in da.unique(inverse).compute():
-            subarray = RaggedIndexedSubarray(
-                array=compressed_data,
-                shape=next(chunk_shape),
-                compression={
-                    "instance_axis": 0,
-                    "instance_index": 0,
-                    "i_element_axis": 1,
-                    "i_element_indices": np.where(inverse == i)[0],
-                },
+        for u_indices, u_shape, c_indices, chunk_location in zip(
+            *array.subarrays(shapes=chunks)
+        ):
+            subarray = Subarray(
+                data=compressed_data,
+                indices=c_indices,
+                shape=u_shape,
+                compressed_dimensions=compressed_dimensions,
+                context_manager=context,
             )
 
-            dsk[name + next(chunk_position)] = (
+            dsk[name + chunk_location] = (
                 getter,
                 subarray,
                 full_slice,
-                asarray,
-                lock,
+                False,
+                False,
             )
-
-    elif compression_type == "ragged indexed contiguous":
-        # ------------------------------------------------------------
-        # Ragged indexed contiguous
-        # ------------------------------------------------------------
-        index = array.get_index().dask_array(copy=False)
-        count = array.get_count().dask_array(copy=False)
-
-        # TODODASK: remove with #297 merge
-        # if is_small(index):
-        #     index = index.compute()
-        #     index_is_dask = False
-        # else:
-        index_is_dask = True
-
-        # TODODASK: remove with #297 merge
-        # if is_small(count):
-        #     count = count.compute()
-
-        cumlative_count = count.cumsum(axis=0)
-
-        # Find the chunk sizes and positions of the uncompressed
-        # array. Each chunk will contain the data for one profile of
-        # one instance, padded with missing values if required.
-        chunks = normalize_chunks(
-            (1, 1) + (-1,) * (uncompressed_ndim - 2),
-            shape=uncompressed_shape,
-            dtype=dtype,
-        )
-        chunk_shape = chunk_shapes(chunks)
-        chunk_position = chunk_positions(chunks)
-
-        size0, size1, size2 = uncompressed_shape[:3]
-
-        #        subarrays = []
-        for i in range(size0):
-            # For all of the profiles in ths instance, find the
-            # locations in the count array of the number of
-            # elements in the profile
-            xprofile_indices = np.where(index == i)[0]
-            if index_is_dask:
-                xprofile_indices.compute_chunk_sizes()
-                # TODODASK: remove with #297 merge
-                # if is_small(xprofile_indices):
-                #     xprofile_indices = xprofile_indices.compute()
-            # --- End: if
-
-            # Find the number of actual profiles in this instance
-            n_profiles = xprofile_indices.size
-
-            # Loop over profiles in this instance, including "missing"
-            # profiles that have ll missing values when uncompressed.
-            #            inner_subarrays = []
-            for j in range(size1):
-                if j >= n_profiles:
-                    # This chunk is full of missing data
-                    subarray = FilledArray(
-                        shape=next(chunk_shape),
-                        size=size2,
-                        dtype=dtype,
-                        fill_value=np.ma.masked,
-                    )
-                else:
-                    # Find the location in the count array of the
-                    # number of elements in this profile
-                    profile_index = xprofile_indices[j]
-
-                    if profile_index == 0:
-                        start = 0
-                    else:
-                        #                        start = int(count[:profile_index].sum())
-                        start = int(cumlative_count[profile_index - 1])
-
-                    stop = start + int(count[profile_index])
-
-                    subarray = RaggedIndexedContiguousSubarray(
-                        array=compressed_data,
-                        shape=next(chunk_shape),
-                        compression={
-                            "instance_axis": 0,
-                            "instance_index": 0,
-                            "i_element_axis": 1,
-                            "i_element_index": 0,
-                            "c_element_axis": 2,
-                            "c_element_indices": slice(start, stop),
-                        },
-                    )
-
-                asarray = getattr(subarray, "dask_asarray", default_asarray)
-
-                dsk[name + next(chunk_position)] = (
-                    getter,
-                    subarray,
-                    full_slice,
-                    asarray,
-                    lock,
-                )
-
-    #                inner_subarrays.append(
-    #                    da.from_array(
-    #                        subarray, chunks=-1, asarray=asarray, lock=lock
-    #                    )
-    #                )
-    # --- End: for
-
-    #            # Concatenate along the profile axis for this instance
-    #            subarrays.append(da.concatenate(inner_subarrays, axis=1))
-    # --- End: for
-
-    #        # Concatenate along the instance axis
-    #        dx = da.concatenate(subarrays, axis=0)
-    #        return dx
 
     elif compression_type == "gathered":
         # ------------------------------------------------------------
         # Gathered
         # ------------------------------------------------------------
-        asarray = getattr(GatheredSubarray, "dask_asarray", default_asarray)
+        uncompressed_indices = conformed_data["uncompressed_indices"]
 
-        compressed_dimension = array.get_compressed_dimension()
-        compressed_axes = array.get_compressed_axes()
-        indices = array.get_list().dask_array(copy=False)
-
-        #        if is_small(indices):
-        #            indices = indices.compute()
-
-        chunks = normalize_chunks(
-            [
-                -1 if i in compressed_axes else "auto"
-                for i in range(uncompressed_ndim)
-            ],
-            shape=uncompressed_shape,
-            dtype=dtype,
-        )
-
-        for chunk_slice, chunk_shape, chunk_position in zip(
-            slices_from_chunks(chunks),
-            chunk_shapes(chunks),
-            chunk_positions(chunks),
+        for u_indices, u_shape, c_indices, chunk_location in zip(
+            *array.subarrays(shapes=chunks)
         ):
-            compressed_part = [
-                cs
-                for i, cs in enumerate(chunk_slice)
-                if i not in compressed_axes
-            ]
-            compressed_part.insert(compressed_dimension, slice(None))
-
-            subarray = GatheredSubarray(
-                array=compressed_data,
-                shape=chunk_shape,
-                compression={
-                    "compressed_dimension": compressed_dimension,
-                    "compressed_axes": compressed_axes,
-                    "compressed_part": compressed_part,
-                    "indices": indices,
-                },
+            subarray = Subarray(
+                data=compressed_data,
+                indices=c_indices,
+                shape=u_shape,
+                compressed_dimensions=compressed_dimensions,
+                uncompressed_indices=uncompressed_indices,
+                context_manager=context,
             )
 
-            dsk[name + chunk_position] = (
+            dsk[name + chunk_location] = (
                 getter,
                 subarray,
                 full_slice,
-                asarray,
-                lock,
+                False,
+                False,
             )
-    # --- End: if
 
-    return da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
+    elif compression_type == "subsampled":
+        # ------------------------------------------------------------
+        # Subsampled
+        #
+        # Note: The chunks created above are incorrect for the
+        #       compressed dimensions, since these chunk sizes are a
+        #       function of the tie point indices which haven't yet
+        #       been accessed. Therefore, the chunks for the
+        #       compressed dimensons must be redefined here.
+        # ------------------------------------------------------------
+
+        # Re-initialise the chunks
+        u_dims = list(compressed_dimensions)
+        chunks = [[] if i in u_dims else c for i, c in enumerate(chunks)]
+
+        # For each dimension, initialise the index of the chunk
+        # previously created (prior to the chunk currently being
+        # created). The value -1 is an arbitrary negative value that is
+        # always less than any chunk index, which is always a natural
+        # number.
+        previous_chunk_location = [-1] * len(chunks)
+
+        parameters = conformed_data["parameters"]
+        dependent_tie_points = conformed_data["dependent_tie_points"]
+
+        for (
+            u_indices,
+            u_shape,
+            c_indices,
+            subarea_indices,
+            first,
+            chunk_location,
+        ) in zip(*array.subarrays(shapes=chunks)):
+            subarray = Subarray(
+                data=compressed_data,
+                indices=c_indices,
+                shape=u_shape,
+                compressed_dimensions=compressed_dimensions,
+                first=first,
+                subarea_indices=subarea_indices,
+                parameters=parameters,
+                dependent_tie_points=dependent_tie_points,
+                context_manager=context,
+            )
+
+            dsk[name + chunk_location] = (
+                getter,
+                subarray,
+                full_slice,
+                False,
+                False,
+            )
+
+            # Add correct chunk sizes for compressed dimensions
+            for d in u_dims[:]:
+                previous = previous_chunk_location[d]
+                new = chunk_location[d]
+                if new > previous:
+                    chunks[d].append(u_shape[d])
+                    previous_chunk_location[d] = new
+                elif new < previous:
+                    # No more chunk sizes required for this compressed
+                    # dimension
+                    u_dims.remove(d)
+
+        chunks = [tuple(c) for c in chunks]
+
+    else:
+        raise ValueError(
+            f"Can't initialise 'Data' from compressed {array!r} with "
+            f"unknown compression type {compression_type!r}"
+        )
+
+    # Return the dask array
+    return da.Array(dsk, name[0], chunks=chunks, dtype=uncompressed_dtype)
 
 
 @lru_cache(maxsize=32)
@@ -401,7 +291,7 @@ def generate_axis_identifiers(n):
 
     The names are arbitrary and have no semantic meaning.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     :Parameters:
 
@@ -413,7 +303,7 @@ def generate_axis_identifiers(n):
         `list`
             The new axis idenfifiers.
 
-    **Examples:**
+    **Examples**
 
     >>> generate_axis_identifiers(0)
     []
@@ -431,10 +321,10 @@ def threads():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     """
-    return config.get("scheduler") in (None, "threads")
+    return config.get("scheduler", default=None) in (None, "threads")
 
 
 def processes():
@@ -443,10 +333,10 @@ def processes():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     """
-    return config.get("scheduler") == "processes"
+    return config.get("scheduler", default=None) == "processes"
 
 
 def synchronous():
@@ -456,10 +346,10 @@ def synchronous():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     """
-    return config.get("scheduler") == "synchronous"
+    return config.get("scheduler", default=None) == "synchronous"
 
 
 def get_lock():
@@ -467,7 +357,7 @@ def get_lock():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASK
 
     """
     if threads():
@@ -478,5 +368,6 @@ def get_lock():
 
     if processes():
         raise ValueError("TODODASK - not yet sorted out processes lock")
+        # Do we even need one? Can't we have lock=False, here?
 
     raise ValueError("TODODASK - what now? raise exception? cluster?")
