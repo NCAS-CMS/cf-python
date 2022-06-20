@@ -27,7 +27,6 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
-    _numpy_isclose,
     _section,
     atol,
     default_netCDF_fillvals,
@@ -3303,6 +3302,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     def _binary_operation(self, other, method):
         """Implement binary arithmetic and comparison operations with
         the numpy broadcasting rules.
@@ -3346,13 +3346,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         inplace = method[2] == "i"
-        method_type = method[-5:-2]
 
         # ------------------------------------------------------------
-        # Ensure that other is an independent Data object
+        # Ensure other is an independent Data object, for example
+        # so that combination with cf.Query objects works.
         # ------------------------------------------------------------
         if getattr(other, "_NotImplemented_RHS_Data_op", False):
-            # Make sure that
             return NotImplemented
 
         elif not isinstance(other, self.__class__):
@@ -3363,7 +3362,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             ):
                 other = cf_dt(
                     other,
-                    # .timetuple()[0:6], microsecond=other.microsecond,
                     calendar=getattr(self.Units, "calendar", "standard"),
                 )
             elif other is None:
@@ -3373,304 +3371,45 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             other = type(self).asdata(other)
 
+        # ------------------------------------------------------------
+        # Prepare data0 (i.e. self copied) and data1 (i.e. other)
+        # ------------------------------------------------------------
         data0 = self.copy()
 
+        # Parse units
         data0, other, new_Units = data0._combined_units(other, method, True)
 
-        # ------------------------------------------------------------
-        # Bring other into memory, if appropriate.
-        # ------------------------------------------------------------
-        other.to_memory()
+        # Cast as dask arrays
+        dx0 = data0.to_dask_array()
+        dx1 = other.to_dask_array()
 
-        # ------------------------------------------------------------
-        # Find which dimensions need to be broadcast in one or other
-        # of the arrays.
-        #
-        # Method:
-        #
-        #   For each common dimension, the 'broadcast_indices' list
-        #   will have a value of None if there is no broadcasting
-        #   required (i.e. the two arrays have the same size along
-        #   that dimension) or a value of slice(None) if broadcasting
-        #   is required (i.e. the two arrays have the different sizes
-        #   along that dimension and one of the sizes is 1).
-        #
-        #   Example:
-        #
-        #     If c.shape is (7,1,6,1,5) and d.shape is (6,4,1) then
-        #     broadcast_indices will be
-        #     [None,slice(None),slice(None)].
-        #
-        #     The indices to d which correspond to a partition of c,
-        #     are the relevant subset of partition.indices updated
-        #     with the non None elements of the broadcast_indices
-        #     list.
-        #
-        #     In this example, if a partition of c were to have a
-        #     partition.indices value of (slice(0,3), slice(0,1),
-        #     slice(2,4), slice(0,1), slice(0,5)), then the relevant
-        #     subset of these is partition.indices[2:] and the
-        #     corresponding indices to d are (slice(2,4), slice(None),
-        #     slice(None))
-        #
-        # ------------------------------------------------------------
-        data0_shape = data0._shape
-        data1_shape = other._shape
-
-        if data0_shape == data1_shape:
-            # self and other have the same shapes
-            broadcasting = False
-
-            align_offset = 0
-
-            new_shape = data0_shape
-            new_ndim = data0._ndim
-            new_axes = data0._axes
-            new_size = data0._size
-
-        else:
-            # self and other have different shapes
-            broadcasting = True
-
-            data0_ndim = data0._ndim
-            data1_ndim = other._ndim
-
-            align_offset = data0_ndim - data1_ndim
-            if align_offset >= 0:
-                # self has at least as many axes as other
-                shape0 = data0_shape[align_offset:]
-                shape1 = data1_shape
-
-                new_shape = data0_shape[:align_offset]
-                new_ndim = data0_ndim
-                new_axes = data0._axes
-            else:
-                # other has more axes than self
-                align_offset = -align_offset
-                shape0 = data0_shape
-                shape1 = data1_shape[align_offset:]
-
-                new_shape = data1_shape[:align_offset]
-                new_ndim = data1_ndim
-                if not data0_ndim:
-                    new_axes = other._axes
-                else:
-                    new_axes = []
-                    existing_axes = self._all_axis_names()
-                    for n in new_shape:
-                        axis = new_axis_identifier(existing_axes)
-                        existing_axes.append(axis)
-                        new_axes.append(axis)
-                    # --- End: for
-                    new_axes += data0._axes
-                # --- End: for
-
-                align_offset = 0
-            # --- End: if
-
-            broadcast_indices = []
-            for a, b in zip(shape0, shape1):
-                if a == b:
-                    new_shape += (a,)
-                    broadcast_indices.append(None)
-                    continue
-
-                # Still here?
-                if a > 1 and b == 1:
-                    new_shape += (a,)
-                elif b > 1 and a == 1:
-                    new_shape += (b,)
-                else:
-                    raise ValueError(
-                        "Can't broadcast shape {} against shape {}".format(
-                            data1_shape, data0_shape
-                        )
-                    )
-
-                broadcast_indices.append(slice(None))
-
-            new_size = reduce(mul, new_shape, 1)
-
-            dummy_location = [None] * new_ndim
-        # ---End: if
-
-        new_flip = []
-
-        # ------------------------------------------------------------
-        # Create a Data object which just contains the metadata for
-        # the result. If we're doing a binary arithmetic operation
-        # then result will get filled with data and returned. If we're
-        # an augmented arithmetic assignment then we'll update self
-        # with this new metadata.
-        # ------------------------------------------------------------
-
-        result = data0.copy()
-        result._shape = new_shape
-        result._ndim = new_ndim
-        result._size = new_size
-        result._axes = new_axes
-
-        # ------------------------------------------------------------
-        # Set the data-type of the result
-        # ------------------------------------------------------------
-        if method_type in ("_eq", "_ne", "_lt", "_le", "_gt", "_ge"):
-            new_dtype = np.dtype(bool)
+        # Set if applicable the tolerance levels for the result
+        if method in ("__eq__", "__ne__"):
             rtol = self._rtol
             atol = self._atol
-        else:
-            if "true" in method:
-                new_dtype = np.dtype(float)
-            elif not inplace:
-                new_dtype = np.result_type(data0.dtype, other.dtype)
-            else:
-                new_dtype = data0.dtype
-        # --- End: if
 
         # ------------------------------------------------------------
-        # Set flags to control whether or not the data of result and
-        # self should be kept in memory
+        # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
-        config = data0.partition_configuration(readonly=not inplace)
-
-        original_numpy_seterr = np.seterr(**_seterr)
-
-        # Think about dtype, here.
-
-        for partition_r, partition_s in zip(
-            result.partitions.matrix.flat, data0.partitions.matrix.flat
-        ):
-
-            partition_s.open(config)
-
-            indices = partition_s.indices
-
-            array0 = partition_s.array
-
-            if broadcasting:
-                indices = tuple(
-                    [
-                        (index if not broadcast_index else broadcast_index)
-                        for index, broadcast_index in zip(
-                            indices[align_offset:], broadcast_indices
-                        )
-                    ]
-                )
-                indices = (Ellipsis,) + indices
-
-            array1 = other[indices].array
-
-            # UNRESOLVED ISSUE: array1 could be much larger than the
-            # chunk size.
-
-            if not inplace:
-                partition = partition_r
-                partition.update_inplace_from(partition_s)
-            else:
-                partition = partition_s
-
-            # --------------------------------------------------------
-            # Do the binary operation on this partition's data
-            # --------------------------------------------------------
-            try:
-                if method == "__eq__":  # and data0.Units.isreftime:
-                    array0 = _numpy_isclose(
-                        array0, array1, rtol=rtol, atol=atol
-                    )
-                elif method == "__ne__":
-                    array0 = ~_numpy_isclose(
-                        array0, array1, rtol=rtol, atol=atol
-                    )
-                else:
-                    array0 = getattr(array0, method)(array1)
-
-            except FloatingPointError as error:
-                # Floating point point errors have been trapped
-                if _mask_fpe[0]:
-                    # Redo the calculation ignoring the errors and
-                    # then set invalid numbers to missing data
-                    np.seterr(**_seterr_raise_to_ignore)
-                    array0 = getattr(array0, method)(array1)
-                    array0 = np.ma.masked_invalid(array0, copy=False)
-                    np.seterr(**_seterr)
-                else:
-                    # Raise the floating point error exception
-                    raise FloatingPointError(error)
-            except TypeError as error:
-                if inplace:
-                    raise TypeError(
-                        "Incompatible result data-type ({0!r}) for "
-                        "in-place {1!r} arithmetic".format(
-                            np.result_type(array0.dtype, array1.dtype).name,
-                            array0.dtype.name,
-                        )
-                    )
-                else:
-                    raise TypeError(error)
-            # --- End: try
-
-            if array0 is NotImplemented:
-                array0 = np.zeros(partition.shape, dtype=bool)
-            elif not array0.ndim and not isinstance(array0, np.ndarray):
-                array0 = np.asanyarray(array0)
-
-            if not inplace:
-                p_datatype = array0.dtype
-                if new_dtype != p_datatype:
-                    new_dtype = np.result_type(p_datatype, new_dtype)
-
-            partition.subarray = array0
-            partition.Units = new_Units
-            partition.axes = new_axes
-            partition.flip = new_flip
-            partition.part = []
-
-            if broadcasting:
-                partition.location = dummy_location
-                partition.shape = list(array0.shape)
-
-            partition._original = None
-            partition._write_to_disk = False
-            partition.close(units=new_Units)
-
-            if not inplace:
-                partition_s.close()
-        # --- End: for
-
-        # Reset numpy.seterr
-        np.seterr(**original_numpy_seterr)
-
-        source = result.source(None)
-        if source is not None and source.get_compression_type():
-            result._del_Array(None)
-
-        if not inplace:
-            result._Units = new_Units
-            result.dtype = new_dtype
-            result._flip(new_flip)
-
-            if broadcasting:
-                result.partitions.set_location_map(result._axes)
-
-            if method_type in ("_eq", "_ne", "_lt", "_le", "_gt", "_ge"):
-                result.override_units(Units(), inplace=True)
-
-            return result
+        if method == "__eq__":
+            result = da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+        elif method == "__ne__":
+            result = ~da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+        elif inplace:
+            # Find non-in-place equivalent operator (remove 'i')
+            equiv_method = method[:2] + method[3:]
+            result = getattr(dx0, equiv_method)(dx1)
         else:
-            # Update the metadata for the new master array in place
-            data0._shape = new_shape
-            data0._ndim = new_ndim
-            data0._size = new_size
-            data0._axes = new_axes
-            data0._flip(new_flip)
-            data0._Units = new_Units
-            data0.dtype = new_dtype
+            result = getattr(dx0, method)(dx1)
 
-            if broadcasting:
-                data0.partitions.set_location_map(new_axes)
-
-            self.__dict__ = data0.__dict__
-
+        if inplace:  # in-place so concerns original self
+            self._set_dask(result)
+            self.override_units(new_Units, inplace=True)
             return self
+        else:  # not, so concerns a new Data object copied from self, data0
+            data0._set_dask(result)
+            data0.override_units(new_Units, inplace=True)
+            return data0
 
     def _parse_indices(self, *args, **kwargs):
         """'cf.Data._parse_indices' is not available.
@@ -4011,6 +3750,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         self._flip([])
 
+    @daskified(_DASKIFIED_VERBOSE)
     def _unary_operation(self, operation):
         """Implement unary arithmetic operations.
 
@@ -4055,6 +3795,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __add__(self, other):
         """The binary arithmetic operation ``+``
 
@@ -4063,6 +3804,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__add__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __iadd__(self, other):
         """The augmented arithmetic assignment ``+=``
 
@@ -4071,6 +3813,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__iadd__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __radd__(self, other):
         """The binary arithmetic operation ``+`` with reflected
         operands.
@@ -4080,6 +3823,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__radd__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __sub__(self, other):
         """The binary arithmetic operation ``-``
 
@@ -4088,6 +3832,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__sub__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __isub__(self, other):
         """The augmented arithmetic assignment ``-=``
 
@@ -4096,6 +3841,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__isub__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rsub__(self, other):
         """The binary arithmetic operation ``-`` with reflected
         operands.
@@ -4105,6 +3851,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rsub__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __mul__(self, other):
         """The binary arithmetic operation ``*``
 
@@ -4113,6 +3860,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__mul__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __imul__(self, other):
         """The augmented arithmetic assignment ``*=``
 
@@ -4121,6 +3869,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__imul__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rmul__(self, other):
         """The binary arithmetic operation ``*`` with reflected
         operands.
@@ -4130,6 +3879,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rmul__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __div__(self, other):
         """The binary arithmetic operation ``/``
 
@@ -4138,6 +3888,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__div__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __idiv__(self, other):
         """The augmented arithmetic assignment ``/=``
 
@@ -4146,6 +3897,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__idiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rdiv__(self, other):
         """The binary arithmetic operation ``/`` with reflected
         operands.
@@ -4155,6 +3907,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rdiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __floordiv__(self, other):
         """The binary arithmetic operation ``//``
 
@@ -4163,6 +3916,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__floordiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ifloordiv__(self, other):
         """The augmented arithmetic assignment ``//=``
 
@@ -4171,6 +3925,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ifloordiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rfloordiv__(self, other):
         """The binary arithmetic operation ``//`` with reflected
         operands.
@@ -4180,6 +3935,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rfloordiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __truediv__(self, other):
         """The binary arithmetic operation ``/`` (true division)
 
@@ -4188,6 +3944,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__truediv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __itruediv__(self, other):
         """The augmented arithmetic assignment ``/=`` (true division)
 
@@ -4196,6 +3953,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__itruediv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rtruediv__(self, other):
         """The binary arithmetic operation ``/`` (true division) with
         reflected operands.
@@ -4205,6 +3963,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rtruediv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __pow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow``
 
@@ -4220,6 +3979,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._binary_operation(other, "__pow__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ipow__(self, other, modulo=None):
         """The augmented arithmetic assignment ``**=``
 
@@ -4235,6 +3995,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._binary_operation(other, "__ipow__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rpow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow`` with
         reflected operands.
@@ -4251,6 +4012,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._binary_operation(other, "__rpow__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __mod__(self, other):
         """The binary arithmetic operation ``%``
 
@@ -4259,6 +4021,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__mod__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __imod__(self, other):
         """The binary arithmetic operation ``%=``
 
@@ -4267,6 +4030,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__imod__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rmod__(self, other):
         """The binary arithmetic operation ``%`` with reflected
         operands.
@@ -4276,6 +4040,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rmod__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __eq__(self, other):
         """The rich comparison operator ``==``
 
@@ -4284,6 +4049,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__eq__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ne__(self, other):
         """The rich comparison operator ``!=``
 
@@ -4292,6 +4058,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ne__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ge__(self, other):
         """The rich comparison operator ``>=``
 
@@ -4300,6 +4067,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ge__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __gt__(self, other):
         """The rich comparison operator ``>``
 
@@ -4308,6 +4076,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__gt__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __le__(self, other):
         """The rich comparison operator ``<=``
 
@@ -4316,6 +4085,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__le__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __lt__(self, other):
         """The rich comparison operator ``<``
 
@@ -4324,6 +4094,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__lt__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __and__(self, other):
         """The binary bitwise operation ``&``
 
@@ -4332,6 +4103,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__and__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __iand__(self, other):
         """The augmented bitwise assignment ``&=``
 
@@ -4340,6 +4112,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__iand__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rand__(self, other):
         """The binary bitwise operation ``&`` with reflected operands.
 
@@ -4348,6 +4121,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rand__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __or__(self, other):
         """The binary bitwise operation ``|``
 
@@ -4356,6 +4130,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__or__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ior__(self, other):
         """The augmented bitwise assignment ``|=``
 
@@ -4364,6 +4139,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ior__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ror__(self, other):
         """The binary bitwise operation ``|`` with reflected operands.
 
@@ -4372,6 +4148,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ror__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __xor__(self, other):
         """The binary bitwise operation ``^``
 
@@ -4380,6 +4157,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__xor__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ixor__(self, other):
         """The augmented bitwise assignment ``^=``
 
@@ -4388,6 +4166,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ixor__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rxor__(self, other):
         """The binary bitwise operation ``^`` with reflected operands.
 
@@ -4396,6 +4175,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rxor__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __lshift__(self, y):
         """The binary bitwise operation ``<<``
 
@@ -4404,6 +4184,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__lshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ilshift__(self, y):
         """The augmented bitwise assignment ``<<=``
 
@@ -4412,6 +4193,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__ilshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rlshift__(self, y):
         """The binary bitwise operation ``<<`` with reflected operands.
 
@@ -4420,6 +4202,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__rlshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rshift__(self, y):
         """The binary bitwise operation ``>>``
 
@@ -4428,6 +4211,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__rshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __irshift__(self, y):
         """The augmented bitwise assignment ``>>=``
 
@@ -4436,6 +4220,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__irshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rrshift__(self, y):
         """The binary bitwise operation ``>>`` with reflected operands.
 
@@ -4444,6 +4229,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__rrshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __abs__(self):
         """The unary arithmetic operation ``abs``
 
@@ -4452,6 +4238,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__abs__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __neg__(self):
         """The unary arithmetic operation ``-``
 
@@ -4460,6 +4247,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__neg__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __invert__(self):
         """The unary bitwise operation ``~``
 
@@ -4468,6 +4256,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__invert__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __pos__(self):
         """The unary arithmetic operation ``+``
 
