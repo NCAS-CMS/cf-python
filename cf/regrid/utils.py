@@ -47,11 +47,15 @@ def regrid(
 
     :Parameters:
 
-        f: `Field`
+        coord_system: `str`
+            The name of the coordinate system of the source and
+            destination grids.
+
+        src: `Field`
+            The source field to be regridded.
 
         dst: `Field`, `Domain`, `dict` or `RegridOperator`
-
-        coord_system: `str`
+            The definition of the destination grid.
 
         method: `str`
             Specify which interpolation method to use during
@@ -199,9 +203,14 @@ def regrid(
     if isinstance(dst, dict):
         # Convert a dictionary containing the destination grid to a
         # Domain object
-        dst, dst_axes = dict_to_domain( coord_system, dst,
-                                        cyclic=dst_cyclic, axes=dst_axes, domain_class=src._Domain
-        )
+        if coord_system == "spherical":
+            dst, dst_axes = spherical_dict_to_domain(dst, cyclic=dst_cyclic,
+                                                     domain_class=src._Domain)
+        else:
+            # Cartesian
+            dst, dst_axes = Cartesian_dict_to_domain(dst, axes=dst_axes,
+                                                     domain_class=src._Domain)
+
         use_dst_mask = False
     elif isinstance(dst, src._Domain.__class__):
         use_dst_mask = False
@@ -386,23 +395,6 @@ def regrid(
 
     # Return the regridded source field
     return src
-
-
-def dict_to_domain(coord_system, d, cyclic=None, axes=None, domain_class=None):
-    """Convert a dictionary grid definition to a `Domain`.
-
-    See `spherical_dict_to_domain` and `Cartesian_dict_to_domain` for
-    details.
-
-    .. versionadded:: TODODASK
-
-    """
-    domain_class = field._Domain
-    if coord_system == "spherical":
-        return spherical_dict_to_domain(d, cyclic=cyclic, domain_class=domain_class)
-
-    # Cartesian
-    return Cartesian_dict_to_domain(d, axes=axes, domain_class=domain_class)
 
 
 def get_grid(
@@ -1946,4 +1938,3 @@ def update_non_coordinates(
 #
 #    """
 #    return np.invert(mask).astype('int32')
-
