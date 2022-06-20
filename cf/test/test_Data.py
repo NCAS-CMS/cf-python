@@ -2493,14 +2493,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(key, (None, None, None))
         self.assertTrue(value.equals(d))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs reconstruct_sectioned_data")
-    def test_Data_reconstruct_sectioned_data(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # TODODASK: Write when Data.reconstruct_sectioned_data is
-        #           daskified
-
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_count(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2532,7 +2524,6 @@ class DataTest(unittest.TestCase):
             # self.assertTrue((d.array==c).all()) so need a
             # check which accounts for floating point calcs:
             np.testing.assert_allclose(d.array, c)
-        # --- End: for
 
         d = cf.Data(a, "m")
         with self.assertRaises(Exception):
@@ -3819,10 +3810,6 @@ class DataTest(unittest.TestCase):
             list(d.flat(ignore_masked=False)), [1, np.ma.masked, 3, 4]
         )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs updated NetCDFArray to test")
-    def test_Data_get_filenames(self):
-        pass
-
     def test_Data_tolist(self):
         for x in (1, [1, 2], [[1, 2], [3, 4]]):
             d = cf.Data(x)
@@ -3954,7 +3941,7 @@ class DataTest(unittest.TestCase):
         d.soften_mask()
         self.assertFalse(d.hardmask)
         self.assertEqual(len(d.to_dask_array().dask.layers), 2)
-        
+
     def test_Data_compressed_array(self):
         import cfdm
 

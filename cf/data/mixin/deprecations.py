@@ -315,6 +315,23 @@ class DataClassDeprecationsMixin:
             removed_at="5.0.0",
         )  # pragma: no cover
 
+    def get_filenames(self):
+        """Return the names of files containing parts of the data array.
+
+        Deprecated at version TODODASK.
+
+        :Returns:
+
+            `set`
+                The file names in normalized, absolute form. If the
+                data is in memory then an empty `set` is returned.
+
+        """
+        raise DeprecationError(
+            "Data method 'get_filenames' has been deprecated at "
+            "version TODODASK and is not available."
+        )  # pragma: no cover
+
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
 
@@ -921,4 +938,40 @@ class DataClassDeprecationsMixin:
             "are handled, due to the use of `dask` for handling all array "
             "manipulations. This may change in the future (see "
             "https://github.com/dask/dask/issues/3245 for more details)."
+        )
+
+    @classmethod
+    def reconstruct_sectioned_data(cls, sections, cyclic=(), hardmask=None):
+        """Expects a dictionary of Data objects with ordering
+        information as keys, as output by the section method when called
+        with a Data object. Returns a reconstructed cf.Data object with
+        the sections in the original order.
+
+        Deprecated at version TODODASK and is no longer available.
+
+        :Parameters:
+
+            sections: `dict`
+                The dictionary of `Data` objects with ordering information
+                as keys.
+
+        :Returns:
+
+            `Data`
+                The resulting reconstructed Data object.
+
+        **Examples**
+
+        >>> d = cf.Data(numpy.arange(120).reshape(2, 3, 4, 5))
+        >>> x = d.section([1, 3])
+        >>> len(x)
+        8
+        >>> e = cf.Data.reconstruct_sectioned_data(x)
+        >>> e.equals(d)
+        True
+
+        """
+        raise DeprecationError(
+            "Data method 'reconstruct_sectioned_data' has been deprecated "
+            "at version TODODASK and is no longer available"
         )

@@ -29,7 +29,6 @@ from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _numpy_isclose,
     _section,
-    abspath,
     atol,
     default_netCDF_fillvals,
     free_memory,
@@ -39,7 +38,6 @@ from ..functions import (
 )
 from ..mixin_container import Container
 from ..units import Units
-from . import FileArray
 from .collapse import Collapse
 from .creation import compressed_to_dask, generate_axis_identifiers, to_dask
 from .dask_utils import (
@@ -135,7 +133,7 @@ _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
 
-class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
+class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -6013,73 +6011,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             assert len(data_list) == 1
             return data_list[0]
 
-    @classmethod
-    def reconstruct_sectioned_data(cls, sections, cyclic=(), hardmask=None):
-        """Expects a dictionary of Data objects with ordering
-        information as keys, as output by the section method when called
-        with a Data object. Returns a reconstructed cf.Data object with
-        the sections in the original order.
-
-        :Parameters:
-
-            sections: `dict`
-                The dictionary of `Data` objects with ordering information
-                as keys.
-
-        :Returns:
-
-            `Data`
-                The resulting reconstructed Data object.
-
-        **Examples**
-
-        >>> d = cf.Data(numpy.arange(120).reshape(2, 3, 4, 5))
-        >>> x = d.section([1, 3])
-        >>> len(x)
-        8
-        >>> e = cf.Data.reconstruct_sectioned_data(x)
-        >>> e.equals(d)
-        True
-
-        """
-        ndims = len(list(sections.keys())[0])
-
-        for i in range(ndims - 1, -1, -1):
-            keys = sorted(sections.keys())
-            if i == 0:
-                if keys[0][i] is None:
-                    assert len(keys) == 1
-                    return tuple(sections.values())[0]
-                else:
-                    data_list = []
-                    for k in keys:
-                        data_list.append(sections[k])
-
-                    out = cls.concatenate_data(data_list, i)
-
-                    out.cyclic(cyclic)
-                    if hardmask is not None:
-                        out.hardmask = hardmask
-
-                    return out
-
-            if keys[0][i] is not None:
-                new_sections = {}
-                new_key = keys[0][:i]
-                data_list = []
-                for k in keys:
-                    if k[:i] == new_key:
-                        data_list.append(sections[k])
-                    else:
-                        new_sections[new_key] = cls.concatenate_data(
-                            data_list, axis=i
-                        )
-                        new_key = k[:i]
-                        data_list = [sections[k]]
-
-                new_sections[new_key] = cls.concatenate_data(data_list, i)
-                sections = new_sections
-
     def argmax(self, axis=None, unravel=False):
         """Return the indices of the maximum values along an axis.
 
@@ -7889,45 +7820,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._axes = data_axes
 
         return d
-
-    @daskified(_DASKIFIED_VERBOSE)
-    def get_filenames(self):
-        """Return the names of files containing parts of the data array.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If the
-                data is in memory then an empty `set` is returned.
-
-        **Examples**
-
-        >>> f = cf.NetCDFArray(TODODASK)
-        >>> d = cf.Data(f)
-        >>> d.get_filenames()
-        {TODODASK}
-
-        >>> d = cf.Data([1, 2, 3])
-        >>> d.get_filenames()
-        set()
-
-        """
-        out = set()
-
-        dx = self.to_dask_array()
-        hlg = dx.dask
-        dsk = hlg.to_dict()
-        for key, value in hlg.get_all_dependencies().items():
-            if value:
-                continue
-
-            # This key has no dependencies, and so is raw data.
-            a = dsk[key]
-            if isinstance(a, FileArray):
-                out.add(abspath(a.get_filename()))
-
-        out.discard(None)
-        return out
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("size")
