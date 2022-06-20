@@ -43,11 +43,11 @@ def regrid(
             dimension combinations.
 
             Each element w_ji is the multiplicative weight that
-            defines how much of V_si (the value in source grid cell i)
-            contributes to V_dj (the value in destination grid cell
+            defines how much of Vs_i (the value in source grid cell i)
+            contributes to Vd_j (the value in destination grid cell
             j).
 
-            The final value of V_dj is the sum of w_ji * V_si for all
+            The final value of Vd_j is the sum of w_ji * Vs_i for all
             source grid cells i. Note that it is typical that for a
             given j most w_ji will be zero, reflecting the fact only a
             few source grid cells intersect a particular destination
@@ -55,16 +55,16 @@ def regrid(
             matrix.
 
             If the destination grid has masked cells, either because
-            it spans areas outside of the definition of the source
-            grid, or by selection (such as ocean cells in a land-only
-            grid), then the corresponding rows in the weights matrix
-            must be be entirely missing data.
+            it spans areas outside of the source grid, or by selection
+            (such as ocean cells for land-only data), then the
+            corresponding rows in the weights matrix must be be
+            entirely missing data.
         
             For the patch recovery and second-order conservative
             regridding methods, the weights matrix will have been
             constructed taking into account the mask of the source
-            grid, which must match the mask of *a* for each regridding
-            slice.
+            grid, which must match the mask of *a* for its regridding
+            dimensions.
 
             For all other regridding methods, the weights matrix will
             have been constructed assuming that no source grid cells
@@ -77,6 +77,11 @@ def regrid(
     
             See section 12.3 "Regridding Methods" of
             https://earthsystemmodeling.org/docs/release/latest/ESMF_refdoc/node1.html
+
+            src_shape: sequence of `int`
+            
+            dst_shape: sequence of `int`
+            
 
         method: `str`
             The name of the regridding method.
@@ -122,9 +127,7 @@ def regrid(
         # A reference source grid mask has already been incorporated
         # into the weights matrix. Therefore, the mask for all slices
         # of 'a' must be the same as this reference mask.
-        if ref_src_mask is not None and (
-            ref_src_mask.dtype != bool or ref_src_mask.shape != src_shape
-        ):
+        if ref_src_mask.dtype != bool or ref_src_mask.shape != src_shape:
             raise ValueEror(
                 "The 'ref_src_mask' parameter must be None or a "
                 "boolean numpy array with shape {src_shape}. Got: "
@@ -139,10 +142,10 @@ def regrid(
         if variable_mask:
             raise ValueError(message)
 
-        if src_mask is None and ref_src_mask.any():
-            raise ValueError(message)
-
-        if src_mask is not None:
+        if src_mask is None:
+            if ref_src_mask.any():
+                raise ValueError(message)
+        else:
             if ref_src_mask.size != src_mask.size:
                 raise ValueError(message)
 
@@ -169,7 +172,12 @@ def regrid(
             n = slice(n, n + 1)
             a_n = a[:, n]
             regridded_data[:, n], prev_weights, prev_mask = _regrid(
-                a_n, weights, method, a_n.mask, prev_weights, prev_mask
+                a_n,
+                np.ma.getamaskarray(a_n),
+                weights,
+                method,
+                prev_weights,
+                prev_mask,
             )
 
         a = regridded_data
@@ -177,7 +185,7 @@ def regrid(
     else:
         # Source data is not masked or the source mask is same for all
         # slices => all slices can be regridded simultaneously.
-        a, _, _ = _regrid(a, weights, method, src_mask)
+        a, _, _ = _regrid(a, src_mask, weights, method)
         del _
 
     # ----------------------------------------------------------------
@@ -193,7 +201,7 @@ def regrid(
     return a
 
 
-def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
+def _regrid(a, src_mask, weights, method, prev_weights=None, prev_mask=None):
     """Worker function for `regrid`.
 
     Modifies the *weights* matrix to account for missing data in *a*,
@@ -281,11 +289,11 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
         if method in ("conservative", "conservative_1st"):
             # First-order consevative method:
             #
-            #     w_ji = f_ji * A_si / A_dj
+            #     w_ji = f_ji * As_i / Ad_j
             #
             # where f_ji is the fraction of source cell i that
-            # contributes to destination cell j, A_si is the area of
-            # source cell i, and A_dj is the area of destination cell
+            # contributes to destination cell j, As_i is the area of
+            # source cell i, and Ad_j is the area of destination cell
             # j.
             #
             # If source grid cell i is masked then w_ji are set to
@@ -305,11 +313,12 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
             # result of rounding.
             D = np.where(D < np.finfo(D.dtype).eps, 1, D)
 
-            # Divide the weights by 'D' (note that for destination
+            # Divide the weights by 'D'. Note that for destination
             # cells which do not intersect any masked source grid
-            # cells, 'D' will be 1) and zero weights associated with
-            # masked source grid cells.
+            # cells, 'D' will be 1.            
             w = weights / D
+
+            # Zero weights associated with masked source grid cells
             w[:, src_mask] = 0
 
             # Mask out rows of the weights matrix which contain all
@@ -347,7 +356,8 @@ def _regrid(a, weights, method, src_mask, prev_weights=None, prev_mask=None):
             #
             # A reference source data mask has already been
             # incorporated into the weights matrix, and 'a' is assumed
-            # to have the same mask (although this is not checked).
+            # to have the same mask (although this is not checked in
+            # this function).
             w = weights
         else:
             raise ValueError(f"Unknown regrid method: {method!r}")
@@ -370,7 +380,7 @@ def regrid_weights(
     dst_shape,
     dtype=None,
     dst_mask=None,
-    quarter=False,
+#    quarter=False,
     dense=True,
     order="C",
 ):
@@ -404,8 +414,6 @@ def regrid_weights(
             have no non-zero weights. If a boolean `numpy` array then
             it must have shape *dst_shape*.
 
-        quarter: `bool`, optional
-
         dense: `bool`, optional
             If True (the default) then return the weights as a dense
             `numpy` array. Otherwise return the weights as a `scipy`
@@ -423,6 +431,7 @@ def regrid_weights(
 
     """
     from math import prod
+    from scipy.sparse import coo_array
 
     # Create a sparse array for the weights
     src_size = prod(src_shape)
@@ -432,17 +441,16 @@ def regrid_weights(
     if dtype is not None:
         weights = weights.astype(dtype, copy=False)
 
-    if quarter:
-        # Quarter the weights matrix, choosing the top left quarter
-        # (which will be equivalent to the botoom right quarter).
-        from scipy.sparse import csr_array
+#    if quarter:
+#        # Quarter the weights matrix, choosing the top left quarter
+#        # (which will be equivalent to the botoom right quarter).
+#        from scipy.sparse import csr_array
+#
+#        w = csr_array((weights, (row - 1, col - 1)), shape=shape)
+#        w = w[: dst_size / 2, : src_size / 2]
+#    else:
 
-        w = csr_array((weights, (row - 1, col - 1)), shape=shape)
-        w = w[: dst_size / 2, : src_size / 2]
-    else:
-        from scipy.sparse import coo_array
-
-        w = coo_array((weights, (row - 1, col - 1)), shape=shape)
+    w = coo_array((weights, (row - 1, col - 1)), shape=shape)
         # if dense==False, convert to csr/csc?
 
     if dense:
