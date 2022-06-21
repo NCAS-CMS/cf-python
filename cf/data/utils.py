@@ -487,7 +487,7 @@ def is_small(array, threshold=None):
     .. versionadded:: 4.0.0
     """
     if threshold is None:
-        threshold = 2 ** 90  # TODODASK - True for now!
+        threshold = 2**90  # TODODASK - True for now!
 
     return array.size * (array.dtype.itemsize + 1) < threshold
 
@@ -501,7 +501,7 @@ def is_very_small(array, threshold=None):
 
     """
     if threshold is None:
-        threshold = 0.125 * 2 ** 90  # TODODASK - True for now!
+        threshold = 0.125 * 2**90  # TODODASK - True for now!
 
     return is_small(array, threshold)
 

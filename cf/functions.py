@@ -156,7 +156,6 @@ if _linux:
 
         return free_bytes
 
-
 else:
     # ----------------------------------------------------------------
     # NOT GNU/LINUX
@@ -1511,7 +1510,6 @@ if _linux:
         return (
             len(listdir(_fd_dir)) > _max_number_of_open_files * of_fraction()
         )
-
 
 else:
     # ----------------------------------------------------------------

@@ -23,7 +23,7 @@ repos:
   # (see https://black.readthedocs.io/en/stable/ for documentation and see
   # the cf-python pyproject.toml file for our custom black configuration)
   - repo: https://github.com/ambv/black
-    rev: 21.5b0
+    rev: 22.3.0
     hooks:
       - id: black
         language_version: python3
