@@ -653,6 +653,6 @@ def YMDhms(d, attr):
     d = d._asdatetime()
     dx = d.to_dask_array()
     dx = dx.map_blocks(partial(cf_YMDhms, attr=attr), dtype=int)
-    d._set_dask(dx, reset_mask_hardness=False)
+    d._set_dask(dx)
     d.override_units(Units(None), inplace=True)
     return d
