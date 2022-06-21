@@ -110,9 +110,7 @@ class DataTest(unittest.TestCase):
         ]
         for expected_warning in expexted_warning_msgs:
             warnings.filterwarnings(
-                "ignore",
-                category=RuntimeWarning,
-                message=expected_warning,
+                "ignore", category=RuntimeWarning, message=expected_warning
             )
 
     def test_Data_equals(self):
@@ -311,21 +309,13 @@ class DataTest(unittest.TestCase):
             )
         # ...including masked string arrays
         sa4 = cf.Data(
-            np.ma.array(
-                ["one", "two", "three"],
-                mask=[0, 0, 1],
-                dtype="S5",
-            ),
+            np.ma.array(["one", "two", "three"], mask=[0, 0, 1], dtype="S5"),
             "m",
             chunks=mask_test_chunksize,
         )
         self.assertTrue(sa4.equals(sa4.copy()))
         sa5 = cf.Data(
-            np.ma.array(
-                ["one", "two", "three"],
-                mask=[0, 1, 0],
-                dtype="S5",
-            ),
+            np.ma.array(["one", "two", "three"], mask=[0, 1, 0], dtype="S5"),
             "m",
             chunks=mask_test_chunksize,
         )
@@ -3635,16 +3625,10 @@ class DataTest(unittest.TestCase):
         ):
             self.assertEqual(func().Units, d.Units)
 
-        for func in (
-            d.sum_of_squares,
-            d.var,
-        ):
+        for func in (d.sum_of_squares, d.var):
             self.assertEqual(func().Units, d.Units ** 2)
 
-        for func in (
-            d.sum_of_weights,
-            d.sum_of_weights2,
-        ):
+        for func in (d.sum_of_weights, d.sum_of_weights2):
             self.assertEqual(func().Units, cf.Units())
 
         # Weighted
@@ -3657,10 +3641,7 @@ class DataTest(unittest.TestCase):
         d = cf.Data([1, 2])
         self.assertEqual(d.integral(weights=w).Units, w.Units)
 
-        for func in (
-            d.sum_of_squares,
-            d.var,
-        ):
+        for func in (d.sum_of_squares, d.var):
             self.assertEqual(func().Units, cf.Units())
 
         # TODODASK - add in mean_of_upper_decile when it's daskified
@@ -3721,11 +3702,7 @@ class DataTest(unittest.TestCase):
         # Cases for which both d and e collapse to a result of the
         # double of same data type
         for x, r in zip((d, e), ("i8", "f8")):
-            for func in (
-                x.integral,
-                x.sum,
-                x.sum_of_squares,
-            ):
+            for func in (x.integral, x.sum, x.sum_of_squares):
                 self.assertEqual(func().dtype, r)
 
         # Cases for which both d and e collapse to a result of double
@@ -3743,10 +3720,7 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(func().dtype, r)
 
         x = d
-        for func in (
-            x.sum_of_weights,
-            x.sum_of_weights2,
-        ):
+        for func in (x.sum_of_weights, x.sum_of_weights2):
             self.assertEqual(func().dtype, "i8")
 
         # Weights
@@ -3814,17 +3788,24 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, d.shape)
         self.assertTrue((f.array == True).all())
 
+        e = cf.Data([99, 99], "km")
+        f = d.isclose(e)
+        self.assertEqual(f.shape, d.shape)
+        self.assertTrue((f.array == False).all())
+
+        d = cf.Data(1, "days since 2000-01-01")
+        e = cf.Data(0, "days since 2000-01-02")
+        self.assertTrue(d.isclose(e).array)
+
+        # Strings
+        d = cf.Data(["foo", "bar"])
+        self.assertTrue((d.isclose(["foo", "bar"]).array == True).all())
+
         # Incompatible units
+        d = cf.Data([[1000, 2500]], "m")
         e = cf.Data([1, 2.5], "s")
         with self.assertRaises(ValueError):
             d.isclose(e)
-
-        d = cf.Data([1], "days since 2000-01-01")
-        e = cf.Data([0], "days since 2000-01-02")
-        self.assertTrue(d.isclose(e).array)
-
-        d = cf.Data(["foo", "bar"])
-        self.assertTrue((d.isclose(["foo", "bar"]).array == True).all())
 
     def test_Data_to_dask_array(self):
         d = cf.Data([1, 2, 3, 4], "m")

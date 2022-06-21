@@ -403,11 +403,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(
-                        array,
-                        copy=copy,
-                        delete_source=False,
-                    )
+                    self._set_dask(array, copy=copy, delete_source=False)
             else:
                 self._del_dask(None)
 
@@ -1741,13 +1737,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("_preserve_partitions")
-    def median(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        inplace=False,
-    ):
+    def median(self, axes=None, squeeze=False, mtol=1, inplace=False):
         """Calculate median values.
 
         Calculates the median value or the median values along axes.
@@ -1789,11 +1779,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         return self.percentile(
-            50,
-            axes=axes,
-            squeeze=squeeze,
-            mtol=mtol,
-            inplace=inplace,
+            50, axes=axes, squeeze=squeeze, mtol=mtol, inplace=inplace
         )
 
     @_inplace_enabled(default=False)
@@ -1865,11 +1851,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
 
         p90 = d.percentile(
-            90,
-            axes=axes,
-            squeeze=False,
-            mtol=mtol,
-            inplace=False,
+            90, axes=axes, squeeze=False, mtol=mtol, inplace=False
         )
 
         with np.testing.suppress_warnings() as sup:
@@ -3361,8 +3343,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 and self.Units.isreftime
             ):
                 other = cf_dt(
-                    other,
-                    calendar=getattr(self.Units, "calendar", "standard"),
+                    other, calendar=getattr(self.Units, "calendar", "standard")
                 )
             elif other is None:
                 # Can't sensibly initialize a Data object from a bare
@@ -3389,12 +3370,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             atol = self._atol
 
         # ------------------------------------------------------------
-        # Perform the binary operation with data0 (self) and data1 (other)
+        # Perform the binary operation with data0 (self) and data1
+        # (other)
         # ------------------------------------------------------------
         if method == "__eq__":
-            result = da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+            if dx0.dtype.kind in "US" or dx1.dtype.kind in "US":
+                result = getattr(dx0, method)(dx1)
+            else:
+                result = da.isclose(dx0, dx1, rtol=rtol, atol=atol)
         elif method == "__ne__":
-            result = ~da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+            if dx0.dtype.kind in "US" or dx1.dtype.kind in "US":
+                result = getattr(dx0, method)(dx1)
+            else:
+                result = ~da.isclose(dx0, dx1, rtol=rtol, atol=atol)
         elif inplace:
             # Find non-in-place equivalent operator (remove 'i')
             equiv_method = method[:2] + method[3:]
@@ -5995,12 +5983,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def maximum_absolute_value(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
+        self, axes=None, squeeze=False, mtol=1, split_every=None, inplace=False
     ):
         """Calculate maximum absolute values.
 
@@ -6133,12 +6116,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def minimum_absolute_value(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
+        self, axes=None, squeeze=False, mtol=1, split_every=None, inplace=False
     ):
         """Calculate minimum absolute values.
 
@@ -9168,9 +9146,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         inspect(self)
 
-    def to_dask_array(self):
-        return self._get_dask()
-
     @daskified(_DASKIFIED_VERBOSE)
     def isclose(self, y, rtol=None, atol=None):
         """Return where data are element-wise equal within a tolerance.
@@ -9221,29 +9196,29 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [ True  True  True]
 
         """
-        if atol is None:
-            atol = self._atol
-
-        if rtol is None:
-            rtol = self._rtol
-
-        a = np.array(0, dtype=self.dtype)
-        b = np.array(0, dtype=getattr(y, "dtype", None))
-
+        a = np.empty((), dtype=self.dtype)
+        b = np.empty((), dtype=da.asanyarray(y).dtype)
         try:
             # Check if a numerical isclose is possible
             np.isclose(a, b)
         except TypeError:
             # self and y do not have suitable numeric data types
-            # (e.g. both are strings
+            # (e.g. both are strings)
             return self == y
         else:
             # self and y have suitable numeric data types
+            if atol is None:
+                atol = self._atol
+
+            if rtol is None:
+                rtol = self._rtol
+
             y = conform_units(y, self.Units)
 
+            dx = da.isclose(self, y, atol=atol, rtol=rtol)
+
             d = self.copy(array=False)
-            dx = da.isclose(d, y, atol=atol, rtol=rtol)
-            d._set_dask(dx, reset_mask_hardness=False)
+            d._set_dask(dx)
             d.hardmask = _DEFAULT_HARDMASK
             d.override_units(_units_None, inplace=True)
             return d

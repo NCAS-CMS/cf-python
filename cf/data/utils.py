@@ -600,7 +600,10 @@ def conform_units(value, units):
     ValueError: Units <Units: km> are incompatible with units <Units: s>
 
     """
-    value_units = getattr(value, "Units", _units_None)
+    value_units = getattr(value, "Units", None)
+    if value_units is None:
+        return value
+
     if value_units.equivalent(units):
         if value_units != units:
             value = value.copy()

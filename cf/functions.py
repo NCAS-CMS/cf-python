@@ -3074,12 +3074,7 @@ def _DEPRECATION_ERROR(message="", version="3.0.0"):
 
 
 def _DEPRECATION_ERROR_ARG(
-    instance,
-    method,
-    arg,
-    message="",
-    version="3.0.0",
-    removed_at="4.0.0",
+    instance, method, arg, message="", version="3.0.0", removed_at="4.0.0"
 ):
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
