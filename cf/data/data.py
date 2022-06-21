@@ -27,12 +27,9 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
-    _numpy_isclose,
     _section,
-    abspath,
     atol,
     default_netCDF_fillvals,
-    fm_threshold,
     free_memory,
     log_level,
     parse_indices,
@@ -40,7 +37,6 @@ from ..functions import (
 )
 from ..mixin_container import Container
 from ..units import Units
-from . import FileArray
 from .collapse import Collapse
 from .creation import compressed_to_dask, generate_axis_identifiers, to_dask
 from .dask_utils import (
@@ -51,6 +47,7 @@ from .dask_utils import (
     cf_percentile,
     cf_rt2dt,
     cf_soften_mask,
+    cf_units,
     cf_where,
 )
 from .mixin import DataClassDeprecationsMixin
@@ -135,7 +132,7 @@ _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
 
-class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
+class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -410,15 +407,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                         array,
                         copy=copy,
                         delete_source=False,
-                        reset_mask_hardness=False,
                     )
             else:
                 self._del_dask(None)
 
-            # Note the mask hardness. It is safe to assume that if a
-            # dask array has been set, then it's mask hardness will be
-            # already baked into each chunk.
-            self._hardmask = getattr(source, "hardmask", _DEFAULT_HARDMASK)
+            # Set the mask hardness
+            self.hardmask = getattr(source, "hardmask", _DEFAULT_HARDMASK)
 
             return
 
@@ -428,13 +422,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         units = Units(units, calendar=calendar)
         self._Units = units
 
-        # Note the mask hardness. This only records what we want the
-        # mask hardness to be, and is required in case this
-        # initialization does not set an array (i.e. array is None or
-        # _use_array is False). If a dask array is actually set later
-        # on, then the mask hardness will be set properly, i.e. it
-        # will be baked into each chunk.
-        self._hardmask = hardmask
+        # Set the mask hardness
+        self.hardmask = hardmask
 
         if array is None:
             return
@@ -544,10 +533,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, delete_source=False, reset_mask_hardness=False)
-
-        # Set the mask hardness on each chunk.
-        self.hardmask = hardmask
+        self._set_dask(array, delete_source=False)
 
         # Override the data type
         if dtype is not None:
@@ -990,7 +976,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # ------------------------------------------------------------
         # Set the subspaced dask array
         # ------------------------------------------------------------
-        new._set_dask(dx, reset_mask_hardness=False)
+        new._set_dask(dx)
 
         # ------------------------------------------------------------
         # Get the axis identifiers for the subspace
@@ -1128,7 +1114,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         value = conform_units(value, self.Units)
 
         # Do the assignment
-        dx = self.to_dask_array()
+
+        # Missing values could be affected, so make sure that the mask
+        # hardness has been applied.
+        dx = self.to_dask_array(apply_mask_hardness=True)
         dx[indices] = value
 
         # Unroll any axes that were rolled to enable a cyclic
@@ -1136,11 +1125,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if roll:
             shifts = [-shift for shift in shifts]
             self.roll(shift=shifts, axis=roll_axes, inplace=True)
-
-        # Reset the mask hardness, otherwise it could be incorrect in
-        # the case that a chunk that was not a masked array is
-        # assigned missing values.
-        self._reset_mask_hardness()
 
         # Remove a source array, on the grounds that we can't
         # guarantee its consistency with the updated dask array.
@@ -1264,14 +1248,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    def _set_dask(
-        self, array, copy=False, delete_source=True, reset_mask_hardness=True
-    ):
+    def _set_dask(self, array, copy=False, delete_source=True):
         """Set the dask array.
 
         .. versionadded:: TODODASK
 
-        .. seealso:: `to_dask_array`, `_del_dask`, `_reset_mask_hardness`
+        .. seealso:: `to_dask_array`, `_del_dask`
 
         :Parameters:
 
@@ -1286,12 +1268,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                 If False then do not delete a source array, if one
                 exists, after setting the new dask array. By default a
                 source array is deleted.
-
-            reset_mask_hardness: `bool`, optional
-                If False then do not reset the mask hardness after
-                setting the new dask array. By default the mask
-                hardness is re-applied, even if the mask hardness has
-                not changed.
 
         :Returns:
 
@@ -1322,9 +1298,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # Remove a source array, on the grounds that we can't
             # guarantee its consistency with the new dask array.
             self._del_Array(None)
-
-        if reset_mask_hardness:
-            self._reset_mask_hardness()
 
     def _del_dask(self, default=ValueError(), delete_source=True):
         """Remove the dask array.
@@ -1380,20 +1353,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             self._del_Array(None)
 
         return out
-
-    def _reset_mask_hardness(self):
-        """Re-apply the mask hardness to the dask array.
-
-        .. versionadded:: TODODASK
-
-        .. seealso:: `hardmask`, `harden_mask`, `soften_mask`
-
-        :Returns:
-
-            `None`
-
-        """
-        self.hardmask = self.hardmask
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -1479,7 +1438,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = self.to_dask_array()
         dx = da.diff(dx, axis=axis, n=n)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         return d
 
@@ -1766,7 +1725,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # Digitise the array
         dx = d.to_dask_array()
         dx = da.digitize(dx, bins, right=upper)
-        d._set_dask(dx, reset_mask_hardness=True)
+        d._set_dask(dx)
         d.override_units(_units_None, inplace=True)
 
         if return_bins:
@@ -2207,7 +2166,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         graph = HighLevelGraph.from_collections(name, dsk, dependencies=[dx])
         dx = Array(graph, name, chunks=out_chunks, dtype=float)
 
-        d._set_dask(dx, reset_mask_hardness=True)
+        d._set_dask(dx)
 
         return d
 
@@ -2253,7 +2212,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = self.to_dask_array()
         dx = dx.persist()
-        d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
+        d._set_dask(dx, delete_source=False)
 
         return d
 
@@ -2405,7 +2364,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
-        d._set_dask(da.ceil(dx), reset_mask_hardness=False)
+        d._set_dask(da.ceil(dx))
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -2648,7 +2607,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             meta=np.array((), dtype=float),
         )
 
-        d._set_dask(dx, reset_mask_hardness=True)
+        d._set_dask(dx)
 
         return d
 
@@ -2743,11 +2702,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d.to_dask_array()
         dx = dx.cumsum(axis=axis, method=method)
-
-        # Note: The dask cumsum method resets the mask hardness to the
-        #       numpy default, so we need to reset the mask hardness
-        #       during _set_dask.
-        d._set_dask(dx, reset_mask_hardness=True)
+        d._set_dask(dx)
 
         return d
 
@@ -2832,7 +2787,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d.to_dask_array()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, delete_source=False, reset_mask_hardness=False)
+        d._set_dask(dx, delete_source=False)
 
         return d
 
@@ -2886,7 +2841,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if not d._isdatetime():
             dx = d.to_dask_array()
             dx = dx.map_blocks(cf_rt2dt, units=units, dtype=object)
-            d._set_dask(dx, reset_mask_hardness=False)
+            d._set_dask(dx)
 
         return d
 
@@ -2943,7 +2898,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if d._isdatetime():
             dx = d.to_dask_array()
             dx = dx.map_blocks(cf_dt2rt, units=units, dtype=float)
-            d._set_dask(dx, reset_mask_hardness=False)
+            d._set_dask(dx)
 
         return d
 
@@ -3334,6 +3289,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             )
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     def _binary_operation(self, other, method):
         """Implement binary arithmetic and comparison operations with
         the numpy broadcasting rules.
@@ -3377,13 +3333,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         inplace = method[2] == "i"
-        method_type = method[-5:-2]
 
         # ------------------------------------------------------------
-        # Ensure that other is an independent Data object
+        # Ensure other is an independent Data object, for example
+        # so that combination with cf.Query objects works.
         # ------------------------------------------------------------
         if getattr(other, "_NotImplemented_RHS_Data_op", False):
-            # Make sure that
             return NotImplemented
 
         elif not isinstance(other, self.__class__):
@@ -3394,7 +3349,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             ):
                 other = cf_dt(
                     other,
-                    # .timetuple()[0:6], microsecond=other.microsecond,
                     calendar=getattr(self.Units, "calendar", "standard"),
                 )
             elif other is None:
@@ -3404,304 +3358,45 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             other = type(self).asdata(other)
 
+        # ------------------------------------------------------------
+        # Prepare data0 (i.e. self copied) and data1 (i.e. other)
+        # ------------------------------------------------------------
         data0 = self.copy()
 
+        # Parse units
         data0, other, new_Units = data0._combined_units(other, method, True)
 
-        # ------------------------------------------------------------
-        # Bring other into memory, if appropriate.
-        # ------------------------------------------------------------
-        other.to_memory()
+        # Cast as dask arrays
+        dx0 = data0.to_dask_array()
+        dx1 = other.to_dask_array()
 
-        # ------------------------------------------------------------
-        # Find which dimensions need to be broadcast in one or other
-        # of the arrays.
-        #
-        # Method:
-        #
-        #   For each common dimension, the 'broadcast_indices' list
-        #   will have a value of None if there is no broadcasting
-        #   required (i.e. the two arrays have the same size along
-        #   that dimension) or a value of slice(None) if broadcasting
-        #   is required (i.e. the two arrays have the different sizes
-        #   along that dimension and one of the sizes is 1).
-        #
-        #   Example:
-        #
-        #     If c.shape is (7,1,6,1,5) and d.shape is (6,4,1) then
-        #     broadcast_indices will be
-        #     [None,slice(None),slice(None)].
-        #
-        #     The indices to d which correspond to a partition of c,
-        #     are the relevant subset of partition.indices updated
-        #     with the non None elements of the broadcast_indices
-        #     list.
-        #
-        #     In this example, if a partition of c were to have a
-        #     partition.indices value of (slice(0,3), slice(0,1),
-        #     slice(2,4), slice(0,1), slice(0,5)), then the relevant
-        #     subset of these is partition.indices[2:] and the
-        #     corresponding indices to d are (slice(2,4), slice(None),
-        #     slice(None))
-        #
-        # ------------------------------------------------------------
-        data0_shape = data0._shape
-        data1_shape = other._shape
-
-        if data0_shape == data1_shape:
-            # self and other have the same shapes
-            broadcasting = False
-
-            align_offset = 0
-
-            new_shape = data0_shape
-            new_ndim = data0._ndim
-            new_axes = data0._axes
-            new_size = data0._size
-
-        else:
-            # self and other have different shapes
-            broadcasting = True
-
-            data0_ndim = data0._ndim
-            data1_ndim = other._ndim
-
-            align_offset = data0_ndim - data1_ndim
-            if align_offset >= 0:
-                # self has at least as many axes as other
-                shape0 = data0_shape[align_offset:]
-                shape1 = data1_shape
-
-                new_shape = data0_shape[:align_offset]
-                new_ndim = data0_ndim
-                new_axes = data0._axes
-            else:
-                # other has more axes than self
-                align_offset = -align_offset
-                shape0 = data0_shape
-                shape1 = data1_shape[align_offset:]
-
-                new_shape = data1_shape[:align_offset]
-                new_ndim = data1_ndim
-                if not data0_ndim:
-                    new_axes = other._axes
-                else:
-                    new_axes = []
-                    existing_axes = self._all_axis_names()
-                    for n in new_shape:
-                        axis = new_axis_identifier(existing_axes)
-                        existing_axes.append(axis)
-                        new_axes.append(axis)
-                    # --- End: for
-                    new_axes += data0._axes
-                # --- End: for
-
-                align_offset = 0
-            # --- End: if
-
-            broadcast_indices = []
-            for a, b in zip(shape0, shape1):
-                if a == b:
-                    new_shape += (a,)
-                    broadcast_indices.append(None)
-                    continue
-
-                # Still here?
-                if a > 1 and b == 1:
-                    new_shape += (a,)
-                elif b > 1 and a == 1:
-                    new_shape += (b,)
-                else:
-                    raise ValueError(
-                        "Can't broadcast shape {} against shape {}".format(
-                            data1_shape, data0_shape
-                        )
-                    )
-
-                broadcast_indices.append(slice(None))
-
-            new_size = reduce(mul, new_shape, 1)
-
-            dummy_location = [None] * new_ndim
-        # ---End: if
-
-        new_flip = []
-
-        # ------------------------------------------------------------
-        # Create a Data object which just contains the metadata for
-        # the result. If we're doing a binary arithmetic operation
-        # then result will get filled with data and returned. If we're
-        # an augmented arithmetic assignment then we'll update self
-        # with this new metadata.
-        # ------------------------------------------------------------
-
-        result = data0.copy()
-        result._shape = new_shape
-        result._ndim = new_ndim
-        result._size = new_size
-        result._axes = new_axes
-
-        # ------------------------------------------------------------
-        # Set the data-type of the result
-        # ------------------------------------------------------------
-        if method_type in ("_eq", "_ne", "_lt", "_le", "_gt", "_ge"):
-            new_dtype = np.dtype(bool)
+        # Set if applicable the tolerance levels for the result
+        if method in ("__eq__", "__ne__"):
             rtol = self._rtol
             atol = self._atol
-        else:
-            if "true" in method:
-                new_dtype = np.dtype(float)
-            elif not inplace:
-                new_dtype = np.result_type(data0.dtype, other.dtype)
-            else:
-                new_dtype = data0.dtype
-        # --- End: if
 
         # ------------------------------------------------------------
-        # Set flags to control whether or not the data of result and
-        # self should be kept in memory
+        # Perform the binary operation with data0 (self) and data1 (other)
         # ------------------------------------------------------------
-        config = data0.partition_configuration(readonly=not inplace)
-
-        original_numpy_seterr = np.seterr(**_seterr)
-
-        # Think about dtype, here.
-
-        for partition_r, partition_s in zip(
-            result.partitions.matrix.flat, data0.partitions.matrix.flat
-        ):
-
-            partition_s.open(config)
-
-            indices = partition_s.indices
-
-            array0 = partition_s.array
-
-            if broadcasting:
-                indices = tuple(
-                    [
-                        (index if not broadcast_index else broadcast_index)
-                        for index, broadcast_index in zip(
-                            indices[align_offset:], broadcast_indices
-                        )
-                    ]
-                )
-                indices = (Ellipsis,) + indices
-
-            array1 = other[indices].array
-
-            # UNRESOLVED ISSUE: array1 could be much larger than the
-            # chunk size.
-
-            if not inplace:
-                partition = partition_r
-                partition.update_inplace_from(partition_s)
-            else:
-                partition = partition_s
-
-            # --------------------------------------------------------
-            # Do the binary operation on this partition's data
-            # --------------------------------------------------------
-            try:
-                if method == "__eq__":  # and data0.Units.isreftime:
-                    array0 = _numpy_isclose(
-                        array0, array1, rtol=rtol, atol=atol
-                    )
-                elif method == "__ne__":
-                    array0 = ~_numpy_isclose(
-                        array0, array1, rtol=rtol, atol=atol
-                    )
-                else:
-                    array0 = getattr(array0, method)(array1)
-
-            except FloatingPointError as error:
-                # Floating point point errors have been trapped
-                if _mask_fpe[0]:
-                    # Redo the calculation ignoring the errors and
-                    # then set invalid numbers to missing data
-                    np.seterr(**_seterr_raise_to_ignore)
-                    array0 = getattr(array0, method)(array1)
-                    array0 = np.ma.masked_invalid(array0, copy=False)
-                    np.seterr(**_seterr)
-                else:
-                    # Raise the floating point error exception
-                    raise FloatingPointError(error)
-            except TypeError as error:
-                if inplace:
-                    raise TypeError(
-                        "Incompatible result data-type ({0!r}) for "
-                        "in-place {1!r} arithmetic".format(
-                            np.result_type(array0.dtype, array1.dtype).name,
-                            array0.dtype.name,
-                        )
-                    )
-                else:
-                    raise TypeError(error)
-            # --- End: try
-
-            if array0 is NotImplemented:
-                array0 = np.zeros(partition.shape, dtype=bool)
-            elif not array0.ndim and not isinstance(array0, np.ndarray):
-                array0 = np.asanyarray(array0)
-
-            if not inplace:
-                p_datatype = array0.dtype
-                if new_dtype != p_datatype:
-                    new_dtype = np.result_type(p_datatype, new_dtype)
-
-            partition.subarray = array0
-            partition.Units = new_Units
-            partition.axes = new_axes
-            partition.flip = new_flip
-            partition.part = []
-
-            if broadcasting:
-                partition.location = dummy_location
-                partition.shape = list(array0.shape)
-
-            partition._original = None
-            partition._write_to_disk = False
-            partition.close(units=new_Units)
-
-            if not inplace:
-                partition_s.close()
-        # --- End: for
-
-        # Reset numpy.seterr
-        np.seterr(**original_numpy_seterr)
-
-        source = result.source(None)
-        if source is not None and source.get_compression_type():
-            result._del_Array(None)
-
-        if not inplace:
-            result._Units = new_Units
-            result.dtype = new_dtype
-            result._flip(new_flip)
-
-            if broadcasting:
-                result.partitions.set_location_map(result._axes)
-
-            if method_type in ("_eq", "_ne", "_lt", "_le", "_gt", "_ge"):
-                result.override_units(Units(), inplace=True)
-
-            return result
+        if method == "__eq__":
+            result = da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+        elif method == "__ne__":
+            result = ~da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+        elif inplace:
+            # Find non-in-place equivalent operator (remove 'i')
+            equiv_method = method[:2] + method[3:]
+            result = getattr(dx0, equiv_method)(dx1)
         else:
-            # Update the metadata for the new master array in place
-            data0._shape = new_shape
-            data0._ndim = new_ndim
-            data0._size = new_size
-            data0._axes = new_axes
-            data0._flip(new_flip)
-            data0._Units = new_Units
-            data0.dtype = new_dtype
+            result = getattr(dx0, method)(dx1)
 
-            if broadcasting:
-                data0.partitions.set_location_map(new_axes)
-
-            self.__dict__ = data0.__dict__
-
+        if inplace:  # in-place so concerns original self
+            self._set_dask(result)
+            self.override_units(new_Units, inplace=True)
             return self
+        else:  # not, so concerns a new Data object copied from self, data0
+            data0._set_dask(result)
+            data0.override_units(new_Units, inplace=True)
+            return data0
 
     def _parse_indices(self, *args, **kwargs):
         """'cf.Data._parse_indices' is not available.
@@ -4042,6 +3737,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         self._flip([])
 
+    @daskified(_DASKIFIED_VERBOSE)
     def _unary_operation(self, operation):
         """Implement unary arithmetic operations.
 
@@ -4082,10 +3778,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = self.to_dask_array()
         dx = getattr(operator, operation)(dx)
 
-        out._set_dask(dx, reset_mask_hardness=False)
+        out._set_dask(dx)
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __add__(self, other):
         """The binary arithmetic operation ``+``
 
@@ -4094,6 +3791,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__add__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __iadd__(self, other):
         """The augmented arithmetic assignment ``+=``
 
@@ -4102,6 +3800,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__iadd__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __radd__(self, other):
         """The binary arithmetic operation ``+`` with reflected
         operands.
@@ -4111,6 +3810,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__radd__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __sub__(self, other):
         """The binary arithmetic operation ``-``
 
@@ -4119,6 +3819,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__sub__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __isub__(self, other):
         """The augmented arithmetic assignment ``-=``
 
@@ -4127,6 +3828,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__isub__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rsub__(self, other):
         """The binary arithmetic operation ``-`` with reflected
         operands.
@@ -4136,6 +3838,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rsub__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __mul__(self, other):
         """The binary arithmetic operation ``*``
 
@@ -4144,6 +3847,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__mul__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __imul__(self, other):
         """The augmented arithmetic assignment ``*=``
 
@@ -4152,6 +3856,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__imul__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rmul__(self, other):
         """The binary arithmetic operation ``*`` with reflected
         operands.
@@ -4161,6 +3866,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rmul__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __div__(self, other):
         """The binary arithmetic operation ``/``
 
@@ -4169,6 +3875,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__div__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __idiv__(self, other):
         """The augmented arithmetic assignment ``/=``
 
@@ -4177,6 +3884,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__idiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rdiv__(self, other):
         """The binary arithmetic operation ``/`` with reflected
         operands.
@@ -4186,6 +3894,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rdiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __floordiv__(self, other):
         """The binary arithmetic operation ``//``
 
@@ -4194,6 +3903,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__floordiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ifloordiv__(self, other):
         """The augmented arithmetic assignment ``//=``
 
@@ -4202,6 +3912,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ifloordiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rfloordiv__(self, other):
         """The binary arithmetic operation ``//`` with reflected
         operands.
@@ -4211,6 +3922,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rfloordiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __truediv__(self, other):
         """The binary arithmetic operation ``/`` (true division)
 
@@ -4219,6 +3931,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__truediv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __itruediv__(self, other):
         """The augmented arithmetic assignment ``/=`` (true division)
 
@@ -4227,6 +3940,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__itruediv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rtruediv__(self, other):
         """The binary arithmetic operation ``/`` (true division) with
         reflected operands.
@@ -4236,6 +3950,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rtruediv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __pow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow``
 
@@ -4251,6 +3966,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return self._binary_operation(other, "__pow__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ipow__(self, other, modulo=None):
         """The augmented arithmetic assignment ``**=``
 
@@ -4266,6 +3982,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return self._binary_operation(other, "__ipow__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rpow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow`` with
         reflected operands.
@@ -4282,6 +3999,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return self._binary_operation(other, "__rpow__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __mod__(self, other):
         """The binary arithmetic operation ``%``
 
@@ -4290,6 +4008,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__mod__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __imod__(self, other):
         """The binary arithmetic operation ``%=``
 
@@ -4298,6 +4017,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__imod__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rmod__(self, other):
         """The binary arithmetic operation ``%`` with reflected
         operands.
@@ -4307,6 +4027,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rmod__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __eq__(self, other):
         """The rich comparison operator ``==``
 
@@ -4315,6 +4036,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__eq__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ne__(self, other):
         """The rich comparison operator ``!=``
 
@@ -4323,6 +4045,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ne__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ge__(self, other):
         """The rich comparison operator ``>=``
 
@@ -4331,6 +4054,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ge__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __gt__(self, other):
         """The rich comparison operator ``>``
 
@@ -4339,6 +4063,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__gt__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __le__(self, other):
         """The rich comparison operator ``<=``
 
@@ -4347,6 +4072,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__le__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __lt__(self, other):
         """The rich comparison operator ``<``
 
@@ -4355,6 +4081,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__lt__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __and__(self, other):
         """The binary bitwise operation ``&``
 
@@ -4363,6 +4090,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__and__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __iand__(self, other):
         """The augmented bitwise assignment ``&=``
 
@@ -4371,6 +4099,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__iand__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rand__(self, other):
         """The binary bitwise operation ``&`` with reflected operands.
 
@@ -4379,6 +4108,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rand__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __or__(self, other):
         """The binary bitwise operation ``|``
 
@@ -4387,6 +4117,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__or__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ior__(self, other):
         """The augmented bitwise assignment ``|=``
 
@@ -4395,6 +4126,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ior__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ror__(self, other):
         """The binary bitwise operation ``|`` with reflected operands.
 
@@ -4403,6 +4135,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ror__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __xor__(self, other):
         """The binary bitwise operation ``^``
 
@@ -4411,6 +4144,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__xor__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ixor__(self, other):
         """The augmented bitwise assignment ``^=``
 
@@ -4419,6 +4153,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__ixor__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rxor__(self, other):
         """The binary bitwise operation ``^`` with reflected operands.
 
@@ -4427,6 +4162,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(other, "__rxor__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __lshift__(self, y):
         """The binary bitwise operation ``<<``
 
@@ -4435,6 +4171,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__lshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ilshift__(self, y):
         """The augmented bitwise assignment ``<<=``
 
@@ -4443,6 +4180,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__ilshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rlshift__(self, y):
         """The binary bitwise operation ``<<`` with reflected operands.
 
@@ -4451,6 +4189,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__rlshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rshift__(self, y):
         """The binary bitwise operation ``>>``
 
@@ -4459,6 +4198,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__rshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __irshift__(self, y):
         """The augmented bitwise assignment ``>>=``
 
@@ -4467,6 +4207,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__irshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rrshift__(self, y):
         """The binary bitwise operation ``>>`` with reflected operands.
 
@@ -4475,6 +4216,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._binary_operation(y, "__rrshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __abs__(self):
         """The unary arithmetic operation ``abs``
 
@@ -4483,6 +4225,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._unary_operation("__abs__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __neg__(self):
         """The unary arithmetic operation ``-``
 
@@ -4491,6 +4234,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._unary_operation("__neg__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __invert__(self):
         """The unary bitwise operation ``~``
 
@@ -4499,6 +4243,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self._unary_operation("__invert__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __pos__(self):
         """The unary arithmetic operation ``+``
 
@@ -4566,35 +4311,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
     @_cyclic.deleter
     def _cyclic(self):
         self._custom["_cyclic"] = _empty_set
-
-    @property
-    @daskified(_DASKIFIED_VERBOSE)
-    def _hardmask(self):
-        """Storage for the mask hardness.
-
-        Contains a `bool`, where `True` denotes a hard mask and
-        `False` denotes a soft mask.
-
-        .. warning:: Assigning to `_hardmask` does *not* trigger a
-                     hardening or softening of the mask of the
-                     underlying data values. Therefore assigning to
-                     `_hardmask` should only be done in cases when it
-                     is known that the intrinsic mask hardness of the
-                     data values is inconsistent with the
-                     existing value of `_hardmask`. Before assigning
-                     to `_hardmask`, first consider if assigning to
-                     `hardmask`, or calling the `harden_mask` or
-                     `soften_mask` method is a more appropriate course
-                     of action, and use one of those if possible.
-
-        See `hardmask` for details.
-
-        """
-        return self._custom["_hardmask"]
-
-    @_hardmask.setter
-    def _hardmask(self, value):
-        self._custom["_hardmask"] = value
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
@@ -4687,11 +4403,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     "Consider using the override_units method instead."
                 )
 
-            if not old_units:
-                self.override_units(value, inplace=True)
-                return
-
-            if self.Units.equals(value):
+            if not old_units or self.Units.equals(value):
+                self._Units = value
                 return
 
         dtype = self.dtype
@@ -4701,14 +4414,12 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             else:
                 dtype = _dtype_float
 
-        def cf_Units(x):
-            return Units.conform(
-                x=x, from_units=old_units, to_units=value, inplace=False
-            )
-
         dx = self.to_dask_array()
-        dx = dx.map_blocks(cf_Units, dtype=dtype)
-        self._set_dask(dx, reset_mask_hardness=False)
+        dx = dx.map_blocks(
+            partial(cf_units, from_units=old_units, to_units=value),
+            dtype=dtype,
+        )
+        self._set_dask(dx)
 
         self._Units = value
 
@@ -4778,7 +4489,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # dask array
         if dx.dtype != value:
             dx = dx.astype(value)
-            self._set_dask(dx, reset_mask_hardness=False)
+            self._set_dask(dx)
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
@@ -4824,15 +4535,21 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         mask, then masked entries may be overwritten with non-missing
         values.
 
-        To allow the unmasking of masked values, the mask must be
-        softened by setting the `hardmask` attribute to False, or
-        equivalently with the `soften_mask` method.
+        .. note:: Setting the `hardmask` attribute does not
+                  immediately change the mask hardness, rather its
+                  value indicates to other methods (such as `where`,
+                  `transpose`, etc.) whether or not the mask needs
+                  hardening or softening prior to an operation being
+                  defined, and those methods will reset the mask
+                  hardness if required.
 
-        The mask can be hardened by setting the `hardmask` attribute
-        to True, or equivalently with the `harden_mask` method.
+                  By contrast, the `harden_mask` and `soften_mask`
+                  methods immediately reset the mask hardness of the
+                  underlying `dask` array, and also set the value of
+                  the `hardmask` attribute.
 
-        .. seealso:: `harden_mask`, `soften_mask`, `where`,
-                     `__setitem__`
+        .. seealso:: `harden_mask`, `soften_mask`, `to_dask_array`,
+                     `where`, `__setitem__`
 
         **Examples**
 
@@ -4842,7 +4559,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d[0] = cf.masked
         >>> print(d.array)
         [-- 2 3]
-        >>> d[...]= 999
+        >>> d[...] = 999
         >>> print(d.array)
         [-- 999 999]
         >>> d.hardmask = False
@@ -4853,14 +4570,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         [-1 -1 -1]
 
         """
-        return self._hardmask
+        return self._custom.get("hardmask", _DEFAULT_HARDMASK)
 
     @hardmask.setter
     def hardmask(self, value):
-        if value:
-            self.harden_mask()
-        else:
-            self.soften_mask()
+        self._custom["hardmask"] = value
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
@@ -4901,26 +4615,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
 
         return bool(dx.any())
-
-    @property
-    @daskified(_DASKIFIED_VERBOSE)
-    def isscalar(self):
-        """True if the data is a 0-d scalar array.
-
-        **Examples**
-
-        >>> d = cf.Data(9, 'm')
-        >>> d.isscalar
-        True
-        >>> d = cf.Data([9], 'm')
-        >>> d.isscalar
-        False
-        >>> d = cf.Data([9, 10], 'm')
-        >>> d.isscalar
-        False
-
-        """
-        return not self.ndim
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
@@ -5211,7 +4905,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         dx = self.to_dask_array()
         mask = da.ma.getmaskarray(dx)
 
-        mask_data_obj._set_dask(mask, reset_mask_hardness=False)
+        mask_data_obj._set_dask(mask)
         mask_data_obj.override_units(_units_None, inplace=True)
         mask_data_obj.hardmask = _DEFAULT_HARDMASK
 
@@ -5261,7 +4955,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
-        d._set_dask(da.arctan(dx), reset_mask_hardness=False)
+        d._set_dask(da.arctan(dx))
 
         d.override_units(_units_radians, inplace=True)
 
@@ -5460,7 +5154,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array()
-        d._set_dask(da.arcsinh(dx), reset_mask_hardness=False)
+        d._set_dask(da.arcsinh(dx))
 
         d.override_units(_units_radians, inplace=True)
 
@@ -5637,7 +5331,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = self.copy(array=False)
         dx = self.to_dask_array()
         dx = da.all(dx, axis=axis, keepdims=keepdims, split_every=split_every)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
         d.hardmask = _DEFAULT_HARDMASK
         d.override_units(_units_None, inplace=True)
         return d
@@ -5754,7 +5448,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = self.copy(array=False)
         dx = self.to_dask_array()
         dx = da.any(dx, axis=axis, keepdims=keepdims, split_every=split_every)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
         d.hardmask = _DEFAULT_HARDMASK
         d.override_units(_units_None, inplace=True)
         return d
@@ -5934,6 +5628,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                     )
 
         d = _inplace_enabled_define_and_cleanup(self)
+
         dx = self.to_dask_array()
 
         mask = None
@@ -5958,7 +5653,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         if mask is not None:
             dx = da.ma.masked_where(mask, dx)
 
-        d._set_dask(dx, reset_mask_hardness=True)
+        d._set_dask(dx)
 
         return d
 
@@ -5992,73 +5687,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         else:
             assert len(data_list) == 1
             return data_list[0]
-
-    @classmethod
-    def reconstruct_sectioned_data(cls, sections, cyclic=(), hardmask=None):
-        """Expects a dictionary of Data objects with ordering
-        information as keys, as output by the section method when called
-        with a Data object. Returns a reconstructed cf.Data object with
-        the sections in the original order.
-
-        :Parameters:
-
-            sections: `dict`
-                The dictionary of `Data` objects with ordering information
-                as keys.
-
-        :Returns:
-
-            `Data`
-                The resulting reconstructed Data object.
-
-        **Examples**
-
-        >>> d = cf.Data(numpy.arange(120).reshape(2, 3, 4, 5))
-        >>> x = d.section([1, 3])
-        >>> len(x)
-        8
-        >>> e = cf.Data.reconstruct_sectioned_data(x)
-        >>> e.equals(d)
-        True
-
-        """
-        ndims = len(list(sections.keys())[0])
-
-        for i in range(ndims - 1, -1, -1):
-            keys = sorted(sections.keys())
-            if i == 0:
-                if keys[0][i] is None:
-                    assert len(keys) == 1
-                    return tuple(sections.values())[0]
-                else:
-                    data_list = []
-                    for k in keys:
-                        data_list.append(sections[k])
-
-                    out = cls.concatenate_data(data_list, i)
-
-                    out.cyclic(cyclic)
-                    if hardmask is not None:
-                        out.hardmask = hardmask
-
-                    return out
-
-            if keys[0][i] is not None:
-                new_sections = {}
-                new_key = keys[0][:i]
-                data_list = []
-                for k in keys:
-                    if k[:i] == new_key:
-                        data_list.append(sections[k])
-                    else:
-                        new_sections[new_key] = cls.concatenate_data(
-                            data_list, axis=i
-                        )
-                        new_key = k[:i]
-                        data_list = [sections[k]]
-
-                new_sections[new_key] = cls.concatenate_data(data_list, i)
-                sections = new_sections
 
     def argmax(self, axis=None, unravel=False):
         """Return the indices of the maximum values along an axis.
@@ -6140,6 +5768,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         return type(self)(a)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
@@ -6152,6 +5781,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         return self
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_units(self, default=ValueError()):
         """Return the units.
 
@@ -6185,6 +5815,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         except AttributeError:
             return super().get_units(default=default)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def get_calendar(self, default=ValueError()):
         """Return the calendar.
 
@@ -6218,6 +5849,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         except (AttributeError, KeyError):
             return super().get_calendar(default=default)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def set_calendar(self, calendar):
         """Set the calendar.
 
@@ -6247,6 +5879,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         self.Units = Units(self.get_units(default=None), calendar)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def set_units(self, value):
         """Set the units.
 
@@ -6974,7 +6607,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array()
         dx = da.clip(dx, a_min, a_max)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
         return d
 
     @classmethod
@@ -7102,7 +6735,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             meta=np.array((), dtype=dx.dtype),
         )
 
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -7159,7 +6792,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d.Units = _units_radians
 
         dx = d.to_dask_array()
-        d._set_dask(da.cos(dx), reset_mask_hardness=False)
+        d._set_dask(da.cos(dx))
 
         d.override_units(_units_1, inplace=True)
 
@@ -7560,21 +7193,20 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = self.copy()
-        hardmask = d.hardmask
-        if hardmask:
-            # Soften a hardmask so that the result doesn't contain a
-            # seperate missing value for each input chunk that
-            # contains missing values. For any number greater than 0
-            # of missing values in the original data, we only want one
-            # missing value in the result.
-            d.soften_mask()
+
+        # Soften the hardmask so that the result doesn't contain a
+        # seperate missing value for each input chunk that contains
+        # missing values. For any number greater than 0 of missing
+        # values in the original data, we only want one missing value
+        # in the result.
+        d.soften_mask()
 
         dx = d.to_dask_array()
         dx = Collapse.unique(dx, split_every=split_every)
 
-        d._set_dask(dx, reset_mask_hardness=False)
-        if hardmask:
-            d.harden_mask()
+        d._set_dask(dx)
+
+        d.hardmask = _DEFAULT_HARDMASK
 
         return d
 
@@ -7818,7 +7450,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d.Units = _units_1
 
         dx = d.to_dask_array()
-        d._set_dask(da.exp(dx), reset_mask_hardness=False)
+        d._set_dask(da.exp(dx))
 
         return d
 
@@ -7866,7 +7498,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d.to_dask_array()
         dx = dx.reshape(shape)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -7875,45 +7507,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._axes = data_axes
 
         return d
-
-    @daskified(_DASKIFIED_VERBOSE)
-    def get_filenames(self):
-        """Return the names of files containing parts of the data array.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If the
-                data is in memory then an empty `set` is returned.
-
-        **Examples**
-
-        >>> f = cf.NetCDFArray(TODODASK)
-        >>> d = cf.Data(f)
-        >>> d.get_filenames()
-        {TODODASK}
-
-        >>> d = cf.Data([1, 2, 3])
-        >>> d.get_filenames()
-        set()
-
-        """
-        out = set()
-
-        dx = self.to_dask_array()
-        hlg = dx.dask
-        dsk = hlg.to_dict()
-        for key, value in hlg.get_all_dependencies().items():
-            if value:
-                continue
-
-            # This key has no dependencies, and so is raw data.
-            a = dsk[key]
-            if isinstance(a, FileArray):
-                out.add(abspath(a.get_filename()))
-
-        out.discard(None)
-        return out
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("size")
@@ -8217,14 +7810,14 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
             dx = concatenate([left, dx, right], axis=axis)
 
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         # Special case for tripolar: The northern Y axis halo contains
         # the values that have been flipped in the X direction.
         if tripolar:
-            hardmask = d.hardmask
-            if hardmask:
-                d.hardmask = False
+            # Make sure that we can overwrite any missing values in
+            # the northern Y axis halo
+            d.soften_mask()
 
             indices1 = indices[:]
             if fold_index == -1:
@@ -8242,10 +7835,10 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             dx = d.to_dask_array()
             dx[tuple(indices1)] = dx[tuple(indices2)]
 
-            d._set_dask(dx, reset_mask_hardness=False)
+            d._set_dask(dx)
 
-            if hardmask:
-                d.hardmask = True
+            # Reset the mask hardness
+            d.hardmask = self.hardmask
 
         # Set expanded axes to be non-cyclic
         d.cyclic(axes=tuple(depth), iscyclic=False)
@@ -8282,8 +7875,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
-        self._set_dask(dx, delete_source=False, reset_mask_hardness=False)
-        self._hardmask = True
+        self._set_dask(dx, delete_source=False)
+        self.hardmask = True
 
     def has_calendar(self):
         """Whether a calendar has been set.
@@ -8379,8 +7972,8 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
-        self._set_dask(dx, delete_source=False, reset_mask_hardness=False)
-        self._hardmask = False
+        self._set_dask(dx, delete_source=False)
+        self.hardmask = False
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -8434,7 +8027,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d.to_dask_array()
         dx = dx.map_blocks(np.ma.filled, fill_value=fill_value, dtype=d.dtype)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         return d
 
@@ -8739,7 +8332,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         new_shape.insert(axes[0], reduce(mul, [shape[i] for i in axes], 1))
 
         dx = dx.reshape(new_shape)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         return d
 
@@ -8774,7 +8367,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
-        d._set_dask(da.floor(dx), reset_mask_hardness=False)
+        d._set_dask(da.floor(dx))
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -8845,7 +8438,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d.to_dask_array()
         dx = da.ufunc.multiply.outer(dx, a)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         d.override_units(d.Units * a.Units, inplace=True)
 
@@ -9008,8 +8601,27 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d._Units = Units(d.Units._units, calendar)
         return d
 
-    def to_dask_array(self):
+    def to_dask_array(self, apply_mask_hardness=False):
         """Convert the data to a `dask` array.
+
+        .. warning:: By default, the mask hardness of the returned
+                     dask array might not be the same as that
+                     specified by the `hardmask` attribute.
+
+                     This could cause problems if a subsequent
+                     operation on the returned dask array involves the
+                     un-masking of masked values (such as by indexed
+                     assignment).
+
+                     To guarantee that the mask hardness of the
+                     returned dassk array is correct, set the
+                     *apply_mask_hardness* parameter to True.
+
+        :Parameters:
+
+            apply_mask_hardness: `bool`, optional
+                If True then force the mask hardness of the returned
+                array to be that given by the `hardmask` attribute.
 
         :Returns:
 
@@ -9021,11 +8633,24 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         >>> d = cf.Data([1, 2, 3, 4], 'm')
         >>> dx = d.to_dask_array()
         >>> dx
-        >>> dask.array<cf_harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+        >>> dask.array<array, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
         >>> dask.array.asanyarray(d) is dx
         True
 
+        >>> d.to_dask_array(apply_mask_hardness=True)
+        dask.array<cf_harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+
+        >>> d = cf.Data([1, 2, 3, 4], 'm', hardmask=False)
+        >>> d.to_dask_array(apply_mask_hardness=True)
+        dask.array<cf_soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+
         """
+        if apply_mask_hardness:
+            if self.hardmask:
+                self.harden_mask()
+            else:
+                self.soften_mask()
+
         return self._custom["dask"]
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -9204,7 +8829,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array()
         dx = da.ma.masked_invalid(dx)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
         return d
 
     def del_calendar(self, default=ValueError()):
@@ -9368,7 +8993,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
         dx = d.to_dask_array()
         dx = dx.map_blocks(partial(np.ma.array, mask=True, copy=False))
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -9498,7 +9123,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d.to_dask_array()
         dx = dx[tuple(index)]
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         return d
 
@@ -9668,7 +9293,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
-        d._set_dask(dx, reset_mask_hardness=True)
+        d._set_dask(dx)
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -9704,7 +9329,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
-        d._set_dask(da.rint(dx), reset_mask_hardness=False)
+        d._set_dask(da.rint(dx))
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -9829,7 +9454,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
-        d._set_dask(da.round(dx, decimals=decimals), reset_mask_hardness=False)
+        d._set_dask(da.round(dx, decimals=decimals))
         return d
 
     def stats(
@@ -10066,33 +9691,53 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array()
         dx = da.swapaxes(dx, axis0, axis1)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
         return d
 
-    def fits_in_memory(self, itemsize):
-        """Return True if the master array is small enough to be
-        retained in memory.
+    def fits_in_memory(self):
+        """Return True if the array is small enough to be retained in
+        memory.
+
+        Returns True if the size of the array with all delayed
+        operations computed, always including space for a full boolean
+        mask, is small enough to be retained in available memory.
+
+        .. note:: The delayed operations are actually not computed by
+                  `fits_in_memory`, so it is possible that an
+                  intermediate operation may require more than the
+                  available memory, even if the final array does not.
+
+        .. seealso:: `array`, `compute`, `nbytes`, `persist`,
+                     `cf.free_memory`
 
         :Parameters:
 
-            itemsize: `int`
+            itemsize: deprecated at version TODODASK
                 The number of bytes per word of the master data array.
 
         :Returns:
 
             `bool`
+                Whether or not the computed array fits in memory.
 
         **Examples**
 
-        >>> print(d.fits_in_memory(8))
+        >>> d = cf.Data([1], 'm')
+        >>> d.fits_in_memory()
+        True
+
+        Create a double precision (8 bytes per word) array that is
+        approximately twice the size of the available memory:
+
+        >>> size = int(2 * cf.free_memory() / 8)
+        >>> d = cf.Data.empty((size,), dtype=float)
+        >>> d.fits_in_memory()
         False
+        >>> d.nbytes * (1 + 1/8) > cf.free_memory()
+        True
 
         """
-        # ------------------------------------------------------------
-        # Note that self._size*(itemsize+1) is the array size in bytes
-        # including space for a full boolean mask
-        # ------------------------------------------------------------
-        return self.size * (itemsize + 1) <= free_memory() - fm_threshold()
+        return self.size * (self.dtype.itemsize + 1) <= free_memory()
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
@@ -10297,8 +9942,11 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
+        # Missing values could be affected, so make sure that the mask
+        # hardness has been applied.
+        dx = d.to_dask_array(apply_mask_hardness=True)
+
         units = d.Units
-        dx = d.to_dask_array()
 
         # Parse condition
         if getattr(condition, "isquery", False):
@@ -10361,10 +10009,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         )
         d._set_dask(dx)
 
-        # Note: No need to run `_reset_mask_hardness` at this point
-        #       because the mask hardness has already been correctly
-        #       set in `cf_where`.
-
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
@@ -10421,7 +10065,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d.Units = _units_radians
 
         dx = d.to_dask_array()
-        d._set_dask(da.sin(dx), reset_mask_hardness=False)
+        d._set_dask(da.sin(dx))
 
         d.override_units(_units_1, inplace=True)
 
@@ -10482,7 +10126,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d.Units = _units_radians
 
         dx = d.to_dask_array()
-        d._set_dask(da.sinh(dx), reset_mask_hardness=False)
+        d._set_dask(da.sinh(dx))
 
         d.override_units(_units_1, inplace=True)
 
@@ -10541,7 +10185,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d.Units = _units_radians
 
         dx = d.to_dask_array()
-        d._set_dask(da.cosh(dx), reset_mask_hardness=False)
+        d._set_dask(da.cosh(dx))
 
         d.override_units(_units_1, inplace=True)
 
@@ -10603,7 +10247,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d.Units = _units_radians
 
         dx = d.to_dask_array()
-        d._set_dask(da.tanh(dx), reset_mask_hardness=False)
+        d._set_dask(da.tanh(dx))
 
         d.override_units(_units_1, inplace=True)
 
@@ -10641,7 +10285,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             dx = da.log(dx)
             dx /= da.log(base)
 
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         d.override_units(
             _units_1, inplace=True
@@ -10738,7 +10382,6 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
                         f"Can't squeeze {d.__class__.__name__}: "
                         f"Can't remove axis of size {shape[i]}"
                     )
-        # --- End: if
 
         if not axes:
             return d
@@ -10747,7 +10390,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         # one size 1 axis needs squeezing.
         dx = d.to_dask_array()
         dx = dx.squeeze(axis=tuple(axes))
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
@@ -10810,7 +10453,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             d.Units = _units_radians
 
         dx = d.to_dask_array()
-        d._set_dask(da.tan(dx), reset_mask_hardness=False)
+        d._set_dask(da.tan(dx))
 
         d.override_units(_units_1, inplace=True)
 
@@ -10863,7 +10506,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             "'Data.to_memory' is not available. "
             "Consider using 'Data.persist' instead."
         )
-    
+
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
@@ -10926,7 +10569,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             raise ValueError(
                 f"Can't transpose: Axes don't match array: {axes}"
             )
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         return d
 
@@ -10965,7 +10608,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
-        d._set_dask(da.trunc(dx), reset_mask_hardness=False)
+        d._set_dask(da.trunc(dx))
         return d
 
     @classmethod
@@ -11270,6 +10913,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+
         dx = d.to_dask_array()
 
         # TODODASK: Steps to preserve invalid values shown, taking same
@@ -11290,7 +10934,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
             # Step 3: reattach original mask onto the output data
             dx = da.ma.masked_array(dx, mask=dx_mask)
 
-        d._set_dask(dx, reset_mask_hardness=True)
+        d._set_dask(dx)
 
         if units is not None:
             d.override_units(units, inplace=True)
@@ -11414,7 +11058,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
 
         dx = d.to_dask_array()
         dx = da.roll(dx, shift, axis=axis)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         return d
 
@@ -12086,7 +11730,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.square(dx, dtype=dtype)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         units = d.Units
         if units:
@@ -12156,7 +11800,7 @@ class Data(Container, cfdm.Data, DataClassDeprecationsMixin):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = da.sqrt(dx, dtype=dtype)
-        d._set_dask(dx, reset_mask_hardness=False)
+        d._set_dask(dx)
 
         units = d.Units
         if units:
@@ -12538,7 +12182,7 @@ def _collapse(
 
     dx = d.to_dask_array()
     dx = func(dx, **kwargs)
-    d._set_dask(dx, reset_mask_hardness=True)
+    d._set_dask(dx)
 
     return d, weights
 

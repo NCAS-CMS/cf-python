@@ -29,7 +29,6 @@ from dask import config
 from dask.utils import parse_bytes
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
-from numpy import isclose as _x_numpy_isclose
 from numpy import shape as _numpy_shape
 from numpy import take as _numpy_take
 from numpy import tile as _numpy_tile
@@ -1829,39 +1828,6 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
                 return out
 
 
-def _numpy_isclose(a, b, rtol=None, atol=None):
-    """Returns a boolean array where two broadcastable arrays are
-    element-wise equal within a tolerance.
-
-    The tolerance values are positive, typically very small numbers. The
-    relative difference (``rtol * abs(b)``) and the absolute difference
-    ``atol`` are added together to compare against the absolute difference
-    between ``a`` and ``b``.
-
-    :Parameters:
-
-        a, b: array_like
-            Input arrays to compare.
-
-        atol: `float`, optional
-            The absolute tolerance for all numerical comparisons, By
-            default the value returned by the `atol` function is used.
-
-        rtol: `float`, optional
-            The relative tolerance for all numerical comparisons, By
-            default the value returned by the `rtol` function is used.
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    try:
-        return _x_numpy_isclose(a, b, rtol=rtol, atol=atol)
-    except (IndexError, NotImplementedError, TypeError):
-        return a == b
-
-
 def parse_indices(shape, indices, cyclic=False, keepdims=True):
     """Parse indices for array access and assignment.
 
@@ -3228,11 +3194,10 @@ def _DEPRECATION_ERROR_ATTRIBUTE(
 ):
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
-    
+
     raise DeprecationError(
         f"{instance.__class__.__name__} attribute {attribute!r} has been "
-        f"deprecated at version {version} and will be removed at version "
-        f"{removed_at}. {message}"
+        f"deprecated at version {version}{removed_at}. {message}"
     )
 
 
