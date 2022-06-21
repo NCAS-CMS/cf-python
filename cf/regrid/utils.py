@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 ESMF_method_map = {}
 
 # --------------------------------------------------------------------
-# Define a named tuple that defines a the source or destination grid,
+# Define a named tuple for the source or destination grid definition,
 # with the following names:
 #
 #   axis_keys: The domain axis identifiers if the regrid axes, in the
@@ -33,14 +33,14 @@ ESMF_method_map = {}
 #                 expected by `Data._regrid`. E.g. [3, 2]
 #   shape: The sizes of the regrid axes, in the order expected by
 #          `Data._regrid`. E.g. [73, 96]
-#   coords: The regrid axis coordinates, in order expected by
+#   coords: The regrid axis coordinates, in the order expected by
 #           `ESMF.Grid`. If the coordinates are 2-d (or more) then the
 #           axis order of each coordinate object must be as expected
 #           by `ESMF.Grid`.
-#   bounds: The regrid axis coordinate bounds, in order expected by
-#           `ESMF.Grid`. If the corodinates are 2-d (or more) then the
-#           axis order of each bounds object must be as expected by
-#           `ESMF.Grid`
+#   bounds: The regrid axis coordinate bounds, in the order expected
+#           by `ESMF.Grid`. If the corodinates are 2-d (or more) then 
+#           the axis order of each bounds object must be as expected
+#           by `ESMF.Grid`.
 #   cyclic: For spherical regridding, whether or not the longitude
 #           axis is cyclic.
 # --------------------------------------------------------------------
@@ -50,7 +50,6 @@ Grid = namedtuple(
 )
 
 
-@_inplace_enabled(default=False)
 def regrid(
     coord_system,
     src,
@@ -71,6 +70,8 @@ def regrid(
     """TODO.
     
     .. versionadded:: TODODASK
+
+    .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`
 
     :Parameters:
 
@@ -131,7 +132,9 @@ def regrid(
 
         dst_axes=None,
 
-        axes=None,
+        axes: sequence, optional
+    
+            Ignored if *coord_sys* is ``spherical``.
 
         ignore_degenerate: `bool`, optional
             For conservative regridding methods, if True (the default)
@@ -153,7 +156,8 @@ def regrid(
 
         check_coordinates: `bool`, optional
 
-            {{inplace: `bool`, optional}}
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
 
     :Returns:
 
@@ -166,26 +170,21 @@ def regrid(
     if isinstance(dst, RegridOperator):
         regrid_operator = dst
         coord_sys = regrid_operator.coord_sys
-        dst_cyclic = regrid_operator.dst_cyclic
         method = regrid_operator.method
+        dst_cyclic = regrid_operator.dst_cyclic
         dst = regrid_operator.get_parameter("dst").copy()
         dst_axes = regrid_operator.get_parameter("dst_axes")
         if coord_sys == "Cartesian":
             axes = regrid_operator.get_parameter("axes")
-
-        if return_operator:
-            return regrid_operator
 
         create_regrid_operator = False
     else:
         create_regrid_operator = True
         dst = dst.copy()
 
-    if return_operator:
+    if not inplace:
         src = src.copy()
-    else:
-        src = _inplace_enabled_define_and_cleanup(src)
-
+    
     if method not in ESMF_method_map:
         raise ValueError(
             "Can't regrid: Must set a valid regridding method from "
@@ -250,7 +249,7 @@ def regrid(
         use_dst_mask = False
     elif isinstance(dst, src._Domain.__class__):
         use_dst_mask = False
-    elif create_regrid_operator and not isinstance(dst, src.__class__):
+    elif create_regrid_operator or not isinstance(dst, src.__class__):
         raise TypeError(
             "'dst' parameter must be of type Field, Domain, dict "
             f"or RegridOperator. Got: {type(dst)}"
@@ -388,6 +387,9 @@ def regrid(
             coordinates=check_coordinates,
         )
 
+    if return_operator:
+        return regrid_operator
+        
     # ----------------------------------------------------------------
     # Still here? Then do the regridding
     # ----------------------------------------------------------------
@@ -430,6 +432,9 @@ def regrid(
             )
 
     # Return the regridded source field
+    if inplace:
+        return
+    
     return src
 
 

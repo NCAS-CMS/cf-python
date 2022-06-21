@@ -15558,39 +15558,36 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   improvements by avoiding having to calculate the
                   weights for each source field. Note that for the
                   other types of *dst* parameter, the calculation of
-                  the regrid weights is not a lazy operation.
+                  the regrid weights is not a lazy operation.                  
 
-                  As the use of a regrid operator is intended to
-                  improve performance, by default the source grid
-                  coordinates defined by the operator are not checked
-                  against those of the source field. This check will
-                  be carried out, however, if the *check_coordinates*
-                  parameter is True.
-
-                  .. warning:: In the event that the grids defined by
-                               the regrid operator and source field
-                               have the same shape but different
-                               coordinates, if the coordinates check
-                               is **not** carried out then the
-                               regriding will still work but give
-                               incorrect results.
+                  .. note:: The source grid of the regrid operator is
+                            checked for compatability with the grid of
+                            the source field. By default only the
+                            computationally cheap tests are performed
+                            (checking that the coordinate system,
+                            cyclicity and grid shape are the same),
+                            with the grid coordinates not being
+                            checked. The coordinates check will be
+                            carried out, however, if the
+                            *check_coordinates* parameter is True.
 
             {{method: `str` or `None`, optional}}
 
             src_cyclic: `None` or `bool`, optional
                 Specifies whether or not the source grid longitude
-                axis is cyclic (i.e. the first and last cells are
-                adjacent). If `None` (the default) then the cyclicity
-                will be inferred from the source grid coordinates,
-                defaulting to `False` if it can not be determined.
+                axis is cyclic (i.e. the first and last cells of the
+                axis are adjacent). If `None` (the default) then the
+                cyclicity will be inferred from the source grid
+                coordinates, defaulting to `False` if it can not be
+                determined.
     
             dst_cyclic: `None` or `bool`, optional
                 Specifies whether or not the destination grid
                 longitude axis is cyclic (i.e. the first and last
-                cells are adjacent). If `None` (the default) then the
-                cyclicity will be inferred from the destination grid
-                coordinates, defaulting to `False` if it can not be
-                determined.
+                cells of the axis are adjacent). If `None` (the
+                default) then the cyclicity will be inferred from the
+                destination grid coordinates, defaulting to `False` if
+                it can not be determined.
 
                 Ignored if *dst* is a `RegridOperator`.
 
@@ -15618,24 +15615,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 by index ``0`` of all of the non-regridding
                 dimensions.
             
-                For any other type of *dst*, *use_dst_mask* is
-                ignored.
-
-                Ignored if *dst* is a `RegridOperator`.
+                Ignored if *dst* is not a `Field`.
   
             src_axes: `dict`, optional
                 When the source field's grid is defined by 2-d
                 latitude and longitude coordinates, then the
                 *src_axes* parameter must be set to specify the X and
-                Y axes of the grid, unless they can be defined by
+                Y axes of the grid, unless they can be defined by any
                 suitable 1-d dimension coordinates. The dictionary
                 must have the keys ``'X'`` and ``'Y'``, whose values
                 identify a unique domain axis construct by passing the
-                given axis description to a call of the field or
-                domain construct's `domain_axis` method. For example,
-                for a value of ``'ncdim%x'``, the domain axis
-                construct returned by ``f.domain_axis('ncdim%x')`` is
-                selected.
+                given axis description to a call of the source field
+                construct's `domain_axis` method. For example, for a
+                value of ``'ncdim%x'``, the domain axis construct
+                returned by ``f.domain_axis('ncdim%x')`` is selected.
 
                 Ignored if *dst* is a `RegridOperator`.
 
@@ -15643,8 +15636,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   ``src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
 
                 *Parameter example:*
-                  The axes may be identified by their position in the
-                  data array: ``src_axes={'X': 1, 'Y': 0}``.
+                  The axes may also be identified by their position in
+                  the source field's data array: ``src_axes={'X': 1,
+                  'Y': 0}``.
 
             dst_axes: `dict`, optional
                 When the destination grid is defined by 2-d latitude
@@ -15666,18 +15660,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   ``dst_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
 
                 *Parameter example:*
-                  If *dst* is a `Field`, then axes may be identified
-                  by their position in the field's data array:
-                  ``dst_axes={'X': 1, 'Y': 0}``.
+                  If *dst* is a `Field`, then axes may also be
+                  identified by their position in the field's data
+                  array: ``dst_axes={'X': 1, 'Y': 0}``.
 
             ignore_degenerate: `bool`, optional
                 For conservative regridding methods, if True (the
                 default) then degenerate cells (those for which enough
-                vertices collapse to leave a cell either a line or a
-                point) are skipped, not producing a result. Otherwise
-                an error will be produced if degenerate cells are
-                found, that will be present in the ESMF log files if
-                `cf.regrid_logging` is set to True.
+                vertices collapse to leave a cell as either a line or
+                a point) are skipped, not producing a
+                result. Otherwise an error will be produced if
+                degenerate cells are found, that will be present in
+                the ESMF log files if `cf.regrid_logging` is set to
+                True.
 
                 For all other regridding methods, degenerate cells are
                 always skipped, regardless of the value of

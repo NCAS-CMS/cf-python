@@ -3715,8 +3715,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
 
-        # Rechunk so that each chunk contains data as expected by the
-        # regrid operator, i.e. the regrid axes all have chunksize -1.
+        # Rechunk so that each chunk contains data in the form
+        # expected by the regrid operator, i.e. the regrid axes all
+        # have chunksize -1.
         chunks = dx.chunks
         shape = dx.shape
         if not all(chunks[i] == (shape[i],) for i in regrid_axes):
