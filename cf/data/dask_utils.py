@@ -4,9 +4,6 @@ These will typically be functions that operate on dask chunks. For
 instance, as would be passed to `dask.array.map_blocks`.
 
 """
-from functools import reduce
-from operator import mul
-
 import dask.array as da
 import numpy as np
 from dask.core import flatten
@@ -283,6 +280,8 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
         `numpy.ndarray`
 
     """
+    from math import prod
+    
     if np.ma.is_masked(a):
         # ------------------------------------------------------------
         # Input array is masked: Replace missing values with NaNs and
@@ -297,8 +296,8 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
             # Count the number of missing values that contribute to
             # each output percentile value and make a corresponding
             # mask
-            full_size = reduce(
-                mul, [size for i, size in enumerate(a.shape) if i in axis], 1
+            full_size = prod(
+                [size for i, size in enumerate(a.shape) if i in axis]
             )
             n_missing = full_size - np.ma.count(
                 a, axis=axis, keepdims=keepdims

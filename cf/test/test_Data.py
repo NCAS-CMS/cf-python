@@ -3558,7 +3558,12 @@ class DataTest(unittest.TestCase):
             b = np.ma.filled(b, np.nan)
             with np.testing.suppress_warnings() as sup:
                 sup.filter(
-                    RuntimeWarning, message=".*All-NaN slice encountered"
+                    category=RuntimeWarning,
+                    message=".*All-NaN slice encountered.*",
+                )
+                sup.filter(
+                    category=UserWarning,
+                    message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
                 )
                 p = np.nanpercentile(b, 90, axis=-1, keepdims=True)
 
@@ -3567,8 +3572,8 @@ class DataTest(unittest.TestCase):
 
             with np.testing.suppress_warnings() as sup:
                 sup.filter(
-                    RuntimeWarning,
-                    message=".*invalid value encountered in less",
+                    category=UserWarning,
+                    message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
                 )
                 b = np.ma.where(b < p, np.ma.masked, b)
 
