@@ -9153,7 +9153,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         {{equals tolerance}}
 
         For numeric data arrays, ``d.isclose(e, rtol, atol)`` is
-        equivalent to ``abs(d - e) <= ``atol + rtol*abs(e)``,
+        equivalent to ``abs(d - e) <= atol + rtol*abs(e)``,
         otherwise it is equivalent to ``d == e``.
 
         :Parameters:
