@@ -403,11 +403,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(
-                        array,
-                        copy=copy,
-                        delete_source=False,
-                    )
+                    self._set_dask(array, copy=copy, delete_source=False)
             else:
                 self._del_dask(None)
 
@@ -1741,13 +1737,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("_preserve_partitions")
-    def median(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        inplace=False,
-    ):
+    def median(self, axes=None, squeeze=False, mtol=1, inplace=False):
         """Calculate median values.
 
         Calculates the median value or the median values along axes.
@@ -1789,11 +1779,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         return self.percentile(
-            50,
-            axes=axes,
-            squeeze=squeeze,
-            mtol=mtol,
-            inplace=inplace,
+            50, axes=axes, squeeze=squeeze, mtol=mtol, inplace=inplace
         )
 
     @_inplace_enabled(default=False)
@@ -1865,11 +1851,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
 
         p90 = d.percentile(
-            90,
-            axes=axes,
-            squeeze=False,
-            mtol=mtol,
-            inplace=False,
+            90, axes=axes, squeeze=False, mtol=mtol, inplace=False
         )
 
         with np.testing.suppress_warnings() as sup:
@@ -3188,13 +3170,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data0.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units1 ** p
+                        return data0, data1, units1**p
                     elif units0.isdimensionless:
                         # units0 is dimensionless
                         if not units0.equals(_units_1):
@@ -3206,17 +3188,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data0.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units1 ** p
+                        return data0, data1, units1**p
                 # --- End: if
 
                 # This will deliberately raise an exception
-                units1 ** units0
+                units1**units0
             else:
                 # -----------------------------------------------------
                 # Operator is __pow__
@@ -3264,13 +3246,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data1.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units0 ** p
+                        return data0, data1, units0**p
                     elif units1.isdimensionless:
                         # units1 is dimensionless
                         if not units1.equals(_units_1):
@@ -3281,17 +3263,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data1.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units0 ** p
+                        return data0, data1, units0**p
                 # --- End: if
 
                 # This will deliberately raise an exception
-                units0 ** units1
+                units0**units1
             # --- End: if
         # --- End: if
 
@@ -3361,8 +3343,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 and self.Units.isreftime
             ):
                 other = cf_dt(
-                    other,
-                    calendar=getattr(self.Units, "calendar", "standard"),
+                    other, calendar=getattr(self.Units, "calendar", "standard")
                 )
             elif other is None:
                 # Can't sensibly initialize a Data object from a bare
@@ -3389,12 +3370,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             atol = self._atol
 
         # ------------------------------------------------------------
-        # Perform the binary operation with data0 (self) and data1 (other)
+        # Perform the binary operation with data0 (self) and data1
+        # (other)
         # ------------------------------------------------------------
         if method == "__eq__":
-            result = da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+            if dx0.dtype.kind in "US" or dx1.dtype.kind in "US":
+                result = getattr(dx0, method)(dx1)
+            else:
+                result = da.isclose(dx0, dx1, rtol=rtol, atol=atol)
         elif method == "__ne__":
-            result = ~da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+            if dx0.dtype.kind in "US" or dx1.dtype.kind in "US":
+                result = getattr(dx0, method)(dx1)
+            else:
+                result = ~da.isclose(dx0, dx1, rtol=rtol, atol=atol)
         elif inplace:
             # Find non-in-place equivalent operator (remove 'i')
             equiv_method = method[:2] + method[3:]
@@ -5995,12 +5983,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def maximum_absolute_value(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
+        self, axes=None, squeeze=False, mtol=1, split_every=None, inplace=False
     ):
         """Calculate maximum absolute values.
 
@@ -6133,12 +6116,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def minimum_absolute_value(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
+        self, axes=None, squeeze=False, mtol=1, split_every=None, inplace=False
     ):
         """Calculate minimum absolute values.
 
@@ -9168,19 +9146,20 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         inspect(self)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def isclose(self, y, rtol=None, atol=None):
-        """Return where data are element-wise equal to other,
-        broadcastable data.
+        """Return where data are element-wise equal within a tolerance.
 
         {{equals tolerance}}
 
-        For numeric data arrays, ``d.isclose(y, rtol, atol)`` is
-        equivalent to ``abs(d - y) <= ``atol + rtol*abs(y)``, otherwise it
-        is equivalent to ``d == y``.
+        For numeric data arrays, ``d.isclose(e, rtol, atol)`` is
+        equivalent to ``abs(d - e) <= atol + rtol*abs(e)``,
+        otherwise it is equivalent to ``d == e``.
 
         :Parameters:
 
             y: data_like
+                The array to compare.
 
             atol: `float`, optional
                 The absolute tolerance for all numerical comparisons. By
@@ -9193,6 +9172,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
              `bool`
+                 A boolean array of where the data are close to *y*.
 
         **Examples**
 
@@ -9216,30 +9196,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [ True  True  True]
 
         """
-        if atol is None:
-            atol = self._atol
-
-        if rtol is None:
-            rtol = self._rtol
-
-        units0 = self.Units
-        units1 = getattr(y, "Units", _units_None)
-        if units0.isreftime and units1.isreftime:
-            if not units0.equals(units1):
-                if not units0.equivalent(units1):
-                    pass
-
-            x = self.override_units(_units_1)
-            y = y.copy()
-            y.Units = units0
-            y.override_units(_units_1, inplace=True)
-        else:
-            x = self
-
+        a = np.empty((), dtype=self.dtype)
+        b = np.empty((), dtype=da.asanyarray(y).dtype)
         try:
-            return abs(x - y) <= float(atol) + float(rtol) * abs(y)
-        except (TypeError, NotImplementedError, IndexError):
+            # Check if a numerical isclose is possible
+            np.isclose(a, b)
+        except TypeError:
+            # self and y do not have suitable numeric data types
+            # (e.g. both are strings)
             return self == y
+        else:
+            # self and y have suitable numeric data types
+            if atol is None:
+                atol = self._atol
+
+            if rtol is None:
+                rtol = self._rtol
+
+            y = conform_units(y, self.Units)
+
+            dx = da.isclose(self, y, atol=atol, rtol=rtol)
+
+            d = self.copy(array=False)
+            d._set_dask(dx)
+            d.hardmask = _DEFAULT_HARDMASK
+            d.override_units(_units_None, inplace=True)
+            return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -11426,7 +11408,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if not units:
                 units = _units_None
             else:
-                units = units ** 2
+                units = units**2
 
         d.override_units(units, inplace=True)
 
@@ -11609,7 +11591,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         units = d.Units
         if units:
-            d.override_units(units ** 2, inplace=True)
+            d.override_units(units**2, inplace=True)
 
         return d
 
@@ -11747,7 +11729,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         units = d.Units
         if units:
-            d.override_units(units ** 2, inplace=True)
+            d.override_units(units**2, inplace=True)
 
         return d
 
@@ -11818,7 +11800,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         units = d.Units
         if units:
             try:
-                d.override_units(units ** 0.5, inplace=True)
+                d.override_units(units**0.5, inplace=True)
             except ValueError as e:
                 raise type(e)(
                     f"Incompatible units for taking a square root: {units!r}"

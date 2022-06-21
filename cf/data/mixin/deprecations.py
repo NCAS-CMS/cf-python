@@ -109,10 +109,7 @@ class DataClassDeprecationsMixin:
     def dtvarray(self):
         """Deprecated at version 3.0.0."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self,
-            "dtvarray",
-            version="3.0.0",
-            removed_at="4.0.0",
+            self, "dtvarray", version="3.0.0", removed_at="4.0.0"
         )  # pragma: no cover
 
     @property
@@ -123,10 +120,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self,
-            "in_memory",
-            version="TODODASK",
-            removed_at="5.0.0",
+            self, "in_memory", version="TODODASK", removed_at="5.0.0"
         )  # pragma: no cover
 
     @property
@@ -760,9 +754,7 @@ class DataClassDeprecationsMixin:
     def save_to_disk(self, itemsize=None):
         """Deprecated."""
         _DEPRECATION_ERROR_METHOD(
-            self,
-            "save_to_disk",
-            removed_at="4.0.0",
+            self, "save_to_disk", removed_at="4.0.0"
         )  # pragma: no cover
 
     def to_disk(self):
@@ -783,10 +775,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self,
-            "to_disk",
-            version="TODODASK",
-            removed_at="5.0.0",
+            self, "to_disk", version="TODODASK", removed_at="5.0.0"
         )  # pragma: no cover
 
     @staticmethod
