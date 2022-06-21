@@ -3170,13 +3170,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data0.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units1 ** p
+                        return data0, data1, units1**p
                     elif units0.isdimensionless:
                         # units0 is dimensionless
                         if not units0.equals(_units_1):
@@ -3188,17 +3188,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data0.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units1 ** p
+                        return data0, data1, units1**p
                 # --- End: if
 
                 # This will deliberately raise an exception
-                units1 ** units0
+                units1**units0
             else:
                 # -----------------------------------------------------
                 # Operator is __pow__
@@ -3246,13 +3246,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data1.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units0 ** p
+                        return data0, data1, units0**p
                     elif units1.isdimensionless:
                         # units1 is dimensionless
                         if not units1.equals(_units_1):
@@ -3263,17 +3263,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data1.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units0 ** p
+                        return data0, data1, units0**p
                 # --- End: if
 
                 # This will deliberately raise an exception
-                units0 ** units1
+                units0**units1
             # --- End: if
         # --- End: if
 
@@ -11408,7 +11408,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if not units:
                 units = _units_None
             else:
-                units = units ** 2
+                units = units**2
 
         d.override_units(units, inplace=True)
 
@@ -11591,7 +11591,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         units = d.Units
         if units:
-            d.override_units(units ** 2, inplace=True)
+            d.override_units(units**2, inplace=True)
 
         return d
 
@@ -11729,7 +11729,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         units = d.Units
         if units:
-            d.override_units(units ** 2, inplace=True)
+            d.override_units(units**2, inplace=True)
 
         return d
 
@@ -11800,7 +11800,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         units = d.Units
         if units:
             try:
-                d.override_units(units ** 0.5, inplace=True)
+                d.override_units(units**0.5, inplace=True)
             except ValueError as e:
                 raise type(e)(
                     f"Incompatible units for taking a square root: {units!r}"
