@@ -1137,11 +1137,7 @@ def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
 
 
 def cf_mean_combine(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    **kwargs,
+    pairs, axis=None, dtype="f8", computing_meta=False, **kwargs
 ):
     """Combination calculations for the mean.
 
@@ -1255,12 +1251,7 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     }
 
 
-def cf_max_combine(
-    pairs,
-    axis=None,
-    computing_meta=False,
-    **kwargs,
-):
+def cf_max_combine(pairs, axis=None, computing_meta=False, **kwargs):
     """Combination calculations for the maximum.
 
     This function is passed to `dask.array.reduction` as its *combine*
@@ -1284,10 +1275,7 @@ def cf_max_combine(
     if computing_meta:
         return mx
 
-    return {
-        "max": mx,
-        "N": sum_sample_sizes(pairs, axis, **kwargs),
-    }
+    return {"max": mx, "N": sum_sample_sizes(pairs, axis, **kwargs)}
 
 
 def cf_max_agg(
@@ -1414,12 +1402,7 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     }
 
 
-def cf_min_combine(
-    pairs,
-    axis=None,
-    computing_meta=False,
-    **kwargs,
-):
+def cf_min_combine(pairs, axis=None, computing_meta=False, **kwargs):
     """Combination calculations for the minimum.
 
     This function is passed to `dask.array.reduction` as its *combine*
@@ -1443,10 +1426,7 @@ def cf_min_combine(
     if computing_meta:
         return mn
 
-    return {
-        "min": mn,
-        "N": sum_sample_sizes(pairs, axis, **kwargs),
-    }
+    return {"min": mn, "N": sum_sample_sizes(pairs, axis, **kwargs)}
 
 
 def cf_min_agg(
@@ -1528,11 +1508,7 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
 
 
 def cf_range_combine(
-    pairs,
-    axis=None,
-    dtype=None,
-    computing_meta=False,
-    **kwargs,
+    pairs, axis=None, dtype=None, computing_meta=False, **kwargs
 ):
     """Combination calculations for the range.
 
@@ -1559,11 +1535,7 @@ def cf_range_combine(
 
     mn = min_arrays(pairs, "min", axis, None, **kwargs)
 
-    return {
-        "max": mx,
-        "min": mn,
-        "N": sum_sample_sizes(pairs, axis, **kwargs),
-    }
+    return {"max": mx, "min": mn, "N": sum_sample_sizes(pairs, axis, **kwargs)}
 
 
 def cf_range_agg(
@@ -1724,11 +1696,7 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
 
 
 def cf_sample_size_combine(
-    pairs,
-    axis=None,
-    dtype="i8",
-    computing_meta=False,
-    **kwargs,
+    pairs, axis=None, dtype="i8", computing_meta=False, **kwargs
 ):
     """Combination calculations for the sample size.
 
@@ -1836,11 +1804,7 @@ def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
 
 
 def cf_sum_combine(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    **kwargs,
+    pairs, axis=None, dtype="f8", computing_meta=False, **kwargs
 ):
     """Combination calculations for the sum.
 
@@ -1865,10 +1829,7 @@ def cf_sum_combine(
     if computing_meta:
         return x
 
-    return {
-        "sum": x,
-        "N": sum_sample_sizes(pairs, axis, **kwargs),
-    }
+    return {"sum": x, "N": sum_sample_sizes(pairs, axis, **kwargs)}
 
 
 def cf_sum_agg(
@@ -2099,11 +2060,7 @@ def cf_var_chunk(
 
 
 def cf_var_combine(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    **kwargs,
+    pairs, axis=None, dtype="f8", computing_meta=False, **kwargs
 ):
     """Combination calculations for the variance.
 

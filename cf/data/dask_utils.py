@@ -90,26 +90,14 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
 
         for a, b in zip(flatten(a_blocks), flatten(b_blocks)):
             result &= np.ma.allclose(
-                a,
-                b,
-                masked_equal=masked_equal,
-                rtol=rtol,
-                atol=atol,
+                a, b, masked_equal=masked_equal, rtol=rtol, atol=atol
             )
 
         return result
 
     axes = tuple(range(x.ndim))
     return da.blockwise(
-        allclose,
-        "",
-        x,
-        axes,
-        y,
-        axes,
-        dtype=bool,
-        rtol=rtol,
-        atol=atol,
+        allclose, "", x, axes, y, axes, dtype=bool, rtol=rtol, atol=atol
     )
 
 

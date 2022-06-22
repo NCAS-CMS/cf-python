@@ -3790,6 +3790,38 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_isclose(self):
+        d = cf.Data(1, "m")
+        for x in (1, [1], np.array([[1]]), da.from_array(1), cf.Data(1)):
+            self.assertTrue(d.isclose(x).array)
+
+        self.assertFalse(d.isclose(1.1))
+
+        d = cf.Data([[1000, 2500]], "m")
+        e = cf.Data([1, 2.5], "km")
+        f = d.isclose(e)
+        self.assertEqual(f.shape, d.shape)
+        self.assertTrue((f.array == True).all())
+
+        e = cf.Data([99, 99], "km")
+        f = d.isclose(e)
+        self.assertEqual(f.shape, d.shape)
+        self.assertTrue((f.array == False).all())
+
+        d = cf.Data(1, "days since 2000-01-01")
+        e = cf.Data(0, "days since 2000-01-02")
+        self.assertTrue(d.isclose(e).array)
+
+        # Strings
+        d = cf.Data(["foo", "bar"])
+        self.assertTrue((d.isclose(["foo", "bar"]).array == True).all())
+
+        # Incompatible units
+        d = cf.Data([[1000, 2500]], "m")
+        e = cf.Data([1, 2.5], "s")
+        with self.assertRaises(ValueError):
+            d.isclose(e)
+
     def test_Data_to_dask_array(self):
         d = cf.Data([1, 2, 3, 4], "m")
         d.Units = cf.Units("km")
