@@ -2042,12 +2042,12 @@ class DataTest(unittest.TestCase):
                 )
 
                 try:
-                    d ** x
+                    d**x
                 except Exception:
                     pass
                 else:
                     message = "Failed in {!r}**{!r}".format(d, x)
-                    self.assertTrue((d ** x).all(), message)
+                    self.assertTrue((d**x).all(), message)
         # --- End: for
 
         for a0 in arrays:
@@ -2121,12 +2121,12 @@ class DataTest(unittest.TestCase):
                 )
 
                 try:
-                    x ** d
+                    x**d
                 except Exception:
                     pass
                 else:
                     message = "Failed in {}**{!r}".format(x, d)
-                    self.assertTrue((x ** d).all(), message)
+                    self.assertTrue((x**d).all(), message)
 
                 a = a0.copy()
                 try:
@@ -2241,12 +2241,12 @@ class DataTest(unittest.TestCase):
                 )
 
                 try:
-                    d ** x
+                    d**x
                 except Exception:
                     pass
                 else:
                     self.assertTrue(
-                        (x ** d).all(), "{}**{}".format(x, repr(d))
+                        (x**d).all(), "{}**{}".format(x, repr(d))
                     )
 
                 self.assertTrue(
@@ -2489,18 +2489,18 @@ class DataTest(unittest.TestCase):
         self.assertEqual(key, (None, None, None))
         self.assertTrue(value.equals(d))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_count(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data(np.arange(24).reshape(2, 3, 4))
+        self.assertEqual(d.count().array, 24)
+        for axis, c in enumerate(d.shape):
+            self.assertTrue((d.count(axis=axis).array == c).all())
 
-        d = cf.Data(ma)
-        self.assertEqual(d.count(), 284, d.count())
-        self.assertEqual(d.count_masked(), d.size - 284, d.count_masked())
+        self.assertTrue((d.count(axis=[0, 1]).array == 6).all())
 
-        d = cf.Data(a)
-        self.assertEqual(d.count(), d.size)
-        self.assertEqual(d.count_masked(), 0)
+        d[0, 0, 0] = np.ma.masked
+        self.assertEqual(d.count().array, 23)
+        for axis, c in enumerate(d.shape):
+            self.assertEqual(d.count(axis=axis).datum(0), c - 1)
 
     def test_Data_exp(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2528,8 +2528,8 @@ class DataTest(unittest.TestCase):
     def test_Data_func(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-        
-        a = np.array([[np.e, np.e ** 2, np.e ** 3.5], [0, 1, np.e ** -1]])
+
+        a = np.array([[np.e, np.e**2, np.e**3.5], [0, 1, np.e**-1]])
 
         # Using sine as an example function to apply
         b = np.sin(a)
@@ -2577,7 +2577,7 @@ class DataTest(unittest.TestCase):
             return
 
         # Test natural log, base e
-        a = np.array([[np.e, np.e ** 2, np.e ** 3.5], [0, 1, np.e ** -1]])
+        a = np.array([[np.e, np.e**2, np.e**3.5], [0, 1, np.e**-1]])
         b = np.log(a)
         c = cf.Data(a, "s")
         d = c.log()
@@ -2591,7 +2591,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(c.shape, b.shape)
 
         # Test another base, using 10 as an example (special managed case)
-        a = np.array([[10, 100, 10 ** 3.5], [0, 1, 0.1]])
+        a = np.array([[10, 100, 10**3.5], [0, 1, 0.1]])
         b = np.log10(a)
         c = cf.Data(a, "s")
         d = c.log(base=10)
@@ -2599,7 +2599,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.shape, b.shape)
 
         # Test an arbitrary base, using 4 (not a special managed case like 10)
-        a = np.array([[4, 16, 4 ** 3.5], [0, 1, 0.25]])
+        a = np.array([[4, 16, 4**3.5], [0, 1, 0.25]])
         b = np.log(a) / np.log(4)  # the numpy way, using log rules from school
         c = cf.Data(a, "s")
         d = c.log(base=4)
@@ -3626,7 +3626,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(func().Units, d.Units)
 
         for func in (d.sum_of_squares, d.var):
-            self.assertEqual(func().Units, d.Units ** 2)
+            self.assertEqual(func().Units, d.Units**2)
 
         for func in (d.sum_of_weights, d.sum_of_weights2):
             self.assertEqual(func().Units, cf.Units())
@@ -3635,7 +3635,7 @@ class DataTest(unittest.TestCase):
         w = cf.Data(1, "m")
         self.assertEqual(d.integral(weights=w).Units, d.Units * w.Units)
         self.assertEqual(d.sum_of_weights(weights=w).Units, w.Units)
-        self.assertEqual(d.sum_of_weights2(weights=w).Units, w.Units ** 2)
+        self.assertEqual(d.sum_of_weights2(weights=w).Units, w.Units**2)
 
         # Dimensionless data
         d = cf.Data([1, 2])
