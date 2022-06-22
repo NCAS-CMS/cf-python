@@ -5323,55 +5323,51 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.override_units(_units_None, inplace=True)
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def allclose(self, y, rtol=None, atol=None):
-        """Returns True if two broadcastable arrays have equal values,
-        False otherwise.
+        """Whether an array is element-wise equal within a tolerance.
 
-        Two real numbers ``x`` and ``y`` are considered equal if
-        ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-        differences) and ``rtol`` (the tolerance on relative differences)
-        are positive, typically very small numbers. See the *atol* and
-        *rtol* parameters.
+        Return True if the data is broadcastable to array *y* and
+        element-wise equal within a tolerance.
+
+        {{equals tolerance}}
 
         .. seealso:: `all`, `any`, `isclose`
 
         :Parameters:
 
             y: data_like
+                The data to compare.
 
-            atol: `float`, optional
-                The absolute tolerance for all numerical comparisons. By
-                default the value returned by the `atol` function is used.
+            {{rtol: number, optional}}
 
-            rtol: `float`, optional
-                The relative tolerance for all numerical comparisons. By
-                default the value returned by the `rtol` function is used.
+            {{atol: number, optional}}
 
         :Returns:
 
-            `bool`
+            `Data`
+                A scalar boolean array that is `True` if the two arrays
+                are equal within the given tolerance, or `False`
+                otherwise.
 
         **Examples**
 
         >>> d = cf.Data([1000, 2500], 'metre')
         >>> e = cf.Data([1, 2.5], 'km')
-        >>> d.allclose(e)
+        >>> bool(d.allclose(e))
         True
 
         >>> d = cf.Data(['ab', 'cdef'])
-        >>> d.allclose([[['ab', 'cdef']]])
-        True
-
-        >>> d.allclose(e)
+        >>> bool(d.allclose([[['ab', 'cdef']]]))
         True
 
         >>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
         >>> e = cf.Data([1, 2.5], 'km')
-        >>> d.allclose(e)
+        >>> bool(d.allclose(e))
         True
 
         >>> d = cf.Data([1, 1, 1], 's')
-        >>> d.allclose(1)
+        >>> bool(d.allclose(1))
         True
 
         """

@@ -2042,12 +2042,12 @@ class DataTest(unittest.TestCase):
                 )
 
                 try:
-                    d ** x
+                    d**x
                 except Exception:
                     pass
                 else:
                     message = "Failed in {!r}**{!r}".format(d, x)
-                    self.assertTrue((d ** x).all(), message)
+                    self.assertTrue((d**x).all(), message)
         # --- End: for
 
         for a0 in arrays:
@@ -2121,12 +2121,12 @@ class DataTest(unittest.TestCase):
                 )
 
                 try:
-                    x ** d
+                    x**d
                 except Exception:
                     pass
                 else:
                     message = "Failed in {}**{!r}".format(x, d)
-                    self.assertTrue((x ** d).all(), message)
+                    self.assertTrue((x**d).all(), message)
 
                 a = a0.copy()
                 try:
@@ -2241,12 +2241,12 @@ class DataTest(unittest.TestCase):
                 )
 
                 try:
-                    d ** x
+                    d**x
                 except Exception:
                     pass
                 else:
                     self.assertTrue(
-                        (x ** d).all(), "{}**{}".format(x, repr(d))
+                        (x**d).all(), "{}**{}".format(x, repr(d))
                     )
 
                 self.assertTrue(
@@ -2529,7 +2529,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = np.array([[np.e, np.e ** 2, np.e ** 3.5], [0, 1, np.e ** -1]])
+        a = np.array([[np.e, np.e**2, np.e**3.5], [0, 1, np.e**-1]])
 
         # Using sine as an example function to apply
         b = np.sin(a)
@@ -2577,7 +2577,7 @@ class DataTest(unittest.TestCase):
             return
 
         # Test natural log, base e
-        a = np.array([[np.e, np.e ** 2, np.e ** 3.5], [0, 1, np.e ** -1]])
+        a = np.array([[np.e, np.e**2, np.e**3.5], [0, 1, np.e**-1]])
         b = np.log(a)
         c = cf.Data(a, "s")
         d = c.log()
@@ -2591,7 +2591,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(c.shape, b.shape)
 
         # Test another base, using 10 as an example (special managed case)
-        a = np.array([[10, 100, 10 ** 3.5], [0, 1, 0.1]])
+        a = np.array([[10, 100, 10**3.5], [0, 1, 0.1]])
         b = np.log10(a)
         c = cf.Data(a, "s")
         d = c.log(base=10)
@@ -2599,7 +2599,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.shape, b.shape)
 
         # Test an arbitrary base, using 4 (not a special managed case like 10)
-        a = np.array([[4, 16, 4 ** 3.5], [0, 1, 0.25]])
+        a = np.array([[4, 16, 4**3.5], [0, 1, 0.25]])
         b = np.log(a) / np.log(4)  # the numpy way, using log rules from school
         c = cf.Data(a, "s")
         d = c.log(base=4)
@@ -3645,7 +3645,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(func().Units, d.Units)
 
         for func in (d.sum_of_squares, d.var):
-            self.assertEqual(func().Units, d.Units ** 2)
+            self.assertEqual(func().Units, d.Units**2)
 
         for func in (d.sum_of_weights, d.sum_of_weights2):
             self.assertEqual(func().Units, cf.Units())
@@ -3654,7 +3654,7 @@ class DataTest(unittest.TestCase):
         w = cf.Data(1, "m")
         self.assertEqual(d.integral(weights=w).Units, d.Units * w.Units)
         self.assertEqual(d.sum_of_weights(weights=w).Units, w.Units)
-        self.assertEqual(d.sum_of_weights2(weights=w).Units, w.Units ** 2)
+        self.assertEqual(d.sum_of_weights2(weights=w).Units, w.Units**2)
 
         # Dimensionless data
         d = cf.Data([1, 2])
@@ -3789,6 +3789,44 @@ class DataTest(unittest.TestCase):
         # Can't set to Units that are not equivalent
         with self.assertRaises(ValueError):
             d.set_units("km")
+
+    def test_Data_allclose(self):
+        d = cf.Data(1, "m")
+        for x in (1, [1], np.array([[1]]), da.from_array(1), cf.Data(1)):
+            self.assertTrue(d.allclose(x).array)
+
+        d = cf.Data([1000, 2500], "metre")
+        e = cf.Data([1, 2.5], "km")
+        self.assertTrue(d.allclose(e))
+
+        e = cf.Data([1, 999], "km")
+        self.assertFalse(d.allclose(e))
+
+        d = cf.Data([[1000, 2500], [1000, 2500]], "metre")
+        e = cf.Data([1, 2.5], "km")
+        self.assertTrue(d.allclose(e))
+
+        d = cf.Data(["ab", "cdef"])
+        e = [[["ab", "cdef"]]]
+        self.assertTrue(d.allclose(e))
+
+        d = cf.Data([1, 1, 1], "s")
+        e = 1
+        self.assertTrue(d.allclose(e))
+
+        # Incompatible units
+        with self.assertRaises(ValueError):
+            d.allclose(cf.Data([1, 1, 1], "m"))
+
+        # Not broadcastable
+        with self.assertRaises(ValueError):
+            d.allclose([1, 2])
+
+        # Incompatible units
+        d = cf.Data([[1000, 2500]], "m")
+        e = cf.Data([1, 2.5], "s")
+        with self.assertRaises(ValueError):
+            d.allclose(e)
 
     def test_Data_isclose(self):
         d = cf.Data(1, "m")
