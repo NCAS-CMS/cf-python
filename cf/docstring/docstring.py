@@ -341,6 +341,37 @@ _docstring_substitution_definitions = {
 
                 When *weights* is a data_like object then it must have
                 the same shape as the array.""",
+    # percentile method
+    "{{percentile method: `str`, optional}}": """method: `str`, optional
+                Specify the interpolation method to use when the
+                percentile lies between two data values. The methods
+                are listed here, but their definitions must be
+                referenced from the documentation for
+                `numpy.percentile`.
+
+                For the default ``'linear'`` method, if the percentile
+                lies between two adjacent data values ``i < j`` then
+                the percentile is calculated as ``i+(j-i)*fraction``,
+                where ``fraction`` is the fractional part of the index
+                surrounded by ``i`` and ``j``.
+
+                ===============================
+                *method*
+                ===============================
+                ``'inverted_cdf'``
+                ``'averaged_inverted_cdf'``
+                ``'closest_observation'``
+                ``'interpolated_inverted_cdf'``
+                ``'hazen'``
+                ``'weibull'``
+                ``'linear'`` (default)
+                ``'median_unbiased'``
+                ``'normal_unbiased'``
+                ``'lower'``
+                ``'higher'``
+                ``'nearest'``
+                ``'midpoint'``
+                ===============================""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

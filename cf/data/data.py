@@ -1782,21 +1782,24 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             50, axes=axes, squeeze=squeeze, mtol=mtol, inplace=inplace
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def mean_of_upper_decile(
         self,
         axes=None,
         weights=None,
+        method="linear",
         squeeze=False,
         mtol=1,
         include_decile=True,
         split_every=None,
         inplace=False,
     ):
-        """Calculate means of the upper deciles.
+        """Mean of values defined by the upper tenth of their
+        distribution.
 
-        Calculates the mean of the upper decile or the mean or the
-        mean of the upper decile values along axes.
+        For the values defined by the upper tenth of their
+        distribution, calculates their mean, or their mean along axes.
 
         See
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
@@ -1810,20 +1813,25 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{weights: data_like, `dict`, or `None`, optional}}
 
-                TODODASK - note that weights only applies to the
-                           calculation of the mean, not the upper
-                           decile.
+                .. note:: *weights* only applies to the calculation of
+                          the mean defined by the upper tenth of their
+                          distribution.
+
+            {{percentile method: `str`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}}
 
-                TODODASK - note that mtol only applies to the
-                           calculation of the upper decile, not the
-                           mean.
+                .. note:: *mtol* only applies to the calculation of
+                          the location of the 90th percentile.
 
             include_decile: `bool`, optional
-                TODODASK
+                If True then include in the mean any values that are
+                equal to the 90th percentile. By default these are
+                excluded.
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -1839,35 +1847,40 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASK
+        >>> d = cf.Data(np.arange(20).reshape(4, 5), 'm')
+        >>> print(d.array)
+        [[ 0  1  2  3  4]
+         [ 5  6  7  8  9]
+         [10 11 12 13 14]
+         [15 16 17 18 19]]
+        >>> e = d.mean_of_upper_decile()
+        >>> e
+        <CF Data(1, 1): [[18.5]] m>
 
         """
-
-        # TODODASK: Some updates off the back of daskifying collapse
-        #           have been done, but still needs looking at. A unit
-        #           test has also been written, but not run. Needs
-        #           __lt__ and __le__.
-
         d = _inplace_enabled_define_and_cleanup(self)
 
+        # Find the 90th percentile
         p90 = d.percentile(
             90, axes=axes, squeeze=False, mtol=mtol, inplace=False
         )
 
-        with np.testing.suppress_warnings() as sup:
-            sup.filter(
-                RuntimeWarning, message=".*invalid value encountered in less.*"
-            )
-            if include_decile:
-                mask = d < p90
-            else:
-                mask = d <= p90
+        # Mask all elements that are less than (or equal to) the 90th
+        # percentile
+        if include_decile:
+            less_than_p90 = d < p90
+        else:
+            less_than_p90 = d <= p90
 
         if mtol < 1:
-            mask.filled(False, inplace=True)
+            # Set missing values to True to ensure that 'd' gets
+            # masked at those locations
+            less_than_p90.filled(True, inplace=True)
 
-        d.where(mask, cf_masked, inplace=True)
+        d.where(less_than_p90, cf_masked, inplace=True)
 
+        # Find the mean of elements greater than (or equal to) the
+        # 90th percentile
         d.mean(
             axes=axes,
             weights=weights,
@@ -1947,36 +1960,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 By default, of *axes* is `None`, all axes are selected.
 
-            method: `str`, optional
-                Specify the interpolation method to use when the
-                desired percentile lies between two data values. The
-                methods are listed here, but their definitions must be
-                referenced from the documentation for
-                `numpy.percentile`.
+            {{percentile method: `str`, optional}}
 
-                For the default ``'linear'`` method, if the percentile
-                lies between two adjacent data values ``i < j`` then
-                the percentile is calculated as ``i+(j-i)*fraction``,
-                where ``fraction`` is the fractional part of the index
-                surrounded by ``i`` and ``j``.
-
-                ===============================
-                *method*
-                ===============================
-                ``'inverted_cdf'``
-                ``'averaged_inverted_cdf'``
-                ``'closest_observation'``
-                ``'interpolated_inverted_cdf'``
-                ``'hazen'``
-                ``'weibull'``
-                ``'linear'`` (default)
-                ``'median_unbiased'``
-                ``'normal_unbiased'``
-                ``'lower'``
-                ``'higher'``
-                ``'nearest'``
-                ``'midpoint'``
-                ===============================
+                .. versionadded:: TODODASK
 
             squeeze: `bool`, optional
                 If True then all axes over which percentiles are
@@ -7996,10 +7982,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = {{package}}.Data([[1, 2, 3]])
+        >>> d = cf.Data([[1, 2, 3]])
         >>> print(d.filled().array)
         [[1 2 3]]
-        >>> d[0, 0] = cfdm.masked
+        >>> d[0, 0] = cf.masked
         >>> print(d.filled().array)
         [-9223372036854775806                    2                    3]
         >>> d.set_fill_value(-99)
