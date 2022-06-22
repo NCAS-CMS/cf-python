@@ -110,9 +110,7 @@ class DataTest(unittest.TestCase):
         ]
         for expected_warning in expexted_warning_msgs:
             warnings.filterwarnings(
-                "ignore",
-                category=RuntimeWarning,
-                message=expected_warning,
+                "ignore", category=RuntimeWarning, message=expected_warning
             )
 
     def test_Data_equals(self):
@@ -311,21 +309,13 @@ class DataTest(unittest.TestCase):
             )
         # ...including masked string arrays
         sa4 = cf.Data(
-            np.ma.array(
-                ["one", "two", "three"],
-                mask=[0, 0, 1],
-                dtype="S5",
-            ),
+            np.ma.array(["one", "two", "three"], mask=[0, 0, 1], dtype="S5"),
             "m",
             chunks=mask_test_chunksize,
         )
         self.assertTrue(sa4.equals(sa4.copy()))
         sa5 = cf.Data(
-            np.ma.array(
-                ["one", "two", "three"],
-                mask=[0, 1, 0],
-                dtype="S5",
-            ),
+            np.ma.array(["one", "two", "three"], mask=[0, 1, 0], dtype="S5"),
             "m",
             chunks=mask_test_chunksize,
         )
@@ -3583,9 +3573,16 @@ class DataTest(unittest.TestCase):
             e = d.mean_of_upper_decile(
                 axes=axis, weights=weights, squeeze=True
             )
-            e = np.ma.array(e.array)
+            with np.testing.suppress_warnings() as sup:
+                sup.filter(
+                    category=UserWarning,
+                    message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
+                )
+                e = e.array
 
-            self.assertTrue((e.mask == b.mask).all())
+            self.assertTrue(
+                (np.ma.getmaskarray(e) == np.ma.getmaskarray(b)).all()
+            )
             self.assertTrue(np.allclose(e, b))
 
         # mtol
@@ -3647,16 +3644,10 @@ class DataTest(unittest.TestCase):
         ):
             self.assertEqual(func().Units, d.Units)
 
-        for func in (
-            d.sum_of_squares,
-            d.var,
-        ):
+        for func in (d.sum_of_squares, d.var):
             self.assertEqual(func().Units, d.Units ** 2)
 
-        for func in (
-            d.sum_of_weights,
-            d.sum_of_weights2,
-        ):
+        for func in (d.sum_of_weights, d.sum_of_weights2):
             self.assertEqual(func().Units, cf.Units())
 
         # Weighted
@@ -3669,10 +3660,7 @@ class DataTest(unittest.TestCase):
         d = cf.Data([1, 2])
         self.assertEqual(d.integral(weights=w).Units, w.Units)
 
-        for func in (
-            d.sum_of_squares,
-            d.var,
-        ):
+        for func in (d.sum_of_squares, d.var):
             self.assertEqual(func().Units, cf.Units())
 
     def test_Data_collapse_keepdims(self):
@@ -3730,11 +3718,7 @@ class DataTest(unittest.TestCase):
         # Cases for which both d and e collapse to a result of the
         # double of same data type
         for x, r in zip((d, e), ("i8", "f8")):
-            for func in (
-                x.integral,
-                x.sum,
-                x.sum_of_squares,
-            ):
+            for func in (x.integral, x.sum, x.sum_of_squares):
                 self.assertEqual(func().dtype, r)
 
         # Cases for which both d and e collapse to a result of double
@@ -3753,10 +3737,7 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(func().dtype, r)
 
         x = d
-        for func in (
-            x.sum_of_weights,
-            x.sum_of_weights2,
-        ):
+        for func in (x.sum_of_weights, x.sum_of_weights2):
             self.assertEqual(func().dtype, "i8")
 
         # Weights
