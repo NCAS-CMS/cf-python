@@ -5360,7 +5360,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `Data`
-                A scalar boolean array that is `True if the two arrays
+                A scalar boolean array that is `True` if the two arrays
                 are equal within the given tolerance, or `False`
                 otherwise.
 
