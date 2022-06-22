@@ -271,6 +271,19 @@ class DataUtilsTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cf.data.utils.first_non_missing_value(d, method="bad")
 
+    def test_Data_Utils_conform_units(self):
+        for x in (1, [1, 2], "foo", np.array([[1]])):
+            self.assertEqual(cf.data.utils.conform_units(x, cf.Units("m")), x)
+
+        d = cf.Data([1000, 2000], "m")
+        e = cf.data.utils.conform_units(d, cf.Units("m"))
+        self.assertIs(e, d)
+        e = cf.data.utils.conform_units(d, cf.Units("km"))
+        self.assertTrue(e.equals(cf.Data([1, 2], "km"), ignore_data_type=True))
+
+        with self.assertRaises(ValueError):
+            cf.data.utils.conform_units(d, cf.Units("s"))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
