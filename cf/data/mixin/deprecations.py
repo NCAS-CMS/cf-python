@@ -109,10 +109,7 @@ class DataClassDeprecationsMixin:
     def dtvarray(self):
         """Deprecated at version 3.0.0."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self,
-            "dtvarray",
-            version="3.0.0",
-            removed_at="4.0.0",
+            self, "dtvarray", version="3.0.0", removed_at="4.0.0"
         )  # pragma: no cover
 
     @property
@@ -123,10 +120,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self,
-            "in_memory",
-            version="TODODASK",
-            removed_at="5.0.0",
+            self, "in_memory", version="TODODASK", removed_at="5.0.0"
         )  # pragma: no cover
 
     @property
@@ -150,6 +144,33 @@ class DataClassDeprecationsMixin:
             self,
             "ismasked",
             message="Use the 'is_masked' attribute instead",
+            version="TODODASK",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    @property
+    def isscalar(self):
+        """True if the data is a 0-d scalar array.
+
+        Deprecated at version TODODASK. Use `d.ndim == 0`` instead.
+
+        **Examples**
+
+        >>> d = cf.Data(9, 'm')
+        >>> d.isscalar
+        True
+        >>> d = cf.Data([9], 'm')
+        >>> d.isscalar
+        False
+        >>> d = cf.Data([9, 10], 'm')
+        >>> d.isscalar
+        False
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "isscalar",
+            message="Use 'd.ndim == 0' instead",
             version="TODODASK",
             removed_at="5.0.0",
         )  # pragma: no cover
@@ -235,7 +256,8 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames` instead."""
+        """Deprecated at version 3.4.0, use method `get_filenames`
+        instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
@@ -285,6 +307,23 @@ class DataClassDeprecationsMixin:
             "All files are now automatically closed when not being accessed.",
             version="TODODASK",
             removed_at="5.0.0",
+        )  # pragma: no cover
+
+    def get_filenames(self):
+        """Return the names of files containing parts of the data array.
+
+        Deprecated at version TODODASK.
+
+        :Returns:
+
+            `set`
+                The file names in normalized, absolute form. If the
+                data is in memory then an empty `set` is returned.
+
+        """
+        raise DeprecationError(
+            "Data method 'get_filenames' has been deprecated at "
+            "version TODODASK and is not available."
         )  # pragma: no cover
 
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
@@ -715,9 +754,7 @@ class DataClassDeprecationsMixin:
     def save_to_disk(self, itemsize=None):
         """Deprecated."""
         _DEPRECATION_ERROR_METHOD(
-            self,
-            "save_to_disk",
-            removed_at="4.0.0",
+            self, "save_to_disk", removed_at="4.0.0"
         )  # pragma: no cover
 
     def to_disk(self):
@@ -738,12 +775,9 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self,
-            "to_disk",
-            version="TODODASK",
-            removed_at="5.0.0",
+            self, "to_disk", version="TODODASK", removed_at="5.0.0"
         )  # pragma: no cover
-        
+
     @staticmethod
     def seterr(all=None, divide=None, over=None, under=None, invalid=None):
         """Set how floating-point errors in the results of arithmetic
@@ -893,4 +927,40 @@ class DataClassDeprecationsMixin:
             "are handled, due to the use of `dask` for handling all array "
             "manipulations. This may change in the future (see "
             "https://github.com/dask/dask/issues/3245 for more details)."
+        )
+
+    @classmethod
+    def reconstruct_sectioned_data(cls, sections, cyclic=(), hardmask=None):
+        """Expects a dictionary of Data objects with ordering
+        information as keys, as output by the section method when called
+        with a Data object. Returns a reconstructed cf.Data object with
+        the sections in the original order.
+
+        Deprecated at version TODODASK and is no longer available.
+
+        :Parameters:
+
+            sections: `dict`
+                The dictionary of `Data` objects with ordering information
+                as keys.
+
+        :Returns:
+
+            `Data`
+                The resulting reconstructed Data object.
+
+        **Examples**
+
+        >>> d = cf.Data(numpy.arange(120).reshape(2, 3, 4, 5))
+        >>> x = d.section([1, 3])
+        >>> len(x)
+        8
+        >>> e = cf.Data.reconstruct_sectioned_data(x)
+        >>> e.equals(d)
+        True
+
+        """
+        raise DeprecationError(
+            "Data method 'reconstruct_sectioned_data' has been deprecated "
+            "at version TODODASK and is no longer available"
         )

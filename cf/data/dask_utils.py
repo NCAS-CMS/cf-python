@@ -14,8 +14,7 @@ from dask.core import flatten
 from ..cfdatetime import dt2rt, rt2dt
 from ..functions import atol as cf_atol
 from ..functions import rtol as cf_rtol
-
-# from dask.utils import deepmap  # Apply function inside nested lists
+from ..units import Units
 
 
 def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
@@ -94,26 +93,14 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
 
         for a, b in zip(flatten(a_blocks), flatten(b_blocks)):
             result &= np.ma.allclose(
-                a,
-                b,
-                masked_equal=masked_equal,
-                rtol=rtol,
-                atol=atol,
+                a, b, masked_equal=masked_equal, rtol=rtol, atol=atol
             )
 
         return result
 
     axes = tuple(range(x.ndim))
     return da.blockwise(
-        allclose,
-        "",
-        x,
-        axes,
-        y,
-        axes,
-        dtype=bool,
-        rtol=rtol,
-        atol=atol,
+        allclose, "", x, axes, y, axes, dtype=bool, rtol=rtol, atol=atol
     )
 
 
@@ -594,3 +581,45 @@ def cf_dt2rt(a, units):
 
     """
     return dt2rt(a, units_out=units, units_in=None)
+
+
+def cf_units(a, from_units, to_units):
+    """Convert array values to have different equivalent units.
+
+    .. versionadded:: TODODASK
+
+    .. seealso:: `cf.Data.Units`
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array.
+
+        from_units: `Units`
+            The existing units of the array.
+
+        to_units: `Units`
+            The units that the array should be converted to. Must be
+            equivalent to *from_units*.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An array containing values in the new units. In order to
+            represent the new units, the returned data type may be
+            different from that of the input array. For instance, if
+            *a* has an integer data type, *from_units* are kilometres,
+            and *to_units* are ``'miles'`` then the returned array
+            will have a float data type.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> a = np.array([1, 2])
+    >>> print(cf.data.dask_utils.cf_units(a, cf.Units('km'), cf.Units('m')))
+    [1000. 2000.]
+
+    """
+    return Units.conform(
+        a, from_units=from_units, to_units=to_units, inplace=False
+    )
