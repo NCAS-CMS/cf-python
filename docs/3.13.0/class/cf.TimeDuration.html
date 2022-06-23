@@ -1,0 +1,514 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.TimeDuration &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.TimeDuration.Units" href="../attribute/cf.TimeDuration.Units.html" />
+    <link rel="prev" title="cf.Query.inspect" href="../method/cf.Query.inspect.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.13.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.Query.inspect.html" title="previous chapter">cf.Query.inspect</a></li>
+      <li>Next: <a href="../attribute/cf.TimeDuration.Units.html" title="next chapter">cf.TimeDuration.Units</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-timeduration">
+<h1>cf.TimeDuration<a class="headerlink" href="#cf-timeduration" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.TimeDuration">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">TimeDuration</code><span class="sig-paren">(</span><em class="sig-param">duration</em>, <em class="sig-param">units=None</em>, <em class="sig-param">month=1</em>, <em class="sig-param">day=1</em>, <em class="sig-param">hour=0</em>, <em class="sig-param">minute=0</em>, <em class="sig-param">second=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.0/cf/timeduration.py#L54-L1654"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A duration of time.</p>
+<p>The duration of time is a number of either calendar years,
+calendar months, days, hours, minutes or seconds.</p>
+<p>A calendar year (or month) is an arbitrary year (or month) in an
+arbitrary calendar. A calendar is as part of the time duration,
+but will be taken from the context in which the time duration
+instance is being used. For example, a calendar may be specified
+when creating time intervals (see below for examples).</p>
+<p>A default offset is specified that may be used by some
+applications to temporally position the time duration. For
+example, setting <code class="docutils literal notranslate"><span class="pre">cf.TimeDuration(1,</span> <span class="pre">'calendar_month',</span> <span class="pre">day=16,</span>
+<span class="pre">hour=12)</span></code> will define a duration of one calendar month which, by
+default, starts at 12:00 on the 16th of the month. Note that the
+offset</p>
+<p><strong>Changing the units</strong></p>
+<p>The time duration’s units may be changed in place by assigning
+equivalent units to the <a class="reference internal" href="../attribute/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> attribute:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">&lt;CF TimeDuration: P1D (Y-M-D 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">Units</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">&lt;CF TimeDuration: PT86400.0S (Y-M-D 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">Units</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;minutes&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">&lt;CF TimeDuration: PT1440.0M (Y-M-D 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">Units</span> <span class="o">=</span> <span class="s1">&#39;calendar_months&#39;</span>
+<span class="go">ValueError: Can&#39;t set units (currently &lt;Units: minutes&gt;) to non-equivalent units &lt;Units: calendar_months&gt;</span>
+</pre></div>
+</div>
+<p><strong>Creating time intervals</strong></p>
+<p>A time interval of exactly the time duration, starting or ending
+at a particular date-time, may be produced with the <a class="reference internal" href="../method/cf.TimeDuration.interval.html#cf.TimeDuration.interval" title="cf.TimeDuration.interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code></a>
+method. If elements of the start or end date-time are not
+specified, then default values are taken from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code> attributes of
+the time duration instance:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">&lt;CF TimeDuration: P6M (Y-M-01 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">1999</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="go">(cftime.DatetimeGregorian(1999-12-01 00:00:00),</span>
+<span class="go"> cftime.DatetimeGregorian(2000-06-01 00:00:00))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">&lt;CF TimeDuration: P5D (Y-M-D 06:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2004</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(cftime.DatetimeGregorian(2004-02-26 00:00:00),</span>
+<span class="go"> cftime.DatetimeGregorian(2004-03-02 00:00:00))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2004</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(cftime.DatetimeNoLeap(2004-02-25 00:00:00),</span>
+<span class="go"> cftime.DatetimeNoLeap(2004-03-02 00:00:00))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2004</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(cftime.Datetime360Day(2004-02-27 00:00:00),</span>
+<span class="go"> cftime.Datetime360Day(2004-03-02 00:00:00))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2004</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">iso</span><span class="o">=</span><span class="s1">&#39;start and duration&#39;</span><span class="p">)</span>
+<span class="go">&#39;2004-02-27 00:00:00/P5D&#39;</span>
+</pre></div>
+</div>
+<p><strong>Comparison operations</strong></p>
+<p>Comparison operations are defined for <a class="reference internal" href="#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> objects,
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> objects, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays and numbers:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="mi">25</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">12.0</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">30.5</span> <span class="o">!=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">1.5</span><span class="p">))</span>
+<span class="go">numpy.bool_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.5</span><span class="p">])</span>
+<span class="go">array([ True])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span> <span class="o">&gt;</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span>
+<span class="go">array([[False,  True]])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">&lt;CF Data(): True&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">2.</span><span class="p">],</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF Data(1): [True]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="mi">60</span><span class="p">]],</span> <span class="s1">&#39;seconds&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF Data(1, 1): [[True]]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF Data(2): [True, False]&gt;</span>
+</pre></div>
+</div>
+<p><strong>Arithmetic operations</strong></p>
+<p>Arithmetic operations are defined for <a class="reference internal" href="#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> objects,
+date-time-like objects (such as <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code>,
+<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, etc.), <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> objects, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays and
+numbers:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: P92D (Y-M-D 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: P65.0D (Y-M-D 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: P64.5D (Y-M-D 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="mi">21</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: P65.75Y (Y-01-01 00:00:00)&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="go">&lt;CF TimeDuration: P32D (Y-M-D 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">4.5</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: P34.5D (Y-M-D 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.5</span>
+<span class="go">&lt;CF TimeDuration: P61.5Y (Y-01-01 00:00:00)&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: 4.5 hours (from Y-M-D h:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">8.0</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: 4.5 hours (from Y-M-D h:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span> <span class="o">//</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">8.0</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: 4.0 hours (from Y-M-D h:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="mf">2.25</span><span class="p">]])</span>
+<span class="go">&lt;CF TimeDuration: 81.0 calendar_months (from Y-M-01 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span> <span class="o">//</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">0.825</span><span class="p">])</span>
+<span class="go">&lt;CF TimeDuration: P43.0M (Y-01-01 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span>
+<span class="go">&lt;CF TimeDuration: P6M (Y-01-01 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;calendar_year&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: P0.0M (Y-01-01 00:00:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_year&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: P12.0M (Y-01-01 00:00:00)&gt;</span>
+</pre></div>
+</div>
+<p>The in place operators (<code class="docutils literal notranslate"><span class="pre">+=</span></code>, <code class="docutils literal notranslate"><span class="pre">//=</span></code>, etc.) are supported in a
+similar manner.</p>
+<p><strong>Attributes</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 84%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">duration</span></code></p></td>
+<td><p>The length of the time duration in a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object
+with units.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code></p></td>
+<td><p>The default year for time interval creation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></p></td>
+<td><p>The default month for time interval creation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></p></td>
+<td><p>The default day for time interval creation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code></p></td>
+<td><p>The default hour for time interval creation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code></p></td>
+<td><p>The default minute for time interval creation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></p></td>
+<td><p>The default second for time interval creation.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Constructors</strong></p>
+<p>For convenience, the following functions may also be used to
+create time duration objects:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 88%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a></p></td>
+<td><p>Create a time duration of calendar years.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a></p></td>
+<td><p>Create a time duration of calendar months.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a></p></td>
+<td><p>Create a time duration of days.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../function/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a></p></td>
+<td><p>Create a time duration of hours.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../function/cf.m.html#cf.m" title="cf.m"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.m</span></code></a></p></td>
+<td><p>Create a time duration of minutes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../function/cf.s.html#cf.s" title="cf.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.s</span></code></a></p></td>
+<td><p>Create a time duration of seconds.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../function/cf.dt.html#cf.dt" title="cf.dt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt</span></code></a>, <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code></p>
+</div>
+<p><strong>Initialization</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>duration: data-like</dt><dd><p>The length of the time duration.</p>
+<p>A data-like object is any object containing array-like or
+scalar data which could be used to create a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>
+object.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>Instances, <code class="docutils literal notranslate"><span class="pre">x</span></code>, of following types are all examples of
+data-like objects (because <code class="docutils literal notranslate"><span class="pre">cf.Data(x)</span></code> creates a
+valid <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object), <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>,
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Coordinate</span></code>,
+<a class="reference internal" href="cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a>, optional</dt><dd><blockquote>
+<div><p>The units of the time duration. Required if, and only if,
+<em>duration</em> is not a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object which already
+contains the units. Units must be one of calendar years,
+calendar months, days, hours, minutes or seconds.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">units='calendar_months'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">units='days'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">units=cf.Units('calendar_years')</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+<dl>
+<dt>month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>The offset used when creating, with the <a class="reference internal" href="../method/cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a> method, a
+time interval containing a given date-time.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The offset element <em>month</em> is ignored unless the
+time duration is at least 1 calendar year.</p>
+<p>The offset element <em>day</em> is ignored unless the
+time duration is at least 1 calendar month.</p>
+<p>The offset element <em>hour</em> is ignored unless the
+time duration is at least 1 day</p>
+<p>The offset element <em>minute</em> is ignored unless
+the time duration is at least 1 hour.</p>
+<p>The offset element <em>second</em> is ignored unless
+the time duration is at least 1 minute</p>
+</div>
+<dl>
+<dt><em>Parameter example:</em></dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;calendar_month&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s1">&#39;2000-1-8&#39;</span><span class="p">))</span>
+<span class="go">(cftime.DatetimeGregorian(2000-01-01 00:00:00),</span>
+<span class="go"> cftime.DatetimeGregorian(2000-02-01 00:00:00))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;calendar_month&#39;</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s1">&#39;2000-1-8&#39;</span><span class="p">))</span>
+<span class="go">(cftime.DatetimeGregorian(1999-12-15 00:00:00),</span>
+<span class="go"> cftime.DatetimeGregorian(2000-01-15 00:00:00))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;calendar_month&#39;</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s1">&#39;2000-1-8&#39;</span><span class="p">))</span>
+<span class="go">(cftime.DatetimeGregorian(1999-12-30 00:00:00),</span>
+<span class="go"> cftime.DatetimeGregorian(2000-01-30 00:00:00))</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">3</span> <span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">12</span> <span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">18</span> <span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">30</span> <span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span> <span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The units of the time duration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.TimeDuration.isint.html#cf.TimeDuration.isint" title="cf.TimeDuration.isint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isint</span></code></a></p></td>
+<td><p>True if the time duration is a whole number.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.TimeDuration.iso.html#cf.TimeDuration.iso" title="cf.TimeDuration.iso"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iso</span></code></a></p></td>
+<td><p>Return the time duration as an ISO 8601-like time duration string.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></p></td>
+<td><p>Return a time interval containing a date-time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.TimeDuration.copy.html#cf.TimeDuration.copy" title="cf.TimeDuration.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.TimeDuration.days_in_month.html#cf.TimeDuration.days_in_month" title="cf.TimeDuration.days_in_month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">days_in_month</span></code></a></p></td>
+<td><p>The number of days in a specific month in a specific year in a specific calendar.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.TimeDuration.equals.html#cf.TimeDuration.equals" title="cf.TimeDuration.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>True if two time durations are equal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.TimeDuration.equivalent.html#cf.TimeDuration.equivalent" title="cf.TimeDuration.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></p></td>
+<td><p>True if two time durations are logically equivalent.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.TimeDuration.inspect.html#cf.TimeDuration.inspect" title="cf.TimeDuration.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
+<td><p>Inspect the attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.TimeDuration.interval.html#cf.TimeDuration.interval" title="cf.TimeDuration.interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code></a></p></td>
+<td><p>Return a time interval of exactly the time duration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.TimeDuration.is_day_factor.html#cf.TimeDuration.is_day_factor" title="cf.TimeDuration.is_day_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_day_factor</span></code></a></p></td>
+<td><p>Return True if an integer multiple of the time duration is equal to one day.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-06-23.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

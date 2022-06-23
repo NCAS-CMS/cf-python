@@ -8,6 +8,9 @@ version 3.13.0
   (https://github.com/NCAS-CMS/cf-python/issues/306)
 * Fix bug when setting the CFA "base" option to an empty string in
   `cf.write` (https://github.com/NCAS-CMS/cf-python/issues/346)
+* Fixed failure from `cf.write` when writing identical (auxiliary)
+  coordinates to different data variables in different groups
+  (https://github.com/NCAS-CMS/cf-python/issues/336)
 * Removed ``-g`` from the ``umread_lib/c-lib`` compiler options
   (https://github.com/NCAS-CMS/cf-python/pull/305)
 * Updated the deprecated `distutils.version` to `packaging.version`

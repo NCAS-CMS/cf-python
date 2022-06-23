@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Field.digitize &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.histogram" href="cf.Field.histogram.html" />
+    <link rel="prev" title="cf.Field.bin" href="cf.Field.bin.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.13.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.bin.html" title="previous chapter">cf.Field.bin</a></li>
+      <li>Next: <a href="cf.Field.histogram.html" title="next chapter">cf.Field.histogram</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-field-digitize">
+<h1>cf.Field.digitize<a class="headerlink" href="#cf-field-digitize" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.digitize">
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">digitize</code><span class="sig-paren">(</span><em class="sig-param">bins</em>, <em class="sig-param">upper=False</em>, <em class="sig-param">open_ends=False</em>, <em class="sig-param">closed_ends=None</em>, <em class="sig-param">return_bins=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.0/cf/field.py#L5890-L6242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.digitize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the indices of the bins to which each value belongs.</p>
+<p>Values (including masked values) that do not belong to any bin
+result in masked values in the output field construct of indices.</p>
+<p>Bins defined by percentiles are easily created with the
+<a class="reference internal" href="cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percentile</span></code></a> method</p>
+<dl>
+<dt><em>Example</em>:</dt><dd><p>Find the indices for bins defined by the 10th, 50th and 90th
+percentiles:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bins</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">percentile</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">closed_ends</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>The output field construct is given a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> property, and
+some or all of the following properties that define the bins:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bin_count</span></code></p></td>
+<td><p>An integer giving the number of bins</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code></p></td>
+<td><p>A 1-d vector giving the bin bounds. The
+first two numbers describe the lower and
+upper boundaries of the first bin, the
+second two numbers describe the lower and
+upper boundaries of the second bin, and so
+on. The presence of left-unbounded and
+right-unbounded bins (see the <em>bins</em> and
+<em>open_ends</em> parameters) is deduced from the
+<code class="docutils literal notranslate"><span class="pre">bin_count</span></code> property. If the
+<code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> vector has 2N elements then
+the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> property will be N+2 if
+there are left-unbounded and
+right-unbounded bins, or N if no such bins
+are present.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bin_interval_type</span></code></p></td>
+<td><p>A string that specifies the nature of the
+bin boundaries, i.e. if they are closed or
+open. For example, if the lower boundary is
+closed and the upper boundary is open
+(which is the case when the <em>upper</em>
+parameter is False) then
+<code class="docutils literal notranslate"><span class="pre">bin_interval_type</span></code> will have the value
+<code class="docutils literal notranslate"><span class="pre">'lower:</span> <span class="pre">closed</span> <span class="pre">upper:</span> <span class="pre">open'</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bin_units</span></code></p></td>
+<td><p>A string giving the units of the bin
+boundary values (e.g. <code class="docutils literal notranslate"><span class="pre">'Kelvin'</span></code>). If the
+<em>bins</em> parameter is a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object with
+units then these are used to set this
+property, otherwise the field construct’s
+units are used.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bin_calendar</span></code></p></td>
+<td><p>A string giving the calendar of reference
+date-time units for the bin boundary values
+(e.g. <code class="docutils literal notranslate"><span class="pre">'noleap'</span></code>). If the units are not
+reference date-time units this property
+will be omitted. If the calendar is the CF
+default calendar, then this property may be
+omitted. If the <em>bins</em> parameter is a
+<a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object with a calendar then this is
+used to set this property, otherwise the
+field construct’s calendar is used.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bin_standard_name</span></code></p></td>
+<td><p>A string giving the standard name of the
+bin boundaries
+(e.g. <code class="docutils literal notranslate"><span class="pre">'air_temperature'</span></code>). If there is
+no standard name then this property will be
+omitted.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bin_long_name</span></code></p></td>
+<td><p>A string giving the long name of the bin
+boundaries (e.g. <code class="docutils literal notranslate"><span class="pre">'Air</span> <span class="pre">Temperature'</span></code>). If
+there is no long name, or the
+<code class="docutils literal notranslate"><span class="pre">bin_standard_name</span></code> is present, then this
+property will be omitted.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Of these properties, the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> are
+guaranteed to be output, with the others being dependent on the
+available metadata.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.0.2.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>, <a class="reference internal" href="../function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">histogram</span></code></a>, <a class="reference internal" href="cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percentile</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>bins: array_like</dt><dd><p>The bin boundaries. One of:</p>
+<ul>
+<li><p>An integer</p>
+<p>Create this many equally sized, contiguous bins spanning
+the range of the data. I.e. the smallest bin boundary is
+the minimum of the data and the largest bin boundary is
+the maximum of the data. In order to guarantee that each
+data value lies inside a bin, the <em>closed_ends</em>
+parameter is assumed to be True.</p>
+</li>
+<li><p>A 1-d array</p>
+<p>When sorted into a monotonically increasing sequence,
+each boundary, with the exception of the two end
+boundaries, counts as the upper boundary of one bin and
+the lower boundary of next. If the <em>open_ends</em> parameter
+is True then the lowest lower bin boundary also defines
+a left-unbounded (i.e. not bounded below) bin, and the
+largest upper bin boundary also defines a
+right-unbounded (i.e. not bounded above) bin.</p>
+</li>
+<li><p>A 2-d array</p>
+<p>The second dimension, that must have size 2, contains
+the lower and upper boundaries of each bin. The bins to
+not have to be contiguous, but must not overlap. If the
+<em>open_ends</em> parameter is True then the lowest lower bin
+boundary also defines a left-unbounded (i.e. not bounded
+below) bin, and the largest upper bin boundary also
+defines a right-unbounded (i.e. not bounded above) bin.</p>
+</li>
+</ul>
+</dd>
+<dt>upper: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then each bin includes its upper bound but not its
+lower bound. By default the opposite is applied, i.e. each
+bin includes its lower bound but not its upper bound.</p>
+</dd>
+<dt>open_ends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then create left-unbounded (i.e. not bounded
+below) and right-unbounded (i.e. not bounded above) bins
+from the lowest lower bin boundary and largest upper bin
+boundary respectively. By default these bins are not
+created</p>
+</dd>
+<dt>closed_ends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then extend the most extreme open boundary by a
+small amount so that its bin includes values that are
+equal to the unadjusted boundary value. This is done by
+multiplying it by <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">-</span> <span class="pre">epsilon</span></code> or <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">+</span> <span class="pre">epsilon</span></code>,
+whichever extends the boundary in the appropriate
+direction, where <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is the smallest positive
+64-bit float such that <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">+</span> <span class="pre">epsilson</span> <span class="pre">!=</span> <span class="pre">1.0</span></code>. I.e. if
+<em>upper</em> is False then the largest upper bin boundary is
+made slightly larger and if <em>upper</em> is True then the
+lowest lower bin boundary is made slightly lower.</p>
+<p>By default <em>closed_ends</em> is assumed to be True if <em>bins</em>
+is a scalar and False otherwise.</p>
+</dd>
+<dt>return_bins: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then also return the bins in their 2-d form.</p>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, [<a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>]</dt><dd><p>The field construct containing indices of the bins to
+which each value belongs, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was
+in-place.</p>
+<p>If <em>return_bins</em> is True then also return the bins in
+their 2-d form.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 0.001 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
+<span class="go"> &#39;standard_name&#39;: &#39;specific_humidity&#39;,</span>
+<span class="go"> &#39;units&#39;: &#39;0.001 1&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[  7.  34.   3.  14.  18.  37.  24.  29.]</span>
+<span class="go"> [ 23.  36.  45.  62.  46.  73.   6.  66.]</span>
+<span class="go"> [110. 131. 124. 146.  87. 103.  57.  11.]</span>
+<span class="go"> [ 29.  59.  39.  70.  58.  72.   9.  17.]</span>
+<span class="go"> [  6.  36.  19.  35.  18.  37.  34.  13.]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">&lt;CF Field: long_name=Bin index to which each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0 0 0 0 0 0 0 0]</span>
+<span class="go"> [0 0 0 1 0 1 0 1]</span>
+<span class="go"> [2 2 2 2 1 2 1 0]</span>
+<span class="go"> [0 1 0 1 1 1 0 0]</span>
+<span class="go"> [0 0 0 0 0 0 0 0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &quot;Bin index to which each &#39;specific_humidity&#39; value belongs&quot;,</span>
+<span class="go"> &#39;bin_bounds&#39;: array([  0,  50,  50, 100, 100, 150]),</span>
+<span class="go"> &#39;bin_count&#39;: 3,</span>
+<span class="go"> &#39;bin_interval_type&#39;: &#39;lower: closed upper: open&#39;,</span>
+<span class="go"> &#39;bin_standard_name&#39;: &#39;specific_humidity&#39;,</span>
+<span class="go"> &#39;bin_units&#39;: &#39;0.001 1&#39;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">140</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-- -- --  0  0 -- -- --]</span>
+<span class="go"> [-- --  1 --  1 -- -- --]</span>
+<span class="go"> [ 2  2  2 -- --  2  1  0]</span>
+<span class="go"> [--  1 -- --  1 -- --  0]</span>
+<span class="go"> [-- --  0 --  0 -- --  0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &quot;Bin index to which each &#39;specific_humidity&#39; value belongs&quot;,</span>
+<span class="go"> &#39;bin_bounds&#39;: array([ 10,  20,  40,  60, 100, 140]),</span>
+<span class="go"> &#39;bin_count&#39;: 3,</span>
+<span class="go"> &#39;bin_interval_type&#39;: &#39;lower: closed upper: open&#39;,</span>
+<span class="go"> &#39;bin_standard_name&#39;: &#39;specific_humidity&#39;,</span>
+<span class="go"> &#39;bin_units&#39;: &#39;0.001 1&#39;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">140</span><span class="p">]],</span> <span class="n">open_ends</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ 0 --  0  1  1 -- -- --]</span>
+<span class="go"> [-- --  2 --  2 --  0 --]</span>
+<span class="go"> [ 3  3  3 -- --  3  2  1]</span>
+<span class="go"> [--  2 -- --  2 --  0  1]</span>
+<span class="go"> [ 0 --  1 --  1 -- --  1]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &quot;Bin index to which each &#39;specific_humidity&#39; value belongs&quot;,</span>
+<span class="go"> &#39;bin_bounds&#39;: array([ 10,  20,  40,  60, 100, 140]),</span>
+<span class="go"> &#39;bin_count&#39;: 5,</span>
+<span class="go"> &#39;bin_interval_type&#39;: &#39;lower: closed upper: open&#39;,</span>
+<span class="go"> &#39;bin_standard_name&#39;: &#39;specific_humidity&#39;,</span>
+<span class="go"> &#39;bin_units&#39;: &#39;0.001 1&#39;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">&lt;CF Field: long_name=Bin index to which each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ 1  1  0  1  1  1  1  1]</span>
+<span class="go"> [ 1  1  1  2  2  2  0  2]</span>
+<span class="go"> [-- -- -- --  2 --  2  1]</span>
+<span class="go"> [ 1  2  1  2  2  2  1  1]</span>
+<span class="go"> [ 0  1  1  1  1  1  1  1]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &quot;Bin index to which each &#39;specific_humidity&#39; value belongs&quot;,</span>
+<span class="go"> &#39;bin_bounds&#39;: array([  2,   6,   6,  45,  45, 100]),</span>
+<span class="go"> &#39;bin_count&#39;: 3,</span>
+<span class="go"> &#39;bin_interval_type&#39;: &#39;lower: open upper: closed&#39;,</span>
+<span class="go"> &#39;bin_standard_name&#39;: &#39;specific_humidity&#39;,</span>
+<span class="go"> &#39;bin_units&#39;: &#39;0.001 1&#39;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bins</span>
+<span class="go">&lt;CF Data(10, 2): [[3.0, ..., 146.00000000000003]] 0.001 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&lt;CF Data(10, 2): [[2.999999999999999, ..., 146.0]] 0.001 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0 2 0 0 1 2 1 1]</span>
+<span class="go"> [1 2 2 4 3 4 0 4]</span>
+<span class="go"> [7 8 8 9 5 6 3 0]</span>
+<span class="go"> [1 3 2 4 3 4 0 0]</span>
+<span class="go"> [0 2 1 2 1 2 2 0]]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[  7.  34.   3.  14.  18.  37.  24.  29.]</span>
+<span class="go"> [ 23.  36.   --  62.  46.   --   6.  66.]</span>
+<span class="go"> [110. 131. 124. 146.  87. 103.  57.  11.]</span>
+<span class="go"> [ 29.  59.  39.  70.  58.  72.   9.  17.]</span>
+<span class="go"> [  6.  36.  19.  35.  18.  37.  34.  13.]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ 0  2  0  0  1  2  1  1]</span>
+<span class="go"> [ 1  2 --  4  3 --  0  4]</span>
+<span class="go"> [ 7  8  8  9  5  6  3  0]</span>
+<span class="go"> [ 1  3  2  4  3  4  0  0]</span>
+<span class="go"> [ 0  2  1  2  1  2  2  0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &quot;Bin index to which each &#39;specific_humidity&#39; value belongs&quot;,</span>
+<span class="go"> &#39;bin_bounds&#39;: array([  3. ,  17.3,  17.3,  31.6,  31.6,  45.9,  45.9,  60.2,</span>
+<span class="go">        60.2,  74.5,  74.5,  88.8,  88.8, 103.1, 103.1, 117.4, 117.4, 131.7,</span>
+<span class="go">        131.7, 146. ]),</span>
+<span class="go"> &#39;bin_count&#39;: 10,</span>
+<span class="go"> &#39;bin_interval_type&#39;: &#39;lower: closed upper: open&#39;,</span>
+<span class="go"> &#39;bin_standard_name&#39;: &#39;specific_humidity&#39;,</span>
+<span class="go"> &#39;bin_units&#39;: &#39;0.001 1&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-06-23.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
