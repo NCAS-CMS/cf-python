@@ -101,14 +101,6 @@ from packaging.version import Version
 import importlib.util
 import platform
 
-# Check the version of Python
-_minimum_vn = "3.7.0"
-if Version(platform.python_version()) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad python version: cf requires python version {_minimum_vn} "
-        f"or later. Got {platform.python_version()}"
-    )
-
 _found_ESMF = bool(importlib.util.find_spec("ESMF"))
 
 # TODODASK - Remove the next 2 lines when the move to dask is complete
@@ -144,6 +136,14 @@ try:
     import packaging
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
+
+# Check the version of packaging
+_minimum_vn = "20.0"
+if Version(packaging.__version__) < Version(_minimum_vn):
+    raise RuntimeError(
+        f"Bad packaging version: cf requires packaging>={_minimum_vn}. "
+        f"Got {packaging.__version__} at {packaging.__file__}"
+    )
 
 # Check the version of psutil
 _minimum_vn = "0.6.0"
@@ -195,13 +195,14 @@ if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
         f"Got {_cfdm_version} at {cfdm.__file__}"
     )
 
-# Check the version of packaging
-_minimum_vn = "20.0"
-if Version(packaging.__version__) < Version(_minimum_vn):
-    raise RuntimeError(
-        f"Bad packaging version: cf requires packaging>={_minimum_vn}. "
-        f"Got {packaging.__version__} at {packaging.__file__}"
+# Check the version of Python
+_minimum_vn = "3.7.0"
+if Version(platform.python_version()) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad python version: cf requires python version {_minimum_vn} "
+        f"or later. Got {platform.python_version()}"
     )
+
 
 from .constructs import Constructs
 
