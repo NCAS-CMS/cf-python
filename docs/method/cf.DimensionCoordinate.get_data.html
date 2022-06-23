@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.13.0</a></h1>
 
 
 
@@ -127,10 +127,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.DimensionCoordinate.get_data<a class="headerlink" href="#cf-dimensioncoordinate-get-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DimensionCoordinate.get_data">
-<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">get_data</code><span class="sig-paren">(</span><em class="sig-param">default=ValueError()</em>, <em class="sig-param">_units=None</em>, <em class="sig-param">_fill_value=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/mixin/propertiesdata.py#L4870-L4921"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">get_data</code><span class="sig-paren">(</span><em class="sig-param">default=ValueError()</em>, <em class="sig-param">_units=None</em>, <em class="sig-param">_fill_value=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.0/cf/mixin/propertiesdata.py#L4870-L4921"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p>Note that a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance is returned. Use its <a class="reference internal" href="../attribute/cf.DimensionCoordinate.array.html#cf.DimensionCoordinate.array" title="cf.DimensionCoordinate.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>
-attribute to return the data as an independent <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>
+attribute to return the data as an independent <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>
 <p>The units, calendar and fill value properties are, if set,
 inserted into the data.</p>
 <div class="versionadded">
@@ -158,7 +158,7 @@ raised instead.</p>
 <dd class="field-even"><p>The data.</p>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
@@ -187,7 +187,7 @@ raised instead.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-01-17.
+      &copy;2022, NCAS | Page built on 2022-06-23.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

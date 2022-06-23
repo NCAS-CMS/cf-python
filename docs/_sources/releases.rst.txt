@@ -16,7 +16,8 @@ Documentation for all versions of cf.
 **CF-1.9**
 ----------
 
-* `Version 3.12.0 <https://ncas-cms.github.io/cf-python/3.12.0>`_ (2022-01-22)
+* `Version 3.13.0 <https://ncas-cms.github.io/cf-python/3.13.0>`_ (2022-06-23)
+* `Version 3.12.0 <https://ncas-cms.github.io/cf-python/3.12.0>`_ (2022-01-18)
 * `Version 3.11.0 <https://ncas-cms.github.io/cf-python/3.11.0>`_ (2021-10-08)
 
 **CF-1.8**
@@ -79,7 +80,7 @@ Documentation for all versions of cf.
 * `version 1.0.2     <http://cfpython.bitbucket.io/docs/1.0.2/index.html>`_ (2015-06-05)
 * `version 1.0       <http://cfpython.bitbucket.io/docs/1.0/index.html>`_ (2015-05-27)
 * `version 0.9.9     <http://cfpython.bitbucket.io/docs/0.9.9/index.html>`_ (2015-01-05)
-* `version .9.8.3    <http://cfpython.bitbucket.io/docs/0.9.8.3/index.html>`_ (2014-07-14)
+* `version 0.9.8.3    <http://cfpython.bitbucket.io/docs/0.9.8.3/index.html>`_ (2014-07-14)
 * `version 0.9.8     <http://cfpython.bitbucket.io/docs/0.9.8/index.html>`_ (2013-12-06)
 * `version 0.9.6     <http://cfpython.bitbucket.io/docs/0.9.6/build/index.html>`_ (2012-11-27)
 * `version 0.9.5     <http://cfpython.bitbucket.io/docs/0.9.5/build/index.html>`_ (2012-10-01)
@@ -112,7 +113,7 @@ be found with the `cf.CF` function:
 	     
    >>> import cf
    >>> cf.CF()
-   '1.8'
+   '1.9'
 
 This indicates which version of the CF conventions are represented by
 this release of the cf package, and therefore the version can not be
@@ -125,7 +126,7 @@ version , and is found in the usual manner:
    :caption: *Retrieve the version of the cf package.*
 	     	     
    >>> cf.__version__
-   '3.7.0'
+   '3.13.0'
 
 The next section outlines the scheme used to set version identifiers.
 

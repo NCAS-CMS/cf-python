@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.13.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.where<a class="headerlink" href="#cf-field-where" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.where">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">where</code><span class="sig-paren">(</span><em class="sig-param">condition</em>, <em class="sig-param">x=None</em>, <em class="sig-param">y=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">construct=None</em>, <em class="sig-param">i=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">item=None</em>, <em class="sig-param">**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/field.py#L14874-L15208"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">where</code><span class="sig-paren">(</span><em class="sig-param">condition</em>, <em class="sig-param">x=None</em>, <em class="sig-param">y=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">construct=None</em>, <em class="sig-param">i=False</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">item=None</em>, <em class="sig-param">**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.0/cf/field.py#L14874-L15208"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign to data elements depending on a condition.</p>
 <p>Data can be changed by assigning to elements that are selected by
 a condition based on the data values of the field construct or on
@@ -154,7 +154,7 @@ allowing masked elements to be set to non-masked values.</p>
 <dt>condition:</dt><dd><p>The condition which determines how to assign values to the
 data.</p>
 <p>In general it may be any scalar or array-like object (such
-as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>, <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is
+as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>, <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is
 broadcastable to the shape of the data. Assignment from
 the <em>x</em> and <em>y</em> parameters will be done where elements of
 the condition evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> respectively.</p>
@@ -219,7 +219,7 @@ assign to the field construct’s data from <em>y</em>. The <em>x</em> and
 <ul class="simple">
 <li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. The appropriate data elements array are
 unchanged. This the default.</p></li>
-<li><p>Any scalar or array-like object (such as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>,
+<li><p>Any scalar or array-like object (such as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>,
 <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is broadcastable to the
 shape of the data.</p></li>
 </ul>
@@ -302,7 +302,7 @@ that is returned by this call of the field construct’s
 </dl>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <p>Set data array values to 15 everywhere:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
 </pre></div>
@@ -373,7 +373,7 @@ by indices:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-01-17.
+      &copy;2022, NCAS | Page built on 2022-06-23.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

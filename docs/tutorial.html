@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.12.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.13.0</a></h1>
 
 
 
@@ -120,7 +120,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.12.0 for version 1.9 of the CF conventions.</p>
+<p>Version 3.13.0 for version 1.9 of the CF conventions.</p>
 <p>All of the Python code in this tutorial is available in two executable
 scripts (<a class="reference download internal" download="" href="_downloads/tutorial.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 28kB,
 <a class="reference download internal" download="" href="_downloads/field_analysis.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 8kB).</p>
@@ -1863,7 +1863,7 @@ possible when the “hardmask” attribute is False.</em></span><a class="header
 </pre></div>
 </div>
 </div>
-<p>Note that this is the opposite behaviour to <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays, which
+<p>Note that this is the opposite behaviour to <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays, which
 assume that the mask is <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.generic.html#modifying-the-mask">soft by default</a>. The
 reason for the difference is so that land-sea masks are, by default,
 preserved through assignment operations.</p>
@@ -2655,7 +2655,7 @@ the offset.</em></span><a class="headerlink" href="#id195" title="Permalink to t
 </section>
 <section id="time-duration-constructors">
 <span id="id38"></span><h3><a class="toc-backref" href="#id411">Time duration constructors</a><a class="headerlink" href="#time-duration-constructors" title="Permalink to this headline">¶</a></h3>
-<p>For convenience, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TtimeDuration</span></code> instances can be created with the
+<p>For convenience, <a class="reference internal" href="class/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> instances can be created with the
 following constructors:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -4618,7 +4618,7 @@ and metadata constructs.</em></span><a class="headerlink" href="#id251" title="P
 </div>
 <p>Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
-been generated with dummy values using <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
+been generated with dummy values using <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
 <div class="literal-block-wrapper docutils container" id="id252">
 <div class="code-block-caption"><span class="caption-text"><em>Create a field construct that contains at least one
 instance of each type of metadata construct.</em></span><a class="headerlink" href="#id252" title="Permalink to this code">¶</a></div>
@@ -9031,16 +9031,16 @@ context manager:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care must be taken when combining a construct with a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
 which both of these objects allow themselves to be
 combined with other types:</p>
 <ul class="simple">
 <li><p>If the construct is on the left hand side (LHS) of the
 operation then, as expected, a construct is returned
 whose data is the combination of the original
-construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</p></li>
-<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on the
 LHS) is returned, containing the same data as in the
 first case.</p></li>
@@ -9593,7 +9593,7 @@ options to</p>
 border, and</p></li>
 <li><p>Control the placement position of the filter window.</p></li>
 </ul>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.7.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.8.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating window weights for filtering:</p>
 <div class="literal-block-wrapper docutils container" id="id373">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
@@ -9620,7 +9620,7 @@ convolved values. For example, window weights of <code class="docutils literal n
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and window
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the window weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.7.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.8.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method can not, in general, be
@@ -9980,7 +9980,7 @@ format can not reliably be detected automatically.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-01-17.
+      &copy;2022, NCAS | Page built on 2022-06-23.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

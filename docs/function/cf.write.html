@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.12.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.13.0</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.write<a class="headerlink" href="#cf-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.write">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">cfa_options=None</em>, <em class="sig-param">single=None</em>, <em class="sig-param">double=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">HDF_chunksizes=None</em>, <em class="sig-param">no_shuffle=None</em>, <em class="sig-param">unlimited=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.12.0/cf/read_write/write.py#L19-L745"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">cfa_options=None</em>, <em class="sig-param">single=None</em>, <em class="sig-param">double=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">group=True</em>, <em class="sig-param">coordinates=False</em>, <em class="sig-param">HDF_chunksizes=None</em>, <em class="sig-param">no_shuffle=None</em>, <em class="sig-param">unlimited=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.0/cf/read_write/write.py#L19-L745"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -512,7 +512,7 @@ do not support 64-bit integers). By default, input data
 types are preserved. Any data type conversion is only
 applied to the arrays on disk, and not to the input field
 constructs themselves.</p>
-<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
+<p>Data types conversions are defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a>
 objects in a dictionary whose keys are input data types
 with values of output data types.</p>
 <dl class="simple">
@@ -638,7 +638,7 @@ to writing, instead. See <a class="reference internal" href="../method/cf.Data.n
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <p>There are further worked examples
 <a class="reference internal" href="../tutorial.html#writing-to-a-netcdf-dataset"><span class="std std-ref">in the tutorial</span></a>.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
@@ -665,7 +665,7 @@ to writing, instead. See <a class="reference internal" href="../method/cf.Data.n
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-01-17.
+      &copy;2022, NCAS | Page built on 2022-06-23.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

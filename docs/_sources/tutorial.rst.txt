@@ -2334,7 +2334,7 @@ Date-time ranges that span the time duration can also be created:
 Time duration constructors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For convenience, `cf.TtimeDuration` instances can be created with the
+For convenience, `cf.TimeDuration` instances can be created with the
 following constructors:
 
 ===========  ===========================================================
