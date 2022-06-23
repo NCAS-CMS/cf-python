@@ -2489,23 +2489,27 @@ class DataTest(unittest.TestCase):
         self.assertEqual(key, (None, None, None))
         self.assertTrue(value.equals(d))
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_count(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        d = cf.Data(np.arange(24).reshape(2, 3, 4))
+        self.assertEqual(d.count().array, 24)
+        for axis, c in enumerate(d.shape):
+            self.assertTrue((d.count(axis=axis).array == c).all())
 
-        d = cf.Data(ma)
-        self.assertEqual(d.count(), 284, d.count())
-        self.assertEqual(d.count_masked(), d.size - 284, d.count_masked())
+        self.assertTrue((d.count(axis=[0, 1]).array == 6).all())
 
-        d = cf.Data(a)
-        self.assertEqual(d.count(), d.size)
-        self.assertEqual(d.count_masked(), 0)
+        d[0, 0, 0] = np.ma.masked
+        self.assertEqual(d.count().array, 23)
+        for axis, c in enumerate(d.shape):
+            self.assertEqual(d.count(axis=axis).datum(0), c - 1)
+
+    def test_Data_count_masked(self):
+        d = cf.Data(np.arange(24).reshape(2, 3, 4))
+        self.assertEqual(d.count_masked().array, 0)
+
+        d[0, 0, 0] = np.ma.masked
+        self.assertEqual(d.count_masked().array, 1)
 
     def test_Data_exp(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for x in (1, -1):
             a = 0.9 * x * self.ma
             c = np.ma.exp(a)
@@ -2526,9 +2530,6 @@ class DataTest(unittest.TestCase):
             _ = d.exp()
 
     def test_Data_func(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = np.array([[np.e, np.e**2, np.e**3.5], [0, 1, np.e**-1]])
 
         # Using sine as an example function to apply
