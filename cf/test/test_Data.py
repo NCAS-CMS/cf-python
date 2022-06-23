@@ -3791,6 +3791,44 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.set_units("km")
 
+    def test_Data_allclose(self):
+        d = cf.Data(1, "m")
+        for x in (1, [1], np.array([[1]]), da.from_array(1), cf.Data(1)):
+            self.assertTrue(d.allclose(x).array)
+
+        d = cf.Data([1000, 2500], "metre")
+        e = cf.Data([1, 2.5], "km")
+        self.assertTrue(d.allclose(e))
+
+        e = cf.Data([1, 999], "km")
+        self.assertFalse(d.allclose(e))
+
+        d = cf.Data([[1000, 2500], [1000, 2500]], "metre")
+        e = cf.Data([1, 2.5], "km")
+        self.assertTrue(d.allclose(e))
+
+        d = cf.Data(["ab", "cdef"])
+        e = [[["ab", "cdef"]]]
+        self.assertTrue(d.allclose(e))
+
+        d = cf.Data([1, 1, 1], "s")
+        e = 1
+        self.assertTrue(d.allclose(e))
+
+        # Incompatible units
+        with self.assertRaises(ValueError):
+            d.allclose(cf.Data([1, 1, 1], "m"))
+
+        # Not broadcastable
+        with self.assertRaises(ValueError):
+            d.allclose([1, 2])
+
+        # Incompatible units
+        d = cf.Data([[1000, 2500]], "m")
+        e = cf.Data([1, 2.5], "s")
+        with self.assertRaises(ValueError):
+            d.allclose(e)
+
     def test_Data_isclose(self):
         d = cf.Data(1, "m")
         for x in (1, [1], np.array([[1]]), da.from_array(1), cf.Data(1)):
