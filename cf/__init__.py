@@ -74,8 +74,8 @@ installation and source code.
 
 """
 __Conventions__ = "CF-1.9"
-__date__ = "2022-01-18"
-__version__ = "3.12.0"
+__date__ = "2022-06-23"
+__version__ = "3.13.0"
 
 _requires = (
     "numpy",
@@ -84,6 +84,7 @@ _requires = (
     "cfunits",
     "cfdm",
     "psutil",
+    "packaging",
 )
 
 x = ", ".join(_requires)
@@ -139,6 +140,11 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
+try:
+    import packaging
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
 # Check the version of psutil
 _minimum_vn = "0.6.0"
 if Version(psutil.__version__) < Version(_minimum_vn):
@@ -180,13 +186,21 @@ if Version(cfunits.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.9.0.2"
+_minimum_vn = "1.9.0.3"
 _maximum_vn = "1.9.1.0"
 _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     raise RuntimeError(
         f"Bad cfdm version: cf requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
         f"Got {_cfdm_version} at {cfdm.__file__}"
+    )
+
+# Check the version of packaging
+_minimum_vn = "20.0"
+if Version(packaging.__version__) < Version(_minimum_vn):
+    raise RuntimeError(
+        f"Bad packaging version: cf requires packaging>={_minimum_vn}. "
+        f"Got {packaging.__version__} at {packaging.__file__}"
     )
 
 from .constructs import Constructs
