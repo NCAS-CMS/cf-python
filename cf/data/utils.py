@@ -16,6 +16,8 @@ from ..cfdatetime import (
 from ..units import Units
 from .dask_utils import cf_YMDhms
 
+_units_None = Units(None)
+
 
 def _is_numeric_dtype(array):
     """True if the given array is of a numeric or boolean data type.
@@ -577,39 +579,39 @@ def conform_units(value, units):
 
     **Examples**
 
-    >>> cf.data.utils.conform_units(1, cf.Units('metres'))
+    >>> cf.data.utils.conform_units(1, cf.Units('m'))
     1
-    >>> cf.data.utils.conform_units([1, 2, 3], cf.Units('metres'))
+    >>> cf.data.utils.conform_units([1, 2, 3], cf.Units('m'))
     [1, 2, 3]
     >>> import numpy as np
-    >>> cf.data.utils.conform_units(np.array([1, 2, 3]), cf.Units('metres'))
+    >>> cf.data.utils.conform_units(np.array([1, 2, 3]), cf.Units('m'))
     array([1, 2, 3])
-    >>> cf.data.utils.conform_units('string', cf.Units('metres'))
+    >>> cf.data.utils.conform_units('string', cf.Units('m'))
     'string'
     >>> d = cf.Data([1, 2] , 'm')
-    >>> cf.data.utils.conform_units(d, cf.Units('metres'))
+    >>> cf.data.utils.conform_units(d, cf.Units('m'))
     <CF Data(2): [1, 2] m>
     >>> d = cf.Data([1, 2] , 'km')
-    >>> cf.data.utils.conform_units(d, cf.Units('metres'))
-    <CF Data(2): [1000.0, 2000.0] metres>
+    >>> cf.data.utils.conform_units(d, cf.Units('m'))
+    <CF Data(2): [1000.0, 2000.0] m>
     >>> cf.data.utils.conform_units(d, cf.Units('s'))
+    Traceback (most recent call last):
         ...
     ValueError: Units <Units: km> are incompatible with units <Units: s>
 
     """
-    try:
-        value_units = value.Units
-    except AttributeError:
-        pass
-    else:
-        if value_units.equivalent(units):
-            if value_units != units:
-                value = value.copy()
-                value.Units = units
-        elif value_units and units:
-            raise ValueError(
-                f"Units {value_units!r} are incompatible with units {units!r}"
-            )
+    value_units = getattr(value, "Units", None)
+    if value_units is None:
+        return value
+
+    if value_units.equivalent(units):
+        if value_units != units:
+            value = value.copy()
+            value.Units = units
+    elif value_units and units:
+        raise ValueError(
+            f"Units {value_units!r} are incompatible with units {units!r}"
+        )
 
     return value
 

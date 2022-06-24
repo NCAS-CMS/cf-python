@@ -27,7 +27,6 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
-    _numpy_isclose,
     _section,
     atol,
     default_netCDF_fillvals,
@@ -1783,21 +1782,24 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             50, axes=axes, squeeze=squeeze, mtol=mtol, inplace=inplace
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def mean_of_upper_decile(
         self,
         axes=None,
         weights=None,
+        method="linear",
         squeeze=False,
         mtol=1,
         include_decile=True,
         split_every=None,
         inplace=False,
     ):
-        """Calculate means of the upper deciles.
+        """Mean of values defined by the upper tenth of their
+        distribution.
 
-        Calculates the mean of the upper decile or the mean or the
-        mean of the upper decile values along axes.
+        For the values defined by the upper tenth of their
+        distribution, calculates their mean, or their mean along axes.
 
         See
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
@@ -1811,20 +1813,25 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{weights: data_like, `dict`, or `None`, optional}}
 
-                TODODASK - note that weights only applies to the
-                           calculation of the mean, not the upper
-                           decile.
+                .. note:: *weights* only applies to the calculation of
+                          the mean defined by the upper tenth of their
+                          distribution.
+
+            {{percentile method: `str`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{collapse squeeze: `bool`, optional}}
 
             {{mtol: number, optional}}
 
-                TODODASK - note that mtol only applies to the
-                           calculation of the upper decile, not the
-                           mean.
+                .. note:: *mtol* only applies to the calculation of
+                          the location of the 90th percentile.
 
             include_decile: `bool`, optional
-                TODODASK
+                If True then include in the mean any values that are
+                equal to the 90th percentile. By default these are
+                excluded.
 
             {{split_every: `int` or `dict`, optional}}
 
@@ -1840,35 +1847,40 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASK
+        >>> d = cf.Data(np.arange(20).reshape(4, 5), 'm')
+        >>> print(d.array)
+        [[ 0  1  2  3  4]
+         [ 5  6  7  8  9]
+         [10 11 12 13 14]
+         [15 16 17 18 19]]
+        >>> e = d.mean_of_upper_decile()
+        >>> e
+        <CF Data(1, 1): [[18.5]] m>
 
         """
-
-        # TODODASK: Some updates off the back of daskifying collapse
-        #           have been done, but still needs looking at. A unit
-        #           test has also been written, but not run. Needs
-        #           __lt__ and __le__.
-
         d = _inplace_enabled_define_and_cleanup(self)
 
+        # Find the 90th percentile
         p90 = d.percentile(
             90, axes=axes, squeeze=False, mtol=mtol, inplace=False
         )
 
-        with np.testing.suppress_warnings() as sup:
-            sup.filter(
-                RuntimeWarning, message=".*invalid value encountered in less.*"
-            )
-            if include_decile:
-                mask = d < p90
-            else:
-                mask = d <= p90
+        # Mask all elements that are less than (or equal to) the 90th
+        # percentile
+        if include_decile:
+            less_than_p90 = d < p90
+        else:
+            less_than_p90 = d <= p90
 
         if mtol < 1:
-            mask.filled(False, inplace=True)
+            # Set missing values to True to ensure that 'd' gets
+            # masked at those locations
+            less_than_p90.filled(True, inplace=True)
 
-        d.where(mask, cf_masked, inplace=True)
+        d.where(less_than_p90, cf_masked, inplace=True)
 
+        # Find the mean of elements greater than (or equal to) the
+        # 90th percentile
         d.mean(
             axes=axes,
             weights=weights,
@@ -1948,36 +1960,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 By default, of *axes* is `None`, all axes are selected.
 
-            method: `str`, optional
-                Specify the interpolation method to use when the
-                desired percentile lies between two data values. The
-                methods are listed here, but their definitions must be
-                referenced from the documentation for
-                `numpy.percentile`.
+            {{percentile method: `str`, optional}}
 
-                For the default ``'linear'`` method, if the percentile
-                lies between two adjacent data values ``i < j`` then
-                the percentile is calculated as ``i+(j-i)*fraction``,
-                where ``fraction`` is the fractional part of the index
-                surrounded by ``i`` and ``j``.
-
-                ===============================
-                *method*
-                ===============================
-                ``'inverted_cdf'``
-                ``'averaged_inverted_cdf'``
-                ``'closest_observation'``
-                ``'interpolated_inverted_cdf'``
-                ``'hazen'``
-                ``'weibull'``
-                ``'linear'`` (default)
-                ``'median_unbiased'``
-                ``'normal_unbiased'``
-                ``'lower'``
-                ``'higher'``
-                ``'nearest'``
-                ``'midpoint'``
-                ===============================
+                .. versionadded:: TODODASK
 
             squeeze: `bool`, optional
                 If True then all axes over which percentiles are
@@ -3171,13 +3156,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data0.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units1 ** p
+                        return data0, data1, units1**p
                     elif units0.isdimensionless:
                         # units0 is dimensionless
                         if not units0.equals(_units_1):
@@ -3189,17 +3174,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data0.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units1 ** p
+                        return data0, data1, units1**p
                 # --- End: if
 
                 # This will deliberately raise an exception
-                units1 ** units0
+                units1**units0
             else:
                 # -----------------------------------------------------
                 # Operator is __pow__
@@ -3247,13 +3232,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data1.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units0 ** p
+                        return data0, data1, units0**p
                     elif units1.isdimensionless:
                         # units1 is dimensionless
                         if not units1.equals(_units_1):
@@ -3264,17 +3249,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         # raising this to a power is a nonlinear
                         # operation
                         p = data1.datum(0)
-                        if units0 != (units0 ** p) ** (1.0 / p):
+                        if units0 != (units0**p) ** (1.0 / p):
                             raise ValueError(
                                 "Can't raise shifted units {!r} to the "
                                 "power {}".format(units0, p)
                             )
 
-                        return data0, data1, units0 ** p
+                        return data0, data1, units0**p
                 # --- End: if
 
                 # This will deliberately raise an exception
-                units0 ** units1
+                units0**units1
             # --- End: if
         # --- End: if
 
@@ -3285,6 +3270,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
         )
 
+    @daskified(_DASKIFIED_VERBOSE)
     def _binary_operation(self, other, method):
         """Implement binary arithmetic and comparison operations with
         the numpy broadcasting rules.
@@ -3328,13 +3314,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         inplace = method[2] == "i"
-        method_type = method[-5:-2]
 
         # ------------------------------------------------------------
-        # Ensure that other is an independent Data object
+        # Ensure other is an independent Data object, for example
+        # so that combination with cf.Query objects works.
         # ------------------------------------------------------------
         if getattr(other, "_NotImplemented_RHS_Data_op", False):
-            # Make sure that
             return NotImplemented
 
         elif not isinstance(other, self.__class__):
@@ -3344,9 +3329,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 and self.Units.isreftime
             ):
                 other = cf_dt(
-                    other,
-                    # .timetuple()[0:6], microsecond=other.microsecond,
-                    calendar=getattr(self.Units, "calendar", "standard"),
+                    other, calendar=getattr(self.Units, "calendar", "standard")
                 )
             elif other is None:
                 # Can't sensibly initialize a Data object from a bare
@@ -3355,304 +3338,52 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             other = type(self).asdata(other)
 
+        # ------------------------------------------------------------
+        # Prepare data0 (i.e. self copied) and data1 (i.e. other)
+        # ------------------------------------------------------------
         data0 = self.copy()
 
+        # Parse units
         data0, other, new_Units = data0._combined_units(other, method, True)
 
-        # ------------------------------------------------------------
-        # Bring other into memory, if appropriate.
-        # ------------------------------------------------------------
-        other.to_memory()
+        # Cast as dask arrays
+        dx0 = data0.to_dask_array()
+        dx1 = other.to_dask_array()
 
-        # ------------------------------------------------------------
-        # Find which dimensions need to be broadcast in one or other
-        # of the arrays.
-        #
-        # Method:
-        #
-        #   For each common dimension, the 'broadcast_indices' list
-        #   will have a value of None if there is no broadcasting
-        #   required (i.e. the two arrays have the same size along
-        #   that dimension) or a value of slice(None) if broadcasting
-        #   is required (i.e. the two arrays have the different sizes
-        #   along that dimension and one of the sizes is 1).
-        #
-        #   Example:
-        #
-        #     If c.shape is (7,1,6,1,5) and d.shape is (6,4,1) then
-        #     broadcast_indices will be
-        #     [None,slice(None),slice(None)].
-        #
-        #     The indices to d which correspond to a partition of c,
-        #     are the relevant subset of partition.indices updated
-        #     with the non None elements of the broadcast_indices
-        #     list.
-        #
-        #     In this example, if a partition of c were to have a
-        #     partition.indices value of (slice(0,3), slice(0,1),
-        #     slice(2,4), slice(0,1), slice(0,5)), then the relevant
-        #     subset of these is partition.indices[2:] and the
-        #     corresponding indices to d are (slice(2,4), slice(None),
-        #     slice(None))
-        #
-        # ------------------------------------------------------------
-        data0_shape = data0._shape
-        data1_shape = other._shape
-
-        if data0_shape == data1_shape:
-            # self and other have the same shapes
-            broadcasting = False
-
-            align_offset = 0
-
-            new_shape = data0_shape
-            new_ndim = data0._ndim
-            new_axes = data0._axes
-            new_size = data0._size
-
-        else:
-            # self and other have different shapes
-            broadcasting = True
-
-            data0_ndim = data0._ndim
-            data1_ndim = other._ndim
-
-            align_offset = data0_ndim - data1_ndim
-            if align_offset >= 0:
-                # self has at least as many axes as other
-                shape0 = data0_shape[align_offset:]
-                shape1 = data1_shape
-
-                new_shape = data0_shape[:align_offset]
-                new_ndim = data0_ndim
-                new_axes = data0._axes
-            else:
-                # other has more axes than self
-                align_offset = -align_offset
-                shape0 = data0_shape
-                shape1 = data1_shape[align_offset:]
-
-                new_shape = data1_shape[:align_offset]
-                new_ndim = data1_ndim
-                if not data0_ndim:
-                    new_axes = other._axes
-                else:
-                    new_axes = []
-                    existing_axes = self._all_axis_names()
-                    for n in new_shape:
-                        axis = new_axis_identifier(existing_axes)
-                        existing_axes.append(axis)
-                        new_axes.append(axis)
-                    # --- End: for
-                    new_axes += data0._axes
-                # --- End: for
-
-                align_offset = 0
-            # --- End: if
-
-            broadcast_indices = []
-            for a, b in zip(shape0, shape1):
-                if a == b:
-                    new_shape += (a,)
-                    broadcast_indices.append(None)
-                    continue
-
-                # Still here?
-                if a > 1 and b == 1:
-                    new_shape += (a,)
-                elif b > 1 and a == 1:
-                    new_shape += (b,)
-                else:
-                    raise ValueError(
-                        "Can't broadcast shape {} against shape {}".format(
-                            data1_shape, data0_shape
-                        )
-                    )
-
-                broadcast_indices.append(slice(None))
-
-            new_size = reduce(mul, new_shape, 1)
-
-            dummy_location = [None] * new_ndim
-        # ---End: if
-
-        new_flip = []
-
-        # ------------------------------------------------------------
-        # Create a Data object which just contains the metadata for
-        # the result. If we're doing a binary arithmetic operation
-        # then result will get filled with data and returned. If we're
-        # an augmented arithmetic assignment then we'll update self
-        # with this new metadata.
-        # ------------------------------------------------------------
-
-        result = data0.copy()
-        result._shape = new_shape
-        result._ndim = new_ndim
-        result._size = new_size
-        result._axes = new_axes
-
-        # ------------------------------------------------------------
-        # Set the data-type of the result
-        # ------------------------------------------------------------
-        if method_type in ("_eq", "_ne", "_lt", "_le", "_gt", "_ge"):
-            new_dtype = np.dtype(bool)
+        # Set if applicable the tolerance levels for the result
+        if method in ("__eq__", "__ne__"):
             rtol = self._rtol
             atol = self._atol
-        else:
-            if "true" in method:
-                new_dtype = np.dtype(float)
-            elif not inplace:
-                new_dtype = np.result_type(data0.dtype, other.dtype)
-            else:
-                new_dtype = data0.dtype
-        # --- End: if
 
         # ------------------------------------------------------------
-        # Set flags to control whether or not the data of result and
-        # self should be kept in memory
+        # Perform the binary operation with data0 (self) and data1
+        # (other)
         # ------------------------------------------------------------
-        config = data0.partition_configuration(readonly=not inplace)
-
-        original_numpy_seterr = np.seterr(**_seterr)
-
-        # Think about dtype, here.
-
-        for partition_r, partition_s in zip(
-            result.partitions.matrix.flat, data0.partitions.matrix.flat
-        ):
-
-            partition_s.open(config)
-
-            indices = partition_s.indices
-
-            array0 = partition_s.array
-
-            if broadcasting:
-                indices = tuple(
-                    [
-                        (index if not broadcast_index else broadcast_index)
-                        for index, broadcast_index in zip(
-                            indices[align_offset:], broadcast_indices
-                        )
-                    ]
-                )
-                indices = (Ellipsis,) + indices
-
-            array1 = other[indices].array
-
-            # UNRESOLVED ISSUE: array1 could be much larger than the
-            # chunk size.
-
-            if not inplace:
-                partition = partition_r
-                partition.update_inplace_from(partition_s)
+        if method == "__eq__":
+            if dx0.dtype.kind in "US" or dx1.dtype.kind in "US":
+                result = getattr(dx0, method)(dx1)
             else:
-                partition = partition_s
-
-            # --------------------------------------------------------
-            # Do the binary operation on this partition's data
-            # --------------------------------------------------------
-            try:
-                if method == "__eq__":  # and data0.Units.isreftime:
-                    array0 = _numpy_isclose(
-                        array0, array1, rtol=rtol, atol=atol
-                    )
-                elif method == "__ne__":
-                    array0 = ~_numpy_isclose(
-                        array0, array1, rtol=rtol, atol=atol
-                    )
-                else:
-                    array0 = getattr(array0, method)(array1)
-
-            except FloatingPointError as error:
-                # Floating point point errors have been trapped
-                if _mask_fpe[0]:
-                    # Redo the calculation ignoring the errors and
-                    # then set invalid numbers to missing data
-                    np.seterr(**_seterr_raise_to_ignore)
-                    array0 = getattr(array0, method)(array1)
-                    array0 = np.ma.masked_invalid(array0, copy=False)
-                    np.seterr(**_seterr)
-                else:
-                    # Raise the floating point error exception
-                    raise FloatingPointError(error)
-            except TypeError as error:
-                if inplace:
-                    raise TypeError(
-                        "Incompatible result data-type ({0!r}) for "
-                        "in-place {1!r} arithmetic".format(
-                            np.result_type(array0.dtype, array1.dtype).name,
-                            array0.dtype.name,
-                        )
-                    )
-                else:
-                    raise TypeError(error)
-            # --- End: try
-
-            if array0 is NotImplemented:
-                array0 = np.zeros(partition.shape, dtype=bool)
-            elif not array0.ndim and not isinstance(array0, np.ndarray):
-                array0 = np.asanyarray(array0)
-
-            if not inplace:
-                p_datatype = array0.dtype
-                if new_dtype != p_datatype:
-                    new_dtype = np.result_type(p_datatype, new_dtype)
-
-            partition.subarray = array0
-            partition.Units = new_Units
-            partition.axes = new_axes
-            partition.flip = new_flip
-            partition.part = []
-
-            if broadcasting:
-                partition.location = dummy_location
-                partition.shape = list(array0.shape)
-
-            partition._original = None
-            partition._write_to_disk = False
-            partition.close(units=new_Units)
-
-            if not inplace:
-                partition_s.close()
-        # --- End: for
-
-        # Reset numpy.seterr
-        np.seterr(**original_numpy_seterr)
-
-        source = result.source(None)
-        if source is not None and source.get_compression_type():
-            result._del_Array(None)
-
-        if not inplace:
-            result._Units = new_Units
-            result.dtype = new_dtype
-            result._flip(new_flip)
-
-            if broadcasting:
-                result.partitions.set_location_map(result._axes)
-
-            if method_type in ("_eq", "_ne", "_lt", "_le", "_gt", "_ge"):
-                result.override_units(Units(), inplace=True)
-
-            return result
+                result = da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+        elif method == "__ne__":
+            if dx0.dtype.kind in "US" or dx1.dtype.kind in "US":
+                result = getattr(dx0, method)(dx1)
+            else:
+                result = ~da.isclose(dx0, dx1, rtol=rtol, atol=atol)
+        elif inplace:
+            # Find non-in-place equivalent operator (remove 'i')
+            equiv_method = method[:2] + method[3:]
+            result = getattr(dx0, equiv_method)(dx1)
         else:
-            # Update the metadata for the new master array in place
-            data0._shape = new_shape
-            data0._ndim = new_ndim
-            data0._size = new_size
-            data0._axes = new_axes
-            data0._flip(new_flip)
-            data0._Units = new_Units
-            data0.dtype = new_dtype
+            result = getattr(dx0, method)(dx1)
 
-            if broadcasting:
-                data0.partitions.set_location_map(new_axes)
-
-            self.__dict__ = data0.__dict__
-
+        if inplace:  # in-place so concerns original self
+            self._set_dask(result)
+            self.override_units(new_Units, inplace=True)
             return self
+        else:  # not, so concerns a new Data object copied from self, data0
+            data0._set_dask(result)
+            data0.override_units(new_Units, inplace=True)
+            return data0
 
     def _parse_indices(self, *args, **kwargs):
         """'cf.Data._parse_indices' is not available.
@@ -4111,6 +3842,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         self._flip([])
 
+    @daskified(_DASKIFIED_VERBOSE)
     def _unary_operation(self, operation):
         """Implement unary arithmetic operations.
 
@@ -4155,6 +3887,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return out
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __add__(self, other):
         """The binary arithmetic operation ``+``
 
@@ -4163,6 +3896,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__add__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __iadd__(self, other):
         """The augmented arithmetic assignment ``+=``
 
@@ -4171,6 +3905,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__iadd__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __radd__(self, other):
         """The binary arithmetic operation ``+`` with reflected
         operands.
@@ -4180,6 +3915,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__radd__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __sub__(self, other):
         """The binary arithmetic operation ``-``
 
@@ -4188,6 +3924,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__sub__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __isub__(self, other):
         """The augmented arithmetic assignment ``-=``
 
@@ -4196,6 +3933,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__isub__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rsub__(self, other):
         """The binary arithmetic operation ``-`` with reflected
         operands.
@@ -4205,6 +3943,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rsub__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __mul__(self, other):
         """The binary arithmetic operation ``*``
 
@@ -4213,6 +3952,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__mul__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __imul__(self, other):
         """The augmented arithmetic assignment ``*=``
 
@@ -4221,6 +3961,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__imul__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rmul__(self, other):
         """The binary arithmetic operation ``*`` with reflected
         operands.
@@ -4230,6 +3971,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rmul__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __div__(self, other):
         """The binary arithmetic operation ``/``
 
@@ -4238,6 +3980,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__div__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __idiv__(self, other):
         """The augmented arithmetic assignment ``/=``
 
@@ -4246,6 +3989,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__idiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rdiv__(self, other):
         """The binary arithmetic operation ``/`` with reflected
         operands.
@@ -4255,6 +3999,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rdiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __floordiv__(self, other):
         """The binary arithmetic operation ``//``
 
@@ -4263,6 +4008,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__floordiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ifloordiv__(self, other):
         """The augmented arithmetic assignment ``//=``
 
@@ -4271,6 +4017,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ifloordiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rfloordiv__(self, other):
         """The binary arithmetic operation ``//`` with reflected
         operands.
@@ -4280,6 +4027,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rfloordiv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __truediv__(self, other):
         """The binary arithmetic operation ``/`` (true division)
 
@@ -4288,6 +4036,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__truediv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __itruediv__(self, other):
         """The augmented arithmetic assignment ``/=`` (true division)
 
@@ -4296,6 +4045,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__itruediv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rtruediv__(self, other):
         """The binary arithmetic operation ``/`` (true division) with
         reflected operands.
@@ -4305,6 +4055,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rtruediv__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __pow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow``
 
@@ -4320,6 +4071,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._binary_operation(other, "__pow__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ipow__(self, other, modulo=None):
         """The augmented arithmetic assignment ``**=``
 
@@ -4335,6 +4087,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._binary_operation(other, "__ipow__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rpow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow`` with
         reflected operands.
@@ -4351,6 +4104,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._binary_operation(other, "__rpow__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __mod__(self, other):
         """The binary arithmetic operation ``%``
 
@@ -4359,6 +4113,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__mod__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __imod__(self, other):
         """The binary arithmetic operation ``%=``
 
@@ -4367,6 +4122,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__imod__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rmod__(self, other):
         """The binary arithmetic operation ``%`` with reflected
         operands.
@@ -4376,6 +4132,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rmod__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __eq__(self, other):
         """The rich comparison operator ``==``
 
@@ -4384,6 +4141,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__eq__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ne__(self, other):
         """The rich comparison operator ``!=``
 
@@ -4392,6 +4150,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ne__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ge__(self, other):
         """The rich comparison operator ``>=``
 
@@ -4400,6 +4159,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ge__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __gt__(self, other):
         """The rich comparison operator ``>``
 
@@ -4408,6 +4168,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__gt__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __le__(self, other):
         """The rich comparison operator ``<=``
 
@@ -4416,6 +4177,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__le__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __lt__(self, other):
         """The rich comparison operator ``<``
 
@@ -4424,6 +4186,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__lt__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __and__(self, other):
         """The binary bitwise operation ``&``
 
@@ -4432,6 +4195,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__and__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __iand__(self, other):
         """The augmented bitwise assignment ``&=``
 
@@ -4440,6 +4204,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__iand__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rand__(self, other):
         """The binary bitwise operation ``&`` with reflected operands.
 
@@ -4448,6 +4213,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rand__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __or__(self, other):
         """The binary bitwise operation ``|``
 
@@ -4456,6 +4222,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__or__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ior__(self, other):
         """The augmented bitwise assignment ``|=``
 
@@ -4464,6 +4231,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ior__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ror__(self, other):
         """The binary bitwise operation ``|`` with reflected operands.
 
@@ -4472,6 +4240,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ror__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __xor__(self, other):
         """The binary bitwise operation ``^``
 
@@ -4480,6 +4249,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__xor__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ixor__(self, other):
         """The augmented bitwise assignment ``^=``
 
@@ -4488,6 +4258,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ixor__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rxor__(self, other):
         """The binary bitwise operation ``^`` with reflected operands.
 
@@ -4496,6 +4267,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rxor__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __lshift__(self, y):
         """The binary bitwise operation ``<<``
 
@@ -4504,6 +4276,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__lshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __ilshift__(self, y):
         """The augmented bitwise assignment ``<<=``
 
@@ -4512,6 +4285,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__ilshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rlshift__(self, y):
         """The binary bitwise operation ``<<`` with reflected operands.
 
@@ -4520,6 +4294,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__rlshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rshift__(self, y):
         """The binary bitwise operation ``>>``
 
@@ -4528,6 +4303,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__rshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __irshift__(self, y):
         """The augmented bitwise assignment ``>>=``
 
@@ -4536,6 +4312,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__irshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __rrshift__(self, y):
         """The binary bitwise operation ``>>`` with reflected operands.
 
@@ -4544,6 +4321,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__rrshift__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __abs__(self):
         """The unary arithmetic operation ``abs``
 
@@ -4552,6 +4330,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__abs__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __neg__(self):
         """The unary arithmetic operation ``-``
 
@@ -4560,6 +4339,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__neg__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __invert__(self):
         """The unary bitwise operation ``~``
 
@@ -4568,6 +4348,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__invert__")
 
+    @daskified(_DASKIFIED_VERBOSE)
     def __pos__(self):
         """The unary arithmetic operation ``+``
 
@@ -5660,55 +5441,51 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.override_units(_units_None, inplace=True)
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def allclose(self, y, rtol=None, atol=None):
-        """Returns True if two broadcastable arrays have equal values,
-        False otherwise.
+        """Whether an array is element-wise equal within a tolerance.
 
-        Two real numbers ``x`` and ``y`` are considered equal if
-        ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-        differences) and ``rtol`` (the tolerance on relative differences)
-        are positive, typically very small numbers. See the *atol* and
-        *rtol* parameters.
+        Return True if the data is broadcastable to array *y* and
+        element-wise equal within a tolerance.
+
+        {{equals tolerance}}
 
         .. seealso:: `all`, `any`, `isclose`
 
         :Parameters:
 
             y: data_like
+                The data to compare.
 
-            atol: `float`, optional
-                The absolute tolerance for all numerical comparisons. By
-                default the value returned by the `atol` function is used.
+            {{rtol: number, optional}}
 
-            rtol: `float`, optional
-                The relative tolerance for all numerical comparisons. By
-                default the value returned by the `rtol` function is used.
+            {{atol: number, optional}}
 
         :Returns:
 
-            `bool`
+            `Data`
+                A scalar boolean array that is `True` if the two arrays
+                are equal within the given tolerance, or `False`
+                otherwise.
 
         **Examples**
 
         >>> d = cf.Data([1000, 2500], 'metre')
         >>> e = cf.Data([1, 2.5], 'km')
-        >>> d.allclose(e)
+        >>> bool(d.allclose(e))
         True
 
         >>> d = cf.Data(['ab', 'cdef'])
-        >>> d.allclose([[['ab', 'cdef']]])
-        True
-
-        >>> d.allclose(e)
+        >>> bool(d.allclose([[['ab', 'cdef']]]))
         True
 
         >>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
         >>> e = cf.Data([1, 2.5], 'km')
-        >>> d.allclose(e)
+        >>> bool(d.allclose(e))
         True
 
         >>> d = cf.Data([1, 1, 1], 's')
-        >>> d.allclose(1)
+        >>> bool(d.allclose(1))
         True
 
         """
@@ -7112,97 +6889,103 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def count(self):
+    @daskified(_DASKIFIED_VERBOSE)
+    def count(self, axis=None, keepdims=True, split_every=None):
         """Count the non-masked elements of the data.
 
         .. seealso:: `count_masked`
 
+        :Parameters:
+
+            axis: (sequence of) `int`, optional
+                Axis or axes along which the count is performed. The
+                default (`None`) performs the count over all the
+                dimensions of the input array. *axis* may be negative,
+                in which case it counts from the last to the first
+                axis.
+
+            {{collapse keepdims: `bool`, optional}}
+
+            {{split_every: `int` or `dict`, optional}}
+
         :Returns:
 
-            ``int``
+            `Data`
+                The count of non-missing elements.
 
         **Examples**
 
-        >>> d = cf.Data(numpy.arange(24).reshape(3, 4))
+        >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
         >>> print(d.array)
         [[ 0  1  2  3]
          [ 4  5  6  7]
          [ 8  9 10 11]]
         >>> d.count()
-        12
+        <CF Data(1, 1): [[12]]>
+
         >>> d[0, :] = cf.masked
         >>> print(d.array)
         [[-- -- -- --]
          [ 4  5  6  7]
          [ 8  9 10 11]]
         >>> d.count()
-        8
+        <CF Data(1, 1): [[8]]>
 
         >>> print(d.count(0).array)
-        [2 2 2 2]
+        [[2 2 2 2]]
         >>> print(d.count(1).array)
-        [0 4 4]
-        >>> print(d.count((0, 1)))
+        [[0]
+         [4]
+         [4]]
+        >>> print(d.count([0, 1], keepdims=False).array)
         8
 
         """
-        # TODODASK - simply use da.ma.count (dask>=2022.3.1)
-
-        config = self.partition_configuration(readonly=True)
-
-        n = 0
-
-        #        self._flag_partitions_for_processing(parallelise=mpi_on)
-
-        processed_partitions = []
-        for pmindex, partition in self.partitions.ndenumerate():
-            if partition._process_partition:
-                partition.open(config)
-                partition._pmindex = pmindex
-                array = partition.array
-                n += np.ma.count(array)
-                partition.close()
-                processed_partitions.append(partition)
-            # --- End: if
-        # --- End: for
-
-        # processed_partitions contains a list of all the partitions
-        # that have been processed on this rank. In the serial case
-        # this is all of them and this line of code has no
-        # effect. Otherwise the processed partitions from each rank
-        # are distributed to every rank and processed_partitions now
-        # contains all the processed partitions from every rank.
-        processed_partitions = self._share_partitions(
-            processed_partitions, parallelise=False
+        d = self.copy(array=False)
+        dx = self.to_dask_array()
+        dx = da.ma.count(
+            dx, axis=axis, keepdims=keepdims, split_every=split_every
         )
+        d._set_dask(dx)
+        d.hardmask = _DEFAULT_HARDMASK
+        d.override_units(_units_None, inplace=True)
+        return d
 
-        # Put the processed partitions back in the partition matrix
-        # according to each partitions _pmindex attribute set above.
-        pm = self.partitions.matrix
-        for partition in processed_partitions:
-            pm[partition._pmindex] = partition
-        # --- End: for
-
-        # Share the lock files created by each rank for each partition
-        # now in a temporary file so that __del__ knows which lock
-        # files to check if present
-        self._share_lock_files(parallelise=False)
-
-        # Aggregate the results on each process and return on all
-        # processes
-        # if mpi_on:
-        #     n = mpi_comm.allreduce(n, op=mpi_sum)
-        # --- End: if
-
-        return n
-
-    def count_masked(self):
+    @daskified(_DASKIFIED_VERBOSE)
+    def count_masked(self, split_every=None):
         """Count the masked elements of the data.
 
         .. seealso:: `count`
 
+        :Parameters:
+
+            {{split_every: `int` or `dict`, optional}}
+
+        :Returns:
+
+            `Data`
+                The count of missing elements.
+
+        **Examples**
+
+        >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
+        >>> print(d.array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> d.count_masked()
+        <CF Data(1, 1): [[0]]>
+
+        >>> d[0, :] = cf.masked
+        >>> print(d.array)
+        [[-- -- -- --]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> d.count_masked()
+        <CF Data(1, 1): [[4]]>
+
         """
-        return self._size - self.count()
+        return self.size - self.count(split_every=split_every)
 
     @daskified(_DASKIFIED_VERBOSE)
     def cyclic(self, axes=None, iscyclic=True):
@@ -8313,10 +8096,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = {{package}}.Data([[1, 2, 3]])
+        >>> d = cf.Data([[1, 2, 3]])
         >>> print(d.filled().array)
         [[1 2 3]]
-        >>> d[0, 0] = cfdm.masked
+        >>> d[0, 0] = cf.masked
         >>> print(d.filled().array)
         [-9223372036854775806                    2                    3]
         >>> d.set_fill_value(-99)
@@ -9469,19 +9252,20 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         inspect(self)
 
+    @daskified(_DASKIFIED_VERBOSE)
     def isclose(self, y, rtol=None, atol=None):
-        """Return where data are element-wise equal to other,
-        broadcastable data.
+        """Return where data are element-wise equal within a tolerance.
 
         {{equals tolerance}}
 
-        For numeric data arrays, ``d.isclose(y, rtol, atol)`` is
-        equivalent to ``abs(d - y) <= ``atol + rtol*abs(y)``, otherwise it
-        is equivalent to ``d == y``.
+        For numeric data arrays, ``d.isclose(e, rtol, atol)`` is
+        equivalent to ``abs(d - e) <= atol + rtol*abs(e)``,
+        otherwise it is equivalent to ``d == e``.
 
         :Parameters:
 
             y: data_like
+                The array to compare.
 
             atol: `float`, optional
                 The absolute tolerance for all numerical comparisons. By
@@ -9494,6 +9278,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
              `bool`
+                 A boolean array of where the data are close to *y*.
 
         **Examples**
 
@@ -9517,30 +9302,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [ True  True  True]
 
         """
-        if atol is None:
-            atol = self._atol
-
-        if rtol is None:
-            rtol = self._rtol
-
-        units0 = self.Units
-        units1 = getattr(y, "Units", _units_None)
-        if units0.isreftime and units1.isreftime:
-            if not units0.equals(units1):
-                if not units0.equivalent(units1):
-                    pass
-
-            x = self.override_units(_units_1)
-            y = y.copy()
-            y.Units = units0
-            y.override_units(_units_1, inplace=True)
-        else:
-            x = self
-
+        a = np.empty((), dtype=self.dtype)
+        b = np.empty((), dtype=da.asanyarray(y).dtype)
         try:
-            return abs(x - y) <= float(atol) + float(rtol) * abs(y)
-        except (TypeError, NotImplementedError, IndexError):
+            # Check if a numerical isclose is possible
+            np.isclose(a, b)
+        except TypeError:
+            # self and y do not have suitable numeric data types
+            # (e.g. both are strings)
             return self == y
+        else:
+            # self and y have suitable numeric data types
+            if atol is None:
+                atol = self._atol
+
+            if rtol is None:
+                rtol = self._rtol
+
+            y = conform_units(y, self.Units)
+
+            dx = da.isclose(self, y, atol=atol, rtol=rtol)
+
+            d = self.copy(array=False)
+            d._set_dask(dx)
+            d.hardmask = _DEFAULT_HARDMASK
+            d.override_units(_units_None, inplace=True)
+            return d
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -11727,7 +11514,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if not units:
                 units = _units_None
             else:
-                units = units ** 2
+                units = units**2
 
         d.override_units(units, inplace=True)
 
@@ -11910,7 +11697,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         units = d.Units
         if units:
-            d.override_units(units ** 2, inplace=True)
+            d.override_units(units**2, inplace=True)
 
         return d
 
@@ -12048,7 +11835,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         units = d.Units
         if units:
-            d.override_units(units ** 2, inplace=True)
+            d.override_units(units**2, inplace=True)
 
         return d
 
@@ -12119,7 +11906,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         units = d.Units
         if units:
             try:
-                d.override_units(units ** 0.5, inplace=True)
+                d.override_units(units**0.5, inplace=True)
             except ValueError as e:
                 raise type(e)(
                     f"Incompatible units for taking a square root: {units!r}"
