@@ -1,3 +1,13 @@
+version 3.13.1
+--------------
+
+**2022-06-24**
+
+* Fix bug when setting coordinate bounds with different units to their
+  parent coordinates
+  (https://github.com/NCAS-CMS/cf-python/issues/417)
+
+----
 version 3.13.0
 --------------
 
