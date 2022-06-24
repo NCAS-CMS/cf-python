@@ -2631,9 +2631,9 @@ class PropertiesDataBounds(PropertiesData):
                 f"not equivalent to {self.Units!r}, the units of {self!r}"
             )
 
+        if units:
             bounds.Units = self_units
-
-        if not units:
+        else:
             bounds.override_units(self_units, inplace=True)
 
         # Copy selected properties to the bounds
