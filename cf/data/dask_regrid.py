@@ -1,4 +1,4 @@
-"""Regridding functions used wihin a dask graph."""
+"""Regridding functions used within a dask graph."""
 import numpy as np
 
 
@@ -17,7 +17,7 @@ def regrid(
 
     .. seealso:: `regrid_weights`, `_regrid`,
 
-    :Parmaeters:
+    :Parameters:
 
         a: `numpy.ndarray`
             The array to be regridded.
@@ -32,11 +32,11 @@ def regrid(
             The weights matrix only describes cells defined by the
             regridding dimensions. If the array *a* includes
             non-regridding dimensions then, in essence, the the regrid
-            operation is carried out seperately for each slice of the
-            regridding dimensions. For instance, if an *a* that
-            represents T, Z, Y, X dimensions with shape ``(12, 20, 73,
-            96)`` is to have its Y and X dimension regridded, then the
-            result may be thought of as the concatenation of the 240
+            operation is carried out separately for each slice of the
+            regridding dimensions. For instance, if *a* represents T,
+            Z, Y, X dimensions with shape ``(12, 20, 73, 96)`` and is
+            to have its Y and X dimension regridded, then the result
+            may be thought of as the concatenation of the 240
             individual regrids arising from all of the T and Z
             dimension combinations.
 
@@ -92,11 +92,16 @@ def regrid(
             non-regrid axes become the leading dimensions.
 
         ref_src_mask, `numpy.ndarray` or `None`
-            If a `numpy.ndarray` then this is the source grid mask
-            that was used during the creation of the weights matrix
-            given by *weights*, and the mask of each regrid slice of
-            *a* must therefore be identical to *ref_src_mask*. If
-            `None` (the default), then the weights matrix will have
+            If a `numpy.ndarray` with shape *src_shape* then this is
+            the reference source grid mask that was used during the
+            creation of the weights matrix given by *weights*, and the
+            mask of each regrid slice of *a* must therefore be
+            identical to *ref_src_mask*. If *ref_src_mask* is a scalar
+            array with value `False`, then this is equivalent to a
+            reference source grid mask with shape *src_shape* entirely
+            populated with `False`.
+
+            If `None` (the default), then the weights matrix will have
             been created assuming no source grid mask, and the mask of
             each regrid slice of *a* is automatically applied to
             *weights* prior to the regridding calculation.
@@ -142,10 +147,18 @@ def regrid(
         # A reference source grid mask has already been incorporated
         # into the weights matrix. Therefore, the mask for all slices
         # of 'a' must be the same as this reference mask.
+        message = (
+            f"Can't regrid with the {method!r} method when the source "
+            "data mask varies across regridding slices"
+        )
+      
+        if variable_mask or (src_mask is None and ref_src_mask.any()):
+            raise ValueError(message)
+
         if ref_src_mask.dtype != bool or ref_src_mask.shape != src_shape:
             raise ValueError(
                 "The 'ref_src_mask' parameter must be None or a "
-                "boolean numpy array with shape {src_shape}. Got: "
+                "Boolean numpy array with shape {src_shape}. Got: "
                 f"dtype={ref_src_mask.dtype}, shape={ref_src_mask.shape}"
             )
 
@@ -154,19 +167,11 @@ def regrid(
             "source data mask does not match the mask used to "
             "construct the regrid operator"
         )
-        if variable_mask:
+      
+        # TODOA: Q. Do we need to tranpose ref_src_mask first?
+        ref_src_mask = ref_src_mask.reshape(src_mask.shape)
+        if (src_mask != ref_src_mask).any():
             raise ValueError(message)
-
-        if src_mask is None:
-            if ref_src_mask.any():
-                raise ValueError(message)
-        else:
-            if ref_src_mask.size != src_mask.size:
-                raise ValueError(message)
-
-            ref_src_mask = ref_src_mask.reshape(src_mask.shape)
-            if (src_mask != ref_src_mask).any():
-                raise ValueError(message)
 
     # ----------------------------------------------------------------
     # Regrid the source data
@@ -237,9 +242,11 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
             (column-major order).
 
         src_mask: `numpy.ndarray` or `None`
-            The mask of *a* that applies to each regrid slice. Must
-            have shape ``(I,)``, where ``I`` is the number of source
-            grid cells. If `None` then *a* is assumed to be unmasked.
+            The source grid mask to be applied to the weights
+            matrix. If `None` then no source grid cells are masked. If
+            a Boolean `numpy` array then it must have shape ``(I,)``,
+            where ``I`` is the number of source grid cells, and `True`
+            signifies as masked cell.
 
         weights: `numpy.ndarray`
             The weights matrix that defines the regridding
@@ -260,7 +267,7 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
 
         prev_weights: `numpy.ndarray`, optional
             The weights matrix used by a previous call to `_regrid`,
-            possibly modifed to account for missing data. If
+            possibly modified to account for missing data. If
             *prev_mask* equals *src_mask* then the *prev_weights*
             weights matrix to calculate the regridded data. Ignored if
             `prev_mask` is `None`.
@@ -300,7 +307,7 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
         # weights matrix accordingly
         # ------------------------------------------------------------
         if method in ("conservative", "conservative_1st"):
-            # A) First-order consevative method:
+            # A) First-order conservative method:
             #
             #     w_ji = f_ji * As_i / Ad_j
             #
@@ -318,7 +325,7 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
             #     D_j = 1 - w_i1j - ... - wiNj
             #
             # where w_iXj is the unmasked weight for masked source
-            # cell i and desination cell j.
+            # cell i and destination cell j.
             D = 1 - weights[:, src_mask].sum(axis=1, keepdims=True)
 
             # Get rid of values that are approximately zero, or
@@ -365,7 +372,7 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
             else:
                 w = weights
         elif method in ("patch", "conservative_2nd"):
-            # C) Patch recovery and second-order consevative methods:
+            # C) Patch recovery and second-order conservative methods:
             #
             # A reference source data mask has already been
             # incorporated into the weights matrix, and 'a' is assumed
@@ -393,6 +400,7 @@ def regrid_weights(
     dst_shape,
     dtype=None,
     dst_mask=None,
+    start_index=0,
     dense=True,
     order="C",
 ):
@@ -407,6 +415,12 @@ def regrid_weights(
         weights: `numpy.ndarray`
             The 1-d weight value array, as returned by
             `ESMF.Regrid.get_weights_dict`.
+
+        row, col: `numpy.ndarray`, `numpy.ndarray`
+            1-d arrays of the row and column indices of the regridding
+            weights in the dense weights matrix, which has J rows and
+            I columns, where J and I are the total number of cells in
+            the destination and source grids respectively.
 
         row: `numpy.ndarray`
             The 1-d destination/row indices, as returned by
@@ -431,8 +445,14 @@ def regrid_weights(
         dst_mask: `numpy.ndarray` or `None`, optional
             A destination grid mask to be applied to the weights
             matrix, in addition to those destination grid cells that
-            have no non-zero weights. If a boolean `numpy` array then
-            it must have shape *dst_shape*.
+            have no non-zero weights. If `None` (the default) then no
+            additional destination grid cells are masked. If a Boolean
+            `numpy` array then it must have shape *dst_shape*, and
+            `True` signifies as masked cell.
+
+        start_index: `int`, optional
+            Specify whether the *row* and *col* parameters use 0- or
+            1-based indexing.
 
         dense: `bool`, optional
             If True (the default) then return the weights as a dense
@@ -465,7 +485,11 @@ def regrid_weights(
     if dtype is not None:
         weights = weights.astype(dtype, copy=False)
 
-    w = coo_array((weights, (row - 1, col - 1)), shape=shape)
+     if start_index:
+         row = row - start_index 
+         col = col - start_index         
+        
+    w = coo_array((weights, (row, col)), shape=shape)
 
     if dense:
         # Convert the sparse array to a dense array
@@ -479,7 +503,7 @@ def regrid_weights(
             if dst_mask.dtype != bool or dst_mask.shape != dst_shape:
                 raise ValueError(
                     "The 'dst_mask' parameter must be None or a "
-                    "boolean numpy array with shape {dst_shape}. Got: "
+                    "Boolean numpy array with shape {dst_shape}. Got: "
                     f"dtype={dst_mask.dtype}, shape={dst_mask.shape}"
                 )
 

@@ -314,10 +314,93 @@ _docstring_substitution_definitions = {
                 ``'nearest'``
                 ``'midpoint'``
                 ===============================""",
+    # use_src_mask
+    "{{use_src_mask: `bool`, optional}}}": """use_src_mask: `bool`, optional
+                By default the mask of the source field is taken into
+                account during the regridding process. The only
+                possible exception to this is when the nearest source
+                to destination regridding method (``'nearest_stod'``)
+                is being used. In this case, if *use_src_mask* is
+                False then each destination point is mapped to the
+                closest source point, whether or not it is masked (see
+                the *method* parameter for details).
+
+                Ignored if *dst* is a `RegridOperator`.""",
+  
+    # use_dst_mask
+    "{{use_dst_mask: `bool`, optional}}}": """use_dst_mask: `bool`, optional
+                If *dst* is a `Field` and *use_dst_mask* is False (the
+                default) then the mask of data on the destination grid
+                is **not** taken into account when performing
+                regridding. If *use_dst_mask* is True then any masked
+                cells in the *dst* field construct are transferred to
+                the result. If *dst* has more dimensions than are
+                being regridded, then the mask of the destination grid
+                is taken as the subspace defined by index ``0`` of all
+                the non-regridding dimensions.
+            
+                Ignored if *dst* is not a `Field`.""",  
+    # ignore_degenerate
+    "{{ignore_degenerate: `bool`, optional}}": """ignore_degenerate: `bool`, optional
+                For conservative regridding methods, if True (the
+                default) then degenerate cells (those for which enough
+                vertices collapse to leave a cell as either a line or
+                a point) are skipped, not producing a
+                result. Otherwise an error will be produced if
+                degenerate cells are found, that will be present in
+                the ESMF log files.
+
+                For all other regridding methods, degenerate cells are
+                always skipped, regardless of the value of
+                *ignore_degenerate*.
+
+                Ignored if *dst* is a `RegridOperator`.""",
+    # return_operator
+    "{{return_operator: `bool`, optional}}": """return_operator: `bool`, optional
+                If True then do not perform the regridding, rather
+                return the `RegridOperator` instance that defines the
+                regridding operation, and which can be used in
+                subsequent calls. See the *dst* parameter for
+                details.""",
+    # check_coordinates
+    "{{check_coordinates: `bool`, optional}}": """check_coordinates: `bool`, optional
+                If True and *dst* is a `RegridOperator`then the source
+                grid coordinates defined by the operator are checked
+                for compatibilty against those of the source field. By
+                default this check is not carried out. See the *dst*
+                parameter for details.
+
+                Ignored unless *dst* is a `RegridOperator`.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
     # Returns construct
     "{{Returns construct}}": """The selected construct, or its identifier if *key* is
                 True, or a tuple of both if *item* is True.""",
+    # regrid RegridOperator
+    "{{regrid RegridOperator}}": """* `RegridOperator`: The grid is defined by a regrid
+                  operator that has been returned by a previous call
+                  with the *return_operator* parameter set to True.
+
+                  Unlike the other options, for which the regrid
+                  weights need to be calculated, the regrid operator
+                  already contains the weights. Therefore, for cases
+                  where multiple fields with the same source grids
+                  need to be regridded to the same destination grid,
+                  using a regrid operator can give performance
+                  improvements by avoiding having to calculate the
+                  weights for each source field. Note that for the
+                  other types of *dst* parameter, the calculation of
+                  the regrid weights is not a lazy operation.                  
+
+                  .. note:: The source grid of the regrid operator is
+                            checked for compatability with the grid of
+                            the source field. By default only the
+                            computationally cheap tests are performed
+                            (checking that the coordinate system,
+                            cyclicity and grid shape are the same),
+                            with the grid coordinates not being
+                            checked. The coordinates check will be
+                            carried out, however, if the
+                            *check_coordinates* parameter is True.""",
 }

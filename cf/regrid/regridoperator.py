@@ -2,44 +2,89 @@ from copy import deepcopy
 
 
 class RegridOperator:
-    """A regridding operator between two fields.
+    """A regridding operator between two grids.
 
-    TODODASK
+    Regridding is the process of interpolating from one grid
+    resolution to a different grid resolution.
 
-    Stores an `ESMF.Regrid` regridding operator and associated
-    parameters that describe the complete coordinate system of the
-    destination grid.
+    The regridding operator stores the regridding weights, auxiliary
+    information, such as the grid shapes, the CF metadata for the
+    destination grid, and the source grid coordinates.
 
     """
 
     def __init__(self, weights, row, col, coord_sys=None, method=None,
                  src_shape=None, dst_shape=None, src_cyclic=None,
                  dst_cyclic=None, src_mask=None, dst_mask=None,
-                 src_coords=None, src_bounds=None, parameters=None):
+                 src_coords=None, src_bounds=None, start_index=0,
+                 parameters=None):
         """**Initialization**
 
         :Parameters:
 
-            regrid: `ESMF.Regrid`
-                The `ESMF` regridding operator between two fields.
+            weights: array_like
+                1-d array of the regridding weights.
 
-            name: `str`, optional
-                A name that defines the context of the destination
-                grid parameters.
+            row, col: array_like, array_like
+                1-d arrays of the row and column indices of the
+                regridding weights in the dense weights matrix, which
+                has J rows and I columns, where J and I are the total
+                number of cells in the destination and source grids
+                respectively.
+
+            coord_sys: `str`
+                The name of the coordinate system of the source and
+                destination grids. Either ``'spherical'`` or
+                ``'Cartesian'``.
+
+            src_shape: sequence of `int`
+                The shape of the source grid.
+    
+            dst_shape: sequence of `int`
+                The shape of the destination grid.
+    
+            src_cyclic: `bool`
+                For spherical regridding, specifies whether or not the
+                source grid longitude axis is cyclic.
+    
+            dst_cyclic: `bool`
+                For spherical regridding, specifies whether or not the
+                destination grid longitude axis is cyclic.
+
+            src_mask: `numpy.ndarray` or `None`, optional
+                If a `numpy.ndarray` with shape *src_shape* then this
+                is the reference source grid mask that was used during
+                the creation of the *weights*. If *src_mask* is a
+                scalar array with value `False`, then this is
+                equivalent to a source grid mask with shape
+                *src_shape* entirely populated with `False`.
+    
+                If `None` (the default), then the weights are assumed
+                to have been created assuming no source grid mask.
+
+            dst_mask: `numpy.ndarray` or `None`, optional
+                A destination grid mask to be applied to the weights
+                matrix, in addition to those destination grid cells
+                that have no non-zero weights. If `None` (the default)
+                then no additional destination grid cells are
+                masked. If a Boolean `numpy` array then it must have
+                shape *dst_shape*, and `True` signifies as masked
+                cell.
+
+            start_index: `int`, optional
+                Specify whether the *row* and *col* parameters use 0-
+                or 1-based indexing.
 
             parameters: `dict`, optional
-               Parameters that describe the complete coordinate system
-               of the destination grid.
+                Parameters that describe the complete coordinate
+                system of the destination grid.
 
-               Any parameter names and values are allowed, and it is
-               assumed that the these are well defined during the
-               creation and subsequent use of a `RegridOperator`
-               instance.
+                Any parameter names and values are allowed, and it is
+                assumed that the these are well defined during the
+                creation and subsequent use of a `RegridOperator`
+                instance.
 
         """
-        if parameters is None:
-            parameters = {}
-            
         self._weights = weights
         self._row = row
         self._col = col
@@ -53,35 +98,13 @@ class RegridOperator:
         self._dst_mask = dst_mask
         self._src_coords = src_coords
         self._src_bounds = src_bounds
-        self._parameters = parameters.copy()
+        self._start_index = int(start_index)
 
-    def __call__(self, src, check_domain=False):
-        """Regrid a `Field` with the regrid operator.
-
-        :Parameters:
-
-            src: `Field`
-                The field to be regridded.
-
-            check_domain: `bool`, optional
-                If True then check that the source grid defined by the
-                regrid operator is compatible with the domain of
-                *src*. By default this is not checked.
-
-        :Returns:
-
-            `Field`
-                The regridded field.
-
-        """
-        coords_sys = self.coord_sys
-        if coord_sys == "spherical":
-            return src.regrids(self, check_regrid_operator=check_domain)
-        elif coord_sys == "Cartesian":
-            return src.regridc(self, check_regrid_operator=check_domain)
+        if parameters is None:
+            self._parameters = {}
         else:
-            raise ValueError(f"Unknown coordinate system: {coord_sys}")
-        
+            self._parameters = parameters.copy()
+            
     def __repr__(self):
         return (
             f"<CF {self.__class__.__name__}: {self.coord_sys} {self.method}>"
@@ -116,35 +139,8 @@ class RegridOperator:
     def method(self):
         """The regridding method.
 
-        **Examples**
-
-        >>> r.method
-        'patch'
-
         """
         return self._method
-
-    @property
-    def parameters(self):
-        """The parameters that describe the destination grid.
-
-        Any parameter names and values are allowed, and it is assumed
-        that the these are well defined during the creation and
-        subsequent use of a `RegridOperator` instance.
-
-        **Examples**
-
-        >>> type(r.parameters)
-        dict
-
-        """
-        return self._parameters.copy()
-
-    @property
-    def quarter(self):
-        """TODODASK
-        """
-        return self._quarter
 
     @property
     def src_bounds(self):
@@ -177,6 +173,13 @@ class RegridOperator:
         return self._src_shape
 
     @property
+    def start_index(self):
+        """The contained regridding operator.
+
+        """
+        return self._start_index
+
+    @property
     def weights(self):
         """The contained regridding operator.
 
@@ -205,10 +208,69 @@ class RegridOperator:
             src_coords=deepcopy(self.src_coords),
             src_bounds=deepcopy(self.src_bounds),
             coord_sys=self.coord_sys,
-            quarter=self.quarter,
+            start_index=self.start_index,
             parameters=deepcopy(parameters),
         )
     
+    def get_parameter(self, parameter, *default):
+        """Return a regrid operation parameter.
+
+        :Parameters:
+    
+            parameter: `str`
+                The name of the parameter.
+            
+            default: optional
+                Return the value of the *default* parameter if the
+                parameter has not been set.
+            
+                If set to an `Exception` instance then it will be
+                raised instead.
+
+                .. versionadded:: TODODASK
+
+        :Returns:
+    
+            The value of the named parameter or the default value, if
+            set.    
+
+        **Examples**
+
+        >>> r.get_parameter('dst_axes')
+        ['domainaxis1', 'domainaxis0']
+        >>> r.get_parameter('x')
+        Traceback
+            ...
+        ValueError: RegridOperator has no 'x' parameter
+        >>> r.get_parameter('x', 'missing')
+        'missing'
+
+        """
+        try:
+            return self._parameters[parameter]
+        except KeyError:
+            if default:
+                return default[0]
+            
+            raise ValueError(
+                f"{self.__class__.__name__} has no {parameter!r} parameter"
+            )
+
+    def parameters(self):
+        """The parameters that describe the destination grid.
+
+        Any parameter names and values are allowed, and it is assumed
+        that the these are well defined during the creation and
+        subsequent use of a `RegridOperator` instance.
+
+        **Examples**
+
+        >>> type(r.parameters())
+        dict
+
+        """
+        return self._parameters.copy()
+
     def todense(self, order="C"):
         """Return the weights in dense format.
         
@@ -219,26 +281,6 @@ class RegridOperator:
         """
         return self.sparse_array().todense(order=order)
  
-    def get_parameter(self, parameter):
-        """Return a regrid operation parameter.
-
-        **Examples**
-
-        >>> r.get_parameter('ignore_degenerate')
-        True
-        >>> r.get_parameter('x')
-        Traceback
-            ...
-        ValueError: RegridOperator has no 'x' parameter
-
-        """
-        try:
-            return self._parameters[parameter]
-        except KeyError:
-            raise ValueError(
-                f"{self.__class__.__name__} has no {parameter!r} parameter"
-            )
-
     def tosparse(self):
         """Return the weights in sparse COOrdinate format.
         
@@ -248,23 +290,16 @@ class RegridOperator:
 
         """
         from math import prod
-
-        data = self.weights
-        i = self.row - 1
-        j = self.col - 1
+        from scipy.sparse import coo_array
 
         src_size = prod(self.src_shape)
         dst_size = prod(self.dst_shape)
-        shape = [dst_size, src_size]
 
-        if self.quarter:
-             from scipy.sparse import csr_array
-
-             w = csr_array((data, (i, j)), shape=shape)
-             w = w[: dst_size / 2, : src_size / 2]
-        else:
-            from scipy.sparse import coo_array
-            
-            w = coo_array((data, (i, j)), shape=shape)
-
-        return w
+        row = self.row        
+        col = self.col
+        start_index = self.start_index
+        if start_index:
+            row = row - start_index 
+            col = col - start_index 
+        
+        return coo_array((self.weights, (row, col)), shape= [dst_size, src_size])

@@ -15398,94 +15398,40 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         _compute_field_mass=None,
         return_operator=False,
     ):
-        """Return the field regridded onto a new latitude-longitude
-        grid.
+        """Regrid the field to a new latitude and longitude grid.
 
-        Regridding, also called remapping or interpolation, is the
-        process of changing the grid underneath field data values
-        while preserving the qualities of the original data.
+        Regridding is the process of interpolating the field data
+        values while preserving the qualities of the original data,
+        and the metadata of the unaffected axes. The metadata for the
+        regridded axes are taken from the *dst* parameter.
 
-        The regridding method must be specified. First-order
-        conservative interpolation conserves the global area integral
-        of the field, but may not give approximations to the values as
-        good as linear interpolation. Second-order conservative
-        interpolation also takes into account the gradient across the
-        source cells, so in general gives a smoother, more accurate
-        representation of the source field especially when going from
-        a coarser to a finer grid. Linear interpolation is
-        available. The latter method is particular useful for cases
-        when the latitude and longitude coordinate cell boundaries are
-        not known nor inferable. Higher order patch recovery is
-        available as an alternative to linear interpolation. This
-        typically results in better approximations to values and
-        derivatives compared to the latter, but the weight matrix can
-        be larger than the linear matrix, which can be an issue when
-        regridding close to the memory limit on a machine. Nearest
-        neighbour interpolation is also available. Nearest source to
-        destination is particularly useful for regridding integer
-        fields such as land use.
-
-
-        **Metadata**
-
-        The field construct's domain must have well defined X and Y
-        axes with latitude and longitude coordinate values, which may
-        be stored as dimension coordinate objects or two dimensional
-        auxiliary coordinate objects. If the latitude and longitude
-        coordinates are two dimensional then the X and Y axes must be
-        defined by dimension coordinates if present or by the netCDF
-        dimensions. In the latter case the X and Y axes must be
-        specified using the *src_axes* or *dst_axes* keyword. The same
-        is true for the destination grid, if it provided as part of
-        another field.
-
-        The cyclicity of the X axes of the source field and
-        destination grid is taken into account. If an X axis is in
-        fact cyclic but is not registered as such by its parent field
-        (see `cf.Field.iscyclic`), then the cyclicity may be set with
-        the *src_cyclic* or *dst_cyclic* parameters. In the case of
-        two dimensional latitude and longitude dimension coordinates
-        without bounds it will be necessary to specify *src_cyclic* or
-        *dst_cyclic* manually if the field is global.
-
-        The output field construct's coordinate objects which span the
-        X and/or Y axes are replaced with those from the destination
-        grid. Any fields contained in coordinate reference objects
-        will also be regridded, if possible.
-
-
-        **Mask**
-
-        The data array mask of the field is automatically taken into
-        account, such that the regridded data array will be masked in
-        regions where the input data array is masked. By default the
-        mask of the destination grid is not taken into account. If the
-        destination field data has more than two dimensions then the
-        mask, if used, is taken from the two dimensional section of
-        the data where the indices of all axes other than X and Y are
-        zero.
-
-
-        **Implementation**
-
-        The interpolation is carried out using the `ESMF` package, a
-        Python interface to the Earth System Modeling Framework (ESMF)
-        `regridding utility
-        <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
-
-
-        **Logging**
-
-        Whether ESMF logging is enabled or not is determined by
-        `cf.regrid_logging`. If it is logging takes place after every
-        call. By default logging is disabled.
-
-
-        **Latitude-Longitude Grid**
-
-        The canonical grid with independent latitude and longitude
+        The 2-d regridding takes place on a sphere, with the grid
+        being defined by latitude and longitude spherical polar
         coordinates.
 
+        **Latitude and longitude coordinates**
+        
+        The source and destination grids of the regridding must both
+        be defined by latitude and longitude coordinates, which may be
+        1-d dimension coordinates or 2-d auxiliary coordinates. These
+        are automatically detected from the field being regridded and
+        the specification of the destination grid given by the *dst*
+        parameter.
+
+        When a grid is defined by 2-d latitude and longitude
+        coordinates, it is necessary for their X and Y dimensions to
+        be defined. This is either automatically inferred from the
+        exitence of 1-d dimension coordinates, or else must be specified
+        with *src_axes* or *dst_axes* parameters
+        
+        **Cyclicity of the X axis**
+
+        The cyclicity of the X (longitude) axes of the source and
+        destination grids (i.e. whether or not the first and last
+        cells of the axis are adjacent) are taken into account. By
+        default, the cyclicity is inferred from the grids' defining
+        coordinates, but may be also be provided with the *src_cyclic*
+        and *dst_cyclic* parameters.
 
         **Curvilinear Grids**
 
@@ -15493,27 +15439,34 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         long as two dimensional latitude and longitude coordinates are
         present.
 
-
-        **Rotated Pole Grids**
-
-        Rotated pole grids can be regridded as long as two dimensional
-        latitude and longitude coordinates are present. It may be
-        necessary to explicitly identify the grid latitude and grid
-        longitude coordinates as being the X and Y axes and specify
-        the *src_cyclic* or *dst_cyclic* keywords.
-
-
         **Tripolar Grids**
 
-        Tripolar grids are logically rectangular and so may be able to
-        be regridded. If no dimension coordinates are present it will
-        be necessary to specify which netCDF dimensions are the X and
-        Y axes using the *src_axes* or *dst_axes* keywords.
         Connections across the bipole fold are not currently
         supported, but are not be necessary in some cases, for example
-        if the points on either side are together without a gap. It
-        will also be necessary to specify *src_cyclic* or *dst_cyclic*
-        if the grid is global.
+        if the points on either side are together without a gap.
+
+        **Implementation**
+
+        The interpolation is carried out using regridding weights
+        calcualted byt the `ESMF` package, a Python interface to the
+        Earth System Modeling Framework (ESMF) regridding utility:
+        `https://earthsystemmodeling.org/regrid`_.
+
+        **Masked cells**
+
+        By default, the data mask of the field is taken into account
+        during the regridding process, but the destination grid mask
+        is not. This behaviour may be changed with the *use_src_mask*
+        and *use_dst_mask* parameters.
+
+        How masked cells affect the regridding weights is defined by
+        the `ESMF` package.
+
+        **Logging**
+
+        Whether `ESMF` logging is enabled or not is determined by
+        `cf.regrid_logging`. If it is logging takes place after every
+        call. By default logging is disabled.
 
         .. versionadded:: 1.0.4
 
@@ -15521,7 +15474,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            dst: `Field`, `Domain`, `dict` or `RegridOperator`
+            dst: `Field`, `Domain`, `RegridOperator` or sequence of `Coordinate`
                 The definition of the destination grid on which to
                 regrid the field's data. One of:
 
@@ -15545,31 +15498,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   either of the tuples ``('X', 'Y')`` or ``('Y',
                   'X')``.
 
-                * `RegridOperator`: The grid is defined by a regrid
-                  operator that has been returned by a previous call
-                  with the *return_operator* parameter set to True.
+                * Sequence of `Coordinate`: The grid is defined by two
+                  1-d dimension coordinate constructs or two 2-d
+                  auxiliary coordinate constructs, that define the
+                  latitude and longitude coordinates (in any order) of
+                  the source grid.
 
-                  Unlike the other options, for which the regrid
-                  weights need to be calculated, the regrid operator
-                  already contains the weights. Therefore, for cases
-                  where multiple fields with the same source grids
-                  need to be regridded to the same destination grid,
-                  using a regrid operator can give performance
-                  improvements by avoiding having to calculate the
-                  weights for each source field. Note that for the
-                  other types of *dst* parameter, the calculation of
-                  the regrid weights is not a lazy operation.                  
+                  In the 2-d case, both coordinate constructs must
+                  have their axes in the same order, which must be
+                  specified by the *dst_axes* parameter.
 
-                  .. note:: The source grid of the regrid operator is
-                            checked for compatability with the grid of
-                            the source field. By default only the
-                            computationally cheap tests are performed
-                            (checking that the coordinate system,
-                            cyclicity and grid shape are the same),
-                            with the grid coordinates not being
-                            checked. The coordinates check will be
-                            carried out, however, if the
-                            *check_coordinates* parameter is True.
+                {{regrid RegridOperator}}
 
             {{method: `str` or `None`, optional}}
 
@@ -15591,126 +15530,81 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 Ignored if *dst* is a `RegridOperator`.
 
-            use_src_mask: `bool`, optional
-                By default the mask of the source field is taken into
-                account during the regridding process. The only
-                possible exception to this is when the nearest source
-                to destination regridding method (``'nearest_stod'``)
-                is being used. In this case, if *use_src_mask* is
-                False then each destination point is mapped to the
-                closest unmasked source point (see the *method*
-                parameter for details).
-
-                Ignored if *dst* is a `RegridOperator`.
+            {{use_src_mask: `bool`, optional}}
   
-            use_dst_mask: `bool`, optional
-                If *dst* is a `Field` and *use_dst_mask* is False (the
-                default) then the mask of data on the destination grid
-                is **not** taken into account when performing
-                regridding. If *use_dst_mask* is True then any masked
-                cells in the *dst* field construct are guaranteed to
-                be transferred to the result. If *dst* has more
-                dimensions than are being regridded, then the mask of
-                the destination grid is taken as the subspace defined
-                by index ``0`` of all of the non-regridding
-                dimensions.
-            
-                Ignored if *dst* is not a `Field`.
+            {{use_dst_mask: `bool`, optional}}
   
             src_axes: `dict`, optional
-                When the source field's grid is defined by 2-d
-                latitude and longitude coordinates, then the
-                *src_axes* parameter must be set to specify the X and
-                Y axes of the grid, unless they can be defined by any
-                suitable 1-d dimension coordinates. The dictionary
-                must have the keys ``'X'`` and ``'Y'``, whose values
-                identify a unique domain axis construct by passing the
-                given axis description to a call of the source field
-                construct's `domain_axis` method. For example, for a
-                value of ``'ncdim%x'``, the domain axis construct
-                returned by ``f.domain_axis('ncdim%x')`` is selected.
+                When the source grid is defined by 2-d latitude and
+                longitude coordinates and the X and Y dimensions can
+                not be automatically inferred from the existence of
+                1-d dimension coordinates, then they must be
+                identified with the *src_axes* dictionary, with keys
+                ``'X'`` and ``'Y'``.
+
+                The dictionary values identify a unique domain axis by
+                passing the given axis description to a call of the
+                field construct's `domain_axis` method. For example,
+                for a value of ``'ncdim%x'``, the domain axis
+                construct returned by ``f.domain_axis('ncdim%x')`` is
+                selected.
 
                 Ignored if *dst* is a `RegridOperator`.
 
                 *Parameter example:*
-                  ``src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
+                  ``{'X': 'ncdim%x', 'Y': 'ncdim%y'}``
 
                 *Parameter example:*
-                  The axes may also be identified by their position in
-                  the source field's data array: ``src_axes={'X': 1,
-                  'Y': 0}``.
+                  ``{'X': 1, 'Y': 0}``
 
             dst_axes: `dict`, optional
                 When the destination grid is defined by 2-d latitude
-                and longitude coordinates of a `Field` or `Domain`,
-                then the *dst_axes* parameter must be set to specify
-                the X and Y axes of the grid, unless they can be
-                defined by suitable 1-d dimension coordinates. The
-                dictionary must have the keys ``'X'`` and ``'Y'``,
-                whose values identify a unique domain axis construct
-                by passing the given axis description to a call of the
-                destination field or domain construct's `domain_axis`
-                method. For example,a for a value of ``'ncdim%x'``,
-                the domain axis construct returned by
-                ``g.domain_axis('ncdim%x')`` is selected.
+                and longitude coordinates and the X and Y dimensions
+                can not be automatically inferred from the existence
+                of 1-d dimension coordinates, then they must be
+                identified with the *dst_axes* dictionary, with keys
+                ``'X'`` and ``'Y'``.
+
+                If *dst* is a `Field` or `Domain`, then the dictionary
+                values identify a unique domain axis by passing the
+                given axis description to a call of the destination
+                field or domain construct's `domain_axis` method. For
+                example, for a value of ``'ncdim%x'``, the domain axis
+                construct returned by ``f.domain_axis('ncdim%x')`` is
+                selected.
+
+                If *dst* is a sequence of `Coordinate`, then the
+                dictionary values identify a unique domain axis by its
+                position in the 2-d coordinates' data arrays, i.e. the
+                dictionary values must be ``0`` and ``1``:
 
                 Ignored if *dst* is a `RegridOperator`.
 
                 *Parameter example:*
-                  ``dst_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
+                  ``{'X': 'ncdim%x', 'Y': 'ncdim%y'}``
 
                 *Parameter example:*
-                  If *dst* is a `Field`, then axes may also be
-                  identified by their position in the field's data
-                  array: ``dst_axes={'X': 1, 'Y': 0}``.
+                  ``{'X': 1, 'Y': 0}``
 
-            ignore_degenerate: `bool`, optional
-                For conservative regridding methods, if True (the
-                default) then degenerate cells (those for which enough
-                vertices collapse to leave a cell as either a line or
-                a point) are skipped, not producing a
-                result. Otherwise an error will be produced if
-                degenerate cells are found, that will be present in
-                the ESMF log files if `cf.regrid_logging` is set to
-                True.
+            {{ignore_degenerate: `bool`, optional}}
 
-                For all other regridding methods, degenerate cells are
-                always skipped, regardless of the value of
-                *ignore_degenerate*.
-
-                Ignored if *dst* is a `RegridOperator`.
-
-            return_operator: `bool`, optional
-                If True then do not perform the regridding, rather
-                return the `RegridOperator` instance that defines the
-                regridding operation, and which can be used in
-                subsequent calls.
-
-                See the *dst* parameter for details.
+            {{return_operator: `bool`, optional}}
 
                 .. versionadded:: 3.10.0
 
-            check_coordinates: `bool`, optional
-                If True and *dst* is a `RegridOperator`then the source
-                grid coordinates defined by the operator are checked
-                for compatibilty against those of the source field. By
-                default this check is not carried out. See the *dst*
-                parameter for details.
-
-                Ignored unless *dst* is a `RegridOperator`.
+            {{check_coordinates: `bool`, optional}}
 
                 .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
  
             axis_order: sequence, optional
-                Deprecated at version TODODASK. Use a dictionary *dst*
-                parameter with an ``'axes'`` key instead.
-
-            _compute_field_mass: `dict`, optional
                 Deprecated at version TODODASK.
 
             fracfield: `bool`, optional
+                Deprecated at version TODODASK.
+
+            _compute_field_mass: `dict`, optional
                 Deprecated at version TODODASK.
 
             {{i: deprecated at version 3.0.0}}
@@ -15718,11 +15612,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Returns:
 
             `Field` or `None` or `RegridOperator`
-                The regridded field construct, or `None` if the
-                operation was in-place, or the regridding operator if
+                The regridded field construct; or `None` if the
+                operation was in-place or the regridding operator if
                 *return_operator* is True.
 
-        **Examples:**
+        **Examples**
 
         Regrid field construct ``f`` conservatively onto a grid
         contained in field construct ``g``:
@@ -15806,73 +15700,44 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         _compute_field_mass=None,
         return_operator=False,
     ):
-        """Return the field with the specified Cartesian axes regridded
-        onto a new grid.
+        """Regrid the field to a new Cartesian grid.
 
-        Between 1 and 3 dimensions may be regridded.
+        Regridding is the process of interpolating the field data
+        values while preserving the qualities of the original data,
+        and the metadata of the unaffected axes. The metadata for the
+        regridded axes are taken from the *dst* parameter.
 
-        Regridding, also called remapping or interpolation, is the
-        process of changing the grid underneath field data values
-        while preserving the qualities of the original data.
+        Between one and three axes may be simultaneously regridded in
+        Cartesian space.
 
-        The regridding method must be specified. First-order
-        conservative interpolation conserves the global spatial
-        integral of the field, but may not give approximations to the
-        values as good as (multi)linear interpolation. Second-order
-        conservative interpolation also takes into account the
-        gradient across the source cells, so in general gives a
-        smoother, more accurate representation of the source field
-        especially when going from a coarser to a finer
-        grid. (Multi)linear interpolation is available. The latter
-        method is particular useful for cases when the latitude and
-        longitude coordinate cell boundaries are not known nor
-        inferable. Higher order patch recovery is available as an
-        alternative to (multi)linear interpolation.  This typically
-        results in better approximations to values and derivatives
-        compared to the latter, but the weight matrix can be larger
-        than the linear matrix, which can be an issue when regridding
-        close to the memory limit on a machine. It is only available
-        in 2-d. Nearest neighbour interpolation is also
-        available. Nearest source to destination is particularly
-        useful for regridding integer fields such as land use.
-
-        **Metadata**
-
-        The field construct's domain must have axes matching those
-        specified in *src_axes*. The same is true for the destination
-        grid, if it provided as part of another field. Optionally the
-        axes to use from the destination grid may be specified
-        separately in *dst_axes*.
-
-        The output field construct's coordinate objects which span the
-        specified axes are replaced with those from the destination
-        grid. Any fields contained in coordinate reference objects
-        will also be regridded, if possible.
-
-
-        **Mask**
-
-        The data array mask of the field is automatically taken into
-        account, such that the regridded data array will be masked in
-        regions where the input data array is masked. By default the
-        mask of the destination grid is not taken into account. If the
-        destination field data has more dimensions than the number of
-        axes specified then, if used, its mask is taken from the 1-3
-        dimensional section of the data where the indices of all axes
-        other than X and Y are zero.
-
+        **Coordinates**
+        
+        The source and destination grids of the regridding must both
+        be defined by equivalent coordinates, which must be 1-d
+        dimension coordinates. These are automatically detected from
+        the field being regridded and the specification of the
+        destination grid given by the *dst* parameter.
 
         **Implementation**
 
-        The interpolation is carried out using the `ESMF` package, a
-        Python interface to the Earth System Modeling Framework (ESMF)
-        `regridding utility
-        <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
+        The interpolation is carried out using regridding weights
+        calcualted byt the `ESMF` package, a Python interface to the
+        Earth System Modeling Framework (ESMF) regridding utility:
+        `https://earthsystemmodeling.org/regrid`_.
 
+        **Masked cells**
+
+        By default, the data mask of the field is taken into account
+        during the regridding process, but the destination grid mask
+        is not. This behaviour may be changed with the *use_src_mask*
+        and *use_dst_mask* parameters.
+
+        How masked cells affect the regridding weights is defined by
+        the `ESMF` package.
 
         **Logging**
 
-        Whether ESMF logging is enabled or not is determined by
+        Whether `ESMF` logging is enabled or not is determined by
         `cf.regrid_logging`. If it is logging takes place after every
         call. By default logging is disabled.
 
@@ -15880,156 +15745,122 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            dst: `Field` or `dict` or `RegridOperator`
-                The destination grid. Must be one of:
+            dst: `Field`, `Domain`, `RegridOperator` or sequence of `DimensionCoordinate`
+                The definition of the destination grid on which to
+                regrid the field's data. One of:
 
-                * `Field`. The grid is defined by the field
-                  construct's domain.
+                * `Field`: The grid is defined by the coordinates of
+                  the field construct's domain.
 
-                * `dict`. The grid is defined by a dictionary with
-                  keys ``'latitude'`` and ``'longitude'`` whose values
-                  are with either both 1-d dimension coordinates
-                  constructs, or both 2-d auxiliary coordinate
-                  constructs. In the 2-d case, both coordinate
-                  constructs must have their axes in the same order
-                  and this must be specified with the ``'axes'`` key
-                  as either of the tuples ``('X', 'Y')`` or ``('Y',
-                  'X')``.
+                * `Domain`: The grid is defined by the coordinates of
+                  the domain construct.
 
-                * `RegridOperator`. The grid is defined by a regrid
-                  operator that has been returned by a previous call
-                  to `regridc` with ``return_operator=True``.
+                * Sequence of `DimensionCoordinate`: The grid is
+                  defined by between one and three 1-d dimension
+                  coordinate constructs that define the coordinates of
+                  the source grid. The order of the coordinate
+                  constructs **must** match the order of source field
+                  regridding axes defined by the *src_axes* or *axes*
+                  parameter.
 
-                  This option can give large performance increases, as
-                  greatest computational expense is often the creation
-                  of the regrid operator, rather than running the
-                  regrid operator to regrid the data.
+                {{regrid RegridOperator}}
 
-                  The regrid operator defines the source grid and the
-                  regridding weights, so the *method*, *axes*,
-                  *ignore_degenerate*, *use_src_mask*, and
-                  *use_dst_mask* parameters are not required and are
-                  ignored if set.
+            {{method: `str` or `None`, optional}}
 
-                  An exception will be raised if the domain of the
-                  source field being regridded is inconsistent with
-                  source grid of the regrid operator.
+            {{use_src_mask: `bool`, optional}}
+  
+            {{use_dst_mask: `bool`, optional}}
+    
+            src_axes: `sequence`, optional
+                Define the source grid axes to be regridded. The
+                sequence of between one and three values identify
+                unique domain axes by passing each axis description to
+                a call of the source field construct's `domain_axis`
+                method. For example, for a value of ``'ncdim%x'``, the
+                domain axis construct returned by
+                ``f.domain_axis('ncdim%x')`` is selected.
 
-                  The source field being regridded may, however, have
-                  a different data mask to that of the source grid in
-                  the regrid operator. In this case a new regrid
-                  operator is automatically created, with the
-                  associated loss in performance.
+                Must have the same number of values as the *dst_axes*
+                parameter, if set, and the source and destination
+                regridding axes must be specified in the same
+                order. See the *axes* parameter.
 
-            dst: `Field` or `dict` or `RegridOperator`
-                The field containing the new grid or a dictionary with
-                the axes specifiers as keys referencing dimension
-                coordinates.
+                Ignored if *dst* is a `RegridOperator`.
 
-            axes: optional
-                Select dimension coordinates from the source and
-                destination fields for regridding. See `cf.Field.axes`
-                TODO for options for selecting specific axes. However,
-                the number of axes returned by `cf.Field.axes` TODO
-                must be the same as the number of specifiers passed
-                in. TODO Can only be None if regridoperator
+                *Parameter example:*
+                  ``['T']``
 
-                .. note:: When *dst* is a regrid operator then *axes*
-                          is ignored, and its value is set by the
-                          regrid operator's parameters.
+                *Parameter example:*
+                  ``[1, 0]``
 
-            {{method: `str`, optional}}
+                .. versionadded:: TODODASK
 
-            use_src_mask: `bool`, optional
-                For all methods other than 'nearest_stod', this must
-                be True as it does not make sense to set it to
-                False. For the 'nearest_stod' method if it is True
-                then points in the result that are nearest to a masked
-                source point are masked. Otherwise, if it is False,
-                then these points are interpolated to the nearest
-                unmasked source points.
-
-                .. note:: When *dst* is a regrid operator then
-                          *use_src_mask* is ignored, and its value is
-                          set by the regrid operator's parameters.
-
-            use_dst_mask: `bool`, optional
-                By default the mask of the data on the destination
-                grid is not taken into account when performing
-                regridding. If this option is set to True then it is.
-
-                .. note:: When *dst* is a regrid operator then
-                          *use_dst_mask* is ignored, and its value is
-                          set by the regrid operator's parameters.
-
-            fracfield: `bool`, optional
-                If the method of regridding is conservative the
-                fraction of each destination grid cell involved in the
-                regridding is returned instead of the regridded data
-                if this is True. Otherwise this is ignored.
-
-            axis_order: sequence, optional
+            dst_axes: `sequence`, optional
+                When the destination grid is defined by a `Field` or
+                `Domain`, define the destination grid axes to be
+                regridded. The sequence of between one and three
+                values identify unique domain axes by passing each
+                axis description to a call of the destination field or
+                domain construct's `domain_axis` method. For example,
+                for a value of ``'ncdim%x'``, the domain axis
+                construct returned by ``g.domain_axis('ncdim%x')`` is
+                selected. 
         
-                Deprecated at version TODODASK
+                Must have the same number of values as the *src_axes*
+                parameter, if set, and the source and destination
+                regridding axes must be specified in the same
+                order. See the *axes* parameter.
 
-                A sequence of items specifying dimension coordinates
-                as retrieved by the `dim` method. These determine the
-                order in which to iterate over the other axes of the
-                field when regridding slices. The slowest moving axis
-                will be the first one specified. Currently the
-                regridding weights are recalculated every time the
-                mask of a slice changes with respect to the previous
-                one, so this option allows the user to minimise how
-                frequently the mask changes. TODO.
+                Ignored if *dst* is a `RegridOperator`.
 
-            ignore_degenerate: `bool`, optional
-                True by default. Instructs ESMF to ignore degenerate
-                cells when checking the grids for errors. Regridding
-                will proceed and degenerate cells will be skipped, not
-                producing a result, when set to True. Otherwise an
-                error will be produced if degenerate cells are
-                found. This will be present in the ESMF log files if
-                cf.regrid_logging is set to True. As of ESMF 7.0.0
-                this only applies to conservative regridding.  Other
-                methods always skip degenerate cells.
+                *Parameter example:*
+                  ``['T']``
 
-                .. note:: When *dst* is a regrid operator then
-                          *ignore_degenerate* is ignored, and its
-                          value is set by the regrid operator's
-                          parameters.
+                *Parameter example:*
+                  ``[1, 0]``
+
+                .. versionadded:: TODODASK
+
+            axes: optional 
+                Define the axes to be regridded for the source grid
+                and, if *dst* is a `Field` or `Domain`, the
+                destination grid. The *axes* parameter is a
+                convenience that may be used to replace *src_axes* and
+                *dst_axes* when they would contain identical
+                sequences. It may also be used in place of *src_axes*
+                if *dst_axes* is not required.
+
+            {{ignore_degenerate: `bool`, optional}}
+
+            {{return_operator: `bool`, optional}}
+
+                .. versionadded:: 3.10.0
+
+            {{check_coordinates: `bool`, optional}}
+
+                .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
 
+            axis_order: sequence, optional
+                Deprecated at version TODODASK.
+
+            fracfield: `bool`, optional
+                Deprecated at version TODODASK.
+
             _compute_field_mass: `dict`, optional
-                If this is a dictionary then the field masses of the
-                source and destination fields are computed and
-                returned within the dictionary. The keys of the
-                dictionary indicates the lat/long slice of the field
-                and the corresponding value is a tuple containing the
-                source field construct's mass and the destination
-                field construct's mass. The calculation is only done
-                if conservative regridding is being performed. This is
-                for debugging purposes.
-
-            return_operator: `bool`, optional
-                If True then do not perform the regridding, rather
-                return a `RegridOperator` instance that defines the
-                regridding operation, including the destination grid,
-                and which can be used in subsequent calls to
-                `regridc`.
-
-                .. versionadded:: 3.10.0
+                Deprecated at version TODODASK.
 
             {{i: deprecated at version 3.0.0}}
 
         :Returns:
 
             `Field` or `None` or `RegridOperator`
-                The regridded field construct, or `None` if the
-                operation was in-place, or the regridding operator if
+                The regridded field construct; or `None` if the
+                operation was in-place or the regridding operator if
                 *return_operator* is True.
 
-        **Examples:**
+        **Examples**
 
         Regrid the time axes of field ``f`` conservatively onto a grid
         contained in field ``g``:

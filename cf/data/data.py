@@ -3400,39 +3400,34 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _regrid(self, operator=None, regrid_axes=None, regridded_sizes=None):
         """Regrid the data.
 
-        https://earthsystemmodeling.org/esmpy_doc/release/latest/ESMPy.pdf
-
         .. versionadded:: TODODASK
+
+        .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`
 
         :Parameters:
 
             operator: `RegridOperator`
-  
-            dst_mask: array_like or `None`, optional
-                Ignored if *operator* has been set.
-                The mask of the destination grid.
-                If *use_dst_mask* is False then *dst_mask* is ignored
-                and the destination grid is unmasked.
-                If `None` (the default) then the destination grid is
-                unmasked.
-                If it is an array then it must have a number of
-                dimensions equal to the number of regridding axes in
-                the source data, and in the same relative order. The
-                array may be a boolean array, or else its implied
-                boolean mask is used instead, for which True signifies
-                a masked point.
+                The definition of the source and destination grids and
+                the regridding weights.
+
+            regrid_axes: sequence of `int`            
+                The positions of the regrid axes in the data, given in
+                the order expected by the regrid operator.
+
+                *Parameter example:*
+                  ``[3, 2]``
         
-                For instance, if the source data has shape ``(12, 64,
-                19, 128)``, and the dimensions with sizes ``64`` and
-                ``128`` are to be regridded to dimensions with
-                corresponding sizes ``73`` and ``96``, then the mask
-                array must have shape ``(73, 96)``.
-        
+            regridded_sizes: `dict`
+                Mapping of the regrid axes, given by the elements of
+                *regrid_axes*, to their regridded sizes.
+
+                *Parameter example:*
+                   ``{3: 128, 2: 64}``
+
         :Returns:
 
             `Data`
-
-        **Examples**
+                The regridded data.
 
         """
         shape = self.shape
@@ -3449,19 +3444,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Rechunk so that each chunk contains data in the form
         # expected by the regrid operator, i.e. the regrid axes all
         # have chunksize -1.
-        chunks = dx.chunks
-        shape = dx.shape
-        if not all(chunks[i] == (shape[i],) for i in regrid_axes):
+        numblocks = dx.numblocks
+        if not all(numblocks[i] == 1 for i in regrid_axes):
             chunks = [
                 (-1,) if i in regrid_axes else c for i, c in enumerate(chunks)
             ]
             dx = dx.rechunk(chunks)
-
-        # Set the output data type
-        if method in ("nearest_dtos", "nearest_stod"):
-            dst_dtype = dx.dtype
-        else:
-            dst_dtype = float
 
         # Define the regridded chunksizes
         regridded_chunks = tuple(
@@ -3469,15 +3457,52 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             for i, c in enumerate(dx.chunks)
         )
 
+        # Set the output data type
+        if method in ("nearest_dtos", "nearest_stod"):
+            dst_dtype = dx.dtype
+        else:
+            dst_dtype = float
+
         non_regrid_axes = [i for i in range(d.ndim) if i not in regrid_axes]
 
         src_mask = operator.src_mask
         if src_mask is not None:
             src_mask = da.asanyarray(src_mask)
+            if src_mask.npartitions > 1:
+                src_mask = src_mask.rechunk(-1)
 
         dst_mask = operator.dst_mask
         if dst_mask is not None:
             dst_mask = da.asanyarray(dst_mask)
+            if dst_mask.npartitions > 1:
+                dst_mask = dst_mask.rechunk(-1)
+
+        weights=da.asanyarray(operator.weights)
+        if weights.npartitions > 1:
+            weigths = weigths.rechunk(-1)
+            
+        row = da.asanyarray(operator.row)
+        if row.npartitions > 1:
+            row = row.rechunk(-1)
+
+        col = da.asanyarray(operator.col)
+        if col.npartitions > 1:
+            col =  col.rechunk(-1)
+                         
+        weights_func = partial(
+            regrid_weights,
+            src_shape=src_shape,
+            dst_shape=operator.dst_shape,
+            dtype=dst_dtype,
+            start_index=operator.start_index,
+        )
+
+        weights = dask.delayed(weights_func, pure=True)(
+            weights=weights,
+            row=row,
+            col=col,
+            dst_mask=dst_mask,
+        )
 
         regrid_func = partial(
             regrid,
@@ -3485,21 +3510,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             src_shape=src_shape,
             dst_shape=operator.dst_shape,
             axis_order=non_regrid_axes + list(regrid_axes),
-        )
-
-        weights_func = partial(
-            regrid_weights,
-            src_shape=src_shape,
-            dst_shape=operator.dst_shape,
-            dtype=dst_dtype,
-            quarter=operator.quarter,
-        )
-
-        weights = dask.delayed(weights_func, pure=True)(
-            weights=da.asanyarray(operator.weights),
-            row=da.asanyarray(operator.row),
-            col=da.asanyarray(operator.col),
-            dst_mask=dst_mask,
         )
 
         dx = dx.map_blocks(
