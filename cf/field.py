@@ -15485,24 +15485,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 * `Domain`: The grid is defined by the latitude and
                   longitude coordinates of the domain construct.
 
-                * `dict`: The grid is defined by a dictionary with
-                  keys ``'latitude'`` and ``'longitude'`` whose values
-                  are with either both 1-d dimension coordinate
-                  constructs, or both 2-d auxiliary coordinate
-                  constructs, for the latitude and longitude
-                  coordinates respectively.
-
-                  In the 2-d case, both coordinate constructs must
-                  have their axes in the same order which must be
-                  specified by the extra ``'axes'`` dictionary key as
-                  either of the tuples ``('X', 'Y')`` or ``('Y',
-                  'X')``.
-
                 * Sequence of `Coordinate`: The grid is defined by two
                   1-d dimension coordinate constructs or two 2-d
                   auxiliary coordinate constructs, that define the
-                  latitude and longitude coordinates (in any order) of
-                  the source grid.
+                  spherical latitude and longitude coordinates (in any
+                  order) of the destination grid.
 
                   In the 2-d case, both coordinate constructs must
                   have their axes in the same order, which must be
@@ -15758,7 +15745,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 * Sequence of `DimensionCoordinate`: The grid is
                   defined by between one and three 1-d dimension
                   coordinate constructs that define the coordinates of
-                  the source grid. The order of the coordinate
+                  the destination grid. The order of the coordinate
                   constructs **must** match the order of source field
                   regridding axes defined by the *src_axes* or *axes*
                   parameter.

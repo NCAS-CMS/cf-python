@@ -13,29 +13,45 @@ class RegridOperator:
 
     """
 
-    def __init__(self, weights, row, col, coord_sys=None, method=None,
-                 src_shape=None, dst_shape=None, src_cyclic=None,
-                 dst_cyclic=None, src_mask=None, dst_mask=None,
-                 src_coords=None, src_bounds=None, start_index=0,
-                 parameters=None):
+    def __init__(
+        self,
+        weights,
+        row,
+        col,
+        coord_sys=None,
+        method=None,
+        src_shape=None,
+        dst_shape=None,
+        src_cyclic=None,
+        dst_cyclic=None,
+        src_mask=None,
+        dst_mask=None,
+        src_coords=None,
+        src_bounds=None,
+        start_index=0,
+        parameters=None,
+    ):
         """**Initialization**
 
         :Parameters:
 
             weights: array_like
-                1-d array of the regridding weights.
+                The 1-d array of the regridding weights.
 
             row, col: array_like, array_like
-                1-d arrays of the row and column indices of the
+                The 1-d arrays of the row and column indices of the
                 regridding weights in the dense weights matrix, which
                 has J rows and I columns, where J and I are the total
                 number of cells in the destination and source grids
-                respectively.
+                respectively. See the *start_index* parameter.
 
             coord_sys: `str`
                 The name of the coordinate system of the source and
                 destination grids. Either ``'spherical'`` or
                 ``'Cartesian'``.
+
+            method: `str`
+                The name of the regridding method.
 
             src_shape: sequence of `int`
                 The shape of the source grid.
@@ -73,11 +89,12 @@ class RegridOperator:
 
             start_index: `int`, optional
                 Specify whether the *row* and *col* parameters use 0-
-                or 1-based indexing.
+                or 1-based indexing. By default 0-based indexing is
+                used.
 
             parameters: `dict`, optional
-                Parameters that describe the complete coordinate
-                system of the destination grid.
+                Parameters that describe the CF metadata for the
+                destination grid.
 
                 Any parameter names and values are allowed, and it is
                 assumed that the these are well defined during the
@@ -104,43 +121,59 @@ class RegridOperator:
             self._parameters = {}
         else:
             self._parameters = parameters.copy()
-            
+
     def __repr__(self):
         return (
             f"<CF {self.__class__.__name__}: {self.coord_sys} {self.method}>"
         )
 
     @property
+    def col(self):
+        """The 1-d array of the column indices of the regridding weights.
+
+        """
+        return self._col
+
+    @property
     def coord_sys(self):
-        """TODODASK
+        """The name of the coordinate system.
 
         """
         return self._coord_sys
 
     @property
     def dst_cyclic(self):
-        """TODODASK
+        """Whether or not the destination grid longitude axis is cyclic.
+
         """
         return self._dst_cyclic
 
     @property
     def dst_mask(self):
-        """TODODASK
+        """A destination grid mask to be applied to the weights matrix.
         """
         return self._dst_mask
 
     @property
     def dst_shape(self):
-        """TODODASK
+        """The shape of the destination grid.
+
         """
         return self._dst_shape
 
     @property
     def method(self):
-        """The regridding method.
+        """The name of the regridding method.
 
         """
         return self._method
+
+    @property
+    def row(self):
+        """The 1-d array of the row indices of the regridding weights.
+
+        """
+        return self._row
 
     @property
     def src_bounds(self):
@@ -156,32 +189,34 @@ class RegridOperator:
 
     @property
     def src_cyclic(self):
-        """TODODASK
+        """Whether or not the source grid longitude axis is cyclic.
+
         """
         return self._src_cylcic
 
     @property
     def src_mask(self):
-        """TODODASK
+        """The source grid mask that was applied during the weights creation.
+
         """
         return self._src_mask
 
     @property
     def src_shape(self):
-        """TODODASK
+        """The shape of the source grid.
         """
         return self._src_shape
 
     @property
     def start_index(self):
-        """The contained regridding operator.
+        """The start index of the row and column indices.
 
         """
         return self._start_index
 
     @property
     def weights(self):
-        """The contained regridding operator.
+        """The 1-d array of the regridding weights.
 
         """
         return self._weights
@@ -192,6 +227,7 @@ class RegridOperator:
         :Returns:
 
             `RegridOperator`
+                The deep copy.
 
         """
         return type(self)(
@@ -211,7 +247,7 @@ class RegridOperator:
             start_index=self.start_index,
             parameters=deepcopy(parameters),
         )
-    
+
     def get_parameter(self, parameter, *default):
         """Return a regrid operation parameter.
 
@@ -251,22 +287,29 @@ class RegridOperator:
         except KeyError:
             if default:
                 return default[0]
-            
+
             raise ValueError(
                 f"{self.__class__.__name__} has no {parameter!r} parameter"
             )
 
     def parameters(self):
-        """The parameters that describe the destination grid.
-
+        """Parameters that describe the CF metadata for the destination grid.
+    
         Any parameter names and values are allowed, and it is assumed
         that the these are well defined during the creation and
         subsequent use of a `RegridOperator` instance.
 
+        :Returns:
+
+            `dict`
+                The parameters.
+        
         **Examples**
 
-        >>> type(r.parameters())
-        dict
+        >>> r.parameters()
+        {'dst': <CF Domain: {latitude(5), longitude(8), time(1)}>,
+         'dst_axes': ['domainaxis1', 'domainaxis2'],
+         'src_axes': None}
 
         """
         return self._parameters.copy()
@@ -278,9 +321,23 @@ class RegridOperator:
 
         .. seealso:: `tosparse`
 
+        :Parameters:
+
+            order: `str`, optional
+                Specify the memory layout of the returned weights
+                matrix. ``'C'`` (the default) means C order
+                (row-major), ``'F'`` means Fortran (column-major)
+                order.
+
+        :Returns:
+        
+            `numpy.ndarray`
+                The full array of weights, with zeros at locations not
+                The sparse array of weightsdefined by `row` and `col`.
+
         """
         return self.sparse_array().todense(order=order)
- 
+
     def tosparse(self):
         """Return the weights in sparse COOrdinate format.
         
@@ -288,18 +345,25 @@ class RegridOperator:
 
         .. seealso:: `todense`
 
+        :Returns:
+        
+            `scipy.sparse._arrays.coo_array`
+                The sparse array of weights.
+
         """
         from math import prod
         from scipy.sparse import coo_array
 
-        src_size = prod(self.src_shape)
-        dst_size = prod(self.dst_shape)
-
-        row = self.row        
+        row = self.row
         col = self.col
         start_index = self.start_index
         if start_index:
-            row = row - start_index 
-            col = col - start_index 
-        
-        return coo_array((self.weights, (row, col)), shape= [dst_size, src_size])
+            row = row - start_index
+            col = col - start_index
+
+        src_size = prod(self.src_shape)
+        dst_size = prod(self.dst_shape)
+
+        return coo_array(
+            (self.weights, (row, col)), shape=[dst_size, src_size]
+        )

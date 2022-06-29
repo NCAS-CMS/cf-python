@@ -7,44 +7,67 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
+try:
+    import ESMF
+except Exception:
+    ESMF_imported = False
+else:
+    ESMF_imported = True
+
+def ccc(coord_sys, regrid, src, dst, **kwargs):
+    
+    
+    ESMF_regrid = cf.regrid.utils.regrid(coord_sys, src, dst,
+                                         _return_regrid=True,
+                                         **kwargs)
+           
+    src_field = ESMF.Field(regrid.srcfield.grid, "src")
+    dst_field = ESMF.Field(regrid.dstfield.grid, "dst")
+
+    if coord_sys = "spherical":
+        src = src.tranpose(['X', 'Y', 'T']).squeeze()
+    else:
+        pass
+    
+    fill_value = 1e20
+    src_field.data[...] = np.ma.MaskedArray(src.array, copy=False).filled(
+        fill_value
+    )
+    dst_field.data[...] = fill_value
+
+    regrid(src_field, dst_field, zero_region=ESMF.Region.SELECT)
+
+    return  np.ma.MaskedArray(
+        dst_field.data.copy(),
+        mask=(dst_field.data == fill_value),
+    )
 
 class RegridTest(unittest.TestCase):
-    filename1 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_file1.nc"
+    filedname =  os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
     )
-    filename2 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_file2.nc"
-    )
-    filename3 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_file3.nc"
-    )
-    filename4 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_file4.nc"
-    )
-    filename5 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "test_file3.nc"
-    )
-    filename6 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "test_file2.nc"
-    )
-    filename7 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_file5.nc"
-    )
-    filename8 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_file6.nc"
-    )
-    filename9 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_file7.nc"
-    )
-    filename10 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_file8.nc"
-    )
-
-    chunk_sizes = (300, 10000, 100000)[::-1]
-
-    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
+    
+    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
     def test_Field_regrids(self):
         self.assertFalse(cf.regrid_logging())
+
+        dst, src = cf.read(filename)
+#        with cf.atol(1e-12):
+
+        src.tranpose(['X', 'Y', 'T'], inplace=True)
+        dst.tranpose(['Y', 'T', 'X'], inplace=True)
+
+        for method in cf.regrid.utils.ESMF_method_map:
+            x = src.regrids(dst, method=method)
+            x.transpose(['X', 'Y', 'T'], inplace=True)
+            for i in (0, 1):
+                y = ccc("spherical", src.subspace(T=[i]), dst)
+                self.assertTrue(
+                    y.data.equals(x.subspace(T=[i]).squeeze().data)
+                )
+            
+
+        
         with cf.atol(1e-12):
             for chunksize in self.chunk_sizes:
                 with cf.chunksize(chunksize):

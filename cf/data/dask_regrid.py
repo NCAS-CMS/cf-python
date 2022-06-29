@@ -269,19 +269,17 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
             The weights matrix used by a previous call to `_regrid`,
             possibly modified to account for missing data. If
             *prev_mask* equals *src_mask* then the *prev_weights*
-            weights matrix to calculate the regridded data. Ignored if
-            `prev_mask` is `None`.
+            weights matrix is used to calculate the regridded
+            data. Ignored if `prev_mask` is `None`.
 
     :Returns:
 
-        `tuple`
-            Tuple with elements:
-
+        3-`tuple`
             * `numpy.ndarray`: The regridded data.
             * `numpy.ndarray` or `None`: The source grid mask applied
               to the returned weights matrix, always identical to the
               *src_mask* parameter.
-            * `numpy.ndarray`: The weights matrix used to regrid a*.
+            * `numpy.ndarray`: The weights matrix used to regrid *a*.
 
     """
     if src_mask is None:
@@ -307,7 +305,7 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
         # weights matrix accordingly
         # ------------------------------------------------------------
         if method in ("conservative", "conservative_1st"):
-            # A) First-order conservative method:
+            # 1) First-order conservative method:
             #
             #     w_ji = f_ji * As_i / Ad_j
             #
@@ -328,9 +326,10 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
             # cell i and destination cell j.
             D = 1 - weights[:, src_mask].sum(axis=1, keepdims=True)
 
-            # Get rid of values that are approximately zero, or
-            # negative. Very small or negative values can occur as a
-            # result of rounding.
+            # Get rid of values that are (approximately) zero, or
+            # spuriously negative. These values of 'D' correspond to
+            # destination cells that only overlap masked source cells
+            # for which te weights will imminently be zeroed.
             D = np.where(D < np.finfo(D.dtype).eps, 1, D)
 
             # Divide the weights by 'D'. Note that for destination
@@ -346,12 +345,12 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
             # that does not intersect any unmasked source grid cells.
             #
             # Note: Rows that correspond to masked destination grid
-            #       cells have already been masked.
+            #       cells will have already been masked.
             w = np.ma.where(
                 np.count_nonzero(w, axis=1, keepdims=True), w, np.ma.masked
             )
         elif method in ("linear", "nearest_stod", "nearest_dtos"):
-            # B) Linear and nearest neighbour methods:
+            # 2) Linear and nearest neighbour methods:
             #
             # Mask out any row j that contains at least one positive
             # w_ji that corresponds to a masked source grid cell i.
@@ -372,12 +371,11 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
             else:
                 w = weights
         elif method in ("patch", "conservative_2nd"):
-            # C) Patch recovery and second-order conservative methods:
+            # 3) Patch recovery and second-order conservative methods:
             #
             # A reference source data mask has already been
             # incorporated into the weights matrix, and 'a' is assumed
-            # to have the same mask (although this is not checked in
-            # this function).
+            # to have the same mask (which is checked in `regrid`).
             w = weights
         else:
             raise ValueError(f"Unknown regrid method: {method!r}")

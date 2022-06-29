@@ -5,7 +5,6 @@ from collections import namedtuple
 
 import numpy as np
 
-from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 from ..functions import regrid_logging
 
 try:
@@ -30,7 +29,7 @@ ESMF_method_map = {
     "nearest_stod": None,
     "patch": None,
 }
-  
+
 # --------------------------------------------------------------------
 # Define a named tuple for the source or destination grid definition,
 # with the following names:
@@ -52,15 +51,28 @@ ESMF_method_map = {
 #           by `ESMF.Grid`.
 #   cyclic: For spherical regridding, whether or not the longitude
 #           axis is cyclic.
+#   coord_sys: The coordinate system of the grid.
+#   method: The regridding method.
+#   name: Identify the grid as 'source' or 'destination'.
 # --------------------------------------------------------------------
 Grid = namedtuple(
     "Grid",
-    ("axis_keys", "axis_indices", "shape", "coords", "bounds", "cyclic"),
+    (
+        "axis_keys",
+        "axis_indices",
+        "shape",
+        "coords",
+        "bounds",
+        "cyclic",
+        "coord_sys",
+        "method",
+        "name",
+    ),
 )
 
 
 def regrid(
-    coord_system,
+    coord_sys,
     src,
     dst,
     method,
@@ -75,6 +87,7 @@ def regrid(
     return_operator=False,
     check_coordinates=False,
     inplace=False,
+    _regrid=None,
 ):
     """TODO.
     
@@ -85,7 +98,7 @@ def regrid(
 
     :Parameters:
 
-        coord_system: `str`
+        coord_sys: `str`
             The name of the coordinate system of the source and
             destination grids. Either ``'spherical'`` or
             ``'Cartesian'``.
@@ -162,17 +175,25 @@ def regrid(
         inplace: `bool`, optional
             If True then modify *src* in-place and return `None`.
 
+        _return_regrid: `bool`, optional `None` or `list`
+            TODO
+
     :Returns:
 
-        `Field`, `None` or `RegridOperator`
+        `Field`, `None`, `RegridOperator` or `ESMF.Regrid`
             The regridded field construct; or `None` if the operation
             was in-place or the regridding operator if
             *return_operator* is True.
 
+            If *_return_regrid* is True then *src* is not regridded,
+            but the `ESMF.Regrid` instance that does the equivalent
+            regridding is returned instead. This is useful for
+            checking that the field has been regridded correctly.
+
     """
     if not inplace:
         src = src.copy()
-        
+
     # ----------------------------------------------------------------
     # Parse and check parameters
     # ----------------------------------------------------------------
@@ -210,42 +231,45 @@ def regrid(
             f"using the {method!r} regridding method."
         )
 
-    if coord_system == "Cartesian":
+    if coord_sys == "Cartesian":
         # Parse the axes
-        if axes is None:
-            raise ValueError(
-                "Must set the 'axes' parameter for Cartesian regridding"
-            )
-
         if isinstance(axes, str):
             axes = (axes,)
 
-        n_axes = len(axes)
-        if not 1 <= n_axes <= 3:
-            raise ValueError(
-                "Between 1 and 3 axes must be individually specified "
-                "for Cartesian regridding"
-            )
-
-        if method == "patch" and n_axes != 2:
-            raise ValueError(
-                "The patch recovery method is only available for "
-                "2-d regridding."
-            )
-
-        if src_axes is None:        
+        if src_axes is None:
             src_axes = axes
-            
+        elif axes is not None:
+            raise ValueError(
+                "Can't set both the 'axes' and 'src_axes' parameters"
+            )
+        elif isinstance(src_axes, str):
+            src_axes = (src_axes,)
+
         if dst_axes is None:
             dst_axes = axes
+        elif axes is not None:
+            raise ValueError(
+                "Can't set both the 'axes' and 'dst_axes' parameters"
+            )
+        elif isinstance(dst_axes, str):
+            dst_axes = (dst_axes,)
 
     if isinstance(dst, src._Domain):
         use_dst_mask = False
-    elif not (isinstance(dst, Field) or isinstance(dst, RegridOperator)):
-        # Convert a dictionary containing the destination grid to a
-        # Domain object
+    elif not (
+        isinstance(dst, src.__class__) or isinstance(dst, RegridOperator)
+    ):
+        # Convert a sequence of Coordinates containing the destination
+        # grid to a Domain object
+        if isinstance(dst, dict):
+            raise DeprecationError(
+                "Setting the 'dst' parameter to a dictionary was  "
+                "deprecated at version TODODASK. Use a sequence of "
+                "Coordinate instances instead. See the docs for details."
+            )
+
         use_dst_mask = False
-        if coord_system == "spherical":
+        if coord_sys == "spherical":
             dst, dst_axes = spherical_coords_to_domain(
                 dst,
                 dst_axes=dst_axes,
@@ -257,33 +281,22 @@ def regrid(
             dst, dst_axes = Cartesian_coords_to_domain(
                 dst, domain_class=src._Domain
             )
-    elif isinstance(dst, dict):
-        raise DeprecationError(
-            "Setting the 'dst' parameter to a dictionary was deprecated "
-            "at version TODODASK. Use a sequence of Coordinate instance "
-            "instead. See the docs for details."
-        )
-    else:
-        raise TypeError(
-            "'dst' parameter must be of type Field, Domain, sequence of "
-            f"Coordinate, or RegridOperator. Got: {type(dst)}"
-        )
 
     # ----------------------------------------------------------------
-    #
+    # Create descriptions of the source and destination grids
     # ----------------------------------------------------------------
     dst_grid = get_grid(
-        coord_system, dst, "destination", method, dst_cyclic, axes=dst_axes
+        coord_sys, dst, "destination", method, dst_cyclic, axes=dst_axes
     )
     src_grid = get_grid(
-        coord_system, src, "source", method, src_cyclic, axes=src_axes
+        coord_sys, src, "source", method, src_cyclic, axes=src_axes
     )
 
-    conform_coordinate_units(coord_system, src_grid, dst_grid)
+    conform_coordinate_units(coord_sys, src_grid, dst_grid)
 
     if create_regrid_operator:
         # ------------------------------------------------------------
-        #
+        # Create a new regrid operator
         # ------------------------------------------------------------
         ESMF_manager = ESMF_initialise()
 
@@ -292,88 +305,77 @@ def regrid(
         grid_dst_mask = None
         if use_dst_mask:
             dst_mask = get_mask(dst, dst_grid)
-            if method == "nearest_stod":
+            if method == "nearest_stod" or _return_regrid:
                 # For nearest source to desination regridding, the
                 # desination mask needs to be taken into account
                 # during the ESMF calculation of the regrid weights,
                 # rather than the mask being applied retrospectively
                 # to weights that have been calculated assuming no
-                # destination grid mask. See
-                # `cf.data.dask_regrid.regrid`.
+                # destination grid mask. See `cf.data.dask_regrid`.
                 grid_dst_mask = np.array(dst_mask.transpose())
                 dst_mask = None
 
         # Create the destination ESMF.Grid
-        dst_ESMF_grid = create_ESMF_grid(
-            coord_system,
-            name="destination",
-            method=method,
-            grid=dst_grid,
-            mask=grid_dst_mask,
-        )
+        dst_ESMF_grid = create_ESMF_grid(dst_grid, mask=grid_dst_mask)
         del grid_dst_mask
 
         # Create a mask for the source grid
         src_mask = None
         grid_src_mask = None
-        if use_src_mask:
-            if method in ("patch", "conservative_2d"):
-                # For patch recovery and second-order conservative
-                # regridding, the source mask needs to be taken into
-                # account during the ESMF calculation of the regrid
-                # weights, rather than the mask being applied
-                # retrospectively to weights that have been calculated
-                # assuming no source grid mask. See
-                # `cf.data.dask_regrid.regrid`.
-                src_mask = get_mask(src, src_grid)
-                grid_src_mask = np.array(src_mask.transpose())
-                if not grid_src_mask.any():
-                    # There are no masked source cells, so we can
-                    # collapse the mask that gets stored in the regrid
-                    # operator.
-                    src_mask = np.array(False)
+        if use_src_mask and (
+            method in ("patch", "conservative_2d") or _return_regrid
+        ):
+            # For patch recovery and second-order conservative
+            # regridding, the source mask needs to be taken into
+            # account during the ESMF calculation of the regrid
+            # weights, rather than the mask being applied
+            # retrospectively to weights that have been calculated
+            # assuming no source grid mask. See `cf.data.dask_regrid`.
+            src_mask = get_mask(src, src_grid)
+            grid_src_mask = np.array(src_mask.transpose())
+            if not grid_src_mask.any():
+                # There are no masked source cells, so we can collapse
+                # the mask that gets stored in the regrid operator.
+                src_mask = np.array(False)
+                grid_src_mask = src_mask
 
         # Create the source ESMF.Grid
-        src_ESMF_grid = create_ESMF_grid(
-            coord_system,
-            name="source",
-            method=method,
-            grid=src_grid,
-            mask=grid_src_mask,
-        )
+        src_ESMF_grid = create_ESMF_grid(src_grid, mask=grid_src_mask)
         del grid_src_mask
 
         # Create regrid weights
         quarter = (
-            coord_system == "Cartesian"
+            coord_sys == "Cartesian"
             and n_axes == 1
             and len(src_grid.coords) == 2
             and not src_grid.bounds
-        )
+        )  # See `create_ESMF_weights` for details
+
+        _regrid = [] if _return_regrid else None
 
         weights, row, col = create_ESMF_weights(
             method,
             src_ESMF_grid,
             dst_ESMF_grid,
-            unmapped_action=unmapped_action,
             ignore_degenerate=ignore_degenerate,
             quarter=quarter,
+            _regrid=_regrid,
         )
 
-        # We've finished with ESMF, so finalise the ESMF manager. This
-        # is done to free up any Persistent Execution Threads (PETs)
-        # created by the ESMF Virtual Machine
+        if _return_regrid:
+            return _regrid[0]
+
+        # Still here? Then we've finished with ESMF, so finalise the
+        # ESMF manager. This is done to free up any Persistent
+        # Execution Threads (PETs) created by the ESMF Virtual Machine
         # (https://earthsystemmodeling.org/esmpy_doc/release/latest/html/api.html#resource-allocation).
         del src_ESMF_grid
         del dst_ESMF_grid
         del ESMF_mananger
 
         # Create regrid operator
-        parameters={
-            "dst": dst,
-            "dst_axes": dst_grid.axis_keys,
-        }
-        if coord_sys == 'Cartesian':            
+        parameters = {"dst": dst, "dst_axes": dst_grid.axis_keys}
+        if coord_sys == "Cartesian":
             parameters["src_axes"] = src_axes
 
         regrid_operator = RegridOperator(
@@ -393,20 +395,13 @@ def regrid(
             start_index=1,
             parameters=parameters,
         )
-
-        if return_operator:
-            return regrid_operator
     else:
         # ------------------------------------------------------------
         # Check that the given regrid operator is compatible with the
         # source field's grid
         # ------------------------------------------------------------
         check_operator(
-            coord_system,
-            src,
-            src_grid,
-            regrid_operator,
-            coordinates=check_coordinates,
+            src, src_grid, regrid_operator, coordinates=check_coordinates
         )
 
     if return_operator:
@@ -429,11 +424,7 @@ def regrid(
     # Update the regridded metadata
     # ----------------------------------------------------------------
     update_non_coordinates(
-        coord_system,
-        src,
-        regrid_operator,
-        src_grid=src_grid,
-        dst_grid=dst_grid,
+        src, regrid_operator, src_grid=src_grid, dst_grid=dst_grid
     )
 
     update_coordinates(src, dst, src_grid=src_grid, dst_grid=dst_grid)
@@ -443,7 +434,7 @@ def regrid(
     # ----------------------------------------------------------------
     src.set_data(new_data, axes=src.get_data_axes(), copy=False)
 
-    if coord_system == "spherical":
+    if coord_sys == "spherical":
         # Set the cyclicity of the longitude axis of the new field
         key, x = src.dimension_coordinate("X", default=(None, None), item=True)
         if x is not None and x.Units.equivalent(Units("degrees")):
@@ -463,7 +454,7 @@ def regrid(
 def spherical_coords_to_domain(
     dst, dst_axes=None, cyclic=None, domain_class=None
 ):
-    """Convert a dictionary spherical grid definition to a `Domain`.
+    """Convert a sequence of `Coordinate` to spherical grid definition.
     
     .. versionadded:: TODODASK
 
@@ -471,9 +462,9 @@ def spherical_coords_to_domain(
 
         dst: sequence of `Coordinate`
             Two 1-d dimension coordinate constructs or two 2-d
-            auxiliary coordinate constructs that define the latitude
-            and longitude coordinates (in any order) of the
-            destination grid.
+            auxiliary coordinate constructs that define the spherical
+            latitude and longitude grid coordinates (in any order) of
+            the destination grid.
 
         dst_axes: `dict` or `None`
             When *d* contains 2-d latitude and longitude coordinates
@@ -505,18 +496,22 @@ def spherical_coords_to_domain(
     """
     coords = {}
     for c in dst:
-        c = c.copy()
-        if c.Units.islatitude:
-            c.standard_name = "latitude"
-            coords["lat"] = c
-        elif c.Units.islongitude:
-            c.standard_name = "longitude"
-            coords["lon"] = c
-        else:
-            raise ValueError(
-                "When 'dst' is a sequence it must be of latitude and "
-                f"longitude coordinate constructs. Got: {dst!r}"
-            )
+        try:
+            c = c.copy()
+            if c.Units.islatitude:
+                c.standard_name = "latitude"
+                coords["lat"] = c
+            elif c.Units.islongitude:
+                c.standard_name = "longitude"
+                coords["lon"] = c
+        except AttributeError:
+            pass
+
+    if len(coords) != len(dst):
+        raise ValueError(
+            "When 'dst' is a sequence it must be of latitude and "
+            f"longitude coordinate constructs. Got: {dst!r}"
+        )
 
     coords_1d = False
 
@@ -526,7 +521,7 @@ def spherical_coords_to_domain(
         if coords["lon"].ndim != 1:
             raise ValueError(
                 "When 'dst' is a sequence of latitude and longitude "
-                "coordinates, they must have the same shape."
+                "coordinates, they must have the same number of dimensions."
             )
     elif coords["lat"].ndim == 2:
         message = (
@@ -587,14 +582,18 @@ def spherical_coords_to_domain(
 
 
 def Cartesian_coords_to_domain(dst, domain_class=None):
-    """Convert a dictionary Cartesian grid definition to a `Domain`.
-    
+    """Convert a sequence of `Coordinate` to Cartesian grid definition.
+        
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        dst: `dict`
-            The grid definition in dictionary format.
+        dst: sequence of `DimensionCoordinate`
+            Between one and three 1-d dimension coordinate constructs
+            that define the coordinates of the grid. The order of the
+            coordinate constructs **must** match the order of source
+            field regridding axes defined elsewhere by the *src_axes*
+            or *axes* parameter.
 
         domain_class: `Domain` class
             The domain class used to create the new `Domain` instance.
@@ -607,6 +606,9 @@ def Cartesian_coords_to_domain(dst, domain_class=None):
             by the *dst_axes* parameter of `cf.Field.regridc`).
 
     """
+    if not dst:
+        pass
+
     d = domain_class()
 
     axis_keys = []
@@ -618,168 +620,18 @@ def Cartesian_coords_to_domain(dst, domain_class=None):
     return d, axes_keys
 
 
-def spherical_dict_to_domain(
-    d, axis_order=None, cyclic=None, domain_class=None
-):
-    """Convert a dictionary spherical grid definition to a `Domain`.
-    
-    .. versionadded:: TODODASK
-
-    :Parameters:
-
-        d: `dict`
-
-        axis_order: `dict` or `None`
-
-        cyclic: `bool` or `None`
-
-        field: `Field`
-    
-    :Returns:
-
-        `Field`, `list`
-            The new field containing the grid; and a list of the
-            domain axis identifiers of the regrid axes, in the
-            relative order expected by the regridding algorithm.
-
-    """
-    try:
-        coords = {"lat": d["latitude"].copy(), "lon": d["longitude"].copy()}
-    except KeyError:
-        raise ValueError(
-            "Dictionary keys 'longitude' and 'latitude' must be "
-            "specified for the destination grid"
-        )
-
-    coords_1d = False
-
-    if coords["lat"].ndim == 1:
-        coords_1d = True
-        axis_sizes = [coords["lat"].size, coords["lon"].size]
-        if coords["lon"].ndim != 1:
-            raise ValueError(
-                "Longitude and latitude coordinates for the "
-                "destination grid must have the same number of dimensions."
-            )
-    elif coords["lat"].ndim == 2:
-        if axis_order is None:
-            raise ValueError(
-                "Must specify axis order when providing "
-                "2-d latitude and longitude coordinates"
-            )
-
-        axis_sizes = coords["lat"].shape
-
-        axis_order = tuple(axis_order)
-        if axis_order == ("X", "Y"):
-            axis_sizes = axis_sizes[::-1]
-        elif axis_order != ("Y", "X"):
-            raise ValueError(
-                "Axis order must either be ('X', 'Y') or "
-                f"('Y', 'X'). Got {axis_order!r}"
-            )
-
-        if coords["lat"].shape != coords["lon"].shape:
-            raise ValueError(
-                "2-d longitude and latitude coordinates for the "
-                "destination grid must have the same shape."
-            )
-    else:
-        raise ValueError(
-            "Longitude and latitude coordinates for the "
-            "destination grid must be 1-d or 2-d"
-        )
-
-    # Set coordinate identities
-    coords["lat"].standard_name = "latitude"
-    coords["lon"].standard_name = "longitude"
-
-    # Create field
-    f = type(domain_class)()
-
-    # Set domain axes
-    axis_keys = []
-    for size in axis_sizes:
-        key = f.set_construct(f._DomainAxis(size), copy=False)
-        axis_keys.append(key)
-
-    if coord_1d:
-        # Set 1-d coordinates
-        for key, axis in zip(("lat", "lon"), axis_keys):
-            f.set_construct(coords[key], axes=axis, copy=False)
-    else:
-        # Set 2-d coordinates
-        axes = axis_keys
-        if axis_order == ("X", "Y"):
-            axes = axes[::-1]
-
-        for coord in coords.values():
-            f.set_construct(coord, axes=axes, copy=False)
-
-    if cyclic is not None:
-        # Reset X axis cyclicity
-        f.cyclic(axis_keys[1], iscyclic=cyclic, period=360)
-
-    if coords_1d:
-        yx_axes = {}
-    else:
-        yx_axes = {"Y": axis_keys[0], "X": axis_keys[1]}
-
-    return f, yx_axes
-
-
-def Cartesian_dict_to_domain(d, axes=None, domain_class=None):
-    """Convert a dictionary Cartesian grid definition to a `Domain`.
-    
-    .. versionadded:: TODODASK
-
-    :Parameters:
-
-        d: `dict`
-            The grid definition in dictionary format.
-
-        axes: sequence, optional
-            if unset then the keys of *d* will be used instead. 
-
-        domain_class: domain class
-            The class that will provide the returned `Domain`
-            instance.
-
-    :Returns:
-
-        `Domain`, `list` 
-            The new domain containing the grid; and a list of its
-            domain axis identifiers for the regrid axes, in the
-            relative order expected by `Data._regrid`.
-
-    """
-    if axes is None:
-        axes = d.keys()
-
-    f = domain_class()
-
-    axis_keys = []
-    for key in axes:
-        coord = d[key]
-        axis = f.set_construct(f._DomainAxis(coord.size), copy=False)
-        f.set_construct(coord, axes=axis, copy=True)
-        axis_keys.append(axis)
-
-    return f, axes_keys
-
-
-def get_grid(coord_system, f, name=None, method=None, cyclic=None, axes=None):
+def get_grid(coord_sys, f, name=None, method=None, cyclic=None, axes=None):
     """Get axis and coordinate information for regridding.
 
     See `spherical_grid` and `Cartesian_grid` for details.
 
     .. versionadded:: TODODASK
 
-        coord_system: `str`
+        coord_sys: `str`
             The coordinate system of the source and destination grids.
 
     """
-    if coord_system == "spherical":
+    if coord_sys == "spherical":
         return spherical_grid(
             f, name=name, method=method, cyclic=cyclic, axes=axes
         )
@@ -806,11 +658,16 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
             The construct from which to get the grid information.
 
         name: `str`
-            A name to identify the field in error messages. Either
-            ``'source'`` or ``'destination'``.
+            A name to identify the grid.
 
         method: `str`
             The regridding method.
+
+        cyclic: `None` or `bool`
+            Specifies whether or not the source grid longitude axis is
+            cyclic.
+
+            See `cf.Field.regrids` for details.
 
         axes: `dict`, optional
             A dictionary identifying the X and Y axes of the domain,
@@ -958,15 +815,6 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
         data_axes = f.get_data_axes()
         axis_indices = [data_axes.index(key) for key in axis_keys]
 
-    #    return (axis_keys, axis_sizes, axis_indices, coords, bounds, cyclic)
-    #    return {
-    #        'axis_keys': axis_keys,
-    #        'axis_indices': axis_indices,
-    #        'shape': tuple(axis_sizes),
-    #        'coords': coords,
-    #        'bounds': bounds,
-    #        'cyclic': bool(cyclic),
-    #    }
     return grid(
         axis_keys=axis_keys,
         axis_indices=axis_indices,
@@ -974,6 +822,9 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
         coords=coords,
         bounds=bounds,
         cyclic=bool(cyclic),
+        coord_sys="spherical",
+        method=method,
+        name=name,
     )
 
 
@@ -987,11 +838,12 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
 
     :Parameters:
 
-        f: `Field`
-           The field from which to get the coordinates.
+        f: `Field` or `Domain`
+           The field or domain construct from which to get the
+           coordinates.
 
         name: `str`
-            A name to identify the field in error messages.
+            A name to identify the grid.
 
         axes: sequence of `str`
             Specifiers for the dimension coordinates to be
@@ -999,11 +851,33 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
 
     :Returns:
 
-        `list`, `list`
-            A list of the keys of the dimension coordinates; and a
-            list of the dimension coordinates retrieved.
+        `Grid`
 
     """
+    if not axes:
+        if name == "source":
+            raise ValueError(
+                "Must set either the 'axes' or 'src_axes' parameter"
+            )
+        else:
+            raise ValueError(
+                "When 'dst' is a Field or Domain, must set either the "
+                "'axes' or 'dst_axes' parameter"
+            )
+
+    n_axes = len(axes)
+    if not 1 <= n_axes <= 3:
+        raise ValueError(
+            "Between 1 and 3 axes must be individually specified "
+            f"for Cartesian regridding. Got: {axes!r}"
+        )
+
+    if method == "patch" and n_axes != 2:
+        raise ValueError(
+            "The patch recovery method is only available for "
+            f"2-d regridding. {n_axes}-d has been requested"
+        )
+
     # Find the axis keys, sizes and indices of the regrid axes, in the
     # order that they have been given by the 'axes' parameters.
     axis_sizes = []
@@ -1087,14 +961,6 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         # Create a dummy axis because ESMF doesn't like creating
         # weights for 1-d regridding
         data = np.array([np.finfo(float).epsneg, np.finfo(float).eps])
-        #        if bounds:
-        #            # Size 1
-        #            coords[1] = np.array([0.0])
-        #            bounds[1] = data
-        #        else:
-        #            # Size 2
-        #            coords[1] = data
-
         if conservative_regridding(method):
             # Size 1
             coords.append(np.array([0.0]))
@@ -1103,16 +969,6 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
             # Size 2
             coords.append(data)
 
-    #    return axis_keys, axis_sizes, axis_indices, coords, bounds, bool(cyclic)
-    #    return {
-    #        'axis_keys': axis_keys,
-    #        'axis_indices': axis_indices,
-    #        'shape': tuple(axis_sizes),
-    #        'coords': coords,
-    #        'bounds': bounds,
-    #        'cyclic': False,
-    #    }
-
     return grid(
         axis_keys=axis_keys,
         axis_indices=axis_indices,
@@ -1120,10 +976,13 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
         coords=coords,
         bounds=bounds,
         cyclic=False,
+        coord_sys="Cartesian",
+        method=method,
+        name=name,
     )
 
 
-def conform_coordinate_units(coord_system, src_grid, dst_grid):
+def conform_coordinate_units(src_grid, dst_grid):
     """Make the source and destination coordinates have the same units.
 
     Modifies *src_grid* in-place so that its coordinates and bounds
@@ -1134,9 +993,6 @@ def conform_coordinate_units(coord_system, src_grid, dst_grid):
     .. seealso:: `get_spherical_grid`, `regrid`
 
     :Parameters:
-
-        coord_system: `str`
-            The coordinate system of the source and destination grids.
 
         src_grid: `Grid`
             The definition of the source grid.
@@ -1149,7 +1005,7 @@ def conform_coordinate_units(coord_system, src_grid, dst_grid):
         `None`
 
     """
-    if coord_system == "spherical":
+    if src_grid.coord_sys == "spherical":
         # For spherical coordinate systems, the units will have
         # already been checked in `get_spherical_grid`.
         return
@@ -1177,9 +1033,7 @@ def conform_coordinate_units(coord_system, src_grid, dst_grid):
             src[dim] = s
 
 
-def check_operator(
-    coord_system, src, src_grid, regrid_operator, coordinates=False
-):
+def check_operator(src, src_grid, regrid_operator, coordinates=False):
     """Check compatibility of the source field and regrid operator grids.
 
     .. versionadded:: TODODASK
@@ -1187,9 +1041,6 @@ def check_operator(
     .. seealso:: `regrid`
 
     :Parameters:
-
-        coord_system: `str`
-            The coordinate system of the source and destination grids.
 
         src: `Field`
             The field to be regridded.
@@ -1208,7 +1059,7 @@ def check_operator(
             is raised.
 
     """
-    if coord_system != regrid_operator.coord_system:
+    if src_grid.coord_sys != regrid_operator.coord_sys:
         raise ValueError(
             f"Can't regrid {src!r} with {regrid_operator!r}: "
             "Coordinate system mismatch"
@@ -1309,27 +1160,14 @@ def ESMF_initialise():
     return ESMF.Manager(debug=bool(regrid_logging()))
 
 
-def create_ESMF_grid(
-    coord_system, name=None, method=None, grid=None, mask=None
-):
+def create_ESMF_grid(grid=None, mask=None):
     """Create an `ESMF` Grid.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        coord_system: `str`
-            The coordinate system of the source and destination grids.
-
-        name: `str`
-
-        method: `str`
-
-        coords: `dict`
-
-        bounds: `dict`, optional
-
-        cyclic: `bool` or `None`, optional
+        grid: `Grid`
 
         mask: array_like, optional
 
@@ -1344,7 +1182,9 @@ def create_ESMF_grid(
 
     num_peri_dims = 0
     periodic_dim = 0
-    if coord_system == "spherical":
+    spherical = False
+    if grid.coord_sys == "spherical":
+        spherical = True
         lon, lat = 0, 1
         coord_sys = ESMF.CoordSys.SPH_DEG
         if cyclic:
@@ -1354,25 +1194,18 @@ def create_ESMF_grid(
         # Cartesian
         coord_sys = ESMF.CoordSys.CART
 
-    # Parse coordinates for the Grid and get its shape
+    # Parse coordinates for the ESMF.Grid and get its shape
     n_axes = len(coords)
     coords_1d = coords[0].ndim == 1
 
-    #    coords = {dim: np.asanyarray(c) for dim, c in coords.items()}
     coords = [np.asanyarray(c) for c in coords]
     if coords_1d:
         # 1-d coordinates for N-d regridding
         shape = [c.size for c in coords]
-        #        for dim, c in coords.items():
         coords = [
             c.reshape([c.size if i == dim else 1 for i in range(n_axes)])
-            for c in coords
+            for dim, c in enumerate(coords)
         ]
-
-        # for dim, c in enumerate(coords):
-        #    coords[dim] = c.reshape(
-        #        [c.size if i == dim else 1 for i in range(n_axes)]
-        #    )
     elif n_axes == 2:
         # 2-d coordinates for 2-d regridding
         shape = coords[0].shape
@@ -1381,24 +1214,31 @@ def create_ESMF_grid(
             "Coordinates must be 1-d, or possibly 2-d for 2-d regridding"
         )
 
-    # Parse bounds for the Grid
+    # Parse bounds for the ESMF.Grid
     if bounds:
-        #        bounds = {dim: np.asanyarray(b) for dim, b in bounds.items()}
         bounds = [np.asanyarray(b) for b in bounds]
 
-        if coord_system == "spherical":
+        message = (
+            f"The {grid.name} coordinates must have contiguous, "
+            f"non-overlapping bounds for {grid.method} regridding."
+        )
+        if spherical:
             bounds[lat] = np.clip(bounds[lat], -90, 90)
+            if not contiguous_bounds(bounds[lat]):
+                raise ValueError(message)
 
-        if not contiguous_bounds(bounds, cyclic=cyclic, period=360):
-            raise ValueError(
-                f"The {name} coordinates must have contiguous, "
-                f"non-overlapping bounds for {method} regridding."
-            )
+            if not contiguous_bounds(bounds[lon], cyclic=cyclic, period=360):
+                raise ValueError(message)
+        else:
+            # Cartesian
+            for b in bounds:
+                if not contiguous_bounds(b):
+                    raise ValueError(message)
 
         if coords_1d:
             # Bounds for 1-d coordinates
             for dim, b in enumerate(bounds):
-                if coord_system == "spherical" and cyclic and dim == lon:
+                if spherical and cyclic and dim == lon:
                     tmp = b[:, 0]
                 else:
                     n = b.shape[0]
@@ -1421,8 +1261,7 @@ def create_ESMF_grid(
                 tmp[n, m] = b[-1, -1, 2]
                 bounds[dim] = tmp
 
-    # Define the stagger locations
-    max_index = np.array(shape, dtype="int32")
+    # Define the ESMF.Grid stagger locations
     if bounds:
         if n_axes == 3:
             staggerlocs = [
@@ -1431,36 +1270,35 @@ def create_ESMF_grid(
             ]
         else:
             staggerlocs = [ESMF.StaggerLoc.CORNER, ESMF.StaggerLoc.CENTER]
-
     else:
         if n_axes == 3:
             staggerlocs = [ESMF.StaggerLoc.CENTER_VCENTER]
         else:
             staggerlocs = [ESMF.StaggerLoc.CENTER]
 
-    # Create an empty Grid
-    grid = ESMF.Grid(
-        max_index,
+    # Create an empty ESMF.Grid
+    esmf_grid = ESMF.Grid(
+        max_idnex=np.array(shape, dtype="int32"),
         coord_sys=coord_sys,
         num_peri_dims=num_peri_dims,
         periodic_dim=periodic_dim,
         staggerloc=staggerlocs,
     )
 
-    # Populate the Grid centres
+    # Populate the ESMF.Grid centres
     for dim, c in coords.items():
         if n_axes == 3:
-            gridCentre = grid.get_coords(
+            grid_centre = esmf_grid.get_coords(
                 dim, staggerloc=ESMF.StaggerLoc.CENTER_VCENTER
             )
         else:
-            gridCentre = grid.get_coords(
+            grid_centre = esmf_grid.get_coords(
                 dim, staggerloc=ESMF.StaggerLoc.CENTER
             )
 
-        gridCentre[...] = c
+        grid_centre[...] = c
 
-    # Populate the Grid corners
+    # Populate the ESMF.Grid corners
     if bounds:
         if n_axes == 3:
             staggerloc = ESMF.StaggerLoc.CORNER_VFACE
@@ -1468,33 +1306,51 @@ def create_ESMF_grid(
             staggerloc = ESMF.StaggerLoc.CORNER
 
         for dim, b in enumerate(bounds):
-            gridCorner = grid.get_coords(dim, staggerloc=staggerloc)
-            gridCorner[...] = b
+            grid_corner = esmf_grid.get_coords(dim, staggerloc=staggerloc)
+            grid_corner[...] = b
 
-    # Add a Grid mask
+    # Add an ESMF.Grid mask
     if mask is not None:
-        add_mask(grid, mask)
+        mask = np.asanyarray(mask)
+        m = None
+        if mask.dtype == bool and m.any():
+            m = mask
+        elif np.ma.is_masked(mask):
+            m = mask.mask
 
-    return grid
+        if m is not None:
+            grid_mask = esmf_grid.add_item(ESMF.GridItem.MASK)
+            grid_mask[...] = np.invert(mask).astype("int32")
 
 
 def create_ESMF_weights(
     method,
     src_ESMF_grid,
     dst_ESMF_grid,
-    unmapped_action,
     ignore_degenerate,
     quarter=False,
+    _regrid=None,
 ):
-    """Create an `ESMF` regrid operator.
+    """Create the regridding weights.
 
     .. versionadded:: TODODASK
 
     :Parameters:
 
-        ignore_degenerate: `bool`
-            Whether to check for degenerate points.
+        method: `str`
+            The regridding method.
 
+        src_ESMF_grid: `ESMF.Grid`
+            The source grid.
+
+        dst_ESMF_grid: `ESMF.Grid`
+            The destination grid.
+     
+        ignore_degenerate: `bool`, optional
+            Whether or not to ignore degenerate cells.
+
+            See `cf.Field.regrids` for details.
+ 
         quarter: `bool`, optional
             If True then only return weights corresponding to the top
             left hand corner of the weights matrix. This is necessary
@@ -1502,34 +1358,39 @@ def create_ESMF_weights(
             2-d grid for which one of the dimensions is a size 2 dummy
             dimension.
 
-            .. seealso:: `get_Cartesian_grid`
+            .. seealso:: `Cartesian_grid`
+
+        _regrid: `None` or `list`, optional
+            If a `list` then the `ESMF.Regid` instance that created
+            the instance is made available as the list's last element.
 
     :Returns:
 
         3-`tuple` of `numpy.ndarray`
+            * weights: The 1-d array of the regridding weights.
+            * row: The 1-d array of the row indices of the regridding
+                   weights in the dense weights matrix, which has J
+                   rows and I columns, where J and I are the total
+                   number of cells in the destination and source grids
+                   respectively. The start index is 1.
+            * col: The 1-d array of column indices of the regridding
+                   weights in the dense weights matrix, which has J
+                   rows and I columns, where J and I are the total
+                   number of cells in the destination and source grids
+                   respectively. The start index is 1.
 
     """
-    method = ESMF_method_map.get(method)
-    if method is None:
-        raise ValueError("TODO")
-
-    if unmapped_action == "ignore" or unmapped_action is None:
-        unmapped_action = ESMF.UnmappedAction.IGNORE
-    elif unmapped_action == "error":
-        unmapped_action = ESMF.UnmappedAction.ERROR
-
-    # Add a mask to the source grid and create the source field
     src_ESMF_field = ESMF.Field(src_ESMF_grid, "src")
     dst_ESMF_field = ESMF.Field(dst_ESMF_grid, "dst")
 
     mask_values = np.array([0], dtype="int32")
 
-    # Create the regrid operator
+    # Create the ESMF.regrid operator
     r = ESMF.Regrid(
         src_ESMF_field,
         dst_ESMF_field,
-        regrid_method=method,
-        unmapped_action=unmapped_action,
+        regrid_method=ESMF_method_map.get(method),
+        unmapped_action=ESMF.UnmappedAction.IGNORE,
         ignore_degenerate=bool(ignore_degenerate),
         src_mask_values=mask_values,
         dst_mask_values=mask_values,
@@ -1559,154 +1420,95 @@ def create_ESMF_weights(
         row = row[index]
         col = col[index]
 
-    del src_ESMF_field
-    del dst_ESMF_field
-    destroy_Regrid(r)
+    if _regrid is None:
+        # Destroy ESMF objects
+        src_ESMF_field.destroy()
+        dst_ESMF_field.destroy()
+        r.srcfield.grid.destroy()
+        r.srcfield.destroy()
+        r.src_frac_field.destroy()
+        r.dstfield.grid.destroy()
+        r.dstfield.destroy()
+        r.dst_frac_field.destroy()
+        r.destroy()
+    else:
+        # Make the Regrid instance available via the '_regrid' list
+        _regrid.append[r]
 
     return weights, row, col
 
 
-def add_mask(grid, mask):
-    """Add a mask to an `ESMF.Grid`.
-
-    .. versionadded:: TODODASK
-    
-    :Parameters:
-
-        grid: `ESMF.Grid`
-            An `ESMF` grid.
-
-        mask: `np.ndarray` or `None`
-            The mask to add to the grid. If `None` then no mask is
-            added. If an array, then it must either be masked array,
-            in which case it is replaced by its mask, or a boolean
-            array. If the mask contains no True elements then no mask
-            is added.
-
-    :Returns:
-
-        `None`
-
-    """
-    mask = np.asanyarray(mask)
-
-    m = None
-    if mask.dtype == bool and m.any():
-        m = mask
-    elif np.ma.is_masked(mask):
-        m = mask.mask
-
-    if m is not None:
-        grid_mask = grid.add_item(ESMF.GridItem.MASK)
-        grid_mask[...] = np.invert(mask).astype("int32")
-
-
-def contiguous_bounds(bounds, cyclic=False, period=None):
-    """TODODASK
+def contiguous_bounds(b, cyclic=False, period=None):
+    """Determine whether or not bounds are contiguous.
 
     :Parameters:
 
-        bounds: sequence of array_like
+        b: array_like
+            The bounds.
 
         cyclic: `bool`, optional
+            Specifies whether or not the bounds are cyclic.
 
         period: number, optional
+            If *cyclic* is True then define the period of the cyclic
+            axis.
 
     :Returns:
     
         `bool`
+            Whether or not the bounds are contiguous.
 
     """
-    for b in bounds:
-        ndim = b.ndim - 1
-        if ndim == 1:
-            # 1-d cells
-            diff = b[1:, 0] - b[:-1, 1]
-            if cyclic and period is not None:
-                diff = diff % period
+    ndim = b.ndim - 1
+    if ndim == 1:
+        # 1-d cells
+        diff = b[1:, 0] - b[:-1, 1]
+        if cyclic:
+            diff = diff % period
 
-            if diff.any():
-                return False
+        if diff.any():
+            return False
 
-        elif ndim == 2:
-            # 2-d cells
-            nbounds = b.shape[-1]
-            if nbounds != 4:
-                raise ValueError(
-                    f"Can't tell if {ndim}-d cells with {nbounds} vertices "
-                    "are contiguous"
-                )
+    elif ndim == 2:
+        # 2-d cells
+        nbounds = b.shape[-1]
+        if nbounds != 4:
+            raise ValueError(
+                f"Can't tell if {ndim}-d cells with {nbounds} vertices "
+                "are contiguous"
+            )
 
-            # Check cells (j, i) and cells (j, i+1) are contiguous
-            diff = b[:, :-1, 1] - b[:, 1:, 0]
-            if cyclic and period is not None:
-                diff = diff % period
+        # Check cells (j, i) and cells (j, i+1) are contiguous
+        diff = b[:, :-1, 1] - b[:, 1:, 0]
+        if cyclic:
+            diff = diff % period
 
-            if diff.any():
-                return False
+        if diff.any():
+            return False
 
-            diff = b[:, :-1, 2] - b[:, 1:, 3]
-            if cyclic and period is not None:
-                diff = diff % period
+        diff = b[:, :-1, 2] - b[:, 1:, 3]
+        if cyclic:
+            diff = diff % period
 
-            if diff.any():
-                return False
+        if diff.any():
+            return False
 
-            # Check cells (j, i) and (j+1, i) are contiguous
-            diff = b[:-1, :, 3] - b[1:, :, 0]
-            if cyclic and period is not None:
-                diff = diff % period
+        # Check cells (j, i) and (j+1, i) are contiguous
+        diff = b[:-1, :, 3] - b[1:, :, 0]
+        if cyclic:
+            diff = diff % period
 
-            if diff.any():
-                return False
+        if diff.any():
+            return False
 
-            diff = b[:-1, :, 2] - b[1:, :, 1]
-            if cyclic and period is not None:
-                diff = diff % period
+        diff = b[:-1, :, 2] - b[1:, :, 1]
+        if cyclic:
+            diff = diff % period
 
-            if diff.any():
-                return False
+        if diff.any():
+            return False
 
     return True
-
-
-def destroy_Regrid(regrid, src=True, dst=True):
-    """Release the memory allocated to an `ESMF.Regrid` operator.
-
-    It does not matter if the base regrid operator has already been
-    destroyed.
-
-    .. versionadded:: TODODASK
-
-    :Parameters:
-
-        regrid: `ESMF.Regrid`
-            The regrid operator to be destroyed.
-
-        src: `bool`
-            By default the source fields and grid are destroyed. If
-            False then they are not.
-
-        dst: `bool`
-            By default the destination fields and grid are
-            destroyed. If False then they are not.
-
-    :Returns:
-    
-        `None`
-
-    """
-    if src:
-        regrid.srcfield.grid.destroy()
-        regrid.srcfield.destroy()
-        regrid.src_frac_field.destroy()
-
-    if dst:
-        regrid.dstfield.grid.destroy()
-        regrid.dstfield.destroy()
-        regrid.dst_frac_field.destroy()
-
-    regrid.destroy()
 
 
 def get_bounds(method, coords):
@@ -1717,10 +1519,10 @@ def get_bounds(method, coords):
     :Patameters:
 
         method: `str`
-            A valid regridding method.
+            The regridding method.
 
         coords: sequence of `Coordinate`
-            The coordinates that defining an `ESMF.Grid`.
+            The coordinates that define an `ESMF.Grid`.
 
     :Returns:
 
@@ -1729,13 +1531,16 @@ def get_bounds(method, coords):
             regridding method is not conservative.
 
     """
-    if conservative_regridding(method):
-        bounds = [c.get_bounds(None) for c in coords]
-        for b in bounds:
-            if b is None:
-                raise ValueError("TODO")
-    else:
+    if not conservative_regridding(method):
         bounds = []
+    else:
+        bounds = [c.get_bounds(None) for c in coords]
+        for c, b in zip(coords, bounds):
+            if b is None:
+                raise ValueError(
+                    f"All coordinates must have bounds for {method!r} "
+                    f"regridding: {c!r}"
+                )
 
     return bounds
 
@@ -1748,60 +1553,16 @@ def conservative_regridding(method):
     :Patameters:
 
         method: `str`
-            A valid regridding method.
+            A regridding method.
 
     :Returns:
 
         `bool`
-            True if the method is conservative. otherwise False.
+            True if the method is first or second order
+            conservative. Otherwise False.
 
     """
     return method in ("conservative", "conservative_1st", "conservative_2nd")
-
-
-# def get_axis_indices(f, axis_keys, shape=None):
-#    """Get axis indices and their orders in rank of this field.
-#
-#    The indices will be returned in the same order as expected by the
-#    regridding operator.
-#
-#    For instance, for spherical regridding, if *f* has shape ``(96,
-#    12, 73)`` for axes (Longitude, Time, Latitude) then the axis
-#    indices will be ``[2, 0]``.
-#
-#    .. versionadded:: TODODASK
-#
-#    :Parameters:
-#
-#        f: `Field`
-#            The source or destination field. This field might get
-#            size-1 dimensions inserted into its data in-place.
-#
-#        axis_keys: sequence
-#            A sequence of domain axis identifiers for the axes being
-#            regridded, in the order expected by `Data._regrid`.
-#
-#    :Returns:
-#
-#        `list`
-#
-#    """
-#    if f.construct_type == "domain":
-#        return  .....
-#
-#    # Make sure that the data array spans all of the regridding
-#    # axes. This might change 'f' in-place.
-#    data_axes = f.get_data_axes()
-#    for key in axis_keys:
-#        if key not in data_axes:
-#            f.insert_dimension(axis_key, position=-1, inplace=True)
-#
-#    # The indices of the regridding axes, in the order expected by
-#    # `Data._regrid`.
-#    data_axes = f.get_data_axes()
-#    axis_indices = [data_axes.index(key) for key in axis_keys]
-#
-#    return axis_indices
 
 
 def get_mask(f, grid):
@@ -1898,14 +1659,11 @@ def update_coordinates(src, dst, src_grid, dst_grid):
 
 
 def update_non_coordinates(
-    coord_system, src, dst, regrid_operator, src_grid=None, dst_grid=None
+    src, dst, regrid_operator, src_grid=None, dst_grid=None
 ):
     """Update the coordinate references of the regridded field.
 
     :Parameters:
-
-        coord_system: `str`
-            The coordinate system of the source and destination grids.
 
         src: `Field`
             The regridded field. Updated in-place.
@@ -1963,13 +1721,13 @@ def update_non_coordinates(
     # Regrid any remaining source domain ancillaries that span all of
     # the regridding axes
     # ----------------------------------------------------------------
-    if coord_system == "spherical":
-        kwargs = {
-            "src_cyclic": regrid_operator.src_cyclic,
-            "src_axes": {"Y": src_axis_keys[0], "X": src_axis_keys[1]},
-        }
-    else:
-        kwargs = {"axes": src_axis_keys}
+    #    if src_grid.coord_sys == "spherical":
+    #        kwargs = {
+    #            "src_cyclic": regrid_operator.src_cyclic,
+    #            "src_axes": {"Y": src_axis_keys[0], "X": src_axis_keys[1]},
+    #        }
+    #    else:
+    #        kwargs = {"axes": src_axis_keys}#
 
     for da_key in src.domain_ancillaries(todict=True):
         da_axes = data_axes[da_key]
@@ -2003,7 +1761,13 @@ def update_non_coordinates(
             da_field.del_construct(key)
 
         # Regrid the field containing the domain ancillary
-        regrid(coord_system, da_field, regrid_operator, inplace=True, **kwargs)
+        regrid(
+            src_grid.coord_sys,
+            da_field,
+            regrid_operator,
+            inplace=True,
+            #            **kwargs,
+        )
 
         # Set sizes of regridded axes
         domain_axes = src.domain_axes(cached=domain_axes, todict=True)
@@ -2054,3 +1818,270 @@ def update_non_coordinates(
 #
 #    """
 #    return np.invert(mask).astype('int32')
+#
+#
+# def add_mask(grid, mask):
+#    """Add a mask to an `ESMF.Grid`.
+#
+#    .. versionadded:: TODODASK
+#
+#    :Parameters:
+#
+#        grid: `ESMF.Grid`
+#            An `ESMF` grid.
+#
+#        mask: `np.ndarray` or `None`
+#            The mask to add to the grid. If `None` then no mask is
+#            added. If an array, then it must either be masked array,
+#            in which case it is replaced by its mask, or a boolean
+#            array. If the mask contains no True elements then no mask
+#            is added.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    """
+#    mask = np.asanyarray(mask)
+#
+#    m = None
+#    if mask.dtype == bool and m.any():
+#        m = mask
+#    elif np.ma.is_masked(mask):
+#        m = mask.mask
+#
+#    if m is not None:
+#        grid_mask = grid.add_item(ESMF.GridItem.MASK)
+#        grid_mask[...] = np.invert(mask).astype("int32")
+#
+#
+# def spherical_dict_to_domain(
+#    d, axis_order=None, cyclic=None, domain_class=None
+# ):
+#    """Convert a dictionary spherical grid definition to a `Domain`.
+#
+#    .. versionadded:: TODODASK
+#
+#    :Parameters:
+#
+#        d: `dict`
+#
+#        axis_order: `dict` or `None`
+#
+#        cyclic: `bool` or `None`
+#
+#        field: `Field`
+#
+#    :Returns:
+#
+#        `Field`, `list`
+#            The new field containing the grid; and a list of the
+#            domain axis identifiers of the regrid axes, in the
+#            relative order expected by the regridding algorithm.
+#
+#    """
+#    try:
+#        coords = {"lat": d["latitude"].copy(), "lon": d["longitude"].copy()}
+#    except KeyError:
+#        raise ValueError(
+#            "Dictionary keys 'longitude' and 'latitude' must be "
+#            "specified for the destination grid"
+#        )
+#
+#    coords_1d = False
+#
+#    if coords["lat"].ndim == 1:
+#        coords_1d = True
+#        axis_sizes = [coords["lat"].size, coords["lon"].size]
+#        if coords["lon"].ndim != 1:
+#            raise ValueError(
+#                "Longitude and latitude coordinates for the "
+#                "destination grid must have the same number of dimensions."
+#            )
+#    elif coords["lat"].ndim == 2:
+#        if axis_order is None:
+#            raise ValueError(
+#                "Must specify axis order when providing "
+#                "2-d latitude and longitude coordinates"
+#            )
+#
+#        axis_sizes = coords["lat"].shape
+#
+#        axis_order = tuple(axis_order)
+#        if axis_order == ("X", "Y"):
+#            axis_sizes = axis_sizes[::-1]
+#        elif axis_order != ("Y", "X"):
+#            raise ValueError(
+#                "Axis order must either be ('X', 'Y') or "
+#                f"('Y', 'X'). Got {axis_order!r}"
+#            )
+#
+#        if coords["lat"].shape != coords["lon"].shape:
+#            raise ValueError(
+#                "2-d longitude and latitude coordinates for the "
+#                "destination grid must have the same shape."
+#            )
+#    else:
+#        raise ValueError(
+#            "Longitude and latitude coordinates for the "
+#            "destination grid must be 1-d or 2-d"
+#        )
+#
+#    # Set coordinate identities
+#    coords["lat"].standard_name = "latitude"
+#    coords["lon"].standard_name = "longitude"
+#
+#    # Create field
+#    f = type(domain_class)()
+#
+#    # Set domain axes
+#    axis_keys = []
+#    for size in axis_sizes:
+#        key = f.set_construct(f._DomainAxis(size), copy=False)
+#        axis_keys.append(key)
+#
+#    if coord_1d:
+#        # Set 1-d coordinates
+#        for key, axis in zip(("lat", "lon"), axis_keys):
+#            f.set_construct(coords[key], axes=axis, copy=False)
+#    else:
+#        # Set 2-d coordinates
+#        axes = axis_keys
+#        if axis_order == ("X", "Y"):
+#            axes = axes[::-1]
+#
+#        for coord in coords.values():
+#            f.set_construct(coord, axes=axes, copy=False)
+#
+#    if cyclic is not None:
+#        # Reset X axis cyclicity
+#        f.cyclic(axis_keys[1], iscyclic=cyclic, period=360)
+#
+#    if coords_1d:
+#        yx_axes = {}
+#    else:
+#        yx_axes = {"Y": axis_keys[0], "X": axis_keys[1]}
+#
+#    return f, yx_axes
+#
+#
+# def Cartesian_dict_to_domain(d, axes=None, domain_class=None):
+#    """Convert a dictionary Cartesian grid definition to a `Domain`.
+#
+#    .. versionadded:: TODODASK
+#
+#    :Parameters:
+#
+#        d: `dict`
+#            The grid definition in dictionary format.
+#
+#        axes: sequence, optional
+#            if unset then the keys of *d* will be used instead.
+#
+#        domain_class: domain class
+#            The class that will provide the returned `Domain`
+#            instance.
+#
+#    :Returns:
+#
+#        `Domain`, `list`
+#            The new domain containing the grid; and a list of its
+#            domain axis identifiers for the regrid axes, in the
+#            relative order expected by `Data._regrid`.
+#
+#    """
+#    if axes is None:
+#        axes = d.keys()
+#
+#    f = domain_class()
+#
+#    axis_keys = []
+#    for key in axes:
+#        coord = d[key]
+#        axis = f.set_construct(f._DomainAxis(coord.size), copy=False)
+#        f.set_construct(coord, axes=axis, copy=True)
+#        axis_keys.append(axis)
+#
+#    return f, axes_keys
+#
+#
+# def destroy_Regrid(regrid, src=True, dst=True):
+#    """Release the memory allocated to an `ESMF.Regrid` operator.
+#
+#    It does not matter if the base regrid operator has already been
+#    destroyed.
+#
+#    .. versionadded:: TODODASK
+#
+#    :Parameters:
+#
+#        regrid: `ESMF.Regrid`
+#            The regrid operator to be destroyed.
+#
+#        src: `bool`
+#            By default the source fields and grid are destroyed. If
+#            False then they are not.
+#
+#        dst: `bool`
+#            By default the destination fields and grid are
+#            destroyed. If False then they are not.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    """
+#    if src:
+#        regrid.srcfield.grid.destroy()
+#        regrid.srcfield.destroy()
+#        regrid.src_frac_field.destroy()
+#
+#    if dst:
+#        regrid.dstfield.grid.destroy()
+#        regrid.dstfield.destroy()
+#        regrid.dst_frac_field.destroy()
+#
+#    regrid.destroy()
+# def get_axis_indices(f, axis_keys, shape=None):
+#    """Get axis indices and their orders in rank of this field.
+#
+#    The indices will be returned in the same order as expected by the
+#    regridding operator.
+#
+#    For instance, for spherical regridding, if *f* has shape ``(96,
+#    12, 73)`` for axes (Longitude, Time, Latitude) then the axis
+#    indices will be ``[2, 0]``.
+#
+#    .. versionadded:: TODODASK
+#
+#    :Parameters:
+#
+#        f: `Field`
+#            The source or destination field. This field might get
+#            size-1 dimensions inserted into its data in-place.
+#
+#        axis_keys: sequence
+#            A sequence of domain axis identifiers for the axes being
+#            regridded, in the order expected by `Data._regrid`.
+#
+#    :Returns:
+#
+#        `list`
+#
+#    """
+#    if f.construct_type == "domain":
+#        return  .....
+#
+#    # Make sure that the data array spans all of the regridding
+#    # axes. This might change 'f' in-place.
+#    data_axes = f.get_data_axes()
+#    for key in axis_keys:
+#        if key not in data_axes:
+#            f.insert_dimension(axis_key, position=-1, inplace=True)
+#
+#    # The indices of the regridding axes, in the order expected by
+#    # `Data._regrid`.
+#    data_axes = f.get_data_axes()
+#    axis_indices = [data_axes.index(key) for key in axis_keys]
+#
+#    return axis_indices
