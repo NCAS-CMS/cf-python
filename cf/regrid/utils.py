@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 # Mapping of regrid method strings to ESMF method codes. The values
 # get replaced with `ESMF.RegridMethod` constants the first time
 # `ESMF_initialise` is run.
-ESMF_method_map = {
+ESMF_methods = {
     "linear": None,
     "bilinear": None,
     "conservative": None,
@@ -212,10 +212,10 @@ def regrid(
         create_regrid_operator = True
         dst = dst.copy()
 
-    if method not in ESMF_method_map:
+    if method not in ESMF_methods:
         raise ValueError(
             "Can't regrid: Must set a valid regridding method from "
-            f"{tuple(ESMF_method_map.values())}. Got: {method!r}"
+            f"{sorted(ESMF_methods)}. Got: {method!r}"
         )
     elif method == "bilinear":
         logger.info(
@@ -1124,8 +1124,8 @@ def ESMF_initialise():
     Whether ESMF logging is enabled or not is determined by
     `cf.regrid_logging`.
 
-    Also initialises the global 'ESMF_method_map' dictionary, unless
-    it has already been initialised.
+    Also initialises the global 'ESMF_methods' dictionary, unless it
+    has already been initialised.
 
     :Returns:
 
@@ -1138,9 +1138,9 @@ def ESMF_initialise():
             "Regridding will not work unless the ESMF library is installed"
         )
 
-    # Update the global 'ESMF_method_map' dictionary
-    if ESMF_method_map["linear"] is None:
-        ESMF_method_map.update(
+    # Update the global 'ESMF_methods' dictionary
+    if ESMF_methods["linear"] is None:
+        ESMF_methods.update(
             {
                 "linear": ESMF.RegridMethod.BILINEAR,  # see comment below...
                 "bilinear": ESMF.RegridMethod.BILINEAR,  # (for back compat)
@@ -1389,7 +1389,7 @@ def create_ESMF_weights(
     r = ESMF.Regrid(
         src_ESMF_field,
         dst_ESMF_field,
-        regrid_method=ESMF_method_map.get(method),
+        regrid_method=ESMF_methods.get(method),
         unmapped_action=ESMF.UnmappedAction.IGNORE,
         ignore_degenerate=bool(ignore_degenerate),
         src_mask_values=mask_values,

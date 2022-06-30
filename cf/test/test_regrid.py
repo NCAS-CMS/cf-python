@@ -14,9 +14,8 @@ except Exception:
 else:
     ESMF_imported = True
 
-def ccc(coord_sys, regrid, src, dst, **kwargs):
-    
-    
+def regrid_ESMF(coord_sys, regrid, src, dst, **kwargs):
+    """TODO"""    
     ESMF_regrid = cf.regrid.utils.regrid(coord_sys, src, dst,
                                          _return_regrid=True,
                                          **kwargs)
@@ -26,6 +25,7 @@ def ccc(coord_sys, regrid, src, dst, **kwargs):
 
     if coord_sys = "spherical":
         src = src.tranpose(['X', 'Y', 'T']).squeeze()
+        dst = dst.tranpose(['X', 'Y', 'T']).squeeze()
     else:
         pass
     
@@ -52,18 +52,45 @@ class RegridTest(unittest.TestCase):
         self.assertFalse(cf.regrid_logging())
 
         dst, src = cf.read(filename)
-#        with cf.atol(1e-12):
 
         src.tranpose(['X', 'Y', 'T'], inplace=True)
         dst.tranpose(['Y', 'T', 'X'], inplace=True)
 
-        for method in cf.regrid.utils.ESMF_method_map:
+        dst[dst.indices(Y=cf.wi(30, 60))] = cf.masked
+        dst[dst.indices(X=cf.wi(30, 60))] = cf.masked
+
+        src[src.indices(Y=cf.wi(45, 75))] = cf.masked
+        src[src.indices(X=cf.wi(45, 75))] = cf.masked
+        
+#        src[src.indices(T=[0], Y=cf.wi(45, 75))] = cf.masked
+#        src[src.indices(T=[0], X=cf.wi(45, 75))] = cf.masked
+#
+#        src[src.indices(T=[1], Y=cf.wi(15, 45))] = cf.masked
+#        src[src.indices(T=[1], X=cf.wi(15, 45))] = cf.masked
+#        
+#        with cf.atol(1e-12):
+
+        for method in cf.regrid.utils.ESMF_methods:
             x = src.regrids(dst, method=method)
             x.transpose(['X', 'Y', 'T'], inplace=True)
             for i in (0, 1):
-                y = ccc("spherical", src.subspace(T=[i]), dst)
+                y = regrid_ESMF("spherical", src.subspace(T=[i]), dst)
                 self.assertTrue(
-                    y.data.equals(x.subspace(T=[i]).squeeze().data)
+                    y.data.equals(x.subspace(T=[i]).data.squeeze())
+                )
+            
+        src[src.indices(T=[1], Y=cf.wi(15, 45))] = cf.masked
+        src[src.indices(T=[1], X=cf.wi(15, 45))] = cf.masked
+        
+#        with cf.atol(1e-12):
+
+        for method in cf.regrid.utils.ESMF_methods:
+            x = src.regrids(dst, method=method)
+            x.transpose(['X', 'Y', 'T'], inplace=True)
+            for i in (0, 1):
+                y = regrid_ESMF("spherical", src.subspace(T=[i]), dst)
+                self.assertTrue(
+                    y.data.equals(x.subspace(T=[i]).data.squeeze())
                 )
             
 
