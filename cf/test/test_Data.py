@@ -977,6 +977,60 @@ class DataTest(unittest.TestCase):
         # Reset
         cf.constants.CONSTANTS["FM_THRESHOLD"] = fmt
 
+    def test_Data_concatenate(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cf.Data(np.arange(120).reshape(30, 4))
+        e = cf.Data(np.arange(120, 280).reshape(40, 4))
+        fm = cf.Data.full((70, 4), fill_value=False, dtype=bool)
+
+        fm[0, 0] = True
+        fm[10, 2] = True
+        fm[20, 1] = True
+
+        dm = fm[:30]
+        d._auxiliary_mask = [dm]
+
+        f = cf.Data.concatenate([d, e], axis=0)
+        self.assertEqual(f.shape, fm.shape)
+        self.assertTrue((f._auxiliary_mask_return().array == fm).all())
+
+        d = cf.Data(np.arange(120).reshape(30, 4))
+        e = cf.Data(np.arange(120, 280).reshape(40, 4))
+
+        fm = cf.Data.full((70, 4), False, bool)
+        fm[50, 0] = True
+        fm[60, 2] = True
+        fm[65, 1] = True
+
+        em = fm[30:]
+        e._auxiliary_mask = [em]
+
+        f = cf.Data.concatenate([d, e], axis=0)
+        self.assertEqual(f.shape, fm.shape)
+        self.assertTrue((f._auxiliary_mask_return().array == fm).all())
+
+        d = cf.Data(np.arange(120).reshape(30, 4))
+        e = cf.Data(np.arange(120, 280).reshape(40, 4))
+
+        fm = cf.Data.full((70, 4), False, bool)
+        fm[0, 0] = True
+        fm[10, 2] = True
+        fm[20, 1] = True
+        fm[50, 0] = True
+        fm[60, 2] = True
+        fm[65, 1] = True
+
+        dm = fm[:30]
+        d._auxiliary_mask = [dm]
+        em = fm[30:]
+        e._auxiliary_mask = [em]
+
+        f = cf.Data.concatenate([d, e], axis=0)
+        self.assertEqual(f.shape, fm.shape)
+        self.assertTrue((f._auxiliary_mask_return().array == fm).all())
+
     def test_Data__contains__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
