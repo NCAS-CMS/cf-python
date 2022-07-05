@@ -981,55 +981,66 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data(np.arange(120).reshape(30, 4))
-        e = cf.Data(np.arange(120, 280).reshape(40, 4))
-        fm = cf.Data.full((70, 4), fill_value=False, dtype=bool)
+        # Unitless operation with default axis (axis=0):
+        d_np = np.arange(120).reshape(30, 4)
+        e_np = np.arange(120, 280).reshape(40, 4)
+        d = cf.Data(d_np)
+        e = cf.Data(e_np)
 
-        fm[0, 0] = True
-        fm[10, 2] = True
-        fm[20, 1] = True
+        f_np = np.concatenate([d_np, e_np], axis=0)
+        f = cf.Data.concatenate([d, e])
 
-        dm = fm[:30]
-        d._auxiliary_mask = [dm]
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
 
-        f = cf.Data.concatenate([d, e], axis=0)
-        self.assertEqual(f.shape, fm.shape)
-        self.assertTrue((f._auxiliary_mask_return().array == fm).all())
+        # Operation with equivalent but non-equal units
+        d_np = np.array([[1, 2], [3, 4]])
+        e_np = np.array([[5.0, 6.0]])
+        d = cf.Data(d_np, "km")
+        e = cf.Data(e_np, "metre")
 
-        d = cf.Data(np.arange(120).reshape(30, 4))
-        e = cf.Data(np.arange(120, 280).reshape(40, 4))
+        f_np = np.concatenate([d_np, e_np / 1000])  # /1000 for unit conversion
+        f = cf.Data.concatenate((d, e))
 
-        fm = cf.Data.full((70, 4), False, bool)
-        fm[50, 0] = True
-        fm[60, 2] = True
-        fm[65, 1] = True
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
 
-        em = fm[30:]
-        e._auxiliary_mask = [em]
+        # Check axes equivalency
+        self.assertTrue(f.equals(cf.Data.concatenate((d, e), axis=-2)))
 
-        f = cf.Data.concatenate([d, e], axis=0)
-        self.assertEqual(f.shape, fm.shape)
-        self.assertTrue((f._auxiliary_mask_return().array == fm).all())
+        # Non-default axis specification
+        f_np = np.concatenate([d_np, e_np], axis=1)
+        f = cf.Data.concatenate((d, e), axis=1)
 
-        d = cf.Data(np.arange(120).reshape(30, 4))
-        e = cf.Data(np.arange(120, 280).reshape(40, 4))
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
 
-        fm = cf.Data.full((70, 4), False, bool)
-        fm[0, 0] = True
-        fm[10, 2] = True
-        fm[20, 1] = True
-        fm[50, 0] = True
-        fm[60, 2] = True
-        fm[65, 1] = True
+        # Operation with every data item in sequence being a scalar
+        d_np = np.array(1)
+        e_np = np.array(50.0)
+        d = cf.Data(d_np, "km")
+        e = cf.Data(e_np, "metre")
 
-        dm = fm[:30]
-        d._auxiliary_mask = [dm]
-        em = fm[30:]
-        e._auxiliary_mask = [em]
+        # Note can't use (to compute answer):
+        #     f_np = np.concatenate([d_np, e_np])
+        # here since we have different behaviour to NumPy w.r.t scalars, where
+        # NumPy would error for the above with:
+        #     ValueError: zero-dimensional arrays cannot be concatenated
+        f_answer = np.array([d_np, e_np / 1000])  # /1000 for unit conversion
+        f = cf.Data.concatenate((d, e))
 
-        f = cf.Data.concatenate([d, e], axis=0)
-        self.assertEqual(f.shape, fm.shape)
-        self.assertTrue((f._auxiliary_mask_return().array == fm).all())
+        self.assertEqual(f.shape, f_answer.shape)
+        self.assertTrue((f.array == f_answer).all())
+
+        # Operation with some scalar and some non-scalar data in the sequence
+        e_np = np.array([50.0, 75.0])
+        e = cf.Data(e_np, "metre")
+
+        f_np = np.concatenate([d_np, e_np])
+        f = cf.Data.concatenate((d, e))
+
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
 
     def test_Data__contains__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
