@@ -3483,220 +3483,22 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # --- End: if
 
         # Turn a scalar array into a 1-d array
-        ndim = data0._ndim
+        ndim = data0.ndim
         if not ndim:
             data0.insert_dimension(inplace=True)
             ndim = 1
 
         # ------------------------------------------------------------
-        # Check that the axis, shapes and units of all of the input
-        # data arrays are consistent
+        # Check that the units of all input data arrays are consistent
         # ------------------------------------------------------------
-        if axis < 0:
-            axis += ndim
-        if not 0 <= axis < ndim:
-            raise ValueError(
-                "Can't concatenate: Invalid axis specification: Expected "
-                "-{0}<=axis<{0}, got axis={1}".format(ndim, axis)
-            )
-
-        shape0 = data0._shape
         units0 = data0.Units
-        axis_p1 = axis + 1
         for data1 in data:
-            shape1 = data1._shape
-            if (
-                shape0[axis_p1:] != shape1[axis_p1:]
-                or shape0[:axis] != shape1[:axis]
-            ):
-                raise ValueError(
-                    "Can't concatenate: All the input array axes except "
-                    "for the concatenation axis must have the same size"
-                )
-
             if not units0.equivalent(data1.Units):
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have "
                     "equivalent units"
                 )
-        # --- End: for
 
-        for i, data1 in enumerate(data):
-            if _preserve:
-                data1 = data1.copy()
-            else:
-                # If data1 appears more than once in the input data
-                # arrays then we need to copy it
-                for d in data[i + 1 :]:
-                    if d is data1:
-                        data1 = data1.copy()
-                        break
-            # --- End: if
-
-            # Turn a scalar array into a 1-d array
-            if not data1._ndim:
-                data1.insert_dimension(inplace=True)
-
-            shape1 = data1._shape
-
-            # ------------------------------------------------------------
-            # 1. Make sure that the internal names of the axes match
-            # ------------------------------------------------------------
-            axis_map = {}
-            if data1._pmsize < data0._pmsize:
-                for axis1, axis0 in zip(data1._axes, data0._axes):
-                    axis_map[axis1] = axis0
-
-                data1._change_axis_names(axis_map)
-            else:
-                for axis1, axis0 in zip(data1._axes, data0._axes):
-                    axis_map[axis0] = axis1
-
-                data0._change_axis_names(axis_map)
-            # --- End: if
-
-            # ------------------------------------------------------------
-            # Find the internal name of the concatenation axis
-            # ------------------------------------------------------------
-            Paxis = data0._axes[axis]
-
-            # ------------------------------------------------------------
-            # 2. Make sure that the aggregating axis is an axis of the
-            #    partition matrix of both arrays and that the partition
-            #    matrix axes are the same in both arrays (although, for
-            #    now, they may have different orders)
-            #
-            # Note:
-            #
-            # a) This may involve adding new partition matrix axes to
-            #    either or both of data0 and data1.
-            #
-            # b) If the aggregating axis needs to be added it is inserted
-            #    as the outer (slowest varying) axis to reduce the
-            #    likelihood of having to (expensively) transpose the
-            #    partition matrix.
-            # ------------------------------------------------------------
-            for f, g in zip((data0, data1), (data1, data0)):
-
-                g_pmaxes = g.partitions.axes
-                if Paxis in g_pmaxes:
-                    g_pmaxes = g_pmaxes[:]
-                    g_pmaxes.remove(Paxis)
-
-                f_partitions = f.partitions
-                f_pmaxes = f_partitions.axes
-                for pmaxis in g_pmaxes[::-1] + [Paxis]:
-                    if pmaxis not in f_pmaxes:
-                        f_partitions.insert_dimension(pmaxis, inplace=True)
-
-            #                if Paxis not in f_partitions.axes:
-            #                    f_partitions.insert_dimension(Paxis, inplace=True)
-            # --- End: for
-
-            # ------------------------------------------------------------
-            # 3. Make sure that aggregating axis is the outermost (slowest
-            #    varying) axis of the partition matrix of data0
-            # ------------------------------------------------------------
-            ipmaxis = data0.partitions.axes.index(Paxis)
-            if ipmaxis:
-                data0.partitions.swapaxes(ipmaxis, 0, inplace=True)
-
-            # ------------------------------------------------------------
-            # 4. Make sure that the partition matrix axes of data1 are in
-            #    the same order as those in data0
-            # ------------------------------------------------------------
-            pmaxes1 = data1.partitions.axes
-            ipmaxes = [
-                pmaxes1.index(pmaxis) for pmaxis in data0.partitions.axes
-            ]
-            data1.partitions.transpose(ipmaxes, inplace=True)
-
-            # --------------------------------------------------------
-            # 5. Create new partition boundaries in the partition
-            #    matrices of data0 and data1 so that their partition
-            #    arrays may be considered as different slices of a
-            #    common, larger hyperrectangular partition array.
-            #
-            # Note:
-            #
-            # * There is no need to add any boundaries across the
-            #   concatenation axis.
-            # --------------------------------------------------------
-            boundaries0 = data0.partition_boundaries()
-            boundaries1 = data1.partition_boundaries()
-
-            for dim in data0.partitions.axes[1:]:
-
-                # Still here? Then see if there are any partition matrix
-                # boundaries to be created for this partition dimension
-                bounds0 = boundaries0[dim]
-                bounds1 = boundaries1[dim]
-
-                symmetric_diff = set(bounds0).symmetric_difference(bounds1)
-                if not symmetric_diff:
-                    # The partition boundaries for this partition
-                    # dimension are already the same in data0 and data1
-                    continue
-
-                # Still here? Then there are some partition boundaries to
-                # be created for this partition dimension in data0 and/or
-                # data1.
-                for f, g, bf, bg in (
-                    (data0, data1, bounds0, bounds1),
-                    (data1, data0, bounds1, bounds0),
-                ):
-                    extra_bounds = [i for i in bg if i in symmetric_diff]
-                    f.add_partitions(extra_bounds, dim)
-                # --- End: for
-            # --- End: for
-
-            # ------------------------------------------------------------
-            # 6. Concatenate data0 and data1 partition matrices
-            # ------------------------------------------------------------
-            #            if data0._flip != data1._flip:
-            if data0._flip() != data1._flip():
-                data0._move_flip_to_partitions()
-                data1._move_flip_to_partitions()
-
-            matrix0 = data0.partitions.matrix
-            matrix1 = data1.partitions.matrix
-
-            new_pmshape = list(matrix0.shape)
-            new_pmshape[0] += matrix1.shape[0]
-
-            # Initialise an empty partition matrix with the new shape
-            new_matrix = np.empty(new_pmshape, dtype=object)
-
-            # Insert the data0 partition matrix
-            new_matrix[: matrix0.shape[0]] = matrix0
-
-            # Insert the data1 partition matrix
-            new_matrix[matrix0.shape[0] :] = matrix1
-
-            data0.partitions.matrix = new_matrix
-
-            # Update the location map of the partition matrix of data0
-            data0.partitions.set_location_map((Paxis,), (axis,))
-
-            # ------------------------------------------------------------
-            # 7. Update the size, shape and dtype of data0
-            # ------------------------------------------------------------
-            #    original_shape0 = data0._shape
-
-            data0._size += data1._size
-
-            shape0 = list(shape0)
-            shape0[axis] += shape1[axis]
-            data0._shape = tuple(shape0)
-
-            dtype0 = data0.dtype
-            dtype1 = data1.dtype
-            if dtype0 != dtype1:
-                data0.dtype = np.result_type(dtype0, dtype1)
-
-        # ------------------------------------------------------------
-        # Done
-        # ------------------------------------------------------------
         return data0
 
     def _move_flip_to_partitions(self):
