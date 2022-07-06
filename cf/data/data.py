@@ -3469,14 +3469,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
 
         data0 = data[0]
-        data = data[1:]
+        data_rest = data[1:]
 
         if _preserve:
             data0 = data0.copy()
         else:
             # If data0 appears more than once in the input data arrays
             # then we need to copy it
-            for d in data:
+            for d in data_rest:
                 if d is data0:
                     data0 = data0.copy()
                     break
