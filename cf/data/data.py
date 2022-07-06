@@ -3489,21 +3489,31 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             ndim = 1
 
         # ------------------------------------------------------------
-        # Check that the units of all input data arrays are consistent
+        # Check and conform, if necessary, the units of all inputs
         # ------------------------------------------------------------
+        conformed_units_data = []
+
         units0 = data0.Units
-        for data1 in data:
+        for index, data1 in enumerate(data):
             if not units0.equivalent(data1.Units):
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have "
                     "equivalent units"
                 )
+            elif not units0.equals(data1.Units):  # conform for consistency
+                data1 = data[index]
+                data1_copy = data1.copy()
+                data1_copy.Units = units0
+                # Must add the copy, else the original (units) are processed
+                conformed_units_data.append(data1_copy)
+            else:
+                conformed_units_data.append(data1)
 
         # ------------------------------------------------------------
         # Get data as dask arrays and apply concatenation operation
         # ------------------------------------------------------------
         dxs = []
-        for data1 in data:
+        for data1 in conformed_units_data:
             dxs.append(data1.to_dask_array())
 
         data0._set_dask(da.concatenate(dxs, axis=axis))
