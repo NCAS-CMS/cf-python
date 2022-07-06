@@ -986,42 +986,42 @@ class DataTest(unittest.TestCase):
         e_np = np.arange(120, 280).reshape(40, 4)
         d = cf.Data(d_np)
         e = cf.Data(e_np)
-
-        f_np = np.concatenate([d_np, e_np], axis=0)
-        f = cf.Data.concatenate([d, e])
+        f_np = np.concatenate((d_np, e_np), axis=0)
+        f = cf.Data.concatenate((d, e))  # (and try a tuple input)
 
         self.assertEqual(f.shape, f_np.shape)
         self.assertTrue((f.array == f_np).all())
 
-        # Operation with equivalent but non-equal units
+        # Operation with equivalent but non-equal units:
         d_np = np.array([[1, 2], [3, 4]])
         e_np = np.array([[5.0, 6.0]])
         d = cf.Data(d_np, "km")
         e = cf.Data(e_np, "metre")
-
-        f_np = np.concatenate([d_np, e_np / 1000])  # /1000 for unit conversion
-        f = cf.Data.concatenate((d, e))
+        f_np = np.concatenate((d_np, e_np / 1000))  # /1000 for unit conversion
+        f = cf.Data.concatenate([d, e])  # (and try a list input)
 
         self.assertEqual(f.shape, f_np.shape)
         self.assertTrue((f.array == f_np).all())
 
-        # Check axes equivalency
+        # Check axes equivalency:
         self.assertTrue(f.equals(cf.Data.concatenate((d, e), axis=-2)))
 
-        # Non-default axis specification
-        f_np = np.concatenate([d_np, e_np], axis=1)
+        # Non-default axis specification:
+        e_np = np.array([[5.0], [6.0]])  # for compatible shapes with axis=1
+        e = cf.Data(e_np, "metre")
+        f_np = np.concatenate((d_np, e_np / 1000), axis=1)
         f = cf.Data.concatenate((d, e), axis=1)
 
         self.assertEqual(f.shape, f_np.shape)
         self.assertTrue((f.array == f_np).all())
 
-        # Operation with every data item in sequence being a scalar
+        # Operation with every data item in sequence being a scalar:
         d_np = np.array(1)
         e_np = np.array(50.0)
         d = cf.Data(d_np, "km")
         e = cf.Data(e_np, "metre")
 
-        # Note can't use (to compute answer):
+        # Note can't use the following (to compute answer):
         #     f_np = np.concatenate([d_np, e_np])
         # here since we have different behaviour to NumPy w.r.t scalars, where
         # NumPy would error for the above with:
@@ -1032,7 +1032,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, f_answer.shape)
         self.assertTrue((f.array == f_answer).all())
 
-        # Operation with some scalar and some non-scalar data in the sequence
+        # Operation with some scalar and some non-scalar data in the sequence:
         e_np = np.array([50.0, 75.0])
         e = cf.Data(e_np, "metre")
 
