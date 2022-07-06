@@ -3499,6 +3499,15 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     "equivalent units"
                 )
 
+        # ------------------------------------------------------------
+        # Get data as dask arrays and apply concatenation operation
+        # ------------------------------------------------------------
+        dxs = []
+        for data1 in data:
+            dxs.append(data1.to_dask_array())
+
+        data0._set_dask(da.concatenate(dxs, axis=axis))
+
         return data0
 
     def _move_flip_to_partitions(self):
