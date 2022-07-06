@@ -3482,19 +3482,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     break
         # --- End: if
 
-        # Turn a scalar array into a 1-d array
-        ndim = data0.ndim
-        if not ndim:
-            data0.insert_dimension(inplace=True)
-            ndim = 1
-
-        # ------------------------------------------------------------
-        # Check and conform, if necessary, the units of all inputs
-        # ------------------------------------------------------------
         conformed_units_data = []
-
         units0 = data0.Units
         for index, data1 in enumerate(data):
+            # Turn any scalar array into a 1-d array
+            if not data1.ndim:
+                data1.insert_dimension(inplace=True)
+
+            # ------------------------------------------------------------
+            # Check and conform, if necessary, the units of all inputs
+            # ------------------------------------------------------------
             if not units0.equivalent(data1.Units):
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have "
