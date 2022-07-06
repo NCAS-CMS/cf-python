@@ -1036,11 +1036,12 @@ class DataTest(unittest.TestCase):
         e_np = np.array([50.0, 75.0])
         e = cf.Data(e_np, "metre")
 
-        f_np = np.concatenate([d_np, e_np])
+        # As per above comment, can't use np.concatenate to compute
+        f_answer = np.array([1.0, 0.05, 0.075])  # manual /1000 unit conversion
         f = cf.Data.concatenate((d, e))
 
-        self.assertEqual(f.shape, f_np.shape)
-        self.assertTrue((f.array == f_np).all())
+        self.assertEqual(f.shape, f_answer.shape)
+        self.assertTrue((f.array == f_answer).all())
 
     def test_Data__contains__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
