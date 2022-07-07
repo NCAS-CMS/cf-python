@@ -455,7 +455,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 new = new.roll(shift=shift, axis=iaxis)
         else:
-            new = self.copy(array=False)
+            new = self.copy()
 
         # ------------------------------------------------------------
         # Subspace the field construct's data
