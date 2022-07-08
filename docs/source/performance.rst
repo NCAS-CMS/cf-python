@@ -279,6 +279,7 @@ Data partitioning preserves as much as is possible the faster varying
 
 .. note:: The experimental ability to run cf scripts in parallel using
           mpirun was removed at version 3.9.0. This functionality will
-          be restored soon in a robust fashion when the move to using
-          `dask` (https://github.com/NCAS-CMS/cf-python/issues/182) is
+          be restored in version 3.14.0 in a robust fashion when the
+          move to using `dask`
+          (https://github.com/NCAS-CMS/cf-python/issues/182) is
           completed.
