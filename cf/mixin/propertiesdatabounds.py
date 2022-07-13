@@ -2625,11 +2625,13 @@ class PropertiesDataBounds(PropertiesData):
         units = bounds.Units
         self_units = self.Units
 
-        if data is not None and units and not units.equivalent(self_units):
-            raise ValueError(
-                f"Can't set bounds: {bounds!r} units of {bounds.Units!r} are "
-                f"not equivalent to {self.Units!r}, the units of {self!r}"
-            )
+        if data is not None and units:
+            if not units.equivalent(self_units):
+                raise ValueError(
+                    f"Can't set bounds: {bounds!r} units of {bounds.Units!r} "
+                    f"are not equivalent to {self.Units!r}, the units of "
+                    f"{self!r}"
+                )
 
             bounds.Units = self_units
 
