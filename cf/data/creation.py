@@ -90,9 +90,12 @@ def to_dask(array, chunks, **from_array_options):
 
     """
     kwargs = from_array_options
-    kwargs.setdefault("asarray", getattr(array, "dask_asarray", None))
-    kwargs.setdefault("lock", getattr(array, "dask_lock", False))
-
+    lock = getattr(array, "_dask_lock", False)
+    if lock:
+        lock = get_lock()
+    #    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
+    kwargs.setdefault("lock", lock)
+    kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
     return da.from_array(array, chunks=chunks, **kwargs)
 
 

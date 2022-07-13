@@ -40,7 +40,7 @@ class aggregateTest(unittest.TestCase):
             g.extend([f[i] for i in range(7, f.shape[0])])
 
             g0 = g.copy()
-            self.assertTrue(g.equals(g0, verbose=2), "g != g0")
+            self.assertTrue(g.equals(g0, verbose=-1), "g != g0")
 
             with warnings.catch_warnings():
                 # Suppress noise throughout the test fixture from:

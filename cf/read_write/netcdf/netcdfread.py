@@ -1,12 +1,12 @@
-import json
-from ast import literal_eval as ast_literal_eval
-
 import cfdm
-from numpy import dtype as numpy_dtype
+import netCDF4
+import numpy as np
 
-from ...constants import _file_to_fh
-from ...functions import dirname, pathjoin
-from ...units import Units
+_cfa_message = (
+    "Reading CFA files has been temporarily disabled, "
+    "and will return at version 4.0.0. "
+    "CFA-0.4 functionality is still available at version 3.13.x."
+)
 
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
@@ -93,6 +93,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             )
 
         # Still here? Then we have a CFA variable.
+        raise ValueError(_cfa_message)
+
+        # Leave the following CFA code here, as it may be useful at
+        # v4.0.0.
         ncdimensions = (
             g["variable_attributes"][ncvar].get("cfa_dimensions", "").split()
         )
@@ -150,6 +154,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             )
 
         # Still here?
+        raise ValueError(_cfa_message)
+
+        # Leave the following CFA code here, as it may be useful at
+        # v4.0.0.
         cfa_dimensions = (
             g["variable_attributes"][ncvar].get("cfa_dimensions", "").split()
         )
@@ -221,107 +229,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # ------------------------------------------------------------
         # Still here? Then create data for a CFA netCDF variable
         # ------------------------------------------------------------
-        #        print ('    Creating data from CFA variable', repr(ncvar),
-        #               repr(construct))
-        try:
-            cfa_data = json.loads(construct.get_property("cfa_array"))
-        except ValueError as error:
-            raise ValueError(
-                "Error during JSON-decoding of netCDF attribute 'cfa_array': "
-                f"{error}"
-            )
-
-        variable = g["variables"][ncvar]
-
-        cfa_data["file"] = g["filename"]
-        cfa_data["Units"] = construct.Units
-        cfa_data["fill_value"] = construct.fill_value()
-        cfa_data["_pmshape"] = cfa_data.pop("pmshape", ())
-        cfa_data["_pmaxes"] = cfa_data.pop("pmdimensions", ())
-
-        base = cfa_data.get("base", None)
-        if base is not None:
-            cfa_data["base"] = pathjoin(dirname(g["filename"]), base)
-
-        ncdimensions = construct.get_property("cfa_dimensions", "").split()
-        dtype = variable.dtype
-
-        if dtype is str:
-            # netCDF string types have a dtype of `str`, which needs
-            # to be reset as a numpy.dtype, but we don't know what
-            # without reading the data, so set it to None for now.
-            dtype = None
-
-        # UNICODE???? TODO
-        if self._is_char(ncvar) and dtype.kind in "SU" and ncdimensions:
-            strlen = g["nc"].dimensions[ncdimensions[-1]].size
-            if strlen > 1:
-                ncdimensions.pop()
-                dtype = numpy_dtype(f"S{strlen}")
-
-        cfa_data["dtype"] = dtype
-        cfa_data["_axes"] = ncdimensions
-        cfa_data["shape"] = [
-            g["nc"].dimensions[ncdim].size for ncdim in ncdimensions
-        ]
-
-        for attrs in cfa_data["Partitions"]:
-            # FORMAT
-            sformat = attrs.get("subarray", {}).pop("format", "netCDF")
-            if sformat is not None:
-                attrs["format"] = sformat
-
-            # DTYPE
-            dtype = attrs.get("subarray", {}).pop("dtype", None)
-            if dtype not in (None, "char"):
-                attrs["subarray"]["dtype"] = numpy_dtype(dtype)
-
-            # UNITS and CALENDAR
-            units = attrs.pop("punits", None)
-            calendar = attrs.pop("pcalendar", None)
-            if units is not None or calendar is not None:
-                attrs["Units"] = Units(units, calendar)
-
-            # AXES
-            pdimensions = attrs.pop("pdimensions", None)
-            if pdimensions is not None:
-                attrs["axes"] = pdimensions
-
-            # REVERSE
-            reverse = attrs.pop("reverse", None)
-            if reverse is not None:
-                attrs["reverse"] = reverse
-
-            # LOCATION: Change to python indexing (i.e. range does not
-            #           include the final index)
-            for r in attrs["location"]:
-                r[1] += 1
-
-            # PART: Change to python indexing (i.e. slice range does
-            #       not include the final index)
-            part = attrs.get("part", None)
-            if part:
-                p = []
-                for x in ast_literal_eval(part):
-                    if isinstance(x, list):
-                        if x[2] > 0:
-                            p.append(slice(x[0], x[1] + 1, x[2]))
-                        elif x[1] == 0:
-                            p.append(slice(x[0], None, x[2]))
-                        else:
-                            p.append(slice(x[0], x[1] - 1, x[2]))
-                    else:
-                        p.append(list(x))
-
-                attrs["part"] = p
-
-        construct.del_property("cf_role")
-        construct.del_property("cfa_array")
-        construct.del_property("cfa_dimensions", None)
-
-        out = self._create_Data(loadd=cfa_data)
-
-        return out
+        raise ValueError(_cfa_message)
 
     def _create_Data(
         self,
@@ -329,7 +237,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         units=None,
         calendar=None,
         ncvar=None,
-        loadd=None,
         **kwargs,
     ):
         """Create a Data object.
@@ -342,19 +249,20 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 The netCDF variable from which to get units and calendar.
 
         """
+        if array.dtype is None:
+            # The array is based on a netCDF VLEN variable, and
+            # therefore has unknown data type. To find the correct
+            # data type (e.g. "|S7"), we need to read the data into
+            # memory.
+            array = self._array_from_variable(ncvar)
+
         chunks = self.read_vars.get("chunks", "auto")
-
-        #        dask_from_array = {'lock': array._dask_lock,
-        #                           'asarray': array._dask_asarray}
-
-        # TODODASK - is this necessar given that each NetCDFArray.__getitem__ could open (and then close) it's own netCDF4.Dataset instance?
 
         return super()._create_Data(
             array=array,
             units=units,
             calendar=calendar,
             ncvar=ncvar,
-            loadd=loadd,
             chunks=chunks,
             **kwargs,
         )
@@ -380,6 +288,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # Do not create fields from CFA private variables
         # ------------------------------------------------------------
         if g["cfa"]:
+            raise ValueError(_cfa_message)
+
             for ncvar in g["variables"]:
                 if (
                     g["variable_attributes"][ncvar].get("cf_role", None)
@@ -391,6 +301,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         #
         # ------------------------------------------------------------
         if g["cfa"]:
+            raise ValueError(_cfa_message)
+
+            # Leave the following CFA code here, as it may be useful
+            # at v4.0.0.
             for ncvar, ncdims in tuple(g["variable_dimensions"].items()):
                 if ncdims != ():
                     continue
@@ -412,26 +326,76 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                         map(str, ncdimensions)
                     )
 
-    def file_open(self, filename, flatten=True, verbose=None):
-        """Open the netCDf file for reading.
+    def _array_from_variable(self, ncvar):
+        """Convert a netCDF variable to a `numpy` array.
 
-        :Paramters:
+        For char and string netCDF types, the array is processed into
+        a CF-friendly format.
 
-            filename: `str`
-                The netCDF file to be read.
+        .. versionadded:: TODODASK
 
-            flatten: `bool`, optional
-                If False then do not flatten a grouped file. Ignored if
-                the file has no groups.
+        .. note:: This code is copied from
+                  `cfdm.NetCDFArray.__getitem__`.
 
-                .. versionadded:: 3.6.0
+        :Parmaeters:
+
+            ncvar: `str`
+                The netCDF variable name of the variable to be read.
 
         :Returns:
 
-            `netCDF4.Dataset`
-                The object for the file.
+            `numpy.ndarray`
+                The array containing the variable's data.
 
         """
-        out = super().file_open(filename, flatten=flatten, verbose=verbose)
-        _file_to_fh["netCDF"].pop(filename, None)
-        return out
+        variable = self.read_vars["variable_dataset"][ncvar][ncvar]
+        array = variable[...]
+
+        string_type = isinstance(array, str)
+        if string_type:
+            # --------------------------------------------------------
+            # A netCDF string type scalar variable comes out as Python
+            # str object, so convert it to a numpy array.
+            # --------------------------------------------------------
+            array = np.array(array, dtype=f"S{len(array)}")
+
+        if not variable.ndim:
+            # Hmm netCDF4 has a thing for making scalar size 1 , 1d
+            array = array.squeeze()
+
+        kind = array.dtype.kind
+        if not string_type and kind in "SU":
+            # --------------------------------------------------------
+            # Collapse (by concatenation) the outermost (fastest
+            # varying) dimension of char array into
+            # memory. E.g. [['a','b','c']] becomes ['abc']
+            # --------------------------------------------------------
+            if kind == "U":
+                array = array.astype("S")
+
+            array = netCDF4.chartostring(array)
+            shape = array.shape
+            array = np.array([x.rstrip() for x in array.flat], dtype="S")
+            array = np.reshape(array, shape)
+            array = np.ma.masked_where(array == b"", array)
+
+        elif not string_type and kind == "O":
+            # --------------------------------------------------------
+            # A netCDF string type N-d (N>=1) variable comes out as a
+            # numpy object array, so convert it to numpy string array.
+            # --------------------------------------------------------
+            array = array.astype("S")  # , copy=False)
+
+            # --------------------------------------------------------
+            # netCDF4 does not auto-mask VLEN variable, so do it here.
+            # --------------------------------------------------------
+            array = np.ma.where(array == b"", np.ma.masked, array)
+
+        elif not string_type and kind == "O":
+            # --------------------------------------------------------
+            # A netCDF string type N-d (N>=1) variable comes out as a
+            # numpy object array, so convert it to numpy string array.
+            # --------------------------------------------------------
+            array = array.astype("S")
+
+        return array

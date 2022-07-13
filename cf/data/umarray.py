@@ -21,6 +21,8 @@ class UMArray(FileArray):
         fmt=None,
         word_size=None,
         byte_ordering=None,
+        source=None,
+        copy=True,
     ):
         """**Initialization**
 
@@ -57,13 +59,13 @@ class UMArray(FileArray):
             byte_ordering: `str`, optional
 
             size: `int`
-                Deprecated at version 1.9.TODO.0. If set will be
+                Deprecated at version TODODASK. If set will be
                 ignored.
 
                 Number of elements in the uncompressed array.
 
             ndim: `int`
-                Deprecated at version 1.9.TODO.0. If set will be
+                Deprecated at version TODODASK. If set will be
                 ignored.
 
                 The number of uncompressed array dimensions.
@@ -74,27 +76,79 @@ class UMArray(FileArray):
         ...                 data_offset=3420,
         ...                 dtype=numpy.dtype('float32'),
         ...                 shape=(1, 1, 30, 24),
-        ...                 size=720, ndim=4, disk_length=0)
+        ...                 disk_length=0)
 
         >>> a = UMFileArray(
         ...         file='packed_file.pp', header_offset=3156,
         ...         data_offset=3420,
         ...         dtype=numpy.dtype('float32'), shape=(30, 24),
-        ...         size=720, ndim=2, disk_length=423
+        ...         disk_length=423
         ... )
 
         """
-        super().__init__(
-            filename=filename,
-            dtype=dtype,
-            shape=shape,
-            header_offset=header_offset,
-            data_offset=data_offset,
-            disk_length=disk_length,
-            fmt=fmt,
-            word_size=word_size,
-            byte_ordering=byte_ordering,
-        )
+        super().__init__(source=source, copy=copy)
+
+        if source is not None:
+            try:
+                shape = source._get_component("shape", None)
+            except AttributeError:
+                shape = None
+
+            try:
+                filename = source._get_component("filename", None)
+            except AttributeError:
+                filename = None
+
+            try:
+                fmt = source._get_component("fmt", None)
+            except AttributeError:
+                fmt = None
+
+            try:
+                disk_length = source._get_component("disk_length", None)
+            except AttributeError:
+                disk_length = None
+
+            try:
+                header_offset = source._get_component("header_offset", None)
+            except AttributeError:
+                header_offset = None
+
+            try:
+                data_offset = source._get_component("data_offset", None)
+            except AttributeError:
+                data_offset = None
+
+            try:
+                dtype = source._get_component("dtype", None)
+            except AttributeError:
+                dtype = None
+
+            try:
+                word_size = source._get_component("word_size", None)
+            except AttributeError:
+                word_size = None
+
+            try:
+                byte_ordering = source._get_component("byte_ordering", None)
+            except AttributeError:
+                byte_ordering = None
+
+        self._set_component("shape", shape, copy=False)
+        self._set_component("filename", filename, copy=False)
+        self._set_component("dtype", dtype, copy=False)
+        self._set_component("header_offset", header_offset, copy=False)
+        self._set_component("data_offset", data_offset, copy=False)
+        self._set_component("disk_length", disk_length, copy=False)
+
+        if fmt is not None:
+            self._set_component("fmt", fmt, copy=False)
+
+        if byte_ordering is not None:
+            self._set_component("byte_ordering", byte_ordering, copy=False)
+
+        if word_size is not None:
+            self._set_component("word_size", word_size, copy=False)
 
         # By default, close the UM file after data array access
         self._set_component("close", True, copy=False)

@@ -1,3 +1,5 @@
+import numpy as np
+
 from ...functions import inspect as cf_inspect
 from .array import Array
 
@@ -22,20 +24,24 @@ class FileArray(Array):
         return f"<{self.__class__.__name__}: {self.shape} in {self.file}>"
 
     @property
-    def _lock(self):
+    def _dask_lock(self):
         """TODODASK.
 
-        Concurrent reads are assumed to be supported.
+        Concurrent reads are assumed to be not supported.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: TODODASK
 
         """
-        return False
+        return True
 
     @property
-    def filename(self):
-        """The name of the file containing the array."""
-        return self._get_component("filename")
+    def _dask_meta(self):
+        """TODODASK.
+
+        .. versionadded:: TODODASK
+
+        """
+        return np.array((), dtype=self.dtype)
 
     @property
     def array(self):
@@ -54,6 +60,21 @@ class FileArray(Array):
 
         """
         return self[...]
+
+    @property
+    def dtype(self):
+        """Data-type of the array."""
+        return self._get_component("dtype")
+
+    @property
+    def filename(self):
+        """The name of the file containing the array."""
+        return self._get_component("filename")
+
+    @property
+    def shape(self):
+        """Shape of the array."""
+        return self._get_component("shape")
 
     def close(self):
         """Close the dataset containing the data."""

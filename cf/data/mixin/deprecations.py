@@ -321,10 +321,12 @@ class DataClassDeprecationsMixin:
                 data is in memory then an empty `set` is returned.
 
         """
-        raise DeprecationError(
-            "Data method 'get_filenames' has been deprecated at "
-            "version TODODASK and is not available."
-        )  # pragma: no cover
+        return set()
+
+    #        raise DeprecationError(
+    #            "Data method 'get_filenames' has been deprecated at "
+    #            "version TODODASK and is not available."
+    #        )  # pragma: no cover
 
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.

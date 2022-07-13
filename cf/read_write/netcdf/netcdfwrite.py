@@ -1,70 +1,34 @@
-import json
 import random
-from os.path import isfile
 from string import hexdigits
 
 import cfdm
-import numpy
-from netCDF4 import Dataset as netCDF4_Dataset
+import dask.array as da
+import numpy as np
 
 from ... import Bounds, Coordinate, DomainAncillary
+from .netcdfread import NetCDFRead
 
-# TODO: is it OK to import from here? Maybe best move these to '...functions'?
-from ...data.functions import _close_netcdf_file, _file_to_Dataset
-from ...functions import relpath
+_cfa_message = (
+    "Writing CFA files has been temporarily disabled, "
+    "and will return at version 4.0.0. "
+    "CFA-0.4 functionality is still available at version 3.13.x."
+)
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     """A container for writing Fields to a netCDF dataset."""
 
-    def file_close(self, filename):
-        """Close the netCDF file that has been written.
+    def __new__(cls, *args, **kwargs):
+        """Store the NetCDFRead class.
 
-        :Returns:
-
-            `None`
-
-        """
-        _close_netcdf_file(filename)
-
-    def file_open(self, filename, mode, fmt, fields):
-        """Open the netCDF file for writing.
-
-        :Parameters:
-
-            filename: `str`
-                As for the *filename* parameter for initialising a
-                `netCDF.Dataset` instance.
-
-            mode: `str`
-                As for the *mode* parameter for initialising a
-                `netCDF.Dataset` instance.
-
-            fmt: `str`
-                As for the *format* parameter for initialising a
-                `netCDF.Dataset` instance.
-
-            fields: sequence of `Field`
-                The field constructs to be written.
-
-        :Returns:
-
-            `netCDF.Dataset`
-                A `netCDF4.Dataset` object for the file.
+        .. note:: If a child class requires a different NetCDFRead class
+        than the one defined here, then it must be redefined in the
+        child class.
 
         """
-        # I.e. if on either file IO iteration for append mode:
-        if self.write_vars["dry_run"] or self.write_vars["post_dry_run"]:
-            if not isfile(filename):
-                nc = netCDF4_Dataset(filename, "w", format=fmt)
-                nc.close()
-            elif filename in _file_to_Dataset:
-                _close_netcdf_file(filename)
-
-        nc = super().file_open(filename, mode, fmt, fields)
-        _file_to_Dataset[filename] = nc
-
-        return nc
+        instance = super().__new__(cls)
+        instance._NetCDFRead = NetCDFRead
+        return instance
 
     def _write_as_cfa(self, cfvar):
         """True if the variable should be written as a CFA variable.
@@ -77,9 +41,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         data = self.implementation.get_data(cfvar, None)
         if data is None:
-            return False
-
-        if data.in_memory:
             return False
 
         if data.size == 1:
@@ -115,6 +76,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         kwargs = super()._customize_createVariable(cfvar, kwargs)
 
         if self._write_as_cfa(cfvar):
+            raise ValueError(_cfa_message)
+
             kwargs["dimensions"] = ()
             kwargs["chunksizes"] = None
 
@@ -150,6 +113,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         g = self.write_vars
 
         if self._write_as_cfa(cfvar):
+            raise ValueError(_cfa_message)
+
             self._write_cfa_data(ncvar, ncdimensions, data, cfvar)
             return
 
@@ -160,51 +125,34 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # --------------------------------------------------------
             data = data.source().source()
 
-        warned_valid = False
+        # Get the dask array
+        dx = da.asanyarray(data)
 
-        config = data.partition_configuration(readonly=True)
+        # Convert the data type
+        new_dtype = g["datatype"].get(dx.dtype)
+        if new_dtype is not None:
+            dx = dx.astype(new_dtype)
 
-        for partition in data.partitions.flat:
-            partition.open(config)
-            array = partition.array
+        # VLEN variables can not be assigned to by masked arrays
+        # (https://github.com/Unidata/netcdf4-python/pull/465), so
+        # fill missing data in string (as opposed to char) data types.
+        if g["fmt"] == "NETCDF4" and dx.dtype.kind in "SU":
+            dx = dx.map_blocks(
+                self._filled_string_array,
+                fill_value="",
+                meta=np.array((), dx.dtype),
+            )
 
-            # Convert data type
-            new_dtype = g["datatype"].get(array.dtype)
-            if new_dtype is not None:
-                array = array.astype(new_dtype)
+        # Check for out-of-range values
+        if g["warn_valid"]:
+            dx = dx.map_blocks(
+                self._check_valid,
+                cfvar=cfvar,
+                attributes=attributes,
+                meta=np.array((), dx.dtype),
+            )
 
-            # Check that the array doesn't contain any elements
-            # which are equal to any of the missing data values
-            if unset_values:
-                if partition.masked:
-                    temp_array = array.compressed()
-                else:
-                    temp_array = array
-
-                if numpy.intersect1d(unset_values, temp_array).size:
-                    raise ValueError(
-                        "ERROR: Can't write field when array has _FillValue or"
-                        f" missing_value at unmasked point: {ncvar!r}"
-                    )
-            # --- End: if
-
-            if (
-                g["fmt"] == "NETCDF4"
-                and array.dtype.kind in "SU"
-                and numpy.ma.isMA(array)
-            ):
-                # VLEN variables can not be assigned to by masked arrays
-                # https://github.com/Unidata/netcdf4-python/pull/465
-                array = array.filled("")
-
-            if not warned_valid and g["warn_valid"]:
-                # Check for out-of-range values
-                warned_valid = self._check_valid(cfvar, array, attributes)
-
-            # Copy the array into the netCDF variable
-            g["nc"][ncvar][partition.indices] = array
-
-            partition.close()
+        da.store(dx, g["nc"][ncvar], compute=True, return_stored=False)
 
     def _write_dimension_coordinate(
         self, f, key, coord, ncdim=None, coordinates=None
@@ -379,222 +327,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             `None`
 
         """
-        g = self.write_vars
-
-        netcdf_attrs = {
-            "cf_role": "cfa_variable",
-            "cfa_dimensions": " ".join(ncdimensions),
-        }
-
-        # Create a dictionary representation of the data object
-        data = data.copy()
-        axis_map = {}
-        for axis0, axis1 in zip(data._axes, ncdimensions):
-            axis_map[axis0] = axis1
-
-        data._change_axis_names(axis_map)
-        data._move_flip_to_partitions()
-
-        cfa_array = data.dumpd()
-
-        # Modify the dictionary so that it is suitable for JSON
-        # serialization
-        del cfa_array["_axes"]
-        del cfa_array["shape"]
-        del cfa_array["Units"]
-        del cfa_array["dtype"]
-        cfa_array.pop("_cyclic", None)
-        cfa_array.pop("_fill", None)
-        cfa_array.pop("fill_value", None)
-
-        pmshape = cfa_array.pop("_pmshape", None)
-        if pmshape:
-            cfa_array["pmshape"] = pmshape
-
-        pmaxes = cfa_array.pop("_pmaxes", None)
-        if pmaxes:
-            cfa_array["pmdimensions"] = pmaxes
-
-        config = data.partition_configuration(readonly=True)
-
-        base = g["cfa_options"].get("base", None)
-        if base is not None:
-            cfa_array["base"] = base
-
-        convert_dtype = g["datatype"]
-
-        for attrs in cfa_array["Partitions"]:
-            fmt = attrs.get("format", None)
-
-            if fmt is None:
-                # --------------------------------------------------------
-                # This partition has an internal sub-array. This could be
-                # a numpy array or a temporary FileArray object.
-                # --------------------------------------------------------
-                index = attrs.get("index", ())
-                if len(index) == 1:
-                    index = index[0]
-                else:
-                    index = tuple(index)
-
-                partition = data.partitions.matrix.item(index)
-
-                partition.open(config)
-                array = partition.array
-
-                # Convert data type
-                new_dtype = convert_dtype.get(array.dtype, None)
-                if new_dtype is not None:
-                    array = array.astype(new_dtype)
-
-                shape = array.shape
-                ncdim_strlen = []
-                if array.dtype.kind == "S":
-                    # This is an array of strings
-                    strlen = array.dtype.itemsize
-                    if strlen > 1:
-                        # Convert to an array of characters
-                        array = self._character_array(array)
-
-                        # Get the netCDF dimension for the string length
-                        ncdim_strlen = [
-                            self._string_length_dimension(strlen, g=None)
-                        ]
-                # --- End: if
-
-                # Create a name for the netCDF variable to contain the array
-                p_ncvar = "cfa_" + self._random_hex_string()
-                while p_ncvar in g["ncvar_names"]:
-                    p_ncvar = "cfa_" + self._random_hex_string()
-
-                g["ncvar_names"].add(p_ncvar)
-
-                # Get the private CFA netCDF dimensions for the array.
-                cfa_dimensions = [
-                    self._netcdf_name(
-                        f"cfa{size}", dimsize=size, role="cfa_private"
-                    )
-                    for size in array.shape
-                ]
-
-                for (ncdim, size) in zip(cfa_dimensions, array.shape):
-                    if ncdim not in g["ncdim_to_size"]:
-                        # This cfa private dimension needs creating
-                        g["ncdim_to_size"][ncdim] = size
-                        g["netcdf"].createDimension(ncdim, size)
-
-                # Create the private CFA variable and write the array to it
-                #                v = g['netcdf'].createVariable(p_ncvar, self._datatype(array),
-                #                                               cfa_dimensions + ncdim_strlen,
-                # #                                              fill_value=fill_value,
-                #                                               fill_value=False,
-                #                                               least_significant_digit=None,
-                #                                               endian=g['endian'],
-                #                                               **g['netcdf_compression'])
-
-                kwargs = {
-                    "varname": p_ncvar,
-                    "datatype": self._datatype(array),
-                    "dimensions": cfa_dimensions + ncdim_strlen,
-                    "fill_value": None,  # False,
-                    "least_significant_digit": None,
-                    "endian": g["endian"],
-                }
-                kwargs.update(g["netcdf_compression"])
-
-                self._createVariable(**kwargs)
-
-                self._write_attributes(
-                    parent=None,
-                    ncvar=p_ncvar,
-                    extra={"cf_role": "cfa_private"},
-                )
-
-                g["nc"][p_ncvar][...] = array
-
-                # Update the attrs dictionary.
-                #
-                # Note that we don't need to set 'part', 'dtype', 'units',
-                # 'calendar', 'dimensions' and 'reverse' since the
-                # partition's in-memory data array always matches up with
-                # the master data array.
-                attrs["subarray"] = {"shape": shape, "ncvar": p_ncvar}
-
-            else:
-                # --------------------------------------------------------
-                # This partition has an external sub-array
-                # --------------------------------------------------------
-                # PUNITS, PCALENDAR: Change from Units object to netCDF
-                #                    string(s)
-                units = attrs.pop("Units", None)
-                if units is not None:
-                    attrs["punits"] = units.units
-                    if hasattr(units, "calendar"):
-                        attrs["pcalendar"] = units.calendar
-
-                # PDIMENSIONS:
-                p_axes = attrs.pop("axes", None)
-                if p_axes is not None:
-                    attrs["pdimensions"] = p_axes
-
-                # REVERSE
-                p_flip = attrs.pop("flip", None)
-                if p_flip:
-                    attrs["reverse"] = p_flip
-
-                # DTYPE: Change from numpy.dtype object to netCDF string
-                dtype = attrs["subarray"].pop("dtype", None)
-                if dtype is not None:
-                    if dtype.kind != "S":
-                        attrs["subarray"][
-                            "dtype"
-                        ] = self._convert_to_netCDF_datatype(dtype)
-
-                # FORMAT:
-                sfmt = attrs.pop("format", None)
-                if sfmt is not None:
-                    attrs["subarray"]["format"] = sfmt
-            # --- End: if
-
-            # LOCATION: Change from python to CFA indexing (i.e. range
-            #           includes the final index)
-            attrs["location"] = [(x[0], x[1] - 1) for x in attrs["location"]]
-
-            # PART: Change from python to to CFA indexing (i.e. slice
-            #       range includes the final index)
-            part = attrs.get("part", None)
-            if part:
-                p = []
-                for x, size in zip(part, attrs["subarray"]["shape"]):
-                    if isinstance(x, slice):
-                        x = x.indices(size)
-                        if x[2] > 0:
-                            p.append([x[0], x[1] - 1, x[2]])
-                        elif x[1] == -1:
-                            p.append([x[0], 0, x[2]])
-                        else:
-                            p.append([x[0], x[1] + 1, x[2]])
-                    else:
-                        p.append(tuple(x))
-                # --- End: for
-                attrs["part"] = str(p)
-            # --- End: if
-
-            if "base" in cfa_array and "file" in attrs["subarray"]:
-                # Make the file name relative to base
-                attrs["subarray"]["file"] = relpath(
-                    attrs["subarray"]["file"], cfa_array["base"]
-                )
-        # --- End: for
-
-        # Add the description (as a JSON string) of the partition array to
-        # the netcdf attributes.
-        netcdf_attrs["cfa_array"] = json.dumps(
-            cfa_array, default=self._convert_to_builtin_type
-        )
-
-        # Write the netCDF attributes to the file
-        self._write_attributes(parent=None, ncvar=ncvar, extra=netcdf_attrs)
+        raise ValueError(_cfa_message)
 
     def _random_hex_string(self, size=10):
         """Return a random hexadecimal string with the given number of
@@ -657,16 +390,90 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         int
 
         """
-        if isinstance(x, numpy.bool_):
+        if isinstance(x, np.bool_):
             return bool(x)
 
-        if isinstance(x, numpy.integer):
+        if isinstance(x, np.integer):
             return int(x)
 
-        if isinstance(x, numpy.floating):
+        if isinstance(x, np.floating):
             return float(x)
 
         raise TypeError(
             f"{type(x)!r} object can't be converted to a JSON serializable "
             f"type: {x!r}"
         )
+
+    def _check_valid(self, array, cfvar=None, attributes=None):
+        """Checks for array values outside of the valid range.
+
+        Specifically, checks array for out-of-range values, as
+        defined by the valid_[min|max|range] attributes.
+
+        .. versionadded:: TODODASK
+
+        :Parameters:
+
+            array: `numpy.ndarray`
+                The array to be checked.
+
+            cfvar: construct
+                The CF construct containing the array.
+
+            attributes: `dict`
+                The variable's CF properties.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The input array, unchanged.
+
+        """
+        super()._check_valid(cfvar, array, attributes)
+        return array
+
+    def _filled_string_array(self, array, fill_value=""):
+        """Fill a string array.
+
+        .. versionadded:: TODODASK
+
+        :Parameters:
+
+            array: `numpy.ndarray`
+                The `numpy` array with string (byte or unicode) data
+                type.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The string array array with any missing data replaced
+                by the fill value.
+
+        """
+        if np.ma.isMA(array):
+            return array.filled(fill_value)
+
+        return array
+
+
+#    def _convert_dtype(self, array, new_dtype=None):
+#        """Convert the data type of a numpy array.
+#
+#        .. versionadded:: TODODASK
+#
+#        :Parameters:
+#
+#            array: `numpy.ndarray`
+#                The `numpy` array
+#
+#            new_dtype: data-type
+#                The new data type.
+#
+#        :Returns:
+#
+#            `numpy.ndarray`
+#                The array with converted data type.
+#
+#        """
+#        return array.astype(new_dtype)
+#
