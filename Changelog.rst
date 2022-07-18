@@ -1,13 +1,16 @@
 version 3.13.1
 --------------
 
-**2022-??-??**
+**2022-07-??**
 
+* Upgrade to allow cf to work with Python 3.10
+  (https://github.com/NCAS-CMS/cfdm/issues/419)
 * Fix bug when setting coordinate bounds with different units to their
   parent coordinates
   (https://github.com/NCAS-CMS/cf-python/issues/417)
 
 ----
+
 version 3.13.0
 --------------
 
