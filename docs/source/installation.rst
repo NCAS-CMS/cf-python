@@ -32,7 +32,7 @@ Windows Subsystem for Linux (WSL)
 **Python versions**
 -------------------
 
-The cf package is only for Python 3.7, 3.8 and 3.9.
+The cf package is only for Python 3.7 or newer.
 
 Versions 2.x of cf work only for Python 2.7.
 
@@ -138,7 +138,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.13.0``):
+   you want to install, e.g. ``3.13.1``):
 
    .. code-block:: console
 
@@ -199,7 +199,7 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.7, 3.8 or 3.9.
+* `Python <https://www.python.org/>`_, 3.7 or newer.
 
 * `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
 
