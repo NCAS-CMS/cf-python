@@ -114,7 +114,7 @@ class DimensionCoordinate(
         data = self.get_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the data
-            if data._size > 1:
+            if data.size > 1:
                 data = data[0:2].array
                 return bool(data.item(0) < data.item(1))
 
