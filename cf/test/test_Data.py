@@ -1043,6 +1043,33 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, f_answer.shape)
         self.assertTrue((f.array == f_answer).all())
 
+        # Check the cyclicity of axes is correct after concatenate...
+        d_np = np.arange(16).reshape(4, 4)
+        d = cf.Data(d_np, "seconds")
+        d.cyclic([0, 1])  # notably make both axes cyclic here
+        e_np = d_np.copy()
+        e = cf.Data(e_np, "seconds")
+
+        f_np = np.concatenate((d_np, e_np))
+
+        # ...when joining along axis=0 (the default)
+        self.assertEqual(d.cyclic(), {0, 1})
+        f = cf.Data.concatenate([d, e])
+        self.assertEqual(f.cyclic(), {1})
+
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
+
+        # ...when joining along axis=1
+        f_np = np.concatenate((d_np, e_np), axis=1)
+
+        self.assertEqual(d.cyclic(), {0, 1})
+        f = cf.Data.concatenate([d, e], axis=1)
+        self.assertEqual(f.cyclic(), {0})
+
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
+
     def test_Data__contains__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
