@@ -3489,9 +3489,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if not data1.ndim:
                 data1.insert_dimension(inplace=True)
 
-            # ------------------------------------------------------------
             # Check and conform, if necessary, the units of all inputs
-            # ------------------------------------------------------------
             if not units0.equivalent(data1.Units):
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have "
@@ -3506,14 +3504,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             else:
                 conformed_units_data.append(data1)
 
-        # ------------------------------------------------------------
         # Get data as dask arrays and apply concatenation operation
-        # ------------------------------------------------------------
         dxs = []
         for data1 in conformed_units_data:
             dxs.append(data1.to_dask_array())
 
         data0._set_dask(da.concatenate(dxs, axis=axis))
+
+        # Manage cyclicity of axes: if join axis was cyclic, it is no longer
+        cyclic_axes = data0._cyclic
+        if cyclic_axes:
+            # Since cyclicity is lost for the join axis
+            data0.cyclic(axes=axis, iscyclic=False)
 
         return data0
 
