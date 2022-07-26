@@ -3401,6 +3401,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         raise NotImplementedError("'cf.Data._set_subspace' is unavailable.")
 
     @classmethod
+    @daskified(_DASKIFIED_VERBOSE)
     def concatenate(cls, data, axis=0, _preserve=True):
         """Join a sequence of data arrays together.
 
