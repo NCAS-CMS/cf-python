@@ -3469,7 +3469,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "Can't concatenate: Must provide at least two data arrays"
             )
 
-        data0 = data[0]
+        data0 = data[0].copy()
         data_rest = data[1:]
 
         if _preserve:
