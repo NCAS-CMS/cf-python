@@ -3464,7 +3464,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
 
         data0 = data[0].copy()
-        data_rest = data[1:]
 
         conformed_units_data = []
         units0 = data0.Units
