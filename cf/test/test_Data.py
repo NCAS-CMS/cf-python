@@ -1054,7 +1054,14 @@ class DataTest(unittest.TestCase):
 
         # ...when joining along axis=0 (the default)
         self.assertEqual(d.cyclic(), {0, 1})
-        f = cf.Data.concatenate([d, e])
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            f = cf.Data.concatenate([d, e])
+            self.assertTrue(
+                any(
+                    "Concatenating along a cyclic axis (0)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
         self.assertEqual(f.cyclic(), {1})
 
         self.assertEqual(f.shape, f_np.shape)
@@ -1064,7 +1071,14 @@ class DataTest(unittest.TestCase):
         f_np = np.concatenate((d_np, e_np), axis=1)
 
         self.assertEqual(d.cyclic(), {0, 1})
-        f = cf.Data.concatenate([d, e], axis=1)
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            f = cf.Data.concatenate([d, e], axis=1)
+            self.assertTrue(
+                any(
+                    "Concatenating along a cyclic axis (1)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
         self.assertEqual(f.cyclic(), {0})
 
         self.assertEqual(f.shape, f_np.shape)

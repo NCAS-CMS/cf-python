@@ -3419,6 +3419,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 default is 0. Note that scalar arrays are treated as if
                 they were one dimensional.
 
+                .. note:: If the axis specified is cyclic, it will become
+                          non-cyclic in the output.
+
             _preserve: `bool`, optional
                 Deprecated at version TODODASK.
 
@@ -3495,6 +3498,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
         axis = data0._parse_axes(axis)[0]
         if axis in data0.cyclic():
+            logger.warning(
+                f"Concatenating along a cyclic axis ({axis}) therefore the "
+                f"axis has been set as non-cyclic in the output."
+            )
             data0.cyclic(axes=axis, iscyclic=False)
 
         return data0
