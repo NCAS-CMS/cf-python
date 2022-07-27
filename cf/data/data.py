@@ -3493,9 +3493,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         data0._set_dask(da.concatenate(dxs, axis=axis))
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
-        cyclic_axes = data0._cyclic
-        if cyclic_axes:
-            # Since cyclicity is lost for the join axis
+        axis = data0._parse_axes(axis)[0]
+        if axis in data0.cyclic():
             data0.cyclic(axes=axis, iscyclic=False)
 
         return data0
