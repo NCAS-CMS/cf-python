@@ -3480,12 +3480,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 )
             elif not units0.equals(data1.Units):  # conform for consistency
                 data1 = data[index]
-                data1_copy = data1.copy()
-                data1_copy.Units = units0
-                # Must add the copy, else the original (units) are processed
-                conformed_units_data.append(data1_copy)
-            else:
-                conformed_units_data.append(data1)
+                data1 = data1.copy()
+                data1.Units = units0
+
+            conformed_units_data.append(data1)
 
         # Get data as dask arrays and apply concatenation operation
         dxs = []
