@@ -3420,13 +3420,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 they were one dimensional.
 
             _preserve: `bool`, optional
-                If False then the time taken to do the concatenation is
-                reduced at the expense of changing the input data arrays
-                given by the *data* parameter in place and **these in
-                place changes will render the input data arrays
-                unusable**. Therefore, only set to False if it is 100%
-                certain that the input data arrays will not be accessed
-                again. By default the input data arrays are preserved.
+                Deprecated at version TODODASK.
 
         :Returns:
 
@@ -3471,17 +3465,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         data0 = data[0].copy()
         data_rest = data[1:]
-
-        if _preserve:
-            data0 = data0.copy()
-        else:
-            # If data0 appears more than once in the input data arrays
-            # then we need to copy it
-            for d in data_rest:
-                if d is data0:
-                    data0 = data0.copy()
-                    break
-        # --- End: if
 
         conformed_units_data = []
         units0 = data0.Units
