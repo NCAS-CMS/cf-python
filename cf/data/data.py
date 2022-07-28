@@ -3468,11 +3468,15 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         data0 = data[0].copy()
 
-        conformed_units_data = []
+        processed_data = []
         units0 = data0.Units
         for index, data1 in enumerate(data):
+            copied = False  # to avoid making two copies in a given case
+
             # Turn any scalar array into a 1-d array
             if not data1.ndim:
+                data1 = data1.copy()
+                copied = True
                 data1.insert_dimension(inplace=True)
 
             # Check and conform, if necessary, the units of all inputs
@@ -3482,15 +3486,15 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     "equivalent units"
                 )
             elif not units0.equals(data1.Units):  # conform for consistency
-                data1 = data[index]
-                data1 = data1.copy()
+                if not copied:
+                    data1 = data1.copy()
                 data1.Units = units0
 
-            conformed_units_data.append(data1)
+            processed_data.append(data1)
 
         # Get data as dask arrays and apply concatenation operation
         dxs = []
-        for data1 in conformed_units_data:
+        for data1 in processed_data:
             dxs.append(data1.to_dask_array())
 
         data0._set_dask(da.concatenate(dxs, axis=axis))
