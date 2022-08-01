@@ -969,10 +969,12 @@ class DataClassDeprecationsMixin:
 
     @classmethod
     def concatenate_data(cls, data_list, axis):
-        """Concatenates a list of Data objects into a single Data object
-        along the specified access (see cf.Data.concatenate for
-        details). In the case that the list contains only one element,
-        that element is simply returned.
+        """Concatenates a list of Data objects along the specified axis.
+
+        See cf.Data.concatenate for details.
+
+        In the case that the list contains only one element, that element
+        is simply returned.
 
         :Parameters:
 
