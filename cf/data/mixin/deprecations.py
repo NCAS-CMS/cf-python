@@ -966,3 +966,30 @@ class DataClassDeprecationsMixin:
             "Data method 'reconstruct_sectioned_data' has been deprecated "
             "at version TODODASK and is no longer available"
         )
+
+    @classmethod
+    def concatenate_data(cls, data_list, axis):
+        """Concatenates a list of Data objects into a single Data object
+        along the specified access (see cf.Data.concatenate for
+        details). In the case that the list contains only one element,
+        that element is simply returned.
+
+        :Parameters:
+
+            data_list: `list`
+                The list of data objects to concatenate.
+
+            axis: `int`
+                The axis along which to perform the concatenation.
+
+        :Returns:
+
+            `Data`
+                The resulting single `Data` object.
+
+        """
+        raise DeprecationError(
+            "Data method 'concatenate_data' has been deprecated at "
+            "version TODODASK and is no longer available. Use "
+            "'concatenate' instead."
+        )
