@@ -9937,7 +9937,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # condition units are OK, and convert the condition to a
             # boolean dask array with the same shape as the data.
             condition = condition.copy()
-            condition = condition.set_condition_units(units)
+            condition.set_condition_units(units)
             condition = condition.evaluate(d)
 
         condition = type(self).asdata(condition)
