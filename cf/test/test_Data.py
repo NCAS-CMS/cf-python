@@ -977,103 +977,112 @@ class DataTest(unittest.TestCase):
         # Reset
         cf.constants.CONSTANTS["FM_THRESHOLD"] = fmt
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_auxiliary_mask'")
-    def test_Data_AUXILIARY_MASK(self):
+    def test_Data_concatenate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cf.Data()
-        self.assertIsNone(d._auxiliary_mask)
-        self.assertIsNone(d._auxiliary_mask_return())
+        # Unitless operation with default axis (axis=0):
+        d_np = np.arange(120).reshape(30, 4)
+        e_np = np.arange(120, 280).reshape(40, 4)
+        d = cf.Data(d_np)
+        e = cf.Data(e_np)
+        f_np = np.concatenate((d_np, e_np), axis=0)
+        f = cf.Data.concatenate((d, e))  # (and try a tuple input)
 
-        d = cf.Data.empty((90, 60))
-        m = np.full(d.shape, fill_value=False, dtype=bool)
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
 
-        self.assertIsNone(d._auxiliary_mask)
-        self.assertEqual(d._auxiliary_mask_return().shape, m.shape)
-        self.assertTrue((d._auxiliary_mask_return() == m).all())
-        self.assertIsNone(d._auxiliary_mask)
+        # Operation with equivalent but non-equal units:
+        d_np = np.array([[1, 2], [3, 4]])
+        e_np = np.array([[5.0, 6.0]])
+        d = cf.Data(d_np, "km")
+        e = cf.Data(e_np, "metre")
+        f_np = np.concatenate((d_np, e_np / 1000))  # /1000 for unit conversion
+        f = cf.Data.concatenate([d, e])  # (and try a list input)
 
-        m[[0, 2, 80], [0, 40, 20]] = True
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
 
-        d._auxiliary_mask_add_component(cf.Data(m))
-        self.assertEqual(len(d._auxiliary_mask), 1)
-        self.assertEqual(d._auxiliary_mask_return().shape, m.shape)
-        self.assertTrue((d._auxiliary_mask_return() == m).all())
+        # Check axes equivalency:
+        self.assertTrue(f.equals(cf.Data.concatenate((d, e), axis=-2)))
 
-        d = cf.Data.empty((90, 60))
-        m = np.full(d.shape, fill_value=False, dtype=bool)
+        # Non-default axis specification:
+        e_np = np.array([[5.0], [6.0]])  # for compatible shapes with axis=1
+        e = cf.Data(e_np, "metre")
+        f_np = np.concatenate((d_np, e_np / 1000), axis=1)
+        f = cf.Data.concatenate((d, e), axis=1)
 
-        d = cf.Data.empty((90, 60))
-        d._auxiliary_mask_add_component(cf.Data(m[0:1, :]))
-        self.assertEqual(len(d._auxiliary_mask), 1)
-        self.assertTrue((d._auxiliary_mask_return() == m).all())
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
 
-        d = cf.Data.empty((90, 60))
-        d._auxiliary_mask_add_component(cf.Data(m[:, 0:1]))
-        self.assertEqual(len(d._auxiliary_mask), 1)
-        self.assertTrue((d._auxiliary_mask_return() == m).all())
+        # Operation with every data item in sequence being a scalar:
+        d_np = np.array(1)
+        e_np = np.array(50.0)
+        d = cf.Data(d_np, "km")
+        e = cf.Data(e_np, "metre")
 
-        d = cf.Data.empty((90, 60))
-        d._auxiliary_mask_add_component(cf.Data(m[:, 0:1]))
-        d._auxiliary_mask_add_component(cf.Data(m[0:1, :]))
-        self.assertEqual(len(d._auxiliary_mask), 2)
-        self.assertEqual(d._auxiliary_mask_return().shape, m.shape)
-        self.assertTrue((d._auxiliary_mask_return() == m).all())
+        # Note can't use the following (to compute answer):
+        #     f_np = np.concatenate([d_np, e_np])
+        # here since we have different behaviour to NumPy w.r.t scalars, where
+        # NumPy would error for the above with:
+        #     ValueError: zero-dimensional arrays cannot be concatenated
+        f_answer = np.array([d_np, e_np / 1000])  # /1000 for unit conversion
+        f = cf.Data.concatenate((d, e))
 
-        # --------------------------------------------------------
-        d = cf.Data(np.arange(120).reshape(30, 4))
-        e = cf.Data(np.arange(120, 280).reshape(40, 4))
+        self.assertEqual(f.shape, f_answer.shape)
+        self.assertTrue((f.array == f_answer).all())
 
-        fm = cf.Data.full((70, 4), fill_value=False, dtype=bool)
+        # Operation with some scalar and some non-scalar data in the sequence:
+        e_np = np.array([50.0, 75.0])
+        e = cf.Data(e_np, "metre")
 
-        fm[0, 0] = True
-        fm[10, 2] = True
-        fm[20, 1] = True
+        # As per above comment, can't use np.concatenate to compute
+        f_answer = np.array([1.0, 0.05, 0.075])  # manual /1000 unit conversion
+        f = cf.Data.concatenate((d, e))
 
-        dm = fm[:30]
-        d._auxiliary_mask = [dm]
+        self.assertEqual(f.shape, f_answer.shape)
+        self.assertTrue((f.array == f_answer).all())
 
-        f = cf.Data.concatenate([d, e], axis=0)
-        self.assertEqual(f.shape, fm.shape)
-        self.assertTrue((f._auxiliary_mask_return().array == fm).all())
+        # Check the cyclicity of axes is correct after concatenate...
+        d_np = np.arange(16).reshape(4, 4)
+        d = cf.Data(d_np, "seconds")
+        d.cyclic([0, 1])  # notably make both axes cyclic here
+        e_np = d_np.copy()
+        e = cf.Data(e_np, "seconds")
 
-        # --------------------------------------------------------
-        d = cf.Data(np.arange(120).reshape(30, 4))
-        e = cf.Data(np.arange(120, 280).reshape(40, 4))
+        f_np = np.concatenate((d_np, e_np))
 
-        fm = cf.Data.full((70, 4), False, bool)
-        fm[50, 0] = True
-        fm[60, 2] = True
-        fm[65, 1] = True
+        # ...when joining along axis=0 (the default)
+        self.assertEqual(d.cyclic(), {0, 1})
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            f = cf.Data.concatenate([d, e])
+            self.assertTrue(
+                any(
+                    "Concatenating along a cyclic axis (0)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        self.assertEqual(f.cyclic(), {1})
 
-        em = fm[30:]
-        e._auxiliary_mask = [em]
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
 
-        f = cf.Data.concatenate([d, e], axis=0)
-        self.assertEqual(f.shape, fm.shape)
-        self.assertTrue((f._auxiliary_mask_return().array == fm).all())
+        # ...when joining along axis=1
+        f_np = np.concatenate((d_np, e_np), axis=1)
 
-        # --------------------------------------------------------
-        d = cf.Data(np.arange(120).reshape(30, 4))
-        e = cf.Data(np.arange(120, 280).reshape(40, 4))
+        self.assertEqual(d.cyclic(), {0, 1})
+        with self.assertLogs(level=cf.log_level().value) as catch:
+            f = cf.Data.concatenate([d, e], axis=1)
+            self.assertTrue(
+                any(
+                    "Concatenating along a cyclic axis (1)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        self.assertEqual(f.cyclic(), {0})
 
-        fm = cf.Data.full((70, 4), False, bool)
-        fm[0, 0] = True
-        fm[10, 2] = True
-        fm[20, 1] = True
-        fm[50, 0] = True
-        fm[60, 2] = True
-        fm[65, 1] = True
-
-        dm = fm[:30]
-        d._auxiliary_mask = [dm]
-        em = fm[30:]
-        e._auxiliary_mask = [em]
-
-        f = cf.Data.concatenate([d, e], axis=0)
-        self.assertEqual(f.shape, fm.shape)
-        self.assertTrue((f._auxiliary_mask_return().array == fm).all())
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
 
     def test_Data__contains__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
