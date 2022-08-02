@@ -5451,37 +5451,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @classmethod
-    def concatenate_data(cls, data_list, axis):
-        """Concatenates a list of Data objects into a single Data object
-        along the specified access (see cf.Data.concatenate for
-        details). In the case that the list contains only one element,
-        that element is simply returned.
-
-        :Parameters:
-
-            data_list: `list`
-                The list of data objects to concatenate.
-
-            axis: `int`
-                The axis along which to perform the concatenation.
-
-        :Returns:
-
-            `Data`
-                The resulting single `Data` object.
-
-        """
-        if len(data_list) > 1:
-            data = cls.concatenate(data_list, axis=axis)
-            if data.fits_in_one_chunk_in_memory(data.dtype.itemsize):
-                data.varray
-
-            return data
-        else:
-            assert len(data_list) == 1
-            return data_list[0]
-
     def argmax(self, axis=None, unravel=False):
         """Return the indices of the maximum values along an axis.
 
