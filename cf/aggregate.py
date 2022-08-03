@@ -2525,21 +2525,21 @@ def _get_hfl(
 
         return
 
-    if d._pmsize == 1:
-        partition = d.partitions.matrix.item()
-        if not partition.part:
-            key = getattr(partition.subarray, "file_address", None)
-            if key is not None:
-                hash_value = hfl_cache.hash.get(key, None)
-                create_hash = hash_value is None
-
-                if first_and_last_values:
-                    first, last = hfl_cache.fl.get(key, (None, None))
-                    create_fl = first is None
-
-                if first_and_last_bounds:
-                    first, last = hfl_cache.flb.get(key, (None, None))
-                    create_flb = first is None
+    #    if d._pmsize == 1:
+    #        partition = d.partitions.matrix.item()
+    #        if not partition.part:
+    #            key = getattr(partition.subarray, "file_address", None)
+    #            if key is not None:
+    #                hash_value = hfl_cache.hash.get(key, None)
+    #                create_hash = hash_value is None
+    #
+    #                if first_and_last_values:
+    #                    first, last = hfl_cache.fl.get(key, (None, None))
+    #                    create_fl = first is None
+    #
+    #                if first_and_last_bounds:
+    #                    first, last = hfl_cache.flb.get(key, (None, None))
+    #                    create_flb = first is None
 
     if create_hash or create_fl or create_flb:
         # Change the data type if required

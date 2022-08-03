@@ -2092,94 +2092,6 @@ class PropertiesData(Properties):
         """
         return Subspace(self)
 
-    #    @property
-    #    def shape(self):
-    #        '''A tuple of the data array's dimension sizes.
-    #
-    #    .. seealso:: `data`, `has_data`, `ndim`, `size`
-    #
-    #    **Examples:**
-    #
-    #    >>> f.shape
-    #    (73, 96)
-    #    >>> f.ndim
-    #    2
-    #
-    #    >>> f.ndim
-    #    0
-    #    >>> f.shape
-    #    ()
-    #
-    #    >>> f.has_data()
-    #    True
-    #    >>> len(f.shape) == f.ndim
-    #    True
-    #    >>> reduce(lambda x, y: x*y, f.shape, 1) == f.size
-    #    True
-    #
-    #        '''
-    #        return self.data.shape
-    #
-    #
-    #    @property
-    #    def ndim(self):
-    #        '''The number of dimensions in the data array.
-    #
-    #    .. seealso:: `data`, `has_data`, `isscalar`, `shape`
-    #
-    #    **Examples:**
-    #
-    #    >>> f.has_data()
-    #    True
-    #    >>> f.shape
-    #    (73, 96)
-    #    >>> f.ndim
-    #    2
-    #
-    #    >>> f.shape
-    #    ()
-    #    >>> f.ndim
-    #    0
-    #
-    #        '''
-    #        return self.data.ndim
-    #
-    #
-    #    @property
-    #    def size(self):
-    #        '''The number of elements in the data array.
-    #
-    #    .. seealso:: `data`, `has_data`, `ndim`, `shape`
-    #
-    #    **Examples:**
-    #
-    #    >>> f.shape
-    #    (73, 96)
-    #    >>> f.size
-    #    7008
-    #
-    #    >>> f.shape
-    #    ()
-    #    >>> f.ndim
-    #    0
-    #    >>> f.size
-    #    1
-    #
-    #    >>> f.shape
-    #    (1, 1, 1)
-    #    >>> f.ndim
-    #    3
-    #    >>> f.size
-    #    1
-    #
-    #    >>> f.has_data()
-    #    True
-    #    >>> f.size == reduce(lambda x, y: x*y, f.shape, 1)
-    #    True
-    #
-    #        '''
-    #        return self.data.size
-
     @property
     def datetime_array(self):
         """An independent numpy array of date-time objects.
@@ -2451,7 +2363,7 @@ class PropertiesData(Properties):
         if data is None:
             return False
 
-        return data.isscalar
+        return not data.ndim
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)

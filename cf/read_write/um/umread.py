@@ -1814,7 +1814,6 @@ class UMField:
         LBNPT = self.lbnpt
 
         yx_shape = (LBROW, LBNPT)
-        yx_size = LBROW * LBNPT
 
         nz = self.nz
         nt = self.nt
@@ -1831,7 +1830,7 @@ class UMField:
         # Initialise a dask graph for the uncompressed array, and some
         # dask.array.core.getter arguments
         token = tokenize((nt, nz) + yx_shape, uuid4())
-        name = (UMArray.__class__.__name__ + "-" + token,)
+        name = (UMArray().__class__.__name__ + "-" + token,)
         dsk = {}
         full_slice = Ellipsis
 
@@ -1839,7 +1838,7 @@ class UMField:
             # --------------------------------------------------------
             # 0-d partition matrix
             # --------------------------------------------------------
-            # TODODASK, check with DH the below is right (was a missing var)
+            pmaxes = []
             file_data_types = set()
 
             rec = recs[0]
@@ -1852,9 +1851,7 @@ class UMField:
 
             subarray = UMArray(
                 filename=filename,
-                ndim=2,
                 shape=yx_shape,
-                size=yx_size,
                 dtype=data_type_in_file(rec),
                 header_offset=rec.hdr_offset,
                 data_offset=rec.data_offset,
@@ -1866,7 +1863,7 @@ class UMField:
 
             dsk[name + (0, 0)] = (getter, subarray, full_slice, False, False)
 
-            dtype = np.result_type(*file_data_types)
+            dtype = data_type_in_file(rec)
             chunks = normalize_chunks((-1, -1), shape=data_shape, dtype=dtype)
         else:
             # --------------------------------------------------------
@@ -1901,9 +1898,7 @@ class UMField:
 
                     subarray = UMArray(
                         filename=filename,
-                        ndim=3,
                         shape=shape,
-                        size=yx_size,
                         dtype=file_data_type,
                         header_offset=rec.hdr_offset,
                         data_offset=rec.data_offset,
@@ -1948,9 +1943,7 @@ class UMField:
 
                     subarray = UMArray(
                         filename=filename,
-                        ndim=4,
                         shape=shape,
-                        size=yx_size,
                         dtype=file_data_type,
                         header_offset=rec.hdr_offset,
                         data_offset=rec.data_offset,

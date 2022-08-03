@@ -1259,8 +1259,10 @@ class FieldDomain:
 
         if bounds_range is None:
             bounds_range = abs(data.last_element() - data.first_element())
+            if bounds_range is np.ma.masked:
+                bounds_range = None
 
-        if bounds_range != period:
+        if bounds_range is None or bounds_range != period:
             if not noop:
                 self.cyclic(key, iscyclic=False, config=config)
             return False
