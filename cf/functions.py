@@ -122,7 +122,7 @@ if _linux:
             `float`
                 The amount of available physical memory in bytes.
 
-        **Examples:**
+        **Examples**
 
         >>> _free_memory()
         96496240.0
@@ -156,7 +156,6 @@ if _linux:
 
         return free_bytes
 
-
 else:
     # ----------------------------------------------------------------
     # NOT GNU/LINUX
@@ -169,7 +168,7 @@ else:
             `float`
                 The amount of available physical memory in bytes.
 
-        **Examples:**
+        **Examples**
 
         >>> _free_memory()
         96496240.0
@@ -303,7 +302,7 @@ def configuration(
             of the project-wide constants prior to the change, or the
             current names and values if no new values are specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.configuration()  # view full global configuration of constants
     {'rtol': 2.220446049250313e-16,
@@ -513,7 +512,7 @@ def free_memory():
         `float`
             The amount of free memory in bytes.
 
-    **Examples:**
+    **Examples**
 
     >>> import numpy
     >>> print('Free memory =', cf.free_memory()/2**30, 'GiB')
@@ -628,7 +627,7 @@ class regrid_logging(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.regrid_logging()
     False
@@ -694,7 +693,7 @@ class collapse_parallel_mode(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.collapse_parallel_mode()
     0
@@ -755,7 +754,7 @@ class relaxed_identities(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> org = cf.relaxed_identities()
     >>> org
@@ -873,7 +872,7 @@ class tempdir(ConstantAccess):
             The directory prior to the change, or the current
             directory if no new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.tempdir()
     '/tmp'
@@ -942,7 +941,7 @@ class of_fraction(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.of_fraction()
     0.5
@@ -1149,7 +1148,7 @@ class bounds_combination_mode(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> old = cf.bounds_combination_mode()
     >>> print(old)
@@ -1254,7 +1253,7 @@ def fm_threshold():
         `float`
             The amount of memory in bytes.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.fm_threshold()
     10000000000.0
@@ -1406,7 +1405,7 @@ def FM_THRESHOLD(*new_fm_threshold):
 #             The value prior to the change, or the current value if no
 #             new value was specified.
 #
-#     **Examples:**
+#     **Examples**
 #
 #     >>> org = cf.IGNORE_IDENTITIES()
 #     >>> print(org)
@@ -1448,7 +1447,7 @@ def dump(x, **kwargs):
 
         None
 
-    **Examples:**
+    **Examples**
 
     >>> x = 3.14159
     >>> cf.dump(x)
@@ -1494,7 +1493,7 @@ if _linux:
                 Whether or not the number of open files exceeds the
                 threshold.
 
-        **Examples:**
+        **Examples**
 
         In this example, the number of open files is 75% of the maximum
         possible number of concurrently open files:
@@ -1511,7 +1510,6 @@ if _linux:
         return (
             len(listdir(_fd_dir)) > _max_number_of_open_files * of_fraction()
         )
-
 
 else:
     # ----------------------------------------------------------------
@@ -1536,7 +1534,7 @@ else:
                 Whether or not the number of open files exceeds the
                 threshold.
 
-        **Examples:**
+        **Examples**
 
         In this example, the number of open files is 75% of the maximum
         possible number of concurrently open files:
@@ -1581,7 +1579,7 @@ def close_files(file_format=None):
 
         None
 
-    **Examples:**
+    **Examples**
 
     >>> cf.close_files()
     >>> cf.close_files('netCDF')
@@ -1628,7 +1626,7 @@ def close_one_file(file_format=None):
 
         `None`
 
-    **Examples:**
+    **Examples**
 
     >>> cf.close_one_file()
     >>> cf.close_one_file('netCDF')
@@ -1686,7 +1684,7 @@ def open_files(file_format=None):
             is the dictionary that would have been returned if the
             *file_format* parameter was set.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.open_files()
     {'netCDF': {'file1.nc': <netCDF4.Dataset at 0x187b6d0>}}
@@ -1762,7 +1760,7 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
         `bool`
             Returns True if the arrays are equal, otherwise False.
 
-    **Examples:**
+    **Examples**
 
     >>> cf._numpy_allclose([1, 2], [1, 2])
     True
@@ -2084,7 +2082,7 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
         `bool`
             Whether or not the two objects are equivalent.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: rainfall_rate(latitude(10), longitude(20)) kg m2 s-1>
@@ -2195,7 +2193,7 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
         `dict`
             The new STASH to standard name conversion table.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.load_stash2standard_name()
     >>> cf.load_stash2standard_name('my_table.txt')
@@ -2343,7 +2341,7 @@ def flat(x):
         generator
             An iterator over flattened sequence.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.flat([1, [2, [3, 4]]])
     <generator object flat at 0x3649cd0>
@@ -2429,7 +2427,7 @@ def abspath(filename):
             The normalized absolutised version of *filename*, or
             `None`.
 
-    **Examples:**
+    **Examples**
 
     >>> import os
     >>> os.getcwd()
@@ -2476,7 +2474,7 @@ def relpath(filename, start=None):
         `str`
             The relative path.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.relpath('/data/archive/file.nc')
     '../file.nc'
@@ -2514,7 +2512,7 @@ def dirname(filename):
         `str`
             The directory name.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.dirname('/data/archive/file.nc')
     '/data/archive'
@@ -2551,7 +2549,7 @@ def pathjoin(path1, path2):
         `str`
             The joined paths.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.pathjoin('/data/archive', '../archive/file.nc')
     '/data/archive/../archive/file.nc'
@@ -2685,7 +2683,7 @@ def broadcast_array(array, shape):
 
         `numpy.ndarray`
 
-    **Examples:**
+    **Examples**
 
 
     >>> a = numpy.arange(8).reshape(2, 4)
@@ -2770,7 +2768,7 @@ def allclose(x, y, rtol=None, atol=None):
         `bool`
             Returns True if the arrays are equal, otherwise False.
 
-    **Examples:**
+    **Examples**
 
     """
     if rtol is None:
@@ -2954,7 +2952,7 @@ def environment(display=True, paths=True):
             environment is printed and `None` is returned. Otherwise
             the description is returned as a string.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.environment()
     Platform: Linux-5.4.0-58-generic-x86_64-with-debian-bullseye-sid
@@ -3035,7 +3033,7 @@ def default_netCDF_fillvals():
         `dict`
             The fill values, keyed by `numpy` data type strings
 
-    **Examples:**
+    **Examples**
 
     >>> cf.default_netCDF_fillvals()
     {'S1': '\x00',

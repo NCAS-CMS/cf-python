@@ -211,7 +211,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         """Returns False since coordinate reference constructs do not
         have cell bounds.
 
-        **Examples:**
+        **Examples**
 
         >>> c.has_bounds()
         False
@@ -264,7 +264,7 @@ class CoordinateReference(cfdm.CoordinateReference):
             `Units` or `None`
                 The canonical units, or `None` if there are not any.
 
-        **Examples:**
+        **Examples**
 
         >>> cf.CoordinateReference.canonical_units('perspective_point_height')
         <Units: m>
@@ -282,7 +282,7 @@ class CoordinateReference(cfdm.CoordinateReference):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c.close()
 
@@ -303,7 +303,7 @@ class CoordinateReference(cfdm.CoordinateReference):
 
                 The default value, or 0.0 if one is not available.
 
-        **Examples:**
+        **Examples**
 
         >>> cf.CoordinateReference.default_value('ptop')
         0.0
@@ -340,7 +340,7 @@ class CoordinateReference(cfdm.CoordinateReference):
             out: `bool`
                 Whether or not the two objects are equivalent.
 
-        **Examples:**
+        **Examples**
 
         >>> a = cf.example_field(6)
         >>> b = cf.example_field(7)
@@ -544,7 +544,7 @@ class CoordinateReference(cfdm.CoordinateReference):
                 Whether or not the coordinate reference matches one of the
                 given identities.
 
-        **Examples:**
+        **Examples**
 
         >>> c.match_by_identity('time')
 
@@ -619,7 +619,7 @@ class CoordinateReference(cfdm.CoordinateReference):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> r = cf.CoordinateReference('atmosphere_hybrid_height_coordinate',
         ...                             a='ncvar:ak',

@@ -87,7 +87,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
             `FieldList`
                 The matching field constructs.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.read("file.nc")
         >>> f
@@ -151,7 +151,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
             `FieldList`
                 The matching field constructs.
 
-        **Examples:**
+        **Examples**
 
         >>> gl = fl.select_by_units('metres')
         >>> gl = fl.select_by_units('m')
@@ -195,7 +195,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
             `Field`
                 The unique matching field construct.
 
-        **Examples:**
+        **Examples**
 
         >>> fl
         [<CF Field: specific_humidity(latitude(73), longitude(96)) 1>,

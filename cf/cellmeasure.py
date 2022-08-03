@@ -108,7 +108,7 @@ class CellMeasure(mixin.PropertiesData, cfdm.CellMeasure):
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> c.measure
         'area'

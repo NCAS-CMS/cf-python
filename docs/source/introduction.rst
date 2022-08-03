@@ -81,12 +81,6 @@ The cf package can:
 
 * create subspaces of field and domain constructs,
 
-* incorporate, and create, metadata stored in external files, and
-
-* read, write, and create data that have been compressed by convention
-  (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form.
-
 * incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention

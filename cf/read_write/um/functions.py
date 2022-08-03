@@ -25,7 +25,7 @@ def _open_um_file(
         `umread.umfile.File`
             The opened file with an open file descriptor.
 
-    **Examples:**
+    **Examples**
 
     """
     #    filename = abspath(filename)
@@ -82,7 +82,7 @@ def _close_um_file(filename):
 
         `None`
 
-    **Examples:**
+    **Examples**
 
     """
     f = _file_to_UM.pop(filename, None)

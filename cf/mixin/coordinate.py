@@ -31,7 +31,7 @@ class Coordinate:
 
         .. seealso:: `T`, `X`, `~cf.Coordinate.Y`, `Z`
 
-        **Examples:**
+        **Examples**
 
         >>> c.X
         True
@@ -69,7 +69,7 @@ class Coordinate:
 
         .. seealso:: `ctype`, `X`, `~cf.Coordinate.Y`, `Z`
 
-        **Examples:**
+        **Examples**
 
         >>> c = cf.{{class}}()
         >>> c.Units = cf.Units('seconds since 1992-10-08')
@@ -107,7 +107,7 @@ class Coordinate:
 
         .. seealso:: `ctype`, `T`, `~cf.Coordinate.Y`, `Z`
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.example_field(0)
         >>> print(f)
@@ -171,7 +171,7 @@ class Coordinate:
 
         .. seealso:: `ctype`, `T`, `X`, `Z`
 
-        **Examples:**
+        **Examples**
 
         >>> c.Units
         <CF Units: degree_north>
@@ -230,7 +230,7 @@ class Coordinate:
 
         .. seealso:: `ctype`, `T`, `X`, `~cf.Coordinate.Y`
 
-        **Examples:**
+        **Examples**
 
         >>> c.Units
         <CF Units: Pa>
@@ -310,7 +310,7 @@ class Coordinate:
         values `'X'` and `'Y'` being used to identify horizontal
         coordinates).
 
-        **Examples:**
+        **Examples**
 
         >>> c.axis = 'Y'
         >>> c.axis
@@ -348,7 +348,7 @@ class Coordinate:
         the surface as 0 and the depth of 1000 meters as 1000 then the
         `postive` property will have the value `'down'`.
 
-        **Examples:**
+        **Examples**
 
         >>> c.positive = 'up'
         >>> c.positive
@@ -403,7 +403,7 @@ class Coordinate:
 
             TODO
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -495,7 +495,7 @@ class Coordinate:
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {'foo': 'bar',
@@ -587,7 +587,7 @@ class Coordinate:
             `list`
                 The identities.
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {'foo': 'bar',

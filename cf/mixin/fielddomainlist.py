@@ -133,7 +133,7 @@ class FieldDomainList:
             `bool`
                 The matching field constructs.
 
-        **Examples:**
+        **Examples**
 
             TODO
 
@@ -204,7 +204,7 @@ class FieldDomainList:
             `{{class}}`
                 The matching constructs.
 
-        **Examples:**
+        **Examples**
 
         >>> fl = cf.{{class}}([cf.example_field(0), cf.example_field(1)])
         >>> fl
@@ -280,7 +280,7 @@ class FieldDomainList:
             `{{class}}`
                 The matching constructs.
 
-        **Examples:**
+        **Examples**
 
         See `cf.{{class}}.select_by_identity`
 
@@ -324,7 +324,7 @@ class FieldDomainList:
             `bool`
                 The matching field constructs.
 
-        **Examples:**
+        **Examples**
 
             TODO
 

@@ -80,7 +80,7 @@ class PropertiesData(Properties):
 
             `Data`
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12): [14, ..., 56] km)
@@ -560,7 +560,7 @@ class PropertiesData(Properties):
                 A new construct, or the same construct if the operation
                 was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> w = u._binary_operation(u, '__add__')
         >>> w = u._binary_operation(v, '__lt__')
@@ -688,7 +688,7 @@ class PropertiesData(Properties):
     #
     #        `None`
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    >>> f._change_axis_names({'0': 'dim1', '1': 'dim2'})
     #
@@ -838,7 +838,7 @@ class PropertiesData(Properties):
                 A new construct, or the same construct if the operation
                 was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> print(v.array)
         [1 2 -3 -4 -5]
@@ -957,7 +957,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `X`, `Y`, `Z`
 
-        **Examples:**
+        **Examples**
 
         >>> c.T
         False
@@ -971,7 +971,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `T`, `Y`, `Z`
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.X)
         False
@@ -985,7 +985,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `T`, `X`, `Z`
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.Y)
         False
@@ -999,7 +999,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `T`, `X`, `Y`
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.Z)
         False
@@ -1014,7 +1014,7 @@ class PropertiesData(Properties):
         The binary mask's data comprises dimensionless 32-bit integers
         that are 0 where the data has missing values and 1 otherwise.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.mask.array)
         [[ True  False  True False]]
@@ -1121,7 +1121,7 @@ class PropertiesData(Properties):
         consistent manner. These are mirrored by the `units` and
         `calendar` CF properties respectively.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: K>
@@ -1181,7 +1181,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `month`, `day`, `hour`, `minute`, `second`
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.datetime_array)
         [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
@@ -1199,7 +1199,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `year`, `day`, `hour`, `minute`, `second`
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.datetime_array)
         [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
@@ -1217,7 +1217,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `year`, `month`, `hour`, `minute`, `second`
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.datetime_array)
         [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
@@ -1235,7 +1235,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `year`, `month`, `day`, `minute`, `second`
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.datetime_array)
         [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
@@ -1253,7 +1253,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `year`, `month`, `day`, `hour`, `second`
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.datetime_array)
         [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
@@ -1271,7 +1271,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `year`, `month`, `day`, `hour`, `minute`
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.datetime_array)
         [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
@@ -1289,7 +1289,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `binary_mask`
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (12, 73, 96)
@@ -1335,7 +1335,7 @@ class PropertiesData(Properties):
         before the data are scaled. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.add_offset = -4.0
         >>> f.add_offset
@@ -1371,7 +1371,7 @@ class PropertiesData(Properties):
         The calendar used for encoding time data. See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.calendar = 'noleap'
         >>> f.calendar
@@ -1435,7 +1435,7 @@ class PropertiesData(Properties):
         .. seealso:: `fill_value`, `missing_value`,
                      `cf.default_netCDF_fillvals`
 
-        **Examples:**
+        **Examples**
 
         >>> f._FillValue = -1.0e30
         >>> f._FillValue
@@ -1479,7 +1479,7 @@ class PropertiesData(Properties):
         .. seealso:: `_FillValue`, `fill_value`,
                      `cf.default_netCDF_fillvals`
 
-        **Examples:**
+        **Examples**
 
         >>> f.missing_value = 1.0e30
         >>> f.missing_value
@@ -1514,7 +1514,7 @@ class PropertiesData(Properties):
         properties are present, the offset is subtracted before the data
         are scaled. See http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.scale_factor = 10.0
         >>> f.scale_factor
@@ -1549,7 +1549,7 @@ class PropertiesData(Properties):
         (http://www.unidata.ucar.edu/software/udunits). See
         http://cfconventions.org/latest.html for details.
 
-        **Examples:**
+        **Examples**
 
         >>> f.units = 'K'
         >>> f.units
@@ -1629,7 +1629,7 @@ class PropertiesData(Properties):
             `{{class}}` or `None`
                 TODO
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [ 0.  1.]
@@ -1678,7 +1678,7 @@ class PropertiesData(Properties):
             `Data`
                 The maximum of the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12, 64, 128): [[[236.512756, ..., 256.93371]]] K>
@@ -1706,7 +1706,7 @@ class PropertiesData(Properties):
             `Data`
                 The unweighted mean the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
@@ -1735,7 +1735,7 @@ class PropertiesData(Properties):
                 The unweighted average of the maximum and minimum of the
                 data array.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
@@ -1763,7 +1763,7 @@ class PropertiesData(Properties):
             `Data`
                 The minimum of the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
@@ -1804,7 +1804,7 @@ class PropertiesData(Properties):
                 no *value* was specified. `None` is always returned if the
                 period had not been set previously.
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.period())
         None
@@ -1880,7 +1880,7 @@ class PropertiesData(Properties):
                 The absolute difference between the maximum and minimum of
                 the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
@@ -1907,7 +1907,7 @@ class PropertiesData(Properties):
             `Data`
                 The number of non-missing data elements in the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
@@ -1934,7 +1934,7 @@ class PropertiesData(Properties):
             `Data`
                 The unweighted standard deviation of the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
@@ -1966,7 +1966,7 @@ class PropertiesData(Properties):
             `Data`
                 The sum of the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
@@ -2004,7 +2004,7 @@ class PropertiesData(Properties):
                 The construct with data with swapped axis positions. If
                 the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (1, 2, 3)
@@ -2037,7 +2037,7 @@ class PropertiesData(Properties):
             `Data`
                 The unweighted variance of the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
@@ -2085,7 +2085,7 @@ class PropertiesData(Properties):
           along each dimension (similar to the way vector subscripts work
           in Fortran), rather than by their elements.
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -2103,7 +2103,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `array`, `varray`
 
-        **Examples:**
+        **Examples**
 
         >>> f.units
         'days since 2000-01-01'
@@ -2150,7 +2150,7 @@ class PropertiesData(Properties):
         reinstated default data type may be different to the data type
         prior to `dtype` being set.
 
-        **Examples:**
+        **Examples**
 
         >>> f.dtype
         dtype('float64')
@@ -2215,7 +2215,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `where`, `subspace`, `__setitem__`
 
-        **Examples:**
+        **Examples**
 
         >>> f.hardmask = False
         >>> f.hardmask
@@ -2254,7 +2254,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `data`, `datetime_array`, `dask_array`
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(5): [0, ... 4] kg m-1 s-2>
@@ -2307,7 +2307,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `array`, `data`, `datetime_array`, `dask_array`
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(5): [0, ... 4] kg m-1 s-2>
@@ -2341,7 +2341,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `has_data`, `ndim`
 
-        **Examples:**
+        **Examples**
 
         >>> f.ndim
         0
@@ -2389,7 +2389,7 @@ class PropertiesData(Properties):
                 The construct with the ceiling of the data. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -2460,7 +2460,7 @@ class PropertiesData(Properties):
                 The construct with clipped data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.clip(-90, 90)
         >>> g = f.clip(-90, 90, 'degrees_north')
@@ -2487,7 +2487,7 @@ class PropertiesData(Properties):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.close()
 
@@ -2568,7 +2568,7 @@ class PropertiesData(Properties):
     #        of data values. If the operation was in-place then `None` is
     #        returned.
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    TODO
     #
@@ -2613,7 +2613,7 @@ class PropertiesData(Properties):
                 The construct with the cosine of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_east>
@@ -2652,7 +2652,7 @@ class PropertiesData(Properties):
             `int`
                 The number of non-masked elements.
 
-        **Examples:**
+        **Examples**
 
         >>> n = f.count()
 
@@ -2671,7 +2671,7 @@ class PropertiesData(Properties):
             `int`
                 The number of masked elements.
 
-        **Examples:**
+        **Examples**
 
         >>> n = f.count_masked()
 
@@ -2701,7 +2701,7 @@ class PropertiesData(Properties):
 
             `!set`
 
-        **Examples:**
+        **Examples**
 
         >>> f.cyclic()
         set()
@@ -2769,7 +2769,7 @@ class PropertiesData(Properties):
                 A copy of the specified element of the array as a suitable
                 Python scalar.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         2
@@ -2913,7 +2913,7 @@ class PropertiesData(Properties):
             `bool`
                 Whether the two instances are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> f.equals(f)
         True
@@ -3112,7 +3112,7 @@ class PropertiesData(Properties):
             `{{class}}` or `None`
                 The construct with converted reference time data values.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [1  2  3  4]
@@ -3301,7 +3301,7 @@ class PropertiesData(Properties):
                 The construct with floored data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -3342,7 +3342,7 @@ class PropertiesData(Properties):
             `bool`
                 Whether or not there is a match.
 
-        **Examples:**
+        **Examples**
 
         >>> f.ndim
         3
@@ -3406,7 +3406,7 @@ class PropertiesData(Properties):
             `bool`
                 Whether or not there is a match.
 
-        **Examples:**
+        **Examples**
 
         >>> f.units
         'metres'
@@ -3467,7 +3467,7 @@ class PropertiesData(Properties):
             `bool`
                 Whether to not all data elements evaluate to True.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0  3  0]]
@@ -3523,7 +3523,7 @@ class PropertiesData(Properties):
                 Returns `True` if the data are equal within the given
                 tolerance; `False` otherwise.
 
-        **Examples:**
+        **Examples**
 
         >>> x = f.allclose(g)
 
@@ -3564,7 +3564,7 @@ class PropertiesData(Properties):
             `bool`
                 Whether to not any data elements evaluate to `True`.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0  0  0]]
@@ -3628,7 +3628,7 @@ class PropertiesData(Properties):
                 The missing data value or, if one has not been set, the
                 value specified by *default*
 
-        **Examples:**
+        **Examples**
 
         >>> f.fill_value()
         None
@@ -3693,7 +3693,7 @@ class PropertiesData(Properties):
                 The construct with flipped axes, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f.flip()
         >>> f.flip(1)
@@ -3734,7 +3734,7 @@ class PropertiesData(Properties):
                 The construct with the exponential of data values. If
                 the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(1, 2): [[1, 2]]>
@@ -3789,7 +3789,7 @@ class PropertiesData(Properties):
                 The construct with the sine of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -3848,7 +3848,7 @@ class PropertiesData(Properties):
                 of data values. If the operation was in-place then
                 `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -3901,7 +3901,7 @@ class PropertiesData(Properties):
                 data values. If the operation was in-place then `None`
                 is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -3956,7 +3956,7 @@ class PropertiesData(Properties):
                 data values. If the operation was in-place then `None`
                 is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -4011,7 +4011,7 @@ class PropertiesData(Properties):
                 values.  If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -4065,7 +4065,7 @@ class PropertiesData(Properties):
                 data values. If the operation was in-place then `None`
                 is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -4120,7 +4120,7 @@ class PropertiesData(Properties):
                 data values. If the operation was in-place then `None`
                 is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -4180,7 +4180,7 @@ class PropertiesData(Properties):
                 The construct with the tangent of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -4243,7 +4243,7 @@ class PropertiesData(Properties):
                 values. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -4304,7 +4304,7 @@ class PropertiesData(Properties):
                 values. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -4365,7 +4365,7 @@ class PropertiesData(Properties):
                 values. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -4424,7 +4424,7 @@ class PropertiesData(Properties):
                 The construct with the logarithm of data values, or
                 `None` if the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(1, 2): [[1, 2]]>
@@ -4482,7 +4482,7 @@ class PropertiesData(Properties):
                 The construct with truncated data. If the operation
                 was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -4509,7 +4509,7 @@ class PropertiesData(Properties):
                 The unique data array values in a one dimensional `Data`
                 object.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[4 2 1]
@@ -4584,7 +4584,7 @@ class PropertiesData(Properties):
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {'foo': 'bar',
@@ -4688,7 +4688,7 @@ class PropertiesData(Properties):
                    `list`
                        The identities.
 
-               **Examples:**
+               **Examples**
 
                >>> f.properties()
                {'foo': 'bar',
@@ -4746,7 +4746,7 @@ class PropertiesData(Properties):
             `bool`
                 `True` if the selected axis is cyclic, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> f.iscyclic('X')
         True
@@ -4801,7 +4801,7 @@ class PropertiesData(Properties):
 
                 The data.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.Data(range(10))
         >>> f.set_data(d)
@@ -4933,7 +4933,7 @@ class PropertiesData(Properties):
                 The expanded construct, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
             TODO
 
@@ -4988,7 +4988,7 @@ class PropertiesData(Properties):
             `{{class}}` or `None`
                 TODO
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -5046,7 +5046,7 @@ class PropertiesData(Properties):
 
         TODO
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: hPa>
@@ -5102,7 +5102,7 @@ class PropertiesData(Properties):
                 The construct with rounded data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -5153,7 +5153,7 @@ class PropertiesData(Properties):
                 The construct with rounded data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
@@ -5195,7 +5195,7 @@ class PropertiesData(Properties):
             `{{class}}` or `None`
                 TODO
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -5240,7 +5240,7 @@ class PropertiesData(Properties):
                 otherwise return a new `{{class}}` instance containing
                 the new data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.{{class}}()
         >>> f.set_data([1, 2, 3])
@@ -5295,7 +5295,7 @@ class PropertiesData(Properties):
 
             TODO
 
-        **Examples:**
+        **Examples**
 
             TODO
 

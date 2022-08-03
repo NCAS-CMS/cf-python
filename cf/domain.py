@@ -136,7 +136,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.close()
 
@@ -186,7 +186,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     #                prior to the new setting, or the current cyclic domain
     #                axes if no axis was specified.
     #
-    #        **Examples:**
+    #        **Examples**
     #
     #        >>> f.cyclic()
     #        set()
@@ -269,7 +269,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     #            `DomainAxis` or `str`
     #                The selected domain axis construct, or its key.
     #
-    #        **Examples:**
+    #        **Examples**
     #
     #        """
     #        c = self.domain_axes(identity)
@@ -337,7 +337,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 The domain with flipped axes, or `None` if the operation
                 was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.example_field(0).domain
         >>> print(d)
@@ -406,7 +406,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 The value of the *default* parameter, if an exception
                 has not been raised.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.example_domain(0)
         >>> print(d.get_data(None))
@@ -478,7 +478,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             `tuple`
                 The keys of the domain axis constructs spanned by the data.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.example_field(7).domain
         >>> print(d)
@@ -552,7 +552,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {'foo': 'bar',
@@ -648,7 +648,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             `list`
                 The identities.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.Domain()
         >>> d.set_properties({'foo': 'bar',
@@ -749,7 +749,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 A dictionary of indices, keyed by the domain axis
                 construct identifiers to which they apply.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.example_field(0).domain
         >>> print(d)
@@ -917,7 +917,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 Whether or not the domain construct contains the specfied
                 metadata constructs.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.example_field(0).domain
         >>> print(d)
@@ -1022,7 +1022,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             `Field`
                 The rolled field.
 
-        **Examples:**
+        **Examples**
 
         Roll the data of the "X" axis one elements to the right:
 
@@ -1140,7 +1140,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 whether or not it is possible to create specified
                 subspace.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.example_field(0).domain
         >>> print(d)
@@ -1307,7 +1307,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 The domain construct with transposed constructs, or `None`
                 if the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cf.example_field(7).domain
         >>> print(d)
