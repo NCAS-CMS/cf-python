@@ -1,7 +1,6 @@
 import contextlib
 import datetime
 import faulthandler
-import inspect
 import io
 import itertools
 import os
