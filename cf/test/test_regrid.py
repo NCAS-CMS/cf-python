@@ -23,7 +23,7 @@ def regrid_ESMF(coord_sys, regrid, src, dst, **kwargs):
     src_field = ESMF.Field(regrid.srcfield.grid, "src")
     dst_field = ESMF.Field(regrid.dstfield.grid, "dst")
 
-    if coord_sys = "spherical":
+    if coord_sys == "spherical":
         src = src.tranpose(['X', 'Y', 'T']).squeeze()
         dst = dst.tranpose(['X', 'Y', 'T']).squeeze()
     else:
@@ -43,7 +43,7 @@ def regrid_ESMF(coord_sys, regrid, src, dst, **kwargs):
     )
 
 class RegridTest(unittest.TestCase):
-    filedname =  os.path.join(
+    filename =  os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
     )
     
@@ -51,7 +51,7 @@ class RegridTest(unittest.TestCase):
     def test_Field_regrids(self):
         self.assertFalse(cf.regrid_logging())
 
-        dst, src = cf.read(filename)
+        dst, src = cf.read(self.filename)
 
         src.tranpose(['X', 'Y', 'T'], inplace=True)
         dst.tranpose(['Y', 'T', 'X'], inplace=True)

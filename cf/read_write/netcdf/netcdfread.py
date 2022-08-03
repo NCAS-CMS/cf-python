@@ -53,7 +53,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             `list`
                 The netCDF dimension names spanned by the netCDF variable.
 
-        **Examples:**
+        **Examples**
 
         >>> n._ncdimensions('humidity')
         ['time', 'lat', 'lon']
@@ -128,7 +128,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> r._get_domain_axes('areacello')
         ['domainaxis0', 'domainaxis1']

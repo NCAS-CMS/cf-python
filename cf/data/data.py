@@ -3412,17 +3412,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             regrid_axes: sequence of `int`            
                 The positions of the regrid axes in the data, given in
-                the order expected by the regrid operator.
+                the relative order expected by the regrid
+                operator. For spherical regridding this order is [X,
+                Y].
 
                 *Parameter example:*
                   ``[3, 2]``
         
             regridded_sizes: `dict`
-                Mapping of the regrid axes, given by the elements of
-                *regrid_axes*, to their regridded sizes.
+                Mapping of the regrid axes, defined by the integer
+                elements of *regrid_axes*, to their regridded sizes.
 
                 *Parameter example:*
-                   ``{3: 128, 2: 64}``
+                  ``{3: 128, 2: 64}``
 
         :Returns:
 

@@ -82,7 +82,7 @@ class CellMethod(cfdm.CellMethod):
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> c = CellMethod.create('lat: mean (interval: 1 hour)')
 
@@ -232,7 +232,7 @@ class CellMethod(cfdm.CellMethod):
 
         .. seealso:: `over`
 
-        **Examples:**
+        **Examples**
 
         >>> c
         >>> c
@@ -265,7 +265,7 @@ class CellMethod(cfdm.CellMethod):
 
         .. seealso:: `over`
 
-        **Examples:**
+        **Examples**
 
         >>> c
         >>> c
@@ -298,7 +298,7 @@ class CellMethod(cfdm.CellMethod):
 
         .. seealso:: `within`
 
-        **Examples:**
+        **Examples**
 
         >>> c
         >>> c
@@ -342,7 +342,7 @@ class CellMethod(cfdm.CellMethod):
 
         Describes how the cell values have been determined or derived.
 
-        **Examples:**
+        **Examples**
 
         >>> c
         <CF CellMethod: time: minimum>
@@ -370,7 +370,7 @@ class CellMethod(cfdm.CellMethod):
     def intervals(self):
         """The cell method's interval qualifier(s).
 
-        **Examples:**
+        **Examples**
 
         >>> c
         <CF CellMethod: time: minimum>
@@ -532,7 +532,7 @@ class CellMethod(cfdm.CellMethod):
             `bool`
                 Whether or not the two instances are equivalent.
 
-        **Examples:**
+        **Examples**
 
         >>> a = cf.example_field(1)
         >>> a.cell_methods()

@@ -150,7 +150,7 @@ class DomainAxis(cfdm.DomainAxis):
 
         .. seealso:: `del_size`, `get_size`, `has_size`, `set_size`
 
-        **Examples:**
+        **Examples**
 
         >>> d.size = 96
         >>> d.size
@@ -182,7 +182,7 @@ class DomainAxis(cfdm.DomainAxis):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.inspect()
 

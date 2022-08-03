@@ -47,7 +47,7 @@ class UMFileArray(FileArray):
 
         byte_ordering: `str`, optional
 
-    **Examples:**
+    **Examples**
 
     >>> a = UMFileArray(file='file.pp', header_offset=3156,
     ...                 data_offset=3420,

@@ -1,7 +1,7 @@
 HEADERS=umfile.h umfileint.h bits/*.h
 
 LIBRARY=umfile.so
-CFLAGS=-Wall -fPIC -g
+CFLAGS=-Wall -fPIC
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)

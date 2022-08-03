@@ -87,7 +87,7 @@ def regrid(
     return_operator=False,
     check_coordinates=False,
     inplace=False,
-    _regrid=None,
+    _return_regrid=False,
 ):
     """TODO.
     
@@ -163,8 +163,10 @@ def regrid(
 
             See `cf.Field.regrids` for details.
  
-        return_operator: `bool`, optional
-            Whether or not to return the regrid operator.
+        return_operator: `bool`, optional            
+            If True then do not perform the regridding, rather return
+            the `RegridOperator` instance that defines the regridding
+            operation, and which can be used in subsequent calls.
 
             See `cf.Field.regrids` for details.
  
@@ -175,20 +177,22 @@ def regrid(
         inplace: `bool`, optional
             If True then modify *src* in-place and return `None`.
 
-        _return_regrid: `bool`, optional `None` or `list`
-            TODO
+        _return_regrid: `bool`, optional
+            If True then *src* is not regridded, but the `ESMF.Regrid`
+            instance for the operation is returned instead. This is
+            useful for checking that the field has been regridded
+            correctly.
 
     :Returns:
 
-        `Field`, `None`, `RegridOperator` or `ESMF.Regrid`
+        `Field`, `None`, `RegridOperator`, or `ESMF.Regrid`
             The regridded field construct; or `None` if the operation
             was in-place or the regridding operator if
             *return_operator* is True.
 
             If *_return_regrid* is True then *src* is not regridded,
-            but the `ESMF.Regrid` instance that does the equivalent
-            regridding is returned instead. This is useful for
-            checking that the field has been regridded correctly.
+            but the `ESMF.Regrid` instance for the operation is
+            returned instead.
 
     """
     if not inplace:
