@@ -96,8 +96,6 @@ class DataTest(unittest.TestCase):
     mw = mw
     ones = ones
 
-    test_only = []
-
     def setUp(self):
         # Suppress the warning output for some specific warnings which are
         # expected due to the nature of the tests being performed.
@@ -114,9 +112,6 @@ class DataTest(unittest.TestCase):
             )
 
     def test_Data_equals(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         shape = 3, 4
         chunksize = 2, 6
         a = np.arange(12).reshape(*shape)
@@ -432,9 +427,6 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.equals(e))
 
     def test_Data_halo(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data(np.arange(12).reshape(3, 4), "m", chunks=-1)
         d[-1, -1] = cf.masked
         d[1, 1] = cf.masked
@@ -578,9 +570,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((b.mask == e.mask.array).all())
 
     def test_Data_convolution_filter(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         #        raise unittest.SkipTest("GSASL has no PLAIN support")
         if not SCIPY_AVAILABLE:
             raise unittest.SkipTest("SciPy must be installed for this test.")
@@ -630,9 +619,6 @@ class DataTest(unittest.TestCase):
                         self.assertTrue((e.array == b).all())
 
     def test_Data_diff(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = np.ma.arange(12.0).reshape(3, 4)
         a[1, 1] = 4.5
         a[2, 2] = 10.5
@@ -723,9 +709,6 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
     def test_Data__init__dtype_mask(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for m in (1, 20, True):
             d = cf.Data([[1, 2, 3], [4, 5, 6]], mask=m)
             self.assertFalse(d.count())
@@ -799,9 +782,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
 
     def test_Data_digitize(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for a in [
             np.arange(120).reshape(3, 2, 20),
             np.ma.arange(120).reshape(3, 2, 20),
@@ -855,9 +835,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(e))
 
     def test_Data_cumsum(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data(self.a)
         e = d.copy()
         f = d.cumsum(axis=0)
@@ -879,9 +856,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue(cf.functions._numpy_allclose(e.array, b))
 
     def test_Data_flatten(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data(self.ma.copy())
         self.assertTrue(d.equals(d.flatten([]), verbose=2))
         self.assertIsNone(d.flatten(inplace=True))
@@ -913,9 +887,6 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute 'partitions'")
     def test_Data_CachedArray(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         factor = 0.99999999999999
 
         cf.tempdir(self.tempdir)
@@ -943,9 +914,6 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_cached_arithmetic_units(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data(self.a, "m")
         e = cf.Data(self.a, "s")
 
@@ -978,9 +946,6 @@ class DataTest(unittest.TestCase):
         cf.constants.CONSTANTS["FM_THRESHOLD"] = fmt
 
     def test_Data_concatenate(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Unitless operation with default axis (axis=0):
         d_np = np.arange(120).reshape(30, 4)
         e_np = np.arange(120, 280).reshape(40, 4)
@@ -1085,9 +1050,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((f.array == f_np).all())
 
     def test_Data__contains__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data([[0, 1, 2], [3, 4, 5]], units="m", chunks=2)
 
         for value in (
@@ -1140,9 +1102,6 @@ class DataTest(unittest.TestCase):
             ["foo"] in d
 
     def test_Data_asdata(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data(self.ma)
 
         self.assertIs(d.asdata(d), d)
@@ -1172,9 +1131,6 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_squeeze_insert_dimension(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data([list(range(1000))])
         self.assertEqual(d.shape, (1, 1000))
         e = d.squeeze()
@@ -1216,9 +1172,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue(np.allclose(a, array))
 
     def test_Data__getitem__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data(np.ma.arange(450).reshape(9, 10, 5), chunks=(4, 5, 1))
 
         for indices in (
@@ -1353,9 +1306,6 @@ class DataTest(unittest.TestCase):
         #           this when cf.Data.where has been daskified
 
     def test_Data__setitem__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for hardmask in (False, True):
             a = np.ma.arange(90).reshape(9, 10)
             if hardmask:
@@ -1482,9 +1432,6 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.any(keepdims=False))
 
     def test_Data_array(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Scalar numeric array
         d = cf.Data(9, "km")
         a = d.array
@@ -1540,9 +1487,6 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_months_years(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         calendar = "360_day"
         d = cf.Data(
             [1.0, 2],
@@ -1613,9 +1557,6 @@ class DataTest(unittest.TestCase):
         d *= 31
 
     def test_Data_datetime_array(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Scalar array
         for d, x in zip(
             [
@@ -1661,9 +1602,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((a == x).all())
 
     def test_Data_asdatetime_asreftime_isdatetime(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
         self.assertFalse(d._isdatetime())
         self.assertIsNone(d._asreftime(inplace=True))
@@ -1680,9 +1618,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue(f.equals(d))
 
     def test_Data_ceil(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for x in (1, -1):
             a = 0.9 * x * self.a
             c = np.ceil(a)
@@ -1695,9 +1630,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_floor(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for x in (1, -1):
             a = 0.9 * x * self.a
             c = np.floor(a)
@@ -1710,9 +1642,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_trunc(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for x in (1, -1):
             a = 0.9 * x * self.a
             c = np.trunc(a)
@@ -1725,9 +1654,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_rint(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for x in (1, -1):
             a = 0.9 * x * self.a
             c = np.rint(a)
@@ -1745,9 +1671,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_round(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for decimals in range(-8, 8):
             a = self.a + 0.34567
             c = np.round(a, decimals=decimals)
@@ -1762,9 +1685,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_datum(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data(5, "metre")
         self.assertEqual(d.datum(), 5)
         self.assertEqual(d.datum(0), 5)
@@ -1812,9 +1732,6 @@ class DataTest(unittest.TestCase):
             d.datum((0,))
 
     def test_Data_flip(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         array = np.arange(24000).reshape(120, 200)
         d = cf.Data(array.copy(), "metre")
 
@@ -1854,9 +1771,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e[-1].max().array, 4 * 5)
 
     def test_Data_ndindex(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for d in (
             cf.Data(5, "metre"),
             cf.Data([4, 5, 6, 1, 2, 3], "metre"),
@@ -1866,9 +1780,6 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(i, j)
 
     def test_Data_roll(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         d = cf.Data(a.copy())
@@ -1908,9 +1819,6 @@ class DataTest(unittest.TestCase):
             d.swapaxes(3, -3)
 
     def test_Data_transpose(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         d = cf.Data(a.copy())
@@ -1971,9 +1879,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.unique().array == np.unique(a)).all())
 
     def test_Data_year_month_day_hour_minute_second(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data([[1.901, 5.101]], "days since 2000-12-29")
         self.assertTrue(d.year.equals(cf.Data([[2000, 2001]])))
         self.assertTrue(d.month.equals(cf.Data([[12, 1]])))
@@ -1997,9 +1902,6 @@ class DataTest(unittest.TestCase):
             cf.Data([[1, 2]], units="m").year
 
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         array = np.arange(3 * 4 * 5).reshape(3, 4, 5) + 1
 
         arrays = (
@@ -2266,9 +2168,6 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_BROADCASTING(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         A = [
             np.array(3),
             np.array([3]),
@@ -2295,9 +2194,6 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((de.array == ab).all())
 
     def test_Data__len__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         self.assertEqual(3, len(cf.Data([1, 2, 3])))
         self.assertEqual(2, len(cf.Data([[1, 2, 3], [4, 5, 6]])))
         self.assertEqual(1, len(cf.Data([[1, 2, 3]])))
@@ -2307,9 +2203,6 @@ class DataTest(unittest.TestCase):
             len(cf.Data(1))
 
     def test_Data__float__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for x in (-1.9, -1.5, -1.4, -1, 0, 1, 1.0, 1.4, 1.9):
             self.assertEqual(float(cf.Data(x)), float(x))
             self.assertEqual(float(cf.Data(x)), float(x))
@@ -2318,9 +2211,6 @@ class DataTest(unittest.TestCase):
             float(cf.Data([1, 2]))
 
     def test_Data__int__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for x in (-1.9, -1.5, -1.4, -1, 0, 1, 1.0, 1.4, 1.9):
             self.assertEqual(int(cf.Data(x)), int(x))
             self.assertEqual(int(cf.Data(x)), int(x))
@@ -2329,9 +2219,6 @@ class DataTest(unittest.TestCase):
             _ = int(cf.Data([1, 2]))
 
     def test_Data_argmax(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data(np.arange(120).reshape(4, 5, 6))
 
         self.assertEqual(d.argmax().array, 119)
@@ -2356,9 +2243,6 @@ class DataTest(unittest.TestCase):
             d.argmax(axis=d.ndim)
 
     def test_Data_percentile_median(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # ranks: a sequence of percentile rank inputs. NOTE: must
         # include 50 as the last input so that cf.Data.median is also
         # tested correctly.
@@ -2583,9 +2467,6 @@ class DataTest(unittest.TestCase):
         self.assertIs(e.array[0], np.ma.masked)
 
     def test_Data_log(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Test natural log, base e
         a = np.array([[np.e, np.e**2, np.e**3.5], [0, 1, np.e**-1]])
         b = np.log(a)
@@ -2629,9 +2510,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.shape, b.shape)
 
     def test_Data_trigonometric_hyperbolic(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Construct all trig. and hyperbolic method names from the 3 roots:
         trig_methods_root = ["sin", "cos", "tan"]
         trig_methods = trig_methods_root + [
@@ -2727,9 +2605,6 @@ class DataTest(unittest.TestCase):
         #         self.assertTrue((d1.mask.array == c.mask).all())
 
     def test_Data_filled(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data([[1, 2, 3]])
         self.assertTrue((d.filled().array == [[1, 2, 3]]).all())
 
@@ -2982,9 +2857,6 @@ class DataTest(unittest.TestCase):
             bool(cf.Data([1, 2]))
 
     def test_Data_compute(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Scalar numeric array
         d = cf.Data(9, "km")
         a = d.compute()
@@ -3011,9 +2883,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.compute(), 2.5)
 
     def test_Data_persist(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cf.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
