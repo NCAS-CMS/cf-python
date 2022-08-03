@@ -92,7 +92,7 @@ class RegridOperator:
     def method(self):
         """The regridding method.
 
-        **Examples:**
+        **Examples**
 
         >>> r.method
         'conservative'
@@ -108,7 +108,7 @@ class RegridOperator:
     def name(self):
         """The name of the regrid method.
 
-        **Examples:**
+        **Examples**
 
         >>> r.name
         'regrids'
@@ -124,7 +124,7 @@ class RegridOperator:
         that the these are well defined during the creation and
         subsequent use of a `RegridOperator` instance.
 
-        **Examples:**
+        **Examples**
 
         >>> type(r.parameters)
         dict
@@ -136,7 +136,7 @@ class RegridOperator:
     def regrid(self):
         """The contained regridding operator.
 
-        **Examples:**
+        **Examples**
 
         >>> type(r.regrid)
         ESMF.api.regrid.Regrid
@@ -159,7 +159,7 @@ class RegridOperator:
                 Whether or not method is equivalent to the regridding
                 method.
 
-        **Examples:**
+        **Examples**
 
         >>> r.method
         'conservative'
@@ -185,7 +185,7 @@ class RegridOperator:
             `RegridOperator`
                 The copy.
 
-        **Examples:**
+        **Examples**
 
         >>> s = r.copy()
 
@@ -202,7 +202,7 @@ class RegridOperator:
     def destroy(self):
         """Free the memory allocated by the `ESMF.Regrid` instance.
 
-        **Examples:**
+        **Examples**
 
         >>> r.destroy()
 
@@ -223,7 +223,7 @@ class RegridOperator:
     def get_parameter(self, parameter):
         """Return a regrid operation parameter.
 
-        **Examples:**
+        **Examples**
 
         >>> r.get_parameter('ignore_degenerate')
         True

@@ -594,7 +594,7 @@ def write(
 
         `None`
 
-    **Examples:**
+    **Examples**
 
     There are further worked examples
     :ref:`in the tutorial <Writing-to-a-netCDF-dataset>`.

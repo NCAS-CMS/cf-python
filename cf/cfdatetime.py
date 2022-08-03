@@ -107,7 +107,7 @@ def dt(
         `cftime.datetime`
             The new date-time object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2003)
     >>> d
@@ -212,7 +212,7 @@ def dt_vector(
         `numpy.ndarray`
             1-d array of date-time objects.
 
-    **Examples:**
+    **Examples**
 
     TODO
 
@@ -332,7 +332,7 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
             An array of `cftime.datetime` objects with the same shape
             as *array*.
 
-    **Examples:**
+    **Examples**
 
     """
     func = partial(st2datetime, calendar=units_in._calendar)

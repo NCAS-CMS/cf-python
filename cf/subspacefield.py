@@ -114,7 +114,7 @@ class SubspaceField(mixin.Subspace):
             An independent field construct containing the subspace of
             the original field.
 
-    **Examples:**
+    **Examples**
 
     There are further worked examples
     :ref:`in the tutorial <Subspacing-by-metadata>`.
@@ -244,7 +244,7 @@ class SubspaceField(mixin.Subspace):
                 whether or not it is possible to create specified
                 subspace.
 
-        **Examples:**
+        **Examples**
 
         There are further worked examples
         :ref:`in the tutorial <Subspacing-by-metadata>`.

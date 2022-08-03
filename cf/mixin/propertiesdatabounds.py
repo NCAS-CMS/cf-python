@@ -799,7 +799,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: 2.0
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.bounds.array)
         [[-90. -87.]
@@ -840,7 +840,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: 2.0
 
-        **Examples:**
+        **Examples**
 
         >>> c.dtype
         dtype('float64')
@@ -911,7 +911,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. seealso:: `upper_bounds`
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.array)
         [4  2  0]
@@ -949,7 +949,7 @@ class PropertiesDataBounds(PropertiesData):
         consistent manner. These are mirrored by the `units` and
         `calendar` CF properties respectively.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: K>
@@ -1020,7 +1020,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. seealso:: `lower_bounds`
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.array)
         [4  2  0]
@@ -1083,7 +1083,7 @@ class PropertiesDataBounds(PropertiesData):
             `{{class}}` or `None`
                 The construct with masked elements.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [ 0.  1.]
@@ -1151,7 +1151,7 @@ class PropertiesDataBounds(PropertiesData):
         reinstated default data type may be different to the data type
         prior to `dtype` being set.
 
-        **Examples:**
+        **Examples**
 
         >>> f.dtype
         dtype('float64')
@@ -1234,7 +1234,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the ceiling of the data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -1265,7 +1265,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c.chunksize()
 
@@ -1326,7 +1326,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with clipped data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.clip(-90, 90)
         >>> g = f.clip(-90, 90, 'degrees_north')
@@ -1354,7 +1354,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >> c.close()
 
@@ -1454,7 +1454,7 @@ class PropertiesDataBounds(PropertiesData):
     #        of data values. If the operation was in-place then `None` is
     #        returned.
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    TODO
     #
@@ -1500,7 +1500,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the cosine of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_east>
@@ -1546,7 +1546,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `set`
 
-        **Examples:**
+        **Examples**
 
             TODO
 
@@ -1685,7 +1685,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 Whether or not the construct's cells are contiguous.
 
-        **Examples:**
+        **Examples**
 
         >>> c.has_bounds()
         False
@@ -1871,7 +1871,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with converted reference time data
                 values.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [1  2  3  4]
@@ -1934,7 +1934,7 @@ class PropertiesDataBounds(PropertiesData):
                 The value of the named property or the default value, if
                 set.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.{{class}}()
         >>> f.set_property('project', 'CMIP7')
@@ -2060,7 +2060,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with floored data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -2089,7 +2089,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c.direction()
         None
@@ -2110,7 +2110,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 Whether or not the variable matches the given criteria.
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -2159,7 +2159,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 Whether or not the variable matches the given criteria.
 
-        **Examples:**
+        **Examples**
 
             TODO
 
@@ -2212,7 +2212,7 @@ class PropertiesDataBounds(PropertiesData):
 
         TODO
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -2258,7 +2258,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 TODO
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: hPa>
@@ -2421,7 +2421,7 @@ class PropertiesDataBounds(PropertiesData):
                 The expanded data, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -2466,7 +2466,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with flipped axes, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f.flip()
         >>> f.flip(1)
@@ -2543,7 +2543,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the exponential of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(1, 2): [[1, 2]]>
@@ -2589,7 +2589,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> import numpy
         >>> b = {{package}}.Bounds(data=numpy.arange(10).reshape(5, 2))
@@ -2625,11 +2625,13 @@ class PropertiesDataBounds(PropertiesData):
         units = bounds.Units
         self_units = self.Units
 
-        if data is not None and units and not units.equivalent(self_units):
-            raise ValueError(
-                f"Can't set bounds: {bounds!r} units of {bounds.Units!r} are "
-                f"not equivalent to {self.Units!r}, the units of {self!r}"
-            )
+        if data is not None and units:
+            if not units.equivalent(self_units):
+                raise ValueError(
+                    f"Can't set bounds: {bounds!r} units of {bounds.Units!r} "
+                    f"are not equivalent to {self.Units!r}, the units of "
+                    f"{self!r}"
+                )
 
             bounds.Units = self_units
 
@@ -2677,7 +2679,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the sine of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -2734,7 +2736,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the trigonometric inverse tangent of data
                 values. If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2783,7 +2785,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the inverse hyperbolic tangent of data
                 values. If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2835,7 +2837,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the trigonometric inverse sine of data
                 values. If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2887,7 +2889,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the inverse hyperbolic sine of data values.
                 If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2938,7 +2940,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the trigonometric inverse cosine of data
                 values. If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2992,7 +2994,7 @@ class PropertiesDataBounds(PropertiesData):
                 values. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -3051,7 +3053,7 @@ class PropertiesDataBounds(PropertiesData):
                 values. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -3110,7 +3112,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the hyperbolic sine of data values. If
                 the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -3169,7 +3171,7 @@ class PropertiesDataBounds(PropertiesData):
                 values. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -3229,7 +3231,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the tangent of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -3289,7 +3291,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the logarithm of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(1, 2): [[1, 2]]>
@@ -3361,7 +3363,7 @@ class PropertiesDataBounds(PropertiesData):
                 The new construct with removed data axes. If the operation
                 was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (1, 73, 1, 96)
@@ -3409,7 +3411,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with truncated data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -3455,7 +3457,7 @@ class PropertiesDataBounds(PropertiesData):
     #           `list`
     #               The identities.
     #
-    #       **Examples:**
+    #       **Examples**
     #
     #       >>> f.properties()
     #       {'foo': 'bar',
@@ -3542,7 +3544,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {'foo': 'bar',
@@ -3638,7 +3640,7 @@ class PropertiesDataBounds(PropertiesData):
                 no *value* was specified. `None` is always returned if the
                 period had not been set previously.
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.period())
         None
@@ -3699,7 +3701,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with rounded data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -3757,7 +3759,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with rounded data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
@@ -3799,7 +3801,7 @@ class PropertiesDataBounds(PropertiesData):
             `{{class}}` or `None`
                 TODO
 
-        **Examples:**
+        **Examples**
 
         TODO
 

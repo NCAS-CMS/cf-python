@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.12.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.13.0</a></h1>
 
 
 
@@ -120,7 +120,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="performance">
 <h1><strong>Performance</strong><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.12.0 for version 1.9 of the CF conventions.</p>
+<p>Version 3.13.0 for version 1.9 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#lazy-operations" id="id3"><strong>Lazy operations</strong></a></p></li>
@@ -224,7 +224,7 @@ dimensions, etc.) always reflect the data array in its entirety,
 regardless of how the array is partitioned and whether or not its
 partitions are in memory, constructs containing data arrays may be
 used in the API as if they were normal, in-memory objects (like
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays). Partitioning does carry a performance overhead, but
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays). Partitioning does carry a performance overhead, but
 this may be minimised for particular applications or hardware
 configurations.</p>
 </li>
@@ -359,8 +359,9 @@ eight sub-arrays will have shape (1, 1, 1).</p></li>
 <p class="admonition-title">Note</p>
 <p>The experimental ability to run cf scripts in parallel using
 mpirun was removed at version 3.9.0. This functionality will
-be restored soon in a robust fashion when the move to using
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/182">https://github.com/NCAS-CMS/cf-python/issues/182</a>) is
+be restored in version 3.14.0 in a robust fashion when the
+move to using <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/182">https://github.com/NCAS-CMS/cf-python/issues/182</a>) is
 completed.</p>
 </div>
 </section>
@@ -374,7 +375,7 @@ completed.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-01-17.
+      &copy;2022, NCAS | Page built on 2022-07-11.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
