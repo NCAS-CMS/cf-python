@@ -15393,10 +15393,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dst_axes=None,
         axis_order=None,
         ignore_degenerate=True,
+        return_operator=False,
+        check_coordinates=False,
         inplace=False,
         i=False,
         _compute_field_mass=None,
-        return_operator=False,
     ):
         """Regrid the field to a new latitude and longitude grid.
 

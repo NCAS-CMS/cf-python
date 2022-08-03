@@ -7,6 +7,8 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
 
+import numpy as np
+
 try:
     import ESMF
 except Exception:
@@ -14,32 +16,37 @@ except Exception:
 else:
     ESMF_imported = True
 
-def regrid_ESMF(coord_sys, regrid, src, dst, **kwargs):
+def regrid_ESMF(coord_sys,  method, src, dst,**kwargs):
     """TODO"""    
-    ESMF_regrid = cf.regrid.utils.regrid(coord_sys, src, dst,
+    ESMF_regrid = cf.regrid.utils.regrid(coord_sys, src, dst, method,
                                          _return_regrid=True,
                                          **kwargs)
-           
-    src_field = ESMF.Field(regrid.srcfield.grid, "src")
-    dst_field = ESMF.Field(regrid.dstfield.grid, "dst")
 
     if coord_sys == "spherical":
-        src = src.tranpose(['X', 'Y', 'T']).squeeze()
-        dst = dst.tranpose(['X', 'Y', 'T']).squeeze()
+        src = src.transpose(['X', 'Y', 'T']).squeeze()
+        dst = dst.transpose(['X', 'Y', 'T']).squeeze()
     else:
         pass
-    
+    print ('src.array=', src.array)
+
+    src_field = ESMF.Field(ESMF_regrid.srcfield.grid, "src")
+    dst_field = ESMF.Field(ESMF_regrid.dstfield.grid, "dst")
+
+    print (src_field.grid)
+
     fill_value = 1e20
     src_field.data[...] = np.ma.MaskedArray(src.array, copy=False).filled(
-        fill_value
+         fill_value
     )
+    print ('src_field.data[...]=',src_field.data[...])
     dst_field.data[...] = fill_value
 
-    regrid(src_field, dst_field, zero_region=ESMF.Region.SELECT)
-
-    return  np.ma.MaskedArray(
+    ESMF_regrid(src_field, dst_field, zero_region=ESMF.Region.SELECT)
+    print ('dst_field.data[...]=',dst_field.data[...])
+ 
+    return np.ma.MaskedArray(
         dst_field.data.copy(),
-        mask=(dst_field.data == fill_value),
+        mask=(dst_field.data[...] == fill_value),
     )
 
 class RegridTest(unittest.TestCase):
@@ -53,14 +60,14 @@ class RegridTest(unittest.TestCase):
 
         dst, src = cf.read(self.filename)
 
-        src.tranpose(['X', 'Y', 'T'], inplace=True)
-        dst.tranpose(['Y', 'T', 'X'], inplace=True)
+        src.transpose(['X', 'Y', 'T'], inplace=True)
+        dst.transpose(['Y', 'T', 'X'], inplace=True)
 
-        dst[dst.indices(Y=cf.wi(30, 60))] = cf.masked
-        dst[dst.indices(X=cf.wi(30, 60))] = cf.masked
-
-        src[src.indices(Y=cf.wi(45, 75))] = cf.masked
-        src[src.indices(X=cf.wi(45, 75))] = cf.masked
+#        dst[dst.indices(Y=cf.wi(30, 60))] = cf.masked
+#        dst[dst.indices(X=cf.wi(30, 60))] = cf.masked
+#
+#        src[src.indices(Y=cf.wi(45, 75))] = cf.masked
+#        src[src.indices(X=cf.wi(45, 75))] = cf.masked
         
 #        src[src.indices(T=[0], Y=cf.wi(45, 75))] = cf.masked
 #        src[src.indices(T=[0], X=cf.wi(45, 75))] = cf.masked
@@ -70,70 +77,37 @@ class RegridTest(unittest.TestCase):
 #        
 #        with cf.atol(1e-12):
 
+##        for method in cf.regrid.utils.ESMF_methods:
+##            x = src.regrids(dst, method=method)
+##            x.transpose(['X', 'Y', 'T'], inplace=True)
+##            for t in (0, 1):
+##                y = regrid_ESMF("spherical", method, src.subspace(T=[t]), dst)
+##                # print (method,t,(y - a).max())
+##                a = x.subspace(T=[t]).squeeze().array
+##                self.assertTrue(np.allclose(y, a, atol=1e-12, rtol=0))
+            
+#        src[src.indices(T=slice(1, 2), Y=cf.wi(15, 45))] = cf.masked
+#        src[src.indices(T=slice(1, 2), X=cf.wi(15, 45))] = cf.masked
+
+#        src[slice(2, 6, 1), slice(17, 23, 1), :] = cf.masked
+        print (src)
+        src[slice(0, 3, 1), slice(0, 3, 1), :] = cf.masked
+        
+        print ('        MASKED')
         for method in cf.regrid.utils.ESMF_methods:
+            print (method)
             x = src.regrids(dst, method=method)
             x.transpose(['X', 'Y', 'T'], inplace=True)
-            for i in (0, 1):
-                y = regrid_ESMF("spherical", src.subspace(T=[i]), dst)
-                self.assertTrue(
-                    y.data.equals(x.subspace(T=[i]).data.squeeze())
-                )
+            for t in (0, 1):
+                print(t)
+                y = regrid_ESMF("spherical", method, src.subspace(T=[t]), dst)
+                a = x.subspace(T=[t]).squeeze().array
+                                
+                print ((y - a).max())
+                print (a, y)
+                self.assertTrue((y.mask == a.mask).all())
+                self.assertTrue(np.allclose(y, a, atol=1e-12, rtol=0))
             
-        src[src.indices(T=[1], Y=cf.wi(15, 45))] = cf.masked
-        src[src.indices(T=[1], X=cf.wi(15, 45))] = cf.masked
-        
-#        with cf.atol(1e-12):
-
-        for method in cf.regrid.utils.ESMF_methods:
-            x = src.regrids(dst, method=method)
-            x.transpose(['X', 'Y', 'T'], inplace=True)
-            for i in (0, 1):
-                y = regrid_ESMF("spherical", src.subspace(T=[i]), dst)
-                self.assertTrue(
-                    y.data.equals(x.subspace(T=[i]).data.squeeze())
-                )
-            
-
-        
-        with cf.atol(1e-12):
-            for chunksize in self.chunk_sizes:
-                with cf.chunksize(chunksize):
-                    f1 = cf.read(self.filename1)[0]
-                    f2 = cf.read(self.filename2)[0]
-                    f3 = cf.read(self.filename3)[0]
-                    f4 = cf.read(self.filename4)[0]
-                    f5 = cf.read(self.filename5)[0]
-
-                    r = f1.regrids(f2, "conservative")
-                    self.assertTrue(
-                        f3.equals(r),
-                        f"destination=global Field, CHUNKSIZE={chunksize}",
-                    )
-
-                    dst = {"longitude": f2.dim("X"), "latitude": f2.dim("Y")}
-                    r = f1.regrids(dst, "conservative", dst_cyclic=True)
-                    self.assertTrue(
-                        f3.equals(r),
-                        f"destination=global dict, CHUNKSIZE={chunksize}",
-                    )
-
-                    r = f1.regrids(dst, method="conservative", dst_cyclic=True)
-                    self.assertTrue(
-                        f3.equals(r),
-                        f"destination=global dict, CHUNKSIZE={chunksize}",
-                    )
-
-                    # Regrid global to regional roated pole
-                    r = f1.regrids(f5, method="linear")
-                    self.assertTrue(
-                        f4.equals(r, verbose=3),
-                        f"destination=regional Field, CHUNKSIZE={chunksize}",
-                    )
-
-        f6 = cf.read(self.filename6)[0]
-        with self.assertRaises(Exception):
-            f1.regridc(f6, axes="T", method="linear")
-
     @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
     def test_Field_regridc(self):
         self.assertFalse(cf.regrid_logging())
@@ -284,25 +258,25 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f2.regrids(op)
 
-    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
-    def test_Field_regrid_size1_dimensions(self):
-        # Check that non-regridded size 1 axes are handled OK
-        self.assertFalse(cf.regrid_logging())
-
-        f = cf.example_field(0)
-        shape = f.shape
-
-        g = f.regrids(f, method="linear")
-        self.assertEqual(g.shape, (shape))
-        g = f.regridc(f, method="linear", axes="X")
-        self.assertEqual(g.shape, (shape))
-
-        f.insert_dimension("T", position=0, inplace=True)
-        shape = f.shape
-        g = f.regrids(f, method="linear")
-        self.assertEqual(g.shape, shape)
-        g = f.regridc(f, method="linear", axes="X")
-        self.assertEqual(g.shape, shape)
+#    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
+#    def test_Field_regrid_size1_dimensions(self):
+#        # Check that non-regridded size 1 axes are handled OK
+#        self.assertFalse(cf.regrid_logging())
+#
+#        f = cf.example_field(0)
+#        shape = f.shape
+#
+#        g = f.regrids(f, method="linear")
+#        self.assertEqual(g.shape, (shape))
+#        g = f.regridc(f, method="linear", axes="X")
+#        self.assertEqual(g.shape, (shape))
+#
+#        f.insert_dimension("T", position=0, inplace=True)
+#        shape = f.shape
+#        g = f.regrids(f, method="linear")
+#        self.assertEqual(g.shape, shape)
+#        g = f.regridc(f, method="linear", axes="X")
+#        self.assertEqual(g.shape, shape)
 
 
 if __name__ == "__main__":

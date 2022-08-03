@@ -5,7 +5,12 @@ from collections import namedtuple
 
 import numpy as np
 
+import dask.array as da
+
 from ..functions import regrid_logging
+from ..units import Units
+
+from .regridoperator import RegridOperator
 
 try:
     import ESMF
@@ -206,7 +211,7 @@ def regrid(
         coord_sys = regrid_operator.coord_sys
         method = regrid_operator.method
         dst_cyclic = regrid_operator.dst_cyclic
-        dst = regrid_operator.get_parameter("dst").copy()
+        dst = regrid_operator.get_parameter("dst")
         dst_axes = regrid_operator.get_parameter("dst_axes")
         if coord_sys == "Cartesian":
             src_axes = regrid_operator.get_parameter("src_axes")
@@ -214,7 +219,8 @@ def regrid(
         create_regrid_operator = False
     else:
         create_regrid_operator = True
-        dst = dst.copy()
+
+    dst = dst.copy()
 
     if method not in ESMF_methods:
         raise ValueError(
@@ -296,7 +302,7 @@ def regrid(
         coord_sys, src, "source", method, src_cyclic, axes=src_axes
     )
 
-    conform_coordinate_units(coord_sys, src_grid, dst_grid)
+    conform_coordinate_units(src_grid, dst_grid)
 
     if create_regrid_operator:
         # ------------------------------------------------------------
@@ -326,9 +332,9 @@ def regrid(
         # Create a mask for the source grid
         src_mask = None
         grid_src_mask = None
-        if use_src_mask and (
+        if _return_regrid or (use_src_mask and (
             method in ("patch", "conservative_2d") or _return_regrid
-        ):
+        )):
             # For patch recovery and second-order conservative
             # regridding, the source mask needs to be taken into
             # account during the ESMF calculation of the regrid
@@ -343,8 +349,11 @@ def regrid(
                 src_mask = np.array(False)
                 grid_src_mask = src_mask
 
+        print ('grid_src_mask =', repr(grid_src_mask))
+
         # Create the source ESMF.Grid
         src_ESMF_grid = create_ESMF_grid(src_grid, mask=grid_src_mask)
+    
         del grid_src_mask
 
         # Create regrid weights
@@ -373,9 +382,7 @@ def regrid(
         # ESMF manager. This is done to free up any Persistent
         # Execution Threads (PETs) created by the ESMF Virtual Machine
         # (https://earthsystemmodeling.org/esmpy_doc/release/latest/html/api.html#resource-allocation).
-        del src_ESMF_grid
-        del dst_ESMF_grid
-        del ESMF_mananger
+        del ESMF_manager 
 
         # Create regrid operator
         parameters = {"dst": dst, "dst_axes": dst_grid.axis_keys}
@@ -418,7 +425,8 @@ def regrid(
         axis: size for axis, size in zip(src_grid.axis_indices, dst_grid.shape)
     }
 
-    data = src.data._regrid(
+    regridded_data = src.data._regrid(
+        method=method,
         operator=regrid_operator,
         regrid_axes=src_grid.axis_indices,
         regridded_sizes=regridded_axis_sizes,
@@ -428,7 +436,7 @@ def regrid(
     # Update the regridded metadata
     # ----------------------------------------------------------------
     update_non_coordinates(
-        src, regrid_operator, src_grid=src_grid, dst_grid=dst_grid
+        src, dst, regrid_operator, src_grid=src_grid, dst_grid=dst_grid
     )
 
     update_coordinates(src, dst, src_grid=src_grid, dst_grid=dst_grid)
@@ -436,7 +444,7 @@ def regrid(
     # ----------------------------------------------------------------
     # Insert regridded data into the new field
     # ----------------------------------------------------------------
-    src.set_data(new_data, axes=src.get_data_axes(), copy=False)
+    src.set_data(regridded_data, axes=src.get_data_axes(), copy=False)
 
     if coord_sys == "spherical":
         # Set the cyclicity of the longitude axis of the new field
@@ -445,7 +453,8 @@ def regrid(
             src.cyclic(
                 key,
                 iscyclic=dst_grid.cyclic,
-                config={"coord": x, "period": Data(360.0, "degrees")},
+                period=360,
+                config={"coord": x}
             )
 
     # Return the regridded source field
@@ -760,21 +769,26 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
             "Could not find 1-d nor 2-d latitude and longitude coordinates"
         )
 
-    # Check for size 1 latitude or longitude dimensions if source grid
-    # (a size 1 dimension is only problematic for the source grid in ESMF)
+    # Get X/Y axis sizes
+    domain_axes = f.domain_axes(todict=True)
+    x_size = domain_axes[x_axis].size
+    y_size = domain_axes[y_axis].size
+
+    # Source grid size 1 dimensions are problematic for ESMF for some
+    # methods
     if (
         name == "source"
         and method in ("linear", "bilinear", "patch")
         and (x_size == 1 or y_size == 1)
     ):
         raise ValueError(
-            f"Neither the longitude nor latitude dimensions of the {name}"
-            f"field {f!r} can be of size 1 for {method!r} regridding."
+            f"Neither the X nor Y dimensions of the {name} field"
+            f"{f!r} can be of size 1 for spherical {method!r} regridding."
         )
 
     coords = [lon, lat]  # {0: lon, 1: lat}  # ESMF order
     bounds = get_bounds(method, coords)
-
+    print ('000 bounds=', bounds)
     # Convert 2-d coordinate arrays to ESMF axis order = [X, Y]
     if coords_2d:
         for dim, coord_key in enumerate((lon_key, lat_key)):
@@ -795,11 +809,6 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
     if cyclic is None:
         cyclic = f.iscyclic(x_axis)
 
-    # Get X/Y axis sizes
-    domain_axes = f.domain_axes(todict=True)
-    x_size = domain_axes[x_axis].size
-    y_size = domain_axes[y_axis].size
-
     axis_keys = [y_axis, x_axis]
     axis_sizes = [y_size, x_size]
     #    axis_indices = get_axis_indices(f, axis_keys, shape=shape)
@@ -819,7 +828,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
         data_axes = f.get_data_axes()
         axis_indices = [data_axes.index(key) for key in axis_keys]
 
-    return grid(
+    return Grid(
         axis_keys=axis_keys,
         axis_indices=axis_indices,
         shape=tuple(axis_sizes),
@@ -973,7 +982,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
             # Size 2
             coords.append(data)
 
-    return grid(
+    return Grid(
         axis_keys=axis_keys,
         axis_indices=axis_indices,
         shape=tuple(axis_sizes),
@@ -1183,7 +1192,7 @@ def create_ESMF_grid(grid=None, mask=None):
     coords = grid.coords
     bounds = grid.bounds
     cyclic = grid.cyclic
-
+    print ('cyclic=', cyclic)
     num_peri_dims = 0
     periodic_dim = 0
     spherical = False
@@ -1197,12 +1206,12 @@ def create_ESMF_grid(grid=None, mask=None):
     else:
         # Cartesian
         coord_sys = ESMF.CoordSys.CART
-
     # Parse coordinates for the ESMF.Grid and get its shape
     n_axes = len(coords)
     coords_1d = coords[0].ndim == 1
 
     coords = [np.asanyarray(c) for c in coords]
+    print(coords)
     if coords_1d:
         # 1-d coordinates for N-d regridding
         shape = [c.size for c in coords]
@@ -1221,7 +1230,7 @@ def create_ESMF_grid(grid=None, mask=None):
     # Parse bounds for the ESMF.Grid
     if bounds:
         bounds = [np.asanyarray(b) for b in bounds]
-
+        print ('bounds=',bounds)
         message = (
             f"The {grid.name} coordinates must have contiguous, "
             f"non-overlapping bounds for {grid.method} regridding."
@@ -1264,7 +1273,8 @@ def create_ESMF_grid(grid=None, mask=None):
                 tmp[n, :m] = b[-1, :, 3]
                 tmp[n, m] = b[-1, -1, 2]
                 bounds[dim] = tmp
-
+        print ('bounds=',bounds)
+        
     # Define the ESMF.Grid stagger locations
     if bounds:
         if n_axes == 3:
@@ -1282,7 +1292,7 @@ def create_ESMF_grid(grid=None, mask=None):
 
     # Create an empty ESMF.Grid
     esmf_grid = ESMF.Grid(
-        max_idnex=np.array(shape, dtype="int32"),
+        max_index=np.array(shape, dtype="int32"),
         coord_sys=coord_sys,
         num_peri_dims=num_peri_dims,
         periodic_dim=periodic_dim,
@@ -1290,7 +1300,7 @@ def create_ESMF_grid(grid=None, mask=None):
     )
 
     # Populate the ESMF.Grid centres
-    for dim, c in coords.items():
+    for dim, c in enumerate(coords):
         if n_axes == 3:
             grid_centre = esmf_grid.get_coords(
                 dim, staggerloc=ESMF.StaggerLoc.CENTER_VCENTER
@@ -1314,18 +1324,24 @@ def create_ESMF_grid(grid=None, mask=None):
             grid_corner[...] = b
 
     # Add an ESMF.Grid mask
+    print ('mask=', mask)
+            
     if mask is not None:
+        print ('here2')
         mask = np.asanyarray(mask)
         m = None
-        if mask.dtype == bool and m.any():
+        if np.ma.isMA(mask):
+            if np.ma.is_masked(mask):
+                m = mask.mask
+        elif mask.dtype == bool and mask.any():
             m = mask
-        elif np.ma.is_masked(mask):
-            m = mask.mask
 
         if m is not None:
+            print ('MAking ESmf grid mask')
             grid_mask = esmf_grid.add_item(ESMF.GridItem.MASK)
             grid_mask[...] = np.invert(mask).astype("int32")
 
+    return esmf_grid
 
 def create_ESMF_weights(
     method,
@@ -1425,19 +1441,19 @@ def create_ESMF_weights(
         col = col[index]
 
     if _regrid is None:
-        # Destroy ESMF objects
+        # Dest0roy ESMF objects
+        src_ESMF_grid.destroy()
+        dst_ESMF_grid.destroy()
         src_ESMF_field.destroy()
         dst_ESMF_field.destroy()
         r.srcfield.grid.destroy()
         r.srcfield.destroy()
-        r.src_frac_field.destroy()
         r.dstfield.grid.destroy()
         r.dstfield.destroy()
-        r.dst_frac_field.destroy()
         r.destroy()
     else:
         # Make the Regrid instance available via the '_regrid' list
-        _regrid.append[r]
+        _regrid.append(r)
 
     return weights, row, col
 
@@ -1592,11 +1608,11 @@ def get_mask(f, grid):
 
     index = [slice(None) if i in regrid_axes else 0 for i in range(f.ndim)]
 
-    mask = da.ma.getmaskarray(f)
+    mask = da.ma.getmaskarray(f.data.to_dask_array())
     mask = mask[tuple(index)]
 
     # Reorder the mask axes to grid.axes_keys
-    mask = da.transpose(mask, np.argsort(regrid_axes))
+    mask = da.transpose(mask, axes=np.argsort(regrid_axes).tolist())
 
     return mask
 

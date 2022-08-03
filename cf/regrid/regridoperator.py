@@ -326,17 +326,17 @@ class RegridOperator:
             order: `str`, optional
                 Specify the memory layout of the returned weights
                 matrix. ``'C'`` (the default) means C order
-                (row-major), ``'F'`` means Fortran (column-major)
-                order.
+                (row-major), ``'F'`` means Fortran order
+                (column-major).
 
         :Returns:
         
             `numpy.ndarray`
                 The full array of weights, with zeros at locations not
-                The sparse array of weightsdefined by `row` and `col`.
+                defined by `row` and `col`.
 
         """
-        return self.sparse_array().todense(order=order)
+        return self.tosparse().todense(order=order)
 
     def tosparse(self):
         """Return the weights in sparse COOrdinate format.

@@ -114,7 +114,9 @@ def regrid(
     """
     # ----------------------------------------------------------------
     # Reshape the array into a form suitable for the regridding dot
-    # product
+    # product, i.e. a 2-d array whose right-hand dimension represents
+    # are the gathered regridding axes and whose left-hand dimension
+    # represent of all the other dimensions.
     # ----------------------------------------------------------------
     a = a.transpose(axis_order)
     non_regrid_shape = a.shape[: a.ndim - len(src_shape)]
@@ -146,32 +148,31 @@ def regrid(
     if ref_src_mask is not None:
         # A reference source grid mask has already been incorporated
         # into the weights matrix. Therefore, the mask for all slices
-        # of 'a' must be the same as this reference mask.
-        message = (
-            f"Can't regrid with the {method!r} method when the source "
-            "data mask varies across regridding slices"
-        )
-      
+        # of 'a' must be the same as this reference mask.      
         if variable_mask or (src_mask is None and ref_src_mask.any()):
-            raise ValueError(message)
-
-        if ref_src_mask.dtype != bool or ref_src_mask.shape != src_shape:
             raise ValueError(
-                "The 'ref_src_mask' parameter must be None or a "
-                "Boolean numpy array with shape {src_shape}. Got: "
-                f"dtype={ref_src_mask.dtype}, shape={ref_src_mask.shape}"
+                f"Can't regrid with the {method!r} method when the source "
+                f"data mask varies over different {len(src_shape)}-d "
+                "regridding slices"
             )
 
-        message = (
-            f"Can't regrid with the {method!r} method when the "
-            "source data mask does not match the mask used to "
-            "construct the regrid operator"
-        )
-      
-        # TODOA: Q. Do we need to tranpose ref_src_mask first?
-        ref_src_mask = ref_src_mask.reshape(src_mask.shape)
-        if (src_mask != ref_src_mask).any():
-            raise ValueError(message)
+        if ref_src_mask.dtype != bool or (ref_src_mask.shape and ref_src_mask.shape != src_shape):
+            raise ValueError(
+                f"For {method!r} regridding, "
+                "the 'ref_src_mask' parameter must be None or a "
+                f"Boolean numpy array with shape () or {src_shape}. Got: "
+                f"dtype={ref_src_mask.dtype}, shape={ref_src_mask.shape}"
+            )
+          
+        if src_mask is not None:
+            # TODO: Q. Do we need to tranpose ref_src_mask first?
+            ref_src_mask = ref_src_mask.reshape(src_mask.shape)
+            if (src_mask != ref_src_mask).any():
+                raise ValueError(
+                    f"Can't regrid with the {method!r} method when the "
+                    "source data mask does not match the mask used to "
+                    "construct the regrid operator"
+                )
 
     # ----------------------------------------------------------------
     # Regrid the source data
@@ -221,7 +222,8 @@ def regrid(
     return a
 
 
-def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
+def _regrid(a, src_mask, weights, method, prev_mask=None,
+            prev_weights=None):
     """Worker function for `regrid`.
 
     Modifies the *weights* matrix to account for missing data in *a*,
@@ -300,6 +302,8 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
         # ------------------------------------------------------------
         w = prev_weights
     else:
+        min_weight = np.finfo(np.dtype('float64')).eps * 2
+        
         # ------------------------------------------------------------
         # Source data is masked and we might need to adjust the
         # weights matrix accordingly
@@ -323,14 +327,15 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
             #     D_j = 1 - w_i1j - ... - wiNj
             #
             # where w_iXj is the unmasked weight for masked source
-            # cell i and destination cell j.
+            # cell i and destination cell j.            
             D = 1 - weights[:, src_mask].sum(axis=1, keepdims=True)
 
             # Get rid of values that are (approximately) zero, or
             # spuriously negative. These values of 'D' correspond to
-            # destination cells that only overlap masked source cells
-            # for which te weights will imminently be zeroed.
-            D = np.where(D < np.finfo(D.dtype).eps, 1, D)
+            # destination cells that overlap only masked source
+            # cells. These weights will imminently be zeroed, so it's
+            # to set their value to 1 in the mean time.
+            D = np.where(D < min_weight, 1, D)
 
             # Divide the weights by 'D'. Note that for destination
             # cells which do not intersect any masked source grid
@@ -349,27 +354,36 @@ def _regrid(a, src_mask, weights, method, prev_mask=None, prev_weights=None):
             w = np.ma.where(
                 np.count_nonzero(w, axis=1, keepdims=True), w, np.ma.masked
             )
-        elif method in ("linear", "nearest_stod", "nearest_dtos"):
+        elif method in ("linear", "bilinear", "nearest_stod", "nearest_dtos"):
             # 2) Linear and nearest neighbour methods:
             #
             # Mask out any row j that contains at least one positive
             # w_ji that corresponds to a masked source grid cell i.
-            if np.ma.isMA(weights):
-                where = np.ma.where
-            else:
-                where = np.where
+            w = weights.copy()
 
-            j = np.unique(where((weights > 0) & (src_mask))[0])
+            w[:, src_mask] = 0 
+            w = np.ma.where(
+                w.sum(axis=1, keepdims=True) < 1 - min_weight, np.ma.masked, w
+            )
 
-            if j.size:
-                if np.ma.isMA(weights):
-                    w = weights.copy()
-                else:
-                    w = np.ma.array(weights, copy=True)
-
-                w[j, :] = np.ma.masked
-            else:
-                w = weights
+#
+#            
+#            if np.ma.isMA(weights):
+#                where = np.ma.where
+#            else:
+#                where = np.where
+#
+#            j = np.unique(where((weights > weights_limit) & (src_mask))[0])
+#
+#            if j.size:
+#                if np.ma.isMA(weights):
+#                    w = weights.copy()
+#                else:
+#                    w = np.ma.array(weights, copy=True)
+#
+#                w[j, :] = np.ma.masked
+#            else:
+#                w = weights
         elif method in ("patch", "conservative_2nd"):
             # 3) Patch recovery and second-order conservative methods:
             #
@@ -483,9 +497,9 @@ def regrid_weights(
     if dtype is not None:
         weights = weights.astype(dtype, copy=False)
 
-     if start_index:
-         row = row - start_index 
-         col = col - start_index         
+    if start_index:
+        row = row - start_index 
+        col = col - start_index         
         
     w = coo_array((weights, (row, col)), shape=shape)
 

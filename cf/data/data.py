@@ -13,7 +13,6 @@ import numpy as np
 from dask.array import Array
 from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
-from dask.core import flatten
 from dask.highlevelgraph import HighLevelGraph
 
 from ..cfdatetime import dt as cf_dt
@@ -2052,6 +2051,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [2 2 3 3]]
 
         """
+        from dask.core import flatten
+ 
         if interpolation is not None:
             _DEPRECATION_ERROR_KWARGS(
                 self,
@@ -3397,7 +3398,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @daskified(_DASKIFIED_VERBOSE)
-    def _regrid(self, operator=None, regrid_axes=None, regridded_sizes=None):
+    def _regrid(self, method=None, operator=None, regrid_axes=None, regridded_sizes=None):
         """Regrid the data.
 
         .. versionadded:: TODODASK
@@ -3405,6 +3406,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`
 
         :Parameters:
+
+            {{method: `str` or `None`, optional}}
 
             operator: `RegridOperator`
                 The definition of the source and destination grids and
@@ -3432,6 +3435,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 The regridded data.
 
         """
+        from dask import delayed
+        from .dask_regrid import regrid, regrid_weights
+        
         shape = self.shape
         src_shape = tuple(shape[i] for i in regrid_axes)
         if src_shape != operator.src_shape:
@@ -3440,8 +3446,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 f"the shape of the regrid operator: {operator.src_shape}"
             )
 
-        d = _inplace_enabled_define_and_cleanup(self)
-        dx = d.to_dask_array()
+        dx = self.to_dask_array()
 
         # Rechunk so that each chunk contains data in the form
         # expected by the regrid operator, i.e. the regrid axes all
@@ -3465,7 +3470,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         else:
             dst_dtype = float
 
-        non_regrid_axes = [i for i in range(d.ndim) if i not in regrid_axes]
+        non_regrid_axes = [i for i in range(self.ndim) if i not in regrid_axes]
 
         src_mask = operator.src_mask
         if src_mask is not None:
@@ -3479,9 +3484,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if dst_mask.npartitions > 1:
                 dst_mask = dst_mask.rechunk(-1)
 
-        weights=da.asanyarray(operator.weights)
+        weights = da.asanyarray(operator.weights)
         if weights.npartitions > 1:
-            weigths = weigths.rechunk(-1)
+            weigths = weights.rechunk(-1)
             
         row = da.asanyarray(operator.row)
         if row.npartitions > 1:
@@ -3499,7 +3504,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             start_index=operator.start_index,
         )
 
-        weights = dask.delayed(weights_func, pure=True)(
+        weights = delayed(weights_func, pure=True)(
             weights=weights,
             row=row,
             col=col,
@@ -3522,8 +3527,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             meta=np.array((), dtype=dst_dtype),
         )
 
+        d = self.copy()
         d._set_dask(dx)
-
         return d
 
     def _set_subspace(self, *args, **kwargs):
