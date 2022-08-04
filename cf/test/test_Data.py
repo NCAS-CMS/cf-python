@@ -927,7 +927,6 @@ class DataTest(unittest.TestCase):
 
         cf.free_memory_factor(original_FMF)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_cached_arithmetic_units(self):
         """Test arithmetic with, and units of, Data cached to disk."""
         d = cf.Data(self.a, "m")
