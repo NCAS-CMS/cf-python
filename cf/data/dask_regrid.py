@@ -261,6 +261,10 @@ def _regrid(a, src_mask, weights, method, prev_mask=None,
 
             See `regrid` for details.
 
+        t: p
+    
+            Linear regridding: The tolerance for 
+
         method: `str`
             The name of the regridding method.
 
