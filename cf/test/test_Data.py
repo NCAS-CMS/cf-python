@@ -2212,7 +2212,6 @@ class DataTest(unittest.TestCase):
                     )
                 )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_BROADCASTING(self):
         """Test broadcasting of arrays in binary Data operations."""
         A = [
