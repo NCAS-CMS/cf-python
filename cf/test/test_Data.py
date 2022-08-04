@@ -53,7 +53,7 @@ TEST_DASKIFIED_ONLY = True
 
 
 def reshape_array(a, axes):
-    """Reshape an array to reduce given axes' dimensions to a final axis."""
+    """Reshape array reducing given axes' dimensions to a final axis."""
     new_order = [i for i in range(a.ndim) if i not in axes]
     new_order.extend(axes)
     b = np.transpose(a, new_order)
@@ -64,7 +64,7 @@ def reshape_array(a, axes):
 
 
 def axis_combinations(a):
-    """Return a list of axes combinations to iterate over for testing."""
+    """Return a list of axes combinations to iterate over."""
     return [
         axes
         for n in range(1, a.ndim + 1)
@@ -720,7 +720,7 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
     def test_Data__init__dtype_mask(self):
-        """Test Data `__init__` method with `dtype` and `mask` keywords."""
+        """Test `__init__` for Data with `dtype` and `mask` keywords."""
         for m in (1, 20, True):
             d = cf.Data([[1, 2, 3], [4, 5, 6]], mask=m)
             self.assertFalse(d.count())
@@ -1633,7 +1633,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((a == x).all())
 
     def test_Data_asdatetime_asreftime_isdatetime(self):
-        """Test the `asdatetime`, `asreftime` and `isdatetime` methods."""
+        """Test the `{as, is}datetime` and `asreftime` methods."""
         d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
         self.assertFalse(d._isdatetime())
         self.assertIsNone(d._asreftime(inplace=True))
@@ -1923,7 +1923,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.unique().array == np.unique(a)).all())
 
     def test_Data_year_month_day_hour_minute_second(self):
-        """Test the datetime unit Data properties e.g. `day` and `month`."""
+        """Test the datetime component Data properties e.g. `day`."""
         d = cf.Data([[1.901, 5.101]], "days since 2000-12-29")
         self.assertTrue(d.year.equals(cf.Data([[2000, 2001]])))
         self.assertTrue(d.month.equals(cf.Data([[12, 1]])))
@@ -1947,7 +1947,7 @@ class DataTest(unittest.TestCase):
             cf.Data([[1, 2]], units="m").year
 
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
-        """Test the arithmetic, logical & comparison operators on Data."""
+        """Test arithmetic, logical and comparison operators on Data."""
         array = np.arange(3 * 4 * 5).reshape(3, 4, 5) + 1
 
         arrays = (
@@ -2214,7 +2214,7 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_BROADCASTING(self):
-        """Test the broadcasting of arrays for binary operations on Data."""
+        """Test broadcasting of arrays in binary Data operations."""
         A = [
             np.array(3),
             np.array([3]),
@@ -2294,7 +2294,7 @@ class DataTest(unittest.TestCase):
             d.argmax(axis=d.ndim)
 
     def test_Data_percentile_median(self):
-        """Test the `percentile` and (indirectly) `median` Data methods."""
+        """Test the `percentile` and `median` Data methods."""
         # ranks: a sequence of percentile rank inputs. NOTE: must
         # include 50 as the last input so that cf.Data.median is also
         # tested correctly.
@@ -2821,7 +2821,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array == a).all())
 
     def test_Data__init__compression(self):
-        """Test the creation of Data initialised from compressed data."""
+        """Test Data initialised from compressed data sources."""
         import cfdm
 
         # Ragged
@@ -3602,7 +3602,7 @@ class DataTest(unittest.TestCase):
             self.assertFalse(func(mtol=0.5).array.mask)
 
     def test_Data_collapse_units(self):
-        """Test `Units` properties after applying collapse Data methods."""
+        """Test the `Units` property after collapse Data methods."""
         d = cf.Data([1, 2], "m")
 
         self.assertEqual(d.sample_size().Units, cf.Units())
@@ -3680,7 +3680,7 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(e.shape, tuple(s))
 
     def test_Data_collapse_dtype(self):
-        """Test `dtype` properties after applying collapse Data methods."""
+        """Test the `dtype` property after collapse Data methods."""
         d = cf.Data([1, 2, 3, 4], dtype="i4", chunks=2)
         e = cf.Data([1.0, 2, 3, 4], dtype="f4", chunks=2)
         self.assertTrue(d.dtype, "i4")
