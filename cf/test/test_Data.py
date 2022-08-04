@@ -718,7 +718,6 @@ class DataTest(unittest.TestCase):
             },
         )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
     def test_Data__init__dtype_mask(self):
         """Test `__init__` for Data with `dtype` and `mask` keywords."""
         for m in (1, 20, True):
