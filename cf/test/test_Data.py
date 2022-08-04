@@ -1147,7 +1147,6 @@ class DataTest(unittest.TestCase):
             )
         )
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_squeeze_insert_dimension(self):
         """Test the `squeeze` and `insert_dimension` Data methods."""
         d = cf.Data([list(range(1000))])
