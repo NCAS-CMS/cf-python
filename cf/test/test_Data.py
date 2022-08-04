@@ -53,7 +53,7 @@ TEST_DASKIFIED_ONLY = True
 
 
 def reshape_array(a, axes):
-    """TODO."""
+    """Reshape an array to reduce given axes' dimensions to a final axis."""
     new_order = [i for i in range(a.ndim) if i not in axes]
     new_order.extend(axes)
     b = np.transpose(a, new_order)
@@ -64,7 +64,7 @@ def reshape_array(a, axes):
 
 
 def axis_combinations(a):
-    """TODO."""
+    """Return a list of axes combinations to iterate over for testing."""
     return [
         axes
         for n in range(1, a.ndim + 1)
@@ -73,7 +73,7 @@ def axis_combinations(a):
 
 
 class DataTest(unittest.TestCase):
-    """TODO."""
+    """Unit test for the Data class."""
 
     axes_combinations = axis_combinations(a)
     # [
@@ -99,7 +99,7 @@ class DataTest(unittest.TestCase):
     ones = ones
 
     def setUp(self):
-        """TODO."""
+        """Preparations called immediately before each test method."""
         # Suppress the warning output for some specific warnings which are
         # expected due to the nature of the tests being performed.
         expexted_warning_msgs = [
@@ -115,7 +115,7 @@ class DataTest(unittest.TestCase):
             )
 
     def test_Data_equals(self):
-        """TODO."""
+        """Test the equality-testing Data method."""
         shape = 3, 4
         chunksize = 2, 6
         a = np.arange(12).reshape(*shape)
@@ -431,7 +431,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.equals(e))
 
     def test_Data_halo(self):
-        """TODO."""
+        """Test the `halo` Data method."""
         d = cf.Data(np.arange(12).reshape(3, 4), "m", chunks=-1)
         d[-1, -1] = cf.masked
         d[1, 1] = cf.masked
@@ -492,7 +492,7 @@ class DataTest(unittest.TestCase):
             d.halo(4)
 
     def test_Data_mask(self):
-        """TODO."""
+        """Test the `mask` Data property."""
         # Test for a masked Data object (having some masked points)
         a = self.ma
         d = cf.Data(a, units="m")
@@ -527,7 +527,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d3.mask.array[1], True)
 
     def test_Data_apply_masking(self):
-        """TODO."""
+        """Test the `apply_masking` Field method."""
         a = np.ma.arange(12).reshape(3, 4)
         a[1, 1] = np.ma.masked
         d = cf.Data(a, units="m", chunks=2)
@@ -577,7 +577,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((b.mask == e.mask.array).all())
 
     def test_Data_convolution_filter(self):
-        """TODO."""
+        """Test the `convolution_filter` Data method."""
         #        raise unittest.SkipTest("GSASL has no PLAIN support")
         if not SCIPY_AVAILABLE:
             raise unittest.SkipTest("SciPy must be installed for this test.")
@@ -627,7 +627,7 @@ class DataTest(unittest.TestCase):
                         self.assertTrue((e.array == b).all())
 
     def test_Data_diff(self):
-        """TODO."""
+        """Test the `diff` Data method."""
         a = np.ma.arange(12.0).reshape(3, 4)
         a[1, 1] = 4.5
         a[2, 2] = 10.5
@@ -663,7 +663,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((a_diff.mask == d_diff.mask).all())
 
     def test_Data_compressed(self):
-        """TODO."""
+        """Test the `compressed` Data method."""
         a = np.ma.arange(12).reshape(3, 4)
         d = cf.Data(a, "m", chunks=2)
         self.assertIsNone(d.compressed(inplace=True))
@@ -699,7 +699,7 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __eq__")
     def test_Data_stats(self):
-        """TODO."""
+        """Test the `stats` Data method."""
         d = cf.Data([1, 1])
 
         self.assertEqual(
@@ -720,7 +720,7 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_shape'")
     def test_Data__init__dtype_mask(self):
-        """TODO."""
+        """Test Data `__init__` method with `dtype` and `mask` keywords."""
         for m in (1, 20, True):
             d = cf.Data([[1, 2, 3], [4, 5, 6]], mask=m)
             self.assertFalse(d.count())
@@ -794,7 +794,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
 
     def test_Data_digitize(self):
-        """TODO."""
+        """Test the `digitize` Data method."""
         for a in [
             np.arange(120).reshape(3, 2, 20),
             np.ma.arange(120).reshape(3, 2, 20),
@@ -848,7 +848,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(e))
 
     def test_Data_cumsum(self):
-        """TODO."""
+        """Test the `cumsum` Data method."""
         d = cf.Data(self.a)
         e = d.copy()
         f = d.cumsum(axis=0)
@@ -870,7 +870,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(cf.functions._numpy_allclose(e.array, b))
 
     def test_Data_flatten(self):
-        """TODO."""
+        """Test the `flatten` Data method."""
         d = cf.Data(self.ma.copy())
         self.assertTrue(d.equals(d.flatten([]), verbose=2))
         self.assertIsNone(d.flatten(inplace=True))
@@ -902,7 +902,7 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute 'partitions'")
     def test_Data_CachedArray(self):
-        """TODO."""
+        """Test the `CachedArray` class for arrays stored on disk."""
         factor = 0.99999999999999
 
         cf.tempdir(self.tempdir)
@@ -930,7 +930,7 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_cached_arithmetic_units(self):
-        """TODO."""
+        """Test arithmetic with, and units of, Data cached to disk."""
         d = cf.Data(self.a, "m")
         e = cf.Data(self.a, "s")
 
@@ -963,7 +963,7 @@ class DataTest(unittest.TestCase):
         cf.constants.CONSTANTS["FM_THRESHOLD"] = fmt
 
     def test_Data_concatenate(self):
-        """TODO."""
+        """Test the `concatenate` Data method."""
         # Unitless operation with default axis (axis=0):
         d_np = np.arange(120).reshape(30, 4)
         e_np = np.arange(120, 280).reshape(40, 4)
@@ -1068,7 +1068,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((f.array == f_np).all())
 
     def test_Data__contains__(self):
-        """TODO."""
+        """Test containment checking against Data."""
         d = cf.Data([[0, 1, 2], [3, 4, 5]], units="m", chunks=2)
 
         for value in (
@@ -1121,7 +1121,7 @@ class DataTest(unittest.TestCase):
             ["foo"] in d
 
     def test_Data_asdata(self):
-        """TODO."""
+        """Test the `asdata` Data method."""
         d = cf.Data(self.ma)
 
         self.assertIs(d.asdata(d), d)
@@ -1151,7 +1151,7 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute '_ndim'")
     def test_Data_squeeze_insert_dimension(self):
-        """TODO."""
+        """Test the `squeeze` and `insert_dimension` Data methods."""
         d = cf.Data([list(range(1000))])
         self.assertEqual(d.shape, (1, 1000))
         e = d.squeeze()
@@ -1193,7 +1193,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(np.allclose(a, array))
 
     def test_Data__getitem__(self):
-        """TODO."""
+        """Test the access of data elements from Data."""
         d = cf.Data(np.ma.arange(450).reshape(9, 10, 5), chunks=(4, 5, 1))
 
         for indices in (
@@ -1328,7 +1328,7 @@ class DataTest(unittest.TestCase):
         #           this when cf.Data.where has been daskified
 
     def test_Data__setitem__(self):
-        """TODO."""
+        """Test the assignment of data elements on Data."""
         for hardmask in (False, True):
             a = np.ma.arange(90).reshape(9, 10)
             if hardmask:
@@ -1395,7 +1395,7 @@ class DataTest(unittest.TestCase):
             d[[1], [0, 4, 1]] = 9
 
     def test_Data_outerproduct(self):
-        """TODO."""
+        """Test the `outerproduct` Data method."""
         a = np.arange(12).reshape(4, 3)
         d = cf.Data(a, "m", chunks=2)
 
@@ -1413,7 +1413,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.Units, cf.Units("m.s-1"))
 
     def test_Data_all(self):
-        """TODO."""
+        """Test the `all` Data method."""
         d = cf.Data([[1, 2], [3, 4]], "m")
         self.assertTrue(d.all())
         self.assertEqual(d.all(keepdims=False).shape, ())
@@ -1436,7 +1436,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.all(keepdims=False))
 
     def test_Data_any(self):
-        """TODO."""
+        """Test the `any` Data method."""
         d = cf.Data([[0, 2], [0, 4]])
         self.assertTrue(d.any())
         self.assertEqual(d.any(keepdims=False).shape, ())
@@ -1458,7 +1458,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.any(keepdims=False))
 
     def test_Data_array(self):
-        """TODO."""
+        """Test the `array` Data property."""
         # Scalar numeric array
         d = cf.Data(9, "km")
         a = d.array
@@ -1487,7 +1487,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.array, 2.5)
 
     def test_Data_binary_mask(self):
-        """TODO."""
+        """Test the `binary_mask` Data property."""
         d = cf.Data([[0, 1, 2, 3.0]], "m")
         m = d.binary_mask
         self.assertEqual(m.shape, d.shape)
@@ -1500,7 +1500,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.binary_mask.array == [[0, 1, 0, 0]]).all())
 
     def test_Data_clip(self):
-        """TODO."""
+        """Test the `clip` Data method."""
         a = np.arange(12).reshape(3, 4)
         d = cf.Data(a, "m", chunks=2)
 
@@ -1516,7 +1516,7 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_months_years(self):
-        """TODO."""
+        """Test Data with 'months/years since' units specifications."""
         calendar = "360_day"
         d = cf.Data(
             [1.0, 2],
@@ -1587,7 +1587,7 @@ class DataTest(unittest.TestCase):
         d *= 31
 
     def test_Data_datetime_array(self):
-        """TODO."""
+        """Test the `datetime_array` Data property."""
         # Scalar array
         for d, x in zip(
             [
@@ -1633,7 +1633,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((a == x).all())
 
     def test_Data_asdatetime_asreftime_isdatetime(self):
-        """TODO."""
+        """Test the `asdatetime`, `asreftime` and `isdatetime` methods."""
         d = cf.Data([[1.93, 5.17]], "days since 2000-12-29")
         self.assertFalse(d._isdatetime())
         self.assertIsNone(d._asreftime(inplace=True))
@@ -1650,7 +1650,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(f.equals(d))
 
     def test_Data_ceil(self):
-        """TODO."""
+        """Test the `ceil` Data method."""
         for x in (1, -1):
             a = 0.9 * x * self.a
             c = np.ceil(a)
@@ -1663,7 +1663,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_floor(self):
-        """TODO."""
+        """Test the `floor` Data method."""
         for x in (1, -1):
             a = 0.9 * x * self.a
             c = np.floor(a)
@@ -1676,7 +1676,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_trunc(self):
-        """TODO."""
+        """Test the `trunc` Data method."""
         for x in (1, -1):
             a = 0.9 * x * self.a
             c = np.trunc(a)
@@ -1689,7 +1689,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_rint(self):
-        """TODO."""
+        """Test the `rint` Data method."""
         for x in (1, -1):
             a = 0.9 * x * self.a
             c = np.rint(a)
@@ -1707,7 +1707,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_round(self):
-        """TODO."""
+        """Test the `round` Data method."""
         for decimals in range(-8, 8):
             a = self.a + 0.34567
             c = np.round(a, decimals=decimals)
@@ -1722,7 +1722,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == c).all())
 
     def test_Data_datum(self):
-        """TODO."""
+        """Test the `datum` Data method."""
         d = cf.Data(5, "metre")
         self.assertEqual(d.datum(), 5)
         self.assertEqual(d.datum(0), 5)
@@ -1770,7 +1770,7 @@ class DataTest(unittest.TestCase):
             d.datum((0,))
 
     def test_Data_flip(self):
-        """TODO."""
+        """Test the `flip` Data method."""
         array = np.arange(24000).reshape(120, 200)
         d = cf.Data(array.copy(), "metre")
 
@@ -1810,7 +1810,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e[-1].max().array, 4 * 5)
 
     def test_Data_ndindex(self):
-        """TODO."""
+        """Test the `ndindex` Data method."""
         for d in (
             cf.Data(5, "metre"),
             cf.Data([4, 5, 6, 1, 2, 3], "metre"),
@@ -1820,7 +1820,7 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(i, j)
 
     def test_Data_roll(self):
-        """TODO."""
+        """Test the `roll` Data method."""
         a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         d = cf.Data(a.copy())
@@ -1844,7 +1844,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(f.equals(d, verbose=2))
 
     def test_Data_swapaxes(self):
-        """TODO."""
+        """Test the `swapaxes` Data method."""
         a = np.ma.arange(24).reshape(2, 3, 4)
         a[1, 1] = np.ma.masked
         d = cf.Data(a, chunks=(-1, -1, 2))
@@ -1861,7 +1861,7 @@ class DataTest(unittest.TestCase):
             d.swapaxes(3, -3)
 
     def test_Data_transpose(self):
-        """TODO."""
+        """Test the `transpose` Data method."""
         a = np.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
 
         d = cf.Data(a.copy())
@@ -1874,7 +1874,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((d.array == a).all())
 
     def test_Data_unique(self):
-        """TODO."""
+        """Test the `unique` Data method."""
         for chunks in ((-1, -1), (2, 1), (1, 2)):
             # No masked points
             a = np.ma.array([[4, 2, 1], [1, 2, 3]])
@@ -1923,7 +1923,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.unique().array == np.unique(a)).all())
 
     def test_Data_year_month_day_hour_minute_second(self):
-        """TODO."""
+        """Test the datetime unit Data properties e.g. `day` and `month`."""
         d = cf.Data([[1.901, 5.101]], "days since 2000-12-29")
         self.assertTrue(d.year.equals(cf.Data([[2000, 2001]])))
         self.assertTrue(d.month.equals(cf.Data([[12, 1]])))
@@ -1947,7 +1947,7 @@ class DataTest(unittest.TestCase):
             cf.Data([[1, 2]], units="m").year
 
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
-        """TODO."""
+        """Test the arithmetic, logical & comparison operators on Data."""
         array = np.arange(3 * 4 * 5).reshape(3, 4, 5) + 1
 
         arrays = (
@@ -2214,7 +2214,7 @@ class DataTest(unittest.TestCase):
 
     @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attr. 'partition_configuration'")
     def test_Data_BROADCASTING(self):
-        """TODO."""
+        """Test the broadcasting of arrays for binary operations on Data."""
         A = [
             np.array(3),
             np.array([3]),
@@ -2241,7 +2241,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((de.array == ab).all())
 
     def test_Data__len__(self):
-        """TODO."""
+        """Test the `__len__` Data method."""
         self.assertEqual(3, len(cf.Data([1, 2, 3])))
         self.assertEqual(2, len(cf.Data([[1, 2, 3], [4, 5, 6]])))
         self.assertEqual(1, len(cf.Data([[1, 2, 3]])))
@@ -2251,7 +2251,7 @@ class DataTest(unittest.TestCase):
             len(cf.Data(1))
 
     def test_Data__float__(self):
-        """TODO."""
+        """Test the `__float__` Data method."""
         for x in (-1.9, -1.5, -1.4, -1, 0, 1, 1.0, 1.4, 1.9):
             self.assertEqual(float(cf.Data(x)), float(x))
             self.assertEqual(float(cf.Data(x)), float(x))
@@ -2260,7 +2260,7 @@ class DataTest(unittest.TestCase):
             float(cf.Data([1, 2]))
 
     def test_Data__int__(self):
-        """TODO."""
+        """Test the `__int__` Data method."""
         for x in (-1.9, -1.5, -1.4, -1, 0, 1, 1.0, 1.4, 1.9):
             self.assertEqual(int(cf.Data(x)), int(x))
             self.assertEqual(int(cf.Data(x)), int(x))
@@ -2269,7 +2269,7 @@ class DataTest(unittest.TestCase):
             _ = int(cf.Data([1, 2]))
 
     def test_Data_argmax(self):
-        """TODO."""
+        """Test the `argmax` Data method."""
         d = cf.Data(np.arange(120).reshape(4, 5, 6))
 
         self.assertEqual(d.argmax().array, 119)
@@ -2294,7 +2294,7 @@ class DataTest(unittest.TestCase):
             d.argmax(axis=d.ndim)
 
     def test_Data_percentile_median(self):
-        """TODO."""
+        """Test the `percentile` and (indirectly) `median` Data methods."""
         # ranks: a sequence of percentile rank inputs. NOTE: must
         # include 50 as the last input so that cf.Data.median is also
         # tested correctly.
@@ -2415,7 +2415,7 @@ class DataTest(unittest.TestCase):
                 d.percentile(q).array
 
     def test_Data_section(self):
-        """TODO."""
+        """Test the `section` Data method."""
         d = cf.Data(np.arange(24).reshape(2, 3, 4))
 
         e = d.section(-1)
@@ -2436,7 +2436,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(value.equals(d))
 
     def test_Data_count(self):
-        """TODO."""
+        """Test the `count` Data method."""
         d = cf.Data(np.arange(24).reshape(2, 3, 4))
         self.assertEqual(d.count().array, 24)
         for axis, c in enumerate(d.shape):
@@ -2450,7 +2450,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.count(axis=axis).datum(0), c - 1)
 
     def test_Data_count_masked(self):
-        """TODO."""
+        """Test the `count_masked` Data method."""
         d = cf.Data(np.arange(24).reshape(2, 3, 4))
         self.assertEqual(d.count_masked().array, 0)
 
@@ -2458,7 +2458,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.count_masked().array, 1)
 
     def test_Data_exp(self):
-        """TODO."""
+        """Test the `exp` Data method."""
         for x in (1, -1):
             a = 0.9 * x * self.ma
             c = np.ma.exp(a)
@@ -2479,7 +2479,7 @@ class DataTest(unittest.TestCase):
             _ = d.exp()
 
     def test_Data_func(self):
-        """TODO."""
+        """Test the `func` Data method."""
         a = np.array([[np.e, np.e**2, np.e**3.5], [0, 1, np.e**-1]])
 
         # Using sine as an example function to apply
@@ -2524,7 +2524,7 @@ class DataTest(unittest.TestCase):
         self.assertIs(e.array[0], np.ma.masked)
 
     def test_Data_log(self):
-        """TODO."""
+        """Test the `log` Data method."""
         # Test natural log, base e
         a = np.array([[np.e, np.e**2, np.e**3.5], [0, 1, np.e**-1]])
         b = np.log(a)
@@ -2568,7 +2568,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.shape, b.shape)
 
     def test_Data_trigonometric_hyperbolic(self):
-        """TODO."""
+        """Test the trigonometric and hyperbolic Data methods."""
         # Construct all trig. and hyperbolic method names from the 3 roots:
         trig_methods_root = ["sin", "cos", "tan"]
         trig_methods = trig_methods_root + [
@@ -2664,7 +2664,7 @@ class DataTest(unittest.TestCase):
         #         self.assertTrue((d1.mask.array == c.mask).all())
 
     def test_Data_filled(self):
-        """TODO."""
+        """Test the `filled` Data method."""
         d = cf.Data([[1, 2, 3]])
         self.assertTrue((d.filled().array == [[1, 2, 3]]).all())
 
@@ -2682,7 +2682,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.filled().array == ["", "b", "c"]).all())
 
     def test_Data_del_units(self):
-        """TODO."""
+        """Test the `del_units` Data method."""
         d = cf.Data(1)
         with self.assertRaises(ValueError):
             d.del_units()
@@ -2704,7 +2704,7 @@ class DataTest(unittest.TestCase):
             d.del_units()
 
     def test_Data_del_calendar(self):
-        """TODO."""
+        """Test the `del_calendar` Data method."""
         for units in (None, "", "m", "days since 2000-1-1"):
             d = cf.Data(1, units)
             with self.assertRaises(ValueError):
@@ -2716,7 +2716,7 @@ class DataTest(unittest.TestCase):
             d.del_calendar()
 
     def test_Data_get_calendar(self):
-        """TODO."""
+        """Test the `get_calendar` Data method."""
         for units in (None, "", "m", "days since 2000-1-1"):
             d = cf.Data(1, units)
             with self.assertRaises(ValueError):
@@ -2726,7 +2726,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.get_calendar(), "noleap")
 
     def test_Data_has_units(self):
-        """TODO."""
+        """Test the `has_units` Data method."""
         d = cf.Data(1, "")
         self.assertTrue(d.has_units())
         d = cf.Data(1, "m")
@@ -2738,7 +2738,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.has_units())
 
     def test_Data_has_calendar(self):
-        """TODO."""
+        """Test the `has_calendar` Data method."""
         d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
         self.assertTrue(d.has_calendar())
 
@@ -2747,7 +2747,7 @@ class DataTest(unittest.TestCase):
             self.assertFalse(d.has_calendar())
 
     def test_Data_where(self):
-        """TODO."""
+        """Test the `where` Data method."""
         a = np.arange(10)
         d = cf.Data(a)
         b = np.where(a < 5, a, 10 * a)
@@ -2821,7 +2821,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array == a).all())
 
     def test_Data__init__compression(self):
-        """TODO."""
+        """Test the creation of Data initialised from compressed data."""
         import cfdm
 
         # Ragged
@@ -2859,7 +2859,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == f.array).all())
 
     def test_Data_empty(self):
-        """TODO."""
+        """Test the `empty` Data method."""
         for shape, dtype_in, dtype_out in zip(
             [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
         ):
@@ -2868,7 +2868,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.dtype, dtype_out)
 
     def test_Data_full(self):
-        """TODO."""
+        """Test the `full` Data method."""
         fill_value = 999
         for shape, dtype_in, dtype_out in zip(
             [(), (2,), (4, 5)], [None, float, bool], [int, float, bool]
@@ -2881,7 +2881,7 @@ class DataTest(unittest.TestCase):
             )
 
     def test_Data_ones(self):
-        """TODO."""
+        """Test the `ones` Data method."""
         for shape, dtype_in, dtype_out in zip(
             [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
         ):
@@ -2891,7 +2891,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == np.ones(shape, dtype=dtype_in)).all())
 
     def test_Data_zeros(self):
-        """TODO."""
+        """Test the `zeros` Data method."""
         for shape, dtype_in, dtype_out in zip(
             [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
         ):
@@ -2901,7 +2901,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == np.zeros(shape, dtype=dtype_in)).all())
 
     def test_Data__iter__(self):
-        """TODO."""
+        """Test the `__iter__` Data method."""
         for d in (
             cf.Data([1, 2, 3], "metres"),
             cf.Data([[1, 2], [3, 4]], "metres"),
@@ -2914,7 +2914,7 @@ class DataTest(unittest.TestCase):
             list(cf.Data(99, "metres"))
 
     def test_Data__bool__(self):
-        """TODO."""
+        """Test the `__bool__` Data method."""
         for x in (1, 1.5, True, "x"):
             self.assertTrue(bool(cf.Data(x)))
             self.assertTrue(bool(cf.Data([[x]])))
@@ -2930,7 +2930,7 @@ class DataTest(unittest.TestCase):
             bool(cf.Data([1, 2]))
 
     def test_Data_compute(self):
-        """TODO."""
+        """Test the `compute` Data method."""
         # Scalar numeric array
         d = cf.Data(9, "km")
         a = d.compute()
@@ -2957,7 +2957,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.compute(), 2.5)
 
     def test_Data_persist(self):
-        """TODO."""
+        """Test the `persist` Data method."""
         d = cf.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
@@ -2968,7 +2968,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(d))
 
     def test_Data_cyclic(self):
-        """TODO."""
+        """Test the `cyclic` Data method."""
         d = cf.Data(np.arange(12).reshape(3, 4))
         self.assertEqual(d.cyclic(), set())
         self.assertEqual(d.cyclic(0), set())
@@ -2997,7 +2997,7 @@ class DataTest(unittest.TestCase):
             d.cyclic(0)
 
     def test_Data_change_calendar(self):
-        """TODO."""
+        """Test the `change_calendar` Data method."""
         d = cf.Data(
             [0, 1, 2, 3, 4], "days since 2004-02-27", calendar="standard"
         )
@@ -3012,13 +3012,13 @@ class DataTest(unittest.TestCase):
             e = d.change_calendar("noleap").array
 
     def test_Data_chunks(self):
-        """TODO."""
+        """Test the `chunks` Data property."""
         dx = da.ones((4, 5), chunks=(2, 4))
         d = cf.Data.ones((4, 5), chunks=(2, 4))
         self.assertEqual(d.chunks, dx.chunks)
 
     def test_Data_rechunk(self):
-        """TODO."""
+        """Test the `rechunk` Data method."""
         dx = da.ones((4, 5), chunks=(2, 4)).rechunk(-1)
         d = cf.Data.ones((4, 5), chunks=(2, 4)).rechunk(-1)
         self.assertEqual(d.chunks, dx.chunks)
@@ -3030,7 +3030,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(d))
 
     def test_Data_reshape(self):
-        """TODO."""
+        """Test the `reshape` Data method."""
         a = np.arange(12).reshape(3, 4)
         d = cf.Data(a)
         self.assertIsNone(d.reshape(*d.shape, inplace=True))
@@ -3084,7 +3084,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((d.array == a).all())
 
     def test_Data_square(self):
-        """TODO."""
+        """Test the `square` Data method."""
         a = self.ma.astype(float)
         asquare = np.square(a)
 
@@ -3105,7 +3105,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array == asquare).all())
 
     def test_Data_sqrt(self):
-        """TODO."""
+        """Test the `sqrt` Data method."""
         a = self.ma.astype(float)
         asqrt = np.sqrt(a)
 
@@ -3131,7 +3131,7 @@ class DataTest(unittest.TestCase):
             d.sqrt()
 
     def test_Data_integral(self):
-        """TODO."""
+        """Test the `integral` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3150,7 +3150,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_max(self):
-        """TODO."""
+        """Test the `max` Data method."""
         # Masked array
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
@@ -3167,7 +3167,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_maximum_absolute_value(self):
-        """TODO."""
+        """Test the `maximum_absolute_value` Data method."""
         # Masked array
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
@@ -3184,7 +3184,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_mean(self):
-        """TODO."""
+        """Test the `mean` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3203,7 +3203,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_mean_absolute_value(self):
-        """TODO."""
+        """Test the `mean_absolute_value` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3222,7 +3222,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_mid_range(self):
-        """TODO."""
+        """Test the `mid_range` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
@@ -3242,7 +3242,7 @@ class DataTest(unittest.TestCase):
             cf.Data([0, 1], dtype=bool).mid_range()
 
     def test_Data_min(self):
-        """TODO."""
+        """Test the `min` Data method."""
         # Masked array
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
@@ -3259,7 +3259,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_minimum_absolute_value(self):
-        """TODO."""
+        """Test the `minimum_absolute_value` Data method."""
         # Masked array
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
@@ -3276,7 +3276,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_range(self):
-        """TODO."""
+        """Test the `range` Data method."""
         # Masked array
         a = self.ma
 
@@ -3297,7 +3297,7 @@ class DataTest(unittest.TestCase):
             cf.Data([0, 1], dtype=bool).range()
 
     def test_Data_root_mean_square(self):
-        """TODO."""
+        """Test the `root_mean_square` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3316,7 +3316,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_sample_size(self):
-        """TODO."""
+        """Test the `sample_size` Data method."""
         # Masked array
         a = self.ma
         d = cf.Data(a, "m", chunks=(2, 3, 2, 5))
@@ -3347,7 +3347,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_std(self):
-        """TODO."""
+        """Test the `std` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3359,7 +3359,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(std.equals(var.sqrt()))
 
     def test_Data_sum(self):
-        """TODO."""
+        """Test the `sum` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3378,7 +3378,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_sum_of_squares(self):
-        """TODO."""
+        """Test the `sum_of_squares` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3397,7 +3397,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_sum_of_weights(self):
-        """TODO."""
+        """Test the `sum_of_weights` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3429,7 +3429,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_sum_of_weights2(self):
-        """TODO."""
+        """Test the `sum_of_weights2` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3455,7 +3455,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_var(self):
-        """TODO."""
+        """Test the `var` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3515,7 +3515,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(np.allclose(e, b))
 
     def test_Data_mean_of_upper_decile(self):
-        """TODO."""
+        """Test the `mean_of_upper_decile` Data method."""
         # Masked array, non-masked weights
         a = self.ma
         weights = self.w
@@ -3574,7 +3574,7 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.mean_of_upper_decile(inplace=True))
 
     def test_Data_collapse_mtol(self):
-        """TODO."""
+        """Test the `mtol` keyword to the collapse Data methods."""
         # Data with exactly half of its elements masked
         d = cf.Data(np.arange(6), "m", mask=[0, 1, 0, 1, 0, 1], chunks=2)
 
@@ -3602,7 +3602,7 @@ class DataTest(unittest.TestCase):
             self.assertFalse(func(mtol=0.5).array.mask)
 
     def test_Data_collapse_units(self):
-        """TODO."""
+        """Test `Units` properties after applying collapse Data methods."""
         d = cf.Data([1, 2], "m")
 
         self.assertEqual(d.sample_size().Units, cf.Units())
@@ -3645,7 +3645,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(func().Units, cf.Units())
 
     def test_Data_collapse_keepdims(self):
-        """TODO."""
+        """Test the dimensions of outputs of collapse Data methods."""
         d = cf.Data(np.arange(6).reshape(2, 3))
 
         for func in (
@@ -3680,7 +3680,7 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(e.shape, tuple(s))
 
     def test_Data_collapse_dtype(self):
-        """TODO."""
+        """Test `dtype` properties after applying collapse Data methods."""
         d = cf.Data([1, 2, 3, 4], dtype="i4", chunks=2)
         e = cf.Data([1.0, 2, 3, 4], dtype="f4", chunks=2)
         self.assertTrue(d.dtype, "i4")
@@ -3737,7 +3737,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(func(weights=w).dtype, r)
 
     def test_Data_get_units(self):
-        """TODO."""
+        """Test the `get_units` Data method."""
         for units in ("", "m", "days since 2000-01-01"):
             d = cf.Data(1, units)
             self.assertEqual(d.get_units(), units)
@@ -3747,7 +3747,7 @@ class DataTest(unittest.TestCase):
             d.get_units()
 
     def test_Data_set_calendar(self):
-        """TODO."""
+        """Test the `set_calendar` Data method."""
         d = cf.Data(1, "days since 2000-01-01")
         d.set_calendar("standard")
 
@@ -3759,7 +3759,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.Units, cf.Units("m"))
 
     def test_Data_set_units(self):
-        """TODO."""
+        """Test the `set_units` Data method."""
         for units in (None, "", "m", "days since 2000-01-01"):
             d = cf.Data(1, units)
             self.assertEqual(d.Units, cf.Units(units))
@@ -3777,7 +3777,7 @@ class DataTest(unittest.TestCase):
             d.set_units("km")
 
     def test_Data_allclose(self):
-        """TODO."""
+        """Test the `allclose` Data method."""
         d = cf.Data(1, "m")
         for x in (1, [1], np.array([[1]]), da.from_array(1), cf.Data(1)):
             self.assertTrue(d.allclose(x).array)
@@ -3816,7 +3816,7 @@ class DataTest(unittest.TestCase):
             d.allclose(e)
 
     def test_Data_isclose(self):
-        """TODO."""
+        """Test the `isclose` Data method."""
         d = cf.Data(1, "m")
         for x in (1, [1], np.array([[1]]), da.from_array(1), cf.Data(1)):
             self.assertTrue(d.isclose(x).array)
@@ -3849,7 +3849,7 @@ class DataTest(unittest.TestCase):
             d.isclose(e)
 
     def test_Data_to_dask_array(self):
-        """TODO."""
+        """Test the `to_dask_array` Data method."""
         d = cf.Data([1, 2, 3, 4], "m")
         d.Units = cf.Units("km")
         dx = d.to_dask_array()
@@ -3858,7 +3858,7 @@ class DataTest(unittest.TestCase):
         self.assertIs(da.asanyarray(d), dx)
 
     def test_Data_flat(self):
-        """TODO."""
+        """Test the `flat` Data method."""
         d = cf.Data([[1, 2], [3, 4]], mask=[[0, 1], [0, 0]])
         self.assertEqual(list(d.flat()), [1, 3, 4])
         self.assertEqual(
@@ -3866,7 +3866,7 @@ class DataTest(unittest.TestCase):
         )
 
     def test_Data_tolist(self):
-        """TODO."""
+        """Test the `tolist` Data method."""
         for x in (1, [1, 2], [[1, 2], [3, 4]]):
             d = cf.Data(x)
             e = d.tolist()
@@ -3874,7 +3874,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(d.equals(cf.Data(e)))
 
     def test_Data_masked_invalid(self):
-        """TODO."""
+        """Test the `masked_invalid` Data method."""
         a = np.array([0, 1, 2])
         b = np.array([0, 2, 0])
         with warnings.catch_warnings():
@@ -3891,7 +3891,7 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.masked_invalid(inplace=True))
 
     def test_Data_uncompress(self):
-        """TODO."""
+        """Test the `uncompress` Data method."""
         import cfdm
 
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
@@ -3906,7 +3906,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == a).all())
 
     def test_Data_data(self):
-        """TODO."""
+        """Test the `data` Data property."""
         for d in [
             cf.Data(1),
             cf.Data([1, 2], fill_value=0),
@@ -3917,7 +3917,7 @@ class DataTest(unittest.TestCase):
             self.assertIs(d.data, d)
 
     def test_Data_dump(self):
-        """TODO."""
+        """Test the `dump` Data method."""
         d = cf.Data([1, 2], "m")
         x = (
             "Data.shape = (2,)\nData.first_datum = 1\nData.last_datum  = 2\n"
@@ -3926,7 +3926,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.dump(display=False), x)
 
     def test_Data_fill_value(self):
-        """TODO."""
+        """Test the `fill_value` Data property."""
         d = cf.Data([1, 2], "m")
         self.assertIsNone(d.fill_value)
         d.fill_value = 999
@@ -3935,7 +3935,7 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.fill_value)
 
     def test_Data_override_units(self):
-        """TODO."""
+        """Test the `override_units` Data method."""
         d = cf.Data(1012, "hPa")
         e = d.override_units("km")
         self.assertEqual(e.Units, cf.Units("km"))
@@ -3944,7 +3944,7 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.override_units(cf.Units("watts"), inplace=True))
 
     def test_Data_override_calendar(self):
-        """TODO."""
+        """Test the `override_calendar` Data method."""
         d = cf.Data(1, "days since 2020-02-28")
         e = d.override_calendar("noleap")
         self.assertEqual(e.Units, cf.Units("days since 2020-02-28", "noleap"))
@@ -3953,7 +3953,7 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.override_calendar("all_leap", inplace=True))
 
     def test_Data_masked_all(self):
-        """TODO."""
+        """Test the `masked_all` Data method."""
         # shape
         for shape in ((), (2,), (2, 3)):
             a = np.ma.masked_all(shape)
@@ -3968,21 +3968,21 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.dtype, a.dtype)
 
     def test_Data_atol(self):
-        """TODO."""
+        """Test the `_atol` Data property."""
         d = cf.Data(1)
         self.assertEqual(d._atol, cf.atol())
         cf.atol(0.001)
         self.assertEqual(d._atol, 0.001)
 
     def test_Data_rtol(self):
-        """TODO."""
+        """Test the `_rtol` Data property."""
         d = cf.Data(1)
         self.assertEqual(d._rtol, cf.rtol())
         cf.rtol(0.001)
         self.assertEqual(d._rtol, 0.001)
 
     def test_Data_hardmask(self):
-        """TODO."""
+        """Test the `hardmask` Data property."""
         d = cf.Data([1, 2, 3])
         d.hardmask = True
         self.assertTrue(d.hardmask)
@@ -3998,21 +3998,21 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array.mask == [False, False, False]).all())
 
     def test_Data_harden_mask(self):
-        """TODO."""
+        """Test the `harden_mask` Data method."""
         d = cf.Data([1, 2, 3], hardmask=False)
         d.harden_mask()
         self.assertTrue(d.hardmask)
         self.assertEqual(len(d.to_dask_array().dask.layers), 2)
 
     def test_Data_soften_mask(self):
-        """TODO."""
+        """Test the `soften_mask` Data method."""
         d = cf.Data([1, 2, 3], hardmask=True)
         d.soften_mask()
         self.assertFalse(d.hardmask)
         self.assertEqual(len(d.to_dask_array().dask.layers), 2)
 
     def test_Data_compressed_array(self):
-        """TODO."""
+        """Test the `compressed_array` Data property."""
         import cfdm
 
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
@@ -4030,7 +4030,7 @@ class DataTest(unittest.TestCase):
         #       "(ValueError)"
 
     def test_Data_inspect(self):
-        """TODO."""
+        """Test the `inspect` Data method."""
         d = cf.Data([9], "m")
 
         f = io.StringIO()
@@ -4038,7 +4038,7 @@ class DataTest(unittest.TestCase):
             self.assertIsNone(d.inspect())
 
     def test_Data_fits_in_memory(self):
-        """TODO."""
+        """Test the `fits_in_memory` Data method."""
         size = int(0.1 * cf.free_memory() / 8)
         d = cf.Data.empty((size,), dtype=float)
         self.assertTrue(d.fits_in_memory())
@@ -4048,7 +4048,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.fits_in_memory())
 
     def test_Data_get_compressed(self):
-        """TODO."""
+        """Test the Data methods which get compression properties."""
         import cfdm
 
         # Compressed
@@ -4072,7 +4072,7 @@ class DataTest(unittest.TestCase):
             d.get_compressed_dimension()
 
     def test_Data_Units(self):
-        """TODO."""
+        """Test the `Units` Data property."""
         d = cf.Data(100, "m")
         self.assertEqual(d.Units, cf.Units("m"))
 
@@ -4089,12 +4089,12 @@ class DataTest(unittest.TestCase):
             del d.Units
 
     def test_Data_get_data(self):
-        """TODO."""
+        """Test the `get_data` Data method."""
         d = cf.Data(9)
         self.assertIs(d, d.get_data())
 
     def test_Data_get_count(self):
-        """TODO."""
+        """Test the `get_count` Data method."""
         import cfdm
 
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
@@ -4107,7 +4107,7 @@ class DataTest(unittest.TestCase):
             d.get_count()
 
     def test_Data_get_index(self):
-        """TODO."""
+        """Test the `get_index` Data method."""
         import cfdm
 
         f = cfdm.read("DSG_timeSeries_indexed.nc")[0]
@@ -4120,7 +4120,7 @@ class DataTest(unittest.TestCase):
             d.get_index()
 
     def test_Data_get_list(self):
-        """TODO."""
+        """Test the `get_list` Data method."""
         import cfdm
 
         f = cfdm.read("gathered.nc")[0]
