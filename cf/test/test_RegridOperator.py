@@ -18,10 +18,10 @@ class RegridOperatorTest(unittest.TestCase):
         self.assertEqual(self.r.method, "conservative_1st")
 
     def test_RegridOperator_src_shape(self):
-        self.assertEqual(self.r.src_shape, f.cyclic('X'))
+        self.assertEqual(self.r.src_shape, f.cyclic("X"))
 
     def test_RegridOperator_dst_shape(self):
-        self.assertEqual(self.r.dst_shape, f.cyclic('X'))
+        self.assertEqual(self.r.dst_shape, f.cyclic("X"))
 
     def test_RegridOperator_src_cyclic(self):
         self.assertTrue(self.r.src_cyclic, True)
@@ -40,14 +40,14 @@ class RegridOperatorTest(unittest.TestCase):
 
     def test_RegridOperator_get_parameter(self):
         self.r.get_parameter("dst")
-        self.assertIsNone(self.r.get_parameter('bad_name', None))
+        self.assertIsNone(self.r.get_parameter("bad_name", None))
         with self.assertRaises(ValueError):
             self.r.get_parameter(None)
 
     def test_RegridOperator_copy(self):
         self.assertIsInstance(self.r.copy(), self.r)
 
-        
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()

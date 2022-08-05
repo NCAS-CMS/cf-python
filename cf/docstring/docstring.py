@@ -326,7 +326,6 @@ _docstring_substitution_definitions = {
                 the *method* parameter for details).
 
                 Ignored if *dst* is a `RegridOperator`.""",
-  
     # use_dst_mask
     "{{use_dst_mask: `bool`, optional}}}": """use_dst_mask: `bool`, optional
                 If *dst* is a `Field` and *use_dst_mask* is False (the
@@ -338,8 +337,8 @@ _docstring_substitution_definitions = {
                 being regridded, then the mask of the destination grid
                 is taken as the subspace defined by index ``0`` of all
                 the non-regridding dimensions.
-            
-                Ignored if *dst* is not a `Field`.""",  
+
+                Ignored if *dst* is not a `Field`.""",
     # ignore_degenerate
     "{{ignore_degenerate: `bool`, optional}}": """ignore_degenerate: `bool`, optional
                 For conservative regridding methods, if True (the
@@ -391,7 +390,7 @@ _docstring_substitution_definitions = {
                   improvements by avoiding having to calculate the
                   weights for each source field. Note that for the
                   other types of *dst* parameter, the calculation of
-                  the regrid weights is not a lazy operation.                  
+                  the regrid weights is not a lazy operation.
 
                   .. note:: The source grid of the regrid operator is
                             checked for compatability with the grid of

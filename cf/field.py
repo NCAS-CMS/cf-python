@@ -11,13 +11,11 @@ except ImportError:
 import cfdm
 import numpy as np
 from numpy import array as numpy_array
-from numpy import array_equal as numpy_array_equal
 from numpy import asanyarray as numpy_asanyarray
 from numpy import can_cast as numpy_can_cast
 from numpy import delete as numpy_delete
 from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
-from numpy import finfo as numpy_finfo
 from numpy import full as numpy_full
 from numpy import ndarray as numpy_ndarray
 from numpy import prod as numpy_prod
@@ -25,10 +23,8 @@ from numpy import reshape as numpy_reshape
 from numpy import shape as numpy_shape
 from numpy import size as numpy_size
 from numpy import squeeze as numpy_squeeze
-from numpy import tile as numpy_tile
 from numpy import unique as numpy_unique
 from numpy import where as numpy_where
-from numpy.ma import is_masked as numpy_ma_is_masked
 from numpy.ma import isMA as numpy_ma_isMA
 from numpy.ma import where as numpy_ma_where
 
@@ -71,7 +67,6 @@ from .functions import (
     _DEPRECATION_ERROR_METHOD,
     DeprecationError,
     _section,
-    chunksize,
     parse_indices,
 )
 from .functions import relaxed_identities as cf_relaxed_identities
@@ -15411,7 +15406,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         coordinates.
 
         **Latitude and longitude coordinates**
-        
+
         The source and destination grids of the regridding must both
         be defined by latitude and longitude coordinates, which may be
         1-d dimension coordinates or 2-d auxiliary coordinates. These
@@ -15424,7 +15419,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         be defined. This is either automatically inferred from the
         exitence of 1-d dimension coordinates, or else must be specified
         with *src_axes* or *dst_axes* parameters
-        
+
         **Cyclicity of the X axis**
 
         The cyclicity of the X (longitude) axes of the source and
@@ -15507,7 +15502,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 cyclicity will be inferred from the source grid
                 coordinates, defaulting to `False` if it can not be
                 determined.
-    
+
             dst_cyclic: `None` or `bool`, optional
                 Specifies whether or not the destination grid
                 longitude axis is cyclic (i.e. the first and last
@@ -15519,9 +15514,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 Ignored if *dst* is a `RegridOperator`.
 
             {{use_src_mask: `bool`, optional}}
-  
+
             {{use_dst_mask: `bool`, optional}}
-  
+
             src_axes: `dict`, optional
                 When the source grid is defined by 2-d latitude and
                 longitude coordinates and the X and Y dimensions can
@@ -15585,7 +15580,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 .. versionadded:: TODODASK
 
             {{inplace: `bool`, optional}}
- 
+
             axis_order: sequence, optional
                 Deprecated at version TODODASK.
 
@@ -15653,7 +15648,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         from .regrid import regrid
-   
+
         return regrid(
             "spherical",
             self,
@@ -15666,7 +15661,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             src_axes=src_axes,
             dst_axes=dst_axes,
             ignore_degenerate=ignore_degenerate,
-            return_operator=return_operator,            
+            return_operator=return_operator,
             check_coordinates=check_coordinates,
             inplace=inplace,
         )
@@ -15683,10 +15678,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         fracfield=False,
         axis_order=None,
         ignore_degenerate=True,
+        return_operator=False,
+        check_coordinates=False,
         inplace=False,
         i=False,
         _compute_field_mass=None,
-        return_operator=False,
     ):
         """Regrid the field to a new Cartesian grid.
 
@@ -15699,7 +15695,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Cartesian space.
 
         **Coordinates**
-        
+
         The source and destination grids of the regridding must both
         be defined by equivalent coordinates, which must be 1-d
         dimension coordinates. These are automatically detected from
@@ -15756,9 +15752,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             {{method: `str` or `None`, optional}}
 
             {{use_src_mask: `bool`, optional}}
-  
+
             {{use_dst_mask: `bool`, optional}}
-    
+
             src_axes: `sequence`, optional
                 Define the source grid axes to be regridded. The
                 sequence of between one and three values identify
@@ -15792,8 +15788,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 domain construct's `domain_axis` method. For example,
                 for a value of ``'ncdim%x'``, the domain axis
                 construct returned by ``g.domain_axis('ncdim%x')`` is
-                selected. 
-        
+                selected.
+
                 Must have the same number of values as the *src_axes*
                 parameter, if set, and the source and destination
                 regridding axes must be specified in the same
@@ -15809,7 +15805,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: TODODASK
 
-            axes: optional 
+            axes: optional
                 Define the axes to be regridded for the source grid
                 and, if *dst* is a `Field` or `Domain`, the
                 destination grid. The *axes* parameter is a
@@ -15885,7 +15881,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         from .regrid import regrid
-   
+
         return regrid(
             self,
             dst,

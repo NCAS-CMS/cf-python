@@ -1,2 +1,2 @@
+from .regrid import regrid
 from .regridoperator import RegridOperator
-from .utils import regrid

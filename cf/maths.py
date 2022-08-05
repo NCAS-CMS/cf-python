@@ -98,8 +98,12 @@ def relative_vorticity(
 
     # Get the X and Y coordinates
 
-    u_x_key, u_x = f.dimension_coordinate('X', default=(None, None), items=True)
-    v_y_key, v_y = f.dimension_coordinate('Y', default=(None, None), items=True)
+    u_x_key, u_x = f.dimension_coordinate(
+        "X", default=(None, None), items=True
+    )
+    v_y_key, v_y = f.dimension_coordinate(
+        "Y", default=(None, None), items=True
+    )
     if u_x is None:
         raise ValueError(f"No unique {name} dimension coordinate")
 

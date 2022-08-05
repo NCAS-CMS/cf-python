@@ -2052,7 +2052,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         from dask.core import flatten
- 
+
         if interpolation is not None:
             _DEPRECATION_ERROR_KWARGS(
                 self,
@@ -3398,7 +3398,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @daskified(_DASKIFIED_VERBOSE)
-    def _regrid(self, method=None, operator=None, regrid_axes=None, regridded_sizes=None):
+    def _regrid(
+        self,
+        method=None,
+        operator=None,
+        regrid_axes=None,
+        regridded_sizes=None,
+    ):
         """Regrid the data.
 
         .. versionadded:: TODODASK
@@ -3413,15 +3419,15 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 The definition of the source and destination grids and
                 the regridding weights.
 
-            regrid_axes: sequence of `int`            
+            regrid_axes: sequence of `int`
                 The positions of the regrid axes in the data, given in
                 the relative order expected by the regrid
-                operator. For spherical regridding this order is [X,
-                Y].
+                operator. For spherical regridding this order is [Y,
+                X].
 
                 *Parameter example:*
-                  ``[3, 2]``
-        
+                  ``[2, 3]``
+
             regridded_sizes: `dict`
                 Mapping of the regrid axes, defined by the integer
                 elements of *regrid_axes*, to their regridded sizes.
@@ -3435,9 +3441,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 The regridded data.
 
         """
+        print ("regrid_axes",regrid_axes, regridded_sizes)
         from dask import delayed
+
         from .dask_regrid import regrid, regrid_weights
-        
+
         shape = self.shape
         src_shape = tuple(shape[i] for i in regrid_axes)
         if src_shape != operator.src_shape:
@@ -3454,7 +3462,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         numblocks = dx.numblocks
         if not all(numblocks[i] == 1 for i in regrid_axes):
             chunks = [
-                (-1,) if i in regrid_axes else c for i, c in enumerate(chunks)
+                (-1,) if i in regrid_axes else c
+                for i, c in enumerate(dx.chunks)
             ]
             dx = dx.rechunk(chunks)
 
@@ -3486,16 +3495,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         weights = da.asanyarray(operator.weights)
         if weights.npartitions > 1:
-            weigths = weights.rechunk(-1)
-            
+            weights = weights.rechunk(-1)
+
         row = da.asanyarray(operator.row)
         if row.npartitions > 1:
             row = row.rechunk(-1)
 
         col = da.asanyarray(operator.col)
         if col.npartitions > 1:
-            col =  col.rechunk(-1)
-                         
+            col = col.rechunk(-1)
+
         weights_func = partial(
             regrid_weights,
             src_shape=src_shape,
