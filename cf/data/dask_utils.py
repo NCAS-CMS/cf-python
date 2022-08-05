@@ -269,7 +269,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
 
     """
     from math import prod
-    
+
     if np.ma.is_masked(a):
         # ------------------------------------------------------------
         # Input array is masked: Replace missing values with NaNs and
