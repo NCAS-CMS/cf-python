@@ -3510,31 +3510,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return data0
 
-    def _move_flip_to_partitions(self):
-        """Reverses an axis in the sub-array of each partition.
-
-        .. note:: This does not change the master array.
-
-        """
-        #        flip = self._flip
-        flip = self._flip()
-        if not flip:
-            return
-
-        for partition in self.partitions.matrix.flat:
-            p_axes = partition.axes
-            p_flip = partition.flip[:]
-            for axis in flip:
-                if axis in p_flip:
-                    p_flip.remove(axis)
-                elif axis in p_axes:
-                    p_flip.append(axis)
-            # --- End: for
-            partition.flip = p_flip
-        # --- End: for
-
-        self._flip([])
-
     @daskified(_DASKIFIED_VERBOSE)
     def _unary_operation(self, operation):
         """Implement unary arithmetic operations.
