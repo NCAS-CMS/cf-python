@@ -178,7 +178,7 @@ class RegridOperator:
     @property
     def src_cyclic(self):
         """Whether or not the source grid longitude axis is cyclic."""
-        return self._src_cylcic
+        return self._src_cyclic
 
     @property
     def src_mask(self):
@@ -225,8 +225,36 @@ class RegridOperator:
             src_bounds=deepcopy(self.src_bounds),
             coord_sys=self.coord_sys,
             start_index=self.start_index,
-            parameters=deepcopy(self.parameters),
+            parameters=deepcopy(self.parameters()),
         )
+
+    def dump(self):
+        """"""
+        _title = repr(self)[4:-1]
+        line = f"{''.ljust(len(_title), '-')}"
+        string = [line, _title, line]
+
+        for attr in (
+            "weights",
+            "row",
+            "col",
+            "coord_sys",
+            "method",
+            "src_shape",
+            "dst_shape",
+            "src_cyclic",
+            "dst_cyclic",
+            "src_mask",
+            "dst_mask",
+            "src_coords",
+            "src_bounds",
+            "start_index",
+        ):
+            string.append(f"{attr}: {getattr(self, attr)}")
+
+        string.append(f"parameters: {self.parameters()}")
+
+        return "\n".join(string)
 
     def get_parameter(self, parameter, *default):
         """Return a regrid operation parameter.

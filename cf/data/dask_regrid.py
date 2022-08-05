@@ -272,17 +272,30 @@ def _regrid(
             See `regrid` for details.
 
         min_weight: float, optional
+            A very small positive number less than one. By default
+            *min_weight* is ``2.5*np.finfo(np.dtype("float64")).eps``,
+            i.e. ``~5.551115123125783e-16`
 
-            For linear regridding if, masked source grid cell i,
-            ``w_ji`` is strictly less than *min_weight*, then the
-            masked source grid cell is assumed to not overlap with
+            Ignored if the source grid is not masked, or if the
+            regridding method is not linear or not first-order
+            conservative.
+
+            For linear regridding if, for masked source grid cell i,
+            ``w_ji`` is strictly less than *min_weight*, then this
+            masked source grid cell is assumed to not contribute to
             destination grid cell j. In this case, source grid cell i
             being masked is not a sufficient condition for destination
             grid cell j being masked.
 
-            Ignored if the source grid is not masked, or if the
-            regriddig method is not linear # nor first-order
-            conservative.
+            **Linear regridding**
+
+            If the weight, ``w_ji``, for masked source grid cell is
+            strictly less than *min_weight*, then this masked source
+            grid cell is assumed to not contribute to destination grid
+            cell j. In this case, source grid cell i being masked is
+            not a sufficient condition for destination grid cell j
+            being masked.
+
 
         method: `str`
             The name of the regridding method.
@@ -512,7 +525,7 @@ def regrid_weights(
 
     from scipy.sparse import coo_array
 
-    print ("src_shape", src_shape)
+    #    print ("src_shape", src_shape)
     # Create a sparse array for the weights
     src_size = prod(src_shape)
     dst_size = prod(dst_shape)
@@ -536,7 +549,7 @@ def regrid_weights(
         # identified by 'dst_mask'.
         not_masked = np.count_nonzero(w, axis=1, keepdims=True)
         if dst_mask is not None:
-            print (99999999999999, dst_mask[2:, 2:], not_masked)
+            #            print (99999999999999, dst_mask[2:, 2:], not_masked)
             if dst_mask.dtype != bool or dst_mask.shape != dst_shape:
                 raise ValueError(
                     "The 'dst_mask' parameter must be None or a "
@@ -545,10 +558,10 @@ def regrid_weights(
                 )
 
             not_masked = not_masked.astype(bool, copy=False)
-            print (not_masked.shape, dst_mask.shape, ~dst_mask[2:, 2:])
+            #            print (not_masked.shape, dst_mask.shape, ~dst_mask[2:, 2:])
             not_masked &= ~dst_mask.reshape(dst_mask.size, 1)
-            print (not_masked.sum())
-           
+        #            print (not_masked.sum())
+
         if not not_masked.all():
             # Some destination cells are masked
             w = np.ma.where(not_masked, w, np.ma.masked)

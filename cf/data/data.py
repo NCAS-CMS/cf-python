@@ -3441,7 +3441,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 The regridded data.
 
         """
-        print ("regrid_axes",regrid_axes, regridded_sizes)
+        #        print ("regrid_axes",regrid_axes, regridded_sizes)
         from dask import delayed
 
         from .dask_regrid import regrid, regrid_weights

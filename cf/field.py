@@ -15482,7 +15482,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   longitude coordinates of the domain construct.
 
                 * Sequence of `Coordinate`: The grid is defined by two
-                  1-d dimension coordinate constructs or two 2-d
+                  1-d dimension coordinate constructs, or two 2-d
                   auxiliary coordinate constructs, that define the
                   spherical latitude and longitude coordinates (in any
                   order) of the destination grid.
@@ -15518,12 +15518,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             {{use_dst_mask: `bool`, optional}}
 
             src_axes: `dict`, optional
-                When the source grid is defined by 2-d latitude and
-                longitude coordinates and the X and Y dimensions can
-                not be automatically inferred from the existence of
-                1-d dimension coordinates, then they must be
-                identified with the *src_axes* dictionary, with keys
-                ``'X'`` and ``'Y'``.
+                When the source grid's X and Y dimensions can not be
+                inferred from the existence of 1-d dimension
+                coordinates, then they must be identified with the
+                *src_axes* dictionary, with keys ``'X'`` and ``'Y'``.
 
                 The dictionary values identify a unique domain axis by
                 passing the given axis description to a call of the
@@ -15541,12 +15539,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   ``{'X': 1, 'Y': 0}``
 
             dst_axes: `dict`, optional
-                When the destination grid is defined by 2-d latitude
-                and longitude coordinates and the X and Y dimensions
-                can not be automatically inferred from the existence
-                of 1-d dimension coordinates, then they must be
-                identified with the *dst_axes* dictionary, with keys
-                ``'X'`` and ``'Y'``.
+                When the destination grid's X and Y dimensions can not
+                be inferred from the existence of 1-d dimension
+                coordinates, then they must be identified with the
+                *dst_axes* dictionary, with keys ``'X'`` and ``'Y'``.
 
                 If *dst* is a `Field` or `Domain`, then the dictionary
                 values identify a unique domain axis by passing the
@@ -15883,9 +15879,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         from .regrid import regrid
 
         return regrid(
+            "Cartesian",
             self,
             dst,
-            coords_sys="Cartesian",
             method=method,
             src_cyclic=False,
             dst_cyclic=False,

@@ -9,6 +9,7 @@ from . import mixin
 from .constructs import Constructs
 from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from .domainaxis import DomainAxis
 from .functions import _DEPRECATION_ERROR_ARG, parse_indices
 
 logger = logging.getLogger(__name__)
@@ -74,8 +75,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def __new__(cls, *args, **kwargs):
         """Creates a new Domain instance."""
         instance = super().__new__(cls)
-        instance._Data = Data
         instance._Constructs = Constructs
+        instance._Data = Data
+        instance._DomainAxis = DomainAxis
         return instance
 
     def __repr__(self):
@@ -512,7 +514,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         if key is None:
             return self.construct_key(identity, default=default)
 
-        return super().get_data_axes(key=key, default=default)
+        return super().get_data_axes(key, default=default)
 
     def identity(self, default="", strict=False, relaxed=False, nc_only=False):
         """Return the canonical identity.
