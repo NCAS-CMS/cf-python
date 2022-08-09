@@ -899,34 +899,6 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e.ndim, d.ndim - len(axes) + 1)
             self.assertEqual(e.size, d.size)
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "no attribute 'partitions'")
-    def test_Data_CachedArray(self):
-        """Test the `CachedArray` class for arrays stored on disk."""
-        factor = 0.99999999999999
-
-        cf.tempdir(self.tempdir)
-
-        original_FMF = cf.free_memory_factor(1 - factor)
-        d = cf.Data(np.arange(100))
-        cf.free_memory_factor(factor)
-        _ = d.array
-
-        for partition in d.partitions.flat:
-            self.assertTrue(partition.in_cached_file)
-
-        _ = np.arange(1000000).reshape(100, 10000)
-
-        cf.free_memory_factor(1 - factor)
-        d = cf.Data(np.arange(10000).reshape(100, 100))
-        cf.free_memory_factor(factor)
-
-        _ = d.array
-
-        for partition in d.partitions.flat:
-            self.assertTrue(partition.in_cached_file)
-
-        cf.free_memory_factor(original_FMF)
-
     def test_Data_cached_arithmetic_units(self):
         """Test arithmetic with, and units of, Data cached to disk."""
         d = cf.Data(self.a, "m")
