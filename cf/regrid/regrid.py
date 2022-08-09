@@ -1431,8 +1431,8 @@ def create_ESMF_weights(
     src_ESMF_field = ESMF.Field(src_ESMF_grid, "src")
     dst_ESMF_field = ESMF.Field(dst_ESMF_grid, "dst")
 
-    print (src_ESMF_grid)
-    print (dst_ESMF_grid)
+#    print (src_ESMF_grid)
+#    print (dst_ESMF_grid)
 
     mask_values = np.array([0], dtype="int32")
 
