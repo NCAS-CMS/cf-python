@@ -697,7 +697,6 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.shape, (0,))
         self.assertTrue((e.array == a.compressed()).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __eq__")
     def test_Data_stats(self):
         """Test the `stats` Data method."""
         d = cf.Data([1, 1])
