@@ -1720,16 +1720,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Digitise the array
         dx = d.to_dask_array()
-
         dx = da.digitize(dx, bins, right=upper)
+        d._set_dask(dx)
+        d.override_units(_units_None, inplace=True)
+
+        # More elegant to handle 'delete_bins' in cf- rather than Dask- space
+        # i.e. using cf.where with d in-place rather than da.where with dx
+        # just after the digitize operation above (cf.where already applies
+        # equivalent logic element-wise).
         if delete_bins:
             for n, db in enumerate(delete_bins):
                 db -= n
-                dx = np.ma.where(dx == db, np.ma.masked, dx)
-                dx = np.ma.where(dx > db, dx - 1, dx)
-
-        d._set_dask(dx)
-        d.override_units(_units_None, inplace=True)
+                d.where(d == db, np.ma.masked, d, inplace=True)
+                d.where(d > db, d - 1, d, inplace=True)
 
         if return_bins:
             if two_d_bins is None:
