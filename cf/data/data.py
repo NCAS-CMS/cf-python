@@ -10,6 +10,7 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
+from dask import compute, delayed
 from dask.array import Array
 from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
@@ -9376,16 +9377,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if all or locals()[stat]:
                 func = getattr(self, stat)
                 if stat in no_weights:
-                    value = func(squeeze=True)
+                    value = delayed(func)(squeeze=True)
                 else:
-                    value = func(squeeze=True, weights=weights)
+                    value = delayed(func)(squeeze=True, weights=weights)
 
                 out[stat] = value
 
         if all or sample_size:
-            out["sample_size"] = int(self.sample_size())
+            out["sample_size"] = delayed(lambda: int(self.sample_size()))()
 
-        return out
+        return compute(out)[0]
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
