@@ -293,7 +293,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(sa2.equals(sa2.copy()))
         # Unlike for numeric types, for string-like data as long as the data
         # is the same consider the arrays equal, even if the dtype differs.
-        # TODO DASK: this behaviour will be added via cfdm, test fails for now
+        # TODODASK: this behaviour will be added via cfdm, test fails for now
         # ## self.assertTrue(sa1.equals(sa2))
         sa3_data = sa2_data.astype("S5")
         sa3 = cf.Data(sa3_data, "m", chunks=mask_test_chunksize)
