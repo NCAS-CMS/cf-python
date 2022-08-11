@@ -2004,14 +2004,10 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(
                     (d // x).equals(cf.Data(a0 // x, "m"), verbose=1), message
                 )
-                # TODODASK SB: re-instate this once _combined_units is sorted,
-                # presently fails with error:
-                #     AttributeError: 'Data' object has no attribute '_size'
-                #
-                # message = "Failed in {!r}**{}".format(d, x)
-                # self.assertTrue(
-                #     (d ** x).equals(cf.Data(a0 ** x, "m2"), verbose=1), message
-                # )
+                message = "Failed in {!r}**{}".format(d, x)
+                self.assertTrue(
+                    (d**x).equals(cf.Data(a0**x, "m2"), verbose=1), message
+                )
                 message = "Failed in {!r}.__truediv__{}".format(d, x)
                 self.assertTrue(
                     d.__truediv__(x).equals(
@@ -2124,21 +2120,18 @@ class DataTest(unittest.TestCase):
                         e.equals(cf.Data(a, "m"), verbose=1), message
                     )
 
-                # TODODASK SB: re-instate this once _combined_units is sorted,
-                # presently fails with error, as with __pow__:
-                #     AttributeError: 'Data' object has no attribute '_size'
-                # a = a0.copy()
-                # try:
-                #     a **= x
-                # except TypeError:
-                #     pass
-                # else:
-                #     e = d.copy()
-                #     e **= x
-                #     message = "Failed in {!r}**={}".format(d, x)
-                #     self.assertTrue(
-                #         e.equals(cf.Data(a, "m2"), verbose=1), message
-                #     )
+                a = a0.copy()
+                try:
+                    a **= x
+                except TypeError:
+                    pass
+                else:
+                    e = d.copy()
+                    e **= x
+                    message = "Failed in {!r}**={}".format(d, x)
+                    self.assertTrue(
+                        e.equals(cf.Data(a, "m2"), verbose=1), message
+                    )
 
                 a = a0.copy()
                 try:
