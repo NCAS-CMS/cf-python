@@ -3144,7 +3144,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         return data0, data1, _units_1
                 else:
                     # units1 is defined and is not dimensionless
-                    if data0._size > 1:
+                    if data0.size > 1:
                         raise ValueError(
                             "Can only raise units to the power of a single "
                             "value at a time. Asking to raise to the power of "
@@ -3220,7 +3220,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         return data0, data1, _units_1
                 else:
                     # units0 is defined and is not dimensionless
-                    if data1._size > 1:
+                    if data1.size > 1:
                         raise ValueError(
                             "Can only raise units to the power of a single "
                             "value at a time. Asking to raise to the power of "
@@ -8496,7 +8496,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     index = (slice(-1, None),) * self.ndim
                 elif isinstance(index, int):
                     if index < 0:
-                        index += self._size
+                        index += self.size
 
                     index = np.unravel_index(index, self.shape)
                 elif len(index) == self.ndim:
