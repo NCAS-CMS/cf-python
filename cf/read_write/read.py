@@ -616,7 +616,7 @@ def read(
             "cf.read",
             {"chunk": chunk},
             "Use keyword 'chunks' instead.",
-            version="TODODASK",
+            version="TODODASKVER",
         )  # pragma: no cover
 
     # Parse select

@@ -65,7 +65,7 @@ class DataClassDeprecationsMixin:
             self,
             "__hash__",
             message="Consider using 'cf.hash_array' function array instead.",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )
 
@@ -79,19 +79,19 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+            self, "_HDF_chunks", version="TODODASKVER", removed_at="5.0.0"
         )  # pragma: no cover
 
     @_HDF_chunks.setter
     def _HDF_chunks(self, value):
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+            self, "_HDF_chunks", version="TODODASKVER", removed_at="5.0.0"
         )  # pragma: no cover
 
     @_HDF_chunks.deleter
     def _HDF_chunks(self):
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "_HDF_chunks", version="TODODASK", removed_at="5.0.0"
+            self, "_HDF_chunks", version="TODODASKVER", removed_at="5.0.0"
         )  # pragma: no cover
 
     @property
@@ -120,7 +120,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "in_memory", version="TODODASK", removed_at="5.0.0"
+            self, "in_memory", version="TODODASKVER", removed_at="5.0.0"
         )  # pragma: no cover
 
     @property
@@ -144,7 +144,7 @@ class DataClassDeprecationsMixin:
             self,
             "ismasked",
             message="Use the 'is_masked' attribute instead",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -171,7 +171,7 @@ class DataClassDeprecationsMixin:
             self,
             "isscalar",
             message="Use 'd.ndim == 0' instead",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -193,7 +193,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "ispartitioned", version="TODODASK", removed_at="5.0.0"
+            self, "ispartitioned", version="TODODASKVER", removed_at="5.0.0"
         )  # pragma: no cover
 
     @property
@@ -241,7 +241,7 @@ class DataClassDeprecationsMixin:
             "varray",
             message="Data are now stored as `dask` arrays for which, "
             "in general, a numpy array view is not robust.",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -290,7 +290,7 @@ class DataClassDeprecationsMixin:
         _DEPRECATION_ERROR_METHOD(
             self,
             "fits_in_one_chunk_in_memory",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -305,7 +305,7 @@ class DataClassDeprecationsMixin:
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -420,7 +420,7 @@ class DataClassDeprecationsMixin:
             "dumpd",
             message="Consider inspecting the dask array returned "
             "by 'to_dask_array' instead.",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -436,7 +436,7 @@ class DataClassDeprecationsMixin:
             "dumps",
             message="Consider inspecting the dask array returned "
             "by 'to_dask_array' instead.",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -515,7 +515,7 @@ class DataClassDeprecationsMixin:
             message="Use the methods 'nc_clear_hdf5_chunksizes', "
             "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
             "instead.",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -562,7 +562,7 @@ class DataClassDeprecationsMixin:
             "loadd",
             message="Consider inspecting the dask array returned "
             "by 'to_dask_array' instead.",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -594,7 +594,7 @@ class DataClassDeprecationsMixin:
             "loads",
             message="Consider inspecting the dask array returned "
             "by 'to_dask_array' instead.",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -734,7 +734,7 @@ class DataClassDeprecationsMixin:
             self,
             "mask_invalid",
             message="Use the method 'masked_invalid' instead.",
-            version="TODODASK",
+            version="TODODASKVER",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -777,7 +777,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "to_disk", version="TODODASK", removed_at="5.0.0"
+            self, "to_disk", version="TODODASKVER", removed_at="5.0.0"
         )  # pragma: no cover
 
     @staticmethod
