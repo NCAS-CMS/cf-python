@@ -1768,7 +1768,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2])
          [3 -- 5]
@@ -5695,7 +5695,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -5759,7 +5759,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[-99 1 2]
          [3 -- 5]
@@ -5829,7 +5829,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -5893,7 +5893,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
         >>> d[0, 0] = -99
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[-99 1 2]
          [3 -- 5]
@@ -5965,7 +5965,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -6042,7 +6042,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
         >>> d[0, 0] = -99
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[-99 1 2]
          [3 -- 5]
@@ -6120,7 +6120,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -6212,7 +6212,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -8780,7 +8780,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -9116,7 +9116,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -10728,7 +10728,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -10852,7 +10852,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -10929,7 +10929,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11016,7 +11016,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11115,7 +11115,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11214,7 +11214,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11302,7 +11302,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]

@@ -259,15 +259,15 @@ def first_non_missing_value(a, cached=None, method="index"):
     0
     >>> cf.data.utils.first_non_missing_value(d, cached=99)
     99
-    >>> d[0, 0] = np.ma.masked
+    >>> d[0, 0] = cf.masked
     >>> cf.data.utils.first_non_missing_value(d)
     1
-    >>> d[0, :] = np.ma.masked
+    >>> d[0, :] = cf.masked
     >>> cf.data.utils.first_non_missing_value(d)
     4
     >>> cf.data.utils.first_non_missing_value(d, cached=99)
     99
-    >>> d[...] = np.ma.masked
+    >>> d[...] = cf.masked
     >>> print(cf.data.utils.first_non_missing_value(d))
     None
     >>> print(cf.data.utils.first_non_missing_value(d, cached=99))
