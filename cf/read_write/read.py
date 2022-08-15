@@ -497,7 +497,7 @@ def read(
 
         chunks: TODODASK
 
-            .. versionadded:: TODODASK
+            .. versionadded:: TODODASKVER
 
         domain: `bool`, optional
             If True then return only the domain constructs that are

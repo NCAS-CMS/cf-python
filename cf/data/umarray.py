@@ -332,7 +332,7 @@ class UMArray(FileArray):
             um: `umfile_lib.File`
                 The UM or PP dataset to be be closed.
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
         :Returns:
 

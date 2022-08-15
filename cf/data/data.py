@@ -318,7 +318,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             to_memory: `bool`, optional
                 If True then ensure that the original data are in
@@ -340,7 +340,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If the input *array* is a `dask.array.Array` object
                 then *to_memory* is ignored.
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             init_options: `dict`, optional
                 Provide optional keyword arguments to methods and
@@ -1141,7 +1141,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         then they subspace along each dimension independently. This
         behaviour is similar to Fortran, but different to `numpy`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `__keepdims_indexing__`, `__getitem__`,
                      `__setitem__`,
@@ -1180,7 +1180,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         single-axis index reduces the number of array dimensions by
         1. This behaviour is the same as `numpy`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `__orthogonal_indexing__`, `__getitem__`,
                      `__setitem__`
@@ -1247,7 +1247,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _set_dask(self, array, copy=False, delete_source=True):
         """Set the dask array.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `to_dask_array`, `_del_dask`
 
@@ -1298,7 +1298,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _del_dask(self, default=ValueError(), delete_source=True):
         """Remove the dask array.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `_set_dask`, `to_dask_array`
 
@@ -1819,7 +1819,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{collapse squeeze: `bool`, optional}}
 
@@ -1835,7 +1835,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -1962,7 +1962,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             squeeze: `bool`, optional
                 If True then all axes over which percentiles are
@@ -1976,7 +1976,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -2169,7 +2169,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `persist` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `compute`, `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2365,7 +2365,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `array` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `persist`, `array`, `datetime_array`
 
@@ -2618,7 +2618,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 Choose which method to use to perform the cumulative
                 sum. See `dask.array.cumsum` for details.
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -2699,7 +2699,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     ):
         """Change the chunk structure of the data.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `chunks`, `dask.array.rechunk`
 
@@ -5679,7 +5679,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5743,7 +5743,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5813,7 +5813,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5876,7 +5876,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5949,7 +5949,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6027,7 +6027,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6104,7 +6104,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6196,7 +6196,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -7586,7 +7586,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `harden_mask` sets
         `hardmask` to `True`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `hardmask`, `soften_mask`
 
@@ -7683,7 +7683,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `soften_mask` sets
         `hardmask` to `False`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `hardmask`, `harden_mask`
 
@@ -8765,7 +8765,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -9103,7 +9103,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -10713,7 +10713,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -10836,7 +10836,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -10915,7 +10915,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11000,7 +11000,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {[inplace: `bool`, optional}}
 
@@ -11099,7 +11099,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {[inplace: `bool`, optional}}
 
@@ -11198,7 +11198,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11286,7 +11286,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11433,7 +11433,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def square(self, dtype=None, inplace=False):
         """Calculate the element-wise square.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `sqrt`, `sum_of_squares`
 
@@ -11481,7 +11481,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def sqrt(self, dtype=None, inplace=False):
         """Calculate the non-negative square root.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `square`
 
@@ -11759,7 +11759,7 @@ def _where_broadcastable(data, x, name):
     Raises an exception if the result of broadcasting *data* and *x*
     together does not have the same shape as *data*.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `where`
 
@@ -11816,7 +11816,7 @@ def _collapse(
 ):
     """Collapse data in-place using a given funcion.
 
-     .. versionadded:: TODODASK
+     .. versionadded:: TODODASKVER
 
      .. seealso:: `_parse_weights`
 
@@ -11928,7 +11928,7 @@ def _collapse(
 def _parse_weights(d, weights, axis=None):
     """Parse the weights input to `_collapse`.
 
-     .. versionadded:: TODODASK
+     .. versionadded:: TODODASKVER
 
      .. seealso:: `_collapse`
 

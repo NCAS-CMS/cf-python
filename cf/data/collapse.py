@@ -17,7 +17,7 @@ from ..docstring import _docstring_substitution_definitions
 class Collapse(metaclass=DocstringRewriteMeta):
     """Container for functions that collapse dask arrays.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
 
@@ -30,7 +30,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         See `_docstring_substitutions` for details.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `_docstring_substitutions`
 
@@ -48,7 +48,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         See `_docstring_package_depth` for details.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         """
         return 0
@@ -64,7 +64,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -113,7 +113,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -161,7 +161,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -219,7 +219,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -270,7 +270,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -317,7 +317,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -366,7 +366,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -406,7 +406,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -461,7 +461,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -513,7 +513,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -568,7 +568,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -629,7 +629,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -687,7 +687,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -746,7 +746,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -791,7 +791,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
     def unique(cls, a, split_every=None):
         """Return unique elements of the data.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -910,7 +910,7 @@ def double_precision_dtype(a, default=None, bool_type="i"):
 def mask_small_sample_size(x, N, axis, mtol, original_shape):
     """Mask elements where the sample size is below a threshold.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -968,7 +968,7 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
 def sum_weights_chunk(x, weights=None, square=False, N=None, **kwargs):
     """Sum the weights.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1030,7 +1030,7 @@ def combine_arrays(
 
     See `dask.array.reductions.mean_combine` for an example.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Returns:
 
@@ -1049,7 +1049,7 @@ def combine_arrays(
 def sum_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     """Alias of `combine_arrays` with ``func=chunk.sum``.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return combine_arrays(
@@ -1060,7 +1060,7 @@ def sum_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
 def max_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     """Alias of `combine_arrays` with ``func=chunk.max``.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return combine_arrays(
@@ -1071,7 +1071,7 @@ def max_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
 def min_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     """Alias of `combine_arrays` with ``func=chunk.min``.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return combine_arrays(
@@ -1083,7 +1083,7 @@ def sum_sample_sizes(pairs, axis, computing_meta=False, **kwargs):
     """Alias of `combine_arrays` with ``key="N", func=chunk.sum,
     dtype="i8"``.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return combine_arrays(
@@ -1106,7 +1106,7 @@ def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
      This function is passed to `dask.array.reduction` as its *chunk*
      parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1144,7 +1144,7 @@ def cf_mean_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1188,7 +1188,7 @@ def cf_mean_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1227,7 +1227,7 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1257,7 +1257,7 @@ def cf_max_combine(pairs, axis=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1291,7 +1291,7 @@ def cf_max_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1338,7 +1338,7 @@ def cf_mid_range_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1378,7 +1378,7 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1408,7 +1408,7 @@ def cf_min_combine(pairs, axis=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1442,7 +1442,7 @@ def cf_min_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1481,7 +1481,7 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1515,7 +1515,7 @@ def cf_range_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1551,7 +1551,7 @@ def cf_range_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1591,7 +1591,7 @@ def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1628,7 +1628,7 @@ def cf_rms_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1667,7 +1667,7 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1703,7 +1703,7 @@ def cf_sample_size_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1738,7 +1738,7 @@ def cf_sample_size_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1777,7 +1777,7 @@ def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1811,7 +1811,7 @@ def cf_sum_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1846,7 +1846,7 @@ def cf_sum_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1928,7 +1928,7 @@ def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1956,7 +1956,7 @@ def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
 
     It is assumed that the arrays are one-dimensional.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -1995,7 +1995,7 @@ def cf_var_chunk(
     https://en.wikipedia.org/wiki/Pooled_variance#Sample-based_statistics
     for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -2067,7 +2067,7 @@ def cf_var_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -2126,7 +2126,7 @@ def cf_var_agg(
     https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
     for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 

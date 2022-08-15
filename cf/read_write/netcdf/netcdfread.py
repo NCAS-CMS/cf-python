@@ -332,7 +332,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         For char and string netCDF types, the array is processed into
         a CF-friendly format.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. note:: This code is copied from
                   `cfdm.NetCDFArray.__getitem__`.

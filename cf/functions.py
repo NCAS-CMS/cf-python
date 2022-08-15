@@ -2585,7 +2585,7 @@ def hash_array(array, algorithm=hashlib.sha1):
             Constructor function for the desired hash algorithm,
             e.g. `hashlib.md5`, `hashlib.sha256`, etc.
 
-            .. versionadded:: TODODASK
+            .. versionadded:: TODODASKVER
 
     :Returns:
 

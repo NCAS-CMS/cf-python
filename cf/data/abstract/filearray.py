@@ -29,7 +29,7 @@ class FileArray(Array):
 
         Concurrent reads are assumed to be not supported.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         """
         return True
@@ -38,7 +38,7 @@ class FileArray(Array):
     def _dask_meta(self):
         """TODODASK.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         """
         return np.array((), dtype=self.dtype)
