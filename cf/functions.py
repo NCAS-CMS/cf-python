@@ -2833,13 +2833,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
             passed. By default it is False.
 
         stop: `int`, optional
-            Deprecated at version TODODASK.
+            Deprecated at version TODODASKVER.
 
             Stop after taking this number of sections and return. If
             stop is None all sections are taken.
 
         chunks: `bool`, optional
-            Deprecated at version TODODASK. Consider using
+            Deprecated at version TODODASKVER. Consider using
             `cf.Data.rechunk` instead.
 
             If True return sections that are of the maximum possible
@@ -2874,13 +2874,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     if stop is not None:
         raise DeprecationError(
             "The 'stop' keyword of cf._section() was deprecated at "
-            "version TODODASK and is no longer available"
+            "version TODODASKVER and is no longer available"
         )
 
     if chunks:
         raise DeprecationError(
             "The 'chunks' keyword of cf._section() was deprecated at "
-            "version TODODASK and is no longer available. Consider using "
+            "version TODODASKVER and is no longer available. Consider using "
             "cf.Data.rechunk instead."
         )
 

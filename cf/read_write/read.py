@@ -538,7 +538,7 @@ def read(
         select_options: deprecated at version 3.0.0
             Use methods on the returned `FieldList` instead.
 
-        chunk: deprecated at version TODODASK
+        chunk: deprecated at version TODODASKVER
             Use the *chunks* parameter instead.
 
     :Returns:

@@ -367,7 +367,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                  *Parameter example:*
                    ``{'from_array': {'inline_array': True}}``
 
-            chunk: deprecated at version TODODASK
+            chunk: deprecated at version TODODASKVER
                 Use the *chunks* parameter instead.
 
         **Examples**
@@ -2624,7 +2624,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 .. versionadded:: 3.3.0
 
-            masked_as_zero: deprecated at version TODODASK
+            masked_as_zero: deprecated at version TODODASKVER
                 See the examples for the new behaviour when there are
                 masked values.
 
@@ -3423,7 +3423,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                           non-cyclic in the output.
 
             _preserve: `bool`, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
         :Returns:
 
@@ -7352,7 +7352,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASK
+            size: deprecated at version TODODASKVER
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -9450,7 +9450,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Parameters:
 
-            itemsize: deprecated at version TODODASK
+            itemsize: deprecated at version TODODASKVER
                 The number of bytes per word of the master data array.
 
         :Returns:
@@ -11365,13 +11365,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 sectioned.
 
             stop: `int`, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
                 Stop after this number of sections and return. If stop is
                 None all sections are taken.
 
             chunks: `bool`, optional
-                Depreated at version TODODASK. Consider using
+                Depreated at version TODODASKVER. Consider using
                 `cf.Data.rechunk` instead.
 
                 If True return sections that are of the maximum possible
