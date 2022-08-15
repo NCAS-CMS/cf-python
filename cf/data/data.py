@@ -11371,7 +11371,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 None all sections are taken.
 
             chunks: `bool`, optional
-                Depreated at version TODODASKVER. Consider using
+                Deprecated at version TODODASKVER. Consider using
                 `cf.Data.rechunk` instead.
 
                 If True return sections that are of the maximum possible
