@@ -2279,7 +2279,7 @@ class PropertiesData(Properties):
         return data.array
 
     def dask_array(self, copy=True):
-        """TODODASK.
+        """TODODASKDOCS.
 
         :Parameters:
 
@@ -2290,7 +2290,7 @@ class PropertiesData(Properties):
 
         **Examples:**
 
-        TODODASK
+        TODODASKDOCS
 
         """
         data = self.get_data(None)
@@ -2325,7 +2325,7 @@ class PropertiesData(Properties):
         <CF Data(5): [999, ... 4] kg m-1 s-2>
 
         """
-        raise ValueError("TODODASK - deprecated?")
+        raise ValueError("TODODASKMSG - deprecated?")
 
     #        data = self.get_data(None)
     #        if data is None:

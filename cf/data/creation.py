@@ -58,9 +58,9 @@ def convert_to_builtin_type(x):
 
 
 def to_dask(array, chunks, **from_array_options):
-    """TODODASK.
+    """TODODASKDOCS.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -102,7 +102,7 @@ def to_dask(array, chunks, **from_array_options):
 def compressed_to_dask(array, chunks):
     """Create a dask array with `Subarray` chunks.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -294,7 +294,7 @@ def generate_axis_identifiers(n):
 
     The names are arbitrary and have no semantic meaning.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -324,7 +324,7 @@ def threads():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return config.get("scheduler", default=None) in (None, "threads")
@@ -336,7 +336,7 @@ def processes():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return config.get("scheduler", default=None) == "processes"
@@ -349,18 +349,18 @@ def synchronous():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return config.get("scheduler", default=None) == "synchronous"
 
 
 def get_lock():
-    """TODODASK.
+    """TODODASKDOCS.
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     if threads():
@@ -370,7 +370,8 @@ def get_lock():
         return False
 
     if processes():
-        raise ValueError("TODODASK - not yet sorted out processes lock")
+        raise ValueError("TODODASKMSG - not yet sorted out processes lock")
         # Do we even need one? Can't we have lock=False, here?
 
-    raise ValueError("TODODASK - what now? raise exception? cluster?")
+    # TODODASK: what now? raise exception? cluster?
+    raise ValueError("TODODASKMSG")

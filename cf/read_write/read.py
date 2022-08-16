@@ -497,7 +497,7 @@ def read(
 
         chunks: TODODASK
 
-            .. versionadded:: TODODASK
+            .. versionadded:: TODODASKVER
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -538,7 +538,7 @@ def read(
         select_options: deprecated at version 3.0.0
             Use methods on the returned `FieldList` instead.
 
-        chunk: deprecated at version TODODASK
+        chunk: deprecated at version TODODASKVER
             Use the *chunks* parameter instead.
 
     :Returns:
@@ -616,7 +616,7 @@ def read(
             "cf.read",
             {"chunk": chunk},
             "Use keyword 'chunks' instead.",
-            version="TODODASK",
+            version="TODODASKVER",
         )  # pragma: no cover
 
     # Parse select

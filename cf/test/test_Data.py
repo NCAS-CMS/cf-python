@@ -3994,13 +3994,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.compressed_array == f.compressed_array).all())
 
         d = cf.Data([1, 2, 3], "m")
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             d.compressed_array
-
-        # TODO: when cfdm>1.9.0.3 is released (i.e. a release that
-        #       includes https://github.com/NCAS-CMS/cfdm/pull/184),
-        #       we can replace the loose "(Exception)" with the tight
-        #       "(ValueError)"
 
     def test_Data_inspect(self):
         """Test the `inspect` Data method."""

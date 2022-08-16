@@ -318,7 +318,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             to_memory: `bool`, optional
                 If True then ensure that the original data are in
@@ -340,7 +340,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If the input *array* is a `dask.array.Array` object
                 then *to_memory* is ignored.
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             init_options: `dict`, optional
                 Provide optional keyword arguments to methods and
@@ -367,7 +367,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                  *Parameter example:*
                    ``{'from_array': {'inline_array': True}}``
 
-            chunk: deprecated at version TODODASK
+            chunk: deprecated at version TODODASKVER
                 Use the *chunks* parameter instead.
 
         **Examples**
@@ -541,7 +541,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @property
     def dask_compressed_array(self):
-        """TODODASK.
+        """TODODASKDOCS.
 
         :Returns:
 
@@ -1141,7 +1141,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         then they subspace along each dimension independently. This
         behaviour is similar to Fortran, but different to `numpy`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `__keepdims_indexing__`, `__getitem__`,
                      `__setitem__`,
@@ -1180,7 +1180,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         single-axis index reduces the number of array dimensions by
         1. This behaviour is the same as `numpy`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `__orthogonal_indexing__`, `__getitem__`,
                      `__setitem__`
@@ -1247,7 +1247,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _set_dask(self, array, copy=False, delete_source=True):
         """Set the dask array.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `to_dask_array`, `_del_dask`
 
@@ -1298,7 +1298,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _del_dask(self, default=ValueError(), delete_source=True):
         """Remove the dask array.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `_set_dask`, `to_dask_array`
 
@@ -1768,7 +1768,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2])
          [3 -- 5]
@@ -1819,7 +1819,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{collapse squeeze: `bool`, optional}}
 
@@ -1835,7 +1835,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -1962,7 +1962,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             squeeze: `bool`, optional
                 If True then all axes over which percentiles are
@@ -1976,7 +1976,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -2058,7 +2058,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "percentile",
                 {"interpolation": None},
                 message="Use the 'method' parameter instead.",
-                version="TODODASK",
+                version="TODODASKVER",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -2169,7 +2169,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `persist` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `compute`, `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2186,7 +2186,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASK
+        TODODASKDOCS
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -2198,10 +2198,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     def can_compute(self, functions=None, log_levels=None, override=False):
-        """TODODASK - this method is premature - needs thinking about as part
-        of the wider resource management issue
-
-        Whether or not it is acceptable to compute the data.
+        """Whether or not it is acceptable to compute the data.
 
         If the data is explicitly requested to be computed (as would
         be the case when writing to disk, or accessing the `array`
@@ -2256,6 +2253,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 False.
 
         """
+        # TODODASKAPI - this method is premature - needs thinking about as part
+        # of the wider resource management issue
+
         # TODODASK: Always return True for now, to aid development.
         return True
 
@@ -2365,7 +2365,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `array` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `persist`, `array`, `datetime_array`
 
@@ -2618,13 +2618,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 Choose which method to use to perform the cumulative
                 sum. See `dask.array.cumsum` for details.
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
                 .. versionadded:: 3.3.0
 
-            masked_as_zero: deprecated at version TODODASK
+            masked_as_zero: deprecated at version TODODASKVER
                 See the examples for the new behaviour when there are
                 masked values.
 
@@ -2675,7 +2675,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "cumsum",
                 {"masked_as_zero": None},
                 message="",
-                version="TODODASK",
+                version="TODODASKVER",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -2699,7 +2699,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     ):
         """Change the chunk structure of the data.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `chunks`, `dask.array.rechunk`
 
@@ -3423,7 +3423,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                           non-cyclic in the output.
 
             _preserve: `bool`, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
         :Returns:
 
@@ -4128,7 +4128,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @property
     def force_compute(self):
-        """TODODASK See also config settings."""
+        """TODODASKDOCS See also config settings."""
         return self._custom.get("force_compute", False)
 
     @force_compute.setter
@@ -4224,7 +4224,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASK
+        TODODASKDOCS
         >>> d = cf.Data([0.5, 1.5, 2.5])
         >>> d.dtype
         dtype(float64')
@@ -5679,7 +5679,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5695,7 +5695,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -5743,7 +5743,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5759,7 +5759,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[-99 1 2]
          [3 -- 5]
@@ -5813,7 +5813,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5829,7 +5829,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -5876,7 +5876,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5893,7 +5893,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
         >>> d[0, 0] = -99
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[-99 1 2]
          [3 -- 5]
@@ -5949,7 +5949,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5965,7 +5965,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -6027,7 +6027,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6042,7 +6042,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
         >>> d[0, 0] = -99
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[-99 1 2]
          [3 -- 5]
@@ -6104,7 +6104,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6120,7 +6120,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -6196,7 +6196,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6212,7 +6212,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -7193,8 +7193,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def insert_dimension(self, position=0, inplace=False):
         """Expand the shape of the data array in place.
 
-        # TODODASK bring back expand_dime alias (or rather alias this to that)
-
         .. seealso:: `flip`, `squeeze`, `swapaxes`, `transpose`
 
         :Parameters:
@@ -7213,6 +7211,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Examples**
 
         """
+        # TODODASKAPI bring back expand_dime alias (or rather alias this to
+        # that)
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Parse position
@@ -7352,7 +7353,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASK
+            size: deprecated at version TODODASKVER
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -7586,7 +7587,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `harden_mask` sets
         `hardmask` to `True`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `hardmask`, `soften_mask`
 
@@ -7683,7 +7684,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `soften_mask` sets
         `hardmask` to `False`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `hardmask`, `harden_mask`
 
@@ -8392,9 +8393,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Return an element of the data array as a standard Python
         scalar.
 
-        TODODASK: consider renameing/aliasing to 'item'. Might depend
-                  on whether or not the APIs are the same.
-
         The first and last elements are always returned with
         ``d.datum(0)`` and ``d.datum(-1)`` respectively, even if the data
         array is a scalar array or has two or more dimensions.
@@ -8484,6 +8482,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         6
 
         """
+        # TODODASKAPI: consider renaming/aliasing to 'item'. Might depend
+        # on whether or not the APIs are the same.
+
         if index:
             n_index = len(index)
             if n_index == 1:
@@ -8765,7 +8766,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -8780,7 +8781,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -9103,7 +9104,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -9116,7 +9117,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -9450,7 +9451,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Parameters:
 
-            itemsize: deprecated at version TODODASK
+            itemsize: deprecated at version TODODASKVER
                 The number of bytes per word of the master data array.
 
         :Returns:
@@ -10713,7 +10714,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -10728,7 +10729,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -10757,7 +10758,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         Equivalent in function to `numpy.roll`.
 
-        TODODASK  - note that it works for multiple axes
+        TODODASKDOCS  - note that it works for multiple axes
 
         :Parameters:
 
@@ -10790,7 +10791,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             `Data` or `None`
 
         """
-        # TODODASK - consider matching the numpy/dask api: "shift, axis="
+        # TODODASKAPI - consider matching the numpy/dask api: "shift, axis="
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -10836,7 +10837,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -10852,7 +10853,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -10915,7 +10916,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -10929,7 +10930,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11000,7 +11001,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {[inplace: `bool`, optional}}
 
@@ -11016,7 +11017,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11099,7 +11100,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {[inplace: `bool`, optional}}
 
@@ -11115,7 +11116,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11198,7 +11199,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11214,7 +11215,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11286,7 +11287,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11302,7 +11303,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11365,13 +11366,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 sectioned.
 
             stop: `int`, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
                 Stop after this number of sections and return. If stop is
                 None all sections are taken.
 
             chunks: `bool`, optional
-                Depreated at version TODODASK. Consider using
+                Deprecated at version TODODASKVER. Consider using
                 `cf.Data.rechunk` instead.
 
                 If True return sections that are of the maximum possible
@@ -11413,7 +11414,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "section",
                 {"chunks": chunks},
                 message="Consider using Data.rechunk() instead.",
-                version="TODODASK",
+                version="TODODASKVER",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -11422,7 +11423,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 self,
                 "section",
                 {"stop": stop},
-                version="TODODASK",
+                version="TODODASKVER",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -11433,7 +11434,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def square(self, dtype=None, inplace=False):
         """Calculate the element-wise square.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `sqrt`, `sum_of_squares`
 
@@ -11481,7 +11482,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def sqrt(self, dtype=None, inplace=False):
         """Calculate the non-negative square root.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `square`
 
@@ -11759,7 +11760,7 @@ def _where_broadcastable(data, x, name):
     Raises an exception if the result of broadcasting *data* and *x*
     together does not have the same shape as *data*.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `where`
 
@@ -11816,7 +11817,7 @@ def _collapse(
 ):
     """Collapse data in-place using a given funcion.
 
-     .. versionadded:: TODODASK
+     .. versionadded:: TODODASKVER
 
      .. seealso:: `_parse_weights`
 
@@ -11928,7 +11929,7 @@ def _collapse(
 def _parse_weights(d, weights, axis=None):
     """Parse the weights input to `_collapse`.
 
-     .. versionadded:: TODODASK
+     .. versionadded:: TODODASKVER
 
      .. seealso:: `_collapse`
 

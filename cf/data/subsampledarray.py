@@ -65,7 +65,7 @@ class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
      [305.0 333.75]
      [333.75 360.0]]
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
 

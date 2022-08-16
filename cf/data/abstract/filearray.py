@@ -25,20 +25,20 @@ class FileArray(Array):
 
     @property
     def _dask_lock(self):
-        """TODODASK.
+        """TODODASKDOCS.
 
         Concurrent reads are assumed to be not supported.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         """
         return True
 
     @property
     def _dask_meta(self):
-        """TODODASK.
+        """TODODASKDOCS.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         """
         return np.array((), dtype=self.dtype)

@@ -59,13 +59,13 @@ class UMArray(FileArray):
             byte_ordering: `str`, optional
 
             size: `int`
-                Deprecated at version TODODASK. If set will be
+                Deprecated at version TODODASKVER. If set will be
                 ignored.
 
                 Number of elements in the uncompressed array.
 
             ndim: `int`
-                Deprecated at version TODODASK. If set will be
+                Deprecated at version TODODASKVER. If set will be
                 ignored.
 
                 The number of uncompressed array dimensions.
@@ -332,7 +332,7 @@ class UMArray(FileArray):
             um: `umfile_lib.File`
                 The UM or PP dataset to be be closed.
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
