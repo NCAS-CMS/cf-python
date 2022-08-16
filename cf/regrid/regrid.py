@@ -31,7 +31,7 @@ ESMF_methods = {
     "nearest_stod": None,
     "patch": None,
 }
-
+# ppp
 # --------------------------------------------------------------------
 # Define a named tuple for the source or destination grid definition,
 # with the following names:
@@ -314,6 +314,10 @@ def regrid(
     src_grid = get_grid(
         coord_sys, src, "source", method, src_cyclic, axes=src_axes
     )
+
+    #    print (repr(src), repr(dst))
+    #    print ('\n\nsrc_grid=',  src_grid)
+    #    print ('\ndst_grid=',  dst_grid)
 
     conform_coordinate_units(src_grid, dst_grid)
 
@@ -879,6 +883,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
     :Returns:
 
         `Grid`
+            The `namedtuple` defining the grid.
 
     """
     if not axes:
@@ -902,7 +907,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
     if method == "patch" and n_axes != 2:
         raise ValueError(
             "The patch recovery method is only available for "
-            f"2-d regridding. {n_axes}-d has been requested"
+            f"2-d regridding. {n_axes}-d has been requested."
         )
 
     # Find the axis keys, sizes and indices of the regrid axes, in the
@@ -916,6 +921,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
 
         axis_keys.append(key)
         axis_sizes.append(domain_axis.size)
+    # ppp
 
     if f.construct_type == "domain":
         axis_indices = list(range(len(axis_keys)))
@@ -1431,8 +1437,8 @@ def create_ESMF_weights(
     src_ESMF_field = ESMF.Field(src_ESMF_grid, "src")
     dst_ESMF_field = ESMF.Field(dst_ESMF_grid, "dst")
 
-#    print (src_ESMF_grid)
-#    print (dst_ESMF_grid)
+    #    print (src_ESMF_grid)
+    #    print (dst_ESMF_grid)
 
     mask_values = np.array([0], dtype="int32")
 
