@@ -58,7 +58,7 @@ def convert_to_builtin_type(x):
 
 
 def to_dask(array, chunks, **from_array_options):
-    """TODODASK.
+    """TODODASKDOCS.
 
     .. versionadded:: TODODASKVER
 
@@ -356,7 +356,7 @@ def synchronous():
 
 
 def get_lock():
-    """TODODASK.
+    """TODODASKDOCS.
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
@@ -370,7 +370,8 @@ def get_lock():
         return False
 
     if processes():
-        raise ValueError("TODODASK - not yet sorted out processes lock")
+        raise ValueError("TODODASKMSG - not yet sorted out processes lock")
         # Do we even need one? Can't we have lock=False, here?
 
-    raise ValueError("TODODASK - what now? raise exception? cluster?")
+    # TODODASK: what now? raise exception? cluster?
+    raise ValueError("TODODASKMSG")

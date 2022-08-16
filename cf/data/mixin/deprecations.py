@@ -356,7 +356,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            "TODODASK. Use 'rechunk' instead"
+            "TODODASKMSG. Use 'rechunk' instead"
         )  # pragma: no cover
 
     def dumpd(self):
@@ -619,7 +619,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            "TODODASK Consider using rechunk instead"
+            "TODODASKMSG Consider using rechunk instead"
         )  # pragma: no cover
 
     @staticmethod
@@ -750,7 +750,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            "TODODASK - consider using 'chunks' instead"
+            "TODODASKMSG - consider using 'chunks' instead"
         )  # pragma: no cover
 
     def save_to_disk(self, itemsize=None):

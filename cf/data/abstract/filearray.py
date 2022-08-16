@@ -25,7 +25,7 @@ class FileArray(Array):
 
     @property
     def _dask_lock(self):
-        """TODODASK.
+        """TODODASKDOCS.
 
         Concurrent reads are assumed to be not supported.
 
@@ -36,7 +36,7 @@ class FileArray(Array):
 
     @property
     def _dask_meta(self):
-        """TODODASK.
+        """TODODASKDOCS.
 
         .. versionadded:: TODODASKVER
 

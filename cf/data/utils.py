@@ -477,15 +477,16 @@ def chunk_shapes(chunks):
 
 
 def is_small(array, threshold=None):
-    """TODODASK - need to define what 'small' is, and consider the API
-     in general
-
-    We adjust the size of the data here for the potiential of a mask
+    """We adjust the size of the data here for the potiential of a mask.
 
     Returns False if size is unknown
 
     .. versionadded:: 4.0.0
+
     """
+    # TODODASKAPI - need to define what 'small' is, and consider the API
+    # in general
+
     if threshold is None:
         threshold = 2**90  # TODODASK - True for now!
 
@@ -493,13 +494,14 @@ def is_small(array, threshold=None):
 
 
 def is_very_small(array, threshold=None):
-    """
-    TODODASK - need to define what 'very small' is, and consider the API
-    in general
+    """TODODASKDOCS.
 
     .. versionadded:: 4.0.0
 
     """
+    # TODODASKAPI - need to define what 'very small' is, and consider the
+    # API in general
+
     if threshold is None:
         threshold = 0.125 * 2**90  # TODODASK - True for now!
 

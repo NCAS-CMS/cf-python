@@ -541,7 +541,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @property
     def dask_compressed_array(self):
-        """TODODASK.
+        """TODODASKDOCS.
 
         :Returns:
 
@@ -2186,7 +2186,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASK
+        TODODASKDOCS
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -2198,10 +2198,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     def can_compute(self, functions=None, log_levels=None, override=False):
-        """TODODASK - this method is premature - needs thinking about as part
-        of the wider resource management issue
-
-        Whether or not it is acceptable to compute the data.
+        """Whether or not it is acceptable to compute the data.
 
         If the data is explicitly requested to be computed (as would
         be the case when writing to disk, or accessing the `array`
@@ -2256,6 +2253,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 False.
 
         """
+        # TODODASKAPI - this method is premature - needs thinking about as part
+        # of the wider resource management issue
+
         # TODODASK: Always return True for now, to aid development.
         return True
 
@@ -4128,7 +4128,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @property
     def force_compute(self):
-        """TODODASK See also config settings."""
+        """TODODASKDOCS See also config settings."""
         return self._custom.get("force_compute", False)
 
     @force_compute.setter
@@ -4224,7 +4224,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASK
+        TODODASKDOCS
         >>> d = cf.Data([0.5, 1.5, 2.5])
         >>> d.dtype
         dtype(float64')
@@ -7193,8 +7193,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def insert_dimension(self, position=0, inplace=False):
         """Expand the shape of the data array in place.
 
-        # TODODASK bring back expand_dime alias (or rather alias this to that)
-
         .. seealso:: `flip`, `squeeze`, `swapaxes`, `transpose`
 
         :Parameters:
@@ -7213,6 +7211,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Examples**
 
         """
+        # TODODASKAPI bring back expand_dime alias (or rather alias this to
+        # that)
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Parse position
@@ -8392,9 +8393,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Return an element of the data array as a standard Python
         scalar.
 
-        TODODASK: consider renameing/aliasing to 'item'. Might depend
-                  on whether or not the APIs are the same.
-
         The first and last elements are always returned with
         ``d.datum(0)`` and ``d.datum(-1)`` respectively, even if the data
         array is a scalar array or has two or more dimensions.
@@ -8484,6 +8482,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         6
 
         """
+        # TODODASKAPI: consider renaming/aliasing to 'item'. Might depend
+        # on whether or not the APIs are the same.
+
         if index:
             n_index = len(index)
             if n_index == 1:
@@ -10757,7 +10758,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         Equivalent in function to `numpy.roll`.
 
-        TODODASK  - note that it works for multiple axes
+        TODODASKDOCS  - note that it works for multiple axes
 
         :Parameters:
 
@@ -10790,7 +10791,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             `Data` or `None`
 
         """
-        # TODODASK - consider matching the numpy/dask api: "shift, axis="
+        # TODODASKAPI - consider matching the numpy/dask api: "shift, axis="
 
         d = _inplace_enabled_define_and_cleanup(self)
 
