@@ -10,10 +10,11 @@ def regrid(
     dst_shape=None,
     axis_order=None,
     ref_src_mask=None,
+        min_weight=None,
 ):
     """Regrid an array.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `regrid_weights`, `_regrid`,
 
@@ -106,6 +107,29 @@ def regrid(
             each regrid slice of *a* is automatically applied to
             *weights* prior to the regridding calculation.
 
+        min_weight: float, optional
+            A very small non-negative number less than one. By default
+            *min_weight* is ``2.5*np.finfo(np.dtype("float64")).eps``,
+            i.e. ``5.551115123125783e-16`. It is used during linear
+            and first-order conservative regridding when adjusting the
+            weights matrix to account for the data mask. It is ignored
+            for all other regrid methods, or if data being regridded
+            has no missing values.
+
+            **Linear regridding**
+
+            Destination grid cell j will only be masked if a) it is
+            masked in destination grid definition; or b) ``min_weight
+            <= w_ji`` for all masked source grid cells i for which
+            ``w_ji > 0``.
+
+            **Conservative first-order regridding**
+
+            Destination grid cell j will only be masked if a) it is
+            masked in destination grid definition; or b) The sum of
+            ``w_ji`` for all non-masked source grid cells i is strictly
+            less than *min_weight*.
+
     :Returns:
 
         `numpy.ndarray`
@@ -118,11 +142,13 @@ def regrid(
     # are the gathered regridding axes and whose left-hand dimension
     # represent of all the other dimensions.
     # ----------------------------------------------------------------
+    print (a.shape, weights.shape)
     a = a.transpose(axis_order)
     non_regrid_shape = a.shape[: a.ndim - len(src_shape)]
     dst_size, src_size = weights.shape
     a = a.reshape(-1, src_size)
     a = a.T
+    print (a.shape)
 
     # ----------------------------------------------------------------
     # Find the source grid mask
@@ -132,9 +158,14 @@ def regrid(
     if np.ma.is_masked(a):
         # Source data is masked for at least one slice
         mask = np.ma.getmaskarray(a)
-        if mask.shape[1] == 1 or set(mask.sum(axis=1).tolist()).issubset(
-            (0, mask.shape[1])
-        ):
+        print ('mask.shape=', mask.shape, (mask == mask[:, 0:1]).all())
+#        for i in range(96):
+#            print (mask[:, i])
+#        print ('mask.sum(axis=1).tolist()=',mask.sum(axis=1).tolist(), mask.shape[1])
+#        if mask.shape[1] == 1 or set(mask.sum(axis=1).tolist()).issubset(
+#            (0, mask.shape[1])
+#        ):
+        if mask.shape[1] == 1 or (mask == mask[:, 0:1]).all():
             # The source mask is same for all slices
             src_mask = mask[:, 0]
             if not src_mask.any():
@@ -179,6 +210,9 @@ def regrid(
     # ----------------------------------------------------------------
     # Regrid the source data
     # ----------------------------------------------------------------
+    if min_weight is None:
+        min_weight = np.finfo(np.dtype("float64")).eps * 2.5
+        
     if variable_mask:
         # Source data is masked and the source mask varies across
         # slices => we have to regrid each slice separately.
@@ -201,7 +235,7 @@ def regrid(
                 method,
                 prev_mask,
                 prev_weights,
-                min_weight=0,
+                min_weight=min_weight,
             )
 
         a = regridded_data
@@ -209,7 +243,7 @@ def regrid(
     else:
         # Source data is not masked or the source mask is same for all
         # slices => all slices can be regridded simultaneously.
-        a, _, _ = _regrid(a, src_mask, weights, method, min_weight=0)
+        a, _, _ = _regrid(a, src_mask, weights, method, min_weight=min_weight)
         del _
 
     # ----------------------------------------------------------------
@@ -232,7 +266,7 @@ def _regrid(
     method,
     prev_mask=None,
     prev_weights=None,
-    min_weight=0,
+    min_weight=None,
 ):
     """Worker function for `regrid`.
 
@@ -240,7 +274,7 @@ def _regrid(
     and creates the regridded array by forming the dot product of the
     modified *weights* and *a*.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `regrid`, `regrid_weights`
 
@@ -272,30 +306,13 @@ def _regrid(
             See `regrid` for details.
 
         min_weight: float, optional
-            A very small positive number less than one. By default
-            *min_weight* is ``2.5*np.finfo(np.dtype("float64")).eps``,
-            i.e. ``~5.551115123125783e-16`
+            A very small non-negative number less than one. It is used
+            during linear and first-order conservative regridding when
+            adjusting the weights matrix to account for the data
+            mask. It is ignored for all other regrid methods, or if
+            data being regridded has no missing values.
 
-            Ignored if the source grid is not masked, or if the
-            regridding method is not linear or not first-order
-            conservative.
-
-            For linear regridding if, for masked source grid cell i,
-            ``w_ji`` is strictly less than *min_weight*, then this
-            masked source grid cell is assumed to not contribute to
-            destination grid cell j. In this case, source grid cell i
-            being masked is not a sufficient condition for destination
-            grid cell j being masked.
-
-            **Linear regridding**
-
-            If the weight, ``w_ji``, for masked source grid cell is
-            strictly less than *min_weight*, then this masked source
-            grid cell is assumed to not contribute to destination grid
-            cell j. In this case, source grid cell i being masked is
-            not a sufficient condition for destination grid cell j
-            being masked.
-
+            See `regrid` for details`
 
         method: `str`
             The name of the regridding method.
@@ -406,6 +423,9 @@ def _regrid(
             else:
                 where = np.where
 
+            # Find the rows of 'weights' that contain at least one
+            # masked source cell with a non-zero weight. Each row
+            # corresponds to a destination grid cell.
             j = np.unique(where((weights >= min_weight) & (src_mask))[0])
             if j.size:
                 if np.ma.isMA(weights):
@@ -454,21 +474,23 @@ def regrid_weights(
 ):
     """Create a weights matrix for use in `regrid`.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `regrid`, `_regrid`, `ESMF.Regrid.get_weights_dict`
 
     :Parameters:
 
         weights: `numpy.ndarray`
-            The 1-d weight value array, as returned by
-            `ESMF.Regrid.get_weights_dict`.
+            The 1-d array of regridding weights for locations in the
+            2-d dense weights matrix. The loctions are defined by the
+            *row* and *col* parmaeters.
 
         row, col: `numpy.ndarray`, `numpy.ndarray`
-            1-d arrays of the row and column indices of the regridding
-            weights in the dense weights matrix, which has J rows and
-            I columns, where J and I are the total number of cells in
-            the destination and source grids respectively.
+            The 1-d arrays of the row and column indices of the
+            regridding weights in the dense weights matrix, which has
+            J rows and I columns, where J and I are the total number
+            of cells in the destination and source grids
+            respectively. See the *start_index* parameter.
 
         row: `numpy.ndarray`
             The 1-d destination/row indices, as returned by
@@ -500,7 +522,7 @@ def regrid_weights(
 
         start_index: `int`, optional
             Specify whether the *row* and *col* parameters use 0- or
-            1-based indexing.
+            1-based indexing. By default 0-based indexing is used.
 
         dense: `bool`, optional
             If True (the default) then return the weights as a dense
@@ -510,15 +532,15 @@ def regrid_weights(
         order: `str`, optional
             If *dense* is True then specify the memory layout of the
             returned weights matrix. ``'C'`` (the default) means C
-            order (row-major), ``'F'`` means Fortran (column-major)
-            order.
+            order (row-major), and ``'F'`` means Fortran order
+            (column-major).
 
     :Returns:
 
         `numpy.ndarray`
-            The 2-d weights matrix, an array with with shape ``(J,
-            I)``, where ``J`` is the number of destination grid cells
-            and ``I`` is the number of source grid cells.
+            The 2-d dense weights matrix, an array with with shape
+            ``(J, I)``, where ``J`` is the number of destination grid
+            cells and ``I`` is the number of source grid cells.
 
     """
     from math import prod
@@ -541,7 +563,8 @@ def regrid_weights(
     w = coo_array((weights, (row, col)), shape=shape)
 
     if dense:
-        # Convert the sparse array to a dense array
+        # Convert the sparse array to a dense array of weights, padded
+        # with zeros.
         w = w.todense(order=order)
 
         # Mask out rows that correspond to masked destination
@@ -549,7 +572,6 @@ def regrid_weights(
         # identified by 'dst_mask'.
         not_masked = np.count_nonzero(w, axis=1, keepdims=True)
         if dst_mask is not None:
-            #            print (99999999999999, dst_mask[2:, 2:], not_masked)
             if dst_mask.dtype != bool or dst_mask.shape != dst_shape:
                 raise ValueError(
                     "The 'dst_mask' parameter must be None or a "
@@ -558,9 +580,7 @@ def regrid_weights(
                 )
 
             not_masked = not_masked.astype(bool, copy=False)
-            #            print (not_masked.shape, dst_mask.shape, ~dst_mask[2:, 2:])
             not_masked &= ~dst_mask.reshape(dst_mask.size, 1)
-        #            print (not_masked.sum())
 
         if not not_masked.all():
             # Some destination cells are masked

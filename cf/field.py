@@ -15530,8 +15530,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 construct returned by ``f.domain_axis('ncdim%x')`` is
                 selected.
 
-                Ignored if *dst* is a `RegridOperator`.
-
                 *Parameter example:*
                   ``{'X': 'ncdim%x', 'Y': 'ncdim%y'}``
 

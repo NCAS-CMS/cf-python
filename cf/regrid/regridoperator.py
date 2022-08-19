@@ -1,15 +1,20 @@
 from copy import deepcopy
 
+from cfdm import Container
 
-class RegridOperator:
+from ..decorators import _display_or_return
+from ..mixin_container import Container as mixin_Container
+
+
+class RegridOperator(mixin_Container, Container):
     """A regridding operator between two grids.
 
     Regridding is the process of interpolating from one grid
     resolution to a different grid resolution.
 
-    The regridding operator stores the regridding weights, auxiliary
-    information, such as the grid shapes, the CF metadata for the
-    destination grid, and the source grid coordinates.
+    The regridding operator stores the regridding weights; auxiliary
+    information, such as the grid shapes; the CF metadata for the
+    destination grid; and the source grid coordinates.
 
     """
 
@@ -29,14 +34,19 @@ class RegridOperator:
         src_coords=None,
         src_bounds=None,
         start_index=0,
-        parameters=None,
+#        parameters=None,
+        src_axes=None,
+        dst_axes=None,
+        dst=None,
     ):
         """**Initialization**
 
         :Parameters:
 
             weights: array_like
-                The 1-d array of the regridding weights.
+                The 1-d array of regridding weights for locations in
+                the 2-d dense weights matrix. The loctions are defined
+                by the *row* and *col* parameters.
 
             row, col: array_like, array_like
                 The 1-d arrays of the row and column indices of the
@@ -69,14 +79,15 @@ class RegridOperator:
 
             src_mask: `numpy.ndarray` or `None`, optional
                 If a `numpy.ndarray` with shape *src_shape* then this
-                is the reference source grid mask that was used during
-                the creation of the *weights*. If *src_mask* is a
-                scalar array with value `False`, then this is
-                equivalent to a source grid mask with shape
-                *src_shape* entirely populated with `False`.
+                is the source grid mask that was used during the
+                creation of the *weights*. If *src_mask* is a scalar
+                array with value `False`, then this is equivalent to a
+                source grid mask with shape *src_shape* entirely
+                populated with `False`.
 
                 If `None` (the default), then the weights are assumed
-                to have been created assuming no source grid mask.
+                to have been created assuming no source grid masked
+                cells.
 
             dst_mask: `numpy.ndarray` or `None`, optional
                 A destination grid mask to be applied to the weights
@@ -84,7 +95,8 @@ class RegridOperator:
                 that have no non-zero weights. If `None` (the default)
                 then no additional destination grid cells are
                 masked. If a Boolean `numpy` array then it must have
-                shape *dst_shape*, and `True` signifies a masked cell.
+                shape *dst_shape*, and a value of `True` signifies a
+                masked destination grid cell.
 
             start_index: `int`, optional
                 Specify whether the *row* and *col* parameters use 0-
@@ -100,26 +112,43 @@ class RegridOperator:
                 creation and subsequent use of a `RegridOperator`
                 instance.
 
-        """
-        self._weights = weights
-        self._row = row
-        self._col = col
-        self._coord_sys = coord_sys
-        self._method = method
-        self._src_shape = tuple(src_shape)
-        self._dst_shape = tuple(dst_shape)
-        self._src_cyclic = bool(src_cyclic)
-        self._dst_cyclic = bool(dst_cyclic)
-        self._src_mask = src_mask
-        self._dst_mask = dst_mask
-        self._src_coords = src_coords
-        self._src_bounds = src_bounds
-        self._start_index = int(start_index)
+            TODO dst, dst_axes, src_axes
 
-        if parameters is None:
-            self._parameters = {}
-        else:
-            self._parameters = parameters.copy()
+        """
+        super().__init__()
+        
+        self._set_component('weights', weights, copy=False)
+        self._set_component('row', row, copy=False)
+        self._set_component('col', col, copy=False)
+        self._set_component('coord_sys', coord_sys, copy=False)
+        self._set_component('method', method, copy=False)
+        self._set_component('src_shape', tuple(src_shape), copy=False)
+        self._set_component('dst_shape', tuple(dst_shape), copy=False)
+        self._set_component('src_cyclic', bool(src_cyclic), copy=False)
+        self._set_component('dst_cyclic', bool(dst_cyclic), copy=False)
+        self._set_component('src_mask', src_mask, copy=False)
+        self._set_component('dst_mask', dst_mask, copy=False)
+        self._set_component('src_coords', tuple(src_coords), copy=False)
+        self._set_component('src_bounds', tuple(src_bounds), copy=False)
+        self._set_component('start_index', int(start_index), copy=False)
+        self._set_component('src_axes', src_axes, copy=False)
+        self._set_component('dst_axes', dst_axes, copy=False)
+        self._set_component('dst', dst, copy=False)
+
+#        if not src_axes:
+#            src_axes = None
+#            
+#        if not dst_axes:
+#            dst_axes = None
+#            
+#        self._set_component('src_axes', src_axes, copy=False)
+#        self._set_component('dst_axes', dst_axes, copy=False)
+#        #if parameters is None:
+#        #    parameters = {}
+        #else:
+        #    parameters.copy()
+#
+#        self._set_component('parameters', parameters, copy=False)
 
     def __repr__(self):
         return (
@@ -130,76 +159,127 @@ class RegridOperator:
     def col(self):
         """The 1-d array of the column indices of the regridding
         weights."""
-        return self._col
+        return self._get_component('col')
 
     @property
     def coord_sys(self):
         """The name of the coordinate system."""
-        return self._coord_sys
+        return self._get_component('coord_sys')
+
+    @property
+    def dst(self):
+        """TODODASK."""
+        return self._get_component('dst')
+
+    @property
+    def dst_axes(self):
+        """TODODASK."""
+        return self._get_component('dst_axes')
 
     @property
     def dst_cyclic(self):
         """Whether or not the destination grid longitude axis is
         cyclic."""
-        return self._dst_cyclic
+        return self._get_component('dst_cyclic')
 
     @property
     def dst_mask(self):
-        """A destination grid mask to be applied to the weights
-        matrix."""
-        return self._dst_mask
+        """A destination grid mask to be applied to the weights matrix.
+        
+        If `None` then no additional destination grid cells are
+        masked.
+
+        If a Boolean `numpy` array then it is required that this mask
+        is applied to the weights matrix prior to use in a regrdding
+        operation. The mask must have shape `!dst_shape`, and a value
+        of `True` signifies a masked destination grid cell.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component('dst_mask')
+
 
     @property
     def dst_shape(self):
-        """The shape of the destination grid."""
-        return self._dst_shape
+        """The shape of the destination grid.
+        .. versionadded:: TODODASKVER
+        """
+        return self._get_component('dst_shape')
+
 
     @property
     def method(self):
-        """The name of the regridding method."""
-        return self._method
+        """The name of the regridding method.
+        .. versionadded:: TODODASKVER
+        """
+        return self._get_component('method')
 
     @property
     def row(self):
         """The 1-d array of the row indices of the regridding
-        weights."""
-        return self._row
+        weights.
+        .. versionadded:: TODODASKVER
+        """
+        return self._get_component('row')
+
+    @property
+    def src_axes(self):
+        """TODODASK."""
+        return self._get_component('src_axes')
 
     @property
     def src_bounds(self):
         """TODODASK."""
-        return self._src_bounds
+        return self._get_component('src_bounds')
 
     @property
     def src_coords(self):
-        """TODODASK."""
-        return self._src_coords
+        """TODODASK.
+        .. versionadded:: TODODASKVER
+        """
+        return self._get_component('src_coords')
 
     @property
     def src_cyclic(self):
         """Whether or not the source grid longitude axis is cyclic."""
-        return self._src_cyclic
+        return self._get_component('src_cyclic')
 
     @property
     def src_mask(self):
         """The source grid mask that was applied during the weights
-        creation."""
-        return self._src_mask
+        creation.
+
+        If `None` then the weights are assumed to have been created
+        assuming no source grid masked cells.
+
+        If a Boolean `numpy.ndarray` with shape `!src_shape` then this
+        is the source grid mask that was used during the creation of
+        the *weights*.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component('src_mask')
 
     @property
     def src_shape(self):
         """The shape of the source grid."""
-        return self._src_shape
+        return self._get_component('src_shape')
 
     @property
     def start_index(self):
-        """The start index of the row and column indices."""
-        return self._start_index
+        """The start index of the row and column indices.
+        .. versionadded:: TODODASKVER
+        """
+        return self._get_component('start_index')
 
     @property
     def weights(self):
-        """The 1-d array of the regridding weights."""
-        return self._weights
+        """The 1-d array of the regridding weights.
+        .. versionadded:: TODODASKVER
+        """
+        return self._get_component('weights')
 
     def copy(self):
         """Return a deep copy.
@@ -225,19 +305,37 @@ class RegridOperator:
             src_bounds=deepcopy(self.src_bounds),
             coord_sys=self.coord_sys,
             start_index=self.start_index,
-            parameters=deepcopy(self.parameters()),
+            src_axes=self.src_axes,
+            dst_axes=self.dst_axes,
+            dst=self.dst.copy()
+#            parameters=deepcopy(self.parameters()),
         )
 
-    def dump(self):
-        """"""
+    @_display_or_return
+    def dump(self, display=True):
+        """A full description of the regrid operator.
+
+        Returns a description of all properties, including
+        the weights and their row and column indices.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            display: `bool`, optional
+                If False then return the description as a string. By
+                default the description is printed.
+
+        :Returns:
+
+            {{returns dump}}
+
+        """
         _title = repr(self)[4:-1]
         line = f"{''.ljust(len(_title), '-')}"
         string = [line, _title, line]
 
         for attr in (
-            "weights",
-            "row",
-            "col",
             "coord_sys",
             "method",
             "src_shape",
@@ -249,84 +347,88 @@ class RegridOperator:
             "src_coords",
             "src_bounds",
             "start_index",
+                "src_axes", "dst_axes", "dst",
+            "weights",
+            "row",
+            "col",
         ):
-            string.append(f"{attr}: {getattr(self, attr)}")
+            string.append(f"{attr}: {getattr(self, attr)!r}")
 
-        string.append(f"parameters: {self.parameters()}")
+#        string.append(f"parameters: {self.parameters()}")
 
         return "\n".join(string)
 
-    def get_parameter(self, parameter, *default):
-        """Return a regrid operation parameter.
-
-        :Parameters:
-
-            parameter: `str`
-                The name of the parameter.
-
-            default: optional
-                Return the value of the *default* parameter if the
-                parameter has not been set.
-
-                If set to an `Exception` instance then it will be
-                raised instead.
-
-                .. versionadded:: TODODASK
-
-        :Returns:
-
-            The value of the named parameter or the default value, if
-            set.
-
-        **Examples**
-
-        >>> r.get_parameter('dst_axes')
-        ['domainaxis1', 'domainaxis0']
-        >>> r.get_parameter('x')
-        Traceback
-            ...
-        ValueError: RegridOperator has no 'x' parameter
-        >>> r.get_parameter('x', 'missing')
-        'missing'
-
-        """
-        try:
-            return self._parameters[parameter]
-        except KeyError:
-            if default:
-                return default[0]
-
-            raise ValueError(
-                f"{self.__class__.__name__} has no {parameter!r} parameter"
-            )
-
-    def parameters(self):
-        """Parameters that describe the CF metadata for the destination
-        grid.
-
-        Any parameter names and values are allowed, and it is assumed
-        that the these are well defined during the creation and
-        subsequent use of a `RegridOperator` instance.
-
-        :Returns:
-
-            `dict`
-                The parameters.
-
-        **Examples**
-
-        >>> r.parameters()
-        {'dst': <CF Domain: {latitude(5), longitude(8), time(1)}>,
-         'dst_axes': ['domainaxis1', 'domainaxis2'],
-         'src_axes': None}
-
-        """
-        return self._parameters.copy()
+#    def get_parameter(self, parameter, *default):
+#        """Return a regrid operation parameter.
+#
+#        :Parameters:
+#
+#            parameter: `str`
+#                The name of the parameter.
+#
+#            default: optional
+#                Return the value of the *default* parameter if the
+#                parameter has not been set.
+#
+#                If set to an `Exception` instance then it will be
+#                raised instead.
+#
+#                .. versionadded:: TODODASKVER
+#
+#        :Returns:
+#
+#            The value of the named parameter or the default value, if
+#            set.
+#
+#        **Examples**
+#
+#        >>> r.get_parameter('dst_axes')
+#        ['domainaxis1', 'domainaxis0']
+#        >>> r.get_parameter('x')
+#        Traceback
+#            ...
+#        ValueError: RegridOperator has no 'x' parameter
+#        >>> r.get_parameter('x', 'missing')
+#        'missing'
+#
+#        """
+#        try:
+#            return self._get_component('parameters')[parameter]
+#        except KeyError:
+#            if default:
+#                return default[0]
+#
+#            raise ValueError(
+#                f"{self.__class__.__name__} has no {parameter!r} parameter"
+#            )
+#
+#    def parameters(self):
+#        """Parameters that describe the CF metadata for the destination
+#        grid.
+#
+#        Any parameter names and values are allowed, and it is assumed
+#        that the these are well defined during the creation and
+#        subsequent use of a `RegridOperator` instance.
+#
+#        :Returns:
+#
+#            `dict`
+#                The parameters.
+#
+#        **Examples**
+#
+#        >>> r.parameters()
+#        {'dst': <CF Domain: {latitude(5), longitude(8), time(1)}>,
+#         'dst_axes': ['domainaxis1', 'domainaxis2'],
+#         'src_axes': None}
+#
+#        """
+#        return self._get_component('parameters').copy()
 
     def todense(self, order="C"):
         """Return the weights in dense format.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `tosparse`
 
@@ -335,14 +437,16 @@ class RegridOperator:
             order: `str`, optional
                 Specify the memory layout of the returned weights
                 matrix. ``'C'`` (the default) means C order
-                (row-major), ``'F'`` means Fortran order
+                (row-major), and``'F'`` means Fortran order
                 (column-major).
 
         :Returns:
 
             `numpy.ndarray`
-                The full array of weights, with zeros at locations not
-                defined by `row` and `col`.
+                The 2-d dense weights matrix, an array with with shape
+                ``(J, I)``, where ``J`` is the number of destination
+                grid cells and ``I`` is the number of source grid
+                cells.
 
         """
         return self.tosparse().todense(order=order)
@@ -350,7 +454,7 @@ class RegridOperator:
     def tosparse(self):
         """Return the weights in sparse COOrdinate format.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `todense`
 

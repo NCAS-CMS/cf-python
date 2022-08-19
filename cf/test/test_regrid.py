@@ -26,42 +26,84 @@ methods = (
     "patch",
 )
 
+
+# Get the test source and destination fields
+filename = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "regrid2.nc"
+)
+dst_org, src_org = cf.read(filename)
+
+
+# Set numerical comparison tolerances
 atol = 1e-12
 rtol = 0
 
 
-def ESMF_regrid_2d(coord_sys, method, src, dst, **kwargs):
-    """Help function that regrids Field data using pure ESMF.
+def ESMF_regrid_1d(method, src, dst, **kwargs):
+    """Helper function that regrids one dimension of Field data using pure
+    ESMF.
 
-    Used to verify `cf.Field.regrids` nad `cf.Field.regridc`
+    Used to verify `cf.Field.regridc`
+
+    :Returns:
+
+        Regridded numpy masked array.
+
+    """
+    ESMF_regrid = cf.regrid.regrid(
+        'Cartesian', src, dst, method, _return_regrid=True, **kwargs
+    )
+
+    src = src.transpose(["Y", "X", "T"])
+    
+    ndbounds = src.shape[1:3]
+    
+    src_field = ESMF.Field(ESMF_regrid.srcfield.grid, "src", ndbounds=ndbounds)
+    dst_field = ESMF.Field(ESMF_regrid.dstfield.grid, "dst", ndbounds=ndbounds)
+    
+    fill_value = 1e20
+    array = src.array
+    array = np.expand_dims(array, 1)
+    
+    src_field.data[...] = np.ma.MaskedArray(array, copy=False).filled(
+        fill_value
+    )
+    dst_field.data[...] = fill_value
+
+    ESMF_regrid(src_field, dst_field, zero_region=ESMF.Region.SELECT)
+
+    out = dst_field.data[:, 0, :, :]
+
+    return np.ma.MaskedArray(out.copy(), mask=(out == fill_value))
+
+
+def ESMF_regrid_Nd(coord_sys, method, src, dst, **kwargs):
+    """Helper function that regrids Field data using pure ESMF.
+
+    Used to verify `cf.Field.regrids` and `cf.Field.regridc`
+
+    :Returns:
+
+        Regridded numpy masked array.
 
     """
     ESMF_regrid = cf.regrid.regrid(
         coord_sys, src, dst, method, _return_regrid=True, **kwargs
     )
 
-    #    if coord_sys == "spherical":
     src = src.transpose(["X", "Y", "T"]).squeeze()
-    dst = dst.transpose(["X", "Y", "T"]).squeeze()
-    #    else:
-    #        src = src.transpose(["Y", "X", "T"]).squeeze()
-    #        dst = dst.transpose(["Y", "X", "T"]).squeeze()
 
     src_field = ESMF.Field(ESMF_regrid.srcfield.grid, "src")
     dst_field = ESMF.Field(ESMF_regrid.dstfield.grid, "dst")
-
-    # print (src_field.grid)
-    # print (dst_field.grid)
 
     fill_value = 1e20
     src_field.data[...] = np.ma.MaskedArray(src.array, copy=False).filled(
         fill_value
     )
-    #    print("src_field.data[...]=", src_field.data[...])
+
     dst_field.data[...] = fill_value
 
     ESMF_regrid(src_field, dst_field, zero_region=ESMF.Region.SELECT)
-    #    print("dst_field.data[...]=", dst_field.data[...])
 
     return np.ma.MaskedArray(
         dst_field.data.copy(),
@@ -70,99 +112,37 @@ def ESMF_regrid_2d(coord_sys, method, src, dst, **kwargs):
 
 
 class RegridTest(unittest.TestCase):
-    filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
-    )
-
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
-    def test_Field_regridc(self):
-        return
-        dst, src0 = cf.read(self.filename)
-
-        src0.transpose(["X", "Y", "T"], inplace=True)
-        dst.transpose(["Y", "T", "X"], inplace=True)
-
-        dst[:, 2:25, 2:35] = cf.masked
-
-        axes = ["Y", "X"]
-
-        kwargs = {"axes": axes}
-
-        for use_dst_mask in (False, True):
-            print("use_dst_mask=", use_dst_mask)
-            src = src0.copy()
-
-            print("        UNMASKED SOURCE")
-            # No source grid masked points
-            for method in methods:
-                if use_dst_mask and method == "nearest_dtos":
-                    # TODO: This test does not pass, but it seems to
-                    #       be problem with the ESMF "truth", rather
-                    #       than cf
-                    continue
-                print("\n", method, use_dst_mask)
-                x = src.regridc(
-                    dst, method=method, use_dst_mask=use_dst_mask, **kwargs
-                )
-
-                #                print (repr(src), repr(x))
-
-                x.transpose(["X", "Y", "T"], inplace=True)
-                #                cf.write(x, 'delme2.nc')
-                x = x.array
-                for t in (0, 1):
-                    y = ESMF_regrid_2d(
-                        "Cartesian",
-                        method,
-                        src.subspace(T=[t]),
-                        dst,
-                        use_dst_mask=use_dst_mask,
-                        **kwargs
-                    )
-                    a = x[..., t]
-
-                    if isinstance(a, np.ma.MaskedArray):
-                        print ("y.mask=",y.mask.shape)
-                        print ("a.mask=",a.mask.shape, x.shape)
-                        self.assertTrue((y.mask == a.mask).all())
-                    else:
-                        self.assertFalse(y.mask.any())
-
-                    #                    print ('y=',y[:10, 10:])
-                    #                    print ('a=',a[:10, 10:])
-                    self.assertTrue(np.allclose(y, a, atol=atol, rtol=rtol))
-
-    #                break
-
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
-    def test_Field_regrid_2d(self):
-        #        return
+    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(False, "Requires ESMF package.")
+    def test_Field_regrid_2d_field(self):
+        """Test 2-d regridding with destination grid defined by a
+        Field."""
         self.assertFalse(cf.regrid_logging())
 
-        dst, src0 = cf.read(self.filename)
+        dst = dst_org.copy()      
+        src0 = src_org.copy()
 
         src0.transpose(["X", "Y", "T"], inplace=True)
         dst.transpose(["Y", "T", "X"], inplace=True)
 
-        dst[2:25, :, 2:35] = np.ma.masked
-        dst_masked = "_dst_masked"
+        # Mask some destination grid points
+        dst[2:25, 0, 2:35] = cf.masked
 
-        #      kwargs = {}
-        #       coord_sys = 'spherical'
-        #        regrid = 'regrids'
-
-        for coord_sys, regrid, kwargs in zip(
+        # Loop round spherical and Cartesian coordinate systems
+        for coord_sys, regrid_func, kwargs in zip(
             ("spherical", "Cartesian"),
             ("regrids", "regridc"),
             ({}, {"axes": ["Y", "X"]}),
         ):
-
+            # Lopp over whether or not to use the destination grid
+            # masked points
             for use_dst_mask in (False, True):
-                print("use_dst_mask=", use_dst_mask)
                 src = src0.copy()
 
                 print("        UNMASKED SOURCE")
-                # No source grid masked points
+                # ----------------------------------------------------
+                # No source grid masked elements
+                # ----------------------------------------------------
                 for method in methods:
                     if use_dst_mask and method == "nearest_dtos":
                         # TODO: This test does not pass, but it seems to
@@ -171,14 +151,13 @@ class RegridTest(unittest.TestCase):
                         continue
 
                     print("\n", coord_sys, method, use_dst_mask)
-                    #                x = src.regrids(dst, method=method, use_dst_mask=use_dst_mask, **kwargs)
-                    x = getattr(src, regrid)(
+                    x = getattr(src, regrid_func)(
                         dst, method=method, use_dst_mask=use_dst_mask, **kwargs
                     )
                     x.transpose(["X", "Y", "T"], inplace=True)
                     x = x.array
                     for t in (0, 1):
-                        y = ESMF_regrid_2d(
+                        y = ESMF_regrid_Nd(
                             coord_sys,
                             method,
                             src.subspace(T=[t]),
@@ -187,13 +166,21 @@ class RegridTest(unittest.TestCase):
                             **kwargs
                         )
                         a = x[..., t]
+                        
+                        if isinstance(a, np.ma.MaskedArray):
+                            self.assertTrue((y.mask == a.mask).all())
+                        else:
+                            self.assertFalse(y.mask.any())
+
                         self.assertTrue(
                             np.allclose(y, a, atol=atol, rtol=rtol)
                         )
 
-                # Mask the souce grid with the same mask over all regridding
-                # slices
-                src[slice(1, 9, 1), slice(1, 10, 1), :] = cf.masked
+                # ----------------------------------------------------
+                # Mask the souce grid with the same mask over all 2-d
+                # regridding slices
+                # ----------------------------------------------------
+                src[slice(2, 10, 1), slice(1, 10, 1), :] = cf.masked
 
                 print("        MASKED SOURCE (INVARIANT)")
                 for method in methods:
@@ -204,13 +191,14 @@ class RegridTest(unittest.TestCase):
                         continue
 
                     print("\n", coord_sys, method, use_dst_mask)
-                    x = getattr(src, regrid)(
+                    x = getattr(src, regrid_func)(
                         dst, method=method, use_dst_mask=use_dst_mask, **kwargs
                     )
                     x.transpose(["X", "Y", "T"], inplace=True)
+                    xx = x.copy()
                     x = x.array
                     for t in (0, 1):
-                        y = ESMF_regrid_2d(
+                        y = ESMF_regrid_Nd(
                             coord_sys,
                             method,
                             src.subspace(T=[t]),
@@ -219,14 +207,9 @@ class RegridTest(unittest.TestCase):
                             **kwargs
                         )
                         a = x[..., t]
-#                        print ('y=',y[:2, :])
-#                        print ('a=',a[:2, :])
 
                         if isinstance(a, np.ma.MaskedArray):
-#                            print ("y.mask=",y.mask.shape)
-#                            print ("a.mask=",a.mask.shape, x.shape)
-#                            self.assertTrue((y.mask == a.mask).all())
-                            pass
+                            self.assertTrue((y.mask == a.mask).all())
                         else:
                             self.assertFalse(y.mask.any())
 
@@ -234,8 +217,10 @@ class RegridTest(unittest.TestCase):
                             np.allclose(y, a, atol=atol, rtol=rtol)
                         )
 
-                # Now make the source mask vary over different regridding
-                # slices
+                # ----------------------------------------------------
+                # Now make the source mask vary over different 2-d
+                # regridding slices
+                # ----------------------------------------------------
                 src[slice(11, 19, 1), slice(11, 20, 1), 1] = cf.masked
 
                 print("        MASKED SOURCE (VARIABLE)")
@@ -251,13 +236,13 @@ class RegridTest(unittest.TestCase):
                         continue
 
                     print("\n", coord_sys, method, use_dst_mask)
-                    x = getattr(src, regrid)(
+                    x = getattr(src, regrid_func)(
                         dst, method=method, use_dst_mask=use_dst_mask, **kwargs
                     )
                     x.transpose(["X", "Y", "T"], inplace=True)
                     x = x.array
                     for t in (0, 1):
-                        y = ESMF_regrid_2d(
+                        y = ESMF_regrid_Nd(
                             coord_sys,
                             method,
                             src.subspace(T=[t]),
@@ -268,8 +253,7 @@ class RegridTest(unittest.TestCase):
                         a = x[..., t]
 
                         if isinstance(a, np.ma.MaskedArray):
-#                            self.assertTrue((y.mask == a.mask).all())
-                            pass
+                            self.assertTrue((y.mask == a.mask).all())
                         else:
                             self.assertFalse(y.mask.any())
 
@@ -277,8 +261,8 @@ class RegridTest(unittest.TestCase):
                             np.allclose(y, a, atol=atol, rtol=rtol)
                         )
 
-        # Can't compute the regrid of the following methods when the
-        # source grid mask varies over different regridding slices
+        # Can't compute the 2-d regrid of the following methods when
+        # the source grid mask varies over different regridding slices
         for method in (
             "conservative_2nd",
             "nearest_stod",
@@ -287,26 +271,34 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regrids(dst, method=method).array
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(False, "Skip for speed")
     def test_Field_regrids_coords(self):
-        return
-        dst, src = cf.read(self.filename)
+        """Spherical regridding with destination grid defined by
+        coords."""
+        #        dst, src = cf.read(self.filename)
+        dst = dst_org.copy()
+        src = src_org.copy()
 
+        src.transpose(["X", "Y", "T"], inplace=True)
+        dst.transpose(["Y", "T", "X"], inplace=True)
+
+        # Truth = destination grid defined by a field
         d0 = src.regrids(dst, method="conservative")
 
-        # 1-d dimension coordinates from dst
+        # Sequence of 1-d dimension coordinates
         x = dst.coord("X")
         y = dst.coord("Y")
 
         d1 = src.regrids([x, y], method="conservative")
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
-        # Regrid operator defined by 1-d coordinates
+        # Regrid operator defined by 1-d dimension coordinates
         r = src.regrids([x, y], method="conservative", return_operator=True)
         d1 = src.regrids(r)
         self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
 
-        # 2-d auxiliary coordinates from dst
+        # Sequence of 2-d auxiliary coordinates
         x_bounds = x.bounds.array
         y_bounds = y.bounds.array
 
@@ -338,7 +330,7 @@ class RegridTest(unittest.TestCase):
         )
         self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
 
-        # Regrid operator defined by 2-d coordinates
+        # Regrid operator defined by 2-d auxiliary coordinates
         r = src.regrids(
             [lon_2d_coord, lat_2d_coord],
             dst_axes={"X": 1, "Y": 0},
@@ -346,10 +338,50 @@ class RegridTest(unittest.TestCase):
             dst_cyclic=True,
             return_operator=True,
         )
+
         d1 = src.regrids(r)
         self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
 
-        # Check that disallowed dst raise an exception
+    @unittest.skipUnless(False, "Skip for speed")
+    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    def test_Field_regridc_2d_coords(self):
+        """2-d Cartesian regridding with destination grid defined by
+        coords."""
+        #        dst, src = cf.read(self.filename)
+        dst = dst_org.copy()
+        src = src_org.copy()
+
+        src.transpose(["X", "Y", "T"], inplace=True)
+        dst.transpose(["Y", "T", "X"], inplace=True)
+
+        axes = ["Y", "X"]
+
+        # 1-d dimension coordinates
+        x = dst.coord("X")
+        y = dst.coord("Y")
+
+        # Truth = destination grid defined by a field
+        d0 = src.regridc(dst, method="conservative", axes=axes)
+
+        # Sequence of 1-d dimension coordinates
+        d1 = src.regridc([y, x], method="conservative", axes=axes)
+        self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
+
+        # Regrid operator defined by 1-d dimension coordinates
+        r = src.regridc(
+            [y, x], method="conservative", axes=axes, return_operator=True
+        )
+        d1 = src.regridc(r)
+        self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
+
+    @unittest.skipUnless(False, "Skip for speed")
+    def test_Field_regrids_bad_dst(self):
+        """Check that disallowed destination grid types raise an
+        exception."""
+        #        dst, src = cf.read(self.filename)
+        dst = dst_org.copy()
+        src = src_org.copy()
+
         with self.assertRaises(TypeError):
             src.regrids(999, method="conservative")
 
@@ -359,12 +391,18 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             src.regrids("foobar", method="conservative")
 
-    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(False, "Skip for speed")
     def test_Field_regrids_domain(self):
-        return
-        dst, src = cf.read(self.filename)
+        """Spherical regridding with destination grid defined by a
+        Domain."""
+        #        dst, src = cf.read(self.filename)
+        dst = dst_org
+        src = src_org
 
+        # Truth = destination grid defined by a field
         d0 = src.regrids(dst, method="conservative")
+
         d1 = src.regrids(dst.domain, method="conservative")
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
@@ -378,9 +416,40 @@ class RegridTest(unittest.TestCase):
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
     @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
-    def test_Field_regrids_field(self):
-        return
-        dst, src = cf.read(self.filename)
+    @unittest.skipUnless(False, "Skip for speed")
+    def test_Field_regridc_domain(self):
+        """Spherical regridding with destination grid defined by a
+        Domain."""
+        #        dst, src = cf.read(self.filename)
+        dst = dst_org
+        src = src_org
+
+        axes = ["Y", "X"]
+
+        # Truth = destination grid defined by a field
+        d0 = src.regridc(dst, method="conservative", axes=axes)
+
+        d1 = src.regridc(dst.domain, method="conservative", axes=axes)
+        self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
+
+        # Regrid operator defined by domain
+        r = src.regridc(
+            dst.domain,
+            method="conservative",
+            axes=axes,
+            return_operator=True,
+        )
+        d1 = src.regridc(r)
+        self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
+
+    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    @unittest.skipUnless(False, "Skip for speed")
+    def test_Field_regrids_field_operator(self):
+        """Spherical regridding with destination grid defined by an
+        operator derived from a Field."""
+        #        dst, src = cf.read(self.filename)
+        dst = dst_org
+        src = src_org
 
         d0 = src.regrids(dst, method="conservative")
 
@@ -544,27 +613,211 @@ class RegridTest(unittest.TestCase):
 #        with self.assertRaises(ValueError):
 #            f2.regrids(op)
 #
-#    @unittest.skipUnless(cf._found_ESMF, "Requires ESMF package.")
-#    def test_Field_regrid_size1_dimensions(self):
-#        # Check that non-regridded size 1 axes are handled OK
-#        self.assertFalse(cf.regrid_logging())
-#
-#        f = cf.example_field(0)
-#        shape = f.shape
-#
-#        g = f.regrids(f, method="linear")
-#        self.assertEqual(g.shape, (shape))
-#        g = f.regridc(f, method="linear", axes="X")
-#        self.assertEqual(g.shape, (shape))
-#
-#        f.insert_dimension("T", position=0, inplace=True)
-#        shape = f.shape
-#        g = f.regrids(f, method="linear")
-#        self.assertEqual(g.shape, shape)
-#        g = f.regridc(f, method="linear", axes="X")
-#        self.assertEqual(g.shape, shape)
 
+    @unittest.skipUnless(False, "Skip for speed")
+    def test_Field_regridc_3d_field(self):
+        """Test 3-d Cartesian regridding with destination grid defined by a
+        Field.
 
+        """
+        dst = dst_org.copy()
+        src0 = src_org.copy()
+
+        src0.transpose(["X", "Y", "T"], inplace=True)
+        dst.transpose(["Y", "T", "X"], inplace=True)
+
+        # Mask some destination grid points
+        dst[2:25, 0, 2:35] = cf.masked
+
+        axes=["T", "Y", "X"]
+
+        # Loop over whether or not to use the destination grid masked
+        # points
+        for use_dst_mask in (False, True):
+            src = src0.copy()
+
+            print("        3-d UNMASKED SOURCE")
+            # ----------------------------------------------------
+            # No source grid masked elements
+            # ----------------------------------------------------
+            for method in methods:                
+                if method in ('conservative_2nd', 'patch'):
+                    continue
+
+                if use_dst_mask and method == "nearest_dtos":
+                    # TODO: This test does not pass, but it seems to
+                    #       be problem with the ESMF "truth", rather
+                    #       than cf
+                    continue
+
+                print("\n 3-d",  method, use_dst_mask)
+                x = src.regridc(dst, method=method,
+                                use_dst_mask=use_dst_mask,
+                                axes=axes)
+                x.transpose(["X", "Y", "T"], inplace=True)
+                a = x.array
+
+                y = ESMF_regrid_Nd(
+                    'Cartesian',
+                    method,
+                    src,
+                    dst,
+                    use_dst_mask=use_dst_mask,
+                    axes=axes
+                )
+                
+                if isinstance(a, np.ma.MaskedArray):
+                    self.assertTrue((y.mask == a.mask).all())
+                else:
+                    self.assertFalse(y.mask.any())
+                    
+                self.assertTrue(
+                    np.allclose(y, a, atol=atol, rtol=rtol)
+                )
+
+            # --------------------------------------------------------
+            # Mask the souce grid
+            # --------------------------------------------------------
+            src[slice(2, 10, 1), slice(1, 10, 1), 0] = cf.masked
+            
+            print("        MASKED SOURCE (INVARIANT)")
+            for method in methods:
+                if method in ('conservative_2nd', 'patch', "nearest_dtos"):
+                    continue
+                
+                print("\n 3-d", method, use_dst_mask)
+                x = src.regridc(
+                    dst, method=method, use_dst_mask=use_dst_mask, axes=axes
+                )
+                x.transpose(["X", "Y", "T"], inplace=True)
+                a = x.array
+
+                y = ESMF_regrid_Nd(
+                    'Cartesian',
+                    method,
+                    src,
+                    dst,
+                    use_dst_mask=use_dst_mask, axes=axes,
+                )
+                    
+                if isinstance(a, np.ma.MaskedArray):
+#                    print ((y.mask != a.mask).sum())
+#                    print (np.where((y.mask != a.mask)))
+                    self.assertTrue((y.mask == a.mask).all())
+                else:
+                    self.assertFalse(y.mask.any())
+                    
+                self.assertTrue(
+                    np.allclose(y, a, atol=atol, rtol=rtol)
+                )
+                
+    def test_Field_regridc_1d_field(self):
+        """Test 1-d Cartesian regridding with destination grid defined by a
+        Field.
+
+        """
+        dst = dst_org.copy()
+        src0 = src_org.copy()
+
+        src0.transpose(["X", "Y", "T"], inplace=True)
+        dst.transpose(["Y", "T", "X"], inplace=True)
+
+        # Mask some destination grid points
+        dst[2:25, 0, 2:35] = cf.masked
+
+        axes=["Y"]
+
+        # Loop over whether or not to use the destination grid masked
+        # points
+        for use_dst_mask in (False, True):
+            src = src0.copy()
+
+            print("        1-d UNMASKED SOURCE")
+            # ----------------------------------------------------
+            # No source grid masked elements
+            # ----------------------------------------------------
+            print(methods)
+            for method in methods:                
+                if method in('sconservative_2nd', 'patch'):
+                    continue
+
+                if use_dst_mask and method == "nearest_dtos":
+                    # TODO: This test does not pass, but it seems to
+                    #       be problem with the ESMF "truth", rather
+                    #       than cf
+                    continue
+
+                print("\n 1-d",  method, use_dst_mask)
+                x = src.regridc(dst, method=method,
+                                use_dst_mask=use_dst_mask,
+                                axes=axes)
+                x.transpose(["Y", "X", "T"], inplace=True)
+                a = x.array
+
+                y = ESMF_regrid_1d(
+                    method,
+                    src,
+                    dst,
+                    use_dst_mask=use_dst_mask,
+                    axes=axes
+                )
+
+                if isinstance(a, np.ma.MaskedArray):
+                    self.assertTrue((y.mask == a.mask).all())
+                else:
+                    self.assertFalse(y.mask.any())
+                    
+                self.assertTrue(
+                    np.allclose(y, a, atol=atol, rtol=rtol)
+                )
+
+            # --------------------------------------------------------
+            # Mask the souce grid
+            # --------------------------------------------------------
+            #src[slice(2, 10, 1), slice(1, 10, 1), :] = cf.masked
+#            src[slice(2, 10, 1), :, 1] = cf.masked
+            src[:, slice(1, 10, 1), :] = cf.masked
+           
+            print("        MASKED SOURCE (INVARIANT)")
+            for method in methods:
+                if method in('conservative_2nd', 'patch'):
+                    continue
+                
+                if use_dst_mask and method == "nearest_dtos":
+                    # TODO: This test does not pass, but it seems to
+                    #       be problem with the ESMF "truth", rather
+                    #       than cf
+                    continue
+
+                print("\n 1-d", method, use_dst_mask)
+                x = src.regridc(
+                    dst, method=method, use_dst_mask=use_dst_mask, axes=axes
+                )
+                x.transpose(["Y", "X", "T"], inplace=True)
+                a = x.array
+
+                y = ESMF_regrid_1d(
+                    method,
+                    src,
+                    dst,
+                    use_dst_mask=use_dst_mask, axes=axes,
+                )
+
+                print ('a=', a[:11, :14,0])
+                print ('y=',y[:11, :14,0])
+                if isinstance(a, np.ma.MaskedArray):
+                    print (a[...,0].count(), y[...,0].count())
+                    print (a[...,1].count(), y[...,1].count())
+                    print (a.count(), y.count())
+                    #self.assertTrue((y.mask == a.mask).all())
+                else:
+                    self.assertFalse(y.mask.any())
+                    
+                self.assertTrue(
+                    np.allclose(y, a, atol=atol, rtol=rtol)
+                )
+
+                
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
