@@ -15749,7 +15749,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{use_dst_mask: `bool`, optional}}
 
-            src_axes: `sequence`, optional
+            src_axes: sequence, optional
                 Define the source grid axes to be regridded. The
                 sequence of between one and three values identify
                 unique domain axes by passing each axis description to

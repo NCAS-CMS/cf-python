@@ -10,7 +10,7 @@ def regrid(
     dst_shape=None,
     axis_order=None,
     ref_src_mask=None,
-        min_weight=None,
+    min_weight=None,
 ):
     """Regrid an array.
 
@@ -156,12 +156,12 @@ def regrid(
     if np.ma.is_masked(a):
         # Source data is masked for at least one slice
         mask = np.ma.getmaskarray(a)
-#        for i in range(96):
-#            print (mask[:, i])
-#        print ('mask.sum(axis=1).tolist()=',mask.sum(axis=1).tolist(), mask.shape[1])
-#        if mask.shape[1] == 1 or set(mask.sum(axis=1).tolist()).issubset(
-#            (0, mask.shape[1])
-#        ):
+        #        for i in range(96):
+        #            print (mask[:, i])
+        #        print ('mask.sum(axis=1).tolist()=',mask.sum(axis=1).tolist(), mask.shape[1])
+        #        if mask.shape[1] == 1 or set(mask.sum(axis=1).tolist()).issubset(
+        #            (0, mask.shape[1])
+        #        ):
         if mask.shape[1] == 1 or (mask == mask[:, 0:1]).all():
             # The source mask is same for all slices
             src_mask = mask[:, 0]
@@ -209,7 +209,7 @@ def regrid(
     # ----------------------------------------------------------------
     if min_weight is None:
         min_weight = np.finfo(np.dtype("float64")).eps * 2.5
-        
+
     if variable_mask:
         # Source data is masked and the source mask varies across
         # slices => we have to regrid each slice separately.
@@ -479,8 +479,8 @@ def regrid_weights(
 
         weights: `numpy.ndarray`
             The 1-d array of regridding weights for locations in the
-            2-d dense weights matrix. The loctions are defined by the
-            *row* and *col* parmaeters.
+            2-d dense weights matrix. The locations are defined by the
+            *row* and *col* parameters.
 
         row, col: `numpy.ndarray`, `numpy.ndarray`
             The 1-d arrays of the row and column indices of the

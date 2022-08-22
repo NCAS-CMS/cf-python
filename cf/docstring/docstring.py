@@ -393,12 +393,12 @@ _docstring_substitution_definitions = {
                   the regrid weights is not a lazy operation.
 
                   .. note:: The source grid of the regrid operator is
-                            checked for compatability with the grid of
-                            the source field. By default only the
-                            computationally cheap tests are performed
-                            (checking that the coordinate system,
-                            cyclicity and grid shape are the same),
-                            with the grid coordinates not being
+                            immediately checked for compatability with
+                            the grid of the source field. By default
+                            only the computationally cheap tests are
+                            performed (checking that the coordinate
+                            system, cyclicity and grid shape are the
+                            same), with the grid coordinates not being
                             checked. The coordinates check will be
                             carried out, however, if the
                             *check_coordinates* parameter is True.""",

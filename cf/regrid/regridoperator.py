@@ -3,6 +3,7 @@ from copy import deepcopy
 from cfdm import Container
 
 from ..decorators import _display_or_return
+from ..functions import _DEPRECATION_ERROR_ATTRIBUTE, _DEPRECATION_ERROR_METHOD
 from ..mixin_container import Container as mixin_Container
 
 
@@ -34,7 +35,6 @@ class RegridOperator(mixin_Container, Container):
         src_coords=None,
         src_bounds=None,
         start_index=0,
-#        parameters=None,
         src_axes=None,
         dst_axes=None,
         dst=None,
@@ -45,7 +45,7 @@ class RegridOperator(mixin_Container, Container):
 
             weights: array_like
                 The 1-d array of regridding weights for locations in
-                the 2-d dense weights matrix. The loctions are defined
+                the 2-d dense weights matrix. The locations are defined
                 by the *row* and *col* parameters.
 
             row, col: array_like, array_like
@@ -103,52 +103,38 @@ class RegridOperator(mixin_Container, Container):
                 or 1-based indexing. By default 0-based indexing is
                 used.
 
-            parameters: `dict`, optional
-                Parameters that describe the CF metadata for the
-                destination grid.
+            parameters: Deprecated at version TODODASKVER
+                Use keyword parameters instead.
 
-                Any parameter names and values are allowed, and it is
-                assumed that the these are well defined during the
-                creation and subsequent use of a `RegridOperator`
-                instance.
+            dst: `Field` or `Domain`
+                The definition of the destination grid.
 
-            TODO dst, dst_axes, src_axes
+            dst_axes: `dict` or sequence or `None`, optional
+                The destination grid axes to be regridded.
+
+            src_axes: `dict` or sequence or `None`, optional
+                The source grid axes to be regridded.
 
         """
         super().__init__()
-        
-        self._set_component('weights', weights, copy=False)
-        self._set_component('row', row, copy=False)
-        self._set_component('col', col, copy=False)
-        self._set_component('coord_sys', coord_sys, copy=False)
-        self._set_component('method', method, copy=False)
-        self._set_component('src_shape', tuple(src_shape), copy=False)
-        self._set_component('dst_shape', tuple(dst_shape), copy=False)
-        self._set_component('src_cyclic', bool(src_cyclic), copy=False)
-        self._set_component('dst_cyclic', bool(dst_cyclic), copy=False)
-        self._set_component('src_mask', src_mask, copy=False)
-        self._set_component('dst_mask', dst_mask, copy=False)
-        self._set_component('src_coords', tuple(src_coords), copy=False)
-        self._set_component('src_bounds', tuple(src_bounds), copy=False)
-        self._set_component('start_index', int(start_index), copy=False)
-        self._set_component('src_axes', src_axes, copy=False)
-        self._set_component('dst_axes', dst_axes, copy=False)
-        self._set_component('dst', dst, copy=False)
 
-#        if not src_axes:
-#            src_axes = None
-#            
-#        if not dst_axes:
-#            dst_axes = None
-#            
-#        self._set_component('src_axes', src_axes, copy=False)
-#        self._set_component('dst_axes', dst_axes, copy=False)
-#        #if parameters is None:
-#        #    parameters = {}
-        #else:
-        #    parameters.copy()
-#
-#        self._set_component('parameters', parameters, copy=False)
+        self._set_component("weights", weights, copy=False)
+        self._set_component("row", row, copy=False)
+        self._set_component("col", col, copy=False)
+        self._set_component("coord_sys", coord_sys, copy=False)
+        self._set_component("method", method, copy=False)
+        self._set_component("src_mask", src_mask, copy=False)
+        self._set_component("dst_mask", dst_mask, copy=False)
+        self._set_component("src_cyclic", bool(src_cyclic), copy=False)
+        self._set_component("dst_cyclic", bool(dst_cyclic), copy=False)
+        self._set_component("src_shape", tuple(src_shape), copy=False)
+        self._set_component("dst_shape", tuple(dst_shape), copy=False)
+        self._set_component("src_coords", tuple(src_coords), copy=False)
+        self._set_component("src_bounds", tuple(src_bounds), copy=False)
+        self._set_component("start_index", int(start_index), copy=False)
+        self._set_component("src_axes", src_axes, copy=False)
+        self._set_component("dst_axes", dst_axes, copy=False)
+        self._set_component("dst", dst, copy=False)
 
     def __repr__(self):
         return (
@@ -158,92 +144,142 @@ class RegridOperator(mixin_Container, Container):
     @property
     def col(self):
         """The 1-d array of the column indices of the regridding
-        weights."""
-        return self._get_component('col')
+        weights.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component("col")
 
     @property
     def coord_sys(self):
-        """The name of the coordinate system."""
-        return self._get_component('coord_sys')
+        """The name of the regridding coordinate system.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component("coord_sys")
 
     @property
     def dst(self):
-        """TODODASK."""
-        return self._get_component('dst')
+        """The definition of the destination grid.
+
+        Either a `Field` or` Domain`.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component("dst")
 
     @property
     def dst_axes(self):
-        """TODODASK."""
-        return self._get_component('dst_axes')
+        """The destination grid axes to be regridded.
+
+        If not required then this will be `None`.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component("dst_axes")
 
     @property
     def dst_cyclic(self):
         """Whether or not the destination grid longitude axis is
         cyclic."""
-        return self._get_component('dst_cyclic')
+        return self._get_component("dst_cyclic")
 
     @property
     def dst_mask(self):
         """A destination grid mask to be applied to the weights matrix.
-        
+
         If `None` then no additional destination grid cells are
         masked.
 
         If a Boolean `numpy` array then it is required that this mask
-        is applied to the weights matrix prior to use in a regrdding
+        is applied to the weights matrix prior to use in a regridding
         operation. The mask must have shape `!dst_shape`, and a value
         of `True` signifies a masked destination grid cell.
 
         .. versionadded:: TODODASKVER
 
         """
-        return self._get_component('dst_mask')
-
+        return self._get_component("dst_mask")
 
     @property
     def dst_shape(self):
         """The shape of the destination grid.
-        .. versionadded:: TODODASKVER
-        """
-        return self._get_component('dst_shape')
 
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component("dst_shape")
 
     @property
     def method(self):
         """The name of the regridding method.
+
         .. versionadded:: TODODASKVER
+
         """
-        return self._get_component('method')
+        return self._get_component("method")
+
+    @property
+    def name(self):
+        """The name of the regridding method."""
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "name",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )
 
     @property
     def row(self):
-        """The 1-d array of the row indices of the regridding
-        weights.
+        """The 1-d array of the row indices of the regridding weights.
+
         .. versionadded:: TODODASKVER
+
         """
-        return self._get_component('row')
+        return self._get_component("row")
 
     @property
     def src_axes(self):
-        """TODODASK."""
-        return self._get_component('src_axes')
+        """The source grid axes to be regridded.
+
+        If not required then this will be `None`.
+
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component("src_axes")
 
     @property
     def src_bounds(self):
-        """TODODASK."""
-        return self._get_component('src_bounds')
+        """The bounds of the source grid cells.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component("src_bounds")
 
     @property
     def src_coords(self):
-        """TODODASK.
+        """The coordinates of the source grid cells.
+
         .. versionadded:: TODODASKVER
+
         """
-        return self._get_component('src_coords')
+        return self._get_component("src_coords")
 
     @property
     def src_cyclic(self):
-        """Whether or not the source grid longitude axis is cyclic."""
-        return self._get_component('src_cyclic')
+        """Whether or not the source grid longitude axis is cyclic.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component("src_cyclic")
 
     @property
     def src_mask(self):
@@ -260,26 +296,34 @@ class RegridOperator(mixin_Container, Container):
         .. versionadded:: TODODASKVER
 
         """
-        return self._get_component('src_mask')
+        return self._get_component("src_mask")
 
     @property
     def src_shape(self):
-        """The shape of the source grid."""
-        return self._get_component('src_shape')
+        """The shape of the source grid.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return self._get_component("src_shape")
 
     @property
     def start_index(self):
         """The start index of the row and column indices.
+
         .. versionadded:: TODODASKVER
+
         """
-        return self._get_component('start_index')
+        return self._get_component("start_index")
 
     @property
     def weights(self):
         """The 1-d array of the regridding weights.
+
         .. versionadded:: TODODASKVER
+
         """
-        return self._get_component('weights')
+        return self._get_component("weights")
 
     def copy(self):
         """Return a deep copy.
@@ -308,7 +352,7 @@ class RegridOperator(mixin_Container, Container):
             src_axes=self.src_axes,
             dst_axes=self.dst_axes,
             dst=self.dst.copy()
-#            parameters=deepcopy(self.parameters()),
+            #            parameters=deepcopy(self.parameters()),
         )
 
     @_display_or_return
@@ -347,83 +391,100 @@ class RegridOperator(mixin_Container, Container):
             "src_coords",
             "src_bounds",
             "start_index",
-                "src_axes", "dst_axes", "dst",
+            "src_axes",
+            "dst_axes",
+            "dst",
             "weights",
             "row",
             "col",
         ):
             string.append(f"{attr}: {getattr(self, attr)!r}")
 
-#        string.append(f"parameters: {self.parameters()}")
+        #        string.append(f"parameters: {self.parameters()}")
 
         return "\n".join(string)
 
-#    def get_parameter(self, parameter, *default):
-#        """Return a regrid operation parameter.
-#
-#        :Parameters:
-#
-#            parameter: `str`
-#                The name of the parameter.
-#
-#            default: optional
-#                Return the value of the *default* parameter if the
-#                parameter has not been set.
-#
-#                If set to an `Exception` instance then it will be
-#                raised instead.
-#
-#                .. versionadded:: TODODASKVER
-#
-#        :Returns:
-#
-#            The value of the named parameter or the default value, if
-#            set.
-#
-#        **Examples**
-#
-#        >>> r.get_parameter('dst_axes')
-#        ['domainaxis1', 'domainaxis0']
-#        >>> r.get_parameter('x')
-#        Traceback
-#            ...
-#        ValueError: RegridOperator has no 'x' parameter
-#        >>> r.get_parameter('x', 'missing')
-#        'missing'
-#
-#        """
-#        try:
-#            return self._get_component('parameters')[parameter]
-#        except KeyError:
-#            if default:
-#                return default[0]
-#
-#            raise ValueError(
-#                f"{self.__class__.__name__} has no {parameter!r} parameter"
-#            )
-#
-#    def parameters(self):
-#        """Parameters that describe the CF metadata for the destination
-#        grid.
-#
-#        Any parameter names and values are allowed, and it is assumed
-#        that the these are well defined during the creation and
-#        subsequent use of a `RegridOperator` instance.
-#
-#        :Returns:
-#
-#            `dict`
-#                The parameters.
-#
-#        **Examples**
-#
-#        >>> r.parameters()
-#        {'dst': <CF Domain: {latitude(5), longitude(8), time(1)}>,
-#         'dst_axes': ['domainaxis1', 'domainaxis2'],
-#         'src_axes': None}
-#
-#        """
-#        return self._get_component('parameters').copy()
+    def get_parameter(self, parameter, *default):
+        """Return a regrid operation parameter.
+
+        :Parameters:
+
+            parameter: `str`
+                The name of the parameter.
+
+            default: optional
+                Return the value of the *default* parameter if the
+                parameter has not been set.
+
+                If set to an `Exception` instance then it will be
+                raised instead.
+
+                .. versionadded:: TODODASKVER
+
+        :Returns:
+
+            The value of the named parameter or the default value, if
+            set.
+
+        **Examples**
+
+        >>> r.get_parameter('dst_axes')
+        ['domainaxis1', 'domainaxis0']
+        >>> r.get_parameter('x')
+        Traceback
+            ...
+        ValueError: RegridOperator has no 'x' parameter
+        >>> r.get_parameter('x', 'missing')
+        'missing'
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "get_parameter",
+            message="Using attributes instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )
+
+        try:
+            return self._get_component("parameters")[parameter]
+        except KeyError:
+            if default:
+                return default[0]
+
+            raise ValueError(
+                f"{self.__class__.__name__} has no {parameter!r} parameter"
+            )
+
+    def parameters(self):
+        """Parameters that describe the CF metadata for the destination
+        grid.
+
+        Any parameter names and values are allowed, and it is assumed
+        that the these are well defined during the creation and
+        subsequent use of a `RegridOperator` instance.
+
+        :Returns:
+
+            `dict`
+                The parameters.
+
+        **Examples**
+
+        >>> r.parameters()
+        {'dst': <CF Domain: {latitude(5), longitude(8), time(1)}>,
+         'dst_axes': ['domainaxis1', 'domainaxis2'],
+         'src_axes': None}
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "parameters",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )
+
+        return self._get_component("parameters").copy()
 
     def todense(self, order="C"):
         """Return the weights in dense format.
