@@ -514,11 +514,6 @@ class RegridTest(unittest.TestCase):
         methods = list(all_methods)
         methods.remove("conservative_2nd")
         methods.remove("patch")
-        #            "linear",
-        #            "conservative",
-        #            "nearest_dtos",
-        #            "nearest_stod",
-        #        )
 
         dst = self.dst.copy()
         src0 = self.src.copy()
