@@ -16,7 +16,7 @@ def regrid(
 
     .. versionadded:: TODODASKVER
 
-    .. seealso:: `regrid_weights`, `_regrid`,
+    .. seealso:: `regrid_weights`, `_regrid`, `cf.Data._regrid`
 
     :Parameters:
 
@@ -108,27 +108,36 @@ def regrid(
             *weights* prior to the regridding calculation.
 
         min_weight: float, optional
-            A very small non-negative number less than one. By default
-            *min_weight* is ``2.5*np.finfo(np.dtype("float64")).eps``,
+            A very small non-negative number. By default *min_weight*
+            is ``2.5 * np.finfo("float64").eps``,
             i.e. ``5.551115123125783e-16`. It is used during linear
             and first-order conservative regridding when adjusting the
             weights matrix to account for the data mask. It is ignored
             for all other regrid methods, or if data being regridded
             has no missing values.
 
+            In some cases (described below) for which weights might
+            only be non-zero as a result of rounding errors, the
+            *min_weight* parameter controls whether or a not cell in
+            the regridded field is masked.
+
+            The default value has been chosen empirically as the
+            smallest value that produces the same masks as ESMF for
+            the use cases defined in the cf test suite.
+
             **Linear regridding**
 
             Destination grid cell j will only be masked if a) it is
-            masked in destination grid definition; or b) ``min_weight
-            <= w_ji`` for all masked source grid cells i for which
-            ``w_ji > 0``.
+            masked in destination grid definition; or b) ``w_ji >=
+            min_weight`` for those masked source grid cells i for
+            which ``w_ji > 0``.
 
             **Conservative first-order regridding**
 
             Destination grid cell j will only be masked if a) it is
             masked in destination grid definition; or b) The sum of
-            ``w_ji`` for all non-masked source grid cells i is strictly
-            less than *min_weight*.
+            ``w_ji`` for all non-masked source grid cells i is
+            strictly less than *min_weight*.
 
     :Returns:
 
@@ -156,12 +165,6 @@ def regrid(
     if np.ma.is_masked(a):
         # Source data is masked for at least one slice
         mask = np.ma.getmaskarray(a)
-        #        for i in range(96):
-        #            print (mask[:, i])
-        #        print ('mask.sum(axis=1).tolist()=',mask.sum(axis=1).tolist(), mask.shape[1])
-        #        if mask.shape[1] == 1 or set(mask.sum(axis=1).tolist()).issubset(
-        #            (0, mask.shape[1])
-        #        ):
         if mask.shape[1] == 1 or (mask == mask[:, 0:1]).all():
             # The source mask is same for all slices
             src_mask = mask[:, 0]
@@ -195,7 +198,6 @@ def regrid(
             )
 
         if src_mask is not None:
-            # TODO: Q. Do we need to tranpose ref_src_mask first?
             ref_src_mask = ref_src_mask.reshape(src_mask.shape)
             if (src_mask != ref_src_mask).any():
                 raise ValueError(
@@ -208,15 +210,16 @@ def regrid(
     # Regrid the source data
     # ----------------------------------------------------------------
     if min_weight is None:
-        min_weight = np.finfo(np.dtype("float64")).eps * 2.5
+        min_weight = np.finfo("float64").eps * 2.5
 
     if variable_mask:
         # Source data is masked and the source mask varies across
-        # slices => we have to regrid each slice separately.
+        # slices => we have to regrid each slice separately, adjust
+        # the weights for the mask of each slice.
         #
         # However, if the mask of a regrid slice is the same as the
-        # mask of its previous regrid slice then we don't need to
-        # re-adjust the weights.
+        # mask of its previous regrid slice then we can reuse the
+        # weights that already have the correct mask.
         n_slices = a.shape[1]
         regridded_data = np.ma.empty(
             (dst_size, n_slices), dtype=weights.dtype, order="F"
@@ -230,16 +233,17 @@ def regrid(
                 np.ma.getmaskarray(a_n[:, 0]),
                 weights,
                 method,
-                prev_mask,
-                prev_weights,
+                prev_mask=prev_mask,
+                prev_weights=prev_weights,
                 min_weight=min_weight,
             )
 
         a = regridded_data
         del a_n, regridded_data, prev_weights, prev_mask
     else:
-        # Source data is not masked or the source mask is same for all
-        # slices => all slices can be regridded simultaneously.
+        # Source data is either not masked or the source mask is same
+        # for all slices => all slices can be regridded
+        # simultaneously.
         a, _, _ = _regrid(a, src_mask, weights, method, min_weight=min_weight)
         del _
 
@@ -303,11 +307,11 @@ def _regrid(
             See `regrid` for details.
 
         min_weight: float, optional
-            A very small non-negative number less than one. It is used
-            during linear and first-order conservative regridding when
-            adjusting the weights matrix to account for the data
-            mask. It is ignored for all other regrid methods, or if
-            data being regridded has no missing values.
+            A very small non-negative number. It is used during linear
+            and first-order conservative regridding when adjusting the
+            weights matrix to account for the data mask. It is ignored
+            for all other regrid methods, or if data being regridded
+            has no missing values.
 
             See `regrid` for details`
 
@@ -316,13 +320,15 @@ def _regrid(
 
         prev_mask: `numpy.ndarray` or `None`
             The source grid mask used by a previous call to `_regrid`.
+            See *prev_weights* for details`.
 
         prev_weights: `numpy.ndarray`, optional
             The weights matrix used by a previous call to `_regrid`,
             possibly modified to account for missing data. If
             *prev_mask* equals *src_mask* then the *prev_weights*
-            weights matrix is used to calculate the regridded
-            data. Ignored if `prev_mask` is `None`.
+            weights matrix is used to calculate the regridded data,
+            bypassing any need to calcualte a new weights matrix.
+            Ignored if `prev_mask` is `None`.
 
     :Returns:
 
@@ -352,8 +358,6 @@ def _regrid(
         # ------------------------------------------------------------
         w = prev_weights
     else:
-        min_weight = np.finfo(np.dtype("float64")).eps * 2.5
-
         # ------------------------------------------------------------
         # Source data is masked and we might need to adjust the
         # weights matrix accordingly
@@ -380,11 +384,12 @@ def _regrid(
             # cell i and destination cell j.
             D = 1 - weights[:, src_mask].sum(axis=1, keepdims=True)
 
-            # Get rid of values that are (approximately) zero, or
+            # Get rid of values that are approximately zero, or
             # spuriously negative. These values of 'D' correspond to
             # destination cells that overlap only masked source
             # cells. These weights will imminently be zeroed, so it's
-            # OK to set their value to 1 in the mean time.
+            # OK to set their value to 1, i.e. a nice non-zero value
+            # that will allow us to divide by 'D' in the next step.
             D = np.where(D < min_weight, 1, D)
 
             # Divide the weights by 'D'. Note that for destination
@@ -404,17 +409,12 @@ def _regrid(
             w = np.ma.where(
                 np.count_nonzero(w, axis=1, keepdims=True), w, np.ma.masked
             )
+
         elif method in ("linear", "bilinear", "nearest_dtos"):
             # 2) Linear and nearest neighbour methods:
             #
             # Mask out any row j that contains at least one positive
             # w_ji that corresponds to a masked source grid cell i.
-            #            w = weights.copy()
-            #            w[:, src_mask] = 0
-            #            w = np.ma.where(
-            #                w.sum(axis=1, keepdims=True) < 1 - min_weight, np.ma.masked, w
-            #            )
-
             if np.ma.isMA(weights):
                 where = np.ma.where
             else:
@@ -433,6 +433,7 @@ def _regrid(
                 w[j, :] = np.ma.masked
             else:
                 w = weights
+
         elif method in (
             "patch",
             "conservative_2nd",
@@ -444,6 +445,7 @@ def _regrid(
             # incorporated into the weights matrix, and 'a' is assumed
             # to have the same mask (this is checked in `regrid`).
             w = weights
+
         else:
             raise ValueError(f"Unknown regrid method: {method!r}")
 
@@ -544,7 +546,6 @@ def regrid_weights(
 
     from scipy.sparse import coo_array
 
-    #    print ("src_shape", src_shape)
     # Create a sparse array for the weights
     src_size = prod(src_shape)
     dst_size = prod(dst_shape)

@@ -15390,16 +15390,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ignore_degenerate=True,
         return_operator=False,
         check_coordinates=False,
+        min_weight=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
     ):
         """Regrid the field to a new latitude and longitude grid.
 
-        Regridding is the process of interpolating the field data
-        values while preserving the qualities of the original data,
-        and the metadata of the unaffected axes. The metadata for the
-        regridded axes are taken from the *dst* parameter.
+        {{regridding overview}}
 
         The 2-d regridding takes place on a sphere, with the grid
         being defined by latitude and longitude spherical polar
@@ -15417,17 +15415,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         When a grid is defined by 2-d latitude and longitude
         coordinates, it is necessary for their X and Y dimensions to
         be defined. This is either automatically inferred from the
-        exitence of 1-d dimension coordinates, or else must be specified
-        with *src_axes* or *dst_axes* parameters
-
-        **Cyclicity of the X axis**
-
-        The cyclicity of the X (longitude) axes of the source and
-        destination grids (i.e. whether or not the first and last
-        cells of the axis are adjacent) are taken into account. By
-        default, the cyclicity is inferred from the grids' defining
-        coordinates, but may be also be provided with the *src_cyclic*
-        and *dst_cyclic* parameters.
+        exitence of 1-d dimension coordinates, or else must be
+        specified with *src_axes* or *dst_axes* parameters
 
         **Curvilinear Grids**
 
@@ -15438,31 +15427,24 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         **Tripolar Grids**
 
         Connections across the bipole fold are not currently
-        supported, but are not be necessary in some cases, for example
-        if the points on either side are together without a gap.
+        supported, but are not necessary in some cases, for example if
+        the points on either side are together without a gap (as is
+        the case for NEMO model outputs).
 
-        **Implementation**
+        **Cyclicity of the X axis**
 
-        The interpolation is carried out using regridding weights
-        calcualted byt the `ESMF` package, a Python interface to the
-        Earth System Modeling Framework (ESMF) regridding utility:
-        `https://earthsystemmodeling.org/regrid`_.
+        The cyclicity of the X (longitude) axes of the source and
+        destination grids (i.e. whether or not the first and last
+        cells of the axis are adjacent) are taken into account. By
+        default, the cyclicity is inferred from the grids' defining
+        coordinates, but may be also be provided with the *src_cyclic*
+        and *dst_cyclic* parameters.
 
-        **Masked cells**
+        {{regrid Masked cells}}
 
-        By default, the data mask of the field is taken into account
-        during the regridding process, but the destination grid mask
-        is not. This behaviour may be changed with the *use_src_mask*
-        and *use_dst_mask* parameters.
+        {{regrid Implementation}}
 
-        How masked cells affect the regridding weights is defined by
-        the `ESMF` package.
-
-        **Logging**
-
-        Whether `ESMF` logging is enabled or not is determined by
-        `cf.regrid_logging`. If it is logging takes place after every
-        call. By default logging is disabled.
+        {{regrid Logging}}
 
         .. versionadded:: 1.0.4
 
@@ -15571,18 +15553,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{check_coordinates: `bool`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
+
+            {{min_weight: float, optional}}
+
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
             fracfield: `bool`, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
             _compute_field_mass: `dict`, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
             {{i: deprecated at version 3.0.0}}
 
@@ -15595,50 +15581,53 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Examples**
 
-        Regrid field construct ``f`` conservatively onto a grid
-        contained in field construct ``g``:
+        >>> src, dst = cf.example_fields(1, 0)
+        >>> print(src)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+        Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+        Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                        : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                        : time(1) = [2019-01-01 00:00:00]
+        Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                        : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+        Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+        Coord references: grid_mapping_name:rotated_latitude_longitude
+                        : standard_name:atmosphere_hybrid_height_coordinate
+        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                        : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+        >>> print(dst)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> x = src.regrids(dst, method='linear')
+        >>> print(x)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), latitude(5), longitude(8)) K
+        Cell methods    : latitude(5): longitude(8): mean where land (interval: 0.1 degrees) time(1): maximum
+        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        Coord references: standard_name:atmosphere_hybrid_height_coordinate
+        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                        : surface_altitude(latitude(5), longitude(8)) = [[--, ..., --]] m
 
-        >>> h = f.regrids(g, 'conservative')
-
-        Regrid f to the grid of g using linear regridding and forcing
-        the source field f to be treated as cyclic.
-
-        >>> h = f.regrids(g, src_cyclic=True, method='linear')
-
-        Regrid f to the grid of g using the mask of g.
-
-        >>> h = f.regrids(g, 'conservative_1st', use_dst_mask=True)
-
-        Regrid f to 2-d auxiliary coordinates lat and lon, which have
-        their dimensions ordered "Y" first then "X".
-
-        >>> lat
-        <CF AuxiliaryCoordinate: latitude(110, 106) degrees_north>
-        >>> lon
-        <CF AuxiliaryCoordinate: longitude(110, 106) degrees_east>
-        >>> h = f.regrids(
-        ...         {'longitude': lon, 'latitude': lat, 'axes': ('Y', 'X')},
-        ...         'conservative'
-        ...     )
-
-        Regrid field, f, on tripolar grid to latitude-longitude grid
-        of field, g.
-
-        >>> h = f.regrids(g, 'linear',
-        ...               src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
-        ...               src_cyclic=True)
-
-        Regrid f to the grid of g iterating over the 'Z' axis last and
-        the 'T' axis next to last to minimise the number of times the
-        mask is changed.
-
-        >>> h = f.regrids(g, 'nearest_dtos', axis_order='ZT') TODODASK
-
-        Store the regrid operator and use it for a subsequent regrids:
-
-        >>> op = f.regrids(g, method='conservative', return_operator=True)
-        >>> h = f.regrids(op)
-        >>> h2 = f2.regrids(op)
+        >>> r = src.regrids(dst, method='linear', return_operator=True)
+        >>> y = src.regrids(r)
+        >>> y.equals(x)
+        True
 
         """
         from .regrid import regrid
@@ -15657,6 +15646,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             ignore_degenerate=ignore_degenerate,
             return_operator=return_operator,
             check_coordinates=check_coordinates,
+            min_weight=min_weight,
             inplace=inplace,
         )
 
@@ -15674,16 +15664,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ignore_degenerate=True,
         return_operator=False,
         check_coordinates=False,
+        min_weight=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
     ):
         """Regrid the field to a new Cartesian grid.
 
-        Regridding is the process of interpolating the field data
-        values while preserving the qualities of the original data,
-        and the metadata of the unaffected axes. The metadata for the
-        regridded axes are taken from the *dst* parameter.
+        {{regridding overview}}
 
         Between one and three axes may be simultaneously regridded in
         Cartesian space.
@@ -15696,28 +15684,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         the field being regridded and the specification of the
         destination grid given by the *dst* parameter.
 
-        **Implementation**
+        {{regrid Masked cells}}
 
-        The interpolation is carried out using regridding weights
-        calcualted byt the `ESMF` package, a Python interface to the
-        Earth System Modeling Framework (ESMF) regridding utility:
-        `https://earthsystemmodeling.org/regrid`_.
+        {{regrid Implementation}}
 
-        **Masked cells**
-
-        By default, the data mask of the field is taken into account
-        during the regridding process, but the destination grid mask
-        is not. This behaviour may be changed with the *use_src_mask*
-        and *use_dst_mask* parameters.
-
-        How masked cells affect the regridding weights is defined by
-        the `ESMF` package.
-
-        **Logging**
-
-        Whether `ESMF` logging is enabled or not is determined by
-        `cf.regrid_logging`. If it is logging takes place after every
-        call. By default logging is disabled.
+        {{regrid Logging}}
 
         .. seealso:: `regrids`
 
@@ -15771,7 +15742,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Parameter example:*
                   ``[1, 0]``
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             dst_axes: `sequence`, optional
                 When the destination grid is defined by a `Field` or
@@ -15797,7 +15768,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Parameter example:*
                   ``[1, 0]``
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             axes: optional
                 Define the axes to be regridded for the source grid
@@ -15816,18 +15787,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{check_coordinates: `bool`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
+
+            {{min_weight: float, optional}}
+
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
             fracfield: `bool`, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
             _compute_field_mass: `dict`, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
             {{i: deprecated at version 3.0.0}}
 
@@ -15840,38 +15815,53 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Examples**
 
-        Regrid the time axes of field ``f`` conservatively onto a grid
-        contained in field ``g``:
+        >>> src, dst = cf.example_fields(1, 0)
+        >>> print(src)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+        Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+        Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                        : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                        : time(1) = [2019-01-01 00:00:00]
+        Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                        : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+        Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+        Coord references: grid_mapping_name:rotated_latitude_longitude
+                        : standard_name:atmosphere_hybrid_height_coordinate
+        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                        : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+        >>> print(dst)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> x = src.regrids(dst, method='linear', axes=['Y'], )
+        >>> print(x)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), latitude(5), grid_longitude(9)) K
+        Cell methods    : latitude(5): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                        : time(1) = [2019-01-01 00:00:00]
+        Coord references: standard_name:atmosphere_hybrid_height_coordinate
+        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                        : surface_altitude(latitude(5), grid_longitude(9)) = [[--, ..., --]] m
 
-        >>> h = f.regridc(g, axes='T', method='conservative')
-
-        Regrid the T axis of field ``f`` conservatively onto the grid
-        specified in the dimension coordinate ``t``:
-
-        >>> h = f.regridc({'T': t}, axes=('T'), method='conservative_1st')
-
-        Regrid the T axis of field ``f`` using linear interpolation onto
-        a grid contained in field ``g``:
-
-        >>> h = f.regridc(g, axes=('T'), method='linear')
-
-        Regrid the X and Y axes of field ``f`` conservatively onto a grid
-        contained in field ``g``:
-
-        >>> h = f.regridc(g, axes=('X','Y'), method='conservative_1st')
-
-        Regrid the X and T axes of field ``f`` conservatively onto a grid
-        contained in field ``g`` using the destination mask:
-
-        >>> h = f.regridc(g, axes=('X','Y'), method='linear',
-        ...               use_dst_mask=True)
-
-        Store the regrid operator and use it for a subsequent regrids:
-
-        >>> op = f.regridc(g, axes='T', method='conservative',
-        ...                return_operator=True)
-        >>> h = f.regridc(op)
-        >>> h2 = f2.regridc(op)
+        >>> r = src.regrids(dst, method='linear', axes=['Y'], return_operator=True)
+        >>> y = src.regrids(r)
+        >>> y.equals(x)
+        True
 
         """
         from .regrid import regrid
@@ -15889,6 +15879,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             ignore_degenerate=ignore_degenerate,
             return_operator=return_operator,
             check_coordinates=check_coordinates,
+            min_weight=min_weight,
             inplace=inplace,
         )
 

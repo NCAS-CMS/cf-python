@@ -93,6 +93,7 @@ def regrid(
     ignore_degenerate=True,
     return_operator=False,
     check_coordinates=False,
+    min_weight=None,
     inplace=False,
     return_ESMF_regrid_operator=False,
 ):
@@ -483,6 +484,7 @@ def regrid(
         operator=regrid_operator,
         regrid_axes=src_grid.axis_indices,
         regridded_sizes=regridded_axis_sizes,
+        min_weight=min_weight,
     )
 
     # ----------------------------------------------------------------

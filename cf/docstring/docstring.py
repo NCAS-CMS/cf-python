@@ -3,7 +3,7 @@
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
 
-Special docstring subtitutions, as defined by a class's
+Special docstring substitutions, as defined by a class's
 `_docstring_special_substitutions` method, may be used in the
 replacement text, and will be substituted as usual.
 
@@ -22,26 +22,62 @@ Keys must be `str` or `re.Pattern` objects:
 """
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
-    # General susbstitutions (not indent-dependent)
+    # General substitutions (not indent-dependent)
     # ----------------------------------------------------------------
     "{{repr}}": "CF ",
     # ----------------------------------------------------------------
-    # Class description susbstitutions (1 level of indentation)
+    # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
     "{{formula terms links}}": """See CF section 4.3.3 "Parametric Vertical Coordinate" and CF
     Appendix D "Parametric Vertical Coordinates" for details.""",
     # ----------------------------------------------------------------
-    # Class description susbstitutions (1 level of indentation)
+    # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
     #
     # ----------------------------------------------------------------
-    # Method description susbstitutions (2 levels of indentation)
+    # Method description substitutions (2 levels of indentation)
     # ----------------------------------------------------------------
     # List comparison
     "{{List comparison}}": """Each construct in the list is compared with its `!equals`
         method, rather than the ``==`` operator.""",
+    # regridding overview
+    "{{regridding overview}}": """Regridding is the process of interpolating the field data
+        values while preserving the qualities of the original data,
+        and the metadata of the unaffected axes. The metadata for the
+        regridded axes are taken from the *dst* parameter.""",
+    # regrid Masked cells
+    "{{regrid Masked cells}}": """**Masked cells**
+
+        By default, the data mask of the field is taken into account
+        during the regridding process, but the destination grid mask
+        is not. This behaviour may be changed with the *use_src_mask*
+        and *use_dst_mask* parameters.
+
+        The source data may be arbitrarily masked, apart from for
+        second-order conservative and patch recovery regridding
+        methods, for which the mask of the regridding axes must be the
+        same across all non-regridding axes.""",
+    # regrid Masked cells
+    "{{regrid Implementation}}": """**Implementation**
+
+        The interpolation is carried out using regridding weights
+        calculated byt the `ESMF` package, a Python interface to the
+        Earth System Modeling Framework (ESMF) regridding utility:
+        `https://earthsystemmodeling.org/regrid`_. Outside of `ESMF`,
+        these weights are then modified for masked cells (if required)
+        and the regridded data is created as the dot product of the
+        weights with the source data. (Note that whilst the `ESMF`
+        package is able to also create the regridded data from its
+        weights, this feature can't be integrated with the `dask`
+        framework that underpins the field's data.)""",
+    # regrid Logging
+    "{{regrid Logging}}": """**Logging**
+
+        Whether `ESMF` logging is enabled or not is determined by
+        `cf.regrid_logging`. If it is logging takes place after every
+        call. By default logging is disabled.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (3 levels of indentataion)
+    # Method description substitutions (3 levels of indentation)
     # ----------------------------------------------------------------
     # i: deprecated at version 3.0.0
     "{{i: deprecated at version 3.0.0}}": """i: deprecated at version 3.0.0
@@ -85,7 +121,7 @@ _docstring_substitution_definitions = {
 
                 * ``'conservative_2nd'``: Second-order conservative
                   interpolation. As with first order conservative
-                  interpolatio, preserves the area integral of the
+                  interpolation, preserves the area integral of the
                   field between source and destination using a
                   weighted sum, with weights based on the
                   proportionate area of intersection. In addition the
@@ -151,7 +187,7 @@ _docstring_substitution_definitions = {
 
                 *Parameter example:*
                   A size in bytes, like ``"100MiB"`` which will choose
-                  a uniform block-like shape, prefering square-like
+                  a uniform block-like shape, preferring square-like
                   chunk shapes.
 
                 *Parameter example:*
@@ -179,7 +215,7 @@ _docstring_substitution_definitions = {
 
                 * A tuple containing the construct key of the vertical
                   domain axis. If the vertical axis does not appear in
-                  the computed non-parametric coodinates then this an
+                  the computed non-parametric coordinates then this an
                   empty tuple.""",
     # collapse axes
     "{{collapse axes: (sequence of) `int`, optional}}": """axes: (sequence of) `int`, optional
@@ -365,13 +401,50 @@ _docstring_substitution_definitions = {
     "{{check_coordinates: `bool`, optional}}": """check_coordinates: `bool`, optional
                 If True and *dst* is a `RegridOperator`then the source
                 grid coordinates defined by the operator are checked
-                for compatibilty against those of the source field. By
+                for compatibility against those of the source field. By
                 default this check is not carried out. See the *dst*
                 parameter for details.
 
                 Ignored unless *dst* is a `RegridOperator`.""",
+    # min_weight
+    "{{min_weight: float, optional}}": """min_weight: float, optional
+                A very small non-negative number. By default
+                *min_weight* is ``2.5 * np.finfo("float64").eps``,
+                i.e. ``5.551115123125783e-16`. It is used during
+                linear and first-order conservative regridding when
+                adjusting the weights matrix to account for the data
+                mask. It is ignored for all other regrid methods, or
+                if data being regridded has no missing values.
+
+                In some cases (described below) for which weights
+                might only be non-zero as a result of rounding errors,
+                the *min_weight* parameter controls whether or a not
+                cell in the regridded field is masked.
+
+                The default value has been chosen empirically as the
+                smallest value that produces the same masks as ESMF
+                for the use cases defined in the cf test suite.
+
+                Define w_ji as the multiplicative weight that defines
+                how much of Vs_i (the value in source grid cell i)
+                contributes to Vd_j (the value in destination grid
+                cell j).
+
+                **Linear regridding**
+
+                Destination grid cell j will only be masked if a) it
+                is masked in destination grid definition; or b) ``w_ji
+                >= min_weight`` for those masked source grid cells i
+                for which ``w_ji > 0``.
+
+                **Conservative first-order regridding**
+
+                Destination grid cell j will only be masked if a) it
+                is masked in destination grid definition; or b) The
+                sum of ``w_ji`` for all non-masked source grid cells i
+                is strictly less than *min_weight*.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (4 levels of indentataion)
+    # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
     # Returns construct
     "{{Returns construct}}": """The selected construct, or its identifier if *key* is
@@ -393,7 +466,7 @@ _docstring_substitution_definitions = {
                   the regrid weights is not a lazy operation.
 
                   .. note:: The source grid of the regrid operator is
-                            immediately checked for compatability with
+                            immediately checked for compatibility with
                             the grid of the source field. By default
                             only the computationally cheap tests are
                             performed (checking that the coordinate

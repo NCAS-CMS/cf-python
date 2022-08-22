@@ -3404,8 +3404,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         operator=None,
         regrid_axes=None,
         regridded_sizes=None,
+        min_weight=None,
     ):
         """Regrid the data.
+
+        See `cf.regrid.regrid` for details.
 
         .. versionadded:: TODODASKVER
 
@@ -3435,13 +3438,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 *Parameter example:*
                   ``{3: 128, 2: 64}``
 
+            {{min_weight: float, optional}}
+
         :Returns:
 
             `Data`
                 The regridded data.
 
         """
-        #        print ("regrid_axes",regrid_axes, regridded_sizes)
         from dask import delayed
 
         from .dask_regrid import regrid, regrid_weights
@@ -3481,30 +3485,21 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         non_regrid_axes = [i for i in range(self.ndim) if i not in regrid_axes]
 
+        # Cast weights and mask arrays as dask arrays
+        weights = da.asanyarray(operator.weights)
+        row = da.asanyarray(operator.row)
+        col = da.asanyarray(operator.col)
+
         src_mask = operator.src_mask
         if src_mask is not None:
             src_mask = da.asanyarray(src_mask)
-            if src_mask.npartitions > 1:
-                src_mask = src_mask.rechunk(-1)
 
         dst_mask = operator.dst_mask
         if dst_mask is not None:
             dst_mask = da.asanyarray(dst_mask)
-            if dst_mask.npartitions > 1:
-                dst_mask = dst_mask.rechunk(-1)
 
-        weights = da.asanyarray(operator.weights)
-        if weights.npartitions > 1:
-            weights = weights.rechunk(-1)
-
-        row = da.asanyarray(operator.row)
-        if row.npartitions > 1:
-            row = row.rechunk(-1)
-
-        col = da.asanyarray(operator.col)
-        if col.npartitions > 1:
-            col = col.rechunk(-1)
-
+        # Create a delayed object that calculates creates teh weights
+        # matrix
         weights_func = partial(
             regrid_weights,
             src_shape=src_shape,
@@ -3526,6 +3521,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             src_shape=src_shape,
             dst_shape=operator.dst_shape,
             axis_order=non_regrid_axes + list(regrid_axes),
+            min_weight=min_weight,
         )
 
         dx = dx.map_blocks(
