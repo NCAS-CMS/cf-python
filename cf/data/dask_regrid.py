@@ -142,13 +142,11 @@ def regrid(
     # are the gathered regridding axes and whose left-hand dimension
     # represent of all the other dimensions.
     # ----------------------------------------------------------------
-    print (a.shape, weights.shape)
     a = a.transpose(axis_order)
     non_regrid_shape = a.shape[: a.ndim - len(src_shape)]
     dst_size, src_size = weights.shape
     a = a.reshape(-1, src_size)
     a = a.T
-    print (a.shape)
 
     # ----------------------------------------------------------------
     # Find the source grid mask
@@ -158,7 +156,6 @@ def regrid(
     if np.ma.is_masked(a):
         # Source data is masked for at least one slice
         mask = np.ma.getmaskarray(a)
-        print ('mask.shape=', mask.shape, (mask == mask[:, 0:1]).all())
 #        for i in range(96):
 #            print (mask[:, i])
 #        print ('mask.sum(axis=1).tolist()=',mask.sum(axis=1).tolist(), mask.shape[1])

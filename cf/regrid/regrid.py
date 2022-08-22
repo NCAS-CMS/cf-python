@@ -1425,12 +1425,14 @@ def create_ESMF_grid(grid=None, mask=None):
 
         if mask is not None:
             grid_mask = esmf_grid.add_item(ESMF.GridItem.MASK)
-            # Note: ESMF mask has 0/1 for masked/unmasked elements.
-            print ('PPPPPPPPPP',grid_mask.ndim)
-            if grid_mask.ndim == mask.ndim + 1:
-                Robustify this!!!
+            if len(grid.coords) == 2 and mask.ndim == 1:
+                # ESMF gid has a dummy size 1 dimension, so we need to
+                # include this int he mas as well.
                 mask = np.expand_dims(mask, 1)
                 
+            # Note: 'mask' has True/False for masked/unmasked
+            #       elements, but the ESMF mask requires 0/1 for
+            #       masked/unmasked elements.
             grid_mask[...] = np.invert(mask).astype("int32")
 
     return esmf_grid

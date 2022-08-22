@@ -112,8 +112,8 @@ def ESMF_regrid_Nd(coord_sys, method, src, dst, **kwargs):
 
 
 class RegridTest(unittest.TestCase):
-    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
-    @unittest.skipUnless(False, "Requires ESMF package.")
+    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    #@unittest.skipUnless(False, "Requires ESMF package.")
     def test_Field_regrid_2d_field(self):
         """Test 2-d regridding with destination grid defined by a
         Field."""
@@ -271,8 +271,8 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regrids(dst, method=method).array
 
-    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
-    @unittest.skipUnless(False, "Skip for speed")
+    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    #@unittest.skipUnless(False, "Skip for speed")
     def test_Field_regrids_coords(self):
         """Spherical regridding with destination grid defined by
         coords."""
@@ -342,8 +342,8 @@ class RegridTest(unittest.TestCase):
         d1 = src.regrids(r)
         self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(False, "Skip for speed")
-    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    #@unittest.skipUnless(False, "Skip for speed")
+    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
     def test_Field_regridc_2d_coords(self):
         """2-d Cartesian regridding with destination grid defined by
         coords."""
@@ -374,7 +374,7 @@ class RegridTest(unittest.TestCase):
         d1 = src.regridc(r)
         self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(False, "Skip for speed")
+    #@unittest.skipUnless(False, "Skip for speed")
     def test_Field_regrids_bad_dst(self):
         """Check that disallowed destination grid types raise an
         exception."""
@@ -391,8 +391,8 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             src.regrids("foobar", method="conservative")
 
-    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
-    @unittest.skipUnless(False, "Skip for speed")
+    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    #@unittest.skipUnless(False, "Skip for speed")
     def test_Field_regrids_domain(self):
         """Spherical regridding with destination grid defined by a
         Domain."""
@@ -416,7 +416,7 @@ class RegridTest(unittest.TestCase):
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
     @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
-    @unittest.skipUnless(False, "Skip for speed")
+    #@unittest.skipUnless(False, "Skip for speed")
     def test_Field_regridc_domain(self):
         """Spherical regridding with destination grid defined by a
         Domain."""
@@ -442,8 +442,8 @@ class RegridTest(unittest.TestCase):
         d1 = src.regridc(r)
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
-    #@unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
-    @unittest.skipUnless(False, "Skip for speed")
+    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    #@unittest.skipUnless(False, "Skip for speed")
     def test_Field_regrids_field_operator(self):
         """Spherical regridding with destination grid defined by an
         operator derived from a Field."""
@@ -614,7 +614,8 @@ class RegridTest(unittest.TestCase):
 #            f2.regrids(op)
 #
 
-    @unittest.skipUnless(False, "Skip for speed")
+    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
+    #@unittest.skipUnless(False, "Skip for speed")
     def test_Field_regridc_3d_field(self):
         """Test 3-d Cartesian regridding with destination grid defined by a
         Field.
@@ -711,6 +712,7 @@ class RegridTest(unittest.TestCase):
                     np.allclose(y, a, atol=atol, rtol=rtol)
                 )
                 
+    @unittest.skipUnless(ESMF_imported, "Requires ESMF package.")
     def test_Field_regridc_1d_field(self):
         """Test 1-d Cartesian regridding with destination grid defined by a
         Field.
@@ -803,13 +805,13 @@ class RegridTest(unittest.TestCase):
                     use_dst_mask=use_dst_mask, axes=axes,
                 )
 
-                print ('a=', a[:11, :14,0])
-                print ('y=',y[:11, :14,0])
+#                print ('a=', a[:11, :14,0])
+#                print ('y=',y[:11, :14,0])
                 if isinstance(a, np.ma.MaskedArray):
-                    print (a[...,0].count(), y[...,0].count())
-                    print (a[...,1].count(), y[...,1].count())
-                    print (a.count(), y.count())
-                    #self.assertTrue((y.mask == a.mask).all())
+#                    print (a[...,0].count(), y[...,0].count())
+#                    print (a[...,1].count(), y[...,1].count())
+#                    print (a.count(), y.count())
+                    self.assertTrue((y.mask == a.mask).all())
                 else:
                     self.assertFalse(y.mask.any())
                     
