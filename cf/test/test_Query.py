@@ -566,6 +566,14 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(r.value.array, 3000)
         self.assertEqual(q.value, 9)
 
+    def test_Query_iscontains(self):
+        q = cf.contains(9)
+        self.assertTrue(q.iscontains())
+
+        r = cf.lt(9)
+        self.assertFalse(r.iscontains())
+        self.assertFalse((q | r).iscontains())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

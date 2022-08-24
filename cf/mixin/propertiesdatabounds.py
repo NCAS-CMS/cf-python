@@ -94,7 +94,15 @@ class PropertiesDataBounds(PropertiesData):
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:
-            new.set_data(data[findices], copy=False)
+            new_data = data[findices]
+            new.set_data(new_data, copy=False)
+
+            if 0 in new_data.shape:
+                raise IndexError(
+                    f"Indices {findices!r} result in a subspaced shape of "
+                    f"{new_data.shape}, but can't create a subspace of "
+                    f"{self.__class__.__name__} that has a size 0 axis"
+                )
 
         # Subspace the interior ring array, if there is one.
         interior_ring = self.get_interior_ring(None)

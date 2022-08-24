@@ -20,6 +20,9 @@ from .units import Units
 
 logger = logging.getLogger(__name__)
 
+# Alias for builtin set, since there is a 'set' function
+builtin_set = set
+
 
 class Query:
     '''Encapsulate a condition for subsequent evaluation.
@@ -236,6 +239,8 @@ class Query:
 
         self._bitwise_operator = None
 
+        self.query_type = operator
+
         self._NotImplemented_RHS_Data_op = True
 
     def __deepcopy__(self, memo):
@@ -276,6 +281,7 @@ class Query:
         new._compound = (self.copy(), other.copy())
         new._bitwise_operator = operator_and
         new._attr = ()
+        new._value = None
 
         new._NotImplemented_RHS_Data_op = True
 
@@ -302,6 +308,7 @@ class Query:
         new._compound = (self, other)
         new._bitwise_operator = operator_or
         new._attr = ()
+        new._value = None
 
         new._NotImplemented_RHS_Data_op = True
 
@@ -397,10 +404,13 @@ class Query:
         AttributeError: Compound query doesn't have attribute 'value'
 
         """
-        if not self._compound:
-            return self._value
+        value = self._value
+        if value is None:
+            raise AttributeError(
+                "Compound query doesn't have attribute 'value'"
+            )
 
-        raise AttributeError("Compound query doesn't have attribute 'value'")
+        return value
 
     def addattr(self, attr):
         """Return a `Query` object with a new left hand side operand
@@ -725,6 +735,50 @@ class Query:
 
         """
         print(_inspect(self))  # pragma: no cover
+
+    def iscontains(self):
+        """Return True if the query is a "cell contains" condition.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `cf.contains`
+
+        :Returns:
+
+            `bool`
+                Whether or not the query is a "cell contains"
+                condition.
+
+        **Examples**
+
+        >>> q = cf.contains(15)
+        >>> q
+        <CF Query: [lower_bounds(le 15) & upper_bounds(ge 15)]>
+        >>> q.iscontains()
+        True
+        >>> q |= cf.Query('le', 6)
+        >>> q.iscontains()
+        False
+
+        >>> q = cf.Query('le', 6)
+        >>> q.iscontains()
+        False
+
+        """
+        if not (self._compound and self._bitwise_operator is operator_and):
+            return False
+
+        sig = builtin_set()
+        for q in self._compound:
+            if q._compound:
+                # Skip nested compound queries
+                continue
+
+            sig.add((q.attr, q.operator))
+
+        return sig == builtin_set(
+            ((("lower_bounds",), "le"), (("upper_bounds",), "ge"))
+        )
 
     def set_condition_units(self, units):
         """Set units of condition values in-place.
@@ -1289,8 +1343,9 @@ def contains(value, units=None):
 
     .. versionadded:: 3.0.0
 
-    .. seealso:: `cf.cellsize`, `cf.cellge`, `cf.cellgt`, `cf.cellne`,
-                 `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
+    .. seealso:: `cf.Query.iscontains`, `cf.cellsize`, `cf.cellge`,
+                 `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
+                 `cf.cellwi`, `cf.cellwo`
 
     :Parameters:
 
@@ -1311,10 +1366,18 @@ def contains(value, units=None):
 
     **Examples**
 
-    >>> cf.contains(8)
+    >>> q = cf.contains(8)
+    >>> q
     <CF Query: [lower_bounds(le 8) & upper_bounds(ge 8)]>
-    >>> cf.contains(30, 'degrees_east')
+    >>> q.value
+    8
+
+    >>> q = cf.contains(30, 'degrees_east')
+    >>> q
     <CF Query: [lower_bounds(le 30 degrees_east) & upper_bounds(ge 30 degrees_east)]>
+    >>> q.value
+    <CF Data(): 30 degrees_east>
+
     >>> cf.contains(cf.Data(10, 'km'))
     <CF Query: [lower_bounds(le 10 km) & upper_bounds(ge 10 km)]>
 
@@ -1331,9 +1394,11 @@ def contains(value, units=None):
     [False False False False]
 
     """
-    return Query("le", value, units=units, attr="lower_bounds") & Query(
-        "ge", value, units=units, attr="upper_bounds"
-    )
+    lb = Query("le", value, units=units, attr="lower_bounds")
+    ub = Query("ge", value, units=units, attr="upper_bounds")
+    q = lb & ub
+    q._value = lb.value
+    return q
 
 
 def year(value):

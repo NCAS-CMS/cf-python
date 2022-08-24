@@ -1,12 +1,9 @@
 import logging
 from numbers import Integral
 
+import dask.array as da
 import numpy as np
-
-try:
-    from matplotlib.path import Path
-except ImportError:
-    pass
+from dask.base import is_dask_collection
 
 from ..data import Data
 from ..decorators import (
@@ -22,6 +19,12 @@ from ..functions import (
 )
 from ..query import Query
 from ..units import Units
+
+# try:
+#    from matplotlib.path import Path
+# except ImportError:
+#    pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -336,7 +339,6 @@ class FieldDomain:
         #        )  # pragma: no cover
 
         domain_axes = self.domain_axes(todict=True)
-        #        constructs = self.constructs.filter_by_data()
 
         # Initialize indices
         indices = {axis: slice(None) for axis in domain_axes}
@@ -444,11 +446,10 @@ class FieldDomain:
 
                 if isinstance(value, (list, slice, tuple, np.ndarray)):
                     # ------------------------------------------------
-                    # 1-dimensional CASE 1: Value is already an index,
-                    #                       e.g. [0], [7,4,2],
-                    #                       slice(0,4,2),
-                    #                       numpy.array([2,4,7]),
-                    #                       [True, False, True]
+                    # 1-d CASE 1: Value is already an index, e.g. [0],
+                    #             [7,4,2], slice(0,4,2),
+                    #             numpy.array([2,4,7]), [True, False,
+                    #             True]
                     # ------------------------------------------------
                     logger.debug("  1-d CASE 1:")  # pragma: no cover
 
@@ -469,10 +470,9 @@ class FieldDomain:
                     and self.iscyclic(axis)
                 ):
                     # ------------------------------------------------
-                    # 1-dimensional CASE 2: Axis is cyclic and
-                    #                       subspace criterion is a
-                    #                       'within' or 'without'
-                    #                       Query instance
+                    # 1-d CASE 2: Axis is cyclic and subspace
+                    #             criterion is a 'within' or 'without'
+                    #             Query instance
                     # ------------------------------------------------
                     logger.debug("  1-d CASE 2:")  # pragma: no cover
 
@@ -516,33 +516,37 @@ class FieldDomain:
                             start = -a
                             stop = b - size
 
+                    if start == stop == 0:
+                        raise ValueError(
+                            f"No indices found from: {identity}={value!r}"
+                        )
+
                     index = slice(start, stop, 1)
 
                     if full:
-                        # TODODASK - consider using some sort of
-                        #            dask.arange here
-                        d = self._Data(list(range(size)))
+                        d = self._Data(da.arange(size))
                         d.cyclic(0)
                         ind = (d[index].array,)
                         index = slice(None)
 
                 elif item is not None:
                     # ------------------------------------------------
-                    # 1-dimensional CASE 3: All other 1-d cases
+                    # 1-d CASE 3: All other 1-d cases
                     # ------------------------------------------------
                     logger.debug("  1-d CASE 3:")  # pragma: no cover
 
-                    item_match = value == item
+                    index = value == item
 
-                    if not item_match.any():
-                        raise ValueError(
-                            f"No {identity!r} axis indices found "
-                            f"from: {value}"
-                        )
+                    #                    if not item_match.any():
+                    #                        raise ValueError(
+                    #                            f"No indices found from: {identity}={value!r}"
+                    #                        )
 
-                    index = np.asanyarray(item_match)
+                    #                    index = np.asanyarray(item_match)
+                    index = index.data.to_dask_array()
 
                     if envelope or full:
+                        index = np.asanyarray(index)
                         if np.ma.isMA(index):
                             ind = np.ma.where(index)
                         else:
@@ -569,7 +573,7 @@ class FieldDomain:
 
             else:
                 # ----------------------------------------------------
-                # N-dimensional constructs
+                # N-d constructs
                 # ----------------------------------------------------
                 logger.debug(
                     f"  {n_items} N-d constructs: {constructs!r}\n"
@@ -599,12 +603,10 @@ class FieldDomain:
                 ]
 
                 item_match = item_matches.pop()
-
                 for m in item_matches:
                     item_match &= m
 
-                item_match = item_match.array  # LAMA alert
-
+                item_match = item_match.compute()
                 if np.ma.isMA:
                     ind = np.ma.where(item_match)
                 else:
@@ -621,68 +623,58 @@ class FieldDomain:
                             f"from: {value!r}"
                         )
 
+                # If there are exactly two 2-d contructs constructs,
+                # both with bounds and both with 'cf.contains' values,
+                # then do an extra check to remove any cells already
+                # selected for which the given value is actually
+                # outside of the cell. This could happen if the cells
+                # are not rectangular.
                 bounds = [
-                    item.bounds.array[ind]
+                    item.bounds
                     for item in transposed_constructs
                     if item.has_bounds()
                 ]
 
-                contains = False
-                if bounds:
-                    points2 = []
+                if n_items == constructs[0].ndim == len(bounds) == 2:
+                    point2 = []
                     for v, construct in zip(points, transposed_constructs):
-                        if isinstance(v, Query):
-                            if v.operator == "contains":
-                                contains = True
-                                v = v.value
-                            elif v.operator == "eq":
-                                v = v.value
-                            else:
-                                contains = False
-                                break
+                        if isinstance(v, Query) and v.iscontains():
+                            v = self._Data.asdata(v.value)
+                            if v.Units:
+                                v.Units = construct.Units
 
-                        v = self._Data.asdata(v)
-                        if v.Units:
-                            v.Units = construct.Units
+                            point2.append(v.datum())
+                        else:
+                            point2 = None
+                            break
 
-                        points2.append(v.datum())
+                    if point2:
+                        from dask import compute, delayed
 
-                if contains:
-                    # The coordinates have bounds and the condition is
-                    # a 'contains' Query object. Check each
-                    # potentially matching cell for actually including
-                    # the point.
-                    try:
-                        Path
-                    except NameError:
-                        raise ImportError(
-                            "Need to install matplotlib to create indices "
-                            f"based on {transposed_constructs[0].ndim}-d "
-                            "constructs and a 'contains' Query object"
+                        try:
+                            from matplotlib.path import Path
+                        except ModuleNotFoundError:
+                            raise ImportError(
+                                "Need to install matplotlib to create indices "
+                                f"based on {transposed_constructs[0].ndim}-d "
+                                "constructs and a 'contains' Query object"
+                                "Need to install matplotlib to TODODASK "
+                            )
+
+                        def point_not_in_2d_cell(vertices, point):
+                            return not Path(
+                                tuple(zip(*vertices))
+                            ).contains_point(point)
+
+                        bounds = [b.array[ind] for b in bounds]
+                        delete = compute(
+                            *[
+                                delayed(point_not_in_2d_cell(vertices, point2))
+                                for vertices in zip(*bounds)
+                            ]
                         )
-
-                    if n_items != 2:
-                        raise ValueError(
-                            f"Can't index for cell from {n_axes}-d "
-                            "coordinate objects"
-                        )
-
-                    if 0 < len(bounds) < n_items:
-                        raise ValueError(
-                            "Cell to derive index from must have unique "
-                            f"bounds, but got {bounds}"
-                        )
-
-                    # Remove grid cells if, upon closer inspection,
-                    # they do actually contain the point.
-                    delete = [
-                        n
-                        for n, vertices in enumerate(zip(*zip(*bounds)))
-                        if not Path(zip(*vertices)).contains_point(points2)
-                    ]
-
-                    if delete:
-                        ind = [np.delete(ind_1d, delete) for ind_1d in ind]
+                        if any(delete):
+                            ind = [np.delete(ind_1d, delete) for ind_1d in ind]
 
             if ind is not None:
                 mask_shape = []
@@ -726,12 +718,6 @@ class FieldDomain:
             else:
                 create_mask = False
 
-            # TODODASK - if we have 2 list of integers then we need to
-            #            apply different auxiliary masks (if any)
-            #            after different __getitems__. SCRUB THAT! if
-            #            we have an auxiliary mask, then by definition
-            #            we do _not_ have a list(s) of integers
-
             # --------------------------------------------------------
             # Create an auxiliary mask for these axes
             # --------------------------------------------------------
@@ -747,10 +733,37 @@ class FieldDomain:
                     f"  mask.shape   = {mask.shape}"
                 )  # pragma: no cover
 
+        # ------------------------------------------------------------
+        # Parse the indices
+        # ------------------------------------------------------------
         for axis, index in tuple(indices.items()):
-            indices[axis] = parse_indices(
-                (domain_axes[axis].get_size(),), (index,)
-            )[0]
+            if isinstance(index, slice):
+                index = parse_indices(
+                    (domain_axes[axis].get_size(),), (index,)
+                )[0]
+            elif not is_dask_collection(index):
+                index = np.array(index)
+                if index.dtype != bool:
+                    # Convert a list of integers to a slice, if possible
+                    if len(index) == 1:
+                        start = index[0]
+                        index = slice(start, start + 1)
+                    else:
+                        steps = index[1:] - index[:-1]
+                        step = steps[0]
+                        if step and not (steps - step).any():
+                            # index has a regular step
+                            if step > 0:
+                                start, stop = index[0], index[-1] + 1
+                            elif step < 0:
+                                start, stop = index[0], index[-1] - 1
+
+                            if stop < 0:
+                                stop = None
+
+                            index = slice(start, stop, step)
+
+            indices[axis] = index
 
         # Include the auxiliary mask
         indices = {"indices": indices, "mask": auxiliary_mask}
@@ -3113,9 +3126,7 @@ def _create_auxiliary_mask_component(mask_shape, ind, compress):
     **Examples**
 
     >>> f = cf.{{class}}()
-    >>> d = _create_auxiliary_mask_component(
-    ...     (4,), ([0, 3, 1],)
-    ... )
+    >>> d = _create_auxiliary_mask_component((4,), ([0, 3, 1],))
     >>> print(d.array)
     [False False  True False]
     >>> d = f._create_auxiliary_mask_component(
@@ -3128,22 +3139,17 @@ def _create_auxiliary_mask_component(mask_shape, ind, compress):
      [ True  True  True False  True  True]]
 
     """
-    # Note that, for now, auxiliary_mask has to be numpy array (rather
-    # than a cf.Data object) because we're going to index it with
-    # fancy indexing which a cf.Data object might not support - namely
-    # a non-monotonic list of integers.
     auxiliary_mask = np.ones(mask_shape, dtype=bool)
-
     auxiliary_mask[tuple(ind)] = False
 
     # For compressed indices, remove slices which only contain masked
     # points.
     if compress:
         for i, (index, n) in enumerate(zip(ind, mask_shape)):
-            index = set(index)
-            if len(index) == n:
+            index = np.unique(index)
+            if index.size == n:
                 continue
 
-            auxiliary_mask = auxiliary_mask.take(sorted(index), axis=i)
+            auxiliary_mask = auxiliary_mask.take(index, axis=i)
 
     return Data(auxiliary_mask)

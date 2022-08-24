@@ -473,6 +473,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         new_data = data[tuple(findices)]
 
+        if 0 in new_data.shape:
+            raise IndexError(
+                f"Indices {findices!r} result in a subspaced shape of "
+                f"{new_data.shape}, but can't create a subspace of "
+                f"{self.__class__.__name__} that has a size 0 axis"
+            )
+
         # Set sizes of domain axes
         data_axes = new.get_data_axes()
         domain_axes = new.domain_axes(todict=True)
