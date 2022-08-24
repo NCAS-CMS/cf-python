@@ -4117,6 +4117,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def varray(self):
         """A numpy array view of the data array.
 
+        Deprecated at version TODODASKVER. Data are now stored as
+        `dask` arrays for which, in general, a numpy array view is not
+        robust.
+
         Changing the elements of the returned view changes the data array.
 
         .. seealso:: `array`, `data`, `datetime_array`
@@ -4139,8 +4143,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         <CF Data(5): [999, ... 4] kg m-1 s-2>
 
         """
-        self.uncompress(inplace=True)
-        return super().varray
+#        self.uncompress(inplace=True)
+#        return super().varray
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "varray",
+            message="Data are now stored as `dask` arrays for which, "
+            "in general, a numpy array view is not robust.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # CF properties

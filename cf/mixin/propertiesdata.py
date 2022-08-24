@@ -2278,27 +2278,6 @@ class PropertiesData(Properties):
 
         return data.array
 
-    def dask_array(self, copy=True):
-        """TODODASKDOCS.
-
-        :Parameters:
-
-          copy
-
-
-        .. seealso:: `data`, `array`, `datetime_array`
-
-        **Examples:**
-
-        TODODASKDOCS
-
-        """
-        data = self.get_data(None)
-        if data is None:
-            raise AttributeError(f"{self.__class__.__name__} has no data")
-
-        return data.dask_array(copy=copy)
-
     @property
     def varray(self):
         """A numpy array view of the data.
@@ -2325,15 +2304,14 @@ class PropertiesData(Properties):
         <CF Data(5): [999, ... 4] kg m-1 s-2>
 
         """
-        raise ValueError("TODODASKMSG - deprecated?")
-
-    #        data = self.get_data(None)
-    #        if data is None:
-    #            raise AttributeError(
-    #                f"{self.__class__.__name__} has no data"
-    #            )
-    #
-    #        return data.varray
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "varray",
+            message="Data are now stored as `dask` arrays for which, "
+            "in general, a numpy array view is not robust.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @property
     def isscalar(self):
