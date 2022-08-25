@@ -66,7 +66,7 @@ class Query:
     ``'set'``  A "member of set" condition
     =========  ===================================
 
-    **Complex conditions**
+    **Compound queries**
 
     Multiple conditions may be combined with the Python bitwise "and"
     (`&`) and "or" (`|`) operators to form a new `Query` object.
@@ -271,6 +271,10 @@ class Query:
     def __and__(self, other):
         """The binary bitwise operation ``&``
 
+        Combine two queries with a logical And operation. If the
+        `!value` of both queries is the same then it will retained on
+        the compuind query.
+
         x.__and__(y) <==> x&y
 
         """
@@ -281,7 +285,15 @@ class Query:
         new._compound = (self.copy(), other.copy())
         new._bitwise_operator = operator_and
         new._attr = ()
-        new._value = None
+
+        # If the value of the two queries is the same then retain it
+        # on the compound query
+        value0 = self._value
+        value1 = other._value
+        if value0 is None or value1 is None or value0 != value1:
+            new._value = None
+        else:
+            new._value = deepcopy(value0)
 
         new._NotImplemented_RHS_Data_op = True
 
@@ -298,6 +310,10 @@ class Query:
     def __or__(self, other):
         """The binary bitwise operation ``|``
 
+        Combine two queries with a logical Or operation. If the
+        `!value` of both queries is the same then it will retained on
+        the compuind query.
+
         x.__or__(y) <==> x|y
 
         """
@@ -308,7 +324,15 @@ class Query:
         new._compound = (self, other)
         new._bitwise_operator = operator_or
         new._attr = ()
-        new._value = None
+
+        # If the value of the two queries is the same then retain it
+        # on the compound query
+        value0 = self._value
+        value1 = other._value
+        if value0 is None or value1 is None or value0 != value1:
+            new._value = None
+        else:
+            new._value = deepcopy(value0)
 
         new._NotImplemented_RHS_Data_op = True
 
@@ -756,23 +780,28 @@ class Query:
         <CF Query: [lower_bounds(le 15) & upper_bounds(ge 15)]>
         >>> q.iscontains()
         True
-        >>> q |= cf.Query('le', 6)
+        >>> q |= cf.lt(6)
         >>> q.iscontains()
         False
 
-        >>> q = cf.Query('le', 6)
-        >>> q.iscontains()
+        >>> r = cf.wi(6, 10)
+        >>> r.iscontains()
         False
 
         """
-        if not (self._compound and self._bitwise_operator is operator_and):
+        if not (
+            self._compound
+            and self._value is not None
+            and self._bitwise_operator is operator_and
+        ):
             return False
 
         sig = builtin_set()
         for q in self._compound:
             if q._compound:
-                # Skip nested compound queries
-                continue
+                # A compound query of compound queries is not a "cell
+                # contains" condition
+                break
 
             sig.add((q.attr, q.operator))
 
@@ -1394,11 +1423,9 @@ def contains(value, units=None):
     [False False False False]
 
     """
-    lb = Query("le", value, units=units, attr="lower_bounds")
-    ub = Query("ge", value, units=units, attr="upper_bounds")
-    q = lb & ub
-    q._value = lb.value
-    return q
+    return Query("le", value, units=units, attr="lower_bounds") & Query(
+        "ge", value, units=units, attr="upper_bounds"
+    )
 
 
 def year(value):

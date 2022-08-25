@@ -291,6 +291,8 @@ class FieldDomain:
 
         .. versionadded:: 3.9.0
 
+        .. seealso:: `_create_auxiliary_mask_component`
+
         :Parameters:
 
             mode: `str`
@@ -332,12 +334,6 @@ class FieldDomain:
         envelope = mode == "envelope"
         full = mode == "full"
 
-        #        logger.debug(
-        #            f"{self.__class__.__name__}._indices:\n"
-        #            f"  mode         = {mode!r}\n"
-        #            f"  input kwargs = {kwargs!r}"
-        #        )  # pragma: no cover
-
         domain_axes = self.domain_axes(todict=True)
 
         # Initialize indices
@@ -367,7 +363,7 @@ class FieldDomain:
 
             if axes in parsed:
                 # The axes are the same as an existing key
-                parsed[axes].append((axes, key, construct, value))
+                parsed[axes].append((axes, key, construct, value, identity))
             else:
                 new_key = True
                 y = set(axes)
@@ -375,7 +371,9 @@ class FieldDomain:
                     if set(x) == set(y):
                         # The axes are the same but in a different
                         # order, so we don't need a new key.
-                        parsed[x].append((axes, key, construct, value))
+                        parsed[x].append(
+                            (axes, key, construct, value, identity)
+                        )
                         new_key = False
                         break
 
@@ -383,7 +381,7 @@ class FieldDomain:
                     # The axes, taken in any order, are not the same
                     # as any keys, so create an new key.
                     n_axes += len(axes)
-                    parsed[axes] = [(axes, key, construct, value)]
+                    parsed[axes] = [(axes, key, construct, value, identity)]
 
             unique_axes.update(axes)
 
@@ -401,9 +399,9 @@ class FieldDomain:
 
         auxiliary_mask = {}
 
-        for canonical_axes, axes_key_construct_value in parsed.items():
-            axes, keys, constructs, points = list(
-                zip(*axes_key_construct_value)
+        for canonical_axes, axes_key_construct_value_id in parsed.items():
+            axes, keys, constructs, points, identities = tuple(
+                zip(*axes_key_construct_value_id)
             )
 
             n_items = len(constructs)
@@ -437,20 +435,20 @@ class FieldDomain:
                 axis = item_axes[0]
                 item = constructs[0]
                 value = points[0]
+                identity = identities[0]
 
                 logger.debug(
                     f"  {n_items} 1-d constructs: {constructs!r}\n"
                     f"  axis         = {axis!r}\n"
-                    f"  value        = {value!r}"
+                    f"  value        = {value!r}\n"
+                    f"  identity     = {identity!r}"
                 )  # pragma: no cover
 
                 if isinstance(value, (list, slice, tuple, np.ndarray)):
-                    # ------------------------------------------------
                     # 1-d CASE 1: Value is already an index, e.g. [0],
                     #             [7,4,2], slice(0,4,2),
                     #             numpy.array([2,4,7]), [True, False,
                     #             True]
-                    # ------------------------------------------------
                     logger.debug("  1-d CASE 1:")  # pragma: no cover
 
                     index = value
@@ -469,11 +467,9 @@ class FieldDomain:
                     and item.construct_type == "dimension_coordinate"
                     and self.iscyclic(axis)
                 ):
-                    # ------------------------------------------------
                     # 1-d CASE 2: Axis is cyclic and subspace
                     #             criterion is a 'within' or 'without'
                     #             Query instance
-                    # ------------------------------------------------
                     logger.debug("  1-d CASE 2:")  # pragma: no cover
 
                     if item.increasing:
@@ -530,19 +526,10 @@ class FieldDomain:
                         index = slice(None)
 
                 elif item is not None:
-                    # ------------------------------------------------
                     # 1-d CASE 3: All other 1-d cases
-                    # ------------------------------------------------
                     logger.debug("  1-d CASE 3:")  # pragma: no cover
 
                     index = value == item
-
-                    #                    if not item_match.any():
-                    #                        raise ValueError(
-                    #                            f"No indices found from: {identity}={value!r}"
-                    #                        )
-
-                    #                    index = np.asanyarray(item_match)
                     index = index.data.to_dask_array()
 
                     if envelope or full:
@@ -597,11 +584,14 @@ class FieldDomain:
                     f"  transposed N-d constructs: {transposed_constructs!r}"
                 )  # pragma: no cover
 
+                # Find where each construct matches its value
                 item_matches = [
                     (value == construct).data
                     for value, construct in zip(points, transposed_constructs)
                 ]
 
+                # Find loctions that are True in all of the
+                # construct's matches
                 item_match = item_matches.pop()
                 for m in item_matches:
                     item_match &= m
@@ -623,18 +613,19 @@ class FieldDomain:
                             f"from: {value!r}"
                         )
 
-                # If there are exactly two 2-d contructs constructs,
-                # both with bounds and both with 'cf.contains' values,
-                # then do an extra check to remove any cells already
-                # selected for which the given value is actually
-                # outside of the cell. This could happen if the cells
-                # are not rectangular.
                 bounds = [
                     item.bounds
                     for item in transposed_constructs
                     if item.has_bounds()
                 ]
 
+                # If there are exactly two 2-d contructs constructs,
+                # both with bounds and both with 'cf.contains' values,
+                # then do an extra check to remove any cells already
+                # selected for which the given value is actually
+                # outside of the cell. This could happen if the cells
+                # are not rectangular (e.g. curvilinear latitudes and
+                # longitudes for a plane projection domain).
                 if n_items == constructs[0].ndim == len(bounds) == 2:
                     point2 = []
                     for v, construct in zip(points, transposed_constructs):
@@ -654,23 +645,45 @@ class FieldDomain:
                         try:
                             from matplotlib.path import Path
                         except ModuleNotFoundError:
+                            x = ", ".join(
+                                [
+                                    f"{i}={p!r}"
+                                    for i, p in zip(identities, points)
+                                ]
+                            )
                             raise ImportError(
-                                "Need to install matplotlib to create indices "
-                                f"based on {transposed_constructs[0].ndim}-d "
-                                "constructs and a 'contains' Query object"
-                                "Need to install matplotlib to TODODASK "
+                                "Must install matplotlib to create indices "
+                                f"for {self!r} from: {x}"
                             )
 
-                        def point_not_in_2d_cell(vertices, point):
-                            return not Path(
-                                tuple(zip(*vertices))
-                            ).contains_point(point)
+                        def _point_not_in_cell(nodes_x, nodes_y, point):
+                            """Return True if a point is not in a 2-d
+                            cell.
+
+                            :Parameters:
+
+                                nodes_x: array-like
+                                    The cell x nodes
+
+                                nodes_y: array-like
+                                    The cell y nodes
+
+                                point: (number, number)
+                                    The (x, y) point to check.
+
+                            :Returns:
+
+                                `bool`
+
+                            """
+                            vertices = tuple(zip(nodes_x, nodes_y))
+                            return not Path(vertices).contains_point(point)
 
                         bounds = [b.array[ind] for b in bounds]
                         delete = compute(
                             *[
-                                delayed(point_not_in_2d_cell(vertices, point2))
-                                for vertices in zip(*bounds)
+                                delayed(_point_not_in_cell(x, y, point2))
+                                for x, y in zip(*bounds)
                             ]
                         )
                         if any(delete):
@@ -705,7 +718,7 @@ class FieldDomain:
                             index = slice(start, stop)
                         else:
                             raise ValueError(
-                                "Must have full, envelope or compress"
+                                "Must have mode full, envelope or compress"
                             )  # pragma: no cover
 
                         indices[axis] = index
@@ -743,25 +756,28 @@ class FieldDomain:
                 )[0]
             elif not is_dask_collection(index):
                 index = np.array(index)
-                if index.dtype != bool:
-                    # Convert a list of integers to a slice, if possible
-                    if len(index) == 1:
-                        start = index[0]
-                        index = slice(start, start + 1)
-                    else:
-                        steps = index[1:] - index[:-1]
-                        step = steps[0]
-                        if step and not (steps - step).any():
-                            # index has a regular step
-                            if step > 0:
-                                start, stop = index[0], index[-1] + 1
-                            elif step < 0:
-                                start, stop = index[0], index[-1] - 1
+                if index.dtype == bool:
+                    # Convert a True values to integers
+                    index = np.arange(index.size)[index]
 
-                            if stop < 0:
-                                stop = None
+                # Convert a list of integers to a slice, if possible
+                if len(index) == 1:
+                    start = index[0]
+                    index = slice(start, start + 1)
+                else:
+                    steps = index[1:] - index[:-1]
+                    step = steps[0]
+                    if step and not (steps - step).any():
+                        # index has a regular step
+                        if step > 0:
+                            start, stop = index[0], index[-1] + 1
+                        elif step < 0:
+                            start, stop = index[0], index[-1] - 1
 
-                            index = slice(start, stop, step)
+                        if stop < 0:
+                            stop = None
+
+                        index = slice(start, stop, step)
 
             indices[axis] = index
 
@@ -3099,6 +3115,8 @@ def _create_auxiliary_mask_component(mask_shape, ind, compress):
 
     .. versionadded:: 3.9.0
 
+    .. seealso:: `_indices`
+
     :Parameters:
 
         mask_shape: `tuple`
@@ -3110,9 +3128,11 @@ def _create_auxiliary_mask_component(mask_shape, ind, compress):
               *Parameter example*
                 ``mask_shape=(9, 10)``
 
-        ind: sequnce of `list`
-            As returned by a single argument call of
-            ``np[.ma].where(....)``.
+        ind: sequence of `list`
+            Integer indices with the same shape as *mask_shape*,
+            previously created by a single argument call of
+            ``np[.ma].where``, that define where the returned mask is
+            False.
 
         compress: `bool`
             If True then remove whole slices which only contain masked

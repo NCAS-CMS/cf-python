@@ -574,6 +574,35 @@ class QueryTest(unittest.TestCase):
         self.assertFalse(r.iscontains())
         self.assertFalse((q | r).iscontains())
 
+    def test_Query__and__(self):
+        q = cf.gt(9)
+        r = cf.lt(11)
+        s = q & r
+        self.assertTrue(s == 10)
+        self.assertFalse(s == 8)
+        with self.assertRaises(AttributeError):
+            s.value
+
+        r = cf.lt(9)
+        s = q & r
+        self.assertEqual(s.value, 9)
+        self.assertFalse(s == 9)
+
+    def test_Query__or__(self):
+        q = cf.eq(9)
+        r = cf.gt(11)
+        s = q | r
+        self.assertTrue(s == 9)
+        self.assertTrue(s == 12)
+        self.assertFalse(s == 10)
+        with self.assertRaises(AttributeError):
+            s.value
+
+        r = cf.gt(9)
+        s = q | r
+        self.assertEqual(s.value, 9)
+        self.assertFalse(s == 8)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
