@@ -66,6 +66,7 @@ from .formula_terms import FormulaTerms
 from .functions import (
     _DEPRECATION_ERROR,
     _DEPRECATION_ERROR_ARG,
+    _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_KWARG_VALUE,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
@@ -4020,6 +4021,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 f"Got {aux_X.bounds.shape} and {aux_Y.bounds.shape}"
             )
 
+        # TODODASK: This if block is probably deletable with the
+        #           demise of LAMA, but check!
         if not methods:
             if aux_X.bounds.data.fits_in_one_chunk_in_memory(
                 aux_X.bounds.dtype.itemsize
@@ -4117,6 +4120,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def varray(self):
         """A numpy array view of the data array.
 
+        Deprecated at version TODODASKVER. Data are now stored as
+        `dask` arrays for which, in general, a numpy array view is not
+        robust.
+
         Changing the elements of the returned view changes the data array.
 
         .. seealso:: `array`, `data`, `datetime_array`
@@ -4139,8 +4146,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         <CF Data(5): [999, ... 4] kg m-1 s-2>
 
         """
-        self.uncompress(inplace=True)
-        return super().varray
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "varray",
+            message="Data are now stored as `dask` arrays for which, "
+            "in general, a numpy array view is not robust.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # CF properties
