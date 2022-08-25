@@ -1,3 +1,12 @@
+version 3.14.0
+--------------
+
+**202?-??-??**
+
+* New method: `cf.Field.to_dask_array`
+
+----
+
 version 3.13.1
 --------------
 

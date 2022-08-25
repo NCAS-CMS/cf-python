@@ -8352,6 +8352,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                      returned dassk array is correct, set the
                      *apply_mask_hardness* parameter to True.
 
+        .. versionadded:: TODODASKVER
+
         :Parameters:
 
             apply_mask_hardness: `bool`, optional

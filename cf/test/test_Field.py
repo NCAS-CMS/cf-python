@@ -2755,6 +2755,14 @@ class FieldTest(unittest.TestCase):
                 del lp0.long_name
                 self.assertTrue(lp.equals(lp0, rtol=1e-10))
 
+    def test_Field_to_dask_array(self):
+        f = self.f0.copy()
+        self.assertIs(f.to_dask_array(), f.data.to_dask_array())
+
+        f.del_data()
+        with self.assertRaises(ValueError):
+            f.to_dask_array()
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

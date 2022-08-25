@@ -4457,6 +4457,33 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
+    def to_dask_array(self):
+        """Convert the data to a `dask` array.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `cf.Data.to_dask_array`
+
+        :Returns:
+
+            `dask.array.Array`
+                The dask array contained within the {{class}} instance.
+
+        **Examples**
+
+        >>> f.to_dask_array()
+        dask.array<copy, shape=(10, 9), dtype=float64, chunksize=(10, 9), chunktype=numpy.ndarray>
+
+        >>> f.to_dask_array() is f.data.to_dask_array()
+        True
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            raise ValueError("Can't get dask array when there is no data")
+
+        return data.to_dask_array()
+
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def trunc(self, inplace=False, i=False):
