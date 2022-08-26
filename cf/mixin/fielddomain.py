@@ -20,11 +20,6 @@ from ..functions import (
 from ..query import Query
 from ..units import Units
 
-# try:
-#    from matplotlib.path import Path
-# except ImportError:
-#    pass
-
 
 logger = logging.getLogger(__name__)
 

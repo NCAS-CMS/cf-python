@@ -447,6 +447,9 @@ class PropertiesDataBounds(PropertiesData):
                 was in-place.
 
         """
+        if getattr(other, "_NotImplemented_RHS_Data_op", False):
+            return NotImplemented
+
         inplace = method[2] == "i"
 
         bounds_AND = bounds and bounds_combination_mode() == "AND"

@@ -10607,12 +10607,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Auxiliary masks**
 
-        When creating an actual subspace with the indices, if the first
-        element of the tuple of indices is ``'mask'`` then the extent of
-        the subspace is defined only by the values of elements three and
-        onwards. In this case the second element contains an "auxiliary"
-        data mask that is applied to the subspace after its initial
-        creation, in order to set unselected locations to missing data.
+        When creating an actual subspace with the indices, if the
+        first element of the tuple of indices is ``'mask'`` then the
+        second element is a tuple of auxiliary masks, and the
+        remaining elements contain the usual indexing information that
+        defines the extent of the subspace. Each auxiliary mask
+        broadcasts to the subspaced data, and when the subspace is
+        actually created, these masks should be all be applied to the
+        result.
 
         .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
 
@@ -10694,7 +10696,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(q)
         <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
 
-        >>> print(a)
+ 
+        TODODASK
+
+        >>> f = cf.example_field(2)
         Field: air_potential_temperature (ncvar%air_potential_temperature)
         ------------------------------------------------------------------
         Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
@@ -10703,18 +10708,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : latitude(5) = [-75.0, ..., 75.0] degrees_north
                         : longitude(8) = [22.5, ..., 337.5] degrees_east
                         : air_pressure(1) = [850.0] hPa
-        >>> a.indices(T=410.5)
-        (slice(2, 3, 1), slice(0, 5, 1), slice(0, 8, 1))
-        >>> a.indices(T=cf.dt('1960-04-16'))
+        >>> f.indices(T=410.5)
+        (dask.array<isclose, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
+         slice(None, None, None),
+         slice(None, None, None))
+        >>> f.indices(T=cf.dt('1960-04-16'))
         (slice(4, 5, 1), slice(0, 5, 1), slice(0, 8, 1))
-        >>> indices = a.indices(T=cf.wi(cf.dt('1962-11-01'),
+        >>> indices = f.indices(T=cf.wi(cf.dt('1962-11-01'),
         ...                             cf.dt('1967-03-17 07:30')))
         >>> print(indices)
         (slice(35, 88, 1), slice(0, 5, 1), slice(0, 8, 1))
-        >>> a[indices]
+        >>> f[indices]
         <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
 
-        >>> print(t)
+        >>> f = cf.example_field(1)
         Field: air_temperature (ncvar%ta)
         ---------------------------------
         Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
@@ -10733,11 +10740,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                         : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                         : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-        >>> indices = t.indices(latitude=cf.wi(51, 53))
-        >>> print(indices)
-        ('mask', [<CF Data(1, 5, 9): [[[False, ..., False]]]>], slice(0, 1, 1), slice(3, 8, 1), slice(0, 9, 1))
-        >>> t[indices]
+        >>> indices = f.indices(latitude=cf.wi(51, 53))
+        >>> indices)
+        ('mask',
+         (<CF Data(1, 5, 9): [[[False, ..., False]]]>,),
+         slice(None, None, None),
+         slice(3, 8, 1),
+         slice(0, 9, 1))
+        >>> f[indices]
         <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
+
+
 
         """
         if "exact" in mode:
