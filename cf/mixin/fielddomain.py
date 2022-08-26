@@ -20,7 +20,6 @@ from ..functions import (
 from ..query import Query
 from ..units import Units
 
-
 logger = logging.getLogger(__name__)
 
 

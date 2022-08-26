@@ -10696,7 +10696,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(q)
         <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
 
- 
+
         TODODASK
 
         >>> f = cf.example_field(2)
@@ -10712,12 +10712,16 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         (dask.array<isclose, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
          slice(None, None, None),
          slice(None, None, None))
-        >>> f.indices(T=cf.dt('1960-04-16'))
-        (slice(4, 5, 1), slice(0, 5, 1), slice(0, 8, 1))
+        >>> f.indices(T=cf.dt('1969-11-16'))
+        (dask.array<isclose, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
+         slice(0, 5, 1),
+         slice(0, 8, 1))
         >>> indices = f.indices(T=cf.wi(cf.dt('1962-11-01'),
         ...                             cf.dt('1967-03-17 07:30')))
         >>> print(indices)
-        (slice(35, 88, 1), slice(0, 5, 1), slice(0, 8, 1))
+        (dask.array<isclose, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
+         slice(0, 5, 1),
+         slice(0, 8, 1))
         >>> f[indices]
         <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
 
@@ -10749,8 +10753,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          slice(0, 9, 1))
         >>> f[indices]
         <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
-
-
 
         """
         if "exact" in mode:

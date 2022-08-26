@@ -1331,7 +1331,7 @@ class FieldTest(unittest.TestCase):
 
         indices = f.indices("full", grid_longitude=cf.wi(310, 450))
         self.assertTrue(indices[0], "mask")
-        print (indices)
+        print(indices)
         self.assertTrue(
             (
                 np.array(indices[1][0])
