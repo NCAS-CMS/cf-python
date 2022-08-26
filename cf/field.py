@@ -944,11 +944,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f._binary_operation(g, '__rdiv__')
 
         """
-
-        if isinstance(other, Query):
-            # --------------------------------------------------------
-            # Combine the field with a Query object
-            # --------------------------------------------------------
+        if getattr(other, "_NotImplemented_RHS_Data_op", False):
             return NotImplemented
 
         if not isinstance(other, self.__class__):

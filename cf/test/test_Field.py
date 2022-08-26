@@ -2763,6 +2763,24 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.to_dask_array()
 
+    def test_Field_combine_with_Query(self):
+        f = self.f0
+        q = cf.lt(0.1)
+        q == f
+        f == q
+
+        f = cf.example_field(2)
+
+        x = f.coordinate("X")
+        q = cf.eq(337.5)
+        q == x
+        x == q
+
+        t = f.coordinate("T")
+        q = cf.dt(1962, 11, 16)
+        q == t
+        t == q
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

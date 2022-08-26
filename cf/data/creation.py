@@ -5,7 +5,7 @@ import dask.array as da
 import numpy as np
 from dask import config
 from dask.array.core import getter, normalize_chunks
-from dask.base import tokenize
+from dask.base import is_dask_collection, tokenize
 from dask.utils import SerializableLock
 
 
@@ -65,6 +65,7 @@ def to_dask(array, chunks, **from_array_options):
     :Parameters:
 
         array: array_like
+            TODODASKDOCS.
 
         chunks: `int`, `tuple`, `dict` or `str`, optional
             Specify the chunking of the returned dask array.
@@ -81,22 +82,46 @@ def to_dask(array, chunks, **from_array_options):
 
     **Examples**
 
-    >>> to_dask([1, 2, 3])
+    >>> cf.data.creation.to_dask([1, 2, 3])
     dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.ndarray>
-    >>> to_dask([1, 2, 3], chunks=2)
+    >>> cf.data.creation.to_dask([1, 2, 3], chunks=2)
     dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
-    >>> to_dask([1, 2, 3], chunks=2, {'asarray': True})
+    >>> cf.data.creation.to_dask([1, 2, 3], chunks=2, {'asarray': True})
     dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
+    >>> cf.data.creation.to_dask(cf.dt(2000, 1, 1), 'auto')
+    dask.array<array, shape=(), dtype=object, chunksize=(), chunktype=numpy.ndarray>
+    >>> cf.data.creation.to_dask([cf.dt(2000, 1, 1)], 'auto')
+    dask.array<array, shape=(1,), dtype=object, chunksize=(1,), chunktype=numpy.ndarray>
 
     """
+    if not (
+        is_dask_collection(array)
+        or isinstance(
+            array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
+        )
+    ):
+        if not hasattr(array, "shape"):
+            # 'array' is not of a type that `da.from_array` can cope
+            # with, so convert it to a numpy array
+            array = np.asanyarray(array)
+
     kwargs = from_array_options
     lock = getattr(array, "_dask_lock", False)
     if lock:
         lock = get_lock()
-    #    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
+
     kwargs.setdefault("lock", lock)
     kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
-    return da.from_array(array, chunks=chunks, **kwargs)
+
+    try:
+        return da.from_array(array, chunks=chunks, **kwargs)
+    except NotImplementedError as e:
+        if (
+            str(e)
+            == "Can not use auto rechunking with object dtype. We are unable to estimate the size in bytes of object data"
+        ):
+            # Try again with 'chunks=-1'
+            return da.from_array(array, chunks=-1, **kwargs)
 
 
 def compressed_to_dask(array, chunks):

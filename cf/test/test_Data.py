@@ -4100,6 +4100,21 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.get_list()
 
+    def test_Data__init__datetime(self):
+        """Test `Data.__init__` for datetime objects."""
+        dt = cf.dt(2000, 1, 1)
+        for a in (dt, [dt], [[dt]]):
+            d = cf.Data(a)
+            self.assertEqual(d.array, 0)
+
+        dt = [dt, cf.dt(2000, 2, 1)]
+        d = cf.Data(dt)
+        self.assertTrue((d.array == [0, 31]).all())
+
+        dt = np.ma.array(dt, mask=[True, False])
+        d = cf.Data(dt)
+        self.assertTrue((d.array == [-999, 0]).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

@@ -568,6 +568,9 @@ class PropertiesData(Properties):
         >>> u._binary_operation(v, '__idiv__')
 
         """
+        if getattr(y, "_NotImplemented_RHS_Data_op", False):
+            return NotImplemented
+
         data = self.get_data(None, _fill_value=None)
         if data is None:
             raise ValueError(
