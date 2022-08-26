@@ -4111,9 +4111,16 @@ class DataTest(unittest.TestCase):
         d = cf.Data(dt)
         self.assertTrue((d.array == [0, 31]).all())
 
+        q = cf.wi(cf.dt(1999, 9, 1), cf.dt(2001, 11, 16, 12))
+        self.assertTrue((q == d).array.all())
+        self.assertTrue((d == q).array.all())
+
         dt = np.ma.array(dt, mask=[True, False])
         d = cf.Data(dt)
         self.assertTrue((d.array == [-999, 0]).all())
+
+        self.assertTrue((q == d).array.all())
+        self.assertTrue((d == q).array.all())
 
 
 if __name__ == "__main__":

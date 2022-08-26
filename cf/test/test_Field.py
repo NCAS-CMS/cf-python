@@ -2766,20 +2766,28 @@ class FieldTest(unittest.TestCase):
     def test_Field_combine_with_Query(self):
         f = self.f0
         q = cf.lt(0.1)
-        q == f
-        f == q
+        (q == f).array
+        (f == q).array
 
         f = cf.example_field(2)
 
         x = f.coordinate("X")
         q = cf.eq(337.5)
-        q == x
-        x == q
+        (q == x).array
+        (x == q).array
 
         t = f.coordinate("T")
         q = cf.dt(1962, 11, 16)
-        q == t
-        t == q
+        (q == t).array
+        (t == q).array
+
+        q = cf.wi(cf.dt(1960, 9, 1), cf.dt(1962, 11, 16, 12))
+        (q == t).array
+        (t == q).array
+
+        q = cf.eq(cf.dt(1962, 11, 16, 12))
+        (q == t).array
+        (t == q).array
 
 
 if __name__ == "__main__":

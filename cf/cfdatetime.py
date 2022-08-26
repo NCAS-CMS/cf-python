@@ -405,9 +405,11 @@ def st2elements(date_string):
 
 
 def rt2dt(array, units_in, units_out=None, dummy1=None):
-    """Convert reference times  to date-time objects.
+    """Convert reference times to date-time objects.
 
     The returned array is always independent.
+
+    .. seealso:: `dt2rt`
 
     :Parameters:
 
@@ -426,6 +428,17 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
         `numpy.ndarray`
             An array of `cftime.datetime` objects with the same shape
             as *array*.
+
+    **Examples**
+
+    >>> print(
+    ...   cf.cfdatetime.rt2dt(
+    ...     np.ma.array([0, 685.5], mask=[True, False]),
+    ...     units_in=cf.Units('days since 2000-01-01')
+    ...   )
+    ... )
+    [--
+     cftime.DatetimeGregorian(2001, 11, 16, 12, 0, 0, 0, has_year_zero=False)]
 
     """
     ndim = np.ndim(array)
@@ -456,20 +469,23 @@ def dt2Dt(x, calendar=None):
 
 
 def dt2rt(array, units_in, units_out, dummy1=None):
-    """Round to the nearest millisecond. This is only necessary whilst
-    netCDF4 time functions have an accuracy of no better than 1
-    millisecond (which is still the case at version 1.2.2).
+    """Return numeric time values from datetime objects.
 
-    The returned array is always independent.
+    .. seealso:: `rt2dt`
 
     :Parameters:
 
         array: numpy array-like of date-time objects
+            The datetime objects must be in UTC with no time-zone
+            offset.
 
-        units_in:
+      units_in:
             Ignored.
 
         units_out: `Units`
+            The units of the numeric time values. If there is a
+            time-zone offset in *units_out*, it will be applied to the
+            returned numeric values.
 
         dummy1:
             Ignored.
@@ -479,8 +495,19 @@ def dt2rt(array, units_in, units_out, dummy1=None):
         `numpy.ndarray`
             An array of numbers with the same shape as *array*.
 
+    **Examples**
+
+    >>> print(
+    ...   cf.cfdatetime.dt2rt(
+    ...     np.ma.array([0, cf.dt('2001-11-16 12:00')], mask=[True, False]),
+    ...     None,
+    ...     units_out=cf.Units('days since 2000-01-01'))
+    ...   )
+    ... )
+    [-- 685.5]
+
     """
-    isscalar = np.ndim(array)
+    isscalar = not np.ndim(array)
 
     array = cftime.date2num(
         array, units=units_out.units, calendar=units_out._utime.calendar
