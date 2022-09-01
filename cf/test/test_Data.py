@@ -1291,10 +1291,14 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d[[0, 1], [0, 2]].shape, (2, 2))
         self.assertEqual(d[[0, 1], [2]].shape, (2, 1))
 
-        # Ancillary masks
-        #
-        # TODODASK: Test __getitem__ with ancillary masks. Can only do
-        #           this when cf.Data.where has been daskified
+        # Auxilliary masks
+        d = cf.Data(np.arange(45).reshape(9, 5), chunks=(4, 5))
+        mask0 = cf.Data([[False, True, False, False, True]])
+        mask1 = cf.Data([1, 1, 1, 0, 0, 1, 0, 1, 1], dtype=bool)
+        mask1.insert_dimension(-1, inplace=True)
+        indices = ("mask", (mask0, mask1), slice(None), slice(None))
+
+        self.assertTrue(d[indices].count(), 9)
 
     def test_Data__setitem__(self):
         """Test the assignment of data elements on Data."""
