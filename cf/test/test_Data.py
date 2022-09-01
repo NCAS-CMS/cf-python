@@ -1337,12 +1337,23 @@ class DataTest(unittest.TestCase):
             a[0] = a[2]
             d[0] = d[2]
 
+            a[:, 0] = a[:, 2]
+            d[:, 0] = d[:, 2]
+
+            a[:, 1] = a[:, 3]
+            d[:, 1] = a[:, 3:4]  # Note: a, not d
+
+            d.__keepdims_indexing__ = False
+
+            a[:, 2] = a[:, 4]
+            d[:, 2] = d[:, 4]  # Note: d, not a
+
             self.assertTrue((d.array == a).all())
             self.assertTrue((d.array.mask == a.mask).all())
 
         # Units
         a = np.ma.arange(90).reshape(9, 10)
-        d = cf.Data(a, "metres")
+        d = cf.Data(a.copy(), "metres")
         d[...] = cf.Data(a * 100, "cm")
         self.assertTrue((d.array == a).all())
         self.assertTrue((d.array.mask == a.mask).all())
@@ -1356,12 +1367,29 @@ class DataTest(unittest.TestCase):
         )
         self.assertEqual(d.cyclic(), set([1]))
 
-        # Multiple list/1-d array indices
-        with self.assertRaises(NotImplementedError):
-            d[[1, 2], [0, 4, 1]] = 9
+        # Multiple 1-d array indices
+        a = np.arange(180).reshape(9, 2, 10)
+        value = -1 - np.arange(16).reshape(4, 1, 4)
 
-        with self.assertRaises(NotImplementedError):
-            d[[1], [0, 4, 1]] = 9
+        d = cf.Data(a.copy())
+        d[[2, 4, 6, 8], 0, [1, 2, 3, 4]] = value
+        self.assertEqual(np.count_nonzero(d.where(d < 0, 1, 0)), value.size)
+
+        d = cf.Data(a.copy())
+        d[[2, 4, 6, 8], :, [1, 2, 3, 4]] = value
+        self.assertEqual(
+            np.count_nonzero(d.where(d < 0, 1, 0)), value.size * d.shape[1]
+        )
+
+        d = cf.Data(a.copy())
+        d[[1, 2, 4, 5], 0, [5, 6, 7, -1]] = value
+        self.assertEqual(np.count_nonzero(d.where(d < 0, 1, 0)), value.size)
+
+        d = cf.Data(a.copy())
+        value = np.squeeze(value)
+        d.__keepdims_indexing__ = False
+        d[[2, 4, 6, 8], 0, [1, 2, 3, 4]] = value
+        self.assertEqual(np.count_nonzero(d.where(d < 0, 1, 0)), value.size)
 
     def test_Data_outerproduct(self):
         """Test the `outerproduct` Data method."""
