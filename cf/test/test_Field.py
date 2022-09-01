@@ -626,165 +626,6 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             g = cf.Field.concatenate([], axis=0)
 
-    def test_Field_AUXILIARY_MASK(self):
-        ac = numpy.ma.masked_all((3, 7))
-        ac[0, 0:5] = [1.0, 2.0, 3.0, -99, 5.0]
-        ac[0, 3] = numpy.ma.masked
-        ac[1, 1:5] = [1.5, 2.5, 3.5, 4.5]
-        ac[2, 3:7] = [1.0, 2.0, 3.0, 5.0]
-
-        ae = numpy.ma.masked_all((3, 8))
-        ae[0, 0:5] = [1.0, 2.0, 3.0, -99, 5.0]
-        ae[0, 3] = numpy.ma.masked
-        ae[1, 1:5] = [1.5, 2.5, 3.5, 4.5]
-        ae[2, 3:8] = [1.0, 2.0, 3.0, -99, 5.0]
-        ae[2, 6] = numpy.ma.masked
-
-        af = numpy.ma.masked_all((4, 9))
-        af[1, 0:5] = [1.0, 2.0, 3.0, -99, 5.0]
-        af[1, 3] = numpy.ma.masked
-        af[2, 1:5] = [1.5, 2.5, 3.5, 4.5]
-        af[3, 3:8] = [1.0, 2.0, 3.0, -99, 5.0]
-        af[3, 6] = numpy.ma.masked
-
-        query1 = cf.wi(1, 5) & cf.ne(4)
-
-        for chunksize in self.chunk_sizes[0:2]:
-            cf.chunksize(chunksize)
-
-            f = cf.read(self.contiguous)[0]
-
-            for (method, shape, a) in zip(
-                ["compress", "envelope", "full"],
-                [ac.shape, ae.shape, af.shape],
-                [ac, ae, af],
-            ):
-                message = f"method={method!r}"
-
-                f.indices(method, time=query1)
-
-                g = f.subspace(method, time=query1)
-                t = g.coordinate("time")
-
-                self.assertEqual(g.shape, shape, message)
-                self.assertEqual(t.shape, shape, message)
-
-                self.assertTrue(
-                    (t.data._auxiliary_mask_return().array == a.mask).all(),
-                    message,
-                )
-                self.assertTrue(
-                    (g.data._auxiliary_mask_return().array == a.mask).all(),
-                    message,
-                )
-
-                self.assertTrue(
-                    cf.functions._numpy_allclose(t.array, a), message
-                )
-
-        cf.chunksize(self.original_chunksize)
-
-        query2 = cf.set([1, 3, 5])
-
-        ac2 = numpy.ma.masked_all((2, 6))
-        ac2[0, 0] = 1
-        ac2[0, 1] = 3
-        ac2[0, 3] = 5
-        ac2[1, 2] = 1
-        ac2[1, 4] = 3
-        ac2[1, 5] = 5
-
-        ae2 = numpy.ma.where(
-            (ae == 1) | (ae == 3) | (ae == 5), ae, numpy.ma.masked
-        )
-        af2 = numpy.ma.where(
-            (af == 1) | (af == 3) | (af == 5), af, numpy.ma.masked
-        )
-
-        for chunksize in self.chunk_sizes[0:2]:
-            cf.chunksize(chunksize)
-            f = cf.read(self.contiguous)[0]
-
-            for (method, shape, a) in zip(
-                ["compress", "envelope", "full"],
-                [ac2.shape, ae2.shape, af2.shape],
-                [ac2, ae2, af2],
-            ):
-
-                message = f"method={method!r}"
-
-                h = f.subspace("full", time=query1)
-                g = h.subspace(method, time=query2)
-                t = g.coordinate("time")
-
-                self.assertTrue(g.shape == shape, message)
-                self.assertTrue(t.shape == shape, message)
-
-                self.assertTrue(
-                    (t.data._auxiliary_mask_return().array == a.mask).all(),
-                    message,
-                )
-                self.assertTrue(
-                    (g.data._auxiliary_mask_return().array == a.mask).all(),
-                    message,
-                )
-
-                self.assertTrue(
-                    cf.functions._numpy_allclose(t.array, a), message
-                )
-
-        cf.chunksize(self.original_chunksize)
-
-        ac3 = numpy.ma.masked_all((2, 3))
-        ac3[0, 0] = -2
-        ac3[1, 1] = 3
-        ac3[1, 2] = 4
-
-        ae3 = numpy.ma.masked_all((3, 6))
-        ae3[0, 0] = -2
-        ae3[2, 4] = 3
-        ae3[2, 5] = 4
-
-        af3 = numpy.ma.masked_all((3, 8))
-        af3[0, 0] = -2
-        af3[2, 4] = 3
-        af3[2, 5] = 4
-
-        query3 = cf.set([-2, 3, 4])
-
-        for chunksize in self.chunk_sizes[0:2]:
-            cf.chunksize(chunksize)
-            f = cf.read(self.contiguous)[0].subspace[[0, 2, 3], 1:]
-
-            for (method, shape, a) in zip(
-                ["compress", "envelope", "full"],
-                [ac3.shape, ae3.shape, af3.shape],
-                [ac3, ae3, af3],
-            ):
-
-                message = f"method={method!r}"
-
-                g = f.subspace(method, time=query3)
-                t = g.coordinate("time")
-
-                self.assertEqual(g.shape, shape, message)
-                self.assertEqual(t.shape, shape, message)
-
-                self.assertTrue(
-                    (t.data._auxiliary_mask_return().array == a.mask).all(),
-                    message,
-                )
-                self.assertTrue(
-                    (g.data._auxiliary_mask_return().array == a.mask).all(),
-                    message,
-                )
-
-                self.assertTrue(
-                    cf.functions._numpy_allclose(t.array, a), message
-                )
-
-        cf.chunksize(self.original_chunksize)
-
     def test_Field__getitem__(self):
         f = self.f.copy().squeeze()
         d = f.data
@@ -990,22 +831,20 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.equals(g, verbose=1))
 
     def test_Field_anchor(self):
-        dimarray = self.f.dimension_coordinate("grid_longitude").array
-
         f = self.f.copy()
+
+        dimarray = f.dimension_coordinate("grid_longitude").array
+
         f.cyclic("grid_longitude", period=45)
-        self.assertIsNone(f.anchor("grid_longitude", 32, inplace=True))
-        self.assertIsInstance(
-            f.anchor("grid_longitude", 32, dry_run=True), dict
-        )
+        f.anchor("grid_longitude", 32, dry_run=True)
 
         g = f.subspace(grid_longitude=[0])
-        g.anchor("grid_longitude", 32)
-        g.anchor("grid_longitude", 32, inplace=True)
-        g.anchor("grid_longitude", 32, dry_run=True)
 
+        self.assertIsInstance(g.anchor("grid_longitude", 32), cf.Field)
+        self.assertIsNone(g.anchor("grid_longitude", 32, inplace=True))
+        self.assertIsInstance(g.anchor("grid_longitude", 32, dry_run=True), dict)
         f = self.f.copy()
-
+    
         for period in (dimarray.min() - 5, dimarray.min()):
             anchors = numpy.arange(
                 dimarray.min() - 3 * period, dimarray.max() + 3 * period, 6.5
@@ -1331,10 +1170,15 @@ class FieldTest(unittest.TestCase):
 
         indices = f.indices("full", grid_longitude=cf.wi(310, 450))
         self.assertTrue(indices[0], "mask")
-        print(indices)
+
+        mask = indices[1]
+        self.assertEqual(len(mask) , 1)
+
+        mask = mask[0]
+        self.assertEqual(mask.shape, (1, 1, 9))        
         self.assertTrue(
             (
-                np.array(indices[1][0])
+                np.array(mask)
                 == [
                     [
                         [
@@ -1374,7 +1218,7 @@ class FieldTest(unittest.TestCase):
         x = g.dimension_coordinate("X").array
         self.assertEqual(x.shape, (9,))
         self.assertTrue(
-            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all(), x
+            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all()
         )
         a = array.copy()
         a[..., [0, 1, 6, 7, 8]] = np.ma.masked
@@ -1424,8 +1268,10 @@ class FieldTest(unittest.TestCase):
         x = g.dimension_coordinate("X").array
         self.assertEqual(x.shape, (9,))
         self.assertTrue(
-            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320][::-1]).all(), x
+            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320][::-1]).all()
         )
+        
+        
 
         indices = f.indices("full", grid_longitude=cf.wi(70, 200))
         g = f[indices]
@@ -1433,7 +1279,7 @@ class FieldTest(unittest.TestCase):
         x = g.dimension_coordinate("X").array
         self.assertEqual(x.shape, (9,))
         self.assertTrue(
-            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320][::-1]).all(), x
+            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320][::-1]).all()
         )
 
         # wo
@@ -1508,11 +1354,11 @@ class FieldTest(unittest.TestCase):
                 cf.functions._numpy_allclose(array2, g.array), g.array
             )
 
-        array = np.ma.where(
-            ((lon >= 72) & (lon <= 83)) | (lon >= 118),
-            f.array,
-            np.ma.masked,
-        )
+#        array = np.ma.where(
+#            ((lon >= 72) & (lon <= 83)) | (lon >= 118),
+ #           f.array,
+ #           np.ma.masked,
+ #       )
 
         for mode in ((), ("compress",), ("full",), ("envelope",)):
             indices = f.indices(*mode, longitude=cf.wi(72, 83) | cf.gt(118))
@@ -1580,9 +1426,23 @@ class FieldTest(unittest.TestCase):
                 shape = (1, 1, 1)
 
             self.assertEqual(g.shape, shape)
-
+            self.assertEqual(g.array.compressed(), 29)
             if mode != "full":
                 self.assertEqual(g.construct("longitude").array, 83)
+
+        for mode in ("compress", "full", "envelope"):
+            indices = f.indices(mode, longitude=cf.contains(83) | cf.contains(100))
+
+            g = f[indices]
+            if mode == "full":
+                shape = f.shape
+            elif mode == "envelope":
+                shape = (1, 4, 3)
+            else:
+                shape = (1, 2, 2)
+
+            self.assertEqual(g.shape, shape)
+            self.assertTrue((g.array.compressed() == [4, 29]).all())
 
         # Add 2-d auxiliary coordinates with bounds, so we can
         # properly test cf.contains values

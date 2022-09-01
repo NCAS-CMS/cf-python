@@ -26,6 +26,7 @@ import cfdm
 import netCDF4
 import numpy as np
 from dask import config
+from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
@@ -802,7 +803,7 @@ class chunksize(ConstantAccess):
 
     .. note:: Setting the chunksize will change the `dask` global
               configuration value ``'array.chunk-size'``. If
-              `chunksize` is used a context manager then the `dask`
+              `chunksize` is used in a context manager then the `dask`
               configuration value is only altered within that context.
 
     :Parameters:
@@ -1844,7 +1845,7 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     :Returns:
 
         `list` [, `dict`]
-            The parsed indices. If *cyclic* is True the a dictionary
+            The parsed indices. If *cyclic* is True then a dictionary
             is also returned that contains the parameters needed to
             interpret any cyclic slices.
 
@@ -1973,6 +1974,33 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                 index = slice(-1, None, None)
             else:
                 index = slice(index, index + 1, 1)
+
+# Keep this for now - it (or bits of it) might be useful
+#
+#        elif not is_dask_collection(index):
+#            index = np.array(index)
+#            if index.dtype == bool:
+#                # Convert True values to integers
+#                index = np.arange(index.size)[index]
+#
+#            # Convert a list of integers to a slice, if possible
+#            if len(index) == 1:
+#                start = index[0]
+#                index = slice(start, start + 1)
+#            else:
+#                steps = index[1:] - index[:-1]
+#                step = steps[0]
+#                if step and not (steps - step).any():
+#                    # index has a regular step
+#                    if step > 0:
+#                        start, stop = index[0], index[-1] + 1
+#                    elif step < 0:
+#                        start, stop = index[0], index[-1] - 1
+#
+#                    if stop < 0:
+#                        stop = None
+#
+#                    index = slice(start, stop, step)
 
         parsed_indices[i] = index
 

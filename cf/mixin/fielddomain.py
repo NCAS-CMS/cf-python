@@ -3,7 +3,7 @@ from numbers import Integral
 
 import dask.array as da
 import numpy as np
-from dask.base import is_dask_collection
+#from dask.base import is_dask_collection
 
 from ..data import Data
 from ..decorators import (
@@ -299,7 +299,7 @@ class FieldDomain:
 
             auxiliary_mask: `bool`
                 Whether or not to create an auxiliary mask. See
-                `indices` for details.
+                `cf.Field.indices` for details.
 
             kwargs: *optional*
                 See the **kwargs** parameters of `indices` for
@@ -709,7 +709,7 @@ class FieldDomain:
                             start = 0
                             stop = domain_axes[axis].get_size()
                             size = stop - start
-                            index = slice(start, stop)
+                            index = slice(None) # slice(start, stop)
                         else:
                             raise ValueError(
                                 "Must have mode full, envelope or compress"
@@ -741,39 +741,40 @@ class FieldDomain:
                 )  # pragma: no cover
 
         # ------------------------------------------------------------
-        # Parse the indices
+        # Parse the indices so that we end up with as many slices and
+        # dask arrays as possible
         # ------------------------------------------------------------
-        for axis, index in tuple(indices.items()):
-            if isinstance(index, slice):
-                index = parse_indices(
-                    (domain_axes[axis].get_size(),), (index,)
-                )[0]
-            elif not is_dask_collection(index):
-                index = np.array(index)
-                if index.dtype == bool:
-                    # Convert a True values to integers
-                    index = np.arange(index.size)[index]
-
-                # Convert a list of integers to a slice, if possible
-                if len(index) == 1:
-                    start = index[0]
-                    index = slice(start, start + 1)
-                else:
-                    steps = index[1:] - index[:-1]
-                    step = steps[0]
-                    if step and not (steps - step).any():
-                        # index has a regular step
-                        if step > 0:
-                            start, stop = index[0], index[-1] + 1
-                        elif step < 0:
-                            start, stop = index[0], index[-1] - 1
-
-                        if stop < 0:
-                            stop = None
-
-                        index = slice(start, stop, step)
-
-            indices[axis] = index
+#        for axis, index in tuple(indices.items()):
+##           if isinstance(index, slice):
+##               index = parse_indices(
+##                   (domain_axes[axis].get_size(),), (index,)
+##               )[0]
+#            if not (isisntance(index, slice) or is_dask_collection(index)):
+#                index = np.array(index)
+#                if index.dtype == bool:
+#                    # Convert a True values to integers
+#                    index = np.arange(index.size)[index]
+#
+#                # Convert a list of integers to a slice, if possible
+#                if len(index) == 1:
+#                    start = index[0]
+#                    index = slice(start, start + 1)
+#                else:
+#                    steps = index[1:] - index[:-1]
+#                    step = steps[0]
+#                    if step and not (steps - step).any():
+#                        # index has a regular step
+#                        if step > 0:
+#                            start, stop = index[0], index[-1] + 1
+#                        elif step < 0:
+#                            start, stop = index[0], index[-1] - 1
+#
+#                        if stop < 0:
+#                            stop = None
+#
+#                        index = slice(start, stop, step)
+#
+#            indices[axis] = index
 
         # Include the auxiliary mask
         indices = {"indices": indices, "mask": auxiliary_mask}

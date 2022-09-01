@@ -80,15 +80,9 @@ class PropertiesDataBounds(PropertiesData):
 
         cname = self.__class__.__name__
         logger.debug(
-            f"{cname}.__getitem__: shape    = {self.shape}"
-        )  # pragma: no cover
-        logger.debug(
-            f"{cname}.__getitem__: indices2 = {indices2}"
-        )  # pragma: no cover
-        logger.debug(
-            f"{cname}.__getitem__: indices  = {indices}"
-        )  # pragma: no cover
-        logger.debug(
+            f"{cname}.__getitem__: shape    = {self.shape}\n"
+            f"{cname}.__getitem__: indices2 = {indices2}\n"            
+            f"{cname}.__getitem__: indices  = {indices}\n"
             f"{cname}.__getitem__: findices = {findices}"
         )  # pragma: no cover
 
@@ -137,7 +131,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 logger.debug(
                     f"{self.__class__.__name__}.__getitem__: findices for "
-                    f"bounds = {findices}"
+                    f"bounds = {tuple(findices)}"
                 )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
