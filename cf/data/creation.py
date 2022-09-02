@@ -99,11 +99,10 @@ def to_dask(array, chunks, **from_array_options):
         or isinstance(
             array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
         )
-    ):
-        if not hasattr(array, "shape"):
-            # 'array' is not of a type that `da.from_array` can cope
-            # with, so convert it to a numpy array
-            array = np.asanyarray(array)
+    ) and not hasattr(array, "shape"):
+        # 'array' is not of a type that `da.from_array` can cope with,
+        # so convert it to a numpy array
+        array = np.asanyarray(array)
 
     kwargs = from_array_options
     lock = getattr(array, "_dask_lock", False)
@@ -122,7 +121,8 @@ def to_dask(array, chunks, **from_array_options):
             # dtype.
             return da.from_array(array, chunks=-1, **kwargs)
 
-        raise(error)
+        raise (error)
+
 
 def compressed_to_dask(array, chunks):
     """Create a dask array with `Subarray` chunks.
