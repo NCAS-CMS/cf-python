@@ -1291,7 +1291,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d[[0, 1], [0, 2]].shape, (2, 2))
         self.assertEqual(d[[0, 1], [2]].shape, (2, 1))
 
-        # Auxilliary masks
+        # Ancillary masks
         d = cf.Data(np.arange(45).reshape(9, 5), chunks=(4, 5))
         mask0 = cf.Data([[False, True, False, False, True]])
         mask1 = cf.Data([1, 1, 1, 0, 0, 1, 0, 1, 1], dtype=bool)

@@ -887,14 +887,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if indices is Ellipsis:
             return self.copy()
 
-        auxiliary_mask = ()
+        ancillary_mask = ()
         try:
             arg = indices[0]
         except (IndexError, TypeError):
             pass
         else:
             if isinstance(arg, str) and arg == "mask":
-                auxiliary_mask = indices[1]
+                ancillary_mask = indices[1]
                 indices = indices[2:]
 
         shape = self.shape
@@ -1010,9 +1010,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 new._cyclic = cyclic_axes.difference(x)
 
         # ------------------------------------------------------------
-        # Apply auxiliary masks
+        # Apply ancillary masks
         # ------------------------------------------------------------
-        for mask in auxiliary_mask:
+        for mask in ancillary_mask:
             new.where(mask, cf_masked, None, inplace=True)
 
         if new.shape != self.shape:
