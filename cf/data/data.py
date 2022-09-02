@@ -10798,7 +10798,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = d.to_dask_array()
         dx = da.roll(dx, shift, axis=axis)
         d._set_dask(dx)
-pritn 
+
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
