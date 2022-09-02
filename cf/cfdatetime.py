@@ -501,7 +501,7 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     ...   cf.cfdatetime.dt2rt(
     ...     np.ma.array([0, cf.dt('2001-11-16 12:00')], mask=[True, False]),
     ...     None,
-    ...     units_out=cf.Units('days since 2000-01-01'))
+    ...     units_out=cf.Units('days since 2000-01-01')
     ...   )
     ... )
     [-- 685.5]
