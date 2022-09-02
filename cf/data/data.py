@@ -3313,16 +3313,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [0 2 4 6]
 
         """
+        if getattr(other, "_NotImplemented_RHS_Data_op", False):
+            return NotImplemented
+
         inplace = method[2] == "i"
 
         # ------------------------------------------------------------
         # Ensure other is an independent Data object, for example
         # so that combination with cf.Query objects works.
         # ------------------------------------------------------------
-        if getattr(other, "_NotImplemented_RHS_Data_op", False):
-            return NotImplemented
-
-        elif not isinstance(other, self.__class__):
+        if not isinstance(other, self.__class__):
             if (
                 isinstance(other, cftime.datetime)
                 and other.calendar == ""
