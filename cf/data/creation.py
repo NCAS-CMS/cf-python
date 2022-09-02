@@ -82,7 +82,7 @@ def to_dask(array, chunks, **from_array_options):
 
     **Examples**
 
-    >>> cf.data.creation.to_dask([1, 2, 3])
+    >>> cf.data.creation.to_dask([1, 2, 3], 'auto')
     dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.ndarray>
     >>> cf.data.creation.to_dask([1, 2, 3], chunks=2)
     dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
