@@ -115,14 +115,14 @@ def to_dask(array, chunks, **from_array_options):
 
     try:
         return da.from_array(array, chunks=chunks, **kwargs)
-    except NotImplementedError as e:
-        if (
-            str(e)
-            == "Can not use auto rechunking with object dtype. We are unable to estimate the size in bytes of object data"
-        ):
-            # Try again with 'chunks=-1'
+    except NotImplementedError as error:
+        if chunks == "auto":
+            # Try again with 'chunks=-1', in case the failure was due
+            # to not being able to use auto rechunking with object
+            # dtype.
             return da.from_array(array, chunks=-1, **kwargs)
 
+        raise(error)
 
 def compressed_to_dask(array, chunks):
     """Create a dask array with `Subarray` chunks.
