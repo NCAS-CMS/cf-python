@@ -4169,7 +4169,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except KeyError:
             pass
         else:
-            if not old_units.equivalent(value):
+            if old_units and not old_units.equivalent(value):
                 raise ValueError(
                     f"Can't set Units to {value!r} that are not "
                     f"equivalent to the current units {old_units!r}. "
