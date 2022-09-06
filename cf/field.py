@@ -10722,17 +10722,30 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         (dask.array<isclose, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
          slice(None, None, None),
          slice(None, None, None))
-        >>> f.indices(T=cf.dt('1969-11-16'))
+        >>> f.indices(T=cf.dt('1961-11-16'))
         (dask.array<isclose, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
          slice(0, 5, 1),
          slice(0, 8, 1))
-        >>> indices = f.indices(T=cf.wi(cf.dt('1962-11-01'),
-        ...                             cf.dt('1967-03-17 07:30')))
-        >>> print(indices)
-        (dask.array<isclose, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
-         slice(0, 5, 1),
-         slice(0, 8, 1))
-        >>> f[indices]
+        >>> indices = f.indices(T=cf.wi(cf.dt('1960-03-01'),
+        ...                             cf.dt('1961-12-17 07:30')))
+        >>> indices
+        (dask.array<and_, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
+        slice(None, None, None),
+        slice(None, None, None))
+        >>> print(indices[0].compute())
+        [False False False  True  True  True  True  True  True  True  True  True
+          True  True  True  True  True  True  True  True  True  True  True  True
+          True False False False False False False False False False False False]
+        >>> print(f[indices])
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(22), latitude(5), longitude(8)) K
+        Cell methods    : area: mean
+        Dimension coords: time(22) = [1960-03-16 12:00:00, ..., 1961-12-16 12:00:00]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
         <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
 
         >>> f = cf.example_field(1)
@@ -10755,14 +10768,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                         : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
         >>> indices = f.indices(latitude=cf.wi(51, 53))
-        >>> indices)
+        >>> indices
         ('mask',
          (<CF Data(1, 5, 9): [[[False, ..., False]]]>,),
          slice(None, None, None),
-         slice(3, 8, 1),
-         slice(0, 9, 1))
+         [3, 4, 5, 6, 7],
+         [0, 1, 2, 3, 4, 5, 6, 7, 8])
         >>> f[indices]
         <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
+        >>> print(f[indices].array)
+        [[[261.7 260.6 270.8 260.3 265.6 279.4 276.9 267.6 260.6]
+          [264.2 275.9 262.5 264.9 264.7 270.2 270.4 268.6 275.3]
+          [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
+          [273.8 273.1 268.5 272.3 264.3 278.7 270.6 273.0 270.6]
+          [-- -- -- -- 261.2 275.3 271.2 260.8 268.9]]]
 
         """
         if "exact" in mode:
