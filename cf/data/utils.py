@@ -183,7 +183,7 @@ def convert_to_reftime(a, units=None, first_value=None):
         d_units = getattr(units, "units", None)
 
         if x_calendar != "":
-            if units is None:
+            if not units:
                 d_calendar = x_calendar
             elif not units.equivalent(Units(x_since, x_calendar)):
                 raise ValueError(

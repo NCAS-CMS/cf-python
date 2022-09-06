@@ -887,14 +887,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if indices is Ellipsis:
             return self.copy()
 
-        auxiliary_mask = ()
+        ancillary_mask = ()
         try:
             arg = indices[0]
         except (IndexError, TypeError):
             pass
         else:
             if isinstance(arg, str) and arg == "mask":
-                auxiliary_mask = indices[1]
+                ancillary_mask = indices[1]
                 indices = indices[2:]
 
         shape = self.shape
@@ -1010,9 +1010,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 new._cyclic = cyclic_axes.difference(x)
 
         # ------------------------------------------------------------
-        # Apply auxiliary masks
+        # Apply ancillary masks
         # ------------------------------------------------------------
-        for mask in auxiliary_mask:
+        for mask in ancillary_mask:
             new.where(mask, cf_masked, None, inplace=True)
 
         if new.shape != self.shape:
@@ -3313,16 +3313,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [0 2 4 6]
 
         """
+        if getattr(other, "_NotImplemented_RHS_Data_op", False):
+            return NotImplemented
+
         inplace = method[2] == "i"
 
         # ------------------------------------------------------------
         # Ensure other is an independent Data object, for example
         # so that combination with cf.Query objects works.
         # ------------------------------------------------------------
-        if getattr(other, "_NotImplemented_RHS_Data_op", False):
-            return NotImplemented
-
-        elif not isinstance(other, self.__class__):
+        if not isinstance(other, self.__class__):
             if (
                 isinstance(other, cftime.datetime)
                 and other.calendar == ""
@@ -8351,6 +8351,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                      To guarantee that the mask hardness of the
                      returned dassk array is correct, set the
                      *apply_mask_hardness* parameter to True.
+
+        .. versionadded:: TODODASKVER
 
         :Parameters:
 
