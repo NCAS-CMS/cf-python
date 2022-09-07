@@ -26,7 +26,6 @@ import cfdm
 import netCDF4
 import numpy as np
 from dask import config
-from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from numpy import all as _numpy_all
 from numpy import allclose as _x_numpy_allclose
@@ -1942,29 +1941,29 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                     stop -= size
 
             if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
-                # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # -1:0:1  => [9]
-                # -1:1:1  => [9, 0]
-                # -1:3:1  => [9, 0, 1, 2]
-                # -1:9:1  => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-                # -4:0:1  => [6, 7, 8, 9]
-                # -4:1:1  => [6, 7, 8, 9, 0]
-                # -4:3:1  => [6, 7, 8, 9, 0, 1, 2]
-                # -4:6:1  => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
-                # -9:0:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # -9:1:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-                # -10:0:1 => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -1:0:1] => [9]
+                # x[ -1:1:1] => [9, 0]
+                # x[ -1:3:1] => [9, 0, 1, 2]
+                # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+                # x[ -4:0:1] => [6, 7, 8, 9]
+                # x[ -4:1:1] => [6, 7, 8, 9, 0]
+                # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
+                # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
+                # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+                # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                 index = slice(0, stop - start, step)
                 roll[i] = -start
 
             elif step < 0 and 0 <= start < size and start - size <= stop < 0:
-                # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # 0:-4:-1  => [0, 9, 8, 7]
-                # 6:-1:-1  => [6, 5, 4, 3, 2, 1, 0]
-                # 6:-2:-1  => [6, 5, 4, 3, 2, 1, 0, 9]
-                # 6:-4:-1  => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
-                # 0:-2:-1  => [0, 9]
-                # 0:-10:-1 => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[0: -4:-1] => [0, 9, 8, 7]
+                # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
+                # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
+                # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
+                # x[0: -2:-1] => [0, 9]
+                # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
                 index = slice(start - stop - 1, None, step)
                 roll[i] = -1 - stop
 
@@ -1974,33 +1973,6 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                 index = slice(-1, None, None)
             else:
                 index = slice(index, index + 1, 1)
-
-# Keep this for now - it (or bits of it) might be useful
-#
-#        elif not is_dask_collection(index):
-#            index = np.array(index)
-#            if index.dtype == bool:
-#                # Convert True values to integers
-#                index = np.arange(index.size)[index]
-#
-#            # Convert a list of integers to a slice, if possible
-#            if len(index) == 1:
-#                start = index[0]
-#                index = slice(start, start + 1)
-#            else:
-#                steps = index[1:] - index[:-1]
-#                step = steps[0]
-#                if step and not (steps - step).any():
-#                    # index has a regular step
-#                    if step > 0:
-#                        start, stop = index[0], index[-1] + 1
-#                    elif step < 0:
-#                        start, stop = index[0], index[-1] - 1
-#
-#                    if stop < 0:
-#                        stop = None
-#
-#                    index = slice(start, stop, step)
 
         parsed_indices[i] = index
 

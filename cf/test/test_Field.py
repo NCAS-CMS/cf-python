@@ -842,9 +842,11 @@ class FieldTest(unittest.TestCase):
 
         self.assertIsInstance(g.anchor("grid_longitude", 32), cf.Field)
         self.assertIsNone(g.anchor("grid_longitude", 32, inplace=True))
-        self.assertIsInstance(g.anchor("grid_longitude", 32, dry_run=True), dict)
+        self.assertIsInstance(
+            g.anchor("grid_longitude", 32, dry_run=True), dict
+        )
         f = self.f.copy()
-    
+
         for period in (dimarray.min() - 5, dimarray.min()):
             anchors = numpy.arange(
                 dimarray.min() - 3 * period, dimarray.max() + 3 * period, 6.5
@@ -1172,10 +1174,10 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(indices[0], "mask")
 
         mask = indices[1]
-        self.assertEqual(len(mask) , 1)
+        self.assertEqual(len(mask), 1)
 
         mask = mask[0]
-        self.assertEqual(mask.shape, (1, 1, 9))        
+        self.assertEqual(mask.shape, (1, 1, 9))
         self.assertTrue(
             (
                 np.array(mask)
@@ -1217,9 +1219,7 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.shape, (1, 10, 9))
         x = g.dimension_coordinate("X").array
         self.assertEqual(x.shape, (9,))
-        self.assertTrue(
-            (x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all()
-        )
+        self.assertTrue((x == [0, 40, 80, 120, 160, 200, 240, 280, 320]).all())
         a = array.copy()
         a[..., [0, 1, 6, 7, 8]] = np.ma.masked
         self.assertTrue(cf.functions._numpy_allclose(g.array, a), g.array)
@@ -1270,8 +1270,6 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(
             (x == [0, 40, 80, 120, 160, 200, 240, 280, 320][::-1]).all()
         )
-        
-        
 
         indices = f.indices("full", grid_longitude=cf.wi(70, 200))
         g = f[indices]
@@ -1354,12 +1352,6 @@ class FieldTest(unittest.TestCase):
                 cf.functions._numpy_allclose(array2, g.array), g.array
             )
 
-#        array = np.ma.where(
-#            ((lon >= 72) & (lon <= 83)) | (lon >= 118),
- #           f.array,
- #           np.ma.masked,
- #       )
-
         for mode in ((), ("compress",), ("full",), ("envelope",)):
             indices = f.indices(*mode, longitude=cf.wi(72, 83) | cf.gt(118))
             g = f[indices]
@@ -1431,7 +1423,9 @@ class FieldTest(unittest.TestCase):
                 self.assertEqual(g.construct("longitude").array, 83)
 
         for mode in ("compress", "full", "envelope"):
-            indices = f.indices(mode, longitude=cf.contains(83) | cf.contains(100))
+            indices = f.indices(
+                mode, longitude=cf.contains(83) | cf.contains(100)
+            )
 
             g = f[indices]
             if mode == "full":

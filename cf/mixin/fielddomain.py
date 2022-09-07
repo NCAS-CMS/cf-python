@@ -3,7 +3,6 @@ from numbers import Integral
 
 import dask.array as da
 import numpy as np
-#from dask.base import is_dask_collection
 
 from ..data import Data
 from ..decorators import (
@@ -12,13 +11,12 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import (
-    _DEPRECATION_ERROR_KWARGS,
-    bounds_combination_mode,
-    parse_indices,
-)
+from ..functions import _DEPRECATION_ERROR_KWARGS, bounds_combination_mode
 from ..query import Query
 from ..units import Units
+
+# from dask.base import is_dask_collection
+
 
 logger = logging.getLogger(__name__)
 
@@ -275,7 +273,7 @@ class FieldDomain:
 
         return True
 
-    def _indices(self, mode, data_axes, auxiliary_mask, **kwargs):
+    def _indices(self, mode, data_axes, ancillary_mask, kwargs):
         """Create indices that define a subspace of the field or domain
         construct.
 
@@ -285,7 +283,7 @@ class FieldDomain:
 
         .. versionadded:: 3.9.0
 
-        .. seealso:: `_create_auxiliary_mask_component`
+        .. seealso:: `_create_ancillary_mask_component`
 
         :Parameters:
 
@@ -297,11 +295,11 @@ class FieldDomain:
                 The domain axis identifiers of the data axes, or
                 `None` if there is no data array.
 
-            auxiliary_mask: `bool`
-                Whether or not to create an auxiliary mask. See
+            ancillary_mask: `bool`
+                Whether or not to create ancillary masks. See
                 `cf.Field.indices` for details.
 
-            kwargs: *optional*
+            kwargs: `dict`, *optional*
                 See the **kwargs** parameters of `indices` for
                 details.
 
@@ -315,13 +313,13 @@ class FieldDomain:
                  domain axis identifiers, each of which has a value of
                  the index for that domain axis.
 
-                 The ``'mask'`` key stores a dictionary in keyed by
+                 The ``'mask'`` key stores a dictionary keyed by
                  tuples of domain axis identifier combinations, each
                  of which has of a `Data` object containing the
-                 auxiliary mask to apply to those domain axes at time
-                 of the indices being used to create a subspace. This
-                 dictionary will always be empty if *auxiliary_mask*
-                 is False.
+                 ancillary mask to apply to those domain axes
+                 immediately after the the subspace has been created
+                 by the ``'indices'``. This dictionary will always be
+                 empty if the *ancillary_mask* parameter is False.
 
         """
         compress = mode == "compress"
@@ -330,7 +328,7 @@ class FieldDomain:
 
         domain_axes = self.domain_axes(todict=True)
 
-        # Initialize indices
+        # Initialize the index for each axis
         indices = {axis: slice(None) for axis in domain_axes}
 
         parsed = {}
@@ -391,7 +389,7 @@ class FieldDomain:
                 "domain axes"
             )
 
-        auxiliary_mask = {}
+        mask = {}
 
         for canonical_axes, axes_key_construct_value_id in parsed.items():
             axes, keys, constructs, points, identities = tuple(
@@ -549,7 +547,7 @@ class FieldDomain:
                 # indices.
                 #
                 # Note that we might overwrite it later if there's an
-                # auxiliary mask for this axis.
+                # ancillary mask for this axis.
                 indices[axis] = index
 
             else:
@@ -614,12 +612,12 @@ class FieldDomain:
                 ]
 
                 # If there are exactly two 2-d contructs constructs,
-                # both with bounds and both with 'cf.contains' values,
-                # then do an extra check to remove any cells already
-                # selected for which the given value is actually
-                # outside of the cell. This could happen if the cells
-                # are not rectangular (e.g. curvilinear latitudes and
-                # longitudes for a plane projection domain).
+                # both with cell bounds and both with 'cf.contains'
+                # values, then do an extra check to remove any cells
+                # already selected for which the given value is in
+                # fact outside of the cell. This could happen if the
+                # cells are not rectangular (e.g. for curvilinear
+                # latitudes and longitudes array).
                 if n_items == constructs[0].ndim == len(bounds) == 2:
                     point2 = []
                     for v, construct in zip(points, transposed_constructs):
@@ -684,7 +682,7 @@ class FieldDomain:
                             ind = [np.delete(ind_1d, delete) for ind_1d in ind]
 
             if ind is not None:
-                mask_shape = []
+                mask_component_shape = []
                 masked_subspace_size = 1
                 ind = np.array(ind)
 
@@ -709,7 +707,7 @@ class FieldDomain:
                             start = 0
                             stop = domain_axes[axis].get_size()
                             size = stop - start
-                            index = slice(None) # slice(start, stop)
+                            index = slice(None)
                         else:
                             raise ValueError(
                                 "Must have mode full, envelope or compress"
@@ -717,71 +715,30 @@ class FieldDomain:
 
                         indices[axis] = index
 
-                    mask_shape.append(size)
+                    mask_component_shape.append(size)
                     masked_subspace_size *= size
                     ind[i] -= start
 
-                create_mask = data_axes and ind.shape[1] < masked_subspace_size
+                create_mask = (
+                    ancillary_mask
+                    and data_axes
+                    and ind.shape[1] < masked_subspace_size
+                )
             else:
                 create_mask = False
 
-            # --------------------------------------------------------
-            # Create an auxiliary mask for these axes
-            # --------------------------------------------------------
+            # Create an ancillary mask for these axes
             logger.debug(f"  create_mask  = {create_mask}")  # pragma: no cover
-
             if create_mask:
-                mask = _create_auxiliary_mask_component(
-                    mask_shape, ind, compress
+                mask[canonical_axes] = _create_ancillary_mask_component(
+                    mask_component_shape, ind, compress
                 )
-                auxiliary_mask[canonical_axes] = mask
-                logger.debug(
-                    f"  mask_shape   = {mask_shape}\n"
-                    f"  mask.shape   = {mask.shape}"
-                )  # pragma: no cover
 
-        # ------------------------------------------------------------
-        # Parse the indices so that we end up with as many slices and
-        # dask arrays as possible
-        # ------------------------------------------------------------
-#        for axis, index in tuple(indices.items()):
-##           if isinstance(index, slice):
-##               index = parse_indices(
-##                   (domain_axes[axis].get_size(),), (index,)
-##               )[0]
-#            if not (isisntance(index, slice) or is_dask_collection(index)):
-#                index = np.array(index)
-#                if index.dtype == bool:
-#                    # Convert a True values to integers
-#                    index = np.arange(index.size)[index]
-#
-#                # Convert a list of integers to a slice, if possible
-#                if len(index) == 1:
-#                    start = index[0]
-#                    index = slice(start, start + 1)
-#                else:
-#                    steps = index[1:] - index[:-1]
-#                    step = steps[0]
-#                    if step and not (steps - step).any():
-#                        # index has a regular step
-#                        if step > 0:
-#                            start, stop = index[0], index[-1] + 1
-#                        elif step < 0:
-#                            start, stop = index[0], index[-1] - 1
-#
-#                        if stop < 0:
-#                            stop = None
-#
-#                        index = slice(start, stop, step)
-#
-#            indices[axis] = index
-
-        # Include the auxiliary mask
-        indices = {"indices": indices, "mask": auxiliary_mask}
+        indices = {"indices": indices, "mask": mask}
 
         logger.debug(f"  indices      = {indices!r}")  # pragma: no cover
 
-        # Return the indices and the auxiliary mask
+        # Return the indices and ancillary masks
         return indices
 
     def _roll_constructs(self, axis, shift):
@@ -3105,8 +3062,8 @@ class FieldDomain:
         return self.coordinate_references(*identities, **filter_kwargs)
 
 
-def _create_auxiliary_mask_component(mask_shape, ind, compress):
-    """Create an auxiliary mask component.
+def _create_ancillary_mask_component(mask_shape, ind, compress):
+    """Create an ancillary mask component.
 
     .. versionadded:: 3.9.0
 
@@ -3141,10 +3098,10 @@ def _create_auxiliary_mask_component(mask_shape, ind, compress):
     **Examples**
 
     >>> f = cf.{{class}}()
-    >>> d = _create_auxiliary_mask_component((4,), ([0, 3, 1],))
+    >>> d = _create_ancillary_mask_component((4,), ([0, 3, 1],))
     >>> print(d.array)
     [False False  True False]
-    >>> d = f._create_auxiliary_mask_component(
+    >>> d = f._create_ancillary_mask_component(
     ...     (4, 6), ([0, 3, 1], [5, 3, 2])
     ... )
     >>> print(d.array)
@@ -3154,8 +3111,8 @@ def _create_auxiliary_mask_component(mask_shape, ind, compress):
      [ True  True  True False  True  True]]
 
     """
-    auxiliary_mask = np.ones(mask_shape, dtype=bool)
-    auxiliary_mask[tuple(ind)] = False
+    mask = np.ones(mask_shape, dtype=bool)
+    mask[tuple(ind)] = False
 
     # For compressed indices, remove slices which only contain masked
     # points.
@@ -3165,6 +3122,6 @@ def _create_auxiliary_mask_component(mask_shape, ind, compress):
             if index.size == n:
                 continue
 
-            auxiliary_mask = auxiliary_mask.take(index, axis=i)
+            mask = mask.take(index, axis=i)
 
-    return Data(auxiliary_mask)
+    return Data(mask)

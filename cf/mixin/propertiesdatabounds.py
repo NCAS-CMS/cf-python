@@ -81,7 +81,7 @@ class PropertiesDataBounds(PropertiesData):
         cname = self.__class__.__name__
         logger.debug(
             f"{cname}.__getitem__: shape    = {self.shape}\n"
-            f"{cname}.__getitem__: indices2 = {indices2}\n"            
+            f"{cname}.__getitem__: indices2 = {indices2}\n"
             f"{cname}.__getitem__: indices  = {indices}\n"
             f"{cname}.__getitem__: findices = {findices}"
         )  # pragma: no cover

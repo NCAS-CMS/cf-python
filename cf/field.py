@@ -3,18 +3,11 @@ from collections import namedtuple
 from functools import reduce
 from operator import mul as operator_mul
 
-try:
-    from matplotlib.path import Path
-except ImportError:
-    pass
-
 import cfdm
 import numpy as np
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
-from numpy import asanyarray as numpy_asanyarray
 from numpy import can_cast as numpy_can_cast
-from numpy import delete as numpy_delete
 from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
@@ -29,8 +22,6 @@ from numpy import tile as numpy_tile
 from numpy import unique as numpy_unique
 from numpy import where as numpy_where
 from numpy.ma import is_masked as numpy_ma_is_masked
-from numpy.ma import isMA as numpy_ma_isMA
-from numpy.ma import where as numpy_ma_where
 
 from . import (
     AuxiliaryCoordinate,
@@ -433,10 +424,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             indices = (indices,)
 
         if isinstance(indices[0], str) and indices[0] == "mask":
-            auxiliary_mask = indices[:2]
+            ancillary_mask = indices[:2]
             indices2 = indices[2:]
         else:
-            auxiliary_mask = None
+            ancillary_mask = None
             indices2 = indices
 
         indices, roll = parse_indices(shape, indices2, cyclic=True)
@@ -461,9 +452,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         # Subspace the field construct's data
         # ------------------------------------------------------------
-        if auxiliary_mask:
-            auxiliary_mask = list(auxiliary_mask)
-            findices = auxiliary_mask + indices
+        if ancillary_mask:
+            ancillary_mask = list(ancillary_mask)
+            findices = ancillary_mask + indices
         else:
             findices = indices
 
@@ -506,12 +497,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     else:
                         dice.append(slice(None))
                 logger.debug(f"    dice = {tuple(dice)}")  # pragma: no cover
-  
-                # Generally we do not apply an auxiliary mask to the
+
+                # Generally we do not apply an ancillary mask to the
                 # metadata items, but for DSGs we do.
-                if auxiliary_mask and new.DSG:
+                if ancillary_mask and new.DSG:
                     item_mask = []
-                    for mask in auxiliary_mask[1]:
+                    for mask in ancillary_mask[1]:
                         iaxes = [
                             data_axes.index(axis)
                             for axis in construct_axes
@@ -540,7 +531,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                     if item_mask:
                         needs_slicing = True
-                        dice = [auxiliary_mask[0], item_mask] + dice
+                        dice = [ancillary_mask[0], item_mask] + dice
 
                 # Replace existing construct with its subspace
                 if needs_slicing:
@@ -10583,39 +10574,41 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         The subspace is defined by identifying indices based on the
         metadata constructs.
 
-        Metadata constructs are selected conditions are specified on their
-        data. Indices for subspacing are then automatically inferred from
-        where the conditions are met.
+        Metadata constructs are selected conditions are specified on
+        their data. Indices for subspacing are then automatically
+        inferred from where the conditions are met.
 
-        The returned tuple of indices may be used to created a subspace by
-        indexing the original field construct with them.
+        The returned tuple of indices may be used to created a
+        subspace by indexing the original field construct with them.
 
-        Metadata constructs and the conditions on their data are defined
-        by keyword parameters.
+        Metadata constructs and the conditions on their data are
+        defined by keyword parameters.
 
-        * Any domain axes that have not been identified remain unchanged.
+        * Any domain axes that have not been identified remain
+          unchanged.
 
         * Multiple domain axes may be subspaced simultaneously, and it
           doesn't matter which order they are specified in.
 
-        * Subspace criteria may be provided for size 1 domain axes that
-          are not spanned by the field construct's data.
+        * Subspace criteria may be provided for size 1 domain axes
+          that are not spanned by the field construct's data.
 
         * Explicit indices may also be assigned to a domain axis
-          identified by a metadata construct, with either a Python `slice`
-          object, or a sequence of integers or booleans.
+          identified by a metadata construct, with either a Python
+          `slice` object, or a sequence of integers or booleans.
 
-        * For a dimension that is cyclic, a subspace defined by a slice or
-          by a `Query` instance is assumed to "wrap" around the edges of
-          the data.
+        * For a dimension that is cyclic, a subspace defined by a
+          slice or by a `Query` instance is assumed to "wrap" around
+          the edges of the data.
 
         * Conditions may also be applied to multi-dimensional metadata
-          constructs. The "compress" mode is still the default mode (see
-          the positional arguments), but because the indices may not be
-          acting along orthogonal dimensions, some missing data may still
-          need to be inserted into the field construct's data.
+          constructs. The "compress" mode is still the default mode
+          (see the positional arguments), but because the indices may
+          not be acting along orthogonal dimensions, some missing data
+          may still need to be inserted into the field construct's
+          data.
 
-        **Auxiliary masks**
+        **Ancillary masks**
 
         When creating an actual subspace with the indices, if the
         first element of the tuple of indices is ``'mask'`` then the
@@ -10623,45 +10616,49 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         remaining elements contain the usual indexing information that
         defines the extent of the subspace. Each auxiliary mask
         broadcasts to the subspaced data, and when the subspace is
-        actually created, these masks should be all be applied to the
-        result.
+        actually created, these masks are all automatically applied to
+        the result.
 
-        .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
+        .. seealso:: `subspace`, `where`, `__getitem__`,
+                     `__setitem__`, `cf.Domain.indices`
 
         :Parameters:
 
             mode: `str`, *optional*
-                There are three modes of operation, each of which provides
-                indices for a different type of subspace:
+                There are three modes of operation, each of which
+                provides indices for a different type of subspace:
 
-                ==============  ==========================================
+                ==============  ======================================
                 *mode*          Description
-                ==============  ==========================================
+                ==============  ======================================
                 ``'compress'``  This is the default mode. Unselected
                                 locations are removed to create the
                                 returned subspace. Note that if a
-                                multi-dimensional metadata construct is
-                                being used to define the indices then some
-                                missing data may still be inserted at
-                                unselected locations.
+                                multi-dimensional metadata construct
+                                is being used to define the indices
+                                then some missing data may still be
+                                inserted at unselected locations.
 
-                ``'envelope'``  The returned subspace is the smallest that
-                                contains all of the selected
+                ``'envelope'``  The returned subspace is the smallest
+                                that contains all of the selected
                                 indices. Missing data is inserted at
-                                unselected locations within the envelope.
+                                unselected locations within the
+                                envelope.
 
-                ``'full'``      The returned subspace has the same domain
-                                as the original field construct. Missing
-                                data is inserted at unselected locations.
-                ==============  ==========================================
+                ``'full'``      The returned subspace has the same
+                                domain as the original field
+                                construct. Missing data is inserted at
+                                unselected locations.
+                ==============  ======================================
 
             kwargs: *optional*
-                A keyword name is an identity of a metadata construct, and
-                the keyword value provides a condition for inferring
-                indices that apply to the dimension (or dimensions)
-                spanned by the metadata construct's data. Indices are
-                created that select every location for which the metadata
-                construct's data satisfies the condition.
+                A keyword name is an identity of a metadata construct,
+                and the keyword value provides a condition for
+                inferring indices that apply to the dimension (or
+                dimensions) spanned by the metadata construct's
+                data. Indices are created that select every location
+                for which the metadata construct's data satisfies the
+                condition.
 
         :Returns:
 
@@ -10705,9 +10702,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(indices)
         >>> print(q)
         <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
-
-
-        TODODASK
 
         >>> f = cf.example_field(2)
         Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -10767,21 +10761,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                         : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                         : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-        >>> indices = f.indices(latitude=cf.wi(51, 53))
+        >>> indices = f.indices(latitude=cf.wi(51.5, 52.4))
         >>> indices
         ('mask',
          (<CF Data(1, 5, 9): [[[False, ..., False]]]>,),
          slice(None, None, None),
-         [3, 4, 5, 6, 7],
+         [4, 5, 6],
          [0, 1, 2, 3, 4, 5, 6, 7, 8])
         >>> f[indices]
-        <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
+        <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(3), grid_longitude(9)) K>
         >>> print(f[indices].array)
-        [[[261.7 260.6 270.8 260.3 265.6 279.4 276.9 267.6 260.6]
-          [264.2 275.9 262.5 264.9 264.7 270.2 270.4 268.6 275.3]
-          [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
-          [273.8 273.1 268.5 272.3 264.3 278.7 270.6 273.0 270.6]
-          [-- -- -- -- 261.2 275.3 271.2 260.8 268.9]]]
+        [[[264.2 275.9 262.5 264.9 264.7 270.2 270.4 -- --]
+         [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
+         [-- -- -- -- -- -- 270.6 273.0 270.6]]]
 
         """
         if "exact" in mode:
@@ -10809,19 +10801,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         data_axes = self.get_data_axes()
 
-        # ------------------------------------------------------------
         # Get the indices for every domain axis in the domain,
-        # including any auxiliary masks
-        # ------------------------------------------------------------
-        domain_indices = self._indices(mode, data_axes, True, **kwargs)
+        # including any ancillary masks
+        domain_indices = self._indices(mode, data_axes, True, kwargs)
 
-        # Initialise the output indices with any auxiliary masks
-        auxiliary_mask = domain_indices["mask"]
-        if auxiliary_mask:
-            # Ensure that each auxiliary mask is broadcastable to the
-            # data
+        # Initialise the output indices with any ancillary masks.
+        # Ensure that each ancillary mask is broadcastable to the
+        # data, by adding any missing size 1 dimensions and reordering
+        # to the dimensions to the order of the field's data.
+        ancillary_mask = domain_indices["mask"]
+        if ancillary_mask:
             masks = []
-            for axes, mask in auxiliary_mask.items():
+            for axes, mask in ancillary_mask.items():
                 axes = list(axes)
                 for i, axis in enumerate(data_axes):
                     if axis not in axes:
