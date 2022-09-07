@@ -4052,6 +4052,15 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.Units, cf.Units("km"))
         self.assertEqual(d.array, 0.1)
 
+        # Assign units when none were set
+        d = cf.Data(100)
+        d.Units = cf.Units("km")
+        self.assertEqual(d.Units, cf.Units("km"))
+
+        d = cf.Data(100, "")
+        with self.assertRaises(ValueError):
+            d.Units = cf.Units("km")
+
         # Assign non-equivalent units
         with self.assertRaises(ValueError):
             d.Units = cf.Units("watt")
