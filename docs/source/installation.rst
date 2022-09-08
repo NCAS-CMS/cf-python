@@ -102,10 +102,6 @@ details.
 **conda**
 ---------
 
-.. note:: The latest version of cf available via conda is confirmed at
-          `the top of the README document
-          <https://github.com/NCAS-CMS/cf-python#cf-python>`_.
-
 To install cf with all of its :ref:`required <Required>` and
 :ref:`optional <Optional>` dependencies, and the `cf-plot
 visualisation package <http://ajheaps.github.io/cf-plot>`_, run
