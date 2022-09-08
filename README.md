@@ -6,9 +6,7 @@ is built on a complete implementation of the CF data model.
 
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/NCAS-CMS/cf-python?color=000000&label=latest%20version)](https://ncas-cms.github.io/cf-python/Changelog.html)
 [![PyPI](https://img.shields.io/pypi/v/cf-python?color=000000)](https://ncas-cms.github.io/cf-python/installation.html#pip)
-[![Conda](https://img.shields.io/conda/v/ncas/cf-python?color=000000)](https://ncas-cms.github.io/cf-python/installation.html#conda)
 
-[![Conda](https://img.shields.io/conda/pn/ncas/cf-python?color=2d8659)](https://ncas-cms.github.io/cf-python/installation.html#operating-systems)
 [![Website](https://img.shields.io/website?color=2d8659&down_message=online&label=documentation&up_message=online&url=https%3A%2F%2Fncas-cms.github.io%2Fcf-python%2F)](https://ncas-cms.github.io/cf-python/index.html)
 [![GitHub](https://img.shields.io/github/license/NCAS-CMS/cf-python?color=2d8659)](https://github.com/NCAS-CMS/cf-python/blob/master/LICENSE)
 
