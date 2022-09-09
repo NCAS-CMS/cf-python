@@ -209,7 +209,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         copy=True,
         dtype=None,
         mask=None,
-            filenames=None,
+        filenames=None,
         to_memory=False,
         init_options=None,
         _use_array=True,
@@ -413,7 +413,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             return
 
-        super().__init__(array=array, fill_value=fill_value, filenames=filenames, _use_array=False)
+        super().__init__(
+            array=array,
+            fill_value=fill_value,
+            filenames=filenames,
+            _use_array=False,
+        )
 
         # Set the units
         units = Units(units, calendar=calendar)

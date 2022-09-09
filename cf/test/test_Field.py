@@ -2789,6 +2789,27 @@ class FieldTest(unittest.TestCase):
         (q == t).array
         (t == q).array
 
+    def test_Field_orignal_filenames(self):
+        """Test Field.orignal_filenames."""
+        f = cf.example_field(0)
+        f.data.original_filenames(define=["file1.nc", "file2.nc"])
+        x = f.coordinate("longitude")
+        x.data.original_filenames(define=["file1.nc", "file3.nc"])
+        b = x.bounds
+        b.data.original_filenames(define=["file1.nc", "file4.nc"])
+
+        self.assertEqual(
+            f.original_filenames(),
+            set(
+                (
+                    cf.abspath("file1.nc"),
+                    cf.abspath("file2.nc"),
+                    cf.abspath("file3.nc"),
+                    cf.abspath("file4.nc"),
+                )
+            ),
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
