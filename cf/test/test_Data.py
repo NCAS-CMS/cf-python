@@ -1292,9 +1292,13 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d[[0, 1], [2]].shape, (2, 1))
 
         # Ancillary masks
-        #
-        # TODODASK: Test __getitem__ with ancillary masks. Can only do
-        #           this when cf.Data.where has been daskified
+        d = cf.Data(np.arange(45).reshape(9, 5), chunks=(4, 5))
+        mask0 = cf.Data([[False, True, False, False, True]])
+        mask1 = cf.Data([1, 1, 1, 0, 0, 1, 0, 1, 1], dtype=bool)
+        mask1.insert_dimension(-1, inplace=True)
+        indices = ("mask", (mask0, mask1), slice(None), slice(None))
+
+        self.assertTrue(d[indices].count(), 9)
 
     def test_Data__setitem__(self):
         """Test the assignment of data elements on Data."""
@@ -3994,13 +3998,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.compressed_array == f.compressed_array).all())
 
         d = cf.Data([1, 2, 3], "m")
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             d.compressed_array
-
-        # TODO: when cfdm>1.9.0.3 is released (i.e. a release that
-        #       includes https://github.com/NCAS-CMS/cfdm/pull/184),
-        #       we can replace the loose "(Exception)" with the tight
-        #       "(ValueError)"
 
     def test_Data_inspect(self):
         """Test the `inspect` Data method."""
@@ -4053,6 +4052,15 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.Units, cf.Units("km"))
         self.assertEqual(d.array, 0.1)
 
+        # Assign units when none were set
+        d = cf.Data(100)
+        d.Units = cf.Units("km")
+        self.assertEqual(d.Units, cf.Units("km"))
+
+        d = cf.Data(100, "")
+        with self.assertRaises(ValueError):
+            d.Units = cf.Units("km")
+
         # Assign non-equivalent units
         with self.assertRaises(ValueError):
             d.Units = cf.Units("watt")
@@ -4104,6 +4112,28 @@ class DataTest(unittest.TestCase):
         d = cf.Data(9, "m")
         with self.assertRaises(ValueError):
             d.get_list()
+
+    def test_Data__init__datetime(self):
+        """Test `Data.__init__` for datetime objects."""
+        dt = cf.dt(2000, 1, 1)
+        for a in (dt, [dt], [[dt]]):
+            d = cf.Data(a)
+            self.assertEqual(d.array, 0)
+
+        dt = [dt, cf.dt(2000, 2, 1)]
+        d = cf.Data(dt)
+        self.assertTrue((d.array == [0, 31]).all())
+
+        q = cf.wi(cf.dt(1999, 9, 1), cf.dt(2001, 11, 16, 12))
+        self.assertTrue((q == d).array.all())
+        self.assertTrue((d == q).array.all())
+
+        dt = np.ma.array(dt, mask=[True, False])
+        d = cf.Data(dt)
+        self.assertTrue((d.array == [-999, 0]).all())
+
+        self.assertTrue((q == d).array.all())
+        self.assertTrue((d == q).array.all())
 
 
 if __name__ == "__main__":

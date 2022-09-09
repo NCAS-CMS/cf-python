@@ -180,7 +180,7 @@ else:
 # --- End: if
 
 
-# TODODASK - deprecate 'collapse_parallel_mode' when move to dask is complete
+# TODODASKDEPR - deprecate 'collapse_parallel_mode' when move to dask complete
 def configuration(
     atol=None,
     rtol=None,
@@ -662,7 +662,7 @@ class regrid_logging(ConstantAccess):
         return bool(arg)
 
 
-# TODODASK - deprecate when move to dask is complete
+# TODODASKDEPR - deprecate when move to dask is complete
 class collapse_parallel_mode(ConstantAccess):
     """Which mode to use when collapse is run in parallel. There are
     three possible modes:
@@ -1020,7 +1020,7 @@ class free_memory_factor(ConstantAccess):
 
     """
 
-    # TODODASK: Review how all this free memory stuff works with dask
+    # TODODASKAPI: Review how all this free memory stuff works with dask
 
     _name = "FREE_MEMORY_FACTOR"
 
@@ -1361,7 +1361,7 @@ def REGRID_LOGGING(*new_regrid_logging):
     return regrid_logging(*new_regrid_logging)
 
 
-# TODODASK - deprecate when move to dask is complete
+# TODODASKDEPR - deprecate when move to dask is complete
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     """Alias for `cf.collapse_parallel_mode`."""
     return collapse_parallel_mode(*new_collapse_parallel_mode)
@@ -2585,7 +2585,7 @@ def hash_array(array, algorithm=hashlib.sha1):
             Constructor function for the desired hash algorithm,
             e.g. `hashlib.md5`, `hashlib.sha256`, etc.
 
-            .. versionadded:: TODODASK
+            .. versionadded:: TODODASKVER
 
     :Returns:
 
@@ -2833,13 +2833,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
             passed. By default it is False.
 
         stop: `int`, optional
-            Deprecated at version TODODASK.
+            Deprecated at version TODODASKVER.
 
             Stop after taking this number of sections and return. If
             stop is None all sections are taken.
 
         chunks: `bool`, optional
-            Deprecated at version TODODASK. Consider using
+            Deprecated at version TODODASKVER. Consider using
             `cf.Data.rechunk` instead.
 
             If True return sections that are of the maximum possible
@@ -2874,13 +2874,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     if stop is not None:
         raise DeprecationError(
             "The 'stop' keyword of cf._section() was deprecated at "
-            "version TODODASK and is no longer available"
+            "version TODODASKVER and is no longer available"
         )
 
     if chunks:
         raise DeprecationError(
             "The 'chunks' keyword of cf._section() was deprecated at "
-            "version TODODASK and is no longer available. Consider using "
+            "version TODODASKVER and is no longer available. Consider using "
             "cf.Data.rechunk instead."
         )
 

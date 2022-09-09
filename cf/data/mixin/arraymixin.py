@@ -1,7 +1,7 @@
 class ArrayMixin:
     """Mixin class for a container of an array.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
 

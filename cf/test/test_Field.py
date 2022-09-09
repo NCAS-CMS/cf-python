@@ -2755,6 +2755,40 @@ class FieldTest(unittest.TestCase):
                 del lp0.long_name
                 self.assertTrue(lp.equals(lp0, rtol=1e-10))
 
+    def test_Field_to_dask_array(self):
+        f = self.f0.copy()
+        self.assertIs(f.to_dask_array(), f.data.to_dask_array())
+
+        f.del_data()
+        with self.assertRaises(ValueError):
+            f.to_dask_array()
+
+    def test_Field_combine_with_Query(self):
+        f = self.f0
+        q = cf.lt(0.1)
+        (q == f).array
+        (f == q).array
+
+        f = cf.example_field(2)
+
+        x = f.coordinate("X")
+        q = cf.eq(337.5)
+        (q == x).array
+        (x == q).array
+
+        t = f.coordinate("T")
+        q = cf.dt(1962, 11, 16)
+        (q == t).array
+        (t == q).array
+
+        q = cf.wi(cf.dt(1960, 9, 1), cf.dt(1962, 11, 16, 12))
+        (q == t).array
+        (t == q).array
+
+        q = cf.eq(cf.dt(1962, 11, 16, 12))
+        (q == t).array
+        (t == q).array
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

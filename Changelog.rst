@@ -1,12 +1,14 @@
 version 3.14.0
 --------------
 
-**????-??-??**
+**202?-??-??**
 
+* New method: `cf.Field.to_dask_array`
 * Changed dependency: ``1.10.0.1<=cfdm<1.10.1.0``
 * New dependency: ``dask>=2022.6.0``
 
 ----
+
 version 3.13.1
 --------------
 
