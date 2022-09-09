@@ -368,6 +368,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                  *Parameter example:*
                    ``{'from_array': {'inline_array': True}}``
 
+            filenames: (sequence of) `str`, optional
+                Record the file names that contain some or all of the
+                data at the time of `Data` instance creation.
+
+                .. versionadded:: TODODASKVER
+
             chunk: deprecated at version TODODASKVER
                 Use the *chunks* parameter instead.
 
