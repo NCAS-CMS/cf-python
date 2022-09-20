@@ -101,35 +101,6 @@ class FieldTest(unittest.TestCase):
         for ns in ("cf", ""):
             f.creation_commands(namespace=ns)
 
-    def test_Field_get_filenames(self):
-        f = self.f0
-
-        cf.write(f, tmpfile)
-        g = cf.read(tmpfile)[0]
-
-        abspath_tmpfile = os.path.abspath(tmpfile)
-        self.assertEqual(
-            g.get_filenames(), set([abspath_tmpfile]), g.get_filenames()
-        )
-
-        g.data[...] = -99
-        self.assertEqual(
-            g.get_filenames(), set([abspath_tmpfile]), g.get_filenames()
-        )
-
-        for c in g.constructs.filter_by_data().values():
-            c.data[...] = -99
-
-        self.assertEqual(
-            g.get_filenames(), set([abspath_tmpfile]), g.get_filenames()
-        )
-
-        for c in g.constructs.filter_by_data().values():
-            if c.has_bounds():
-                c.bounds.data[...] = -99
-
-        self.assertEqual(g.get_filenames(), set(), g.get_filenames())
-
     def test_Field_halo(self):
         f = cf.example_field(7)
 
@@ -2789,8 +2760,8 @@ class FieldTest(unittest.TestCase):
         (q == t).array
         (t == q).array
 
-    def test_Field_orignal_filenames(self):
-        """Test Field.orignal_filenames."""
+    def test_Field_original_filenames(self):
+        """Test Field.original_filenames."""
         f = cf.example_field(0)
         f.data.original_filenames(define=["file1.nc", "file2.nc"])
         x = f.coordinate("longitude")
