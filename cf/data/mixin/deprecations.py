@@ -256,8 +256,7 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames`
-        instead."""
+        """Deprecated at version 3.4.0, consider usin method `original_filenames` instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
@@ -312,7 +311,9 @@ class DataClassDeprecationsMixin:
     def get_filenames(self):
         """Return the names of files containing parts of the data array.
 
-        Deprecated at version TODODASKVER.
+        Deprecated at version TODODASKVER and and is no longer
+        available and will be removed at v5.0.0. Consider using the
+        `original_filenames` method instead.
 
         :Returns:
 
@@ -321,13 +322,14 @@ class DataClassDeprecationsMixin:
                 data is in memory then an empty `set` is returned.
 
         """
-        return set()
-
-    #        raise DeprecationError(
-    #            "Data method 'get_filenames' has been deprecated at "
-    #            "version TODODASKVER and is not available."
-    #        )  # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "get_filenames",
+            "Consider using the 'original_filenames' method instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+    
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
 
