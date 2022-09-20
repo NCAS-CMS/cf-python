@@ -9,7 +9,7 @@ from . import mixin
 from .constructs import Constructs
 from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
-from .functions import _DEPRECATION_ERROR_ARG, parse_indices
+from .functions import _DEPRECATION_ERROR_ARG, _DEPRECATION_ERROR_METHOD, parse_indices
 
 logger = logging.getLogger(__name__)
 
@@ -513,6 +513,27 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             return self.construct_key(identity, default=default)
 
         return super().get_data_axes(key=key, default=default)
+
+    def get_filenames(self):
+        """Return the file names containing the metadata construct data.
+
+        Deprecated at version TODODASKVER and and is no longer
+        available. Consider using the `original_filenames` method
+        instead.
+
+        :Returns:
+
+            `set`
+                The file names in normalized, absolute form. If all of the
+                data are in memory then an empty `set` is returned.
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "get_filenames",
+            "Consider using the 'original_filenames' method instead.",
+            version="TODODASKVER",
+        )  # pragma: no cover
 
     def identity(self, default="", strict=False, relaxed=False, nc_only=False):
         """Return the canonical identity.
