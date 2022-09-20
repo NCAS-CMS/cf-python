@@ -597,6 +597,7 @@ Deprecated
    ~cf.FieldAncillary.delprop
    ~cf.FieldAncillary.dtvarray
    ~cf.FieldAncillary.expand_dims
+   ~cf.FieldAncillary.get_filenames
    ~cf.FieldAncillary.getprop
    ~cf.FieldAncillary.hasbounds
    ~cf.FieldAncillary.hasdata

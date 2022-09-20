@@ -701,6 +701,7 @@ Deprecated
    ~cf.DimensionCoordinate.delprop
    ~cf.DimensionCoordinate.expand_dims
    ~cf.DimensionCoordinate.files
+   ~cf.DimensionCoordinate.get_filenames
    ~cf.DimensionCoordinate.getprop
    ~cf.DimensionCoordinate.hasprop
    ~cf.DimensionCoordinate.insert_data

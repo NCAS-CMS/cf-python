@@ -608,6 +608,7 @@ Deprecated
    ~cf.Index.delprop
    ~cf.Index.dtvarray
    ~cf.Index.expand_dims
+   ~cf.Index.get_filenames
    ~cf.Index.getprop
    ~cf.Index.hasbounds
    ~cf.Index.hasdata

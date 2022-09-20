@@ -945,6 +945,7 @@ Deprecated
    ~cf.Field.example_field
    ~cf.Field.expand_dims
    ~cf.Field.field
+   ~cf.Field.get_filenames
    ~cf.Field.getprop
    ~cf.Field.HDF_chunks
    ~cf.Field.hasprop

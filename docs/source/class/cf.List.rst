@@ -594,6 +594,7 @@ Deprecated
    ~cf.List.delprop
    ~cf.List.dtvarray
    ~cf.List.expand_dims
+   ~cf.List.get_filenames
    ~cf.List.getprop
    ~cf.List.hasbounds
    ~cf.List.hasdata

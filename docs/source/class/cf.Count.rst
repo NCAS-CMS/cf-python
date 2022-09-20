@@ -606,6 +606,7 @@ Deprecated
    ~cf.Count.delprop
    ~cf.Count.dtvarray
    ~cf.Count.expand_dims
+   ~cf.Count.get_filenames
    ~cf.Count.getprop
    ~cf.Count.halo
    ~cf.Count.hasbounds
