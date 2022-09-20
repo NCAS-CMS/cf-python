@@ -4146,7 +4146,6 @@ class DataTest(unittest.TestCase):
         # Check source
         e = cf.Data(source=d)
         self.assertEqual(e.original_filenames(), d.original_filenames())
-        print(e.original_filenames())
 
 
 if __name__ == "__main__":
