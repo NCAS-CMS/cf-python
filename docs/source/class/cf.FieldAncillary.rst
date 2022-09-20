@@ -222,7 +222,7 @@ Data
    ~cf.FieldAncillary.period
    ~cf.FieldAncillary.iscyclic
    ~cf.FieldAncillary.isperiodic
-   ~cf.FieldAncillary.get_filenames
+   ~cf.FieldAncillary.original_filenames
    ~cf.FieldAncillary.has_bounds
 
 Miscellaneous

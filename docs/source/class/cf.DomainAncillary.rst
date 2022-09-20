@@ -291,7 +291,7 @@ Data
    ~cf.DomainAncillary.period
    ~cf.DomainAncillary.iscyclic
    ~cf.DomainAncillary.isperiodic
-   ~cf.DomainAncillary.get_filenames
+   ~cf.DomainAncillary.original_filenames
 
 Miscellaneous
 -------------

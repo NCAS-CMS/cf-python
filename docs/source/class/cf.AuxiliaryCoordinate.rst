@@ -335,7 +335,7 @@ Cyclicity
    ~cf.AuxiliaryCoordinate.convert_reference_time
    ~cf.AuxiliaryCoordinate.cyclic
    ~cf.AuxiliaryCoordinate.period
-   ~cf.AuxiliaryCoordinate.get_filenames
+   ~cf.AuxiliaryCoordinate.original_filenames
 
 Miscellaneous
 -------------

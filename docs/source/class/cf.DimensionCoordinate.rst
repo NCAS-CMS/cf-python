@@ -340,8 +340,8 @@ Cyclicity
    ~cf.DimensionCoordinate.close
    ~cf.DimensionCoordinate.convert_reference_time
    ~cf.DimensionCoordinate.cyclic
+   ~cf.DimensionCoordinate.original_filenames
    ~cf.DimensionCoordinate.period
-   ~cf.DimensionCoordinate.get_filenames
 
 Miscellaneous
 -------------

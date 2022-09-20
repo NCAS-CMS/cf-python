@@ -219,7 +219,7 @@ Data
    ~cf.Index.period
    ~cf.Index.iscyclic
    ~cf.Index.isperiodic
-   ~cf.Index.get_filenames
+   ~cf.Index.original_filenames
    ~cf.Index.has_bounds
 
 Miscellaneous

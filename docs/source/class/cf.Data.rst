@@ -555,8 +555,8 @@ Miscellaneous
    :template: method.rst
 
    ~cf.Data.creation_commands
-   ~cf.Data.get_filenames
    ~cf.Data.get_data
+   ~cf.Data.original_filenames
    ~cf.Data.source
 
 .. rubric:: Attributes
@@ -769,5 +769,6 @@ Deprecated
    ~cf.Data.dtvarray
    ~cf.Data.expand_dims
    ~cf.Data.files
+   ~cf.Data.get_filenames
    ~cf.Data.save_to_disk
    ~cf.Data.unsafe_array

@@ -246,7 +246,7 @@ Data
    ~cf.CellMeasure.period
    ~cf.CellMeasure.iscyclic
    ~cf.CellMeasure.isperiodic
-   ~cf.CellMeasure.get_filenames
+   ~cf.CellMeasure.original_filenames
    ~cf.CellMeasure.has_bounds
 
 Miscellaneous
