@@ -256,7 +256,8 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, consider usin method `original_filenames` instead."""
+        """Deprecated at version 3.4.0, consider usin method
+        `original_filenames` instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
@@ -328,7 +329,7 @@ class DataClassDeprecationsMixin:
             "Consider using the 'original_filenames' method instead.",
             version="TODODASKVER",
         )  # pragma: no cover
-    
+
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
 

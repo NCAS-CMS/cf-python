@@ -9,7 +9,11 @@ from . import mixin
 from .constructs import Constructs
 from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
-from .functions import _DEPRECATION_ERROR_ARG, _DEPRECATION_ERROR_METHOD, parse_indices
+from .functions import (
+    _DEPRECATION_ERROR_ARG,
+    _DEPRECATION_ERROR_METHOD,
+    parse_indices,
+)
 
 logger = logging.getLogger(__name__)
 

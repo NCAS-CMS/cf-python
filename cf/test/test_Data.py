@@ -4141,12 +4141,12 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.original_filenames(), set())
 
         d = cf.Data(9, filenames="file1.nc")
-        self.assertEqual(d.original_filenames(), set([cf.abspath('file1.nc')]))
+        self.assertEqual(d.original_filenames(), set([cf.abspath("file1.nc")]))
 
         # Check source
         e = cf.Data(source=d)
         self.assertEqual(e.original_filenames(), d.original_filenames())
-        print( e.original_filenames())
+        print(e.original_filenames())
 
 
 if __name__ == "__main__":
