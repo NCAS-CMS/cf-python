@@ -311,8 +311,8 @@ class Query:
         """The binary bitwise operation ``|``
 
         Combine two queries with a logical Or operation. If the
-        `!value` of both queries is the same then it will retained on
-        the compuind query.
+        `!value` of both queries is the same then it will be retained on
+        the compound query.
 
         x.__or__(y) <==> x|y
 
