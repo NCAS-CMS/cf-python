@@ -1061,7 +1061,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         If indices for two or more dimensions are lists or 1-d arrays
         of Booleans or integers, and any of these are dask
         collections, then these dask collections will be
-        computedimmediately.
+        computed immediately.
 
         .. seealso:: `__getitem__`, `__keedims_indexing__`,
                      `__orthogonal_indexing__`, `cf.masked`,
