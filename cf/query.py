@@ -272,8 +272,8 @@ class Query:
         """The binary bitwise operation ``&``
 
         Combine two queries with a logical And operation. If the
-        `!value` of both queries is the same then it will retained on
-        the compuind query.
+        `!value` of both queries is the same then it will be retained on
+        the compound query.
 
         x.__and__(y) <==> x&y
 
