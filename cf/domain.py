@@ -672,45 +672,47 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         return out
 
     def indices(self, *mode, **kwargs):
-        """Create indices that define a subspace of the domain
-        construct.
+        """Create indices that define a subspace of the domain construct.
 
-        The indices returned by this method be used to create the subspace
-        by passing them to the `subspace` method of the original domain
-        construct.
+        The indices returned by this method be used to create the
+        subspace by passing them to the `subspace` method of the
+        original domain construct.
 
         The subspace is defined by identifying indices based on the
         metadata constructs.
 
-        Metadata constructs are selected conditions are specified on their
-        data. Indices for subspacing are then automatically inferred from
-        where the conditions are met.
+        Metadata constructs are selected conditions are specified on
+        their data. Indices for subspacing are then automatically
+        inferred from where the conditions are met.
 
-        Metadata constructs and the conditions on their data are defined
-        by keyword parameters.
+        Metadata constructs and the conditions on their data are
+        defined by keyword parameters.
 
-        * Any domain axes that have not been identified remain unchanged.
+        * Any domain axes that have not been identified remain
+          unchanged.
 
         * Multiple domain axes may be subspaced simultaneously, and it
           doesn't matter which order they are specified in.
 
         * Explicit indices may also be assigned to a domain axis
-          identified by a metadata construct, with either a Python `slice`
-          object, or a sequence of integers or booleans.
+          identified by a metadata construct, with either a Python
+          `slice` object, or a sequence of integers or booleans.
 
-        * For a dimension that is cyclic, a subspace defined by a slice or
-          by a `Query` instance is assumed to "wrap" around the edges of
-          the data.
+        * For a dimension that is cyclic, a subspace defined by a
+          slice or by a `Query` instance is assumed to "wrap" around
+          the edges of the data.
 
         * Conditions may also be applied to multi-dimensional metadata
-          constructs. The "compress" mode is still the default mode (see
-          the positional arguments), but because the indices may not be
-          acting along orthogonal dimensions, some missing data may still
-          need to be inserted into the field construct's data.
+          constructs. The "compress" mode is still the default mode
+          (see the positional arguments), but because the indices may
+          not be acting along orthogonal dimensions, some missing data
+          may still need to be inserted into the field construct's
+          data.
 
         .. versionadded:: 3.11.0
 
-        .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
+        .. seealso:: `subspace`, `where`, `__getitem__`,
+                     `__setitem__`, `cf.Field.indices`
 
         :Parameters:
 
@@ -718,30 +720,30 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 There are two modes of operation, each of which provides
                 indices for a different type of subspace:
 
-                ==============  ==========================================
+                ==============  ======================================
                 *mode*          Description
-                ==============  ==========================================
-                ``'compress'``  Return indices that identify only the
-                                requested locations.
+                ==============  ======================================
+                ``'compress'``  This is the default mode. Unselected
+                                locations are removed to create the
+                                returned subspace. Note that if a
+                                multi-dimensional metadata construct
+                                is being used to define the indices
+                                then some missing data may still be
+                                inserted at unselected locations.
 
-                                This is the default mode.
-
-                                Note that if a multi-dimensional metadata
-                                construct is being used to define the
-                                indices then some unrequested locations
-                                may also be selected.
-
-                ``'envelope'``  The returned subspace is the smallest that
-                                contains all of the requested locations.
-                ==============  ==========================================
+                ``'envelope'``  The returned subspace is the smallest
+                                that contains all of the selected
+                                indices.
+                ==============  ======================================
 
             kwargs: *optional*
-                A keyword name is an identity of a metadata construct, and
-                the keyword value provides a condition for inferring
-                indices that apply to the dimension (or dimensions)
-                spanned by the metadata construct's data. Indices are
-                created that select every location for which the metadata
-                construct's data satisfies the condition.
+                A keyword name is an identity of a metadata construct,
+                and the keyword value provides a condition for
+                inferring indices that apply to the dimension (or
+                dimensions) spanned by the metadata construct's
+                data. Indices are created that select every location
+                for which the metadata construct's data satisfies the
+                condition.
 
         :Returns:
 
@@ -799,15 +801,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         else:
             raise ValueError(f"Invalid value for 'mode' argument: {mode[0]!r}")
 
-        # ------------------------------------------------------------
         # Get the indices for every domain axis in the domain, without
         # any auxiliary masks.
-        # ------------------------------------------------------------
         domain_indices = self._indices(mode, None, False, **kwargs)
 
-        # ------------------------------------------------------------
-        # Return the indices
-        # ------------------------------------------------------------
         return domain_indices["indices"]
 
     def match_by_construct(self, *identities, OR=False, **conditions):
@@ -1270,10 +1267,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """Permute the data axes of the metadata constructs.
 
         Each metadata construct has its data axis order changed to the
-        relative ordering defined by the *axes* parameter. For instance,
-        if the given *axes* are ``['X', 'Z', 'Y']`` then a metadata
-        construct whose data axis order is ('Y', 'X') will be tranposed to
-        have data order ('X', 'Y').
+        relative ordering defined by the *axes* parameter. For
+        instance, if the given *axes* are ``['X', 'Z', 'Y']`` then a
+        metadata construct whose data axis order is ``('Y', 'X')``
+        will be tranposed to have data order ``('X', 'Y')``.
 
         .. versionadded:: 3.11.0
 

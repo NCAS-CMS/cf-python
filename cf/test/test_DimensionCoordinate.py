@@ -484,6 +484,14 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         self.assertTrue((c.bounds.data.array == [0, 2592000]).all())
 
+    def test_DimensiconCoordinate__getitem__(self):
+        dim = self.dim
+        self.assertTrue((dim[1:3].array == dim.array[1:3]).all())
+
+        # Indices result in a subspaced shape that has a size 0 axis
+        with self.assertRaises(IndexError):
+            dim[[False] * dim.size]
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
