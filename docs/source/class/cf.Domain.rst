@@ -161,7 +161,7 @@ Miscellaneous
    ~cf.Domain.has_data
    ~cf.Domain.has_geometry
    ~cf.Domain.apply_masking   
-   ~cf.Domain.original_filenames
+   ~cf.Domain.get_original_filenames
    ~cf.Domain.close
 
 Domain axes

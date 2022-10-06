@@ -209,7 +209,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         copy=True,
         dtype=None,
         mask=None,
-        filenames=None,
         to_memory=False,
         init_options=None,
         _use_array=True,
@@ -368,12 +367,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                  *Parameter example:*
                    ``{'from_array': {'inline_array': True}}``
 
-            filenames: (sequence of) `str`, optional
-                Record the file names that contain some or all of the
-                data at the time of `Data` instance creation.
-
-                .. versionadded:: TODODASKVER
-
             chunk: deprecated at version TODODASKVER
                 Use the *chunks* parameter instead.
 
@@ -422,7 +415,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         super().__init__(
             array=array,
             fill_value=fill_value,
-            filenames=filenames,
             _use_array=False,
         )
 

@@ -244,7 +244,7 @@ Miscellaneous data operations
 	      
    ~cf.Field.cyclic
    ~cf.Field.period
-   ~cf.Field.original_filenames
+   ~cf.Field.get_original_filenames
    ~cf.Field.close
    ~cf.Field.chunk
  

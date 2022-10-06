@@ -223,7 +223,7 @@ Data
    ~cf.Bounds.period
    ~cf.Bounds.iscyclic
    ~cf.Bounds.isperiodic
-   ~cf.Bounds.original_filenames
+   ~cf.Bounds.get_original_filenames
    ~cf.Bounds.has_bounds
 
 Miscellaneous

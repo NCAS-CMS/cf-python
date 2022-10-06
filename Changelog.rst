@@ -3,7 +3,8 @@ version 3.14.0
 
 **202?-??-??**
 
-* New method: `cf.Field.to_dask_array`
+* New method: `cf.Field.get_original_filenames`
+  (https://github.com/NCAS-CMS/cf-python/issues/448)
 
 ----
 

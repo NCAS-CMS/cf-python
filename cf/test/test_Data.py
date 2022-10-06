@@ -4135,18 +4135,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((q == d).array.all())
         self.assertTrue((d == q).array.all())
 
-    def test_Data_original_filenames(self):
-        """Test Data.original_filenames."""
-        d = cf.Data(9, "metres")
-        self.assertEqual(d.original_filenames(), set())
-
-        d = cf.Data(9, filenames="file1.nc")
-        self.assertEqual(d.original_filenames(), set([cf.abspath("file1.nc")]))
-
-        # Check source
-        e = cf.Data(source=d)
-        self.assertEqual(e.original_filenames(), d.original_filenames())
-
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

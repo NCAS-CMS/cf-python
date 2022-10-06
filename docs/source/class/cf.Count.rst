@@ -218,7 +218,7 @@ Data
    ~cf.Count.period
    ~cf.Count.iscyclic
    ~cf.Count.isperiodic
-   ~cf.Count.original_filenames
+   ~cf.Count.get_original_filenames
    ~cf.Count.has_bounds
 
 Miscellaneous

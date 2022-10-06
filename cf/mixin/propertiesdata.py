@@ -4835,8 +4835,10 @@ class PropertiesData(Properties):
         """Return the name of the file or files containing the data.
 
         Deprecated at version TODODASKVER and and is no longer
-        available. Consider using the `original_filenames` method
+        available. Consider using the `get_original_filenames` method
         instead.
+
+        .. note:: Might get re-instated in a later version.
 
         :Returns:
 
@@ -4848,7 +4850,7 @@ class PropertiesData(Properties):
         _DEPRECATION_ERROR_METHOD(
             self,
             "get_filenames",
-            "Consider using the 'original_filenames' method instead.",
+            "Consider using the 'get_original_filenames' method instead.",
         )  # pragma: no cover
 
     @_inplace_enabled(default=False)

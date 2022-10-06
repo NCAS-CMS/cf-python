@@ -256,8 +256,8 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, consider usin method
-        `original_filenames` instead."""
+        """Deprecated at version 3.4.0, consider using method
+        `get_filenames` instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
@@ -313,8 +313,10 @@ class DataClassDeprecationsMixin:
         """Return the names of files containing parts of the data array.
 
         Deprecated at version TODODASKVER and and is no longer
-        available. Consider using the `original_filenames` method
+        available. Consider using the `get_original_filenames` method
         instead.
+
+        .. note:: Might get re-instated in a later version.
 
         :Returns:
 
@@ -326,7 +328,7 @@ class DataClassDeprecationsMixin:
         _DEPRECATION_ERROR_METHOD(
             self,
             "get_filenames",
-            "Consider using the 'original_filenames' method instead.",
+            "Consider using the 'get_original_filenames' method instead.",
             version="TODODASKVER",
         )  # pragma: no cover
 

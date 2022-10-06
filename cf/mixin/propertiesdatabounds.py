@@ -3812,11 +3812,11 @@ class PropertiesDataBounds(PropertiesData):
 
     def files(self):
         """Deprecated at version 3.4.0, consider using the
-        `original_filenames` method instead."""
+        `get_original_filenames` method instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
             "files",
-            "Consider using the 'original_filenames' method instead.",
+            "Consider using the 'get_original_filenames' method instead.",
             version="3.4.0",
             removed_at="4.0.0",
         )  # pragma: no cover

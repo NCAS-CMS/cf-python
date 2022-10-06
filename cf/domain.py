@@ -522,8 +522,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         """Return the file names containing the metadata construct data.
 
         Deprecated at version TODODASKVER and and is no longer
-        available. Consider using the `original_filenames` method
+        available. Consider using the `get_original_filenames` method
         instead.
+
+        .. note:: Might get re-instated in a later version.
 
         :Returns:
 
@@ -535,7 +537,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         _DEPRECATION_ERROR_METHOD(
             self,
             "get_filenames",
-            "Consider using the 'original_filenames' method instead.",
+            "Consider using the 'get_original_filenames' method instead.",
             version="TODODASKVER",
         )  # pragma: no cover
 

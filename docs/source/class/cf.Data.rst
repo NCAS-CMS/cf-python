@@ -556,7 +556,7 @@ Miscellaneous
 
    ~cf.Data.creation_commands
    ~cf.Data.get_data
-   ~cf.Data.original_filenames
+   ~cf.Data.get_original_filenames
    ~cf.Data.source
 
 .. rubric:: Attributes

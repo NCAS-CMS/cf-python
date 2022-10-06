@@ -2760,17 +2760,17 @@ class FieldTest(unittest.TestCase):
         (q == t).array
         (t == q).array
 
-    def test_Field_original_filenames(self):
-        """Test Field.original_filenames."""
+    def test_Field_get_original_filenames(self):
+        """Test Field.orignal_filenames."""
         f = cf.example_field(0)
-        f.data.original_filenames(define=["file1.nc", "file2.nc"])
+        f._original_filenames(define=["file1.nc", "file2.nc"])
         x = f.coordinate("longitude")
-        x.data.original_filenames(define=["file1.nc", "file3.nc"])
+        x._original_filenames(define=["file1.nc", "file3.nc"])
         b = x.bounds
-        b.data.original_filenames(define=["file1.nc", "file4.nc"])
+        b._original_filenames(define=["file1.nc", "file4.nc"])
 
         self.assertEqual(
-            f.original_filenames(),
+            f.get_original_filenames(),
             set(
                 (
                     cf.abspath("file1.nc"),
@@ -2779,6 +2779,10 @@ class FieldTest(unittest.TestCase):
                     cf.abspath("file4.nc"),
                 )
             ),
+        )
+
+        self.assertEqual(
+            f.get_original_filenames(), f.copy().get_original_filenames()
         )
 
 
