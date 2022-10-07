@@ -1671,13 +1671,34 @@ class FieldTest(unittest.TestCase):
         f = cf.read(self.filename1)[0]
 
         # Test user weights in different modes
-        for mode in ("reflect", "constant", "nearest", "mirror", "wrap"):
+        for mode in ("reflect", "constant", "nearest", "wrap"):
             g = f.convolution_filter(window, axis=-1, mode=mode, cval=0.0)
             self.assertTrue(
                 (
                     g.array == convolve1d(f.array, window, axis=-1, mode=mode)
                 ).all()
             )
+
+        # Test coordinate bounds
+        f = cf.example_field(0)
+        window = [0.5, 1, 2, 1, 0.5]
+
+        g = f.convolution_filter(window, mode="wrap", axis="X")
+        gx = g.coord("X").bounds.array
+        self.assertTrue((gx[:, 0] == np.linspace(-90, 225, 8)).all())
+        self.assertTrue((gx[:, 1] == np.linspace(135, 450, 8)).all())
+
+        g = f[:, ::-1].convolution_filter(window, mode="wrap", axis="X")
+        gx = g.coord("X").bounds.array
+        self.assertTrue((gx[:, 0] == np.linspace(450, 135, 8)).all())
+        self.assertTrue((gx[:, 1] == np.linspace(225, -90, 8)).all())
+
+        g = f.convolution_filter(window, mode="constant", axis="X")
+        gx = g.coord("X").bounds.array
+        self.assertTrue((gx[:, 0] == [0, 0, 0, 45, 90, 135, 180, 225]).all())
+        self.assertTrue(
+            (gx[:, 1] == [135, 180, 225, 270, 315, 360, 360, 360]).all()
+        )
 
     def test_Field_moving_window(self):
         if not SCIPY_AVAILABLE:  # needed for 'moving_window' method
@@ -1700,7 +1721,7 @@ class FieldTest(unittest.TestCase):
         # Origin = 0
         # ------------------------------------------------------------
         for method in ("mean", "sum", "integral"):
-            for mode in ("constant", "wrap", "reflect", "nearest", "mirror"):
+            for mode in ("constant", "wrap", "reflect", "nearest"):
                 g = f.moving_window(
                     method, window_size=3, axis="X", weights=weights, mode=mode
                 )
@@ -1740,7 +1761,7 @@ class FieldTest(unittest.TestCase):
             # ------------------------------------------------------------
             # Origin = 1
             # ------------------------------------------------------------
-            for mode in ("constant", "wrap", "reflect", "nearest", "mirror"):
+            for mode in ("constant", "wrap", "reflect", "nearest"):
                 g = f.moving_window(
                     method,
                     window_size=3,
