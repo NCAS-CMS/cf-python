@@ -1413,6 +1413,15 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.shape, (4, 3, 5))
         self.assertEqual(d.Units, cf.Units("m.s-1"))
 
+        # axes/cyclic
+        d = cf.Data(np.arange(12).reshape(4, 3))
+        e = cf.Data(np.arange(6).reshape(2, 3))
+        d.cyclic(0)
+        e.cyclic(1)
+        f = d.outerproduct(e)
+        self.assertEqual(len(f._axes), d.ndim + e.ndim)
+        self.assertEqual(f.cyclic(), set([0, d.ndim + 1]))
+
     def test_Data_all(self):
         """Test the `all` Data method."""
         d = cf.Data([[1, 2], [3, 4]], "m")
