@@ -2162,7 +2162,6 @@ class FieldTest(unittest.TestCase):
             ("grid_longitude", re.compile("^atmos"), "grid_latitude"),
             inplace=True,
         )
-        h.varray
         h.transpose(
             (re.compile("^atmos"), "grid_latitude", "grid_longitude"),
             inplace=True,
