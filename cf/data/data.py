@@ -8206,10 +8206,23 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             pass
 
         dx = d.to_dask_array()
+        ndim = dx.ndim
+
         dx = da.ufunc.multiply.outer(dx, a)
         d._set_dask(dx)
 
         d.override_units(d.Units * a.Units, inplace=True)
+
+        # Include axis names for the new dimensions
+        axes = d._axes
+        for i, a_axis in enumerate(a._axes):
+            axes += (new_axis_identifier(axes),)
+
+        d._axes = axes
+
+        # Make sure that cyclic axes in 'a' are still cyclic in 'd'
+        for a_axis in a._cyclic:
+            d.cyclic(ndim + a._axes.index(a_axis))
 
         return d
 
