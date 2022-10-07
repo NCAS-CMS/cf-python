@@ -1058,36 +1058,74 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         If the shape of the data is unknown then it is calculated
         immediately by executing all delayed operations.
 
-        .. seealso:: `__getitem__`, `__orthogonal_indexing__`,
-        `cf.masked`, `hardmask`, `where`
+        If indices for two or more dimensions are lists or 1-d arrays
+        of Booleans or integers, and any of these are dask
+        collections, then these dask collections will be
+        computed immediately.
 
-        **Examples**
+        .. seealso:: `__getitem__`, `__keedims_indexing__`,
+                     `__orthogonal_indexing__`, `cf.masked`,
+                     `hardmask`, `where`
 
         """
+        shape = self.shape
+
         indices, roll = parse_indices(
-            self.shape, indices, cyclic=True, keepdims=True
+            shape,
+            indices,
+            cyclic=True,
+            keepdims=self.__keepdims_indexing__,
         )
-        indices = tuple(indices)
 
         axes_with_list_indices = [
             i
             for i, x in enumerate(indices)
             if isinstance(x, list) or getattr(x, "shape", False)
         ]
+
+        # When there are two or more 1-d array indices of Booleans or
+        # integers, convert them to slices, if possible.
+        #
+        # Note: If any of these 1-d arrays is a dask collection, then
+        #       this will be computed.
         if len(axes_with_list_indices) > 1:
-            raise NotImplementedError(
-                "Currently limited to at most one dimension's assignment "
-                "index being a 1-d array of integers or booleans. "
-                f"Got: {indices}"
-            )
-            # TODODASK: The inherited algorithm that does assignment
-            #           for multiple list/1-d array indices
-            #           (cfdm.Data._set_subspace) won't work when the
-            #           1-d array is a dask array because it may need
-            #           to be computed at __setitem__ runtime, which
-            #           is not desirable. Until this can be fixed,
-            #           it's easiest to disallow this case, that was
-            #           allowed pre-dask.
+            for i, index in enumerate(indices):
+                if not (
+                    isinstance(index, list) or getattr(index, "shape", False)
+                ):
+                    # Not a 1-d array
+                    continue
+
+                index = np.array(index)
+
+                size = shape[i]
+                if index.dtype == bool:
+                    # Convert True values to integers
+                    index = np.arange(size)[index]
+                else:
+                    # Make sure all integer values are non-negative
+                    index = np.where(index < 0, index + size, index)
+
+                if size == 1:
+                    start = index[0]
+                    index = slice(start, start + 1)
+                else:
+                    steps = index[1:] - index[:-1]
+                    step = steps[0]
+                    if step and not (steps - step).any():
+                        # Array has a regular step, and so can be
+                        # converted to a slice.
+                        if step > 0:
+                            start, stop = index[0], index[-1] + 1
+                        elif step < 0:
+                            start, stop = index[0], index[-1] - 1
+
+                        if stop < 0:
+                            stop = None
+
+                        index = slice(start, stop, step)
+
+                indices[i] = index
 
         # Roll axes with cyclic slices
         if roll:
@@ -1109,12 +1147,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Make sure that the units of value are the same as self
         value = conform_units(value, self.Units)
 
-        # Do the assignment
-
         # Missing values could be affected, so make sure that the mask
         # hardness has been applied.
         dx = self.to_dask_array(apply_mask_hardness=True)
-        dx[indices] = value
+
+        # Do the assignment
+        self._set_subspace(dx, indices, value)
 
         # Unroll any axes that were rolled to enable a cyclic
         # assignment
@@ -3395,10 +3433,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "'cf.Data._parse_indices' is not available. "
             "Use function 'cf.parse_indices' instead."
         )
-
-    def _set_subspace(self, *args, **kwargs):
-        """'cf.Data._set_subspace' is unavailable."""
-        raise NotImplementedError("'cf.Data._set_subspace' is unavailable.")
 
     @classmethod
     @daskified(_DASKIFIED_VERBOSE)
