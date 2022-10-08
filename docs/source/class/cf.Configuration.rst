@@ -1,33 +1,58 @@
-﻿cf.Configuration
+﻿.. currentmodule:: cf
+.. default-role:: obj
+
+cf.Configuration
 ================
 
-.. currentmodule:: cf
+----
 
-.. autoclass:: Configuration
+.. autoclass:: cf.Configuration
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Copying
+-------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
-   
-      ~Configuration.__init__
-      ~Configuration.clear
-      ~Configuration.copy
-      ~Configuration.fromkeys
-      ~Configuration.get
-      ~Configuration.items
-      ~Configuration.keys
-      ~Configuration.pop
-      ~Configuration.popitem
-      ~Configuration.setdefault
-      ~Configuration.update
-      ~Configuration.values
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   
-   
-   
+   ~cf.Configuration.copy
+
+Dictionary functionality
+------------------------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Configuration.clear
+   ~cf.Configuration.fromkeys
+   ~cf.Configuration.get
+   ~cf.Configuration.items
+   ~cf.Configuration.keys
+   ~cf.Configuration.pop
+   ~cf.Configuration.popitem
+   ~cf.Configuration.setdefault
+   ~cf.Configuration.update
+   ~cf.Configuration.values
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Configuration.__enter__
+   ~cf.Configuration.__exit__
+   ~cf.Configuration.__repr__

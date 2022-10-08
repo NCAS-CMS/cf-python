@@ -2291,33 +2291,6 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    def get_filenames(self):
-        """Return the name of the file or files containing the data.
-
-        The names of the file or files containing the bounds data are also
-        returned.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If all of the
-                data are in memory then an empty `set` is returned.
-
-        """
-        out = super().get_filenames()
-
-        data = self.get_bounds_data(None, _fill_value=None)
-        if data is not None:
-            out.update(data.get_filenames())
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            data = interior_ring.get_data(None, _fill_value=False)
-            if data is not None:
-                out.update(interior_ring.get_filenames())
-
-        return out
-
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
@@ -3840,11 +3813,12 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames`
-        instead."""
+        """Deprecated at version 3.4.0, consider using the
+        `get_original_filenames` method instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
-            "expand_dims",
-            "Use method 'get_filenames' instead.",
+            "files",
+            "Consider using the 'get_original_filenames' method instead.",
             version="3.4.0",
+            removed_at="4.0.0",
         )  # pragma: no cover

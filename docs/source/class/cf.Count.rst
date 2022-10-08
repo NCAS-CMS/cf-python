@@ -218,7 +218,7 @@ Data
    ~cf.Count.period
    ~cf.Count.iscyclic
    ~cf.Count.isperiodic
-   ~cf.Count.get_filenames
+   ~cf.Count.get_original_filenames
    ~cf.Count.has_bounds
 
 Miscellaneous
@@ -606,6 +606,7 @@ Deprecated
    ~cf.Count.delprop
    ~cf.Count.dtvarray
    ~cf.Count.expand_dims
+   ~cf.Count.get_filenames
    ~cf.Count.getprop
    ~cf.Count.halo
    ~cf.Count.hasbounds

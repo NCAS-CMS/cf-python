@@ -222,7 +222,7 @@ Data
    ~cf.FieldAncillary.period
    ~cf.FieldAncillary.iscyclic
    ~cf.FieldAncillary.isperiodic
-   ~cf.FieldAncillary.get_filenames
+   ~cf.FieldAncillary.get_original_filenames
    ~cf.FieldAncillary.has_bounds
 
 Miscellaneous
@@ -597,6 +597,7 @@ Deprecated
    ~cf.FieldAncillary.delprop
    ~cf.FieldAncillary.dtvarray
    ~cf.FieldAncillary.expand_dims
+   ~cf.FieldAncillary.get_filenames
    ~cf.FieldAncillary.getprop
    ~cf.FieldAncillary.hasbounds
    ~cf.FieldAncillary.hasdata

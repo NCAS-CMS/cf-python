@@ -291,7 +291,7 @@ Data
    ~cf.DomainAncillary.period
    ~cf.DomainAncillary.iscyclic
    ~cf.DomainAncillary.isperiodic
-   ~cf.DomainAncillary.get_filenames
+   ~cf.DomainAncillary.get_original_filenames
 
 Miscellaneous
 -------------
@@ -651,6 +651,7 @@ Deprecated
    ~cf.DomainAncillary.delprop
    ~cf.DomainAncillary.dtvarray
    ~cf.DomainAncillary.expand_dims
+   ~cf.DomainAncillary.get_filenames
    ~cf.DomainAncillary.getprop
    ~cf.DomainAncillary.hasbounds
    ~cf.DomainAncillary.hasdata
