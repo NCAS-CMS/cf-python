@@ -1,29 +1,61 @@
-﻿cf.Constant
+﻿.. currentmodule:: cf
+.. default-role:: obj
+
+cf.Constant
 ===========
 
-.. currentmodule:: cf
+----
 
-.. autoclass:: Constant
+.. autoclass:: cf.Constant
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Attributes
 
-   .. autosummary::
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
    
-      ~Constant.__init__
-      ~Constant.copy
-   
-   
+   ~cf.Constant.value
 
-   
-   
-   .. rubric:: Attributes
+Miscellaneous
+-------------
 
-   .. autosummary::
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-      ~Constant.value
+   ~cf.Constant.copy
    
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
    
+   ~cf.Constant._func
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Constant.__deepcopy__
+   ~cf.Constant.__enter__
+   ~cf.Constant.__exit__
+   ~cf.Constant.__repr__
+   ~cf.Constant.__str__
+

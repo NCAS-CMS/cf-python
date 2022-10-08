@@ -102,19 +102,14 @@ details.
 **conda**
 ---------
 
-.. note:: The latest version of cf available via conda is confirmed at
-          `the top of the README document
-          <https://github.com/NCAS-CMS/cf-python#cf-python>`_.
-
-The cf package is in the ``ncas`` conda channel. To install cf with
-all of its :ref:`required <Required>` and :ref:`optional <Optional>`
-dependencies, and the `cf-plot visualisation package
-<http://ajheaps.github.io/cf-plot>`_, run
+To install cf with all of its :ref:`required <Required>` and
+:ref:`optional <Optional>` dependencies, and the `cf-plot
+visualisation package <http://ajheaps.github.io/cf-plot>`_, run
 
 .. code-block:: console
    :caption: *Install with conda.*
 
-   $ conda install -c ncas -c conda-forge cf-python cf-plot udunits2
+   $ conda install -c conda-forge cf-python cf-plot udunits2
    $ conda install -c conda-forge mpich esmpy
 
 The second of the two ``conda`` commands is required for
@@ -208,8 +203,8 @@ Required
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.0 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.9.0.3 or up to,
-  but not including, 1.9.1.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.0.0 or up to,
+  but not including, 1.10.1.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.4 or newer.
 

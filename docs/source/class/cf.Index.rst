@@ -219,7 +219,7 @@ Data
    ~cf.Index.period
    ~cf.Index.iscyclic
    ~cf.Index.isperiodic
-   ~cf.Index.get_filenames
+   ~cf.Index.get_original_filenames
    ~cf.Index.has_bounds
 
 Miscellaneous
@@ -608,6 +608,7 @@ Deprecated
    ~cf.Index.delprop
    ~cf.Index.dtvarray
    ~cf.Index.expand_dims
+   ~cf.Index.get_filenames
    ~cf.Index.getprop
    ~cf.Index.hasbounds
    ~cf.Index.hasdata
