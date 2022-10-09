@@ -6915,51 +6915,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return out
 
-    def has_construct(self, *identity, **filter_kwargs):
-        """Whether a metadata construct exists.
-
-        .. versionadded:: 3.4.0
-
-        .. seealso:: `construct`, `del_construct`, `get_construct`,
-                     `set_construct`
-
-        :Parameters:
-
-            identity, filter_kwargs: optional
-                Select the unique construct returned by
-                ``f.construct(*identity, **filter_kwargs)``. See
-                `construct` for details.
-
-        :Returns:
-
-            `bool`
-                `True` if the construct exists, otherwise `False`.
-
-        **Examples**
-
-        >>> f = cf.example_field(0)
-        >>> print(f)
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(latitude(5), longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                        : longitude(8) = [22.5, ..., 337.5] degrees_east
-                        : time(1) = [2019-01-01 00:00:00]
-
-        >>> f.has_construct('T')
-        True
-        >>> f.has_construct('longitude')
-        True
-        >>> f.has_construct('Z')
-        False
-
-        """
-        return (
-            self.construct(*identity, default=None, **filter_kwargs)
-            is not None
-        )
-
     def histogram(self, digitized):
         """Return a multi-dimensional histogram of the data.
 
@@ -12257,23 +12212,47 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Examples**
 
-        TODO
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> x = f.convert('X')
+        >>> print(x)
+        Field: longitude (ncvar%lon)
+        ----------------------------
+        Data            : longitude(longitude(8)) degrees_east
+        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+        >>> print(x.array)
+        [ 22.5  67.5 112.5 157.5 202.5 247.5 292.5 337.5]
+        >>> cs = f.convert('X', cellsize=True)
+        >>> print(cs)
+        Field: longitude (ncvar%lon)
+        ----------------------------
+        Data            : longitude(longitude(8)) degrees_east
+        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+        >> print(cs.array)
+        [45. 45. 45. 45. 45. 45. 45. 45.]
+        >>> print(f.convert('X', full_domain=False))
+        Field: longitude (ncvar%lon)
+        ----------------------------
+        Data            : longitude(ncdim%lon(8)) degrees_east
 
         """
-        key, construct = self.construct(
+        key, c = self.construct(
             *identity, item=True, default=(None, None), **filter_kwargs
         )
-        if key is None:
-            raise ValueError(
-                f"Can't find metadata construct with identity {identity!r}"
-            )
 
-        f = super().convert(key, full_domain=full_domain)
+        f = super().convert(full_domain=full_domain, filter_by_key=(key,))
 
         if cellsize:
             # Change the new field's data to cell sizes
             try:
-                cs = construct.cellsize
+                cs = c.cellsize
             except AttributeError as error:
                 raise ValueError(error)
 
@@ -12904,144 +12883,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def cell_method(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Select a cell method construct.
-
-        {{unique construct}}
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `cell_methods`
-
-        :Parameters:
-
-            identity: optional
-                Select cell method constructs that have an identity,
-                defined by their `!identities` methods, that matches
-                any of the given values.
-
-                Additionally, the values are matched against construct
-                identifiers, with or without the ``'key%'`` prefix.
-
-                Additionally, if for a given value
-                ``f.domain_axes(value)`` returns a unique domain axis
-                construct then any cell method constructs that span
-                exactly that axis are selected. See `domain_axes` for
-                details.
-
-                If no values are provided then all cell method
-                constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{key: `bool`, optional}}
-
-            {{item: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 3.9.0
-
-            default: optional
-                Return the value of the *default* parameter if there
-                is no unique construct.
-
-                {{default Exception}}
-
-            {{filter_kwargs: optional}}
-
-                .. versionadded:: (cfdm) 3.9.0
-
-        :Returns:
-
-                {{Returns construct}}
-
-        **Examples**
-
-        """
-        return self._construct(
-            "cell_method",
-            "cell_methods",
-            identity,
-            key=key,
-            item=item,
-            default=default,
-            **filter_kwargs,
-        )
-
-    def field_ancillary(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Select a field ancillary construct.
-
-        {{unique construct}}
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `field_ancillaries`
-
-        :Parameters:
-
-            identity: optional
-                Select field ancillary constructs that have an
-                identity, defined by their `!identities` methods, that
-                matches any of the given values.
-
-                Additionally, the values are matched against construct
-                identifiers, with or without the ``'key%'`` prefix.
-
-                If no values are provided then all field ancillary
-                constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{key: `bool`, optional}}
-
-            {{item: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 3.9.0
-
-            default: optional
-                Return the value of the *default* parameter if there
-                is no unique construct.
-
-                {{default Exception}}
-
-            {{filter_kwargs: optional}}
-
-                .. versionadded:: (cfdm) 3.9.0
-
-        :Returns:
-
-                {{Returns construct}}
-
-        **Examples**
-
-        """
-        return self._construct(
-            "field_ancillary",
-            "field_ancillaries",
-            identity,
-            key=key,
-            item=item,
-            default=default,
-            **filter_kwargs,
-        )
-
     def domain_axis_position(self, *identity, **filter_kwargs):
         """Return the position in the data of a domain axis construct.
 
@@ -13163,67 +13004,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return self._default(default)
 
         return axis.get_size(default=default)
-
-    def get_data_axes(self, *identity, default=ValueError(), **filter_kwargs):
-        """Return domain axis constructs spanned by data.
-
-        Specifically, returns the keys of the domain axis constructs
-        spanned by the field's data, or the data of a metadata construct.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `del_data_axes`, `has_data_axes`,
-                     `set_data_axes`, `construct`
-
-        :Parameters:
-
-            identity, filter_kwargs: optional
-                Select the unique construct returned by
-                ``f.construct(*identity, **filter_kwargs)``. See
-                `construct` for details.
-
-                If neither *identity* nor *filter_kwargs* are set then
-                the domain of the field constructs's data are
-                returned.
-
-            default: optional
-                Return the value of the *default* parameter if the
-                data axes have not been set.
-
-                {{default Exception}}
-
-        :Returns:
-
-            `tuple` of `str`
-                The keys of the domain axis constructs spanned by the
-                data.
-
-        **Examples**
-
-        >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
-        >>> f.get_data_axes()
-        ('domainaxis0', 'domainaxis1')
-        >>> f.del_data_axes()
-        ('domainaxis0', 'domainaxis1')
-        >>> print(f.del_dataxes(None))
-        None
-        >>> print(f.get_data_axes(default=None))
-        None
-
-        """
-        if not identity and not filter_kwargs:
-            # Get axes of the Field data array
-            return super().get_data_axes(default=default)
-
-        key = self.construct(*identity, key=True, **filter_kwargs)
-
-        axes = super().get_data_axes(key, default=None)
-        if axes is None:
-            return self._default(
-                default, "Can't get axes for non-existent construct"
-            )
-
-        return axes
 
     def grad_xy(self, x_wrap=None, one_sided_at_boundary=False, radius=None):
         r"""Calculate the (X, Y) gradient vector.
