@@ -772,14 +772,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except TypeError:
             raise TypeError(f"iteration over a 0-d {self.__class__.__name__}")
 
-        keepdims_indexing = self.__keepdims_indexing__
-
-        for i in range(n):
-            out = self[i]
-            if keepdims_indexing:
+        if self.__keepdims_indexing__:
+            for i in range(n):
+                out = self[i]
                 out.reshape(out.shape[1:], inplace=True)
-
-            yield out
+                yield out
+        else:
+            for i in range(n):
+                yield self[i]
 
     def __len__(self):
         """Called to implement the built-in function `len`.
