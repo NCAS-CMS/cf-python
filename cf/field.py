@@ -12293,57 +12293,38 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `collapse`, `convolution_filter`, `moving_window`,
-                     `sum`
+        .. seealso:: `collapse`, `convolution_filter`,
+                     `moving_window`, `sum`
 
         :Parameters:
 
             axis:
-                Select the domain axis over which the cumulative sums are
-                to be calculated, defined by that which would be selected
-                by passing the given axis description to a call of the
-                field construct's `domain_axis` method. For example, for a
-                value of ``'X'``, the domain axis construct returned by
+                Select the domain axis over which the cumulative sums
+                are to be calculated, defined by that which would be
+                selected by passing the given axis description to a
+                call of the field construct's `domain_axis`
+                method. For example, for a value of ``'X'``, the
+                domain axis construct returned by
                 ``f.domain_axis('X')`` is selected.
 
-            masked_as_zero: `bool`, optional
-                If True then set missing data values to zero before
-                calculating the cumulative sum. By default the output data
-                will be masked at the same locations as the original data.
-                .. note:: Sums produced entirely from masked elements will
-                          always result in masked values in the output
-                          data, regardless of the setting of
-                          *masked_as_zero*.
-
-            coordinate: `str`, optional
-                Set how the cell coordinate values for the summed axis are
-                defined, relative to the new cell bounds. By default they
-                are unchanged from the original field construct. The
-                *coordinate* parameter may be one of:
-
-                ===============  =========================================
-                *coordinate*     Description
-                ===============  =========================================
-                `None`           This is the default.
-                                 Output coordinates are unchanged.
-                ``'mid_range'``  An output coordinate is the average of
-                                 its output coordinate bounds.
-                ``'minimum'``    An output coordinate is the minimum of
-                                 its output coordinate bounds.
-                ``'maximum'``    An output coordinate is the maximum of
-                                 its output coordinate bounds.
-                ===============  =========================================
-
-                *Parameter Example:*
-                  ``coordinate='maximum'``
             {{inplace: `bool`, optional}}
 
+            coordinate: deprecated at version TODODASKVER
+                Set how the cell coordinate values for the summed axis
+                are defined, relative to the new cell bounds.
+
+            masked_as_zero: deprecated at version TODODASKVER
+                See `Data.cumsum` for examples of the new behaviour
+                when there are masked values.
+
         :Returns:
+
             `Field` or `None`
-                The field construct with the cumulatively summed axis, or
-                `None` if the operation was in-place.
+                The field construct with the cumulatively summed axis,
+                or `None` if the operation was in-place.
 
         **Examples**
+
         >>> f = cf.example_field(2)
         >>> print(f)
         Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -12383,13 +12364,34 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          2678.7 2934.9 3147.2 3378.9 3634.  3847.9 4103.7 4404.9 4618.2 4818.3
          5022.9 5226.1 5470.7 5709.1 6013.6 6283.4 6551.3 6833.7 7048.7 7337.4
          7554.7 7861.8 8161.1 8377.  8667.2 8907.1]
-        >>> g = f.cumsum('latitude', masked_as_zero=True)
-        >>> g = f.cumsum('latitude', coordinate='mid_range')
-        >>> f.cumsum('latitude', inplace=True)
 
         """
+        # TODODASKAPI
+        if masked_as_zero:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "cumsum",
+                {"masked_as_zero": None},
+                message="",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
+        # TODODASKAPI
+        if coordinate is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "cumsum",
+                {"coordinate": None},
+                message="",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         # Retrieve the axis
-        axis_key = self.domain_axis(axis, key=True)
+        axis_key, domain_axis = self.domain_axis(
+            axis, item=True, default=(None, None)
+        )
         if axis_key is None:
             raise ValueError(f"Invalid axis specifier: {axis!r}")
 
@@ -12399,38 +12401,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Get the axis index
         axis_index = f.get_data_axes().index(axis_key)
 
-        f.data.cumsum(axis_index, masked_as_zero=masked_as_zero, inplace=True)
+        f.data.cumsum(axis_index, inplace=True)
 
-        if self.domain_axis(axis_key).get_size() > 1:
-            # Update the bounds of the summed axis if necessary
+        if domain_axis.get_size() > 1:
+            # Update the bounds of the summed axis
             coord = f.dimension_coordinate(
                 filter_by_axis=(axis_key,), default=None
             )
             if coord is not None and coord.has_bounds():
-                bounds = coord.get_bounds()
-                bounds[:, 0] = bounds[0, 0]
-
-                data = coord.get_data(None, _fill_value=False)
-
-                if coordinate is not None and data is not None:
-                    if coordinate == "mid_range":
-                        data[...] = (
-                            (bounds[:, 0] + bounds[:, 1]) * 0.5
-                        ).squeeze()
-                    elif coordinate == "minimum":
-                        data[...] = coord.lower_bounds
-                    elif coordinate == "maximum":
-                        data[...] = coord.upper_bounds
-                    else:
-                        raise ValueError(
-                            "'coordinate' parameter must be one of "
-                            "(None, 'mid_range', 'minimum', 'maximum'). "
-                            f"Got {coordinate!r}"
-                        )
+                bounds = coord.get_bounds_data(None)
+                if bounds is not None:
+                    bounds[:, 0] = bounds[0, 0]
 
             # Add a cell method
             f._update_cell_methods(
-                method="sum", domain_axes=f.domain_axes(axis_key, todict=True)
+                method="sum", domain_axes={axis_key: domain_axis}
             )
 
         return f

@@ -743,36 +743,32 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(g.cumsum(2, inplace=True))
         self.assertTrue(g.equals(h, verbose=2))
 
+        # Check that a new cell method that has been added
+        cell_methods = h.cell_methods(todict=True)
+        self.assertEqual(len(cell_methods), len(f.cell_methods()) + 1)
+        _, cm = cell_methods.popitem()
+        self.assertEqual(cm.method, "sum")
+        self.assertEqual(cm.axes, (h.get_data_axes()[2],))
+
+        # Check the dimension coordinate bounds
+        fx = f.dimension_coordinate("X")
+        hx = h.dimension_coordinate("X")
+        self.assertTrue((hx.lower_bounds == fx.lower_bounds[0]).all())
+        self.assertTrue((hx.upper_bounds == fx.upper_bounds).all())
+
+        a = f.array
         for axis in range(f.ndim):
-            a = numpy.cumsum(f.array, axis=axis)
-            self.assertTrue((f.cumsum(axis=axis).array == a).all())
+            b = np.cumsum(a, axis=axis)
+            self.assertTrue((f.cumsum(axis=axis).array == b).all())
 
         f[0, 0, 3] = cf.masked
         f[0, 2, 7] = cf.masked
 
+        a = f.array
         for axis in range(f.ndim):
-            a = f.array
-            a = numpy.cumsum(a, axis=axis)
+            b = np.cumsum(a, axis=axis)
             g = f.cumsum(axis=axis)
-            self.assertTrue(cf.functions._numpy_allclose(g.array, a))
-
-        for axis in range(f.ndim):
-            g = f.cumsum(axis=axis, masked_as_zero=True)
-
-            a = f.array
-            mask = a.mask
-            a = a.filled(0)
-            a = numpy.cumsum(a, axis=axis)
-            size = a.shape[axis]
-            shape = [1] * a.ndim
-            shape[axis] = size
-            new_mask = numpy.cumsum(mask, axis=axis) == numpy.arange(
-                1, size + 1
-            ).reshape(shape)
-            a = numpy.ma.array(a, mask=new_mask, copy=False)
-            self.assertTrue(
-                cf.functions._numpy_allclose(g.array, a, verbose=2)
-            )
+            self.assertTrue(cf.functions._numpy_allclose(g.array, b))
 
     def test_Field_flip(self):
         f = self.f.copy()
