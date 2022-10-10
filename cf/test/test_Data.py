@@ -2917,8 +2917,18 @@ class DataTest(unittest.TestCase):
             cf.Data([1, 2, 3], "metres"),
             cf.Data([[1, 2], [3, 4]], "metres"),
         ):
+            d.__keepdims_indexing__ = False
             for i, e in enumerate(d):
                 self.assertTrue(e.equals(d[i]))
+
+        for d in (
+            cf.Data([1, 2, 3], "metres"),
+            cf.Data([[1, 2], [3, 4]], "metres"),
+        ):
+            d.__keepdims_indexing__ = True
+            for i, e in enumerate(d):
+                out = d[i]
+                self.assertTrue(e.equals(out.reshape(out.shape[1:])))
 
         # iteration over a 0-d Data
         with self.assertRaises(TypeError):
