@@ -3186,7 +3186,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         return data0, data1, _units_1
                 else:
                     # units1 is defined and is not dimensionless
-                    if data0._size > 1:
+                    if data0.size > 1:
                         raise ValueError(
                             "Can only raise units to the power of a single "
                             "value at a time. Asking to raise to the power of "
@@ -3262,7 +3262,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         return data0, data1, _units_1
                 else:
                     # units0 is defined and is not dimensionless
-                    if data1._size > 1:
+                    if data1.size > 1:
                         raise ValueError(
                             "Can only raise units to the power of a single "
                             "value at a time. Asking to raise to the power of "
@@ -3414,6 +3414,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         elif inplace:
             # Find non-in-place equivalent operator (remove 'i')
             equiv_method = method[:2] + method[3:]
+            # Need to add check in here to ensure that the operation is not
+            # trying to cast in a way which is invalid. For example, doing
+            # [an int array] ** float value = [a float array] is fine, but
+            # doing this in-place would try to chance an int array into a
+            # float one, which isn't valid casting. Therefore we need to
+            # catch cases where __i<op>__ isn't possible even if __<op>__
+            # is due to datatype consistency rules.
             result = getattr(dx0, equiv_method)(dx1)
         else:
             result = getattr(dx0, method)(dx1)
@@ -8550,7 +8557,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     index = (slice(-1, None),) * self.ndim
                 elif isinstance(index, int):
                     if index < 0:
-                        index += self._size
+                        index += self.size
 
                     index = np.unravel_index(index, self.shape)
                 elif len(index) == self.ndim:
