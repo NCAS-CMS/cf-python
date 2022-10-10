@@ -11,6 +11,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
     bounds_combination_mode,
 )
@@ -2295,12 +2296,13 @@ class PropertiesDataBounds(PropertiesData):
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the data by adding a halo.
 
@@ -2327,10 +2329,10 @@ class PropertiesDataBounds(PropertiesData):
 
         :Parameters:
 
-            size: `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the halo
+                If *depth* is a non-negative `int` then this is the halo
                 size that is applied to all of the axes defined by the
                 *axes* parameter.
 
@@ -2343,22 +2345,22 @@ class PropertiesDataBounds(PropertiesData):
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``1``
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results in
+                  Specify a halo size of zero: ``0``. This results in
                   no change to the data shape.
 
                 *Parameter example:*
-                  For data with three dimensions, specify a halo size of 3
-                  for the first dimension and 1 for the second dimension:
-                  ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
-                  3, 1: 1, 2: 0}``
+                  For data with three dimensions, specify a halo size
+                  of 3 for the first dimension and 1 for the second
+                  dimension: ``{0: 3, 1: 1}``. This is equivalent to
+                  ``{0: 3, 1: 1, 2: 0}``
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
-                  dimensions `size=2, axes=[0, -1]`` or equivalently
-                  ``size={0: 2, -1: 2}``.
+                  dimensions `depth=2, axes=[0, -1]`` or equivalently
+                  ``depth={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
                 Select the domain axes to be expanded, defined by their
@@ -2374,14 +2376,14 @@ class PropertiesDataBounds(PropertiesData):
                 whose values identify the corresponding domain axis
                 construct by their integer positions in the data.
 
-                The "X" and "Y" axes must be a subset of those identified
-                by the *size* or *axes* parameter.
+                The "X" and "Y" axes must be a subset of those
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+                  respectively of the data: ``{'X': 2, 'Y': 1}``
 
             fold_index: `int`, optional
                 Identify which index of the "Y" axis corresponds to the
@@ -2394,8 +2396,12 @@ class PropertiesDataBounds(PropertiesData):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
+            size: deprecated at version TODODASKVER
+                Use the *depth* parameter instead.
+
         :Returns:
 
+            `{{class}}` or `None`
                 The expanded data, or `None` if the operation was
                 in-place.
 
@@ -2404,13 +2410,23 @@ class PropertiesDataBounds(PropertiesData):
         TODO
 
         """
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self),
             "halo",
             bounds=True,
             interior_ring=True,
             inplace=inplace,
-            size=size,
+            depth=depth,
             axes=axes,
             tripolar=tripolar,
             fold_index=fold_index,

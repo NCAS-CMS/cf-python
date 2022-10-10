@@ -7282,7 +7282,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("size")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
@@ -7469,6 +7468,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         from dask.array.core import concatenate
+
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
 
         d = _inplace_enabled_define_and_cleanup(self)
 

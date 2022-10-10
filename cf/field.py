@@ -13421,12 +13421,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the field construct by adding a halo to its data.
 
@@ -13454,42 +13455,43 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            size:  `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the halo
-                size that is applied to all of the axes defined by the
-                *axes* parameter.
+                If *depth* is a non-negative `int` then this is the
+                halo size that is applied to all of the axes defined
+                by the *axes* parameter.
 
                 Alternatively, halo sizes may be assigned to axes
                 individually by providing a `dict` for which a key
-                specifies an axis (by passing the axis description to a
-                call of the field construct's `domain_axis` method. For
-                example, for a value of ``'X'``, the domain axis construct
-                returned by ``f.domain_axis('X')``) with a corresponding
-                value of the halo size for that axis. Axes not specified
-                by the dictionary are not expanded, and the *axes*
-                parameter must not also be set.
+                specifies an axis (by passing the axis description to
+                a call of the field construct's `domain_axis`
+                method. For example, for a value of ``'X'``, the
+                domain axis construct returned by
+                ``f.domain_axis('X')``) with a corresponding value of
+                the halo size for that axis. Axes not specified by the
+                dictionary are not expanded, and the *axes* parameter
+                must not also be set.
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``1``
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results in
+                  Specify a halo size of zero: ``0``. This results in
                   no change to the data shape.
 
                 *Parameter example:*
-                  For data with three dimensions, specify a halo size of 3
-                  for the first dimension and 1 for the second dimension:
-                  ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
-                  3, 1: 1, 2: 0}``
+                  For data with three dimensions, specify a halo size
+                  of 3 for the first dimension and 1 for the second
+                  dimension: ``{0: 3, 1: 1}``. This is equivalent to
+                  ``{0: 3, 1: 1, 2: 0}``
 
                 *Parameter example:*
                   Specify a halo size of 2 for the "longitude" and
-                  "latitude" axes: ``size=2, axes=['latutude',
-                  'longitude']``, or equivalently ``size={'latutude': 2,
-                  'longitude': 2}``.
+                  "latitude" axes: ``depth=2, axes=['latutude',
+                  'longitude']``, or equivalently ``depth={'latutude':
+                  2, 'longitude': 2}``.
 
             axes: (sequence of) `str` or `int`, optional
                 Select the domain axes to be expanded, defined by the
@@ -13523,27 +13525,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             tripolar: `dict`, optional
                 A dictionary defining the "X" and "Y" axes of a global
-                tripolar domain. This is necessary because in the global
-                tripolar case the "X" and "Y" axes need special treatment,
-                as described above. It must have keys ``'X'`` and ``'Y'``,
-                whose values identify the corresponding domain axis
-                construct by passing the value to a call of the field
-                construct's `domain_axis` method. For example, for a value
-                of ``'ncdim%i'``, the domain axis construct returned by
+                tripolar domain. This is necessary because in the
+                global tripolar case the "X" and "Y" axes need special
+                treatment, as described above. It must have keys
+                ``'X'`` and ``'Y'``, whose values identify the
+                corresponding domain axis construct by passing the
+                value to a call of the field construct's `domain_axis`
+                method. For example, for a value of ``'ncdim%i'``, the
+                domain axis construct returned by
                 ``f.domain_axis('ncdim%i')``.
 
-                The "X" and "Y" axes must be a subset of those identified
-                by the *size* or *axes* parameter.
+                The "X" and "Y" axes must be a subset of those
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by their netCDF dimension
-                  names: ``tripolar={'X': 'ncdim%i', 'Y': 'ncdim%j'}``
+                  names: ``{'X': 'ncdim%i', 'Y': 'ncdim%j'}``
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+                  respectively of the data: ``{'X': 2, 'Y': 1}``
 
             fold_index: `int`, optional
                 Identify which index of the "Y" axis corresponds to the
@@ -13555,6 +13558,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             {{inplace: `bool`, optional}}
 
             {{verbose: `int` or `str` or `None`, optional}}
+
+            size: deprecated at version TODODASKVER
+                Use the *depth* parameter instead.
 
         :Returns:
 
@@ -13646,21 +13652,31 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        # Set the halo size for each axis.
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
+        # Set the halo depth for each axis.
         data_axes = f.get_data_axes(default=())
-        if isinstance(size, dict):
+        if isinstance(depth, dict):
             if axes is not None:
                 raise ValueError(
-                    "Can't set existing axes when size is a dict."
+                    "Can't set existing axes when depth is a dict."
                 )
 
             axis_halo = {
-                self.domain_axis(k, key=True): v for k, v in size.items()
+                self.domain_axis(k, key=True): v for k, v in depth.items()
             }
 
             if not set(data_axes).issuperset(axis_halo):
                 raise ValueError(
-                    f"Can't apply halo: Bad axis specification: {size!r}"
+                    f"Can't apply halo: Bad axis specification: {depth!r}"
                 )
         else:
             if axes is None:
@@ -13669,7 +13685,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if isinstance(axes, (str, int)):
                 axes = (axes,)
 
-            axis_halo = {self.domain_axis(k, key=True): size for k in axes}
+            axis_halo = {self.domain_axis(k, key=True): depth for k in axes}
 
         if tripolar:
             # Find the X and Y axes of a tripolar grid
@@ -13702,10 +13718,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             tripolar_axes = {X: "X", Y: "Y"}
 
         # Add halos to the field construct's data
-        size = {data_axes.index(axis): h for axis, h, in axis_halo.items()}
+        depth = {data_axes.index(axis): h for axis, h, in axis_halo.items()}
 
         f.data.halo(
-            size=size,
+            depth,
             tripolar=tripolar,
             fold_index=fold_index,
             inplace=True,
@@ -13738,7 +13754,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 }
 
             c.halo(
-                size=construct_size,
+                construct_size,
                 tripolar=construct_tripolar,
                 fold_index=fold_index,
                 inplace=True,
