@@ -11473,7 +11473,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Moving mean, sum, and integral calculations are possible.
 
         By default moving means are unweighted, but weights based on
-        the axis cell sizes (or custom weights) may applied to the
+        the axis cell sizes, or custom weights, may applied to the
         calculation via the *weights* parameter.
 
         By default moving integrals must be weighted.
@@ -11823,10 +11823,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
             # Multiply the field by the (possibly adjusted) weights
-            if numpy_can_cast(w.dtype, f.dtype):
-                f *= w
-            else:
-                f = f * w
+            f = f * w
 
         # Create the window weights
         window = numpy_full((window_size,), 1.0)
@@ -11856,10 +11853,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 origin=origin,
                 inplace=True,
             )
-            if numpy_can_cast(w.dtype, f.dtype):
-                f /= w
-            else:
-                f = f / w
+            f = f / w
 
         # Add a cell method
         if f.domain_axis(axis).get_size() > 1 or method == "integral":
@@ -12163,45 +12157,43 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 filter_by_axis=(axis_key,), default=None
             )
             if coord is not None and coord.has_bounds():
-                old_bounds = coord.bounds.array
-                length = old_bounds.shape[0]
-                new_bounds = numpy_empty((length, 2))
+                old_bounds = coord.bounds.data
+                new_bounds = self._Data.empty(
+                    old_bounds.shape, units=coord.Units
+                )
                 len_weights = len(window)
                 lower_offset = len_weights // 2 + origin
                 upper_offset = len_weights - 1 - lower_offset
                 if mode == "wrap":
                     if coord.direction():
-                        new_bounds[:, 0] = coord.roll(
+                        new_bounds[:, 0:1] = coord.roll(
                             0, upper_offset
-                        ).bounds.array[:, 0]
-                        new_bounds[:, 1] = (
-                            coord.roll(0, -lower_offset).bounds.array[:, 1]
-                            + coord.period()
-                        )
+                        ).bounds[:, 0:1]
+                        new_bounds[:, 1:] = (
+                            coord.roll(0, -lower_offset).bounds[:, 1:]
+                        ) + coord.period()
                     else:
-                        new_bounds[:, 0] = (
-                            coord.roll(0, upper_offset).bounds.array[:, 0]
-                            + 2 * coord.period()
-                        )
-                        new_bounds[:, 1] = (
-                            coord.roll(0, -lower_offset).bounds.array[:, 1]
+                        new_bounds[:, 0:1] = (
+                            coord.roll(0, upper_offset).bounds[:, 0:1]
                             + coord.period()
                         )
+                        new_bounds[:, 1:] = coord.roll(
+                            0, -lower_offset
+                        ).bounds[:, 1:]
                 else:
-                    new_bounds[upper_offset:length, 0] = old_bounds[
-                        0 : length - upper_offset, 0
+                    length = old_bounds.shape[0]
+                    new_bounds[upper_offset:length, 0:1] = old_bounds[
+                        0 : length - upper_offset, 0:1
                     ]
-                    new_bounds[0:upper_offset, 0] = old_bounds[0, 0]
-                    new_bounds[0 : length - lower_offset, 1] = old_bounds[
-                        lower_offset:length, 1
+                    new_bounds[0:upper_offset, 0:1] = old_bounds[0, 0:1]
+                    new_bounds[0 : length - lower_offset, 1:] = old_bounds[
+                        lower_offset:length, 1:
                     ]
-                    new_bounds[length - lower_offset : length, 1] = old_bounds[
-                        length - 1, 1
-                    ]
+                    new_bounds[
+                        length - lower_offset : length, 1:
+                    ] = old_bounds[length - 1, 1:]
 
-                coord.set_bounds(
-                    self._Bounds(data=Data(new_bounds, units=coord.Units))
-                )
+                coord.set_bounds(self._Bounds(data=new_bounds))
 
         return f
 
