@@ -179,6 +179,7 @@ Data
    ~cf.Bounds.count
    ~cf.Bounds.count_masked
    ~cf.Bounds.fill_value
+   ~cf.Bounds.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -188,7 +189,6 @@ Data
    ~cf.Bounds.binary_mask
    ~cf.Bounds.hardmask
    ~cf.Bounds.mask
-   ~cf.Bounds.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -204,7 +204,7 @@ Data
 
    ~cf.Bounds.__setitem__
    ~cf.Bounds.halo
-   ~cf.Bounds.mask_invalid
+   ~cf.Bounds.masked_invalid
    ~cf.Bounds.subspace
    ~cf.Bounds.where
 

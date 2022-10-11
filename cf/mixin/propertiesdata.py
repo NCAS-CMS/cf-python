@@ -1595,13 +1595,13 @@ class PropertiesData(Properties):
 
         self.Units = Units(None, getattr(self, "calendar", None))
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
+
+        Deprecated at version TODODASKVER. Use the method
+        `masked_invalid` instead.
 
         Note that:
 
@@ -1661,11 +1661,53 @@ class PropertiesData(Properties):
         [1.  -- ]
 
         """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "mask_invalid",
+            message="Use the method 'masked_invalid' instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
+    def masked_invalid(self, inplace=False, i=False):
+        """Mask the array where invalid values occur (NaN or inf).
+
+        .. seealso:: `numpy.ma.masked_invalid`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with masked values, or `None` if the
+                operation was in-place.
+
+
+        **Examples**
+
+        >>> print(f.array)
+        [0 1 2]
+        >>> print(g.array)
+        [0 2 0]
+        >>> h = f / g
+        >>> print(h.array)
+        [nan 0.5 inf]
+        >>> i = h.masked_invalid()
+        >>> print(i.array)
+        [-- 0.5 --]
+
+        """
         v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None, _fill_value=False)
         if data is not None:
-            data.mask_invalid(inplace=True)
+            data.masked_invalid(inplace=True)
 
         return v
 
@@ -3899,7 +3941,7 @@ class PropertiesData(Properties):
         >>> f.arctanh(inplace=True)
         >>> print(f.array)
         [nan inf 1.0986122886681098 0.6931471805599453 --]
-        >>> f.mask_invalid(inplace=True)
+        >>> f.masked_invalid(inplace=True)
         >>> print(f.array)
         [-- -- 1.0986122886681098 0.6931471805599453 --]
 
@@ -3954,7 +3996,7 @@ class PropertiesData(Properties):
         >>> f.arcsin(inplace=True)
         >>> print(f.array)
         [nan 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
-        >>> f.mask_invalid(inplace=True)
+        >>> f.masked_invalid(inplace=True)
         >>> print(f.array)
         [-- 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
 
@@ -4063,7 +4105,7 @@ class PropertiesData(Properties):
         >>> f.arccos(inplace=True)
         >>> print(f.array)
         [nan 0.0 0.6435011087932843 0.9272952180016123 --]
-        >>> f.mask_invalid(inplace=True)
+        >>> f.masked_invalid(inplace=True)
         >>> print(f.array)
         [-- 0.0 0.6435011087932843 0.9272952180016123 --]
 
@@ -4118,7 +4160,7 @@ class PropertiesData(Properties):
         >>> f.arccosh(inplace=True)
         >>> print(f.array)
         [0.6223625037147786 0.0 nan nan --]
-        >>> f.mask_invalid(inplace=True)
+        >>> f.masked_invalid(inplace=True)
         >>> print(f.array)
         [0.6223625037147786 0.0 -- -- --]
 

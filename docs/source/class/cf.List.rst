@@ -171,20 +171,20 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.List.apply_masking
+   ~cf.List.count
+   ~cf.List.count_masked
    ~cf.List.fill_value
+   ~cf.List.masked_invalid
    
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cf.List.apply_masking
    ~cf.List.binary_mask
-   ~cf.List.count
-   ~cf.List.count_masked
    ~cf.List.hardmask
    ~cf.List.mask
-   ~cf.List.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -200,7 +200,7 @@ Data
 
    ~cf.List.__setitem__
    ~cf.List.halo
-   ~cf.List.mask_invalid
+   ~cf.List.masked_invalid
    ~cf.List.subspace
    ~cf.List.where
 
