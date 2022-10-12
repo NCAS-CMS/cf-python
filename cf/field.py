@@ -14458,163 +14458,197 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Assign to data elements depending on a condition.
 
-        Data can be changed by assigning to elements that are selected by
-        a condition based on the data values of the field construct or on
-        its metadata constructs.
-
-        Different values can be assigned to where the conditions are, and
-        are not, met.
+        The elements to be changed are identified by a
+        condition. Different values can be assigned according to where
+        the condition is True (assignment from the *x* parameter) or
+        False (assignment from the *y* parameter).
 
         **Missing data**
 
-        Data array elements may be set to missing values by assigning them
-        to the `cf.masked` constant, or by assignment missing data
-        elements of array-valued *x* and *y* parameters.
+        Array elements may be set to missing values if either *x* or
+        *y* are the `cf.masked` constant, or by assignment from any
+        missing data elements in *x* or *y*.
 
-        By default the data mask is "hard", meaning that masked values can
-        not be changed by assigning them to another value. This behaviour
-        may be changed by setting the `hardmask` attribute of the field
-        construct to `False`, thereby making the data mask "soft" and
-        allowing masked elements to be set to non-masked values.
+        If the data mask is hard (see the `hardmask` attribute) then
+        missing data values in the array will not be overwritten,
+        regardless of the content of *x* and *y*.
 
-        .. seealso:: `cf.masked`, `hardmask`, `indices`, `mask`,
-                     `subspace`, `__setitem__`
+        If the *condition* contains missing data then the
+        corresponding elements in the array will not be assigned to,
+        regardless of the contents of *x* and *y*.
+
+        **Broadcasting**
+
+        The array and the *condition*, *x* and *y* parameters must all
+        be broadcastable across the original array, such that the size
+        of the result is identical to the orginal size of the
+        array. Leading size 1 dimensions of these parameters are
+        ignored, thereby also ensuring that the shape of the result is
+        identical to the orginal shape of the array.
+
+        If *condition* is a `Query` object then for the purposes of
+        broadcasting, the condition is considered to be that which is
+        produced by applying the query to the field's array.
+
+        **Performance**
+
+        If any of the shapes of the *condition*, *x*, or *y*
+        parameters, or the field, is unknown, then there is a
+        possibility that an unknown shape will need to be calculated
+        immediately by executing all delayed operations on that
+        object.
+
+        .. seealso:: `hardmask`, `indices`, `mask`, `subspace`,
+                     `__setitem__`, `cf.masked`
 
         :Parameters:
 
-            condition:
-                The condition which determines how to assign values to the
-                data.
+            condition: array_like, `Field` or `Query`
+                The condition which determines how to assign values to
+                the field's data.
 
-                In general it may be any scalar or array-like object (such
-                as a `numpy`, `Data` or `Field` object) that is
-                broadcastable to the shape of the data. Assignment from
-                the *x* and *y* parameters will be done where elements of
-                the condition evaluate to `True` and `False` respectively.
+                Assignment from the *x* and *y* parameters will be
+                done where elements of the condition evaluate to
+                `True` and `False` respectively.
 
-                *Parameter example:*
-                  ``f.where(f.data<0, x=-999)`` will set all data values
-                  that are less than zero to -999.
+                If *condition* is a `Query` object then this implies a
+                condition defined by applying the query to the data.
 
                 *Parameter example:*
-                  ``f.where(True, x=-999)`` will set all data values to
-                  -999. This is equivalent to ``f[...] = -999``.
+                  ``f.where(f.data<0, x=-999)`` will set all data
+                  values that are less than zero to -999.
 
                 *Parameter example:*
-                  ``f.where(False, y=-999)`` will set all data values to
-                  -999. This is equivalent to ``f[...] = -999``.
+                  ``f.where(True, x=-999)`` will set all data values
+                  to -999. This is equivalent to ``f[...] = -999``.
+
+                *Parameter example:*
+                  ``f.where(False, y=-999)`` will set all data values
+                  to -999. This is equivalent to ``f[...] = -999``.
 
                 *Parameter example:*
                   If field construct ``f`` has shape ``(5, 3)`` then
-                  ``f.where([True, False, True], x=-999, y=cf.masked)``
-                  will set data values in columns 0 and 2 to -999, and
-                  data values in column 1 to missing data. This works
-                  because the condition has shape ``(3,)`` which
-                  broadcasts to the field construct's shape.
-
-                If, however, *condition* is a `Query` object then this
-                implies a condition defined by applying the query to the
-                field construct's data (or a metadata construct's data if
-                the *construct* parameter is set).
+                  ``f.where([True, False, True], x=-999,
+                  y=cf.masked)`` will set data values in columns 0 and
+                  2 to -999, and data values in column 1 to missing
+                  data. This works because the condition has shape
+                  ``(3,)`` which broadcasts to the field construct's
+                  shape.
 
                 *Parameter example:*
-                  ``f.where(cf.lt(0), x=-999)`` will set all data values
-                  that are less than zero to -999. This is equivalent to
-                  ``f.where(f.data<0, x=-999)``.
+                  ``f.where(cf.lt(0), x=-999)`` will set all data
+                  values that are less than zero to -999. This is
+                  equivalent to ``f.where(f.data<0, x=-999)``.
 
-                If *condition* is another field construct then it is first
-                transformed so that it is broadcastable to the data being
-                assigned to. This is done by using the metadata constructs
-                of the two field constructs to create a mapping of
-                physically identical dimensions between the fields, and
-                then manipulating the dimensions of other field
-                construct's data to ensure that they are broadcastable. If
-                either of the field constructs does not have sufficient
-                metadata to create such a mapping then an exception will
-                be raised. In this case, any manipulation of the
-                dimensions must be done manually, and the `Data` instance
-                of *construct* (rather than the field construct itself)
-                may be used for the condition.
+                If *condition* is a `Field` then it is first
+                transformed so that it is broadcastable to the data
+                being assigned to. This is done by using the metadata
+                constructs of the two field constructs to create a
+                mapping of physically identical dimensions between the
+                fields, and then manipulating the dimensions of other
+                field construct's data to ensure that they are
+                broadcastable. If either of the field constructs does
+                not have sufficient metadata to create such a mapping
+                then an exception will be raised. In this case, any
+                manipulation of the dimensions must be done manually,
+                and the `Data` instance of *construct* (rather than
+                the field construct itself) may be used for the
+                condition.
 
                 *Parameter example:*
-                  If field construct ``f`` has shape ``(5, 3)`` and ``g =
-                  f.transpose() < 0`` then ``f.where(g, x=-999)`` will set
-                  all data values that are less than zero to -999,
-                  provided there are sufficient metadata for the data
-                  dimensions to be mapped. However, ``f.where(g.data,
-                  x=-999)`` will always fail in this example, because the
-                  shape of the condition is ``(3, 5)``, which does not
+                  If field construct ``f`` has shape ``(5, 3)`` and
+                  ``g = f.transpose() < 0`` then ``f.where(g,
+                  x=-999)`` will set all data values that are less
+                  than zero to -999, provided there are sufficient
+                  metadata for the data dimensions to be
+                  mapped. However, ``f.where(g.data, x=-999)`` will
+                  always fail in this example, because the shape of
+                  the condition is ``(3, 5)``, which does not
                   broadcast to the shape of the ``f``.
 
-            x, y: *optional*
-                Specify the assignment values. Where the condition
-                evaluates to `True`, assign to the field construct's data
-                from *x*, and where the condition evaluates to `False`,
-                assign to the field construct's data from *y*. The *x* and
-                *y* parameters are each one of:
+            x, y:  array-like or `Field` or `None`
+                Specify the assignment values. Where the condition is
+                True assign to the data from *x*, and where the
+                condition is False assign to the data from *y*.
 
-                * `None`. The appropriate data elements array are
-                  unchanged. This the default.
+                If *x* is `None` (the default) then no assignment is
+                carried out where the condition is True.
 
-                * Any scalar or array-like object (such as a `numpy`,
-                  `Data` or `Field` object) that is broadcastable to the
-                  shape of the data.
-
-            ..
+                If *y* is `None` (the default) then no assignment is
+                carried out where the condition is False.
 
                 *Parameter example:*
-                  ``f.where(condition)``, for any ``condition``, returns a
-                  field construct with identical data values.
+                  ``d.where(condition)``, for any ``condition``,
+                  returns data with identical data values.
+
+                *Parameter example:*
+                  ``d.where(cf.lt(0), x=-d, y=cf.masked)`` will change
+                  the sign of all negative data values, and set all
+                  other data values to missing data.
+
+                *Parameter example:*
+                  ``d.where(cf.lt(0), x=-d)`` will change the sign of
+                  all negative data values, and leave all other data
+                  values unchanged. This is equivalent to, but faster
+                  than, ``d.where(cf.lt(0), x=-d, y=d)``
+
+                *Parameter example:*
+                  ``f.where(condition)``, for any ``condition``,
+                  returns a field construct with identical data
+                  values.
 
                 *Parameter example:*
                   ``f.where(cf.lt(0), x=-f.data, y=cf.masked)`` will
-                  change the sign of all negative data values, and set all
-                  other data values to missing data.
+                  change the sign of all negative data values, and set
+                  all other data values to missing data.
 
-                If *x* or *y* is another field construct then it is first
-                transformed so that its data is broadcastable to the data
-                being assigned to. This is done by using the metadata
-                constructs of the two field constructs to create a mapping
-                of physically identical dimensions between the fields, and
-                then manipulating the dimensions of other field
-                construct's data to ensure that they are broadcastable. If
-                either of the field constructs does not have sufficient
-                metadata to create such a mapping then an exception will
-                be raised. In this case, any manipulation of the
-                dimensions must be done manually, and the `Data` instance
-                of *x* or *y* (rather than the field construct itself) may
-                be used for the condition.
+                If *x* or *y* is a `Field` then it is first
+                transformed so that its data is broadcastable to the
+                data being assigned to. This is done by using the
+                metadata constructs of the two field constructs to
+                create a mapping of physically identical dimensions
+                between the fields, and then manipulating the
+                dimensions of other field construct's data to ensure
+                that they are broadcastable. If either of the field
+                constructs does not have sufficient metadata to create
+                such a mapping then an exception will be raised. In
+                this case, any manipulation of the dimensions must be
+                done manually, and the `Data` instance of *x* or *y*
+                (rather than the field construct itself) may be used
+                for the condition.
 
                 *Parameter example:*
-                  If field construct ``f`` has shape ``(5, 3)`` and ``g =
-                  f.transpose() * 10`` then ``f.where(cf.lt(0), x=g)``
-                  will set all data values that are less than zero to the
-                  equivalent elements of field construct ``g``, provided
-                  there are sufficient metadata for the data dimensions to
-                  be mapped. However, ``f.where(cf.lt(0), x=g.data)`` will
-                  always fail in this example, because the shape of the
-                  condition is ``(3, 5)``, which does not broadcast to the
-                  shape of the ``f``.
+                  If field construct ``f`` has shape ``(5, 3)`` and
+                  ``g = f.transpose() * 10`` then ``f.where(cf.lt(0),
+                  x=g)`` will set all data values that are less than
+                  zero to the equivalent elements of field construct
+                  ``g``, provided there are sufficient metadata for
+                  the data dimensions to be mapped. However,
+                  ``f.where(cf.lt(0), x=g.data)`` will always fail in
+                  this example, because the shape of the condition is
+                  ``(3, 5)``, which does not broadcast to the shape of
+                  the ``f``.
 
             construct: `str`, optional
-                Define the condition by applying the *construct* parameter
-                to the given metadata construct's data, rather then the
-                data of the field construct. Must be
+                Define the condition by applying the *construct*
+                parameter to the given metadata construct's data,
+                rather then the data of the field construct. Must be
 
-                * The identity or key of a metadata coordinate construct
-                  that has data.
+                * The identity or key of a metadata coordinate
+                  construct that has data.
 
             ..
 
-                The *construct* parameter selects the metadata construct
-                that is returned by this call of the field construct's
-                `construct` method: ``f.construct(construct)``. See
-                `cf.Field.construct` for details.
+                The *construct* parameter selects the metadata
+                construct that is returned by this call of the field
+                construct's `construct` method:
+                ``f.construct(construct)``. See `cf.Field.construct`
+                for details.
 
                 *Parameter example:*
                   ``f.where(cf.wi(-30, 30), x=cf.masked,
-                  construct='latitude')`` will set all data values within
-                  30 degrees of the equator to missing data.
+                  construct='latitude')`` will set all data values
+                  within 30 degrees of the equator to missing data.
 
             {{inplace: `bool`, optional}}
 

@@ -2834,6 +2834,12 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
         self.assertTrue((e.array == a).all())
 
+        d = cf.Data(np.arange(12).reshape(3, 4))
+        for condition in (True, 3, [True], [[1]], [[[1]]], [[[1, 1, 1, 1]]]):
+            e = d.where(condition, -9)
+            self.assertEqual(e.shape, d.shape)
+            self.assertTrue((e.array == -9).all())
+
     def test_Data__init__compression(self):
         """Test Data initialised from compressed data sources."""
         import cfdm
