@@ -2238,7 +2238,7 @@ class FieldTest(unittest.TestCase):
 
         # Percentiles taken across *all axes*
         ranks = ([30, 60, 90], [20], 80)  # include valid singular form
-        
+
         for rank in ranks:
             # Note: Currently in cf the default is squeeze=False, but
             #       numpy has an inverse parameter called keepdims
@@ -2252,7 +2252,7 @@ class FieldTest(unittest.TestCase):
             b2 = f.percentile(rank)  # has squeeze=False default
             self.assertTrue(b2.shape, a2.shape)
             self.assertTrue(b2.allclose(a2, rtol=1e-05, atol=1e-08))
-            
+
         # TODO: add loop to check get same shape and close enough data
         # for every possible axis combo (see also test_Data_percentile).
 

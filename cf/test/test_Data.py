@@ -2332,7 +2332,7 @@ class DataTest(unittest.TestCase):
                             self.assertEqual(len(b1._axes), len(d._axes) + 1)
                         else:
                             self.assertEqual(len(b1._axes), len(d._axes))
-                            
+
         # Masked data
         a = self.ma
         filled = np.ma.filled(a, np.nan)

@@ -2195,7 +2195,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Add a new axis identifier for a leading rank axis
         if q.ndim:
             axes = d._axes
-            d._axes = (new_axis_identifier(axes),) + axes    
+            d._axes = (new_axis_identifier(axes),) + axes
 
         return d
 

@@ -13748,9 +13748,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return f
 
     def percentile(
-        self, ranks, axes=None,
-            method="linear", squeeze=False, mtol=1,
-        interpolation=None
+        self,
+        ranks,
+        axes=None,
+        method="linear",
+        squeeze=False,
+        mtol=1,
+        interpolation=None,
     ):
         """Compute percentiles of the data along the specified axes.
 
