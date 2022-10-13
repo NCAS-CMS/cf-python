@@ -12,6 +12,10 @@
 
 * Make sure that `Changelog.rst` is up to date.
 
+* Check the code for deprecated keyword arguments that can be
+  completely removed, i.e. those with a "removed_at" version that is
+  at or before the version being released.
+
 * Check that the documentation API coverage is complete:
 
   ```bash

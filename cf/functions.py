@@ -3126,9 +3126,12 @@ def _DEPRECATION_ERROR_KWARGS(
     exact=False,
     relaxed_identity=False,
     info=False,
-    version="3.0.0",
-    removed_at="4.0.0",
+    version=None,
+    removed_at=None,
 ):
+    if version is None:
+        raise ValueError("Must provide deprecation version, e.g. '3.14.0'")
+
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
 

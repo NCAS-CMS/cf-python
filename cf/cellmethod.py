@@ -469,7 +469,7 @@ class CellMethod(cfdm.CellMethod):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def expand_intervals(self, inplace=False, i=False):
         """Expand the cell method interval to cover all of its axes."""
@@ -481,7 +481,7 @@ class CellMethod(cfdm.CellMethod):
 
         return c
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def change_axes(self, axis_map, inplace=False, i=False):
         """Change the axes of the cell method according to a given
@@ -503,7 +503,7 @@ class CellMethod(cfdm.CellMethod):
 
         return c
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equivalent(
         self, other, rtol=None, atol=None, verbose=None, traceback=False

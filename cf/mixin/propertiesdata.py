@@ -1598,7 +1598,7 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
@@ -1985,7 +1985,7 @@ class PropertiesData(Properties):
             "ERROR: Can't get the sum when there is no data array"
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False):
         """Interchange two axes of an array.
@@ -2346,7 +2346,7 @@ class PropertiesData(Properties):
 
         return not data.ndim
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def ceil(self, inplace=False, i=False):
         """The ceiling of the data, element-wise.
@@ -2405,7 +2405,7 @@ class PropertiesData(Properties):
     #        if data is not None:
     #            data.chunk(chunksize)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         """Limit the values in the data.
@@ -2565,7 +2565,7 @@ class PropertiesData(Properties):
     #
     #        return out
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cos(self, inplace=False, i=False):
         """Take the trigonometric cosine of the data element-wise.
@@ -3013,7 +3013,7 @@ class PropertiesData(Properties):
 
         return True
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def convert_reference_time(
         self,
@@ -3200,7 +3200,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         """Flatten axes of the data.
@@ -3258,7 +3258,7 @@ class PropertiesData(Properties):
             inplace=inplace,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def floor(self, inplace=False, i=False):
         """Floor the data array, element-wise.
@@ -3647,7 +3647,7 @@ class PropertiesData(Properties):
 
         return fillval
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         """Flip (reverse the direction of) data dimensions.
@@ -3693,7 +3693,7 @@ class PropertiesData(Properties):
             i=i,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def exp(self, inplace=False, i=False):
         """The exponential of the data, element-wise.
@@ -3741,7 +3741,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sin(self, inplace=False, i=False):
         """Take the trigonometric sine of the data element-wise.
@@ -3802,7 +3802,7 @@ class PropertiesData(Properties):
         )
 
     # `arctan2`, AT2 seealso
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
         """Take the trigonometric inverse tangent of the data element-
@@ -3856,7 +3856,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):
         """Take the inverse hyperbolic tangent of the data element-wise.
@@ -3911,7 +3911,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arcsin(self, inplace=False):
         """Take the trigonometric inverse sine of the data element-wise.
@@ -3966,7 +3966,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arcsinh(self, inplace=False):
         """Take the inverse hyperbolic sine of the data element-wise.
@@ -4019,7 +4019,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
         """Take the trigonometric inverse cosine of the data element-
@@ -4075,7 +4075,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arccosh(self, inplace=False):
         """Take the inverse hyperbolic cosine of the data element-wise.
@@ -4131,7 +4131,7 @@ class PropertiesData(Properties):
         )
 
     # `arctan2`, AT2 seealso
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tan(self, inplace=False, i=False):
         """Take the trigonometric tangent of the data element-wise.
@@ -4192,7 +4192,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tanh(self, inplace=False):
         """Take the hyperbolic tangent of the data array.
@@ -4254,7 +4254,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sinh(self, inplace=False):
         """Take the hyperbolic sine of the data element-wise.
@@ -4315,7 +4315,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cosh(self, inplace=False):
         """Take the hyperbolic cosine of the data element-wise.
@@ -4376,7 +4376,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
         """The logarithm of the data array.
@@ -4465,7 +4465,7 @@ class PropertiesData(Properties):
 
         return data.to_dask_array()
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def trunc(self, inplace=False, i=False):
         """Truncate the data, element-wise.
@@ -4540,7 +4540,9 @@ class PropertiesData(Properties):
             "ERROR: Can't get unique values when there is no data array"
         )
 
-    @_deprecated_kwarg_check("relaxed_identity")
+    @_deprecated_kwarg_check(
+        "relaxed_identity", version="3.0.0", removed_at="4.0.0"
+    )
     def identity(
         self,
         default="",
@@ -4987,7 +4989,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
         """Override the calendar of date-time units.
@@ -5044,7 +5046,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
         """Override the units.
@@ -5111,7 +5113,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def rint(self, inplace=False, i=False):
         """Round the data to the nearest integer, element-wise.
@@ -5150,7 +5152,7 @@ class PropertiesData(Properties):
             i=i,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def round(self, decimals=0, inplace=False, i=False):
         """Round the data to the given number of decimals.
@@ -5203,7 +5205,7 @@ class PropertiesData(Properties):
             decimals=decimals,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, iaxis, shift, inplace=False, i=False):
         """Roll the data along an axis.
@@ -5308,7 +5310,7 @@ class PropertiesData(Properties):
 
         return super().set_data(data, copy=copy, inplace=inplace)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def where(
         self, condition, x=None, y=None, inplace=False, i=False, verbose=None
