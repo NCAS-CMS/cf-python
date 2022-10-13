@@ -12235,7 +12235,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         ----------------------------
         Data            : longitude(longitude(8)) degrees_east
         Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
-        >> print(cs.array)
+        >>> print(cs.array)
         [45. 45. 45. 45. 45. 45. 45. 45.]
         >>> print(f.convert('X', full_domain=False))
         Field: longitude (ncvar%lon)
