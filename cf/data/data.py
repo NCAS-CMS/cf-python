@@ -2022,10 +2022,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{inplace: `bool`, optional}}
 
-            interpolation: deprecated at version 4.0.0
+            interpolation: deprecated at version TODODASKVER
                 Use the *method* parameter instead.
 
-            _preserve_partitions: deprecated at version 4.0.0
+            _preserve_partitions: deprecated at version TODODASKVER
 
         :Returns:
 
@@ -2094,6 +2094,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [2 2 3 3]]
 
         """
+        # TODODASKAPI: interpolation -> method
         if interpolation is not None:
             _DEPRECATION_ERROR_KWARGS(
                 self,
@@ -2190,6 +2191,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = Array(graph, name, chunks=out_chunks, dtype=float)
 
         d._set_dask(dx)
+
+        # Add a new axis identifier for a leading rank axis
+        if q.ndim:
+            axes = d._axes
+            d._axes = (new_axis_identifier(axes),) + axes    
 
         return d
 

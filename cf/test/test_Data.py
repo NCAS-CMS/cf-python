@@ -2325,6 +2325,14 @@ class DataTest(unittest.TestCase):
                     self.assertEqual(b1.shape, a1.shape)
                     self.assertTrue((b1.array == a1).all())
 
+                    # Check that the _axes attribute has been updated
+                    # for the new rank dimension, where appropriate.
+                    if keepdims:
+                        if isinstance(q, list):
+                            self.assertEqual(len(b1._axes), len(d._axes) + 1)
+                        else:
+                            self.assertEqual(len(b1._axes), len(d._axes))
+                            
         # Masked data
         a = self.ma
         filled = np.ma.filled(a, np.nan)

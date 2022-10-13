@@ -13748,7 +13748,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return f
 
     def percentile(
-        self, ranks, axes=None, interpolation="linear", squeeze=False, mtol=1
+        self, ranks, axes=None,
+            method="linear", squeeze=False, mtol=1,
+        interpolation=None
     ):
         """Compute percentiles of the data along the specified axes.
 
@@ -13788,23 +13790,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 By default, or if *axes* is `None`, all axes are selected.
 
-            interpolation: `str`, optional
-                Specify the interpolation method to use when the desired
-                percentile lies between two data values ``i < j``:
+            {{percentile method: `str`, optional}}
 
-                ===============  =========================================
-                *interpolation*  Description
-                ===============  =========================================
-                ``'linear'``     ``i+(j-i)*fraction``, where ``fraction``
-                                 is the fractional part of the index
-                                 surrounded by ``i`` and ``j``
-                ``'lower'``      ``i``
-                ``'higher'``     ``j``
-                ``'nearest'``    ``i`` or ``j``, whichever is nearest.
-                ``'midpoint'``   ``(i+j)/2``
-                ===============  =========================================
-
-                By default ``'linear'`` interpolation is used.
+                .. versionadded:: TODODASKVER
 
             squeeze: `bool`, optional
                 If True then all size 1 axes are removed from the returned
@@ -13829,6 +13817,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   To ensure that an output array element is a missing
                   datum if more than 25% of its input array elements are
                   missing data: ``mtol=0.25``.
+
+            interpolation: deprecated at version TODODASKVER
+                Use the *method* parameter instead.
 
         :Returns:
 
@@ -13928,6 +13919,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0 2 1 1 1 2 1 1]]
 
         """
+        # TODODASKAPI: interpolation -> method
+        if interpolation is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "percentile",
+                {"interpolation": None},
+                message="Use the 'method' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         data_axes = self.get_data_axes(default=())
 
         if axes is None:
@@ -13946,7 +13948,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         data = self.data.percentile(
             ranks,
             axes=iaxes,
-            interpolation=interpolation,
+            method=method,
             squeeze=False,
             mtol=mtol,
         )
