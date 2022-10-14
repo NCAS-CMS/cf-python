@@ -1143,8 +1143,7 @@ class UMField:
           Zsea(k) = eta_value(k)*Height_at_top_of_model
 
           C(k)=[1-eta_value(k)/eta_value(first_constant_rho_level)]**2 for
-          levels less than or equal to first_constant_rho_level
-
+               levels less than or equal to first_constant_rho_level
           C(k)=0.0 for levels greater than first_constant_rho_level
 
         where eta_value(k) is the eta_value for theta or rho level k. The
@@ -1200,12 +1199,36 @@ class UMField:
             field, ac, axes=[_axis["z"]], copy=False
         )
 
-        # atmosphere_hybrid_height_coordinate dimension coordinate
-        TOA_height = bounds1.max()
-        if TOA_height <= 0:
-            TOA_height = self.height_at_top_of_model
+        # Height at top of atmosphere
+        TOA_height = self.height_at_top_of_model
+        if TOA_height is None:
+            pseudolevels = any(
+                [
+                    rec.int_hdr.item(
+                        lbuser5,
+                    )
+                    for rec in self.z_recs
+                ]
+            )
+            if pseudolevels:
+                # Pseudolevels and atmosphere hybrid height
+                # coordinates are both present => can't reliably infer
+                # height. This is due to a current limitation in the C
+                # library, that can ony create Z-T aggregations,
+                # rather than the requited Z-T-P aggregations.
+                TOA_height = -1
 
-        if not TOA_height:
+        if TOA_height is None:
+            TOA_height = bounds1.max()
+            if TOA_height <= 0:
+                TOA_height = None
+        elif TOA_height <= 0:
+            TOA_height = None
+        else:
+            TOA_height = float(TOA_height)
+
+        # atmosphere_hybrid_height_coordinate dimension coordinate
+        if TOA_height is None:
             dc = None
         else:
             array = array / TOA_height
@@ -1218,7 +1241,7 @@ class UMField:
             )
             dc = self.coord_axis(dc, axiscode)
             dc = self.coord_positive(dc, axiscode, _axis["z"])
-            self.implementation.set_dimension_coordinate(
+            key_dc = self.implementation.set_dimension_coordinate(
                 field,
                 dc,
                 axes=[_axis["z"]],
@@ -1248,20 +1271,21 @@ class UMField:
             field, ac, axes=[_axis["z"]], copy=False
         )
 
-        if bool(dc):
-            # atmosphere_hybrid_height_coordinate coordinate reference
-            ref = self.implementation.initialise_CoordinateReference()
-            cc = self.implementation.initialise_CoordinateConversion(
-                parameters={
-                    "standard_name": "atmosphere_hybrid_height_coordinate"
-                },
-                domain_ancillaries={"a": key_a, "b": key_b, "orog": None},
+        # atmosphere_hybrid_height_coordinate coordinate reference
+        ref = self.implementation.initialise_CoordinateReference()
+        cc = self.implementation.initialise_CoordinateConversion(
+            parameters={
+                "standard_name": "atmosphere_hybrid_height_coordinate"
+            },
+            domain_ancillaries={"a": key_a, "b": key_b, "orog": None},
+        )
+        self.implementation.set_coordinate_conversion(ref, cc)
+        if dc is not None:
+            self.implementation.set_coordinate_reference_coordinates(
+                ref, (key_dc,)
             )
-            self.implementation.set_coordinate_conversion(ref, cc)
-            # TODO set coordinates?
-            self.implementation.set_coordinate_reference(
-                field, ref, copy=False
-            )
+
+        self.implementation.set_coordinate_reference(field, ref, copy=False)
 
         return dc
 

@@ -468,13 +468,32 @@ def read(
                                           from the top level's upper
                                           bound defined by BRSVD1 in
                                           the lookup header. If the
-                                          height at top model can not
-                                          be determined from the
-                                          header and is not provided
-                                          then no
-                                          "atmosphere_hybrid_height_coordinate"
-                                          dimension coordinate
-                                          construct will be created.
+                                          height can't be determined
+                                          from the header, or the
+                                          given height is less than or
+                                          equal to 0, then a
+                                          coordinate reference system
+                                          will still be created, but
+                                          without an atmosphere hybrid
+                                          height dimension coordinate
+                                          construct.
+
+                                          ..note:: A current
+                                             limitation is that if
+                                             pseudolevels and
+                                             atmosphere hybrid height
+                                             coordinates are defined
+                                             by same the lookup
+                                             headers then the height
+                                             *can't be determined
+                                             automatcally*. In this
+                                             case the height may be
+                                             found after reading as
+                                             the maximum value of the
+                                             bounds of the domain
+                                             ancillary construct
+                                             containing the 'a'
+                                             formula term.
             ============================  =====================================
 
             If format is specified as ``'PP'`` then the word size and
@@ -491,6 +510,10 @@ def read(
               To specify that the input files are 32-bit,
               little-endian PP files from version 5.1 of the UM:
               ``um={'fmt': 'PP', 'endian': 'little', 'version': 5.1}``
+
+            >>> x = cf.read('file.pp')[0]
+            >>> TOA = x.construct('id%UM_atmosphere_hybrid_height_coordinate_a').bounds.max().datum()
+            >>> x = cf.read('file.pp', um={'height_at_top_of_model': TOA})[0]
 
             .. versionadded:: 1.5
 
