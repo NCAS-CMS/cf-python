@@ -1214,8 +1214,9 @@ class UMField:
                 # Pseudolevels and atmosphere hybrid height
                 # coordinates are both present => can't reliably infer
                 # height. This is due to a current limitation in the C
-                # library, that can ony create Z-T aggregations,
-                # rather than the requited Z-T-P aggregations.
+                # library that means it can ony create Z-T
+                # aggregations, rather than the requited Z-T-P
+                # aggregations.
                 TOA_height = -1
 
         if TOA_height is None:

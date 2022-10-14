@@ -465,35 +465,37 @@ def read(
                                           the upper bound of the top
                                           model level. By default the
                                           height at top model is taken
-                                          from the top level's upper
+                                          from the top level’s upper
                                           bound defined by BRSVD1 in
                                           the lookup header. If the
-                                          height can't be determined
+                                          height can’t be determined
                                           from the header, or the
                                           given height is less than or
                                           equal to 0, then a
                                           coordinate reference system
-                                          will still be created, but
+                                          will still be created that
+                                          contains the 'a' and'b'
+                                          formular term values, but
                                           without an atmosphere hybrid
                                           height dimension coordinate
                                           construct.
 
-                                          ..note:: A current
-                                             limitation is that if
-                                             pseudolevels and
-                                             atmosphere hybrid height
-                                             coordinates are defined
-                                             by same the lookup
-                                             headers then the height
-                                             *can't be determined
-                                             automatcally*. In this
-                                             case the height may be
-                                             found after reading as
-                                             the maximum value of the
-                                             bounds of the domain
-                                             ancillary construct
-                                             containing the 'a'
-                                             formula term.
+                                         .. note:: A current
+                                            limitation is that if
+                                            pseudolevels and
+                                            atmosphere hybrid height
+                                            coordinates are defined by
+                                            same the lookup headers
+                                            then the height can’t be
+                                            determined
+                                            automatcally. In this case
+                                            the height may be found
+                                            after reading as the
+                                            maximum value of the
+                                            bounds of the domain
+                                            ancillary construct
+                                            containing the 'a' formula
+                                            term.
             ============================  =====================================
 
             If format is specified as ``'PP'`` then the word size and
