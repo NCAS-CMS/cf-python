@@ -736,11 +736,11 @@ class FieldTest(unittest.TestCase):
         f.domain_mask(grid_longitude=cf.wi(25, 31))
 
     def test_Field_cumsum(self):
-        f = self.f.copy()
+        f = cf.example_field(0)
 
         g = f.copy()
-        h = g.cumsum(2)
-        self.assertIsNone(g.cumsum(2, inplace=True))
+        h = g.cumsum(1)
+        self.assertIsNone(g.cumsum(1, inplace=True))
         self.assertTrue(g.equals(h, verbose=2))
 
         # Check that a new cell method that has been added
@@ -748,21 +748,29 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(cell_methods), len(f.cell_methods()) + 1)
         _, cm = cell_methods.popitem()
         self.assertEqual(cm.method, "sum")
-        self.assertEqual(cm.axes, (h.get_data_axes()[2],))
+        self.assertEqual(cm.axes, (h.get_data_axes()[1],))
 
-        # Check the dimension coordinate bounds
+        # Check increasing dimension coordinate bounds
         fx = f.dimension_coordinate("X")
         hx = h.dimension_coordinate("X")
         self.assertTrue((hx.lower_bounds == fx.lower_bounds[0]).all())
         self.assertTrue((hx.upper_bounds == fx.upper_bounds).all())
+
+        # Check decreasing dimension coordinate bounds
+        g = f.flip("X")
+        h = g.cumsum("X")
+        gx = g.dimension_coordinate("X")
+        hx = h.dimension_coordinate("X")
+        self.assertTrue((hx.upper_bounds == gx.upper_bounds[0]).all())
+        self.assertTrue((hx.lower_bounds == gx.lower_bounds).all())
 
         a = f.array
         for axis in range(f.ndim):
             b = np.cumsum(a, axis=axis)
             self.assertTrue((f.cumsum(axis=axis).array == b).all())
 
-        f[0, 0, 3] = cf.masked
-        f[0, 2, 7] = cf.masked
+        f[0, 3] = cf.masked
+        f[2, 7] = cf.masked
 
         a = f.array
         for axis in range(f.ndim):
