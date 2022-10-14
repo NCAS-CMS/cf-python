@@ -186,7 +186,7 @@ if Version(cfunits.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.9.0.3"
+_minimum_vn = "1.9.0.4"
 _maximum_vn = "1.9.1.0"
 _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
