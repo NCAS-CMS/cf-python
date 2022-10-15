@@ -4625,7 +4625,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         2000-12-01 00:00:00
 
         """
-        return self.compute().copy()
+        array = self.compute().copy()
+        if not isinstance(array, np.ndarray):
+            array = np.asanyarray(array)
+
+        return array
 
     @property
     @daskified(_DASKIFIED_VERBOSE)
