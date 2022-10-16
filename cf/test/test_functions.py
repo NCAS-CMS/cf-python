@@ -206,9 +206,9 @@ class functionTest(unittest.TestCase):
 
         org = func(1000)
         old = func()
-        new = 2000
+        new = 2000.123
         with func(new):
-            self.assertEqual(func(), new)
+            self.assertEqual(func(), int(new))
 
         self.assertEqual(func(), old)
         func(org)
