@@ -1,18 +1,17 @@
 import logging
 import sys
+
+import numpy as np
+
 from enum import Enum, auto
 from tempfile import gettempdir
 
 from dask import config
 from dask.utils import parse_bytes
-from numpy.ma import masked as numpy_ma_masked
 from psutil import virtual_memory
 
 from .units import Units
 
-# platform = sys.platform
-# if platform == 'darwin':
-#     from psutil import virtual_memory
 
 # --------------------------------------------------------------------
 # Find the total amount of memory, in bytes
@@ -21,20 +20,6 @@ _TOTAL_MEMORY = float(virtual_memory().total)
 
 _CHUNKSIZE = "128 MiB"
 config.set({"array.chunk-size": _CHUNKSIZE})
-
-# if platform == 'darwin':
-#     # MacOS
-#    _MemTotal = float(virtual_memory().total)
-# else:
-#     # Linux
-#     _meminfo_file = open('/proc/meminfo', 'r', 1)
-#     for line in _meminfo_file:
-#         field_size = line.split()
-#         if field_size[0] == 'MemTotal:':
-#             _MemTotal = float(field_size[1]) * 1024
-#             break
-#
-#     _meminfo_file.close()
 
 
 """A dictionary of useful constants.
@@ -65,10 +50,6 @@ in cf.
       The number of chunk sizes to be kept free for temporary work
       space.
 
-    OF_FRACTION: `float`
-      The fraction of the maximum number of concurrently open files
-      which may be used for files containing data arrays.
-
     TEMPDIR: `str`
       The location to store temporary files. By default it is the
       default directory used by the :mod:`tempfile` module.
@@ -81,12 +62,6 @@ in cf.
     FREE_MEMORY_FACTOR: `int`
       Factor to divide the free memory by.
 
-    COLLAPSE_PARALLEL_MODE: `int`
-      The mode to use when parallelising collapse. By default this is
-      0 to try and automatically determine which mode to use.
-
-      Deprecated at version 3.9.0
-
     LOG_LEVEL: `str`
       The minimal level of seriousness for which log messages are
       shown. See `cf.log_level`.
@@ -96,13 +71,9 @@ CONSTANTS = {
     "ATOL": sys.float_info.epsilon,
     "RTOL": sys.float_info.epsilon,
     "TEMPDIR": gettempdir(),
-    "OF_FRACTION": 0.5,
     "TOTAL_MEMORY": _TOTAL_MEMORY,
     "FREE_MEMORY_FACTOR": 0.1,
-    "WORKSPACE_FACTOR_1": 2.0,
-    "WORKSPACE_FACTOR_2": 8.0,
     "REGRID_LOGGING": False,
-    "COLLAPSE_PARALLEL_MODE": 0,
     "RELAXED_IDENTITIES": False,
     "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
     "BOUNDS_COMBINATION_MODE": "AND",
@@ -115,13 +86,12 @@ CONSTANTS["FM_THRESHOLD"] = (
 
 CONSTANTS["MIN_TOTAL_MEMORY"] = CONSTANTS["TOTAL_MEMORY"]
 
-masked = numpy_ma_masked
-# nomask = numpy_ma_nomask
+masked = np.ma.masked
 
 repr_prefix = "CF "
 repr_suffix = ""
 
-_file_to_fh = {}
+#_file_to_fh = {}
 
 _stash2standard_name = {}
 

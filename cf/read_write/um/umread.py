@@ -17,7 +17,8 @@ from ... import __Conventions__, __version__
 from ...constants import _stash2standard_name
 from ...data import UMArray
 from ...data.data import Data
-from ...data.functions import _close_um_file, _open_um_file
+
+# from ...data.functions import _close_um_file, _open_um_file
 from ...decorators import (
     _manage_log_level_via_verbose_attr,
     _manage_log_level_via_verbosity,
@@ -26,6 +27,7 @@ from ...functions import abspath
 from ...functions import atol as cf_atol
 from ...functions import load_stash2standard_name
 from ...functions import rtol as cf_rtol
+from ...umread_lib.umfile import File
 from ...units import Units
 
 # import numpy as np
@@ -472,6 +474,41 @@ _rotated_latitude_longitude_lbcodes = set((101, 102, 111))
 _axis = {"area": None}
 
 _autocyclic_false = {"no-op": True, "X": False, "cyclic": False}
+
+
+def open_um_file(
+    filename, aggregate=True, fmt=None, word_size=None, byte_ordering=None
+):
+    """Open a UM fields file or PP file and read it into a
+    `umread.umfile.File` object.
+
+    If there is already a `umread.umfile.File` object for the file
+    then it is returned with an open file descriptor.
+
+    :Parameters:
+
+        filename: `str`
+            The file to be opened.
+
+    :Returns:
+
+        `umread.umfile.File`
+            The opened file with an open file descriptor.
+
+    """
+    try:
+        f = File(
+            filename, byte_ordering=byte_ordering, word_size=word_size, fmt=fmt
+        )
+    except Exception as error:
+        try:
+            f.close_fd()
+        except Exception:
+            pass
+
+        raise Exception(error)
+
+    return f
 
 
 class UMField:
@@ -3446,6 +3483,8 @@ class UMRead(cfdm.read_write.IORead):
             for var in f.vars
         ]
 
+        self.file_close(f)
+
         return [field for x in um for field in x.fields if field]
 
     def is_um_file(self, filename):
@@ -3476,7 +3515,7 @@ class UMRead(cfdm.read_write.IORead):
 
         """
         try:
-            f = _open_um_file(filename)
+            f = open_um_file(filename)
         except Exception:
             return False
 
@@ -3487,7 +3526,7 @@ class UMRead(cfdm.read_write.IORead):
 
         return True
 
-    def file_close(self):
+    def file_close(self, f):
         """Close the file that has been read.
 
         :Returns:
@@ -3495,7 +3534,7 @@ class UMRead(cfdm.read_write.IORead):
             `None`
 
         """
-        _close_um_file(self.read_vars["filename"])
+        f.close_fd()
 
     def file_open(self, filename):
         """Open the file for reading.
@@ -3510,7 +3549,7 @@ class UMRead(cfdm.read_write.IORead):
         """
         g = self.read_vars
 
-        return _open_um_file(
+        return open_um_file(
             filename,
             byte_ordering=g["byte_ordering"],
             word_size=g["word_size"],

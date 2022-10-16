@@ -1,9 +1,9 @@
-from ..constants import _file_to_fh
-from ..functions import close_one_file, open_files_threshold_exceeded
-from ..umread_lib.umfile import File
+# from ..constants import _file_to_fh
+# from ..functions import close_one_file #, open_files_threshold_exceeded
+# from ..umread_lib.umfile import File
 
-_file_to_UM = _file_to_fh.setdefault("UM", {})
-_file_to_Dataset = _file_to_fh.setdefault("netCDF", {})
+# _file_to_UM = _file_to_fh.setdefault("UM", {})
+##_file_to_Dataset = _file_to_fh.setdefault("netCDF", {})
 
 
 # def _open_netcdf_file(filename, mode, fmt="NETCDF4"):  # set_auto_mask=True):
@@ -81,84 +81,84 @@ _file_to_Dataset = _file_to_fh.setdefault("netCDF", {})
 #    nc = _file_to_Dataset.pop(filename, None)
 #    if nc is not None:
 #        nc.close()
-
-
-def _open_um_file(
-    filename, aggregate=True, fmt=None, word_size=None, byte_ordering=None
-):
-    """Open a UM fields file or PP file and read it into a `umfile.File`
-    object.
-
-    If there is already a `umfile.File` object for the file then it is
-    returned with an open file descriptor.
-
-    :Parameters:
-
-        filename: `str`
-            The file to be opened.
-
-    :Returns:
-
-        `umfile.File`
-            The opened file with an open file descriptor.
-
-    """
-    f = _file_to_UM.get(filename)
-
-    if f is not None:
-        if f.fd is None:
-            if open_files_threshold_exceeded():
-                # Close a random data array file to make way for this
-                # one
-                close_one_file()
-
-            f.open_fd()
-        # --- End: if
-        return f
-
-    if open_files_threshold_exceeded():
-        # Close a random data array file to make way for this one
-        close_one_file()
-
-    try:
-        f = File(
-            path=filename,
-            byte_ordering=byte_ordering,
-            word_size=word_size,
-            fmt=fmt,
-        )
-    except Exception as error:
-        try:
-            f.close_fd()
-        except Exception:
-            pass
-
-        raise Exception(error)
-
-    # Add a close method to the file object
-    f.close = f.close_fd
-
-    # Update the _file_to_UM dictionary
-    _file_to_UM[filename] = f
-
-    return f
-
-
-def _close_um_file(filename):
-    """Close a PP or UM fields file.
-
-    Does nothing if the file is already closed.
-
-    :Parameters:
-
-        filename : str
-            The file to be closed.
-
-    :Returns:
-
-        `None`
-
-    """
-    f = _file_to_UM.pop(filename, None)
-    if f is not None:
-        f.close_fd()
+#
+#
+# def _open_um_file(
+#    filename, aggregate=True, fmt=None, word_size=None, byte_ordering=None
+# ):
+#    """Open a UM fields file or PP file and read it into a `umfile.File`
+#    object.
+#
+#    If there is already a `umfile.File` object for the file then it is
+#    returned with an open file descriptor.
+#
+#    :Parameters:
+#
+#        filename: `str`
+#            The file to be opened.
+#
+#    :Returns:
+#
+#        `umfile.File`
+#            The opened file with an open file descriptor.
+#
+#    """
+##    f = _file_to_UM.get(filename)
+##
+##    if f is not None:
+##        if f.fd is None:
+###            if open_files_threshold_exceeded():
+###                # Close a random data array file to make way for this
+###                # one
+###                close_one_file()
+##
+##            f.open_fd()
+##
+##        return f
+##
+##    if open_files_threshold_exceeded():
+##        # Close a random data array file to make way for this one
+##        close_one_file()
+#
+#    try:
+#        f = File(
+#            path=filename,
+#            byte_ordering=byte_ordering,
+#            word_size=word_size,
+#            fmt=fmt,
+#        )
+#    except Exception as error:
+#        try:
+#            f.close_fd()
+#        except Exception:
+#            pass
+#
+#        raise Exception(error)
+#
+#    # Add a close method to the file object
+#    f.close = f.close_fd
+#
+# #   # Update the _file_to_UM dictionary
+# #   _file_to_UM[filename] = f
+#
+#    return f
+#
+#
+# def _close_um_file(filename):
+#    """Close a PP or UM fields file.
+#
+#    Does nothing if the file is already closed.
+#
+#    :Parameters:
+#
+#        filename : str
+#            The file to be closed.
+#
+#    :Returns:
+#
+#        `None`
+#
+#    """
+#    f = _file_to_UM.pop(filename, None)
+#    if f is not None:
+#        f.close_fd()
