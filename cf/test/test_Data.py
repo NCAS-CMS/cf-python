@@ -293,7 +293,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(sa2.equals(sa2.copy()))
         # Unlike for numeric types, for string-like data as long as the data
         # is the same consider the arrays equal, even if the dtype differs.
-        # TODO DASK: this behaviour will be added via cfdm, test fails for now
+        # TODODASK: this behaviour will be added via cfdm, test fails for now
         # ## self.assertTrue(sa1.equals(sa2))
         sa3_data = sa2_data.astype("S5")
         sa3 = cf.Data(sa3_data, "m", chunks=mask_test_chunksize)
@@ -2045,14 +2045,10 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(
                     (d // x).equals(cf.Data(a0 // x, "m"), verbose=1), message
                 )
-                # TODODASK SB: re-instate this once _combined_units is sorted,
-                # presently fails with error:
-                #     AttributeError: 'Data' object has no attribute '_size'
-                #
-                # message = "Failed in {!r}**{}".format(d, x)
-                # self.assertTrue(
-                #     (d ** x).equals(cf.Data(a0 ** x, "m2"), verbose=1), message
-                # )
+                message = "Failed in {!r}**{}".format(d, x)
+                self.assertTrue(
+                    (d**x).equals(cf.Data(a0**x, "m2"), verbose=1), message
+                )
                 message = "Failed in {!r}.__truediv__{}".format(d, x)
                 self.assertTrue(
                     d.__truediv__(x).equals(
@@ -2165,9 +2161,10 @@ class DataTest(unittest.TestCase):
                         e.equals(cf.Data(a, "m"), verbose=1), message
                     )
 
-                # TODODASK SB: re-instate this once _combined_units is sorted,
-                # presently fails with error, as with __pow__:
-                #     AttributeError: 'Data' object has no attribute '_size'
+                # TODO: this test fails due to casting issues. It is actually
+                # testing against expected behaviour with contradicts that of
+                # NumPy so we might want to change the logic: see Issue 435,
+                # github.com/NCAS-CMS/cf-python/issues/435. Skip for now.
                 # a = a0.copy()
                 # try:
                 #     a **= x
@@ -2920,8 +2917,18 @@ class DataTest(unittest.TestCase):
             cf.Data([1, 2, 3], "metres"),
             cf.Data([[1, 2], [3, 4]], "metres"),
         ):
+            d.__keepdims_indexing__ = False
             for i, e in enumerate(d):
                 self.assertTrue(e.equals(d[i]))
+
+        for d in (
+            cf.Data([1, 2, 3], "metres"),
+            cf.Data([[1, 2], [3, 4]], "metres"),
+        ):
+            d.__keepdims_indexing__ = True
+            for i, e in enumerate(d):
+                out = d[i]
+                self.assertTrue(e.equals(out.reshape(out.shape[1:])))
 
         # iteration over a 0-d Data
         with self.assertRaises(TypeError):
