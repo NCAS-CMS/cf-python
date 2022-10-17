@@ -568,6 +568,9 @@ class PropertiesData(Properties):
         >>> u._binary_operation(v, '__idiv__')
 
         """
+        if getattr(y, "_NotImplemented_RHS_Data_op", False):
+            return NotImplemented
+
         data = self.get_data(None, _fill_value=None)
         if data is None:
             raise ValueError(
@@ -2278,27 +2281,6 @@ class PropertiesData(Properties):
 
         return data.array
 
-    def dask_array(self, copy=True):
-        """TODODASK.
-
-        :Parameters:
-
-          copy
-
-
-        .. seealso:: `data`, `array`, `datetime_array`
-
-        **Examples:**
-
-        TODODASK
-
-        """
-        data = self.get_data(None)
-        if data is None:
-            raise AttributeError(f"{self.__class__.__name__} has no data")
-
-        return data.dask_array(copy=copy)
-
     @property
     def varray(self):
         """A numpy array view of the data.
@@ -2325,15 +2307,14 @@ class PropertiesData(Properties):
         <CF Data(5): [999, ... 4] kg m-1 s-2>
 
         """
-        raise ValueError("TODODASK - deprecated?")
-
-    #        data = self.get_data(None)
-    #        if data is None:
-    #            raise AttributeError(
-    #                f"{self.__class__.__name__} has no data"
-    #            )
-    #
-    #        return data.varray
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "varray",
+            message="Data are now stored as `dask` arrays for which, "
+            "in general, a numpy array view is not robust.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @property
     def isscalar(self):
@@ -4457,6 +4438,33 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
+    def to_dask_array(self):
+        """Convert the data to a `dask` array.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `cf.Data.to_dask_array`
+
+        :Returns:
+
+            `dask.array.Array`
+                The dask array contained within the {{class}} instance.
+
+        **Examples**
+
+        >>> f.to_dask_array()
+        dask.array<copy, shape=(10, 9), dtype=float64, chunksize=(10, 9), chunktype=numpy.ndarray>
+
+        >>> f.to_dask_array() is f.data.to_dask_array()
+        True
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            raise ValueError("Can't get dask array when there is no data")
+
+        return data.to_dask_array()
+
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def trunc(self, inplace=False, i=False):
@@ -4822,6 +4830,28 @@ class PropertiesData(Properties):
         return super().get_data(
             default=default, _units=False, _fill_value=_fill_value
         )
+
+    def get_filenames(self):
+        """Return the name of the file or files containing the data.
+
+        Deprecated at version TODODASKVER and and is no longer
+        available. Consider using the `get_original_filenames` method
+        instead.
+
+        .. note:: Might get re-instated in a later version.
+
+        :Returns:
+
+            `set`
+                The file names in normalized, absolute form. If all of the
+                data are in memory then an empty `set` is returned.
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "get_filenames",
+            "Consider using the 'get_original_filenames' method instead.",
+        )  # pragma: no cover
 
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity

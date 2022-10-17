@@ -5,7 +5,7 @@ import dask.array as da
 import numpy as np
 from dask import config
 from dask.array.core import getter, normalize_chunks
-from dask.base import tokenize
+from dask.base import is_dask_collection, tokenize
 from dask.utils import SerializableLock
 
 
@@ -58,13 +58,14 @@ def convert_to_builtin_type(x):
 
 
 def to_dask(array, chunks, **from_array_options):
-    """TODODASK.
+    """TODODASKDOCS.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
         array: array_like
+            TODODASKDOCS.
 
         chunks: `int`, `tuple`, `dict` or `str`, optional
             Specify the chunking of the returned dask array.
@@ -81,28 +82,48 @@ def to_dask(array, chunks, **from_array_options):
 
     **Examples**
 
-    >>> to_dask([1, 2, 3])
+    >>> cf.data.creation.to_dask([1, 2, 3], 'auto')
     dask.array<array, shape=(3,), dtype=int64, chunksize=(3,), chunktype=numpy.ndarray>
-    >>> to_dask([1, 2, 3], chunks=2)
+    >>> cf.data.creation.to_dask([1, 2, 3], chunks=2)
     dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
-    >>> to_dask([1, 2, 3], chunks=2, {'asarray': True})
+    >>> cf.data.creation.to_dask([1, 2, 3], chunks=2, {'asarray': True})
     dask.array<array, shape=(3,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>
+    >>> cf.data.creation.to_dask(cf.dt(2000, 1, 1), 'auto')
+    dask.array<array, shape=(), dtype=object, chunksize=(), chunktype=numpy.ndarray>
+    >>> cf.data.creation.to_dask([cf.dt(2000, 1, 1)], 'auto')
+    dask.array<array, shape=(1,), dtype=object, chunksize=(1,), chunktype=numpy.ndarray>
 
     """
+    if not (
+        is_dask_collection(array)
+        or isinstance(
+            array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
+        )
+    ) and not hasattr(array, "shape"):
+        # 'array' is not of a type that `da.from_array` can cope with,
+        # so convert it to a numpy array
+        array = np.asanyarray(array)
+
     kwargs = from_array_options
     lock = getattr(array, "_dask_lock", False)
     if lock:
         lock = get_lock()
-    #    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
+
     kwargs.setdefault("lock", lock)
     kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
-    return da.from_array(array, chunks=chunks, **kwargs)
+
+    try:
+        return da.from_array(array, chunks=chunks, **kwargs)
+    except NotImplementedError:
+        # Try again with 'chunks=-1', in case the failure was due to
+        # not being able to use auto rechunking with object dtype.
+        return da.from_array(array, chunks=-1, **kwargs)
 
 
 def compressed_to_dask(array, chunks):
     """Create a dask array with `Subarray` chunks.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -294,7 +315,7 @@ def generate_axis_identifiers(n):
 
     The names are arbitrary and have no semantic meaning.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -324,7 +345,7 @@ def threads():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return config.get("scheduler", default=None) in (None, "threads")
@@ -336,7 +357,7 @@ def processes():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return config.get("scheduler", default=None) == "processes"
@@ -349,18 +370,18 @@ def synchronous():
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     return config.get("scheduler", default=None) == "synchronous"
 
 
 def get_lock():
-    """TODODASK.
+    """TODODASKDOCS.
 
     See https://docs.dask.org/en/latest/scheduling.html for details.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     """
     if threads():
@@ -370,7 +391,8 @@ def get_lock():
         return False
 
     if processes():
-        raise ValueError("TODODASK - not yet sorted out processes lock")
+        raise ValueError("TODODASKMSG - not yet sorted out processes lock")
         # Do we even need one? Can't we have lock=False, here?
 
-    raise ValueError("TODODASK - what now? raise exception? cluster?")
+    # TODODASK: what now? raise exception? cluster?
+    raise ValueError("TODODASKMSG")

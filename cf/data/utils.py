@@ -72,7 +72,7 @@ def _is_numeric_dtype(array):
 def convert_to_datetime(a, units):
     """Convert a dask array of numbers to one of date-time objects.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso `convert_to_reftime`
 
@@ -110,7 +110,7 @@ def convert_to_reftime(a, units=None, first_value=None):
     """Convert a dask array of string or object date-times to floating
     point reference times.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso `convert_to_datetime`
 
@@ -183,7 +183,7 @@ def convert_to_reftime(a, units=None, first_value=None):
         d_units = getattr(units, "units", None)
 
         if x_calendar != "":
-            if units is None:
+            if not units:
                 d_calendar = x_calendar
             elif not units.equivalent(Units(x_since, x_calendar)):
                 raise ValueError(
@@ -213,7 +213,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 def first_non_missing_value(a, cached=None, method="index"):
     """Return the first non-missing value of a dask array.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -259,15 +259,15 @@ def first_non_missing_value(a, cached=None, method="index"):
     0
     >>> cf.data.utils.first_non_missing_value(d, cached=99)
     99
-    >>> d[0, 0] = np.ma.masked
+    >>> d[0, 0] = cf.masked
     >>> cf.data.utils.first_non_missing_value(d)
     1
-    >>> d[0, :] = np.ma.masked
+    >>> d[0, :] = cf.masked
     >>> cf.data.utils.first_non_missing_value(d)
     4
     >>> cf.data.utils.first_non_missing_value(d, cached=99)
     99
-    >>> d[...] = np.ma.masked
+    >>> d[...] = cf.masked
     >>> print(cf.data.utils.first_non_missing_value(d))
     None
     >>> print(cf.data.utils.first_non_missing_value(d, cached=99))
@@ -318,7 +318,7 @@ def first_non_missing_value(a, cached=None, method="index"):
 def unique_calendars(a):
     """Find the unique calendars from a dask array of date-time objects.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -363,7 +363,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 
     The name is arbitrary and has no semantic meaning.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -419,7 +419,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `chunk_shapes`
 
@@ -449,7 +449,7 @@ def chunk_positions(chunks):
 def chunk_shapes(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `chunk_positions`
 
@@ -477,15 +477,16 @@ def chunk_shapes(chunks):
 
 
 def is_small(array, threshold=None):
-    """TODODASK - need to define what 'small' is, and consider the API
-     in general
-
-    We adjust the size of the data here for the potiential of a mask
+    """We adjust the size of the data here for the potiential of a mask.
 
     Returns False if size is unknown
 
     .. versionadded:: 4.0.0
+
     """
+    # TODODASKAPI - need to define what 'small' is, and consider the API
+    # in general
+
     if threshold is None:
         threshold = 2**90  # TODODASK - True for now!
 
@@ -493,13 +494,14 @@ def is_small(array, threshold=None):
 
 
 def is_very_small(array, threshold=None):
-    """
-    TODODASK - need to define what 'very small' is, and consider the API
-    in general
+    """TODODASKDOCS.
 
     .. versionadded:: 4.0.0
 
     """
+    # TODODASKAPI - need to define what 'very small' is, and consider the
+    # API in general
+
     if threshold is None:
         threshold = 0.125 * 2**90  # TODODASK - True for now!
 
@@ -509,7 +511,7 @@ def is_very_small(array, threshold=None):
 def scalar_masked_array(dtype=float):
     """Return a scalar masked array.
 
-     .. versionadded:: TODODASK
+     .. versionadded:: TODODASKVER
 
      :Parmaeters:
 
@@ -567,7 +569,7 @@ def conform_units(value, units):
 
     In all other cases *value* is returned unchanged.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -622,7 +624,7 @@ def YMDhms(d, attr):
     Only applicable for data with reference time units. The returned
     `Data` will have the same mask hardness as the original array.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
                  `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`

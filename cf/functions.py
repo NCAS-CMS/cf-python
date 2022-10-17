@@ -180,7 +180,7 @@ else:
 # --- End: if
 
 
-# TODODASK - deprecate 'collapse_parallel_mode' when move to dask is complete
+# TODODASKDEPR - deprecate 'collapse_parallel_mode' when move to dask complete
 def configuration(
     atol=None,
     rtol=None,
@@ -662,7 +662,7 @@ class regrid_logging(ConstantAccess):
         return bool(arg)
 
 
-# TODODASK - deprecate when move to dask is complete
+# TODODASKDEPR - deprecate when move to dask is complete
 class collapse_parallel_mode(ConstantAccess):
     """Which mode to use when collapse is run in parallel. There are
     three possible modes:
@@ -802,7 +802,7 @@ class chunksize(ConstantAccess):
 
     .. note:: Setting the chunksize will change the `dask` global
               configuration value ``'array.chunk-size'``. If
-              `chunksize` is used a context manager then the `dask`
+              `chunksize` is used in a context manager then the `dask`
               configuration value is only altered within that context.
 
     :Parameters:
@@ -1020,7 +1020,7 @@ class free_memory_factor(ConstantAccess):
 
     """
 
-    # TODODASK: Review how all this free memory stuff works with dask
+    # TODODASKAPI: Review how all this free memory stuff works with dask
 
     _name = "FREE_MEMORY_FACTOR"
 
@@ -1361,7 +1361,7 @@ def REGRID_LOGGING(*new_regrid_logging):
     return regrid_logging(*new_regrid_logging)
 
 
-# TODODASK - deprecate when move to dask is complete
+# TODODASKDEPR - deprecate when move to dask is complete
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     """Alias for `cf.collapse_parallel_mode`."""
     return collapse_parallel_mode(*new_collapse_parallel_mode)
@@ -1844,7 +1844,7 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     :Returns:
 
         `list` [, `dict`]
-            The parsed indices. If *cyclic* is True the a dictionary
+            The parsed indices. If *cyclic* is True then a dictionary
             is also returned that contains the parameters needed to
             interpret any cyclic slices.
 
@@ -1941,29 +1941,29 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                     stop -= size
 
             if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
-                # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # -1:0:1  => [9]
-                # -1:1:1  => [9, 0]
-                # -1:3:1  => [9, 0, 1, 2]
-                # -1:9:1  => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-                # -4:0:1  => [6, 7, 8, 9]
-                # -4:1:1  => [6, 7, 8, 9, 0]
-                # -4:3:1  => [6, 7, 8, 9, 0, 1, 2]
-                # -4:6:1  => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
-                # -9:0:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # -9:1:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-                # -10:0:1 => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -1:0:1] => [9]
+                # x[ -1:1:1] => [9, 0]
+                # x[ -1:3:1] => [9, 0, 1, 2]
+                # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+                # x[ -4:0:1] => [6, 7, 8, 9]
+                # x[ -4:1:1] => [6, 7, 8, 9, 0]
+                # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
+                # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
+                # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+                # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                 index = slice(0, stop - start, step)
                 roll[i] = -start
 
             elif step < 0 and 0 <= start < size and start - size <= stop < 0:
-                # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # 0:-4:-1  => [0, 9, 8, 7]
-                # 6:-1:-1  => [6, 5, 4, 3, 2, 1, 0]
-                # 6:-2:-1  => [6, 5, 4, 3, 2, 1, 0, 9]
-                # 6:-4:-1  => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
-                # 0:-2:-1  => [0, 9]
-                # 0:-10:-1 => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[0: -4:-1] => [0, 9, 8, 7]
+                # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
+                # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
+                # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
+                # x[0: -2:-1] => [0, 9]
+                # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
                 index = slice(start - stop - 1, None, step)
                 roll[i] = -1 - stop
 
@@ -2585,7 +2585,7 @@ def hash_array(array, algorithm=hashlib.sha1):
             Constructor function for the desired hash algorithm,
             e.g. `hashlib.md5`, `hashlib.sha256`, etc.
 
-            .. versionadded:: TODODASK
+            .. versionadded:: TODODASKVER
 
     :Returns:
 
@@ -2833,13 +2833,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
             passed. By default it is False.
 
         stop: `int`, optional
-            Deprecated at version TODODASK.
+            Deprecated at version TODODASKVER.
 
             Stop after taking this number of sections and return. If
             stop is None all sections are taken.
 
         chunks: `bool`, optional
-            Deprecated at version TODODASK. Consider using
+            Deprecated at version TODODASKVER. Consider using
             `cf.Data.rechunk` instead.
 
             If True return sections that are of the maximum possible
@@ -2874,13 +2874,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     if stop is not None:
         raise DeprecationError(
             "The 'stop' keyword of cf._section() was deprecated at "
-            "version TODODASK and is no longer available"
+            "version TODODASKVER and is no longer available"
         )
 
     if chunks:
         raise DeprecationError(
             "The 'chunks' keyword of cf._section() was deprecated at "
-            "version TODODASK and is no longer available. Consider using "
+            "version TODODASKVER and is no longer available. Consider using "
             "cf.Data.rechunk instead."
         )
 

@@ -219,7 +219,7 @@ Data
    ~cf.List.period
    ~cf.List.iscyclic
    ~cf.List.isperiodic
-   ~cf.List.get_filenames
+   ~cf.List.get_original_filenames
    ~cf.List.has_bounds
 
 Miscellaneous
@@ -594,6 +594,7 @@ Deprecated
    ~cf.List.delprop
    ~cf.List.dtvarray
    ~cf.List.expand_dims
+   ~cf.List.get_filenames
    ~cf.List.getprop
    ~cf.List.hasbounds
    ~cf.List.hasdata

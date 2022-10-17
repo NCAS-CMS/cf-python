@@ -80,21 +80,23 @@ class PropertiesDataBounds(PropertiesData):
 
         cname = self.__class__.__name__
         logger.debug(
-            f"{cname}.__getitem__: shape    = {self.shape}"
-        )  # pragma: no cover
-        logger.debug(
-            f"{cname}.__getitem__: indices2 = {indices2}"
-        )  # pragma: no cover
-        logger.debug(
-            f"{cname}.__getitem__: indices  = {indices}"
-        )  # pragma: no cover
-        logger.debug(
+            f"{cname}.__getitem__: shape    = {self.shape}\n"
+            f"{cname}.__getitem__: indices2 = {indices2}\n"
+            f"{cname}.__getitem__: indices  = {indices}\n"
             f"{cname}.__getitem__: findices = {findices}"
         )  # pragma: no cover
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:
-            new.set_data(data[findices], copy=False)
+            new_data = data[findices]
+            new.set_data(new_data, copy=False)
+
+            if 0 in new_data.shape:
+                raise IndexError(
+                    f"Indices {findices!r} result in a subspaced shape of "
+                    f"{new_data.shape}, but can't create a subspace of "
+                    f"{self.__class__.__name__} that has a size 0 axis"
+                )
 
         # Subspace the interior ring array, if there is one.
         interior_ring = self.get_interior_ring(None)
@@ -129,7 +131,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 logger.debug(
                     f"{self.__class__.__name__}.__getitem__: findices for "
-                    f"bounds = {findices}"
+                    f"bounds = {tuple(findices)}"
                 )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
@@ -439,6 +441,9 @@ class PropertiesDataBounds(PropertiesData):
                 was in-place.
 
         """
+        if getattr(other, "_NotImplemented_RHS_Data_op", False):
+            return NotImplemented
+
         inplace = method[2] == "i"
 
         bounds_AND = bounds and bounds_combination_mode() == "AND"
@@ -2286,33 +2291,6 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    def get_filenames(self):
-        """Return the name of the file or files containing the data.
-
-        The names of the file or files containing the bounds data are also
-        returned.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If all of the
-                data are in memory then an empty `set` is returned.
-
-        """
-        out = super().get_filenames()
-
-        data = self.get_bounds_data(None, _fill_value=None)
-        if data is not None:
-            out.update(data.get_filenames())
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            data = interior_ring.get_data(None, _fill_value=False)
-            if data is not None:
-                out.update(interior_ring.get_filenames())
-
-        return out
-
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
@@ -3835,11 +3813,12 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames`
-        instead."""
+        """Deprecated at version 3.4.0, consider using the
+        `get_original_filenames` method instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
-            "expand_dims",
-            "Use method 'get_filenames' instead.",
+            "files",
+            "Consider using the 'get_original_filenames' method instead.",
             version="3.4.0",
+            removed_at="4.0.0",
         )  # pragma: no cover

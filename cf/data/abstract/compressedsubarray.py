@@ -58,12 +58,12 @@ class CompressedSubarray(abc.ABC):
     # ----------------------------------------------------------------
     @property
     def dask_lock(self):
-        """TODODASK."""
+        """TODODASKDOCS."""
         return self.array.dask_lock
 
     @property
     def dask_asarray(self):
-        """TODODASK."""
+        """TODODASKDOCS."""
         return False
 
     # ----------------------------------------------------------------

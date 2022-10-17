@@ -157,12 +157,11 @@ Miscellaneous
    ~cf.Domain.creation_commands
    ~cf.Domain.equals
    ~cf.Domain.fromconstructs
-   ~cf.Domain.get_filenames
    ~cf.Domain.has_bounds
    ~cf.Domain.has_data
    ~cf.Domain.has_geometry
    ~cf.Domain.apply_masking   
-   ~cf.Domain.get_filenames
+   ~cf.Domain.get_original_filenames
    ~cf.Domain.close
 
 Domain axes
@@ -320,6 +319,7 @@ Deprecated
    :template: method.rst
 
    ~cf.Domain.delprop
+   ~cf.Domain.get_filenames
    ~cf.Domain.getprop
    ~cf.Domain.hasprop
    ~cf.Domain.setprop

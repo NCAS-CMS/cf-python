@@ -3,17 +3,10 @@ from collections import namedtuple
 from functools import reduce
 from operator import mul as operator_mul
 
-try:
-    from matplotlib.path import Path
-except ImportError:
-    pass
-
 import cfdm
 import numpy as np
 from numpy import array as numpy_array
-from numpy import asanyarray as numpy_asanyarray
 from numpy import can_cast as numpy_can_cast
-from numpy import delete as numpy_delete
 from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import full as numpy_full
@@ -25,8 +18,7 @@ from numpy import size as numpy_size
 from numpy import squeeze as numpy_squeeze
 from numpy import unique as numpy_unique
 from numpy import where as numpy_where
-from numpy.ma import isMA as numpy_ma_isMA
-from numpy.ma import where as numpy_ma_where
+from numpy.ma import is_masked as numpy_ma_is_masked
 
 from . import (
     AuxiliaryCoordinate,
@@ -62,6 +54,7 @@ from .formula_terms import FormulaTerms
 from .functions import (
     _DEPRECATION_ERROR,
     _DEPRECATION_ERROR_ARG,
+    _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_KWARG_VALUE,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
@@ -397,10 +390,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             indices = (indices,)
 
         if isinstance(indices[0], str) and indices[0] == "mask":
-            auxiliary_mask = indices[:2]
+            ancillary_mask = indices[:2]
             indices2 = indices[2:]
         else:
-            auxiliary_mask = None
+            ancillary_mask = None
             indices2 = indices
 
         indices, roll = parse_indices(shape, indices2, cyclic=True)
@@ -425,9 +418,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # ------------------------------------------------------------
         # Subspace the field construct's data
         # ------------------------------------------------------------
-        if auxiliary_mask:
-            auxiliary_mask = list(auxiliary_mask)
-            findices = auxiliary_mask + indices
+        if ancillary_mask:
+            ancillary_mask = list(ancillary_mask)
+            findices = ancillary_mask + indices
         else:
             findices = indices
 
@@ -437,6 +430,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         logger.debug(f"    findices = {findices}")  # pragma: no cover
 
         new_data = data[tuple(findices)]
+
+        if 0 in new_data.shape:
+            raise IndexError(
+                f"Indices {findices!r} result in a subspaced shape of "
+                f"{new_data.shape}, but can't create a subspace of "
+                f"{self.__class__.__name__} that has a size 0 axis"
+            )
 
         # Set sizes of domain axes
         data_axes = new.get_data_axes()
@@ -462,12 +462,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         dice.append(indices[data_axes.index(axis)])
                     else:
                         dice.append(slice(None))
+                logger.debug(f"    dice = {tuple(dice)}")  # pragma: no cover
 
-                # Generally we do not apply an auxiliary mask to the
+                # Generally we do not apply an ancillary mask to the
                 # metadata items, but for DSGs we do.
-                if auxiliary_mask and new.DSG:
+                if ancillary_mask and new.DSG:
                     item_mask = []
-                    for mask in auxiliary_mask[1]:
+                    for mask in ancillary_mask[1]:
                         iaxes = [
                             data_axes.index(axis)
                             for axis in construct_axes
@@ -496,7 +497,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                     if item_mask:
                         needs_slicing = True
-                        dice = [auxiliary_mask[0], item_mask] + dice
+                        dice = [ancillary_mask[0], item_mask] + dice
 
                 # Replace existing construct with its subspace
                 if needs_slicing:
@@ -908,11 +909,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f._binary_operation(g, '__rdiv__')
 
         """
-
-        if isinstance(other, Query):
-            # --------------------------------------------------------
-            # Combine the field with a Query object
-            # --------------------------------------------------------
+        if getattr(other, "_NotImplemented_RHS_Data_op", False):
             return NotImplemented
 
         if not isinstance(other, self.__class__):
@@ -3985,6 +3982,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 f"Got {aux_X.bounds.shape} and {aux_Y.bounds.shape}"
             )
 
+        # TODODASK: This if block is probably deletable with the
+        #           demise of LAMA, but check!
         if not methods:
             if aux_X.bounds.data.fits_in_one_chunk_in_memory(
                 aux_X.bounds.dtype.itemsize
@@ -4082,6 +4081,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def varray(self):
         """A numpy array view of the data array.
 
+        Deprecated at version TODODASKVER. Data are now stored as
+        `dask` arrays for which, in general, a numpy array view is not
+        robust.
+
         Changing the elements of the returned view changes the data array.
 
         .. seealso:: `array`, `data`, `datetime_array`
@@ -4104,8 +4107,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         <CF Data(5): [999, ... 4] kg m-1 s-2>
 
         """
-        self.uncompress(inplace=True)
-        return super().varray
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "varray",
+            message="Data are now stored as `dask` arrays for which, "
+            "in general, a numpy array view is not robust.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # CF properties
@@ -6871,51 +6880,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             out.set_construct(cell_method, copy=False)
 
         return out
-
-    def has_construct(self, *identity, **filter_kwargs):
-        """Whether a metadata construct exists.
-
-        .. versionadded:: 3.4.0
-
-        .. seealso:: `construct`, `del_construct`, `get_construct`,
-                     `set_construct`
-
-        :Parameters:
-
-            identity, filter_kwargs: optional
-                Select the unique construct returned by
-                ``f.construct(*identity, **filter_kwargs)``. See
-                `construct` for details.
-
-        :Returns:
-
-            `bool`
-                `True` if the construct exists, otherwise `False`.
-
-        **Examples**
-
-        >>> f = cf.example_field(0)
-        >>> print(f)
-        Field: specific_humidity (ncvar%q)
-        ----------------------------------
-        Data            : specific_humidity(latitude(5), longitude(8)) 1
-        Cell methods    : area: mean
-        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                        : longitude(8) = [22.5, ..., 337.5] degrees_east
-                        : time(1) = [2019-01-01 00:00:00]
-
-        >>> f.has_construct('T')
-        True
-        >>> f.has_construct('longitude')
-        True
-        >>> f.has_construct('Z')
-        False
-
-        """
-        return (
-            self.construct(*identity, default=None, **filter_kwargs)
-            is not None
-        )
 
     def histogram(self, digitized):
         """Return a multi-dimensional histogram of the data.
@@ -10531,83 +10495,91 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         The subspace is defined by identifying indices based on the
         metadata constructs.
 
-        Metadata constructs are selected conditions are specified on their
-        data. Indices for subspacing are then automatically inferred from
-        where the conditions are met.
+        Metadata constructs are selected conditions are specified on
+        their data. Indices for subspacing are then automatically
+        inferred from where the conditions are met.
 
-        The returned tuple of indices may be used to created a subspace by
-        indexing the original field construct with them.
+        The returned tuple of indices may be used to created a
+        subspace by indexing the original field construct with them.
 
-        Metadata constructs and the conditions on their data are defined
-        by keyword parameters.
+        Metadata constructs and the conditions on their data are
+        defined by keyword parameters.
 
-        * Any domain axes that have not been identified remain unchanged.
+        * Any domain axes that have not been identified remain
+          unchanged.
 
         * Multiple domain axes may be subspaced simultaneously, and it
           doesn't matter which order they are specified in.
 
-        * Subspace criteria may be provided for size 1 domain axes that
-          are not spanned by the field construct's data.
+        * Subspace criteria may be provided for size 1 domain axes
+          that are not spanned by the field construct's data.
 
         * Explicit indices may also be assigned to a domain axis
-          identified by a metadata construct, with either a Python `slice`
-          object, or a sequence of integers or booleans.
+          identified by a metadata construct, with either a Python
+          `slice` object, or a sequence of integers or booleans.
 
-        * For a dimension that is cyclic, a subspace defined by a slice or
-          by a `Query` instance is assumed to "wrap" around the edges of
-          the data.
+        * For a dimension that is cyclic, a subspace defined by a
+          slice or by a `Query` instance is assumed to "wrap" around
+          the edges of the data.
 
         * Conditions may also be applied to multi-dimensional metadata
-          constructs. The "compress" mode is still the default mode (see
-          the positional arguments), but because the indices may not be
-          acting along orthogonal dimensions, some missing data may still
-          need to be inserted into the field construct's data.
+          constructs. The "compress" mode is still the default mode
+          (see the positional arguments), but because the indices may
+          not be acting along orthogonal dimensions, some missing data
+          may still need to be inserted into the field construct's
+          data.
 
-        **Auxiliary masks**
+        **Ancillary masks**
 
-        When creating an actual subspace with the indices, if the first
-        element of the tuple of indices is ``'mask'`` then the extent of
-        the subspace is defined only by the values of elements three and
-        onwards. In this case the second element contains an "auxiliary"
-        data mask that is applied to the subspace after its initial
-        creation, in order to set unselected locations to missing data.
+        When creating an actual subspace with the indices, if the
+        first element of the tuple of indices is ``'mask'`` then the
+        second element is a tuple of auxiliary masks, and the
+        remaining elements contain the usual indexing information that
+        defines the extent of the subspace. Each auxiliary mask
+        broadcasts to the subspaced data, and when the subspace is
+        actually created, these masks are all automatically applied to
+        the result.
 
-        .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
+        .. seealso:: `subspace`, `where`, `__getitem__`,
+                     `__setitem__`, `cf.Domain.indices`
 
         :Parameters:
 
             mode: `str`, *optional*
-                There are three modes of operation, each of which provides
-                indices for a different type of subspace:
+                There are three modes of operation, each of which
+                provides indices for a different type of subspace:
 
-                ==============  ==========================================
+                ==============  ======================================
                 *mode*          Description
-                ==============  ==========================================
+                ==============  ======================================
                 ``'compress'``  This is the default mode. Unselected
                                 locations are removed to create the
                                 returned subspace. Note that if a
-                                multi-dimensional metadata construct is
-                                being used to define the indices then some
-                                missing data may still be inserted at
-                                unselected locations.
+                                multi-dimensional metadata construct
+                                is being used to define the indices
+                                then some missing data may still be
+                                inserted at unselected locations.
 
-                ``'envelope'``  The returned subspace is the smallest that
-                                contains all of the selected
+                ``'envelope'``  The returned subspace is the smallest
+                                that contains all of the selected
                                 indices. Missing data is inserted at
-                                unselected locations within the envelope.
+                                unselected locations within the
+                                envelope.
 
-                ``'full'``      The returned subspace has the same domain
-                                as the original field construct. Missing
-                                data is inserted at unselected locations.
-                ==============  ==========================================
+                ``'full'``      The returned subspace has the same
+                                domain as the original field
+                                construct. Missing data is inserted at
+                                unselected locations.
+                ==============  ======================================
 
             kwargs: *optional*
-                A keyword name is an identity of a metadata construct, and
-                the keyword value provides a condition for inferring
-                indices that apply to the dimension (or dimensions)
-                spanned by the metadata construct's data. Indices are
-                created that select every location for which the metadata
-                construct's data satisfies the condition.
+                A keyword name is an identity of a metadata construct,
+                and the keyword value provides a condition for
+                inferring indices that apply to the dimension (or
+                dimensions) spanned by the metadata construct's
+                data. Indices are created that select every location
+                for which the metadata construct's data satisfies the
+                condition.
 
         :Returns:
 
@@ -10652,7 +10624,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> print(q)
         <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
 
-        >>> print(a)
+        >>> f = cf.example_field(2)
         Field: air_potential_temperature (ncvar%air_potential_temperature)
         ------------------------------------------------------------------
         Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
@@ -10661,18 +10633,37 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : latitude(5) = [-75.0, ..., 75.0] degrees_north
                         : longitude(8) = [22.5, ..., 337.5] degrees_east
                         : air_pressure(1) = [850.0] hPa
-        >>> a.indices(T=410.5)
-        (slice(2, 3, 1), slice(0, 5, 1), slice(0, 8, 1))
-        >>> a.indices(T=cf.dt('1960-04-16'))
-        (slice(4, 5, 1), slice(0, 5, 1), slice(0, 8, 1))
-        >>> indices = a.indices(T=cf.wi(cf.dt('1962-11-01'),
-        ...                             cf.dt('1967-03-17 07:30')))
-        >>> print(indices)
-        (slice(35, 88, 1), slice(0, 5, 1), slice(0, 8, 1))
-        >>> a[indices]
+        >>> f.indices(T=410.5)
+        (dask.array<isclose, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
+         slice(None, None, None),
+         slice(None, None, None))
+        >>> f.indices(T=cf.dt('1961-11-16'))
+        (dask.array<isclose, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
+         slice(0, 5, 1),
+         slice(0, 8, 1))
+        >>> indices = f.indices(T=cf.wi(cf.dt('1960-03-01'),
+        ...                             cf.dt('1961-12-17 07:30')))
+        >>> indices
+        (dask.array<and_, shape=(36,), dtype=bool, chunksize=(36,), chunktype=numpy.ndarray>,
+        slice(None, None, None),
+        slice(None, None, None))
+        >>> print(indices[0].compute())
+        [False False False  True  True  True  True  True  True  True  True  True
+          True  True  True  True  True  True  True  True  True  True  True  True
+          True False False False False False False False False False False False]
+        >>> print(f[indices])
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(22), latitude(5), longitude(8)) K
+        Cell methods    : area: mean
+        Dimension coords: time(22) = [1960-03-16 12:00:00, ..., 1961-12-16 12:00:00]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
         <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
 
-        >>> print(t)
+        >>> f = cf.example_field(1)
         Field: air_temperature (ncvar%ta)
         ---------------------------------
         Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
@@ -10691,11 +10682,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                         : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                         : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-        >>> indices = t.indices(latitude=cf.wi(51, 53))
-        >>> print(indices)
-        ('mask', [<CF Data(1, 5, 9): [[[False, ..., False]]]>], slice(0, 1, 1), slice(3, 8, 1), slice(0, 9, 1))
-        >>> t[indices]
-        <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
+        >>> indices = f.indices(latitude=cf.wi(51.5, 52.4))
+        >>> indices
+        ('mask',
+         (<CF Data(1, 5, 9): [[[False, ..., False]]]>,),
+         slice(None, None, None),
+         [4, 5, 6],
+         [0, 1, 2, 3, 4, 5, 6, 7, 8])
+        >>> f[indices]
+        <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(3), grid_longitude(9)) K>
+        >>> print(f[indices].array)
+        [[[264.2 275.9 262.5 264.9 264.7 270.2 270.4 -- --]
+         [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
+         [-- -- -- -- -- -- 270.6 273.0 270.6]]]
 
         """
         if "exact" in mode:
@@ -10723,19 +10722,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         data_axes = self.get_data_axes()
 
-        # ------------------------------------------------------------
         # Get the indices for every domain axis in the domain,
-        # including any auxiliary masks
-        # ------------------------------------------------------------
-        domain_indices = self._indices(mode, data_axes, True, **kwargs)
+        # including any ancillary masks
+        domain_indices = self._indices(mode, data_axes, True, kwargs)
 
-        # Initialise the output indices with any auxiliary masks
-        auxiliary_mask = domain_indices["mask"]
-        if auxiliary_mask:
-            # Ensure that each auxiliary mask is broadcastable to the
-            # data
+        # Initialise the output indices with any ancillary masks.
+        # Ensure that each ancillary mask is broadcastable to the
+        # data, by adding any missing size 1 dimensions and reordering
+        # to the dimensions to the order of the field's data.
+        ancillary_mask = domain_indices["mask"]
+        if ancillary_mask:
             masks = []
-            for axes, mask in auxiliary_mask.items():
+            for axes, mask in ancillary_mask.items():
                 axes = list(axes)
                 for i, axis in enumerate(data_axes):
                     if axis not in axes:
@@ -10754,445 +10752,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         indices.extend([domain_indices["indices"][axis] for axis in data_axes])
 
         return tuple(indices)
-
-        # iiiiiiiiiiiiiiiiiiii
-
-        if "exact" in mode:
-            _DEPRECATION_ERROR_ARG(
-                self,
-                "indices",
-                "exact",
-                "Keywords are now never interpreted as regular expressions.",
-            )  # pragma: no cover
-
-        if len(mode) > 1:
-            raise ValueError(
-                "Can't provide more than one positional argument."
-            )
-
-        envelope = "envelope" in mode
-        full = "full" in mode
-        compress = "compress" in mode or not (envelope or full)
-
-        logger.debug(
-            "Field.indices:"
-            f"    envelope, full, compress = {envelope} {full} {compress}"
-        )  # pragma: no cover
-
-        auxiliary_mask = []
-
-        data_axes = self.get_data_axes()
-
-        # Initialize indices
-        indices = [slice(None)] * self.ndim
-
-        domain_axes = self.domain_axes(todict=True)
-
-        parsed = {}
-        unique_axes = set()
-        n_axes = 0
-        for identity, value in kwargs.items():
-            if identity in domain_axes:
-                axes = (identity,)
-                key = None
-                construct = None
-            else:
-                key, construct = self.construct(
-                    identity,
-                    filter_by_data=True,
-                    item=True,
-                    default=(None, None),
-                )
-                if construct is None:
-                    raise ValueError(
-                        "Can't find indices: Ambiguous axis or axes: "
-                        f"{identity!r}"
-                    )
-
-                axes = self.get_data_axes(key)
-
-            sorted_axes = tuple(sorted(axes))
-            if sorted_axes not in parsed:
-                n_axes += len(sorted_axes)
-
-            parsed.setdefault(sorted_axes, []).append(
-                (axes, key, construct, value)
-            )
-
-            unique_axes.update(sorted_axes)
-
-        if len(unique_axes) < n_axes:
-            raise ValueError(
-                "Can't find indices: Multiple constructs with incompatible "
-                "domain axes"
-            )
-
-        for sorted_axes, axes_key_construct_value in parsed.items():
-            axes, keys, constructs, points = list(
-                zip(*axes_key_construct_value)
-            )
-            n_items = len(constructs)
-            n_axes = len(sorted_axes)
-
-            if n_items > n_axes:
-                if n_axes == 1:
-                    a = "axis"
-                else:
-                    a = "axes"
-
-                raise ValueError(
-                    f"Error: Can't specify {n_items} conditions for "
-                    f"{n_axes} {a}: {points}"
-                )
-
-            create_mask = False
-
-            item_axes = axes[0]
-
-            logger.debug(
-                f"    item_axes = {item_axes!r}" f"    keys      = {keys!r}"
-            )  # pragma: no cover
-
-            if n_axes == 1:
-                # ----------------------------------------------------
-                # 1-d construct
-                # ----------------------------------------------------
-                ind = None
-
-                logger.debug(
-                    f"    {n_items} 1-d constructs: {constructs!r}"
-                )  # pragma: no cover
-
-                axis = item_axes[0]
-                item = constructs[0]
-                value = points[0]
-
-                logger.debug(
-                    f"    axis      = {axis!r}" f"    value     = {value!r}"
-                )  # pragma: no cover
-
-                if isinstance(value, (list, slice, tuple, numpy_ndarray)):
-                    # ------------------------------------------------
-                    # 1-dimensional CASE 1: Value is already an index,
-                    #                       e.g. [0], (0,3),
-                    #                       slice(0,4,2),
-                    #                       numpy.array([2,4,7]),
-                    #                       [True, False, True]
-                    # -------------------------------------------------
-                    logger.debug("    1-d CASE 1: ")  # pragma: no cover
-
-                    index = value
-
-                    if envelope or full:
-                        size = self.constructs[axis].get_size()
-                        d = Data(list(range(size)))
-                        ind = (d[value].array,)
-                        index = slice(None)
-
-                elif (
-                    item is not None
-                    and isinstance(value, Query)
-                    and value.operator in ("wi", "wo")
-                    and item.construct_type == "dimension_coordinate"
-                    and self.iscyclic(axis)
-                ):
-                    # self.iscyclic(sorted_axes)):
-                    # ------------------------------------------------
-                    # 1-dimensional CASE 2: Axis is cyclic and
-                    #                       subspace criterion is a
-                    #                       'within' or 'without'
-                    #                       Query instance
-                    # -------------------------------------------------
-                    logger.debug("    1-d CASE 2: ")  # pragma: no cover
-
-                    if item.increasing:
-                        anchor0 = value.value[0]
-                        anchor1 = value.value[1]
-                    else:
-                        anchor0 = value.value[1]
-                        anchor1 = value.value[0]
-
-                    a = self.anchor(axis, anchor0, dry_run=True)["roll"]
-                    b = self.flip(axis).anchor(axis, anchor1, dry_run=True)[
-                        "roll"
-                    ]
-
-                    size = item.size
-                    if abs(anchor1 - anchor0) >= item.period():
-                        if value.operator == "wo":
-                            set_start_stop = 0
-                        else:
-                            set_start_stop = -a
-
-                        start = set_start_stop
-                        stop = set_start_stop
-                    elif a + b == size:
-                        b = self.anchor(axis, anchor1, dry_run=True)["roll"]
-                        if (b == a and value.operator == "wo") or not (
-                            b == a or value.operator == "wo"
-                        ):
-                            set_start_stop = -a
-                        else:
-                            set_start_stop = 0
-
-                        start = set_start_stop
-                        stop = set_start_stop
-                    else:
-                        if value.operator == "wo":
-                            start = b - size
-                            stop = -a + size
-                        else:
-                            start = -a
-                            stop = b - size
-
-                    index = slice(start, stop, 1)
-
-                    if full:
-                        # index = slice(start, start+size, 1)
-                        d = Data(list(range(size)))
-                        d.cyclic(0)
-                        ind = (d[index].array,)
-
-                        index = slice(None)
-
-                elif item is not None:
-                    # -------------------------------------------------
-                    # 1-dimensional CASE 3: All other 1-d cases
-                    # -------------------------------------------------
-                    logger.debug("    1-d CASE 3:")  # pragma: no cover
-
-                    item_match = value == item
-
-                    if not item_match.any():
-                        raise ValueError(
-                            f"No {identity!r} axis indices found from: {value}"
-                        )
-
-                    index = numpy_asanyarray(item_match)
-
-                    if envelope or full:
-                        if numpy_ma_isMA(index):
-                            ind = numpy_ma_where(index)
-                        else:
-                            ind = numpy_where(index)
-
-                        index = slice(None)
-
-                else:
-                    raise ValueError(
-                        "Must specify a domain axis construct or a construct "
-                        "with data for which to create indices"
-                    )
-
-                logger.debug(f"    index = {index}")  # pragma: no cover
-
-                # Put the index into the correct place in the list of
-                # indices.
-                #
-                # Note that we might overwrite it later if there's an
-                # auxiliary mask for this axis.
-                if axis in data_axes:
-                    indices[data_axes.index(axis)] = index
-
-            else:
-                # -----------------------------------------------------
-                # N-dimensional constructs
-                # -----------------------------------------------------
-                logger.debug(
-                    f"    {n_items} N-d constructs: {constructs!r}"
-                    f"    {len(points)} points        : {points!r}"
-                    f"    field.shape     : {self.shape}"
-                )  # pragma: no cover
-
-                # Make sure that each N-d item has the same relative
-                # axis order as the field's data array.
-                #
-                # For example, if the data array of the field is
-                # ordered T Z Y X and the item is ordered Y T then the
-                # item is transposed so that it is ordered T Y. For
-                # example, if the field's data array is ordered Z Y X
-                # and the item is ordered X Y T (T is size 1) then
-                # transpose the item so that it is ordered Y X T.
-                g = self.transpose(data_axes, constructs=True)
-
-                #                g = self
-                #                data_axes = .get_data_axes(default=None)
-                #                for item_axes2 in axes:
-                #                    if item_axes2 != data_axes:
-                #                        g = self.transpose(data_axes, constructs=True)
-                #                        break
-
-                item_axes = g.get_data_axes(keys[0])
-
-                constructs = [g.constructs[key] for key in keys]
-                logger.debug(
-                    f"    transposed N-d constructs: {constructs!r}"
-                )  # pragma: no cover
-
-                item_matches = [
-                    (value == construct).data
-                    for value, construct in zip(points, constructs)
-                ]
-
-                item_match = item_matches.pop()
-
-                for m in item_matches:
-                    item_match &= m
-
-                item_match = item_match.array  # LAMA alert
-
-                if numpy_ma_isMA:
-                    ind = numpy_ma_where(item_match)
-                else:
-                    ind = numpy_where(item_match)
-
-                logger.debug(
-                    f"    item_match  = {item_match}"
-                    f"    ind         = {ind}"
-                )  # pragma: no cover
-
-                bounds = [
-                    item.bounds.array[ind]
-                    for item in constructs
-                    if item.has_bounds()
-                ]
-
-                contains = False
-                if bounds:
-                    points2 = []
-                    for v, construct in zip(points, constructs):
-                        if isinstance(v, Query):
-                            if v.operator == "contains":
-                                contains = True
-                                v = v.value
-                            elif v.operator == "eq":
-                                v = v.value
-                            else:
-                                contains = False
-                                break
-
-                        v = Data.asdata(v)
-                        if v.Units:
-                            v.Units = construct.Units
-
-                        points2.append(v.datum())
-
-                if contains:
-                    # The coordinates have bounds and the condition is
-                    # a 'contains' Query object. Check each
-                    # potentially matching cell for actually including
-                    # the point.
-                    try:
-                        Path
-                    except NameError:
-                        raise ImportError(
-                            "Must install matplotlib to create indices based "
-                            f"on {constructs[0].ndim}-d constructs and a "
-                            "'contains' Query object"
-                        )
-
-                    if n_items != 2:
-                        raise ValueError(
-                            f"Can't index for cell from {n_axes}-d coordinate "
-                            "objects"
-                        )
-
-                    if len(bounds) != 1:
-                        raise ValueError(
-                            "Can't create indices based on coordinates that "
-                            "have bounds that aren't unique."
-                        )
-
-                    # Remove grid cells if, upon closer inspection,
-                    # they do actually contain the point.
-                    delete = [
-                        n
-                        for n, vertices in enumerate(zip(*zip(*bounds)))
-                        if not Path(zip(*vertices)).contains_point(points2)
-                    ]
-
-                    if delete:
-                        ind = [numpy_delete(ind_1d, delete) for ind_1d in ind]
-
-            if ind is not None:
-                mask_shape = [None] * self.ndim
-                masked_subspace_size = 1
-                ind = numpy_array(ind)
-                logger.debug(f"    ind = {ind}")  # pragma: no cover
-
-                for i, (axis, start, stop) in enumerate(
-                    zip(item_axes, ind.min(axis=1), ind.max(axis=1))
-                ):
-                    if axis not in data_axes:
-                        continue
-
-                    position = data_axes.index(axis)
-
-                    if indices[position] == slice(None):
-                        if compress:
-                            # Create a compressed index for this axis
-                            size = stop - start + 1
-                            index = sorted(set(ind[i]))
-                        elif envelope:
-                            # Create an envelope index for this axis
-                            stop += 1
-                            size = stop - start
-                            index = slice(start, stop)
-                        elif full:
-                            # Create a full index for this axis
-                            start = 0
-                            #                            stop = self.axis_size(axis)
-                            stop = domain_axes[axis].get_size()
-                            size = stop - start
-                            index = slice(start, stop)
-                        else:
-                            raise ValueError(
-                                "Must have full, envelope or compress"
-                            )  # pragma: no cover
-
-                        indices[position] = index
-
-                    mask_shape[position] = size
-                    masked_subspace_size *= size
-                    ind[i] -= start
-
-                create_mask = ind.shape[1] < masked_subspace_size
-            else:
-                create_mask = False
-
-            # --------------------------------------------------------
-            # Create an auxiliary mask for these axes
-            # --------------------------------------------------------
-            logger.debug(
-                f"    create_mask = {create_mask}"
-            )  # pragma: no cover
-
-            if create_mask:
-                logger.debug(
-                    f"    mask_shape  = {mask_shape}"
-                )  # pragma: no cover
-
-                mask = self.data._create_auxiliary_mask_component(
-                    mask_shape, ind, compress
-                )
-                auxiliary_mask.append(mask)
-                logger.debug(
-                    f"    mask_shape  = {mask_shape}"
-                )  # pragma: no cover
-                logger.debug(
-                    f"    mask.shape  = {mask.shape}"
-                )  # pragma: no cover
-
-        indices = tuple(parse_indices(self.shape, tuple(indices)))
-
-        if auxiliary_mask:
-            indices = ("mask", auxiliary_mask) + indices
-
-            logger.debug(f"    Final indices = {indices}")  # pragma: no cover
-
-        # Return the tuple of indices and the auxiliary mask (which
-        # may be None)
-        return indices
 
     @_inplace_enabled(default=True)
     def set_data(
@@ -11835,7 +11394,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Moving mean, sum, and integral calculations are possible.
 
         By default moving means are unweighted, but weights based on
-        the axis cell sizes (or custom weights) may applied to the
+        the axis cell sizes, or custom weights, may applied to the
         calculation via the *weights* parameter.
 
         By default moving integrals must be weighted.
@@ -12185,10 +11744,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             )
 
             # Multiply the field by the (possibly adjusted) weights
-            if numpy_can_cast(w.dtype, f.dtype):
-                f *= w
-            else:
-                f = f * w
+            f = f * w
 
         # Create the window weights
         window = numpy_full((window_size,), 1.0)
@@ -12218,10 +11774,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 origin=origin,
                 inplace=True,
             )
-            if numpy_can_cast(w.dtype, f.dtype):
-                f /= w
-            else:
-                f = f / w
+            f = f / w
 
         # Add a cell method
         if f.domain_axis(axis).get_size() > 1 or method == "integral":
@@ -12525,45 +12078,43 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 filter_by_axis=(axis_key,), default=None
             )
             if coord is not None and coord.has_bounds():
-                old_bounds = coord.bounds.array
-                length = old_bounds.shape[0]
-                new_bounds = numpy_empty((length, 2))
+                old_bounds = coord.bounds.data
+                new_bounds = self._Data.empty(
+                    old_bounds.shape, units=coord.Units
+                )
                 len_weights = len(window)
                 lower_offset = len_weights // 2 + origin
                 upper_offset = len_weights - 1 - lower_offset
                 if mode == "wrap":
                     if coord.direction():
-                        new_bounds[:, 0] = coord.roll(
+                        new_bounds[:, 0:1] = coord.roll(
                             0, upper_offset
-                        ).bounds.array[:, 0]
-                        new_bounds[:, 1] = (
-                            coord.roll(0, -lower_offset).bounds.array[:, 1]
-                            + coord.period()
-                        )
+                        ).bounds[:, 0:1]
+                        new_bounds[:, 1:] = (
+                            coord.roll(0, -lower_offset).bounds[:, 1:]
+                        ) + coord.period()
                     else:
-                        new_bounds[:, 0] = (
-                            coord.roll(0, upper_offset).bounds.array[:, 0]
-                            + 2 * coord.period()
-                        )
-                        new_bounds[:, 1] = (
-                            coord.roll(0, -lower_offset).bounds.array[:, 1]
+                        new_bounds[:, 0:1] = (
+                            coord.roll(0, upper_offset).bounds[:, 0:1]
                             + coord.period()
                         )
+                        new_bounds[:, 1:] = coord.roll(
+                            0, -lower_offset
+                        ).bounds[:, 1:]
                 else:
-                    new_bounds[upper_offset:length, 0] = old_bounds[
-                        0 : length - upper_offset, 0
+                    length = old_bounds.shape[0]
+                    new_bounds[upper_offset:length, 0:1] = old_bounds[
+                        0 : length - upper_offset, 0:1
                     ]
-                    new_bounds[0:upper_offset, 0] = old_bounds[0, 0]
-                    new_bounds[0 : length - lower_offset, 1] = old_bounds[
-                        lower_offset:length, 1
+                    new_bounds[0:upper_offset, 0:1] = old_bounds[0, 0:1]
+                    new_bounds[0 : length - lower_offset, 1:] = old_bounds[
+                        lower_offset:length, 1:
                     ]
-                    new_bounds[length - lower_offset : length, 1] = old_bounds[
-                        length - 1, 1
-                    ]
+                    new_bounds[
+                        length - lower_offset : length, 1:
+                    ] = old_bounds[length - 1, 1:]
 
-                coord.set_bounds(
-                    self._Bounds(data=Data(new_bounds, units=coord.Units))
-                )
+                coord.set_bounds(self._Bounds(data=new_bounds))
 
         return f
 
@@ -12619,23 +12170,47 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Examples**
 
-        TODO
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> x = f.convert('X')
+        >>> print(x)
+        Field: longitude (ncvar%lon)
+        ----------------------------
+        Data            : longitude(longitude(8)) degrees_east
+        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+        >>> print(x.array)
+        [ 22.5  67.5 112.5 157.5 202.5 247.5 292.5 337.5]
+        >>> cs = f.convert('X', cellsize=True)
+        >>> print(cs)
+        Field: longitude (ncvar%lon)
+        ----------------------------
+        Data            : longitude(longitude(8)) degrees_east
+        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+        >>> print(cs.array)
+        [45. 45. 45. 45. 45. 45. 45. 45.]
+        >>> print(f.convert('X', full_domain=False))
+        Field: longitude (ncvar%lon)
+        ----------------------------
+        Data            : longitude(ncdim%lon(8)) degrees_east
 
         """
-        key, construct = self.construct(
+        key, c = self.construct(
             *identity, item=True, default=(None, None), **filter_kwargs
         )
-        if key is None:
-            raise ValueError(
-                f"Can't find metadata construct with identity {identity!r}"
-            )
 
-        f = super().convert(key, full_domain=full_domain)
+        f = super().convert(full_domain=full_domain, filter_by_key=(key,))
 
         if cellsize:
             # Change the new field's data to cell sizes
             try:
-                cs = construct.cellsize
+                cs = c.cellsize
             except AttributeError as error:
                 raise ValueError(error)
 
@@ -13266,144 +12841,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def cell_method(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Select a cell method construct.
-
-        {{unique construct}}
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `cell_methods`
-
-        :Parameters:
-
-            identity: optional
-                Select cell method constructs that have an identity,
-                defined by their `!identities` methods, that matches
-                any of the given values.
-
-                Additionally, the values are matched against construct
-                identifiers, with or without the ``'key%'`` prefix.
-
-                Additionally, if for a given value
-                ``f.domain_axes(value)`` returns a unique domain axis
-                construct then any cell method constructs that span
-                exactly that axis are selected. See `domain_axes` for
-                details.
-
-                If no values are provided then all cell method
-                constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{key: `bool`, optional}}
-
-            {{item: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 3.9.0
-
-            default: optional
-                Return the value of the *default* parameter if there
-                is no unique construct.
-
-                {{default Exception}}
-
-            {{filter_kwargs: optional}}
-
-                .. versionadded:: (cfdm) 3.9.0
-
-        :Returns:
-
-                {{Returns construct}}
-
-        **Examples**
-
-        """
-        return self._construct(
-            "cell_method",
-            "cell_methods",
-            identity,
-            key=key,
-            item=item,
-            default=default,
-            **filter_kwargs,
-        )
-
-    def field_ancillary(
-        self,
-        *identity,
-        default=ValueError(),
-        key=False,
-        item=False,
-        **filter_kwargs,
-    ):
-        """Select a field ancillary construct.
-
-        {{unique construct}}
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `construct`, `field_ancillaries`
-
-        :Parameters:
-
-            identity: optional
-                Select field ancillary constructs that have an
-                identity, defined by their `!identities` methods, that
-                matches any of the given values.
-
-                Additionally, the values are matched against construct
-                identifiers, with or without the ``'key%'`` prefix.
-
-                If no values are provided then all field ancillary
-                constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{key: `bool`, optional}}
-
-            {{item: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 3.9.0
-
-            default: optional
-                Return the value of the *default* parameter if there
-                is no unique construct.
-
-                {{default Exception}}
-
-            {{filter_kwargs: optional}}
-
-                .. versionadded:: (cfdm) 3.9.0
-
-        :Returns:
-
-                {{Returns construct}}
-
-        **Examples**
-
-        """
-        return self._construct(
-            "field_ancillary",
-            "field_ancillaries",
-            identity,
-            key=key,
-            item=item,
-            default=default,
-            **filter_kwargs,
-        )
-
     def domain_axis_position(self, *identity, **filter_kwargs):
         """Return the position in the data of a domain axis construct.
 
@@ -13525,67 +12962,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             return self._default(default)
 
         return axis.get_size(default=default)
-
-    def get_data_axes(self, *identity, default=ValueError(), **filter_kwargs):
-        """Return domain axis constructs spanned by data.
-
-        Specifically, returns the keys of the domain axis constructs
-        spanned by the field's data, or the data of a metadata construct.
-
-        .. versionadded:: 3.0.0
-
-        .. seealso:: `del_data_axes`, `has_data_axes`,
-                     `set_data_axes`, `construct`
-
-        :Parameters:
-
-            identity, filter_kwargs: optional
-                Select the unique construct returned by
-                ``f.construct(*identity, **filter_kwargs)``. See
-                `construct` for details.
-
-                If neither *identity* nor *filter_kwargs* are set then
-                the domain of the field constructs's data are
-                returned.
-
-            default: optional
-                Return the value of the *default* parameter if the
-                data axes have not been set.
-
-                {{default Exception}}
-
-        :Returns:
-
-            `tuple` of `str`
-                The keys of the domain axis constructs spanned by the
-                data.
-
-        **Examples**
-
-        >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
-        >>> f.get_data_axes()
-        ('domainaxis0', 'domainaxis1')
-        >>> f.del_data_axes()
-        ('domainaxis0', 'domainaxis1')
-        >>> print(f.del_dataxes(None))
-        None
-        >>> print(f.get_data_axes(default=None))
-        None
-
-        """
-        if not identity and not filter_kwargs:
-            # Get axes of the Field data array
-            return super().get_data_axes(default=default)
-
-        key = self.construct(*identity, key=True, **filter_kwargs)
-
-        axes = super().get_data_axes(key, default=None)
-        if axes is None:
-            return self._default(
-                default, "Can't get axes for non-existent construct"
-            )
-
-        return axes
 
     def grad_xy(self, x_wrap=None, one_sided_at_boundary=False, radius=None):
         r"""Calculate the (X, Y) gradient vector.
@@ -14796,7 +14172,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         iaxes = self._axis_positions(axis, parse=False)
         if iaxes:
             # TODODASK - remove these two lines when multiaxis rolls
-            #            are allowed at v4.0.0
+            #            are allowed at TODODASKVER
             iaxis = iaxes[0]
             shift = shift[0]
 
