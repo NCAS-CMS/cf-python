@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.relative_vorticity &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.ATOL" href="cf.ATOL.html" />
+    <link rel="prev" title="cf.histogram" href="cf.histogram.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.13.1</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../function.html"><strong>cf functions</strong></a><ul>
+      <li>Previous: <a href="cf.histogram.html" title="previous chapter">cf.histogram</a></li>
+      <li>Next: <a href="cf.ATOL.html" title="next chapter">cf.ATOL</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-relative-vorticity">
+<h1>cf.relative_vorticity<a class="headerlink" href="#cf-relative-vorticity" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="cf.relative_vorticity">
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">relative_vorticity</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">wrap=None</em>, <em class="sig-param">one_sided_at_boundary=False</em>, <em class="sig-param">radius=6371229.0</em>, <em class="sig-param">cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.1/cf/maths.py#L7-L203"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.relative_vorticity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the relative vorticity using centred finite
+differences.</p>
+<p>The relative vorticity of wind defined on a Cartesian domain (such
+as a plane projection) is defined as</p>
+<blockquote>
+<div><p>ζcartesian = δv/δx − δu/δy</p>
+</div></blockquote>
+<p>where x and y are points on along the ‘X’ and ‘Y’ Cartesian
+dimensions respectively; and u and v denote the ‘X’ and ‘Y’
+components of the horizontal winds.</p>
+<p>If the wind field field is defined on a spherical
+latitude-longitude domain then a correction factor is included:</p>
+<blockquote>
+<div><p>ζspherical = δv/δx − δu/δy + (u/a)tan(ϕ)</p>
+</div></blockquote>
+<p>where u and v denote the longitudinal and latitudinal components
+of the horizontal wind field; a is the radius of the Earth; and ϕ
+is the latitude at each point.</p>
+<p>The relative vorticity is calculated using centred finite
+differences (see the <em>one_sided_at_boundary</em> parameter).</p>
+<p>The grid may be global or limited area. If missing values are
+present then missing values will be returned at points where the
+centred finite difference could not be calculated. The boundary
+conditions may be cyclic in longitude. The non-cyclic boundaries
+may either be filled with missing values or calculated with
+off-centre finite differences.</p>
+<p>Reference: H.B. Bluestein, Synoptic-Dynamic Meteorology in
+Midlatitudes, 1992, Oxford Univ. Press p113-114</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>u: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>A field containing the x-wind. Must be on the same grid as
+the y-wind.</p>
+</dd>
+<dt>v: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>A field containing the y-wind. Must be on the same grid as
+the x-wind.</p>
+</dd>
+<dt>radius: optional</dt><dd><p>The radius of the sphere when the winds are on a spherical
+polar coordinate domain. May be any numeric scalar object
+that can be converted to a <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object (which includes
+numpy array and <a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). By default <em>radius</em> has a
+value of 6371229.0 metres, representing the Earth’s
+radius. If units are not specified then units of metres
+are assumed.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>Five equivalent ways to set a radius of 6371200 metres:
+<code class="docutils literal notranslate"><span class="pre">radius=6371200</span></code>, <code class="docutils literal notranslate"><span class="pre">radius=numpy.array(6371200)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">radius=cf.Data(6371200)</span></code>, <code class="docutils literal notranslate"><span class="pre">radius=cf.Data(6371200,</span>
+<span class="pre">'m')</span></code>, <code class="docutils literal notranslate"><span class="pre">radius=cf.Data(6371.2,</span> <span class="pre">'km')</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Whether the longitude is cyclic or not. By default this is
+autodetected.</p>
+</dd>
+<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then if the field is not cyclic off-centre finite
+differences are calculated at the boundaries, otherwise
+missing values are used at the boundaries.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt><dd><p>The relative vorticity calculated with centred finite
+differences.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-10-17.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

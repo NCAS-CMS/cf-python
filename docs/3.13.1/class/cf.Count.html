@@ -1,0 +1,1352 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Count &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Count.dump" href="../method/cf.Count.dump.html" />
+    <link rel="prev" title="cf.Configuration.__repr__" href="../method/cf.Configuration.__repr__.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.13.1</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.Configuration.__repr__.html" title="previous chapter">cf.Configuration.__repr__</a></li>
+      <li>Next: <a href="../method/cf.Count.dump.html" title="next chapter">cf.Count.dump</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-count">
+<h1>cf.Count<a class="headerlink" href="#cf-count" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.Count">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Count</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.1/cf/count.py#L6-L45"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.count.Count</span></code></p>
+<p>A count variable required to uncompress a ragged array.</p>
+<p>A collection of features stored using a contiguous ragged array
+combines all features along a single dimension (the sample
+dimension) such that each feature in the collection occupies a
+contiguous block.</p>
+<p>The information needed to uncompress the data is stored in a count
+variable that gives the size of each block.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name of the count variable may be accessed
+with the <a class="reference internal" href="../method/cf.Count.nc_set_variable.html#cf.Count.nc_set_variable" title="cf.Count.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.Count.nc_get_variable.html#cf.Count.nc_get_variable" title="cf.Count.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.Count.nc_del_variable.html#cf.Count.nc_del_variable" title="cf.Count.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a>
+and <a class="reference internal" href="../method/cf.Count.nc_has_variable.html#cf.Count.nc_has_variable" title="cf.Count.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The name of the netCDF dimension spanned by the count variable’s
+data may be accessed with the <a class="reference internal" href="../method/cf.Count.nc_set_dimension.html#cf.Count.nc_set_dimension" title="cf.Count.nc_set_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></a>,
+<a class="reference internal" href="../method/cf.Count.nc_get_dimension.html#cf.Count.nc_get_dimension" title="cf.Count.nc_get_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></a>, <a class="reference internal" href="../method/cf.Count.nc_del_dimension.html#cf.Count.nc_del_dimension" title="cf.Count.nc_del_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></a> and <a class="reference internal" href="../method/cf.Count.nc_has_dimension.html#cf.Count.nc_has_dimension" title="cf.Count.nc_has_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_dimension</span></code></a>
+methods.</p>
+<p>The name of the netCDF sample dimension spanned by the compressed
+data (that is stored in the “sample_dimension” netCDF attribute
+and which does not correspond to a domain axis construct) may be
+accessed with the <a class="reference internal" href="../method/cf.Count.nc_set_sample_dimension.html#cf.Count.nc_set_sample_dimension" title="cf.Count.nc_set_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></a>,
+<a class="reference internal" href="../method/cf.Count.nc_get_sample_dimension.html#cf.Count.nc_get_sample_dimension" title="cf.Count.nc_get_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></a>, <a class="reference internal" href="../method/cf.Count.nc_del_sample_dimension.html#cf.Count.nc_del_sample_dimension" title="cf.Count.nc_del_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_sample_dimension</span></code></a> and
+<a class="reference internal" href="../method/cf.Count.nc_has_sample_dimension.html#cf.Count.nc_has_sample_dimension" title="cf.Count.nc_has_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_sample_dimension</span></code></a> methods.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.0.0.</span></p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+property names, with corresponding values. Ignored if
+the <em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cf.Count.set_properties.html#cf.Count.set_properties" title="cf.Count.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.Count.set_property.html#cf.Count.set_property" title="cf.Count.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'number</span> <span class="pre">of</span> <span class="pre">obs'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>data: data_like, optional</dt><dd><p>Set the data. Ignored if the <em>source</em> parameter is
+set.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
+<p>The data also may be set after initialisation with the
+<a class="reference internal" href="../method/cf.Count.set_data.html#cf.Count.set_data" title="cf.Count.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
+</dd>
+<dt>source: optional</dt><dd><p>Initialise the properties and data from those of
+<em>source</em>.</p>
+<p>Note that if <em>source</em> is a <a class="reference internal" href="#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.Count(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.dump.html#cf.Count.dump" title="cf.Count.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description of the count variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.identity.html#cf.Count.identity" title="cf.Count.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
+<td><p>Return the canonical identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.identities.html#cf.Count.identities" title="cf.Count.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p></td>
+<td><p>Return all possible identities.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.inspect.html#cf.Count.inspect" title="cf.Count.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
+<td><p>Inspect the object for debugging.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.id.html#cf.Count.id" title="cf.Count.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></p></td>
+<td><p>An identity for the Count object.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="selection">
+<h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.match_by_identity.html#cf.Count.match_by_identity" title="cf.Count.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></p></td>
+<td><p>Whether or not the construct identity satisfies conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.match_by_naxes.html#cf.Count.match_by_naxes" title="cf.Count.match_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_naxes</span></code></a></p></td>
+<td><p>Whether or not the data has a given dimensionality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.match_by_ncvar.html#cf.Count.match_by_ncvar" title="cf.Count.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a></p></td>
+<td><p>Whether or not the netCDF variable name satisfies conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.match_by_property.html#cf.Count.match_by_property" title="cf.Count.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></p></td>
+<td><p>Whether or not properties satisfy conditions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.match_by_units.html#cf.Count.match_by_units" title="cf.Count.match_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_units</span></code></a></p></td>
+<td><p>Whether or not the construct has given units.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.del_property.html#cf.Count.del_property" title="cf.Count.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.get_property.html#cf.Count.get_property" title="cf.Count.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Get a CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.has_property.html#cf.Count.has_property" title="cf.Count.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Whether a property has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.set_property.html#cf.Count.set_property" title="cf.Count.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<td><p>Set a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.properties.html#cf.Count.properties" title="cf.Count.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.clear_properties.html#cf.Count.clear_properties" title="cf.Count.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<td><p>Remove all properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.set_properties.html#cf.Count.set_properties" title="cf.Count.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set properties.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.add_offset.html#cf.Count.add_offset" title="cf.Count.add_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_offset</span></code></a></p></td>
+<td><p>The add_offset CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.calendar.html#cf.Count.calendar" title="cf.Count.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a></p></td>
+<td><p>The calendar CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.comment.html#cf.Count.comment" title="cf.Count.comment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comment</span></code></a></p></td>
+<td><p>The comment CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count._FillValue.html#cf.Count._FillValue" title="cf.Count._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a></p></td>
+<td><p>The _FillValue CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.history.html#cf.Count.history" title="cf.Count.history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">history</span></code></a></p></td>
+<td><p>The history CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.leap_month.html#cf.Count.leap_month" title="cf.Count.leap_month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_month</span></code></a></p></td>
+<td><p>The leap_month CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.leap_year.html#cf.Count.leap_year" title="cf.Count.leap_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_year</span></code></a></p></td>
+<td><p>The leap_year CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.long_name.html#cf.Count.long_name" title="cf.Count.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a></p></td>
+<td><p>The long_name CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.missing_value.html#cf.Count.missing_value" title="cf.Count.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a></p></td>
+<td><p>The missing_value CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.month_lengths.html#cf.Count.month_lengths" title="cf.Count.month_lengths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month_lengths</span></code></a></p></td>
+<td><p>The month_lengths CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.scale_factor.html#cf.Count.scale_factor" title="cf.Count.scale_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_factor</span></code></a></p></td>
+<td><p>The scale_factor CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.standard_name.html#cf.Count.standard_name" title="cf.Count.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a></p></td>
+<td><p>The standard_name CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.units.html#cf.Count.units" title="cf.Count.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a></p></td>
+<td><p>The units CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.valid_max.html#cf.Count.valid_max" title="cf.Count.valid_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_max</span></code></a></p></td>
+<td><p>The valid_max CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.valid_min.html#cf.Count.valid_min" title="cf.Count.valid_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_min</span></code></a></p></td>
+<td><p>The valid_min CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.valid_range.html#cf.Count.valid_range" title="cf.Count.valid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_range</span></code></a></p></td>
+<td><p>The valid_range CF property.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="units">
+<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.override_units.html#cf.Count.override_units" title="cf.Count.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a></p></td>
+<td><p>Override the units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.override_calendar.html#cf.Count.override_calendar" title="cf.Count.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_calendar</span></code></a></p></td>
+<td><p>Override the calendar of date-time units.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.Units.html#cf.Count.Units" title="cf.Count.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object containing the units of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.array.html#cf.Count.array" title="cf.Count.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
+<td><p>A numpy array deep copy of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.Data.html#cf.Count.Data" title="cf.Count.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> attribute or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.data.html#cf.Count.data" title="cf.Count.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.datetime_array.html#cf.Count.datetime_array" title="cf.Count.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.datum.html#cf.Count.datum" title="cf.Count.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a></p></td>
+<td><p>Return an element of the data array as a standard Python scalar.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.dtype.html#cf.Count.dtype" title="cf.Count.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.isscalar.html#cf.Count.isscalar" title="cf.Count.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
+<td><p>True if the data array is scalar.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.ndim.html#cf.Count.ndim" title="cf.Count.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>The number of dimensions in the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.shape.html#cf.Count.shape" title="cf.Count.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>A tuple of the data array’s dimension sizes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.size.html#cf.Count.size" title="cf.Count.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>The number of elements in the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.varray.html#cf.Count.varray" title="cf.Count.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p></td>
+<td><p>A numpy array view of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__getitem__.html#cf.Count.__getitem__" title="cf.Count.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Return a subspace defined by indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.del_data.html#cf.Count.del_data" title="cf.Count.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<td><p>Remove the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.get_data.html#cf.Count.get_data" title="cf.Count.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<td><p>Return the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.has_data.html#cf.Count.has_data" title="cf.Count.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.set_data.html#cf.Count.set_data" title="cf.Count.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<td><p>Set the data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rearranging elements</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.flatten.html#cf.Count.flatten" title="cf.Count.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
+<td><p>Flatten axes of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.flip.html#cf.Count.flip" title="cf.Count.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a></p></td>
+<td><p>Flip (reverse the direction of) data dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.insert_dimension.html#cf.Count.insert_dimension" title="cf.Count.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
+<td><p>Expand the shape of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.roll.html#cf.Count.roll" title="cf.Count.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a></p></td>
+<td><p>Roll the data along an axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.squeeze.html#cf.Count.squeeze" title="cf.Count.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<td><p>Remove size one axes from the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.swapaxes.html#cf.Count.swapaxes" title="cf.Count.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a></p></td>
+<td><p>Interchange two axes of an array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.transpose.html#cf.Count.transpose" title="cf.Count.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<td><p>Permute the axes of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Data array mask</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.fill_value.html#cf.Count.fill_value" title="cf.Count.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
+<td><p>Return the data array missing data value.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.binary_mask.html#cf.Count.binary_mask" title="cf.Count.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></p></td>
+<td><p>A binary (0 and 1) missing data mask of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.count.html#cf.Count.count" title="cf.Count.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
+<td><p>Count the non-masked elements of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.count_masked.html#cf.Count.count_masked" title="cf.Count.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></p></td>
+<td><p>Count the masked elements of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.hardmask.html#cf.Count.hardmask" title="cf.Count.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p></td>
+<td><p>Whether the mask is hard (True) or soft (False).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.mask.html#cf.Count.mask" title="cf.Count.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
+<td><p>The mask of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.mask_invalid.html#cf.Count.mask_invalid" title="cf.Count.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.apply_masking.html#cf.Count.apply_masking" title="cf.Count.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+</tbody>
+</table>
+<p class="rubric"><em>Changing data values</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__setitem__.html#cf.Count.__setitem__" title="cf.Count.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
+<td><p>Called to implement assignment to x[indices]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.mask_invalid.html#cf.Count.mask_invalid" title="cf.Count.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.subspace.html#cf.Count.subspace" title="cf.Count.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p></td>
+<td><p>Return a new variable whose data is subspaced.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.where.html#cf.Count.where" title="cf.Count.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p></td>
+<td><p>Set data array elements depending on a condition.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Miscellaneous</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.chunk.html#cf.Count.chunk" title="cf.Count.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
+<td><p>Partition the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.close.html#cf.Count.close" title="cf.Count.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<td><p>Close all files referenced by the construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.convert_reference_time.html#cf.Count.convert_reference_time" title="cf.Count.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></p></td>
+<td><p>Convert reference time data values to have new units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.cyclic.html#cf.Count.cyclic" title="cf.Count.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
+<td><p>Set the cyclicity of an axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.period.html#cf.Count.period" title="cf.Count.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a></p></td>
+<td><p>Return or set the period of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.iscyclic.html#cf.Count.iscyclic" title="cf.Count.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a></p></td>
+<td><p>Whether or not a given axis is cyclic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.isperiodic.html#cf.Count.isperiodic" title="cf.Count.isperiodic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isperiodic</span></code></a></p></td>
+<td><p>True if a given axis is periodic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.get_filenames.html#cf.Count.get_filenames" title="cf.Count.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the name of the file or files containing the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.has_bounds.html#cf.Count.has_bounds" title="cf.Count.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not there are cell bounds.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.concatenate.html#cf.Count.concatenate" title="cf.Count.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
+<td><p>Join a sequence of variables together.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.copy.html#cf.Count.copy" title="cf.Count.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.creation_commands.html#cf.Count.creation_commands" title="cf.Count.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.equals.html#cf.Count.equals" title="cf.Count.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.uncompress.html#cf.Count.uncompress" title="cf.Count.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<td><p>Uncompress the construct.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.T.html#cf.Count.T" title="cf.Count.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.X.html#cf.Count.X" title="cf.Count.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
+<td><p>Always False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.Y.html#cf.Count.Y" title="cf.Count.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></p></td>
+<td><p>Always False.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.Z.html#cf.Count.Z" title="cf.Count.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></p></td>
+<td><p>Always False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.id.html#cf.Count.id" title="cf.Count.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></p></td>
+<td><p>An identity for the Count object.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mathematical-operations">
+<h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<p class="rubric"><em>Trigonometrical and hyperbolic functions</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.arccos.html#cf.Count.arccos" title="cf.Count.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
+<td><p>Take the trigonometric inverse cosine of the data element- wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.arccosh.html#cf.Count.arccosh" title="cf.Count.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccosh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.arcsin.html#cf.Count.arcsin" title="cf.Count.arcsin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsin</span></code></a></p></td>
+<td><p>Take the trigonometric inverse sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.arcsinh.html#cf.Count.arcsinh" title="cf.Count.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.arctan.html#cf.Count.arctan" title="cf.Count.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
+<td><p>Take the trigonometric inverse tangent of the data element- wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.arctanh.html#cf.Count.arctanh" title="cf.Count.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctanh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic tangent of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.cos.html#cf.Count.cos" title="cf.Count.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></p></td>
+<td><p>Take the trigonometric cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.cosh.html#cf.Count.cosh" title="cf.Count.cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosh</span></code></a></p></td>
+<td><p>Take the hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.sin.html#cf.Count.sin" title="cf.Count.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p></td>
+<td><p>Take the trigonometric sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.sinh.html#cf.Count.sinh" title="cf.Count.sinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sinh</span></code></a></p></td>
+<td><p>Take the hyperbolic sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.tan.html#cf.Count.tan" title="cf.Count.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p></td>
+<td><p>Take the trigonometric tangent of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.tanh.html#cf.Count.tanh" title="cf.Count.tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanh</span></code></a></p></td>
+<td><p>Take the hyperbolic tangent of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rounding and truncation</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.ceil.html#cf.Count.ceil" title="cf.Count.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code></a></p></td>
+<td><p>The ceiling of the data, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.clip.html#cf.Count.clip" title="cf.Count.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a></p></td>
+<td><p>Limit the values in the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.floor.html#cf.Count.floor" title="cf.Count.floor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floor</span></code></a></p></td>
+<td><p>Floor the data array, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.rint.html#cf.Count.rint" title="cf.Count.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code></a></p></td>
+<td><p>Round the data to the nearest integer, element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.round.html#cf.Count.round" title="cf.Count.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a></p></td>
+<td><p>Round the data to the given number of decimals.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.trunc.html#cf.Count.trunc" title="cf.Count.trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunc</span></code></a></p></td>
+<td><p>Truncate the data, element-wise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Statistical collapses</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.max.html#cf.Count.max" title="cf.Count.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.mean.html#cf.Count.mean" title="cf.Count.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
+<td><p>The unweighted mean the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.mid_range.html#cf.Count.mid_range" title="cf.Count.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a></p></td>
+<td><p>The unweighted average of the maximum and minimum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.min.html#cf.Count.min" title="cf.Count.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.range.html#cf.Count.range" title="cf.Count.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></p></td>
+<td><p>The absolute difference between the maximum and minimum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.sample_size.html#cf.Count.sample_size" title="cf.Count.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a></p></td>
+<td><p>The number of non-missing data elements in the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.sum.html#cf.Count.sum" title="cf.Count.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p></td>
+<td><p>The sum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.sd.html#cf.Count.sd" title="cf.Count.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.var.html#cf.Count.var" title="cf.Count.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.standard_deviation.html#cf.Count.standard_deviation" title="cf.Count.standard_deviation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></a></p></td>
+<td><p>The unweighted sample standard deviation of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.variance.html#cf.Count.variance" title="cf.Count.variance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></a></p></td>
+<td><p>The unweighted sample variance of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.maximum.html#cf.Count.maximum" title="cf.Count.maximum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code></a></p></td>
+<td><p>The maximum of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.minimum.html#cf.Count.minimum" title="cf.Count.minimum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code></a></p></td>
+<td><p>The minimum of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Exponential and logarithmic functions</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.exp.html#cf.Count.exp" title="cf.Count.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a></p></td>
+<td><p>The exponential of the data, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.log.html#cf.Count.log" title="cf.Count.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a></p></td>
+<td><p>The logarithm of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="date-time-operations">
+<h2>Date-time operations<a class="headerlink" href="#date-time-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.day.html#cf.Count.day" title="cf.Count.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></p></td>
+<td><p>The day of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.datetime_array.html#cf.Count.datetime_array" title="cf.Count.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.hour.html#cf.Count.hour" title="cf.Count.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code></a></p></td>
+<td><p>The hour of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.minute.html#cf.Count.minute" title="cf.Count.minute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code></a></p></td>
+<td><p>The minute of each date-time data array element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.month.html#cf.Count.month" title="cf.Count.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></a></p></td>
+<td><p>The month of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.reference_datetime.html#cf.Count.reference_datetime" title="cf.Count.reference_datetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_datetime</span></code></a></p></td>
+<td><p>The reference date-time of units of elapsed time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.second.html#cf.Count.second" title="cf.Count.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></a></p></td>
+<td><p>The second of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Count.year.html#cf.Count.year" title="cf.Count.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code></a></p></td>
+<td><p>The year of each date-time data array element.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="logic-functions">
+<h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Truth value testing</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.all.html#cf.Count.all" title="cf.Count.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a></p></td>
+<td><p>Test whether all data elements evaluate to True.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.any.html#cf.Count.any" title="cf.Count.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a></p></td>
+<td><p>Test whether any data elements evaluate to True.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Comparison</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.allclose.html#cf.Count.allclose" title="cf.Count.allclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allclose</span></code></a></p></td>
+<td><p>Test whether all data are element-wise equal to other, broadcastable data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.equals.html#cf.Count.equals" title="cf.Count.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.equivalent.html#cf.Count.equivalent" title="cf.Count.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></p></td>
+<td><p>True if two constructs are equal, False otherwise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Set operations</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.unique.html#cf.Count.unique" title="cf.Count.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></p></td>
+<td><p>The unique elements of the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_del_variable.html#cf.Count.nc_del_variable" title="cf.Count.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_get_variable.html#cf.Count.nc_get_variable" title="cf.Count.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_has_variable.html#cf.Count.nc_has_variable" title="cf.Count.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
+<td><p>Whether the netCDF variable name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_set_variable.html#cf.Count.nc_set_variable" title="cf.Count.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_del_dimension.html#cf.Count.nc_del_dimension" title="cf.Count.nc_del_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></a></p></td>
+<td><p>Remove the netCDF dimension name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_get_dimension.html#cf.Count.nc_get_dimension" title="cf.Count.nc_get_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></a></p></td>
+<td><p>Return the netCDF dimension name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_has_dimension.html#cf.Count.nc_has_dimension" title="cf.Count.nc_has_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_dimension</span></code></a></p></td>
+<td><p>Whether the netCDF dimension name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_set_dimension.html#cf.Count.nc_set_dimension" title="cf.Count.nc_set_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></a></p></td>
+<td><p>Set the netCDF dimension name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_del_sample_dimension.html#cf.Count.nc_del_sample_dimension" title="cf.Count.nc_del_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_sample_dimension</span></code></a></p></td>
+<td><p>Remove the netCDF sample dimension name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_get_sample_dimension.html#cf.Count.nc_get_sample_dimension" title="cf.Count.nc_get_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></a></p></td>
+<td><p>Return the netCDF sample dimension name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_has_sample_dimension.html#cf.Count.nc_has_sample_dimension" title="cf.Count.nc_has_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_sample_dimension</span></code></a></p></td>
+<td><p>Whether the netCDF sample dimension name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_set_sample_dimension.html#cf.Count.nc_set_sample_dimension" title="cf.Count.nc_set_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></a></p></td>
+<td><p>Set the netCDF sample dimension name.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="aliases">
+<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.match.html#cf.Count.match" title="cf.Count.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Count.dtarray.html#cf.Count.dtarray" title="cf.Count.dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="arithmetic-and-comparison-operations">
+<h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
+<p>Arithmetic, bitwise and comparison operations are defined as
+element-wise operations on the data, which yield a new construct or,
+for augmented assignments, modify the construct’s data in-place.</p>
+<p class="rubric">Comparison operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__lt__.html#cf.Count.__lt__" title="cf.Count.__lt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lt__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__le__.html#cf.Count.__le__" title="cf.Count.__le__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__le__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__eq__.html#cf.Count.__eq__" title="cf.Count.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">==</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__ne__.html#cf.Count.__ne__" title="cf.Count.__ne__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ne__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">!=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__gt__.html#cf.Count.__gt__" title="cf.Count.__gt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__gt__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__ge__.html#cf.Count.__ge__" title="cf.Count.__ge__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ge__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary arithmetic operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__add__.html#cf.Count.__add__" title="cf.Count.__add__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__add__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__sub__.html#cf.Count.__sub__" title="cf.Count.__sub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__sub__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__mul__.html#cf.Count.__mul__" title="cf.Count.__mul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__mul__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__div__.html#cf.Count.__div__" title="cf.Count.__div__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__div__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__truediv__.html#cf.Count.__truediv__" title="cf.Count.__truediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__truediv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__floordiv__.html#cf.Count.__floordiv__" title="cf.Count.__floordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__floordiv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__pow__.html#cf.Count.__pow__" title="cf.Count.__pow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__pow__</span></code></a></p></td>
+<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__mod__.html#cf.Count.__mod__" title="cf.Count.__mod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__mod__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary arithmetic operators with reflected (swapped) operands</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__radd__.html#cf.Count.__radd__" title="cf.Count.__radd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__radd__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__rsub__.html#cf.Count.__rsub__" title="cf.Count.__rsub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rsub__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__rmul__.html#cf.Count.__rmul__" title="cf.Count.__rmul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmul__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__rdiv__.html#cf.Count.__rdiv__" title="cf.Count.__rdiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rdiv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__rtruediv__.html#cf.Count.__rtruediv__" title="cf.Count.__rtruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rtruediv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division) with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__rfloordiv__.html#cf.Count.__rfloordiv__" title="cf.Count.__rfloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rfloordiv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__rpow__.html#cf.Count.__rpow__" title="cf.Count.__rpow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rpow__</span></code></a></p></td>
+<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__rmod__.html#cf.Count.__rmod__" title="cf.Count.__rmod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmod__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code> with reflected operands.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Augmented arithmetic assignments</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__iadd__.html#cf.Count.__iadd__" title="cf.Count.__iadd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iadd__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">+=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__isub__.html#cf.Count.__isub__" title="cf.Count.__isub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__isub__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">-=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__imul__.html#cf.Count.__imul__" title="cf.Count.__imul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__imul__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">*=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__idiv__.html#cf.Count.__idiv__" title="cf.Count.__idiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__idiv__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">/=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__itruediv__.html#cf.Count.__itruediv__" title="cf.Count.__itruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__itruediv__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">/=</span></code> (true division)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__ifloordiv__.html#cf.Count.__ifloordiv__" title="cf.Count.__ifloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ifloordiv__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">//=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__ipow__.html#cf.Count.__ipow__" title="cf.Count.__ipow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ipow__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">**=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__imod__.html#cf.Count.__imod__" title="cf.Count.__imod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__imod__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%=</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Unary arithmetic operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__neg__.html#cf.Count.__neg__" title="cf.Count.__neg__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__neg__</span></code></a></p></td>
+<td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__pos__.html#cf.Count.__pos__" title="cf.Count.__pos__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__pos__</span></code></a></p></td>
+<td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__abs__.html#cf.Count.__abs__" title="cf.Count.__abs__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__abs__</span></code></a></p></td>
+<td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">abs</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary bitwise operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__and__.html#cf.Count.__and__" title="cf.Count.__and__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__and__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__or__.html#cf.Count.__or__" title="cf.Count.__or__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__or__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__xor__.html#cf.Count.__xor__" title="cf.Count.__xor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__xor__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__lshift__.html#cf.Count.__lshift__" title="cf.Count.__lshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__rshift__.html#cf.Count.__rshift__" title="cf.Count.__rshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary bitwise operators with reflected (swapped) operands</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__rand__.html#cf.Count.__rand__" title="cf.Count.__rand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rand__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__ror__.html#cf.Count.__ror__" title="cf.Count.__ror__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ror__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__rxor__.html#cf.Count.__rxor__" title="cf.Count.__rxor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rxor__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__rlshift__.html#cf.Count.__rlshift__" title="cf.Count.__rlshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rlshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__rrshift__.html#cf.Count.__rrshift__" title="cf.Count.__rrshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rrshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code> with reflected operands.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Augmented bitwise assignments</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__iand__.html#cf.Count.__iand__" title="cf.Count.__iand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iand__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&amp;=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__ior__.html#cf.Count.__ior__" title="cf.Count.__ior__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ior__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">|=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__ixor__.html#cf.Count.__ixor__" title="cf.Count.__ixor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ixor__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">^=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__ilshift__.html#cf.Count.__ilshift__" title="cf.Count.__ilshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ilshift__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&lt;&lt;=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__irshift__.html#cf.Count.__irshift__" title="cf.Count.__irshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__irshift__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&gt;&gt;=</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Unary bitwise operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__invert__.html#cf.Count.__invert__" title="cf.Count.__invert__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__invert__</span></code></a></p></td>
+<td><p>The unary bitwise operation <code class="docutils literal notranslate"><span class="pre">~</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<section id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_variable_groups.html#cf.Count.nc_variable_groups" title="cf.Count.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_clear_variable_groups.html#cf.Count.nc_clear_variable_groups" title="cf.Count.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_set_variable_groups.html#cf.Count.nc_set_variable_groups" title="cf.Count.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_dimension_groups.html#cf.Count.nc_dimension_groups" title="cf.Count.nc_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_dimension_groups</span></code></a></p></td>
+<td><p>Return the netCDF dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_clear_dimension_groups.html#cf.Count.nc_clear_dimension_groups" title="cf.Count.nc_clear_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_dimension_groups</span></code></a></p></td>
+<td><p>Remove the netCDF dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_set_dimension_groups.html#cf.Count.nc_set_dimension_groups" title="cf.Count.nc_set_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension_groups</span></code></a></p></td>
+<td><p>Set the netCDF dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_clear_sample_dimension_groups.html#cf.Count.nc_clear_sample_dimension_groups" title="cf.Count.nc_clear_sample_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_sample_dimension_groups</span></code></a></p></td>
+<td><p>Remove the netCDF dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.nc_sample_dimension_groups.html#cf.Count.nc_sample_dimension_groups" title="cf.Count.nc_sample_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_sample_dimension_groups</span></code></a></p></td>
+<td><p>Return the netCDF dimension group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.nc_set_sample_dimension_groups.html#cf.Count.nc_set_sample_dimension_groups" title="cf.Count.nc_set_sample_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension_groups</span></code></a></p></td>
+<td><p>Set the netCDF dimension group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__contains__.html#cf.Count.__contains__" title="cf.Count.__contains__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__contains__</span></code></a></p></td>
+<td><p>Called to implement membership test operators.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__deepcopy__.html#cf.Count.__deepcopy__" title="cf.Count.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__getitem__.html#cf.Count.__getitem__" title="cf.Count.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Return a subspace defined by indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__repr__.html#cf.Count.__repr__" title="cf.Count.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__setitem__.html#cf.Count.__setitem__" title="cf.Count.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
+<td><p>Called to implement assignment to x[indices]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__str__.html#cf.Count.__str__" title="cf.Count.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__array__.html#cf.Count.__array__" title="cf.Count.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></p></td>
+<td><p>Returns a numpy array representation of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__data__.html#cf.Count.__data__" title="cf.Count.__data__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__data__</span></code></a></p></td>
+<td><p>Returns a new reference to the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__query_set__.html#cf.Count.__query_set__" title="cf.Count.__query_set__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_set__</span></code></a></p></td>
+<td><p>Implements the “member of set” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.__query_wi__.html#cf.Count.__query_wi__" title="cf.Count.__query_wi__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wi__</span></code></a></p></td>
+<td><p>Implements the “within a range” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.__query_wo__.html#cf.Count.__query_wo__" title="cf.Count.__query_wo__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wo__</span></code></a></p></td>
+<td><p>Implements the “without a range” condition.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.asdatetime.html#cf.Count.asdatetime" title="cf.Count.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.asreftime.html#cf.Count.asreftime" title="cf.Count.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.attributes.html#cf.Count.attributes" title="cf.Count.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.delprop.html#cf.Count.delprop" title="cf.Count.delprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.dtvarray.html#cf.Count.dtvarray" title="cf.Count.dtvarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.expand_dims.html#cf.Count.expand_dims" title="cf.Count.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.getprop.html#cf.Count.getprop" title="cf.Count.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.halo.html#cf.Count.halo" title="cf.Count.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
+<td><p>Expand the data by adding a halo.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.hasbounds.html#cf.Count.hasbounds" title="cf.Count.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code> method instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.hasdata.html#cf.Count.hasdata" title="cf.Count.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.hasprop.html#cf.Count.hasprop" title="cf.Count.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.insert_data.html#cf.Count.insert_data" title="cf.Count.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.isauxiliary.html#cf.Count.isauxiliary" title="cf.Count.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.isdimension.html#cf.Count.isdimension" title="cf.Count.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.isdomainancillary.html#cf.Count.isdomainancillary" title="cf.Count.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.isfieldancillary.html#cf.Count.isfieldancillary" title="cf.Count.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.ismeasure.html#cf.Count.ismeasure" title="cf.Count.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.name.html#cf.Count.name" title="cf.Count.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method ‘identity’ instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.remove_data.html#cf.Count.remove_data" title="cf.Count.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.select.html#cf.Count.select" title="cf.Count.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Count.setprop.html#cf.Count.setprop" title="cf.Count.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Count.unsafe_array.html#cf.Count.unsafe_array" title="cf.Count.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-10-17.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

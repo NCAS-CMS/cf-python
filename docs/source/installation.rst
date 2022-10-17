@@ -119,7 +119,7 @@ To install from source:
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.9.0``):
+   you want to install, e.g. ``3.13.1``):
 
    .. code-block:: console
 
@@ -180,8 +180,7 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.7 or newer, including
-  the latest version Python 3.9.
+* `Python <https://www.python.org/>`_, 3.7 or newer,
 
 * `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
 
