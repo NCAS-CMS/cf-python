@@ -487,8 +487,8 @@ def read(
                                              coordinates are defined
                                              by same the lookup
                                              headers then the height
-                                             *can't be determined
-                                             automatcally*. In this
+                                             **can't be determined
+                                             automatically**. In this
                                              case the height may be
                                              found after reading as
                                              the maximum value of the
