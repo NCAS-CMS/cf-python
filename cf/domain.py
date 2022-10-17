@@ -699,7 +699,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         return out
 
     def indices(self, *mode, **kwargs):
-        """Create indices that define a subspace of the domain construct.
+        """Create indices that define a subspace of the domain
+        construct.
 
         The indices returned by this method be used to create the
         subspace by passing them to the `subspace` method of the
