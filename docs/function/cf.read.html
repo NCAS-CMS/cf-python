@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.13.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.13.1</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.read">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">files</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">cdl_string=False</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">warn_valid=False</em>, <em class="sig-param">domain=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.0/cf/read_write/read.py#L34-L843"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">files</em>, <em class="sig-param">external=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">ignore_read_error=False</em>, <em class="sig-param">aggregate=True</em>, <em class="sig-param">nfields=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">unsqueeze=False</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">cdl_string=False</em>, <em class="sig-param">select=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">recursive=False</em>, <em class="sig-param">followlinks=False</em>, <em class="sig-param">um=None</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">field=None</em>, <em class="sig-param">height_at_top_of_model=None</em>, <em class="sig-param">select_options=None</em>, <em class="sig-param">follow_symlinks=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">warn_valid=False</em>, <em class="sig-param">domain=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.1/cf/read_write/read.py#L34-L867"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field constructs from netCDF, CDL, PP or UM fields datasets.</p>
 <p>Input datasets are mapped to field constructs in memory which are
 returned as elements of a <a class="reference internal" href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a>.</p>
@@ -524,13 +524,40 @@ height at top model is taken
 from the top level’s upper
 bound defined by BRSVD1 in
 the lookup header. If the
-height at top model can not
-be determined from the
-header and is not provided
-then no
-“atmosphere_hybrid_height_coordinate”
-dimension coordinate
-construct will be created.</p></td>
+height can’t be determined
+from the header, or the
+given height is less than or
+equal to 0, then a
+coordinate reference system
+will still be created that
+contains the ‘a’ and ‘b’
+formula term values, but
+without an atmosphere hybrid
+height dimension coordinate
+construct.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A current
+limitation is that if
+pseudolevels and
+atmosphere hybrid height
+coordinates are defined
+by same the lookup
+headers then the height
+<strong>can’t be determined
+automatically</strong>. In this
+case the height may be
+found after reading as
+the maximum value of the
+bounds of the domain
+ancillary construct
+containing the ‘a’
+formula term. The file
+can then be re-read with
+this height as a <em>um</em>
+parameter.</p>
+</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -649,7 +676,7 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-06-23.
+      &copy;2022, NCAS | Page built on 2022-10-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
