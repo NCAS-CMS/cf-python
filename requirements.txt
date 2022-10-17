@@ -5,4 +5,4 @@ cfdm>=1.10.0.0, <1.10.1.0
 psutil>=0.6.0
 cfunits>=3.3.4
 dask>=2022.6.0
-
+packaging>=20.0
