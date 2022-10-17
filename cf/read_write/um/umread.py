@@ -17,8 +17,6 @@ from ... import __Conventions__, __version__
 from ...constants import _stash2standard_name
 from ...data import UMArray
 from ...data.data import Data
-
-# from ...data.functions import _close_um_file, _open_um_file
 from ...decorators import (
     _manage_log_level_via_verbose_attr,
     _manage_log_level_via_verbosity,
@@ -474,41 +472,6 @@ _rotated_latitude_longitude_lbcodes = set((101, 102, 111))
 _axis = {"area": None}
 
 _autocyclic_false = {"no-op": True, "X": False, "cyclic": False}
-
-
-def open_um_file(
-    filename, aggregate=True, fmt=None, word_size=None, byte_ordering=None
-):
-    """Open a UM fields file or PP file and read it into a
-    `umread.umfile.File` object.
-
-    If there is already a `umread.umfile.File` object for the file
-    then it is returned with an open file descriptor.
-
-    :Parameters:
-
-        filename: `str`
-            The file to be opened.
-
-    :Returns:
-
-        `umread.umfile.File`
-            The opened file with an open file descriptor.
-
-    """
-    try:
-        f = File(
-            filename, byte_ordering=byte_ordering, word_size=word_size, fmt=fmt
-        )
-    except Exception as error:
-        try:
-            f.close_fd()
-        except Exception:
-            pass
-
-        raise Exception(error)
-
-    return f
 
 
 class UMField:
@@ -3483,9 +3446,49 @@ class UMRead(cfdm.read_write.IORead):
             for var in f.vars
         ]
 
-        self.file_close(f)
+        self.file_close()
 
         return [field for x in um for field in x.fields if field]
+
+    def _open_um_file(
+        self,
+        filename,
+        aggregate=True,
+        fmt=None,
+        word_size=None,
+        byte_ordering=None,
+    ):
+        """Open a UM fields file or PP file.
+
+        :Parameters:
+
+            filename: `str`
+                The file to be opened.
+
+        :Returns:
+
+            `umread.umfile.File`
+                The opened file with an open file descriptor.
+
+        """
+        self.file_close()
+        try:
+            f = File(
+                filename,
+                byte_ordering=byte_ordering,
+                word_size=word_size,
+                fmt=fmt,
+            )
+        except Exception as error:
+            try:
+                f.close_fd()
+            except Exception:
+                pass
+
+            raise Exception(error)
+
+        self._um_file = f
+        return f
 
     def is_um_file(self, filename):
         """Whether or not a file is a PP file or UM fields file.
@@ -3504,29 +3507,20 @@ class UMRead(cfdm.read_write.IORead):
 
         **Examples**
 
-        >>> r.is_um_file('myfile.pp')
+        >>> r.is_um_file('ppfile')
         True
-        >>> r.is_um_file('myfile.nc')
-        False
-        >>> r.is_um_file('myfile.pdf')
-        False
-        >>> r.is_um_file('myfile.txt')
-        False
 
         """
         try:
-            f = open_um_file(filename)
+            self.file_open(filename)
         except Exception:
+            self.file_close()
             return False
+        else:
+            self.file_close()
+            return True
 
-        try:
-            f.close_fd()
-        except Exception:
-            pass
-
-        return True
-
-    def file_close(self, f):
+    def file_close(self):
         """Close the file that has been read.
 
         :Returns:
@@ -3534,7 +3528,11 @@ class UMRead(cfdm.read_write.IORead):
             `None`
 
         """
-        f.close_fd()
+        f = getattr(self, "_um_file", None)
+        if f is not None:
+            f.close_fd()
+
+        self._um_file = None
 
     def file_open(self, filename):
         """Open the file for reading.
@@ -3547,13 +3545,13 @@ class UMRead(cfdm.read_write.IORead):
         :Returns:
 
         """
-        g = self.read_vars
+        g = getattr(self, "read_vars", {})
 
-        return open_um_file(
+        return self._open_um_file(
             filename,
-            byte_ordering=g["byte_ordering"],
-            word_size=g["word_size"],
-            fmt=g["fmt"],
+            byte_ordering=g.get("byte_ordering"),
+            word_size=g.get("word_size"),
+            fmt=g.get("fmt"),
         )
 
 

@@ -6,7 +6,6 @@ import importlib
 import os
 import platform
 import re
-import resource
 import sys
 import urllib.parse
 import warnings
@@ -14,7 +13,7 @@ from collections.abc import Iterable
 from itertools import product
 from marshal import dumps
 from numbers import Integral
-from os import getpid, listdir, mkdir
+from os import mkdir
 from os.path import abspath as _os_path_abspath
 from os.path import dirname as _os_path_dirname
 from os.path import expanduser as _os_path_expanduser
@@ -27,24 +26,12 @@ import netCDF4
 import numpy as np
 from dask import config
 from dask.utils import parse_bytes
-from numpy import all as _numpy_all
-from numpy import allclose as _x_numpy_allclose
-from numpy import shape as _numpy_shape
-from numpy import take as _numpy_take
-from numpy import tile as _numpy_tile
-from numpy.ma import all as _numpy_ma_all
-from numpy.ma import allclose as _numpy_ma_allclose
-from numpy.ma import is_masked as _numpy_ma_is_masked
-from numpy.ma import isMA as _numpy_ma_isMA
-from numpy.ma import masked as _numpy_ma_masked
-from numpy.ma import take as _numpy_ma_take
-from psutil import Process, virtual_memory
+from psutil import virtual_memory
 
 from . import __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
-#    _file_to_fh,
     _stash2standard_name,
 )
 from .docstring import _docstring_substitution_definitions
@@ -370,22 +357,22 @@ def configuration(
      'chunksize': 75000000.0}
 
     """
-    if of_fraction is not None:        
+    if of_fraction is not None:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'configuration',
+            "configuration",
             kwargs={"of_fraction": None},
             version="TODODASVER",
             removed_at="5.0.0",
         )  # pragma: no cover
-        
-    if collapse_parallel_mode is not None:        
+
+    if collapse_parallel_mode is not None:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            'configuration',
+            "configuration",
             kwargs={"collapse_parallel_mode": None},
             version="TODODASVER",
             removed_at="5.0.0",
         )  # pragma: no cover
-        
+
     return _configuration(
         Configuration,
         new_atol=atol,
@@ -427,13 +414,7 @@ def _configuration(_Configuration, **kwargs):
             values are specified.
 
     """
-    # Filter out WORKSPACE_FACTOR_{1,2} constants which are only used
-    # externally and not exposed to the user:
-    old = {
-        name.lower(): val
-        for name, val in CONSTANTS.items()
-        if not name.startswith("WORKSPACE_FACTOR_")
-    }
+    old = {name.lower(): val for name, val in CONSTANTS.items()}
 
     old.pop("total_memory", None)
     old.pop("min_total_memory", None)
@@ -521,35 +502,9 @@ def free_memory():
     return _free_memory()
 
 
-def FREE_MEMORY(*new_free_memory):
+def FREE_MEMORY():
     """Alias for `cf.free_memory`."""
-    return free_memory(*new_free_memory)
-
-
-def _WORKSPACE_FACTOR_1():
-    """The value of workspace factor 1 used in calculating the upper
-    limit to the chunksize given the free memory factor.
-
-    :Returns:
-
-        `float`
-            workspace factor 1
-
-    """
-    return CONSTANTS["WORKSPACE_FACTOR_1"]
-
-
-def _WORKSPACE_FACTOR_2():
-    """The value of workspace factor 2 used in calculating the upper
-    limit to the chunksize given the free memory factor.
-
-    :Returns:
-
-        `float`
-            workspace factor 2
-
-    """
-    return CONSTANTS["WORKSPACE_FACTOR_2"]
+    return free_memory()
 
 
 def _cf_free_memory_factor(*new_free_memory_factor):
@@ -721,9 +676,9 @@ class collapse_parallel_mode(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        _DEPRECATION_ERROR_FUNCTION('collapse_parallel_mode',
-                                    version="TODODASKVER",
-                                    removed_at="5.0.0" )  # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION(
+            "collapse_parallel_mode", version="TODODASKVER", removed_at="5.0.0"
+        )  # pragma: no cover
 
 
 class relaxed_identities(ConstantAccess):
@@ -920,30 +875,30 @@ class of_fraction(ConstantAccess):
     containing data arrays may be automatically closed.
 
     Deprecated at version TODODASKVER and is no longer available.
-   
+
     The amount is expressed as a fraction of the maximum possible
     number of concurrently open files.
- 
+
     Note that closed files will be automatically reopened if
     subsequently needed by a variable to access its data array.
- 
+
     .. seealso:: `cf.close_files`, `cf.close_one_file`,
                  `cf.open_files`, `cf.open_files_threshold_exceeded`
- 
+
     :Parameters:
- 
+
         arg: `float` or `Constant`, optional
             The new fraction (between 0.0 and 1.0). The default is to
             not change the current behaviour.
- 
+
     :Returns:
- 
+
         `Constant`
             The value prior to the change, or the current value if no
             new value was specified.
- 
+
     **Examples**
- 
+
     >>> cf.of_fraction()
     0.5
     >>> old = cf.of_fraction(0.33)
@@ -951,45 +906,45 @@ class of_fraction(ConstantAccess):
     0.33
     >>> cf.of_fraction()
     0.5
- 
+
     The fraction may be translated to an actual number of files as
     follows:
- 
+
     >>> old = cf.of_fraction(0.75)
     >>> import resource
     >>> max_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
     >>> threshold = int(max_open_files * cf.of_fraction())
     >>> max_open_files, threshold
     (1024, 768)
- 
+
     """
- 
+
     _name = "OF_FRACTION"
- 
+
     def _parse(cls, arg):
         """Parse a new constant value.
-  
+
         Deprecated at version TODODASKVER and is no longer available.
-  
+
         .. versionaddedd:: 3.8.0
- 
+
         :Parameters:
- 
+
             cls:
                 This class.
- 
+
             arg:
                 The given new constant value.
- 
+
         :Returns:
- 
+
                 A version of the new constant value suitable for insertion
                 into the `CONSTANTS` dictionary.
- 
+
         """
-        _DEPRECATION_ERROR_FUNCTION('of_fraction',
-                                 version="TODODASKVER",
-                                 removed_at="5.0.0" )  # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION(
+            "of_fraction", version="TODODASKVER", removed_at="5.0.0"
+        )  # pragma: no cover
 
 
 class free_memory_factor(ConstantAccess):
@@ -1291,10 +1246,11 @@ def set_performance(chunksize=None, free_memory_factor=None):
             A tuple of the previous chunksize and free_memory_factor.
 
     """
-    _DEPRECATION_ERROR_FUNCTION('set_performance',
-                                version="TODODASKVER",
-                                removed_at="5.0.0" )  # pragma: no cover
-    
+    _DEPRECATION_ERROR_FUNCTION(
+        "set_performance", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
+
+
 def min_total_memory():
     """The minimum total memory across nodes."""
     return CONSTANTS["MIN_TOTAL_MEMORY"]
@@ -1339,20 +1295,20 @@ def SET_PERFORMANCE(*new_set_performance):
     Deprecated at version TODODASKVER and is no longer available.
 
     """
-    _DEPRECATION_ERROR_FUNCTION('SET_PERFORMANCE',
-                                version="TODODASKVER",
-                                removed_at="5.0.0" )  # pragma: no cover
-   
+    _DEPRECATION_ERROR_FUNCTION(
+        "SET_PERFORMANCE", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
+
+
 def OF_FRACTION(*new_of_fraction):
     """Alias for `cf.of_fraction`.
 
     Deprecated at version TODODASKVER and is no longer available.
 
     """
-    _DEPRECATION_ERROR_FUNCTION('OF_FRACTION',
-                                version="TODODASKVER",
-                                removed_at="5.0.0" )  # pragma: no cover
-   
+    _DEPRECATION_ERROR_FUNCTION(
+        "OF_FRACTION", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def REGRID_LOGGING(*new_regrid_logging):
@@ -1366,10 +1322,11 @@ def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     Deprecated at version TODODASKVER and is no longer available.
 
     """
-    _DEPRECATION_ERROR_FUNCTION('COLLAPSE_PARALLEL_MODE',
-                                version="TODODASKVER",
-                                removed_at="5.0.0" )  # pragma: no cover
-   
+    _DEPRECATION_ERROR_FUNCTION(
+        "COLLAPSE_PARALLEL_MODE", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
+
+
 def RELAXED_IDENTITIES(*new_relaxed_identities):
     """Alias for `cf.relaxed_identities`."""
     return relaxed_identities(*new_relaxed_identities)
@@ -1468,11 +1425,12 @@ def dump(x, **kwargs):
         print(x)
 
 
-#_max_number_of_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
+# _max_number_of_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
+
 
 def open_files_threshold_exceeded():
-    """Return True if the total number of open files is greater than
-    the current threshold.
+    """Return True if the total number of open files is greater than the
+    current threshold.
 
     Deprecated at version TODODASKVER and is no longer available.
 
@@ -1503,10 +1461,13 @@ def open_files_threshold_exceeded():
     False
 
     """
-    _DEPRECATION_ERROR_FUNCTION('open_files_threshold_exceeded',
-                                version="TODODASKVER",
-                                removed_at="5.0.0" )  # pragma: no cover
-   
+    _DEPRECATION_ERROR_FUNCTION(
+        "open_files_threshold_exceeded",
+        version="TODODASKVER",
+        removed_at="5.0.0",
+    )  # pragma: no cover
+
+
 def close_files(file_format=None):
     """Close open files containing sub-arrays of data arrays.
 
@@ -1541,10 +1502,10 @@ def close_files(file_format=None):
     >>> cf.close_files('PP')
 
     """
-    _DEPRECATION_ERROR_FUNCTION('close_files',
-                                version="TODODASKVER",
-                                removed_at="5.0.0" )  # pragma: no cover
-   
+    _DEPRECATION_ERROR_FUNCTION(
+        "close_files", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
+
 
 def close_one_file(file_format=None):
     """Close an arbitrary open file containing a sub-array of a data
@@ -1590,11 +1551,11 @@ def close_one_file(file_format=None):
                 'file3.nc': <netCDF4.Dataset at 0x1d185e9>}}
 
     """
-    _DEPRECATION_ERROR_FUNCTION('close_one__file',
-                                version="TODODASKVER",
-                                removed_at="5.0.0" )  # pragma: no cover
-   
-   
+    _DEPRECATION_ERROR_FUNCTION(
+        "close_one__file", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
+
+
 def open_files(file_format=None):
     """Return the open files containing sub-arrays of master data
     arrays.
@@ -1634,10 +1595,10 @@ def open_files(file_format=None):
     {}
 
     """
-    _DEPRECATION_ERROR_FUNCTION('open_files',
-                                version="TODODASKVER",
-                                removed_at="5.0.0" )  # pragma: no cover
-   
+    _DEPRECATION_ERROR_FUNCTION(
+        "open_files", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
+
 
 def ufunc(name, x, *args, **kwargs):
     """The variable must have a `!copy` method and a method called.
@@ -1718,14 +1679,14 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
     # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
-    a_is_masked = _numpy_ma_isMA(a)
-    b_is_masked = _numpy_ma_isMA(b)
+    a_is_masked = np.ma.isMA(a)
+    b_is_masked = np.ma.isMA(b)
 
     if not (a_is_masked or b_is_masked):
         try:
-            return _x_numpy_allclose(a, b, rtol=rtol, atol=atol)
+            return np.allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
-            return _numpy_all(a == b)
+            return np.all(a == b)
     else:
         if a_is_masked and b_is_masked:
             if (a.mask != b.mask).any():
@@ -1734,25 +1695,25 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
                 return False
         else:
-            if _numpy_ma_is_masked(a) or _numpy_ma_is_masked(b):
+            if np.ma.is_masked(a) or np.ma.is_masked(b):
                 if verbose:
                     print("Different masks (B)")
 
                 return False
 
         try:
-            return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
+            return np.ma.allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
             # To prevent a bug causing some header/coord-only CDL reads or
             # aggregations to error. See also TODO comment below.
             if a.dtype == b.dtype:
-                out = _numpy_ma_all(a == b)
+                out = np.ma.all(a == b)
             else:
                 # TODO: is this most sensible? Or should we attempt dtype
                 # conversion and then compare? Probably we should avoid
                 # altogether by catching the different dtypes upstream?
                 out = False
-            if out is _numpy_ma_masked:
+            if out is np.ma.masked:
                 return True
             else:
                 return out
@@ -1953,10 +1914,10 @@ def get_subspace(array, indices):
         # At least two axes have list-of-integers indices so we can't
         # do a normal numpy subspace
         # ------------------------------------------------------------
-        if _numpy_ma_isMA(array):
-            take = _numpy_ma_take
+        if np.ma.isMA(array):
+            take = np.ma.take
         else:
-            take = _numpy_take
+            take = np.take
 
         indices = indices[:]
         for axis in gg:
@@ -2663,14 +2624,14 @@ def broadcast_array(array, shape):
       [4 5 6 --]]]
 
     """
-    a_shape = _numpy_shape(array)
+    a_shape = np.shape(array)
     if a_shape == shape:
         return array
 
     tile = [(m if n == 1 else 1) for n, m in zip(a_shape[::-1], shape[::-1])]
     tile = shape[0 : len(shape) - len(a_shape)] + tuple(tile[::-1])
 
-    return _numpy_tile(array, tile)
+    return np.tile(array, tile)
 
 
 def allclose(x, y, rtol=None, atol=None):
@@ -3195,7 +3156,8 @@ def default_fillvals():
     _DEPRECATION_ERROR_FUNCTION(
         "default_fillvals",
         "Use function 'cf.default_netCDF_fillvals' instead.",
-        version="3.0.2", removed_at="4.0.0"
+        version="3.0.2",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -3203,4 +3165,6 @@ def set_equals(
     x, y, rtol=None, atol=None, ignore_fill_value=False, traceback=False
 ):
     """Deprecated at version 3.0.0."""
-    _DEPRECATION_ERROR_FUNCTION("cf.set_equals", version="3.0.0", removed_at="4.0.0")  # pragma: no cover
+    _DEPRECATION_ERROR_FUNCTION(
+        "cf.set_equals", version="3.0.0", removed_at="4.0.0"
+    )  # pragma: no cover

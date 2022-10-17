@@ -1,17 +1,14 @@
 import logging
 import sys
-
-import numpy as np
-
 from enum import Enum, auto
 from tempfile import gettempdir
 
+import numpy as np
 from dask import config
 from dask.utils import parse_bytes
 from psutil import virtual_memory
 
 from .units import Units
-
 
 # --------------------------------------------------------------------
 # Find the total amount of memory, in bytes
@@ -90,8 +87,6 @@ masked = np.ma.masked
 
 repr_prefix = "CF "
 repr_suffix = ""
-
-#_file_to_fh = {}
 
 _stash2standard_name = {}
 

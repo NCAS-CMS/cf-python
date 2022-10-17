@@ -241,7 +241,6 @@ from .fieldancillary import FieldAncillary
 from .field import Field
 from .data import (
     Data,
-    FilledArray,
     GatheredArray,
     NetCDFArray,
     RaggedContiguousArray,

@@ -2028,10 +2028,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{inplace: `bool`, optional}}
 
-            interpolation: deprecated at version 4.0.0
+            interpolation: deprecated at version TODODASKVER
                 Use the *method* parameter instead.
 
-            _preserve_partitions: deprecated at version 4.0.0
+            _preserve_partitions: deprecated at version TODODASKVER
 
         :Returns:
 
@@ -2269,7 +2269,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         3. Any computations stored after initialisation consist only
            subspace, concatenate, reshape, and copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `force_compute`, `cf.log_level`
 
@@ -7831,7 +7831,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * The stored computations consist only of initialisation,
           subspace or copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `last_element`, `second_element`
 
@@ -7872,7 +7872,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * The stored computations consist only of initialisation,
           subspace or copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `last_element`, `first_element`
 
@@ -7913,7 +7913,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * The stored computations consist only of initialisation,
           subspace or copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `first_element`, `second_element`
 
@@ -8763,7 +8763,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -9507,10 +9507,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         operations computed, always including space for a full boolean
         mask, is small enough to be retained in available memory.
 
-        .. note:: The delayed operations are actually not computed by
-                  `fits_in_memory`, so it is possible that an
-                  intermediate operation may require more than the
-                  available memory, even if the final array does not.
+        **Performance**
+
+        The delayed operations are actually not computed by
+        `fits_in_memory`, so it is possible that an intermediate
+        operation may require more than the available memory, even if
+        the final array does not.
 
         .. seealso:: `array`, `compute`, `nbytes`, `persist`,
                      `cf.free_memory`
@@ -10448,9 +10450,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
-            fill_value: deprecated at version 4.0.0
+            fill_value: deprecated at version TODODASKVER
                 Use `set_fill_value` instead.
 
         :Returns:
@@ -10509,7 +10511,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -10573,7 +10575,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -10625,7 +10627,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -10670,7 +10672,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             units: `Units`, optional
 
-            out: deprecated at version 4.0.0
+            out: deprecated at version TODODASKVER
 
             {{inplace: `bool`, optional}}
 

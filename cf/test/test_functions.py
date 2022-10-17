@@ -217,7 +217,7 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(AttributeError):
             with org:
                 pass
-            
+
         # log_level
         func = cf.log_level
 
