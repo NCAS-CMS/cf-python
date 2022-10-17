@@ -495,7 +495,10 @@ def read(
                                              bounds of the domain
                                              ancillary construct
                                              containing the 'a'
-                                             formula term.
+                                             formula term. The file
+                                             can then be re-read with
+                                             this height as a *um*
+                                             parameter.
             ============================  =====================================
 
             If format is specified as ``'PP'`` then the word size and

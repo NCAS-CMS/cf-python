@@ -228,7 +228,7 @@ result is a new field construct with consistent metadata for the
 collapsed values. Collapses are carried with the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>
 method of the field construct.</p>
 <p>By default all axes with size greater than 1 are collapsed completely
-(i.e. to size 1) with a given <a class="reference internal" href="field_analysis.html#collapse-methods"><span class="std std-ref">collapse method</span></a>.</p>
+(i.e. to size 1) with a given <a class="reference internal" href="tutorial.html#collapse-methods"><span class="std std-ref">collapse method</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id28">
 <div class="code-block-caption"><span class="caption-text"><em>Find the minimum of the entire data.</em></span><a class="headerlink" href="#id28" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
@@ -439,7 +439,7 @@ result.</p>
 <div class="math notranslate nohighlight">
 \[\mu=\frac{1}{N}\sum_{i=1}^{N}
 x_i\]</div>
-<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
 with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span>
 is</p>
@@ -456,7 +456,7 @@ values <span class="math notranslate nohighlight">\(x_i\)</span> absoluted is</p
 <div class="math notranslate nohighlight">
 \[\mu_{abs}=\frac{1}{N}
 \sum_{i=1}^{N}|x_i|\]</div>
-<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
 absoluted with corresponding weights
 <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -489,7 +489,7 @@ unbiased estimate of the variance using
 Bessel’s correction
 (<span class="math notranslate nohighlight">\(s^{2}=s_{N-1}^{2}\)</span>) is given by
 <span class="math notranslate nohighlight">\(ddof=1\)</span>.</p>
-<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 biased estimate of the variance of
 <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> with
 corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -499,7 +499,7 @@ corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> 
 \sum_{i=1}^{N}
 w_i(x_i -
 \hat{\mu})^{2}\]</div>
-<p>The corresponding <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a> unbiased estimate of
+<p>The corresponding <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a> unbiased estimate of
 the variance is</p>
 <div class="math notranslate nohighlight">
 \[\hat{s}^{2}=\frac{1}{V_{1} -
@@ -516,7 +516,7 @@ opposed to frequency weights.</p>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></p></td>
 <td><p>The standard deviation is the square
 root of the unweighted or
-<a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 variance, as defined in this table.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></p></td>
 </tr>
@@ -527,7 +527,7 @@ variance, as defined in this table.</p></td>
 \[RMS=\sqrt{\frac{1}{N}
 \sum_{i=1}^{N}
 x_{i}^2}\]</div>
-<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 root mean square of <span class="math notranslate nohighlight">\(N\)</span> values
 <span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights
 <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -1282,8 +1282,8 @@ field construct already in use.</em></span><a class="headerlink" href="#id51" ti
 <span id="id12"></span><h3><a class="toc-backref" href="#id95">Binning operations</a><a class="headerlink" href="#binning-operations" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a> method of the field construct groups its data into
 bins, where each group is defined by the elements that correspond to
-an <a class="reference internal" href="field_analysis.html#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
-representative value. The same <a class="reference internal" href="field_analysis.html#collapse-methods"><span class="std std-ref">collapse methods</span></a> and <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighting options</span></a> as
+an <a class="reference internal" href="tutorial.html#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
+representative value. The same <a class="reference internal" href="tutorial.html#collapse-methods"><span class="std std-ref">collapse methods</span></a> and <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighting options</span></a> as
 the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> method are available.</p>
 <p>The result of the binning operation is a field construct whose domain
 axis and dimension coordinate constructs describe the sizes of the
@@ -1486,7 +1486,7 @@ coordinate systems. The interpolation is carried by out using the
 <a class="reference external" href="https://earthsystemmodeling.org/esmpy/">ESMF</a> package, a
 Python interface to the Earth System Modeling Framework regridding
 utility.</p>
-<p>As with <a class="reference internal" href="field_analysis.html#statistical-collapses"><span class="std std-ref">statistical collapses</span></a>,
+<p>As with <a class="reference internal" href="tutorial.html#statistical-collapses"><span class="std std-ref">statistical collapses</span></a>,
 regridding may be applied over a subset of the domain axes, and the
 domain axis constructs and coordinate constructs for the non-regridded
 dimensions remain the same.</p>
@@ -1590,7 +1590,7 @@ input at most one source point.</p>
 <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is only available for the ‘X’ and ‘Y’ axes
 simultaneously. All other axes are unchanged. The calculation of the
 regridding weights is based on areas and distances on the surface of
-the sphere, rather in <a class="reference internal" href="field_analysis.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
+the sphere, rather in <a class="reference internal" href="tutorial.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
 <p>The following combinations of spherical source and destination domain
 coordinate systems are available to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
 <table class="docutils align-default">
@@ -1745,7 +1745,7 @@ construct.</p>
 <section id="cartesian-regridding">
 <span id="id17"></span><h3><a class="toc-backref" href="#id100">Cartesian regridding</a><a class="headerlink" href="#cartesian-regridding" title="Permalink to this headline">¶</a></h3>
 <p>Cartesian regridding with the <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> method is very
-similar to <a class="reference internal" href="field_analysis.html#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
+similar to <a class="reference internal" href="tutorial.html#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
 regridding dimensions are not restricted to the horizontal plane, the
 source and destination domains are assumed to be <a class="reference external" href="https://en.wikipedia.org/wiki/Euclidean_space">Euclidian spaces</a> for the purpose of
 calculating regridding weights, and all dimensions are assumed to be
@@ -1980,7 +1980,7 @@ with corresponding coordinate constructs of size greater than 1 <em>and
 with different coordinate values</em>. In such circumstances, the field
 constructs’ data instances may be operated on directly, bypassing any
 checks on the metadata. See
-<a class="reference internal" href="field_analysis.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details. <em>(This
+<a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details. <em>(This
 will be made easier in a future release with a new function for
 combining such field constructs.)</em></p>
 <p class="rubric" id="bounds">Bounds</p>
@@ -2212,13 +2212,13 @@ example, this will be the case if both operands are field constructs
 with corresponding coordinate constructs of size greater than 1 <em>and
 with different coordinate values</em>. In such circumstances, the field
 constructs’ data instances may be operated on directly, bypassing any
-checks on the metadata. See <a class="reference internal" href="field_analysis.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a>
+checks on the metadata. See <a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a>
 for more details. <em>(This will be made easier in a future release with
 a new function for combining such field constructs.)</em></p>
 </section>
 <section id="arithmetical-and-relational-operations-with-insufficient-metadata">
 <span id="id24"></span><h3><a class="toc-backref" href="#id107">Arithmetical and relational operations with insufficient metadata</a><a class="headerlink" href="#arithmetical-and-relational-operations-with-insufficient-metadata" title="Permalink to this headline">¶</a></h3>
-<p>When both operands of a <a class="reference internal" href="field_analysis.html#binary-arithmetical-operations"><span class="std std-ref">binary arithmetical</span></a> or <a class="reference internal" href="field_analysis.html#relational-operations"><span class="std std-ref">relational</span></a> operation are field constructs then the
+<p>When both operands of a <a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">binary arithmetical</span></a> or <a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operation are field constructs then the
 creation of the mapping of physically compatible dimensions relies on
 there being sufficient metadata. By default, the mapping relies on
 their being “strict” identities for the metadata constructs with
@@ -2242,7 +2242,7 @@ the operation to proceed:</p>
 <ul class="simple">
 <li><p><strong>Option 1:</strong> The operation may applied to the field constructs’
 data instances instead. See
-<a class="reference internal" href="field_analysis.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details.</p></li>
+<a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details.</p></li>
 <li><p><strong>Option 2:</strong> If the mapping is not possible due to the absence of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code> properties (or <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code> attributes) on metadata
 constructs that are known to correspond, then setting “relaxed
@@ -2255,14 +2255,14 @@ constructs.</p></li>
 </section>
 <section id="operating-on-the-field-constructs-data">
 <span id="id25"></span><h3><a class="toc-backref" href="#id108">Operating on the field constructs’ data</a><a class="headerlink" href="#operating-on-the-field-constructs-data" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="field_analysis.html#binary-arithmetical-operations"><span class="std std-ref">Binary arithmetical</span></a> and
-<a class="reference internal" href="field_analysis.html#relational-operations"><span class="std std-ref">relational</span></a> operations between may also
+<p><a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">Binary arithmetical</span></a> and
+<a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operations between may also
 be carried out on their data instances, thereby bypassing any
 reference to, or checks on, the metadata constructs. This can be
-useful if there <a class="reference internal" href="field_analysis.html#arithmetical-and-relational-operations-with-insufficient-metadata"><span class="std std-ref">insufficient metadata</span></a>
+useful if there <a class="reference internal" href="tutorial.html#arithmetical-and-relational-operations-with-insufficient-metadata"><span class="std std-ref">insufficient metadata</span></a>
 for determining if the two field constructs are compatible; or if the
 domain metadata constructs of the result can not be
-<a class="reference internal" href="field_analysis.html#ambiguous-result"><span class="std std-ref">unambiguously defined</span></a>.</p>
+<a class="reference internal" href="tutorial.html#ambiguous-result"><span class="std std-ref">unambiguously defined</span></a>.</p>
 <p>In such cases the data instances may be operated on instead and the
 result then inserted into one of the field constructs, either with the
 <a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method of the field construct, or with
