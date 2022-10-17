@@ -1,0 +1,24 @@
+{% extends "!layout.html" %}
+{% block rootrellink %}
+  <li><a target="_blank" href="{{ pathto("../archive.html", 1) }}">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python {{ release }}</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="{{ pathto("../1.0/index.html", 1) }}"
+              {%- if release == "1.0" %}selected{% endif %}>1.0
+
+      <option value="{{ pathto("../0.9.9/index.html", 1) }}"
+              {%- if release == "0.9.9" %}selected{% endif %}>0.9.9
+
+      <option value="{{ pathto("../0.9.8.3/index.html", 1) }}"
+              {%- if release == "0.9.8.3" %}selected{% endif %}>0.9.8.3
+
+      <option value="{{ pathto("../archive.html", 1) }}">Archive
+
+      </select>
+  </li>
+-->
+  {{ super() }}
+{% endblock %}

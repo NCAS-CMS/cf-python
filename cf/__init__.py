@@ -78,7 +78,7 @@ __Conventions__ = "CF-1.10"
 __date__ = "2022-01-18"
 __version__ = "3.14.0b0"
 
-_requires = ("numpy", "netCDF4", "cftime", "cfunits", "cfdm", "psutil", "dask")
+_requires = ("numpy", "netCDF4", "cftime", "cfunits", "cfdm", "psutil", "dask", "packaging")
 
 x = ", ".join(_requires)
 _error0 = f"cf v{ __version__} requires the modules {x}. "
