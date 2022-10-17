@@ -39,14 +39,6 @@ in cf.
     CHUNKSIZE: `int`
       The chunk size (in bytes) for data storage and processing.
 
-    FM_THRESHOLD: `float`
-      The minimum amount of memory (in bytes) to be kept free for
-      temporary work space. This should always be MINNCFM*CHUNKSIZE.
-
-    MINNCFM: `int`
-      The number of chunk sizes to be kept free for temporary work
-      space.
-
     TEMPDIR: `str`
       The location to store temporary files. By default it is the
       default directory used by the :mod:`tempfile` module.
@@ -55,9 +47,6 @@ in cf.
       Whether or not to enable `ESMF` logging. If it is logging is
       performed after every call to `ESMF`. By default logging is
       disabled.
-
-    FREE_MEMORY_FACTOR: `int`
-      Factor to divide the free memory by.
 
     LOG_LEVEL: `str`
       The minimal level of seriousness for which log messages are
@@ -69,19 +58,12 @@ CONSTANTS = {
     "RTOL": sys.float_info.epsilon,
     "TEMPDIR": gettempdir(),
     "TOTAL_MEMORY": _TOTAL_MEMORY,
-    "FREE_MEMORY_FACTOR": 0.1,
     "REGRID_LOGGING": False,
     "RELAXED_IDENTITIES": False,
     "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
     "BOUNDS_COMBINATION_MODE": "AND",
     "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
 }
-
-CONSTANTS["FM_THRESHOLD"] = (
-    CONSTANTS["FREE_MEMORY_FACTOR"] * CONSTANTS["TOTAL_MEMORY"]
-)
-
-CONSTANTS["MIN_TOTAL_MEMORY"] = CONSTANTS["TOTAL_MEMORY"]
 
 masked = np.ma.masked
 

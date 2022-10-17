@@ -36,8 +36,6 @@ class functionTest(unittest.TestCase):
     def test_aliases(self):
         self.assertEqual(cf.log_level(), cf.LOG_LEVEL())
         self.assertEqual(cf.free_memory(), cf.FREE_MEMORY())
-        self.assertEqual(cf.free_memory_factor(), cf.FREE_MEMORY_FACTOR())
-        self.assertEqual(cf.fm_threshold(), cf.FM_THRESHOLD())
         self.assertEqual(cf.total_memory(), cf.TOTAL_MEMORY())
         self.assertEqual(cf.regrid_logging(), cf.REGRID_LOGGING())
         self.assertEqual(cf.relaxed_identities(), cf.RELAXED_IDENTITIES())
@@ -55,12 +53,11 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org, dict)
 
         # Check all keys that should be there are, with correct value type:
-        self.assertEqual(len(org), 9)  # update expected len if add new key(s)
+        self.assertEqual(len(org), 8)  # update expected len if add new key(s)
 
         # Types expected:
         self.assertIsInstance(org["atol"], float)
         self.assertIsInstance(org["rtol"], float)
-        self.assertIsInstance(org["free_memory_factor"], float)
         self.assertIsInstance(org["chunksize"], int)
         self.assertIsInstance(org["relaxed_identities"], bool)
         self.assertIsInstance(org["bounds_combination_mode"], str)
@@ -79,7 +76,7 @@ class functionTest(unittest.TestCase):
             "rtol": 5e-7,
             "atol": 2e-7,
             "tempdir": "/my-custom-tmpdir",
-            "free_memory_factor": 0.25,
+            #            "free_memory_factor": 0.25,
             "regrid_logging": True,
             "relaxed_identities": True,
             "bounds_combination_mode": "XOR",
@@ -136,8 +133,8 @@ class functionTest(unittest.TestCase):
         # Test edge cases & invalid inputs...
         # ... 1. Falsy value inputs on some representative items:
         pre_set_config = cf.configuration()
-        with self.assertRaises(ValueError):
-            cf.configuration(free_memory_factor=0.0)
+        #        with self.assertRaises(ValueError):
+        #            cf.configuration(free_memory_factor=0.0)
         new_values = {"tempdir": "", "atol": 0.0, "regrid_logging": False}
         cf.configuration(**new_values)
         post_set = cf.configuration()
@@ -149,11 +146,11 @@ class functionTest(unittest.TestCase):
 
         # 2. None as an input kwarg rather than as a default:
         pre_set_config = cf.configuration()
-        set_fmf = 0.45
-        cf.configuration(free_memory_factor=set_fmf, rtol=None, log_level=None)
+        set_atol = 0.45
+        cf.configuration(atol=set_atol, rtol=None, log_level=None)
         post_set = cf.configuration()
         # test values that should change
-        self.assertEqual(post_set["free_memory_factor"], set_fmf)
+        self.assertEqual(post_set["atol"], set_atol)
         # ...and values that should not:
         self.assertEqual(post_set["rtol"], pre_set_config["rtol"])
         self.assertAlmostEqual(
@@ -162,7 +159,7 @@ class functionTest(unittest.TestCase):
 
         # 3. Gracefully error with invalid inputs:
         with self.assertRaises(ValueError):
-            cf.configuration(free_memory_factor="bad")
+            cf.configuration(atol="bad")
 
         with self.assertRaises(ValueError):
             cf.configuration(log_level=7)
@@ -186,12 +183,8 @@ class functionTest(unittest.TestCase):
         cf.log_level("DISABLE")
 
     def test_context_managers(self):
-        # rtol, atol, free_memory_factor
-        for func in (
-            cf.atol,
-            cf.rtol,
-            cf.free_memory_factor,
-        ):
+        # rtol, atol
+        for func in (cf.atol, cf.rtol):
             old = func()
             new = old * 1.001
             with func(new):

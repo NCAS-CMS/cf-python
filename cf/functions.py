@@ -167,13 +167,13 @@ def configuration(
     rtol=None,
     tempdir=None,
     chunksize=None,
-    free_memory_factor=None,
     log_level=None,
     regrid_logging=None,
     relaxed_identities=None,
     bounds_combination_mode=None,
     of_fraction=None,
     collapse_parallel_mode=None,
+    free_memory_factor=None,
 ):
     """View or set any number of constants in the project-wide
     configuration.
@@ -185,7 +185,6 @@ def configuration(
     * `rtol`
     * `tempdir`
     * `chunksize`
-    * `free_memory_factor`
     * `log_level`
     * `regrid_logging`
     * `relaxed_identities`
@@ -207,8 +206,7 @@ def configuration(
     .. versionadded:: 3.6.0
 
     .. seealso:: `atol`, `rtol`, `tempdir`, `chunksize`,
-                 `total_memory`, `free_memory_factor`, `fm_threshold`,
-                 `min_total_memory`, `log_level`, `regrid_logging`,
+                 `total_memory`, `log_level`, `regrid_logging`,
                  `relaxed_identities`, `bounds_combination_mode`
 
     :Parameters:
@@ -241,11 +239,6 @@ def configuration(
             Determine how to deal with cell bounds in binary
             operations. See `cf.bounds_combination_mode` for details.
 
-        free_memory_factor: `float` or `Constant`, optional
-            The new value of the fraction of memory kept free as a
-            temporary workspace. The default is to not change the
-            current behaviour.
-
         log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
@@ -276,6 +269,10 @@ def configuration(
             Deprecated at version TODODASKVER and is no longer
             available.
 
+        free_memory_factor: `float` or `Constant`, optional
+            Deprecated at version TODODASKVER and is no longer
+            available.
+
     :Returns:
 
         `Configuration`
@@ -289,7 +286,6 @@ def configuration(
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/tmp',
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
      'relaxed_identities': False,
      'log_level': 'WARNING',
@@ -304,7 +300,6 @@ def configuration(
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/tmp',
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
      'relaxed_identities': False,
      'log_level': 'WARNING',
@@ -314,7 +309,6 @@ def configuration(
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/usr/tmp',
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
      'relaxed_identities': False,
      'log_level': 'INFO',
@@ -327,7 +321,6 @@ def configuration(
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/usr/tmp',
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
      'relaxed_identities': False,
      'log_level': 'INFO',
@@ -339,7 +332,6 @@ def configuration(
     {'rtol': 9.0,
      'atol': 10.0,
      'tempdir': '/usr/tmp',
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
      'relaxed_identities': False,
      'log_level': 'INFO',
@@ -349,7 +341,6 @@ def configuration(
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/usr/tmp',
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
      'relaxed_identities': False,
      'log_level': 'INFO',
@@ -358,6 +349,7 @@ def configuration(
 
     """
     if of_fraction is not None:
+        # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             "configuration",
             kwargs={"of_fraction": None},
@@ -366,6 +358,7 @@ def configuration(
         )  # pragma: no cover
 
     if collapse_parallel_mode is not None:
+        # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             "configuration",
             kwargs={"collapse_parallel_mode": None},
@@ -379,7 +372,6 @@ def configuration(
         new_rtol=rtol,
         new_tempdir=tempdir,
         new_chunksize=chunksize,
-        new_free_memory_factor=free_memory_factor,
         new_log_level=log_level,
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
@@ -417,8 +409,6 @@ def _configuration(_Configuration, **kwargs):
     old = {name.lower(): val for name, val in CONSTANTS.items()}
 
     old.pop("total_memory", None)
-    old.pop("min_total_memory", None)
-    old.pop("fm_threshold", None)
 
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
@@ -431,7 +421,6 @@ def _configuration(_Configuration, **kwargs):
         "new_rtol": rtol,
         "new_tempdir": tempdir,
         "new_chunksize": chunksize,
-        "new_free_memory_factor": free_memory_factor,
         "new_log_level": log_level,
         "new_regrid_logging": regrid_logging,
         "new_relaxed_identities": relaxed_identities,
@@ -505,18 +494,6 @@ def free_memory():
 def FREE_MEMORY():
     """Alias for `cf.free_memory`."""
     return free_memory()
-
-
-def _cf_free_memory_factor(*new_free_memory_factor):
-    """Internal alias for `cf.free_memory_factor`.
-
-    Used in this module to prevent a name clash with a function keyword
-    argument (corresponding to 'import X as cf_X' etc. in other
-    modules). Note we don't use FREE_MEMORY_FACTOR() as it will likely
-    be deprecated in future.
-
-    """
-    return free_memory_factor(*new_free_memory_factor)
 
 
 _disable_logging = cfdm._disable_logging
@@ -676,6 +653,7 @@ class collapse_parallel_mode(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
+        # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION(
             "collapse_parallel_mode", version="TODODASKVER", removed_at="5.0.0"
         )  # pragma: no cover
@@ -942,6 +920,7 @@ class of_fraction(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
+        # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION(
             "of_fraction", version="TODODASKVER", removed_at="5.0.0"
         )  # pragma: no cover
@@ -949,6 +928,8 @@ class of_fraction(ConstantAccess):
 
 class free_memory_factor(ConstantAccess):
     """Set the fraction of memory kept free as a temporary workspace.
+
+    Deprecated at version TODODASKVER and is no longer available.
 
     Users should set the free memory factor through cf.set_performance
     so that the upper limit to the chunksize is recalculated
@@ -969,12 +950,12 @@ class free_memory_factor(ConstantAccess):
 
     """
 
-    # TODODASKAPI: Review how all this free memory stuff works with dask
-
     _name = "FREE_MEMORY_FACTOR"
 
     def _parse(cls, arg):
         """Parse a new constant value.
+
+        Deprecated at version TODODASKVER and is no longer available.
 
         .. versionaddedd:: 3.8.0
 
@@ -992,22 +973,10 @@ class free_memory_factor(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        try:
-            arg = float(arg)
-        except (ValueError, TypeError):
-            raise ValueError(
-                f"Free memory factor must be a float. Got {arg!r}"
-            )
-
-        if not (0 < arg < 1):
-            raise ValueError(
-                "Free memory factor must be between 0.0 and 1.0 "
-                "not inclusive"
-            )
-
-        CONSTANTS["FM_THRESHOLD"] = arg * total_memory()
-
-        return arg
+        # TODODASKAPI
+        _DEPRECATION_ERROR_FUNCTION(
+            "free_memory_factor", version="TODODASKVER", removed_at="5.0.0"
+        )  # pragma: no cover
 
 
 class bounds_combination_mode(ConstantAccess):
@@ -1197,6 +1166,8 @@ def fm_threshold():
     """The amount of memory which is kept free as a temporary work
     space.
 
+    Deprecated at version TODODASKVER and is no longer available.
+
     :Returns:
 
         `float`
@@ -1208,7 +1179,10 @@ def fm_threshold():
     10000000000.0
 
     """
-    return CONSTANTS["FM_THRESHOLD"]
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "fm_threshold", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def set_performance(chunksize=None, free_memory_factor=None):
@@ -1246,14 +1220,22 @@ def set_performance(chunksize=None, free_memory_factor=None):
             A tuple of the previous chunksize and free_memory_factor.
 
     """
+    # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "set_performance", version="TODODASKVER", removed_at="5.0.0"
     )  # pragma: no cover
 
 
 def min_total_memory():
-    """The minimum total memory across nodes."""
-    return CONSTANTS["MIN_TOTAL_MEMORY"]
+    """The minimum total memory across nodes.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "min_total_memory", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def total_memory():
@@ -1275,8 +1257,15 @@ def RTOL(*new_rtol):
 
 
 def FREE_MEMORY_FACTOR(*new_free_memory_factor):
-    """Alias for `cf.free_memory_factor`."""
-    return free_memory_factor(*new_free_memory_factor)
+    """Alias for `cf.free_memory_factor`.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "FREE_MEMORY_FACTOR", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def LOG_LEVEL(*new_log_level):
@@ -1295,6 +1284,7 @@ def SET_PERFORMANCE(*new_set_performance):
     Deprecated at version TODODASKVER and is no longer available.
 
     """
+    # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "SET_PERFORMANCE", version="TODODASKVER", removed_at="5.0.0"
     )  # pragma: no cover
@@ -1306,6 +1296,7 @@ def OF_FRACTION(*new_of_fraction):
     Deprecated at version TODODASKVER and is no longer available.
 
     """
+    # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "OF_FRACTION", version="TODODASKVER", removed_at="5.0.0"
     )  # pragma: no cover
@@ -1322,6 +1313,7 @@ def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     Deprecated at version TODODASKVER and is no longer available.
 
     """
+    # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "COLLAPSE_PARALLEL_MODE", version="TODODASKVER", removed_at="5.0.0"
     )  # pragma: no cover
@@ -1333,8 +1325,15 @@ def RELAXED_IDENTITIES(*new_relaxed_identities):
 
 
 def MIN_TOTAL_MEMORY(*new_min_total_memory):
-    """Alias for `cf.min_total_memory`."""
-    return min_total_memory(*new_min_total_memory)
+    """Alias for `cf.min_total_memory`.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "MIN_TOTAL_MEMORY", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def TEMPDIR(*new_tempdir):
@@ -1348,8 +1347,15 @@ def TOTAL_MEMORY(*new_total_memory):
 
 
 def FM_THRESHOLD(*new_fm_threshold):
-    """Alias for `cf.fm_threshold`."""
-    return fm_threshold(*new_fm_threshold)
+    """Alias for `cf.fm_threshold`.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "FM_THRESHOLD", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 # def IGNORE_IDENTITIES(*arg):
@@ -1461,6 +1467,7 @@ def open_files_threshold_exceeded():
     False
 
     """
+    # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "open_files_threshold_exceeded",
         version="TODODASKVER",
@@ -1502,6 +1509,7 @@ def close_files(file_format=None):
     >>> cf.close_files('PP')
 
     """
+    # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "close_files", version="TODODASKVER", removed_at="5.0.0"
     )  # pragma: no cover
@@ -1551,6 +1559,7 @@ def close_one_file(file_format=None):
                 'file3.nc': <netCDF4.Dataset at 0x1d185e9>}}
 
     """
+    # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "close_one__file", version="TODODASKVER", removed_at="5.0.0"
     )  # pragma: no cover
@@ -1595,6 +1604,7 @@ def open_files(file_format=None):
     {}
 
     """
+    # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "open_files", version="TODODASKVER", removed_at="5.0.0"
     )  # pragma: no cover
