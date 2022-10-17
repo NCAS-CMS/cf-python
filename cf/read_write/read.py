@@ -474,28 +474,31 @@ def read(
                                           equal to 0, then a
                                           coordinate reference system
                                           will still be created that
-                                          contains the 'a' and'b'
-                                          formular term values, but
+                                          contains the 'a' and 'b'
+                                          formula term values, but
                                           without an atmosphere hybrid
                                           height dimension coordinate
                                           construct.
 
-                                         .. note:: A current
-                                            limitation is that if
-                                            pseudolevels and
-                                            atmosphere hybrid height
-                                            coordinates are defined by
-                                            same the lookup headers
-                                            then the height can’t be
-                                            determined
-                                            automatcally. In this case
-                                            the height may be found
-                                            after reading as the
-                                            maximum value of the
-                                            bounds of the domain
-                                            ancillary construct
-                                            containing the 'a' formula
-                                            term.
+                                          .. note:: A current
+                                             limitation is that if
+                                             pseudolevels and
+                                             atmosphere hybrid height
+                                             coordinates are defined
+                                             by same the lookup
+                                             headers then the height
+                                             **can't be determined
+                                             automatically**. In this
+                                             case the height may be
+                                             found after reading as
+                                             the maximum value of the
+                                             bounds of the domain
+                                             ancillary construct
+                                             containing the 'a'
+                                             formula term. The file
+                                             can then be re-read with
+                                             this height as a *um*
+                                             parameter.
             ============================  =====================================
 
             If format is specified as ``'PP'`` then the word size and
@@ -512,10 +515,6 @@ def read(
               To specify that the input files are 32-bit,
               little-endian PP files from version 5.1 of the UM:
               ``um={'fmt': 'PP', 'endian': 'little', 'version': 5.1}``
-
-            >>> x = cf.read('file.pp')[0]
-            >>> TOA = x.construct('id%UM_atmosphere_hybrid_height_coordinate_a').bounds.max().datum()
-            >>> x = cf.read('file.pp', um={'height_at_top_of_model': TOA})[0]
 
             .. versionadded:: 1.5
 

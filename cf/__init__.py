@@ -74,7 +74,7 @@ installation and source code.
 
 """
 __Conventions__ = "CF-1.9"
-__date__ = "2022-10-14"
+__date__ = "2022-10-17"
 __version__ = "3.13.1"
 
 _requires = (
@@ -186,7 +186,7 @@ if Version(cfunits.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.9.0.3"
+_minimum_vn = "1.9.0.4"
 _maximum_vn = "1.9.1.0"
 _cfdm_version = Version(cfdm.__version__)
 if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
