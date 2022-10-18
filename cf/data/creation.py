@@ -396,3 +396,82 @@ def get_lock():
 
     # TODODASK: what now? raise exception? cluster?
     raise ValueError("TODODASKMSG")
+
+def cfa_to_dask(array, chunks):
+    """Create a dask array with `Subarray` chunks.
+
+    .. versionadded:: TODODASKVER
+
+    :Parameters:
+
+        array: subclass of `Array`
+            The compressed array.
+
+        chunks: `int`, `tuple`, `dict` or `str`, optional
+            Specify the chunking of the returned dask array.
+
+            Any value accepted by the *chunks* parameter of the
+            `dask.array.from_array` function is allowed.
+
+            The chunk sizes implied by *chunks* for a dimension that
+            has been compressed are ignored and replaced with values
+            that are implied by the decompression algorithm, so their
+            specification is arbitrary.
+
+    :Returns:
+
+        `dask.array.Array`
+
+    """
+    # Initialise a dask graph for the uncompressed array
+    name = (array.__class__.__name__ + "-" + tokenize(array),)
+    dsk = {}
+    full_slice = Ellipsis
+
+    dtype = array.dtype
+    units = array.units
+    aggregated_data = array.aggregated_data
+    fmt = array.get_fmt(None)
+    if fmt is None:
+        FragmentArray = None
+    else:
+        FragmentArray = array.get_FragmentArray(fmt)
+        
+    # ----------------------------------------------------------------
+    # Set the chunk sizes for the dask array
+    # ----------------------------------------------------------------
+    chunks = normalize_chunks(
+        array.subarray_shapes(chunks),
+        shape=array.shape,
+        dtype=dtype,
+    )
+
+    for _, u_shape, f_indices, chunk_location, fragement_location in zip(
+            *array.subarrays(shapes=chunks)
+    ):
+        d = aggregated_data[fragement_location]
+
+        if fmt is None:
+            FragmentArray = array.get_FragmentArray(d["format"])
+            
+        fragment_array = FragmentArray(
+            filename=d["file"],
+            ncvar=d["address"],
+            group=d.get("group")
+            shape=u_shape,
+            dtype=dtype,
+        )
+        fragment_array.set_parent_units(units)
+
+        dsk[name + chunk_location] = (
+            getter,
+            fragment_array,
+            f_indices,
+            False,
+            False,
+        )
+
+    # Return the dask array
+    return da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
+
+
