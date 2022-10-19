@@ -207,10 +207,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         """
         g = self.read_vars
-
         is_cfa_variable = (
             g["cfa"]
-            and construct.get_property("cf_role", None) == "cfa_variable"
+            and "aggregated_dimensions" in g["variable_attributes"][ncvar]
         )
 
         if not is_cfa_variable:
@@ -227,9 +226,20 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             )
 
         # ------------------------------------------------------------
-        # Still here? Then create data for a CFA netCDF variable
+        # Still here? Then create data for a CFA-netCDF variable
         # ------------------------------------------------------------
-        raise ValueError(_cfa_message)
+        cfa_array, kwargs = self._create_cfanetcdfarray(
+            ncvar,
+            unpacked_dtype=unpacked_dtype,
+            coord_ncvar=coord_ncvar,
+        )
+
+        return self._create_Data(
+            cfa_array,
+            units=kwargs["units"],
+            calendar=kwargs["calendar"],
+            ncvar=ncvar,
+        )
 
     def _create_Data(
         self,
@@ -399,3 +409,45 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             array = array.astype("S")
 
         return array
+
+    def _create_cfanetcdfarray(
+        self,
+        ncvar,
+        unpacked_dtype=False,
+        coord_ncvar=None,
+    ):
+        """Set the Data attribute of a variable.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            ncvar: `str`
+
+            unpacked_dtype: `False` or `numpy.dtype`, optional
+
+            coord_ncvar: `str`, optional
+
+        :Returns:
+
+            (`CFANetCDFArray`, `dict`)
+                The new `NetCDFArray` instance and dictionary of the
+                kwargs used to create it.
+
+        """
+        # Get the kwargs needed to instantiate a general NetCDFArray
+        # instance
+        kwargs = self._create_netcdfarray(
+            ncvar,
+            unpacked_dtype=unpacked_dtype,
+            coord_ncvar=coord_ncvar,
+            return_kwargs_only=True,
+        )
+
+        # Get rid of the incorrect shape
+        kwargs.pop("shape", None)
+
+        # Use the kwargs to create the CFANetCDFArray instance
+        array = self.implementation.initialise_CFANetCDFArray(**kwargs)
+
+        return (array, kwargs)

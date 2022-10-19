@@ -38,7 +38,12 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import compressed_to_dask, generate_axis_identifiers, to_dask
+from .creation import (
+    cfa_to_dask,
+    compressed_to_dask,
+    generate_axis_identifiers,
+    to_dask,
+)
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -457,6 +462,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except AttributeError:
             compressed = ""
 
+        if not compressed:
+            # Find out if the data is a CFA xaggregated array of
+            # fragments
+            try:
+                cfa = array.is_cfa()
+            except AttributeError:
+                cfa = False
+
         if compressed:
             # The data is compressed, so create a uncompressed dask
             # view of it.
@@ -485,6 +498,23 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._set_Array(array)
 
             array = compressed_to_dask(array, chunks)
+
+        elif cfa:
+            # The input data is a CFA aggregated array, so create a
+            # dask array of its fragments.
+            if chunks != _DEFAULT_CHUNKS:
+                raise ValueError(
+                    "Can't define chunks for CFA input arrays. "
+                    "Consider rechunking after initialisation."
+                )
+
+            if init_options.get("from_array"):
+                raise ValueError(
+                    "Can't define 'from_array' initialisation options "
+                    "for CFA input arrays"
+                )
+
+            array = cfa_to_dask(array, chunks)
 
         elif not is_dask_collection(array):
             # Turn the data into a dask array
