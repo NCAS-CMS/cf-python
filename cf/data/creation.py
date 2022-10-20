@@ -415,9 +415,8 @@ def cfa_to_dask(array, chunks):
             `dask.array.from_array` function is allowed.
 
             The chunk sizes implied by *chunks* for a dimension that
-            has been compressed are ignored and replaced with values
-            that are implied by the decompression algorithm, so their
-            specification is arbitrary.
+            has been fragemented are ignored and replaced with values
+            that are implied by that dimensions fragment sizes.
 
     :Returns:
 
@@ -425,7 +424,7 @@ def cfa_to_dask(array, chunks):
 
     """
     # Initialise a dask graph for the uncompressed array
-    name = (array.__class__.__name__ + "-" + tokenize(array),)
+    name = (f"{array.__class__.__name__}-{tokenize(array)}",)
     dsk = {}
 
     dtype = array.dtype
@@ -434,11 +433,7 @@ def cfa_to_dask(array, chunks):
     aggregated_data = array.get_aggregated_data(copy=False)
 
     # Set the chunk sizes for the dask array
-    chunks = normalize_chunks(
-        array.subarray_shapes(chunks),
-        shape=array.shape,
-        dtype=dtype,
-    )
+    chunks = array.subarray_shapes(chunks)
 
     # Create a FragmentArray for each chunk
     for (
@@ -446,9 +441,9 @@ def cfa_to_dask(array, chunks):
         u_shape,
         f_indices,
         chunk_location,
-        fragement_location,
+        fragment_location,
     ) in zip(*array.subarrays(chunks)):
-        d = aggregated_data[fragement_location]
+        d = aggregated_data[fragment_location]
 
         FragmentArray = array.get_FragmentArray(d["format"])
 

@@ -4,10 +4,11 @@ import numpy as np
 
 _cfa_message = (
     "Reading CFA files has been temporarily disabled, "
-    "and will return at version 4.0.0. "
+    "and will return at version ?.?.?. "
     "CFA-0.4 functionality is still available at version 3.13.x."
 )
 
+# TODODASKCFA: remove aggregation_* properties from constructs
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     """A container for instantiating Fields from a netCDF dataset.
@@ -24,7 +25,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         uncompressed* dimensions are returned.
 
         For a CFA variable, the netCDF dimensions are taken from the
-        'cfa_dimensions' netCDF attribute.
+        'aggregated_dimensions' netCDF attribute.
 
         .. versionadded:: 3.0.0
 
@@ -78,28 +79,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         ['depth', 'lat', 'lon']
 
         """
-        g = self.read_vars
 
-        cfa = (
-            g["cfa"]
-            and ncvar not in g["external_variables"]
-            and g["variable_attributes"][ncvar].get("cf_role")
-            == "cfa_variable"
-        )
-
-        if not cfa:
+        if not self._is_cfa_variable(ncvar):
             return super()._ncdimensions(
                 ncvar, ncdimensions=ncdimensions, parent_ncvar=parent_ncvar
             )
 
         # Still here? Then we have a CFA variable.
-        raise ValueError(_cfa_message)
-
-        # Leave the following CFA code here, as it may be useful at
-        # v4.0.0.
-        ncdimensions = (
-            g["variable_attributes"][ncvar].get("cfa_dimensions", "").split()
-        )
+        ncdimensions = self.read_vars["variable_attributes"][ncvar][
+            "aggregated_dimensions"
+        ].split()
 
         return list(map(str, ncdimensions))
 
@@ -108,7 +97,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         netCDF variable's netCDF dimensions.
 
         For a CFA variable, the netCDF dimensions are taken from the
-        'cfa_dimensions' netCDF attribute.
+        'aggregated_dimensions' netCDF attribute.
 
         :Parameter:
 
@@ -137,35 +126,24 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         []
 
         """
-        g = self.read_vars
-
-        cfa = (
-            g["cfa"]
-            and ncvar not in g["external_variables"]
-            and g["variable_attributes"][ncvar].get("cf_role")
-            == "cfa_variable"
-        )
-
-        if not cfa:
+        if not self._is_cfa_variable(ncvar):
             return super()._get_domain_axes(
                 ncvar=ncvar,
                 allow_external=allow_external,
                 parent_ncvar=parent_ncvar,
             )
 
-        # Still here?
-        raise ValueError(_cfa_message)
+        # Still here? Then we have a CFA variable.
+        g = self.read_vars
 
-        # Leave the following CFA code here, as it may be useful at
-        # v4.0.0.
-        cfa_dimensions = (
-            g["variable_attributes"][ncvar].get("cfa_dimensions", "").split()
-        )
+        ncdimensions = g["variable_attributes"][ncvar][
+            "aggregated_dimensions"
+        ].split()
 
         ncdim_to_axis = g["ncdim_to_axis"]
         axes = [
             ncdim_to_axis[ncdim]
-            for ncdim in cfa_dimensions
+            for ncdim in ncdimensions
             if ncdim in ncdim_to_axis
         ]
 
@@ -206,16 +184,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             `Data`
 
         """
-        g = self.read_vars
-        is_cfa_variable = (
-            g["cfa"]
-            and "aggregated_dimensions" in g["variable_attributes"][ncvar]
-        )
-
-        if not is_cfa_variable:
-            # --------------------------------------------------------
+        if not self._is_cfa_variable(ncvar):
             # Create data for a normal netCDF variable
-            # --------------------------------------------------------
             return super()._create_data(
                 ncvar=ncvar,
                 construct=construct,
@@ -225,9 +195,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 coord_ncvar=coord_ncvar,
             )
 
-        # ------------------------------------------------------------
         # Still here? Then create data for a CFA-netCDF variable
-        # ------------------------------------------------------------
         cfa_array, kwargs = self._create_cfanetcdfarray(
             ncvar,
             unpacked_dtype=unpacked_dtype,
@@ -239,6 +207,29 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             units=kwargs["units"],
             calendar=kwargs["calendar"],
             ncvar=ncvar,
+        )
+
+    def _is_cfa_variable(self, ncvar):
+        """Return True if *ncvar* is a CFA variable.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            ncvar: `str`
+                The name of the netCDF variable.
+
+        :Returns:
+
+            `bool`
+                Whether or not *ncvar* is a CFA variable.
+
+        """
+        g = self.read_vars
+        return (
+            g["cfa"]
+            and ncvar not in g["external_variables"]
+            and "aggregated_dimensions" in g["variable_attributes"][ncvar]
         )
 
     def _create_Data(
@@ -290,51 +281,34 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # ------------------------------------------------------------
         # Find out if this is a CFA file
         # ------------------------------------------------------------
-        g["cfa"] = "CFA" in g["global_attributes"].get(
-            "Conventions", ()
-        )  # TODO
+        g["cfa"] = "CFA-" in g["global_attributes"].get("Conventions", ())
 
-        # ------------------------------------------------------------
-        # Do not create fields from CFA private variables
-        # ------------------------------------------------------------
         if g["cfa"]:
-            raise ValueError(_cfa_message)
+            attributes = g["variable_attributes"]
+            dimensions = g["variable_dimensions"]
 
+            # Do not create fields from CFA private
+            # variables. TODODASKCFA: get private variables from
+            # CFANetCDFArray instances
             for ncvar in g["variables"]:
-                if (
-                    g["variable_attributes"][ncvar].get("cf_role", None)
-                    == "cfa_private"
-                ):
+                if attributes[ncvar].get("cf_role", None) == "cfa_private":
                     g["do_not_create_field"].add(ncvar)
 
-        # ------------------------------------------------------------
-        #
-        # ------------------------------------------------------------
-        if g["cfa"]:
-            raise ValueError(_cfa_message)
-
-            # Leave the following CFA code here, as it may be useful
-            # at v4.0.0.
-            for ncvar, ncdims in tuple(g["variable_dimensions"].items()):
+            for ncvar, ncdims in tuple(dimensions.items()):
                 if ncdims != ():
                     continue
 
                 if not (
                     ncvar not in g["external_variables"]
-                    and g["variable_attributes"][ncvar].get("cf_role")
-                    == "cfa_variable"
+                    and "aggregated_dimensions" in attributes[ncvar]
                 ):
                     continue
 
-                ncdimensions = (
-                    g["variable_attributes"][ncvar]
-                    .get("cfa_dimensions", "")
-                    .split()
-                )
+                ncdimensions = attributes[ncvar][
+                    "aggregated_dimensions"
+                ].split()
                 if ncdimensions:
-                    g["variable_dimensions"][ncvar] = tuple(
-                        map(str, ncdimensions)
-                    )
+                    dimensions[ncvar] = tuple(map(str, ncdimensions))
 
     def _array_from_variable(self, ncvar):
         """Convert a netCDF variable to a `numpy` array.
@@ -447,7 +421,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # Get rid of the incorrect shape
         kwargs.pop("shape", None)
 
-        # Use the kwargs to create the CFANetCDFArray instance
+        # Add the aggregated_data attribute (that can be used by
+        # dask.base.tokenize).
+        kwargs["_instructions_attr"] = self.read_vars["variable_attributes"][
+            ncvar
+        ].get("aggregated_data")
+
+        # Use the kwargs to create a specialised CFANetCDFArray
+        # instance
         array = self.implementation.initialise_CFANetCDFArray(**kwargs)
 
         return (array, kwargs)

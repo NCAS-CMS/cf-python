@@ -1,1 +1,1 @@
-from .netcdffragementarray.py import NetCFDFragementArray
+from .netcdffragmentarray import NetCDFFragmentArray

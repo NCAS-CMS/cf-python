@@ -1,5 +1,7 @@
-from ..units import Units
-from .netcdfarray import NetCDFArray
+from numbers import Integral
+
+from ...units import Units
+from ..netcdfarray import NetCDFArray
 
 
 class NetCDFFragmentArray(NetCDFArray):
@@ -19,9 +21,9 @@ class NetCDFFragmentArray(NetCDFArray):
         shape=None,
         mask=True,
         units=False,
-        calendar=False,
+        calendar=None,
         aggregated_units=False,
-        aggregated_calendar=False,
+        aggregated_calendar=None,
         source=None,
         copy=True,
     ):
@@ -91,20 +93,18 @@ class NetCDFFragmentArray(NetCDFArray):
                 `None` to indicate that there are no units.
 
             calendar: `str`, optional
-                The calendar of the netCDF fragment variable.  Set to
-                `None` to indicate that there is no calendar, or the
-                CF default calendar if applicable.
+                The calendar of the netCDF fragment variable. By
+                default, or if set to `None`, then the CF default
+                calendar is assumed, if applicable.
 
             aggregated_units: `str` or `None`, optional
-                The units of the aggregated array. By default, or if
-                set to `None` then the aggregated array is assumed to
-                have no units.
+                The units of the aggregated array. Set to `None` to
+                indicate that there are no units.
 
             aggregated_calendar: `str` or `None`, optional
                 The calendar of the aggregated array. By default, or
-                if set to `None` then the aggregated array is assumed
-                to have no calendar, or the CF default calendar if
-                applicable.
+                if set to `None`, then the CF default calendar is
+                assumed, if applicable.
 
             source: optional
                 Initialise the array from the given object.
@@ -138,10 +138,10 @@ class NetCDFFragmentArray(NetCDFArray):
 
             try:
                 aggregated_calendar = source._get_component(
-                    "aggregated_calendar", False
+                    "aggregated_calendar", None
                 )
             except AttributeError:
-                aggregated_calendar = False
+                aggregated_calendar = None
 
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
@@ -153,72 +153,67 @@ class NetCDFFragmentArray(NetCDFArray):
 
         x.__getitem__(indices) <==> x[indices]
 
-        The indices that define the subspace must be either `Ellipsis` or
-        a sequence that contains an index for each dimension. In the
-        latter case, each dimension's index must either be a `slice`
-        object or a sequence of two or more integers.
+        Indexing is similar to numpy indexing, with the following
+        differences:
 
-        Indexing is similar to numpy indexing. The only difference to
-        numpy indexing (given the restrictions on the type of indices
-        allowed) is:
+          * A dimension's index can't be rank-reducing, i.e. it can't
+            be an integer, nor a scalar `numpy` or `dask` array.
 
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
+          * When two or more dimension's indices are sequences of
+            integers then these indices work independently along each
+            dimension (similar to the way vector subscripts work in
+            Fortran).
 
         **Size 1 dimensions**
 
         If the netCDF fragment variable has fewer dimensions than
-        given by `ndim` then an attempt will be made to insert any
-        missing size 1 dimensions into the returned array. This will
-        happen unless *indices* contains an element that reduces the
-        rank of the result (such as a bare `int` index), in which case
-        that dimension will not appear in the returned array, as
-        usual. Given that the purpose of indexing this object is to
-        provide the data to fill a subspace of a CFA aggregated data
-        array, it is not recommended to provide dimension-reducing
-        indices.
+        defined by `ndim` then any missing size 1 dimensions will be
+        automatically inserted into the requested subspace.
 
         **Performance**
 
-        If a part of the fragment array is required, and the netCDF
-        fragment variable has fewer dimensions than given by `ndim`,
-        then the entire array is read xfrom disk prior having its
-        missing size 1 dimensions added and then having the *indices*
-        applied.
+        If the netCDF fragment variable has fewer dimensions than
+        defined by `ndim` then the entire array is read into memory
+        before the subspace is returned.
 
         .. versionadded:: TODODASKVER
 
         """
+        # Check indices
+        for i in indices:
+            if isinstance(i, slice) or i is Ellipsis:
+                continue
+
+            if isinstance(i, Integral) or not getattr(i, "ndim", True):
+                # 'i' is an integer or a scalar numpy/dask array
+                raise ValueError(f"Can't provide rank-reducing index: {i!r}")
+
         # Re-cast indices so that it has at least ndim elements
-        full_slice = False
-        if all(i in (Ellipsis, slice(None, None, None)) for i in indices):
-            full_slice = True
-            indices = (slice(None),) * self.ndim
-        else:
-            diff = self.ndim - len(indices)
-            if diff > 0:
-                indices += (slice(None),) * diff
+        ndim = self.ndim
+        indices += (slice(None),) * (ndim - len(indices))
 
         try:
             array = super().__getitem__(indices)
         except ValueError:
-            # A value error is raised if indices has ndim elements but
-            # the netCDF fragment variable has fewer dimensions. In
-            # this case we get the entire fragment array, insert the
-            # missing size 1 dimensions, and then apply the requested
-            # slice.
+            # A value error is raised if indices has at least ndim
+            # elements but the netCDF fragment variable has fewer than
+            # ndim dimensions. In this case we get the entire fragment
+            # array, insert the missing size 1 dimensions, and then
+            # apply the requested slice. (A CFA conventions
+            # requirement.)
             array = super().__getitem__(Ellipsis)
-            array = self._reshape(array)
-            if not full_slice:
-                array = array[indices]
+            if array.ndim < ndim:
+                array = array.reshape(self.shape)
 
-        # Get the fragment's units (which are guaranteed to exist
-        # after a `super().__getitem__` call).
-        units = self._get_Units()
+            array = array[indices]
+
+        # Convert the data to have the aggregated array units. (A CFA
+        # conventions requirement.)
+        units = Units(self.get_units(), self.get_calendar())
         if units:
-            # Convert array to have parent units
-            aggregated_units = self._get_aggregated_Units()
+            aggregated_units = Units(
+                self.get_aggregated_units(), self.get_aggregated_calendar()
+            )
             if aggregated_units and aggregated_units != units:
                 array = Units.conform(
                     array, units, aggregated_units, inplace=True
@@ -226,58 +221,53 @@ class NetCDFFragmentArray(NetCDFArray):
 
         return array
 
-    def _get_aggregated_Units(self):
-        """Get the aggregated array units as a `Units` instance.
+    def get_aggregated_calendar(self):
+        """The calendar of the aggregated array.
+
+        If the calendar is `None` then the CF default calendar is
+        assumed, if applicable.
 
         .. versionadded:: TODODASKVER
 
         :Returns:
 
-            `Units`
+            `str` or `None`
 
         """
-        units = self._get_component("aggregated_units", False)
+        return self._get_component("aggregated_calendar", None)
+
+    def get_aggregated_units(self):
+        """The units of the aggregated array.
+
+        If the units are `None` then it is assumed that the fragment
+        data has no same units.
+
+        .. versionadded:: TODODASKVER
+
+        :Returns:
+
+            `str` or `None`
+
+        """
+        units = self._get_component("aggregated", False)
         if units is False:
             raise ValueError(
-                f"{self.__class__.__name__} must have 'aggregate_units'"
+                f"{self.__class__.__name__} must have 'aggregated_units'"
             )
 
-        calendar = self._get_component("aggregated_calendar", False)
-        if calendar is False:
-            raise ValueError(
-                f"{self.__class__.__name__} must have 'aggregate_calendar'"
-            )
+        return units
 
-        return Units(units, calendar)
+    def get_units(self):
+        """The units of the fragment data.
 
-    def _get_Units(self):
-        """Get the fragment variable units as a `Units` instance.
-
-        .. note:: The fragment's units are guaranteed to exist after
-                  `super().__getitem__` call has been called.
+        If the units are `None` then it is assumed that the fragment
+        data has the same units as the aggregated array.
 
         .. versionadded:: TODODASKVER
 
         :Returns:
 
-            `Units`
+            `str` or `None`
 
         """
-        return Units(
-            self._get_component("units", None),
-            self._get_component("calendar", None),
-        )
-
-    def _reshape(self, array):
-        """Add missing size 1 dimensions to an array.
-
-        Adds any size 1 dimension required to give *array* the same
-        number of dimension as `ndim`.
-
-        .. versionadded:: TODODASKVER
-
-        """
-        if array.ndim < self.ndim and array.size == self.size:
-            array = array.reshape(self.shape)
-
-        return array
+        return self._get_component("units", None)
