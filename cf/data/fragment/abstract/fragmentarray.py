@@ -142,7 +142,10 @@ class FragmentArray(Array):
         return self._conform_units(array)
 
     def __repr__(self):
-        return f"<CF {self.__class__.__name__}{self.shape}: {self.get_array().get_filename()}, {self.get_address()}>"
+        return (
+            f"<CF {self.__class__.__name__}{self.shape}: "
+            f"{self.get_filename()}, {self.get_address()}>"
+        )
 
     def _conform_units(self, array):
         # Convert the data to have the aggregated array units. (A CFA
@@ -233,7 +236,7 @@ class FragmentArray(Array):
         """The units of the aggregated array.
 
         If the units are `None` then the aggregated array has no
-        units.
+        defined units.
 
         .. versionadded:: TODODASKVER
 
@@ -254,7 +257,7 @@ class FragmentArray(Array):
     def get_array(self):
         """TODO.
 
-        .. versionadded:: (cfdm) 1.10.0.1
+        .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -269,7 +272,7 @@ class FragmentArray(Array):
         If the calendar is `None` then the CF default calendar is
         assumed, if applicable.
 
-        .. versionadded:: (cfdm) 1.10.0.1
+        .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -278,11 +281,29 @@ class FragmentArray(Array):
         """
         return self.get_array().get_calendar()
 
+    def get_filename(self):
+        """The name of the TODO netCDF file containing the array.
+
+        .. versionadded:: TODODASKVER
+
+        :Returns:
+
+            `str` or `None`
+                The filename, or `None` if there isn't one.
+
+        **Examples**
+
+        >>> a.get_filename()
+        'file.nc'
+
+        """
+        return self._get_component("filename", None)
+
     def get_units(self):
         """The units of the fragment data.
 
         If the units are `None` then it is assumed that the fragment
-        data has the same units as the aggregated array.
+        has the same units as the aggregated array.
 
         .. versionadded:: TODODASKVER
 

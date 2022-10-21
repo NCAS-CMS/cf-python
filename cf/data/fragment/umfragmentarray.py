@@ -18,7 +18,7 @@ class UMFragmentArray(FragmentArray):
         aggregated_units=False,
         aggregated_calendar=None,
         units=False,
-        calendar=None,
+        calendar=False,
         source=None,
         copy=True,
     ):
@@ -27,12 +27,10 @@ class UMFragmentArray(FragmentArray):
         :Parameters:
 
             filename: `str`
-                The name of the netCDF fragment file containing the
-                array.
+                The name of the UM or PP file containing the fragment.
 
-            address: `str`, optional
-                The name of the netCDF variable containing the
-                fragment array. Required unless *varid* is set.
+            address: `int`, optional
+                The start word in the file of the header.
 
             dtype: `numpy.dtype`
                 The data type of the aggregated array. May be `None`
@@ -48,13 +46,13 @@ class UMFragmentArray(FragmentArray):
                 size 1 dimensions.
 
             units: `str`, optional
-                TODO The units of the netCDF fragment variable. Set to
-                `None` to indicate that there are no units.
+                The units of the fragment variable. Set to `None` to
+                indicate that there are no units. By default, or if TODO
 
             calendar: `str`, optional
-                The calendar of the netCDF fragment variable. By
-                default, or if set to `None`, then the CF default
-                calendar is assumed, if applicable.
+                The calendar of the fragment variable. By default, or
+                if set to `None`, then the CF default calendar is
+                assumed, if applicable.
 
             aggregated_units: `str` or `None`, optional
                 The units of the aggregated array. Set to `None` to
