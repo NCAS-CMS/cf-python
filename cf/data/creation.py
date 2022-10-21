@@ -450,8 +450,8 @@ def cfa_to_dask(array, chunks):
         fragment_array = FragmentArray(
             filename=d["file"],
             address=d["address"],
-            shape=u_shape,
             dtype=dtype,
+            shape=u_shape,
             aggregated_units=units,
             aggregated_calendar=calendar,
         )

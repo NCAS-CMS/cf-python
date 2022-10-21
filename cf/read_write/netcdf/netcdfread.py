@@ -10,6 +10,7 @@ _cfa_message = (
 
 # TODODASKCFA: remove aggregation_* properties from constructs
 
+
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     """A container for instantiating Fields from a netCDF dataset.
 

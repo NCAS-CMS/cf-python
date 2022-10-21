@@ -1,9 +1,11 @@
-from ..netcdfarray import NetCDFArray
+import numpy as np
+
+from ..filledarray import FilledArray
 from .abstract import FragmentArray
 
 
-class NetCDFFragmentArray(FragmentArray):
-    """A CFA fragment array stored in a netCDF file.
+class MissingFragmentArray(FragmentArray):
+    """A CFA fragment array stored in a netCDF file TODODASKDOCS.
 
     .. versionadded:: TODODASKVER
 
@@ -26,7 +28,7 @@ class NetCDFFragmentArray(FragmentArray):
 
         :Parameters:
 
-            filename: `str`
+            filename: `str` or `None`
                 The name of the netCDF fragment file containing the
                 array.
 
@@ -86,24 +88,10 @@ class NetCDFFragmentArray(FragmentArray):
             super().__init__(source=source, copy=copy)
             return
 
-        if isinstance(address, int):
-            ncvar = None
-            varid = address
-        else:
-            ncvar = address
-            varid = None
-
-        # TODO set groups from ncvar
-        group = None
-
-        array = NetCDFArray(
-            filename=filename,
-            ncvar=ncvar,
-            varid=varid,
-            group=group,
+        array = FilledArray(
+            fill_value=np.ma.masked,
             dtype=dtype,
             shape=shape,
-            mask=True,
             units=units,
             calendar=calendar,
             copy=False,
@@ -120,52 +108,3 @@ class NetCDFFragmentArray(FragmentArray):
             array=array,
             copy=False,
         )
-
-    def __getitem__(self, indices):
-        """Returns a subspace of the fragment as a numpy array.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        Indexing is similar to numpy indexing, with the following
-        differences:
-
-          * A dimension's index can't be rank-reducing, i.e. it can't
-            be an integer, nor a scalar `numpy` or `dask` array.
-
-          * When two or more dimension's indices are sequences of
-            integers then these indices work independently along each
-            dimension (similar to the way vector subscripts work in
-            Fortran).
-
-        **Performance**
-
-        If the netCDF fragment variable has fewer dimensions than
-        defined by `ndim` then the entire array is read into memory
-        before a subspace of it is returned.
-
-        .. versionadded:: TODODASKVER
-
-        """
-        indices = self._parse_indices(indices)
-
-        # Re-cast indices so that it has at least ndim elements
-        ndim = self.ndim
-        indices += (slice(None),) * (ndim - len(indices))
-
-        array = self.get_array()
-        try:
-            array = array[indices]
-        except ValueError:
-            # A value error is raised if indices has at least ndim
-            # elements but the netCDF fragment variable has fewer than
-            # ndim dimensions. In this case we get the entire fragment
-            # array, insert the missing size 1 dimensions, and then
-            # apply the requested slice. (A CFA conventions
-            # requirement.)
-            array = array[Ellipsis]
-            if array.ndim < ndim:
-                array = array.reshape(self.shape)
-
-            array = array[indices]
-
-        return self._conform_units(array)

@@ -70,7 +70,7 @@ class CFImplementation(cfdm.CFDMImplementation):
             calendar: `str` or `None`, optional
 
             _instructions_attr: `str`, optional
-        
+
         :Returns:
 
             `CFANetCDFArray`
@@ -119,6 +119,7 @@ _implementation = CFImplementation(
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
 )
+
 
 def implementation():
     """Return a container for the CF data model implementation.

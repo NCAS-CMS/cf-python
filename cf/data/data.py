@@ -502,12 +502,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         elif cfa:
             # The input data is a CFA aggregated array, so create a
             # dask array of its fragments.
-            if chunks != _DEFAULT_CHUNKS:
-                raise ValueError(
-                    "Can't define chunks for CFA input arrays. "
-                    "Consider rechunking after initialisation."
-                )
-
             if init_options.get("from_array"):
                 raise ValueError(
                     "Can't define 'from_array' initialisation options "

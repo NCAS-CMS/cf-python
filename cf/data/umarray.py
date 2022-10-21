@@ -21,6 +21,8 @@ class UMArray(FileArray):
         fmt=None,
         word_size=None,
         byte_ordering=None,
+        units=False,
+        calendar=None,
         source=None,
         copy=True,
     ):

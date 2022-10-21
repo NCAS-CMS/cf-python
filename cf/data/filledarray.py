@@ -1,15 +1,21 @@
 import numpy as np
-from numpy import full as numpy_full
 
-from ..constants import masked as cf_masked
-from ..functions import parse_indices
-from . import abstract
+from .abstract import Array
 
 
-class FilledArray(abstract.Array):
+class FilledArray(Array):
     """An underlying filled array."""
 
-    def __init__(self, dtype=None, shape=None, size=None, fill_value=None):
+    def __init__(
+        self,
+        fill_value=None,
+        dtype=None,
+        shape=None,
+        units=False,
+        calendar=False,
+        source=None,
+        copy=True,
+    ):
         """**Initialization**
 
             :Parameters:
@@ -21,16 +27,46 @@ class FilledArray(abstract.Array):
                 The data array's dimension sizes.
 
                 size : int
-                    Number of elements in the data array.
+                    Number of elements indexin the data array.
 
                 fill_value : scalar, optional
 
         #        masked_all: `bool`
 
         """
-        super().__init__(
-            dtype=dtype, shape=shape, size=size, fill_value=fill_value
-        )
+        super().__init__(source=source, copy=copy)
+
+        if source is not None:
+            try:
+                fill_value = source._get_component("fill_value", None)
+            except AttributeError:
+                fill_value = None
+
+            try:
+                dtype = source._get_component("dtype", None)
+            except AttributeError:
+                dtype = None
+
+            try:
+                shape = source._get_component("shape", None)
+            except AttributeError:
+                shape = None
+
+            try:
+                units = source._get_component("units", False)
+            except AttributeError:
+                units = False
+
+            try:
+                calendar = source._get_component("calendar", None)
+            except AttributeError:
+                calendar = None
+
+        self._set_component("fill_value", fill_value, copy=False)
+        self._set_component("dtype", dtype, copy=False)
+        self._set_component("shape", shape, copy=False)
+        self._set_component("units", units, copy=False)
+        self._set_component("calendar", calendar, copy=False)
 
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]
@@ -38,43 +74,45 @@ class FilledArray(abstract.Array):
         Returns a numpy array.
 
         """
+        # If 'apply_indices' is False then we can make a filled numpy
+        # array that already has the correct shape. Otherwise we need
+        # to make one with shape 'self.shape' and then apply the
+        # indices to that.
+        apply_indices = False
+
         if indices is Ellipsis:
             array_shape = self.shape
         else:
             array_shape = []
-            for index in parse_indices(self.shape, indices):
-                if isinstance(index, slice):
-                    step = index.step
-                    if step == 1:
-                        array_shape.append(index.stop - index.start)
-                    elif step == -1:
-                        stop = index.stop
-                        if stop is None:
-                            array_shape.append(index.start + 1)
-                        else:
-                            array_shape.append(index.start - index.stop)
-                    else:
-                        stop = index.stop
-                        if stop is None:
-                            stop = -1
+            for i, size, i in zip(indices, self.shape):
+                if not isinstance(i, slice):
+                    continue
 
-                        a, b = divmod(stop - index.start, step)
-                        if b:
-                            a += 1
+                start, stop, step = i.indices(size)
+                a, b = divmod(stop - start, step)
+                if b:
+                    a += 1
 
-                        array_shape.append(a)
-                else:
-                    array_shape.append(len(index))
-        # --- End: if
+                array_shape.append(a)
 
-        if self.fill_value() is cf_masked:
-            return np.ma.masked_all(array_shape, dtype=self.dtype)
-        elif self.fill_value() is not None:
-            return numpy_full(
-                array_shape, fill_value=self.fill_value(), dtype=self.dtype
+            if len(array_shape) != self.ndim:
+                apply_indices = True
+                array_shape = self.shape
+
+        fill_value = self.get_fill_value()
+        if fill_value is np.ma.masked:
+            array = np.ma.masked_all(array_shape, dtype=self.dtype)
+        elif fill_value is not None:
+            array = np.full(
+                array_shape, fill_value=fill_value, dtype=self.dtype
             )
         else:
-            return np.empty(array_shape, dtype=self.dtype)
+            array = np.empty(array_shape, dtype=self.dtype)
+
+        if apply_indices:
+            array = self.get_subspace(array, indices)
+
+        return array
 
     @property
     def dtype(self):
@@ -82,39 +120,18 @@ class FilledArray(abstract.Array):
         return self._get_component("dtype")
 
     @property
-    def ndim(self):
-        """Number of array dimensions."""
-        return len(self.shape)
-
-    @property
     def shape(self):
         """Tuple of array dimension sizes."""
         return self._get_component("shape")
 
-    @property
-    def size(self):
-        """Number of elements in the array."""
-        return self._get_component("size")
+    def get_fill_value(self):
+        """Return the data array fill value.
 
-    def fill_value(self):
-        """Return the data array missing data value."""
+        .. versionadded:: TODODASKVER
+
+        :Returns:
+
+            asdasda TODO
+
+        """
         return self._get_component("fill_value")
-
-    @property
-    def array(self):
-        """An independent numpy array containing the data."""
-        return self[...]
-
-    def reshape(self, newshape):
-        """Give a new shape to the array."""
-        new = self.copy()
-        new.shape = newshape
-        return new
-
-    def resize(self, newshape):
-        """Change the shape and size of the array in-place."""
-        self.shape = newshape
-
-    def view(self):
-        """Return a view of the entire array."""
-        return self[...]

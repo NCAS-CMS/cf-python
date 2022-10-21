@@ -8,7 +8,11 @@ from dask import compute, delayed
 from dask.array.core import normalize_chunks
 
 from ..functions import abspath
-from .fragment import NetCDFFragmentArray
+from .fragment import (
+    MissingFragmentArray,
+    NetCDFFragmentArray,
+    UMFragmentArray,
+)
 from .netcdfarray import NetCDFArray
 
 
@@ -26,7 +30,11 @@ class CFANetCDFArray(NetCDFArray):
 
         """
         instance = super().__new__(cls)
-        instance._FragmentArray = {"nc": NetCDFFragmentArray, "um": None}
+        instance._FragmentArray = {
+            "nc": NetCDFFragmentArray,
+            "um": UMFragmentArray,
+            None: MissingFragmentArray,
+        }
         return instance
 
     def __init__(
@@ -171,7 +179,9 @@ class CFANetCDFArray(NetCDFArray):
             aggregated_data = {}
             compute(
                 *[
-                    delayed(self._set_fragment(var, loc, aggregated_data))
+                    delayed(
+                        self._set_fragment(var, loc, aggregated_data, filename)
+                    )
                     for loc in product(*[range(i) for i in fragment_shape])
                 ]
             )
@@ -200,7 +210,7 @@ class CFANetCDFArray(NetCDFArray):
             instructions,
         )
 
-    def _set_fragment(self, var, frag_loc, aggregated_data):
+    def _set_fragment(self, var, frag_loc, aggregated_data, cfa_filename):
         """Set a new key/value pair in the *aggregated_data* dictionary.
 
         The *aggregated_data* dictionary contains the definitions of
@@ -228,10 +238,21 @@ class CFANetCDFArray(NetCDFArray):
 
         """
         fragment = var.getFrag(frag_loc=frag_loc)
+
+        filename = fragment.file
+        if filename is None:
+            filename = cfa_filename
+        else:
+            filename = abspath(fragment.file)
+
+        fmt = fragment.format
+        if fmt is None:
+            fmt = "nc"
+
         aggregated_data[frag_loc] = {
-            "file": abspath(fragment.file),
+            "file": filename,
             "address": fragment.address,
-            "format": fragment.format,
+            "format": fmt,
             "location": fragment.location,
         }
 
@@ -243,8 +264,11 @@ class CFANetCDFArray(NetCDFArray):
         :Parameters:
 
             fragment_format: `str`
-                The dataset format of the fragment. Either ``'nc'`` or
-                ``'um'``.
+                The dataset format of the fragment. Either ``'nc'``,
+                ``'um'``, or `None`.
+
+                If the dataset format is unknown then it defaults to
+                `None`.
 
         :Returns:
 
@@ -252,14 +276,13 @@ class CFANetCDFArray(NetCDFArray):
                 The class for representing fragment arrays.
 
         """
-        FragmentArray = self._FragmentArray.get(fragment_format)
-        if FragmentArray is None:
+        try:
+            return self._FragmentArray[fragment_format]
+        except KeyError:
             raise ValueError(
                 "Can't get FragmentArray class for unknown "
                 f"fragment dataset format: {fragment_format!r}"
             )
-
-        return FragmentArray
 
     def get_aggregated_data(self, copy=True):
         """Get the aggregation data dictionary.
