@@ -97,25 +97,31 @@ class FragmentArray(Array):
 
             try:
                 aggregated_calendar = source._get_component(
-                    "aggregated_calendar", None
+                    "aggregated_calendar", False
                 )
             except AttributeError:
-                aggregated_calendar = None
+                aggregated_calendar = False
 
             try:
                 array = source._get_component("array")
             except AttributeError:
                 array = None
 
+        self._set_component("filename", filename, copy=False)
         self._set_component("address", address, copy=False)
         self._set_component("dtype", dtype, copy=False)
-        self._set_component("filename", filename, copy=False)
         self._set_component("shape", shape, copy=False)
-        self._set_component("aggregated_units", aggregated_units, copy=False)
-        self._set_component(
-            "aggregated_calendar", aggregated_calendar, copy=False
-        )
         self._set_component("array", array, copy=copy)
+
+        if aggregated_units is not False:
+            self._set_component(
+                "aggregated_units", aggregated_units, copy=False
+            )
+
+        if aggregated_calendar is not False:
+            self._set_component(
+                "aggregated_calendar", aggregated_calendar, copy=False
+            )
 
     def __getitem__(self, indices):
         """Returns a subspace of the fragment as a numpy array.
@@ -136,25 +142,35 @@ class FragmentArray(Array):
         .. versionadded:: TODODASKVER
 
         """
-        indices = self._parse_indices(indices)
         array = self.get_array()
+        indices = self._parse_indices(indices)
         array = array[indices]
-        return self._conform_units(array)
+        array = self._conform_units(array)
+        return array
 
     def __repr__(self):
-        return (
-            f"<CF {self.__class__.__name__}{self.shape}: "
-            f"{self.get_filename()}, {self.get_address()}>"
-        )
+        """x.__repr__() <==> repr(x)"""
+        out = super().__repr__()
+        return out[:-1] + f", {self.get_address()}>"
 
     def _conform_units(self, array):
-        # Convert the data to have the aggregated array units. (A CFA
-        # conventions requirement.)
-        units = Units(self.get_units(), self.get_calendar())
+        """Conform the array to have the aggregated units.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            TODODASKDOCS
+
+        :Returns:
+
+            `numpy.ndarray`
+                TODODASKDOCS
+
+        """
+        units = self.Units
         if units:
-            aggregated_units = Units(
-                self.get_aggregated_units(), self.get_aggregated_calendar()
-            )
+            aggregated_units = self.aggregated_Units
             if units != aggregated_units:
                 array = Units.conform(
                     array, units, aggregated_units, inplace=True
@@ -163,6 +179,20 @@ class FragmentArray(Array):
         return array
 
     def _parse_indices(self, indices):
+        """TODODASKDOCS.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            TODODASKDOCS
+
+        :Returns:
+
+            `tuple`
+                TODODASKDOCS
+
+        """
         ndim = self.ndim
         if indices is Ellipsis:
             return (slice(None),) * ndim
@@ -173,8 +203,13 @@ class FragmentArray(Array):
                 continue
 
             if isinstance(i, Integral) or not getattr(i, "ndim", True):
+                # TODODASK: what about [] or np.array([])?
+
                 # 'i' is an integer or a scalar numpy/dask array
-                raise ValueError(f"Can't provide rank-reducing index: {i!r}")
+                raise ValueError(
+                    f"Can't subspace {self.__class__.__name__} with a "
+                    f"rank-reducing index: {i!r}"
+                )
 
         indices2 = []
         length = len(indices)
@@ -193,6 +228,22 @@ class FragmentArray(Array):
         return indices2
 
     @property
+    def aggregated_Units(self):
+        """TODODASKDOCS.
+
+        .. versionadded:: TODODASKVER
+
+        :Returns:
+
+            `Units`
+                TODODASKDOCS
+
+        """
+        return Units(
+            self.get_aggregated_units(), self.get_aggregated_calendar(None)
+        )
+
+    @property
     def shape(self):
         """Tuple of array dimension sizes."""
         return self._get_component("shape")
@@ -203,21 +254,19 @@ class FragmentArray(Array):
         return self._get_component("dtype")
 
     def get_address(self):
-        """The calendar of the aggregated array.
-
-        If the calendar is `None` then the CF default calendar is
-        assumed, if applicable.
+        """TODODASKDOCS.
 
         .. versionadded:: TODODASKVER
 
         :Returns:
 
-            `str` or `None`
+                The file address of the fragment. If no address has
+                been set then `None` is returned.
 
         """
         return self._get_component("address", None)
 
-    def get_aggregated_calendar(self):
+    def get_aggregated_calendar(self, default=ValueError()):
         """The calendar of the aggregated array.
 
         If the calendar is `None` then the CF default calendar is
@@ -225,14 +274,38 @@ class FragmentArray(Array):
 
         .. versionadded:: TODODASKVER
 
+        :Parameters:
+
+            TODODASKDOCS
+
         :Returns:
 
             `str` or `None`
 
         """
-        return self._get_component("aggregated_calendar", None)
+        try:
+            return self._get_component("aggregated_calendar")
+        except AttributeError:
+            if default is None:
+                return
 
-    def get_aggregated_units(self):
+            return self._default(
+                default,
+                f"{self.__class__.__name__} 'aggregated_calendar' has not "
+                "been set",
+            )
+
+    #        calendar = self._get_component("aggregated_calendar", False)
+    #        if calendar is False:
+    #           return self._default(
+    #              default,
+    #              f"{self.__class__.__name__} 'aggregated_calendar' has not "
+    #               "been set",
+    #           )
+    #
+    #        return calendar
+
+    def get_aggregated_units(self, default=ValueError()):
         """The units of the aggregated array.
 
         If the units are `None` then the aggregated array has no
@@ -240,22 +313,44 @@ class FragmentArray(Array):
 
         .. versionadded:: TODODASKVER
 
+        :Parameters:
+
+            TODODASKDOCS
+
         :Returns:
 
             `str` or `None`
 
         """
-        units = self._get_component("aggregated_units", False)
-        if units is False:
-            raise ValueError(
+        try:
+            return self._get_component("aggregated_units")
+        except AttributeError:
+            if default is None:
+                return
+
+            return self._default(
+                default,
                 f"{self.__class__.__name__} 'aggregated_units' have not "
-                "been set"
+                "been set",
             )
 
-        return units
+    #            raise ValueError(
+    #                f"{self.__class__.__name__} 'aggregated_units' have not "
+    #                "been set",
+    #            )
+    #
+    #        units = self._get_component("aggregated_units", False)
+    #        if units is False:
+    #            return self._default(
+    #                default,
+    #                f"{self.__class__.__name__} 'aggregated_units' have not "
+    #                "been set",
+    #            )
+    #
+    #        return units
 
     def get_array(self):
-        """TODO.
+        """TODODASKDOCS.
 
         .. versionadded:: TODODASKVER
 
@@ -266,7 +361,7 @@ class FragmentArray(Array):
         """
         return self._get_component("array")
 
-    def get_calendar(self):
+    def get_calendar(self, default=ValueError()):
         """The calendar of the fragment data.
 
         If the calendar is `None` then the CF default calendar is
@@ -274,12 +369,16 @@ class FragmentArray(Array):
 
         .. versionadded:: TODODASKVER
 
+        :Parameters:
+
+            TODODASKDOCS
+
         :Returns:
 
             `str` or `None`
 
         """
-        return self.get_array().get_calendar()
+        return self.get_array().get_calendar(default)
 
     def get_filename(self):
         """The name of the TODO netCDF file containing the array.
@@ -299,7 +398,7 @@ class FragmentArray(Array):
         """
         return self._get_component("filename", None)
 
-    def get_units(self):
+    def get_units(self, default=ValueError()):
         """The units of the fragment data.
 
         If the units are `None` then it is assumed that the fragment
@@ -307,13 +406,19 @@ class FragmentArray(Array):
 
         .. versionadded:: TODODASKVER
 
+        :Parameters:
+
+            TODODASKDOCS
+
         :Returns:
 
             `str` or `None`
 
         """
-        units = self.get_array().get_units()
-        if units is False:
-            units = None
+        return self.get_array().get_units(default)
 
-        return units
+
+#        if units is False:
+#            units = None
+#
+#        return units

@@ -165,12 +165,13 @@ class UMArray(FileArray):
         """
         f = self.open()
 
-        rec = Rec.from_file_and_offsets(
-            f, self.header_offset, self.data_offset, self.disk_length
-        )
+        rec = self._get_rec(f)
 
         int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
+
+        self.close(f)
+        del f
 
         array = rec.get_data().reshape(self.shape)
 
@@ -223,26 +224,51 @@ class UMArray(FileArray):
 
             array += add_offset
 
-        self.close(f)
-
         # Return the numpy array
         return array
 
-    def __str__(self):
-        """x.__str__() <==> str(x)
+    def __repr__(self):
+        """x.__repr__() <==> repr(x)"""
+        out = super().__repr__()
+        return out[:-1] + f", {self.header_offset}>"
+
+    def _get_rec(self, f):
+        """TODODASKDOCS.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            f: `umread_lib.umfile.File`
+                TODODASKDOCS
 
         :Returns:
 
-            `str`
+            `umread_lib.umfile.Rec`
+                TODODASKDOCS
 
         """
-        return f"{self.header_offset}{self.shape} in {self.filename}"
+        header_offset = self.header_offset
+        data_offset = self.data_offset
+        disk_length = self.disk_length
+        if data_offset is None or disk_length is None:
+            # This method doesn't require data_offset and disk_length,
+            # so plays nicely with CFA. Is it fast enough that we can
+            # use this method always?
+            for v in f.vars:
+                for r in v.recs:
+                    if r.hdr_offset == header_offset:
+                        return r
+        else:
+            return Rec.from_file_and_offsets(
+                f, header_offset, data_offset, disk_length
+            )
 
     @property
     def file_address(self):
         """The file name and address.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: ???
 
         :Returns:
 

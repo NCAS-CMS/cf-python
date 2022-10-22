@@ -19,9 +19,12 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
-    def __str__(self):
-        """x.__str__() <==> str(x)"""
-        return f"<{self.__class__.__name__}: {self.shape} in {self.file}>"
+    def __repr__(self):
+        """x.__repr__() <==> repr(x)"""
+        return (
+            f"<CF {self.__class__.__name__}{self.shape}: "
+            "{self.get_filename()}>"
+        )
 
     @property
     def _dask_lock(self):
@@ -108,7 +111,7 @@ class FileArray(Array):
         'file.nc'
 
         """
-        return self._get_component("filename")
+        return self._get_component("filename", None)
 
     def open(self):
         """Returns an open dataset containing the data array."""

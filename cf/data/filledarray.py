@@ -112,7 +112,29 @@ class FilledArray(Array):
         if apply_indices:
             array = self.get_subspace(array, indices)
 
+        self._set_units()
+
         return array
+
+    def _set_units(self):
+        """TODO.
+
+        .. versionadded:: TODODASKVER
+
+        To cfdm.Array ?
+
+        """
+        units = self._get_component("units", False)
+        if units is False:
+            units = None
+            self._set_component("units", units, copy=False)
+
+        calendar = self._get_component("calendar", False)
+        if calendar is False:
+            calendar = None
+            self._set_component("calendar", calendar, copy=False)
+
+        return units, calendar
 
     @property
     def dtype(self):

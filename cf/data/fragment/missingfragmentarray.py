@@ -18,7 +18,7 @@ class MissingFragmentArray(FragmentArray):
         dtype=None,
         shape=None,
         aggregated_units=False,
-        aggregated_calendar=None,
+        aggregated_calendar=False,
         units=False,
         calendar=None,
         source=None,
@@ -104,7 +104,7 @@ class MissingFragmentArray(FragmentArray):
             shape=shape,
             aggregated_units=aggregated_units,
             aggregated_calendar=aggregated_calendar,
-            source=source,
             array=array,
+            source=source,
             copy=False,
         )
