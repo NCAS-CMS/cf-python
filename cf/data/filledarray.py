@@ -124,12 +124,12 @@ class FilledArray(Array):
         To cfdm.Array ?
 
         """
-        units = self._get_component("units", False)
+        units = self.get_units(False)
         if units is False:
             units = None
             self._set_component("units", units, copy=False)
 
-        calendar = self._get_component("calendar", False)
+        calendar = self.get_calendar(False)
         if calendar is False:
             calendar = None
             self._set_component("calendar", calendar, copy=False)

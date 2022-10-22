@@ -46,23 +46,24 @@ class FileArray(Array):
         """
         return np.array((), dtype=self.dtype)
 
-    @property
-    def array(self):
-        """Return an independent numpy array containing the data.
-
-        :Returns:
-
-            `numpy.ndarray`
-                An independent numpy array of the data.
-
-        **Examples**
-
-        >>> n = numpy.asanyarray(a)
-        >>> isinstance(n, numpy.ndarray)
-        True
-
-        """
-        return self[...]
+# Inherited from Array
+#    @property
+#    def array(self):
+#        """Return an independent numpy array containing the data.
+#
+#        :Returns:
+#
+#            `numpy.ndarray`
+#                An independent numpy array of the data.
+#
+#        **Examples**
+#
+#        >>> n = numpy.asanyarray(a)
+#        >>> isinstance(n, numpy.ndarray)
+#        True
+#
+#        """
+#        return self[...]
 
     @property
     def dtype(self):
@@ -72,6 +73,7 @@ class FileArray(Array):
     @property
     def filename(self):
         """The name of the file containing the array."""
+        # TODODASK: Deprecate in favour of get_filename()
         return self._get_component("filename")
 
     @property
@@ -102,8 +104,8 @@ class FileArray(Array):
 
         :Returns:
 
-            `str`
-                The file name.
+            `str` or `None`
+                The filename, or `None` if there isn't one.
 
         **Examples**
 
