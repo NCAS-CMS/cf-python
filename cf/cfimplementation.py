@@ -48,8 +48,8 @@ class CFImplementation(cfdm.CFDMImplementation):
         dtype=None,
         mask=True,
         units=False,
-        calendar=None,
-        _instructions_attr=None,
+        calendar=False,
+        instructions=None,
     ):
         """Return a `CFANetCDFArray` instance.
 
@@ -69,7 +69,7 @@ class CFImplementation(cfdm.CFDMImplementation):
 
             calendar: `str` or `None`, optional
 
-            _instructions_attr: `str`, optional
+            instructions: `str`, optional
 
         :Returns:
 
@@ -85,7 +85,7 @@ class CFImplementation(cfdm.CFDMImplementation):
             mask=mask,
             units=units,
             calendar=calendar,
-            _instructions_attr=_instructions_attr,
+            instructions=instructions,
         )
 
 

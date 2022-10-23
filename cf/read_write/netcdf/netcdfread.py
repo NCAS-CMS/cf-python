@@ -424,10 +424,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         # Add the aggregated_data attribute (that can be used by
         # dask.base.tokenize).
-        kwargs["_instructions_attr"] = self.read_vars["variable_attributes"][
+        kwargs["instructions"] = self.read_vars["variable_attributes"][
             ncvar
         ].get("aggregated_data")
-
+        
         # Use the kwargs to create a specialised CFANetCDFArray
         # instance
         array = self.implementation.initialise_CFANetCDFArray(**kwargs)

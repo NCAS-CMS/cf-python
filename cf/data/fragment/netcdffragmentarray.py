@@ -168,4 +168,4 @@ class NetCDFFragmentArray(FragmentArray):
 
             array = array[indices]
 
-        return self._conform_units(array)
+        return self._conform_units(array)   

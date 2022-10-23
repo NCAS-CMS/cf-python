@@ -3,9 +3,13 @@ import numpy as np
 from .abstract import Array
 
 
-class FilledArray(Array):
-    """An underlying filled array."""
+class FullArray(Array):
+    """A array filled with a given value.
+    
+    The array may be empty or all missing values.    
 
+    """
+   
     def __init__(
         self,
         fill_value=None,
@@ -116,6 +120,24 @@ class FilledArray(Array):
 
         return array
 
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)"""
+        return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
+
+    def __str__(self):
+        """Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
+        fill_value = self.get_fill_value()
+        if fill_value is None:
+            return "Empty"
+
+        return f"Filled with {fill_value!r}"
+
     def _set_units(self):
         """TODO.
 
@@ -156,4 +178,4 @@ class FilledArray(Array):
             asdasda TODO
 
         """
-        return self._get_component("fill_value")
+        return self._get_component("fill_value", None)

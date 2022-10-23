@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..filledarray import FilledArray
+from ..fullarray import FullArray
 from .abstract import FragmentArray
 
 
@@ -88,7 +88,7 @@ class MissingFragmentArray(FragmentArray):
             super().__init__(source=source, copy=copy)
             return
 
-        array = FilledArray(
+        array = FullArray(
             fill_value=np.ma.masked,
             dtype=dtype,
             shape=shape,

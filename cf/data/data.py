@@ -462,6 +462,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except AttributeError:
             compressed = ""
 
+        
+
+        TODO: chack to_dask_array?
         if not compressed:
             # Find out if the data is a CFA xaggregated array of
             # fragments

@@ -251,7 +251,7 @@ from .field import Field
 from .data import (
     CFANetCDFArray,
     Data,
-    FilledArray,
+    FullArray,
     GatheredArray,
     NetCDFArray,
     RaggedContiguousArray,

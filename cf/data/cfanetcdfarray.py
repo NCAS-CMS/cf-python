@@ -4,8 +4,11 @@ from numbers import Number
 
 from CFAPython import CFAFileFormat
 from CFAPython.CFADataset import CFADataset
+
+import dask.array as da
 from dask import compute, delayed
-from dask.array.core import normalize_chunks
+from dask.array.core import getter, normalize_chunks
+from dask.base import tokenize
 
 from ..functions import abspath
 from .fragment import (
@@ -47,9 +50,9 @@ class CFANetCDFArray(NetCDFArray):
         mask=True,
         units=False,
         calendar=None,
+        instructions=None,
         source=None,
         copy=True,
-        _instructions_attr=None,
     ):
         """**Initialisation**
 
@@ -118,10 +121,10 @@ class CFANetCDFArray(NetCDFArray):
 
             {{deep copy}}
 
-            _instructions_attr: `str`, optional
-                Store the ``aggregated_data`` attribute value found on
-                the *ncvar* netCDF variable. If set then this will be
-                used by `__dask__tokenize__` to improve performance.
+            instructions: `str`, optional
+                The ``aggregated_data`` attribute value found on the
+                CFA netCDF variable. If set then this will be used by
+                `__dask__tokenize__`.
 
         """
         if source is not None:
@@ -190,26 +193,27 @@ class CFANetCDFArray(NetCDFArray):
 
         self._set_component("fragment_shape", fragment_shape, copy=False)
         self._set_component("aggregated_data", aggregated_data, copy=False)
-
-        if _instructions_attr is not None:
-            self._set_component(
-                "_instructions_attr", _instructions_attr, copy=False
-            )
+        self._set_component("instructions", instructions, copy=False)
 
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`."""
-        instructions = self._get_component("_instructions_attr", None)
-        if instructions is None:
-            instructions = self.get_aggregated_data(copy=False)
+        aggregated_data = self._get_component("instructions", None)
+        if aggregated_data is None:
+            aggregated_data = self.get_aggregated_data(copy=False)
 
         return (
             self.__class__.__name__,
             abspath(self.get_filename()),
             self.get_ncvar(),
             self.get_group(),
-            instructions,
+            aggregated_data ,
         )
 
+    def __getitem__(self, indices):
+        """TODODASKDOCS"""
+        dx = self.to_dask_array()
+        pass # TODO ???
+    
     def _set_fragment(self, var, frag_loc, aggregated_data, cfa_filename):
         """Set a new key/value pair in the *aggregated_data* dictionary.
 
@@ -605,3 +609,71 @@ class CFANetCDFArray(NetCDFArray):
             product(*s_locations),
             product(*f_locations),
         )
+
+    def to_dask_array(self, chunks="auto"):
+        """Create a dask array with `FragmentArray` chunks.
+
+        .. versionadded:: TODODASKVER
+    
+        :Parameters:
+    
+            chunks: `int`, `tuple`, `dict` or `str`, optional
+                Specify the chunking of the returned dask array.
+    
+                Any value accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is allowed.
+    
+                The chunk sizes implied by *chunks* for a dimension that
+                has been fragemented are ignored and replaced with values
+                that are implied by that dimensions fragment sizes.
+    
+        :Returns:
+    
+            `dask.array.Array`
+    
+        """
+        # Initialise a dask graph for the uncompressed array
+        name = (f"{self.__class__.__name__}-{tokenize(self)}",)
+    
+        dtype = self.dtype
+        units = self.get_units()
+        calendar = self.get_calendar()
+        aggregated_data = self.get_aggregated_data(copy=False)
+    
+        # Set the chunk sizes for the dask array
+        chunks = self.subarray_shapes(chunks)
+    
+        # Create a FragmentArray for each chunk
+        get_FragmentArray= self.get_FragmentArray
+        
+        dsk = {}
+        for (
+            u_indices,
+            u_shape,
+            f_indices,
+            chunk_location,
+            fragment_location,
+        ) in zip(*self.subarrays(chunks)):
+            d = aggregated_data[fragment_location]
+    
+            FragmentArray = get_FragmentArray(d["format"])
+    
+            fragment_array = FragmentArray(
+                filename=d["file"],
+                address=d["address"],
+                dtype=dtype,
+                shape=u_shape,
+                aggregated_units=units,
+                aggregated_calendar=calendar,
+            )
+    
+            dsk[name + chunk_location] = (
+                getter,
+                fragment_array,
+                f_indices,
+                False,
+                False,
+            )
+    
+        # Return the dask array
+        return da.Array(dsk, name[0], chunks=chunks, dtype=dtype)

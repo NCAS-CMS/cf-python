@@ -6,7 +6,7 @@ from .cachedarray import CachedArray
 from .netcdfarray import NetCDFArray
 from .umarray import UMArray
 
-from .filledarray import FilledArray
+from .fullarray import FullArray
 
 from .cfanetcdfarray import CFANetCDFArray
 from .gatheredarray import GatheredArray

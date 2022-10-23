@@ -1,12 +1,15 @@
 import cfdm
 
-from .abstract import FileArray
+from .mixin import FileArrayMixin
 
 
-class NetCDFArray(cfdm.NetCDFArray, FileArray):
+class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
     """An array stored in a netCDF file."""
 
     def __repr__(self):
-        """x.__repr__() <==> repr(x)"""
-        out = super().__repr__()
-        return out[:-1] + f", {self.get_ncvar()}>"
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        """
+        return super().__repr__().replace("<", "<CF ", 1)

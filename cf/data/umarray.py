@@ -352,12 +352,12 @@ class UMArray(FileArray):
         """
         return self._get_component("word_size")
 
-    def close(self, um):
+    def close(self, f):
         """Close the dataset containing the data.
 
         :Parameters:
 
-            um: `umfile_lib.File`
+            f: `umfile_lib.File`
                 The UM or PP dataset to be be closed.
 
                 .. versionadded:: TODODASKVER
@@ -368,7 +368,18 @@ class UMArray(FileArray):
 
         """
         if self._get_component("close"):
-            um.close_fd()
+            f.close_fd()
+
+    def get_address(self):
+        """TODODASKDOCS
+
+        :Returns:
+
+            `str` or `None`
+                TODODASKDOCS, or `None` if there isn't one.
+
+        """
+        return self.header_offset
 
     def open(self):
         """Returns an open dataset containing the data array.

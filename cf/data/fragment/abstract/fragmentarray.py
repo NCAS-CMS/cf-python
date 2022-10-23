@@ -147,8 +147,7 @@ class FragmentArray(Array):
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
         return (
-            f"<CF {self.__class__.__name__}{self.shape}: "
-            "{self.get_filename()}, {self.get_address()}>"
+            f"<CF {self.__class__.__name__}{self.shape}: {self.get_array()}>"
         )
     
     def _conform_units(self, array):
@@ -341,7 +340,19 @@ class FragmentArray(Array):
 
         :Returns:
 
-            `Array`
+            `Array` or `None`
 
         """
-        return self._get_component("array")
+        return self._get_component("array", None)
+
+    def get_units(self, default=ValueError()):
+        """The units of the netCDF variable.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Returns:
+
+            `str` or `None`
+
+        """
+        return self.get_array().get_units(default)
