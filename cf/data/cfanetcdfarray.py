@@ -632,7 +632,6 @@ class CFANetCDFArray(NetCDFArray):
             `dask.array.Array`
     
         """
-        # Initialise a dask graph for the uncompressed array
         name = (f"{self.__class__.__name__}-{tokenize(self)}",)
     
         dtype = self.dtype

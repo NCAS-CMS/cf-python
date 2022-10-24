@@ -94,14 +94,28 @@ def to_dask(array, chunks, **from_array_options):
     dask.array<array, shape=(1,), dtype=object, chunksize=(1,), chunktype=numpy.ndarray>
 
     """
-    if not (
-        is_dask_collection(array)
-        or isinstance(
-            array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
+    if is_dask_collection(array):
+        if chunks != _DEFAULT_CHUNKS:
+            raise ValueError(
+                "Can't define chunks for dask input arrays. Consider "
+                "rechunking the dask array before initialisation, "
+                "or rechunking the `Data` after initialisation."
         )
+        
+        return array
+
+    try:
+        return array.to_dask_array(chunks=chunks)
+    except TypeError:
+        return array.to_dask_array()
+    except AttributeError:
+        pass
+    
+    if not isinstance(
+            array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
     ) and not hasattr(array, "shape"):
         # 'array' is not of a type that `da.from_array` can cope with,
-        # so convert it to a numpy array
+        # so convert it to a numpy array.
         array = np.asanyarray(array)
 
     kwargs = from_array_options
