@@ -288,8 +288,7 @@ Mask support
    ~cf.Data.count_masked
    ~cf.Data.compressed
    ~cf.Data.filled
-   ~cf.Data.mask_fpe
-   ~cf.Data.mask_invalid
+   ~cf.Data.masked_invalid
    ~cf.Data.del_fill_value
    ~cf.Data.get_fill_value
    ~cf.Data.has_fill_value
@@ -770,5 +769,8 @@ Deprecated
    ~cf.Data.expand_dims
    ~cf.Data.files
    ~cf.Data.get_filenames
+   ~cf.Data.mask_fpe
+   ~cf.Data.mask_invalid
    ~cf.Data.save_to_disk
+   ~cf.Data.seterr
    ~cf.Data.unsafe_array

@@ -8608,7 +8608,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def masked_invalid(self, inplace=False):
         """Mask the array where invalid values occur (NaN or inf).
 
-        .. seealso:: `where`
+        .. seealso:: `where`, `numpy.ma.masked_invalid`
 
         :Parameters:
 
