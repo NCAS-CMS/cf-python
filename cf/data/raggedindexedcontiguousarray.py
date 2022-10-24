@@ -1,10 +1,10 @@
 import cfdm
 
-from .mixin import ArrayMixin
+from .mixin import ArrayMixin, RaggedArrayMixin
 
 
 class RaggedIndexedContiguousArray(
-    ArrayMixin, cfdm.RaggedIndexedContiguousArray
+    RaggedArrayMixin, ArrayMixin, cfdm.RaggedIndexedContiguousArray
 ):
     """An underlying indexed contiguous ragged array.
 

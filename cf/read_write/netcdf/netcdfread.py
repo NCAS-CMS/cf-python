@@ -427,7 +427,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         kwargs["instructions"] = self.read_vars["variable_attributes"][
             ncvar
         ].get("aggregated_data")
-        
+
         # Use the kwargs to create a specialised CFANetCDFArray
         # instance
         array = self.implementation.initialise_CFANetCDFArray(**kwargs)

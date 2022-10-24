@@ -146,13 +146,9 @@ class NetCDFFragmentArray(FragmentArray):
         .. versionadded:: TODODASKVER
 
         """
-        indices = self._parse_indices(indices)
-
-        # Re-cast indices so that it has at least ndim elements
-        ndim = self.ndim
-        indices += (slice(None),) * (ndim - len(indices))
-
+        indices = self._conform_indices(indices)
         array = self.get_array()
+        
         try:
             array = array[indices]
         except ValueError:
@@ -160,12 +156,11 @@ class NetCDFFragmentArray(FragmentArray):
             # elements but the netCDF fragment variable has fewer than
             # ndim dimensions. In this case we get the entire fragment
             # array, insert the missing size 1 dimensions, and then
-            # apply the requested slice. (A CFA conventions
-            # requirement.)
+            # apply the requested slice.
             array = array[Ellipsis]
             if array.ndim < ndim:
                 array = array.reshape(self.shape)
 
             array = array[indices]
 
-        return self._conform_units(array)   
+        return self._conform_units(array)

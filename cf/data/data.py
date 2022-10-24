@@ -38,9 +38,7 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import (
-    cfa_to_dask,
-    compressed_to_dask,
+from .creation import (  # cfa_to_dask,; compressed_to_dask,
     generate_axis_identifiers,
     to_dask,
 )
@@ -463,8 +461,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             compressed = ""
 
         if compressed:
-            # The data is compressed, so create a uncompressed dask
-            # view of it.
+            # The input data is compressed
             if chunks != _DEFAULT_CHUNKS:
                 raise ValueError(
                     "Can't define chunks for compressed input arrays. "
@@ -490,107 +487,116 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._set_Array(array)
 
         # Cast the input data as a dask array
-        array = to_dask(array, chunks, **kwargs)
-        
-#            if is_dask_collection(array):
-#                # The input data is already a dask array
-#                if chunks != _DEFAULT_CHUNKS:
-#                    raise ValueError(
-#                        "Can't define chunks for dask input arrays. Consider "
-#                        "rechunking the dask array before initialisation, "
-#                        "or rechunking the `Data` after initialisation."
-#                    )
-#            else:
-#                # Turn the input data into a dask array
-#                try:
-#                    array = array.to_dask_array(chunks=chunks)
-#                except TypeError:
-#                    array = array.to_dask_array()
-#                except AttributeError:
-#                    kwargs = init_options.get("from_array", {})
-#                    if "chunks" in kwargs:
-#                        raise TypeError(
-#                            "Can't define 'chunks' in the 'from_array' "
-#                            "initialisation options. "
-#                            "Use the 'chunks' parameter instead."
-#                        )
-#            
-#                   
-#
-#        if not compressed:
-#            # Find out if the data is a CFA xaggregated array of
-#            # fragments
-#            try:
-#                cfa = array.is_cfa()
-#            except AttributeError:
-#                cfa = False
-#
-#        if compressed:
-#            # The data is compressed, so create a uncompressed dask
-#            # view of it.
-#            if chunks != _DEFAULT_CHUNKS:
-#                raise ValueError(
-#                    "Can't define chunks for compressed input arrays. "
-#                    "Consider rechunking after initialisation."
-#                )
-#
-#            if init_options.get("from_array"):
-#                raise ValueError(
-#                    "Can't define 'from_array' initialisation options "
-#                    "for compressed input arrays"
-#                )
-#
-#            # Bring the compressed data into memory without
-#            # decompressing it
-#            if to_memory:
-#                try:
-#                    array = array.to_memory()
-#                except AttributeError:
-#                    pass
-#
-#            # Save the input compressed array, as this will contain
-#            # extra information, such as a count or index variable.
-#            self._set_Array(array)
-#
-#            array = compressed_to_dask(array, chunks)
-#
-#        elif cfa:
-#            # The input data is a CFA aggregated array, so create a
-#            # dask array of its fragments.
-#            if init_options.get("from_array"):
-#                raise ValueError(
-#                    "Can't define 'from_array' initialisation options "
-#                    "for CFA input arrays"
-#                )
-#
-#            array = cfa_to_dask(array, chunks)
-#
-#        elif not is_dask_collection(array):
-#            # Turn the data into a dask array
-#            kwargs = init_options.get("from_array", {})
-#            if "chunks" in kwargs:
-#                raise TypeError(
-#                    "Can't define 'chunks' in the 'from_array' "
-#                    "initialisation options. "
-#                    "Use the 'chunks' parameter instead."
-#                )
-#
-#            # Bring the data into memory
-#            if to_memory:
-#                try:
-#                    array = array.to_memory()
-#                except AttributeError:
-#                    pass
-#
-#            array = to_dask(array, chunks, **kwargs)
-#
-#        elif chunks != _DEFAULT_CHUNKS:
-#            # The data is already a dask array
-#            raise ValueError(
-#                "Can't define chunks for dask input arrays. Consider "
-#                "rechunking the dask array before initialisation, or "
-#                "rechunking the Data after initialisation."
-#            )
+        kwargs = init_options.get("from_array", {})
+        if "chunks" in kwargs:
+            raise TypeError(
+                "Can't define 'chunks' in the 'from_array' initialisation "
+                "options. Use the 'chunks' parameter instead."
+            )
+
+        array = to_dask(
+            array, chunks, default_chunks=_DEFAULT_CHUNKS, **kwargs
+        )
+
+        #            if is_dask_collection(array):
+        #                # The input data is already a dask array
+        #                if chunks != _DEFAULT_CHUNKS:
+        #                    raise ValueError(
+        #                        "Can't define chunks for dask input arrays. Consider "
+        #                        "rechunking the dask array before initialisation, "
+        #                        "or rechunking the `Data` after initialisation."
+        #                    )
+        #            else:
+        #                # Turn the input data into a dask array
+        #                try:
+        #                    array = array.to_dask_array(chunks=chunks)
+        #                except TypeError:
+        #                    array = array.to_dask_array()
+        #                except AttributeError:
+        #                    kwargs = init_options.get("from_array", {})
+        #                    if "chunks" in kwargs:
+        #                        raise TypeError(
+        #                            "Can't define 'chunks' in the 'from_array' "
+        #                            "initialisation options. "
+        #                            "Use the 'chunks' parameter instead."
+        #                        )
+        #
+        #
+        #
+        #        if not compressed:
+        #            # Find out if the data is a CFA xaggregated array of
+        #            # fragments
+        #            try:
+        #                cfa = array.is_cfa()
+        #            except AttributeError:
+        #                cfa = False
+        #
+        #        if compressed:
+        #            # The data is compressed, so create a uncompressed dask
+        #            # view of it.
+        #            if chunks != _DEFAULT_CHUNKS:
+        #                raise ValueError(
+        #                    "Can't define chunks for compressed input arrays. "
+        #                    "Consider rechunking after initialisation."
+        #                )
+        #
+        #            if init_options.get("from_array"):
+        #                raise ValueError(
+        #                    "Can't define 'from_array' initialisation options "
+        #                    "for compressed input arrays"
+        #                )
+        #
+        #            # Bring the compressed data into memory without
+        #            # decompressing it
+        #            if to_memory:
+        #                try:
+        #                    array = array.to_memory()
+        #                except AttributeError:
+        #                    pass
+        #
+        #            # Save the input compressed array, as this will contain
+        #            # extra information, such as a count or index variable.
+        #            self._set_Array(array)
+        #
+        #            array = compressed_to_dask(array, chunks)
+        #
+        #        elif cfa:
+        #            # The input data is a CFA aggregated array, so create a
+        #            # dask array of its fragments.
+        #            if init_options.get("from_array"):
+        #                raise ValueError(
+        #                    "Can't define 'from_array' initialisation options "
+        #                    "for CFA input arrays"
+        #                )
+        #
+        #            array = cfa_to_dask(array, chunks)
+        #
+        #        elif not is_dask_collection(array):
+        #            # Turn the data into a dask array
+        #            kwargs = init_options.get("from_array", {})
+        #            if "chunks" in kwargs:
+        #                raise TypeError(
+        #                    "Can't define 'chunks' in the 'from_array' "
+        #                    "initialisation options. "
+        #                    "Use the 'chunks' parameter instead."
+        #                )
+        #
+        #            # Bring the data into memory
+        #            if to_memory:
+        #                try:
+        #                    array = array.to_memory()
+        #                except AttributeError:
+        #                    pass
+        #
+        #            array = to_dask(array, chunks, **kwargs)
+        #
+        #        elif chunks != _DEFAULT_CHUNKS:
+        #            # The data is already a dask array
+        #            raise ValueError(
+        #                "Can't define chunks for dask input arrays. Consider "
+        #                "rechunking the dask array before initialisation, or "
+        #                "rechunking the Data after initialisation."
+        #            )
 
         # Find out if we have an array of date-time objects
         if units.isreftime:

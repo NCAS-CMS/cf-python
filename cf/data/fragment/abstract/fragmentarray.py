@@ -112,9 +112,7 @@ class FragmentArray(Array):
         self._set_component("dtype", dtype, copy=False)
         self._set_component("shape", shape, copy=False)
         self._set_component("array", array, copy=copy)
-        self._set_component(
-            "aggregated_units", aggregated_units, copy=False
-        )
+        self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
@@ -139,7 +137,7 @@ class FragmentArray(Array):
 
         """
         array = self.get_array()
-        indices = self._parse_indices(indices)
+        indices = self._conform_indices(indices)
         array = array[indices]
         array = self._conform_units(array)
         return array
@@ -149,34 +147,11 @@ class FragmentArray(Array):
         return (
             f"<CF {self.__class__.__name__}{self.shape}: {self.get_array()}>"
         )
-    
-    def _conform_units(self, array):
-        """Conform the array to have the aggregated units.
 
-        .. versionadded:: TODODASKVER
+    def _conform_indices(self, indices):
+        """Conform the indices that retrieve the fragment data.
 
-        :Parameters:
-
-            TODODASKDOCS
-
-        :Returns:
-
-            `numpy.ndarray`
-                TODODASKDOCS
-
-        """
-        units = self.Units
-        if units:
-            aggregated_units = self.aggregated_Units
-            if units != aggregated_units:
-                array = Units.conform(
-                    array, units, aggregated_units, inplace=True
-                )
-
-        return array
-
-    def _parse_indices(self, indices):
-        """TODODASKDOCS.
+        The indicies may need modification in order to ensure that 
 
         .. versionadded:: TODODASKVER
 
@@ -200,7 +175,7 @@ class FragmentArray(Array):
         for i in indices:
             if isinstance(i, slice):
                 continue
-            
+
             if i is Ellipsis:
                 has_ellipsis = True
                 continue
@@ -227,12 +202,37 @@ class FragmentArray(Array):
                 else:
                     indices2.append(i)
                     n -= 1
-    
+
                 length -= 1
 
             indices = tuple(indices2)
 
         return indices
+
+    def _conform_units(self, array):
+        """Conform the array to have the aggregated units.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            TODODASKDOCS
+
+        :Returns:
+
+            `numpy.ndarray`
+                TODODASKDOCS
+
+        """
+        units = self.Units
+        if units:
+            aggregated_units = self.aggregated_Units
+            if units != aggregated_units:
+                array = Units.conform(
+                    array, units, aggregated_units, inplace=True
+                )
+
+        return array
 
     @property
     def aggregated_Units(self):
@@ -283,11 +283,15 @@ class FragmentArray(Array):
 
         :Parameters:
 
-            TODODASKDOCS
+            default: optional
+                Return the value of the *default* parameter if the
+                calendar has not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
             `str` or `None`
+                The calendar value.
 
         """
         calendar = self._get_component("aggregated_calendar", False)
@@ -310,6 +314,8 @@ class FragmentArray(Array):
         defined units.
 
         .. versionadded:: TODODASKVER
+
+        .. seealso:: `get_aggregated_calendar`
 
         :Parameters:
 
@@ -350,9 +356,19 @@ class FragmentArray(Array):
 
         .. versionadded:: (cfdm) 1.10.0.1
 
+        .. seealso:: `get_calendar`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                units have not been set. If set to an `Exception`
+                instance then it will be raised instead.
+
         :Returns:
 
             `str` or `None`
+                The units value.
 
         """
         return self.get_array().get_units(default)

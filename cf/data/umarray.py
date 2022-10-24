@@ -371,7 +371,7 @@ class UMArray(FileArray):
             f.close_fd()
 
     def get_address(self):
-        """TODODASKDOCS
+        """TODODASKDOCS.
 
         :Returns:
 

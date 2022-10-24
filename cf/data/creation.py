@@ -57,7 +57,7 @@ def convert_to_builtin_type(x):
     raise TypeError(f"{type(x)!r} object is not JSON serializable: {x!r}")
 
 
-def to_dask(array, chunks, **from_array_options):
+def to_dask(array, chunks, default_chunks=False, **from_array_options):
     """TODODASKDOCS.
 
     .. versionadded:: TODODASKVER
@@ -95,13 +95,13 @@ def to_dask(array, chunks, **from_array_options):
 
     """
     if is_dask_collection(array):
-        if chunks != _DEFAULT_CHUNKS:
+        if default_chunks is not False and chunks != default_chunks:
             raise ValueError(
                 "Can't define chunks for dask input arrays. Consider "
                 "rechunking the dask array before initialisation, "
                 "or rechunking the `Data` after initialisation."
-        )
-        
+            )
+
         return array
 
     try:
@@ -110,9 +110,9 @@ def to_dask(array, chunks, **from_array_options):
         return array.to_dask_array()
     except AttributeError:
         pass
-    
+
     if not isinstance(
-            array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
+        array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
     ) and not hasattr(array, "shape"):
         # 'array' is not of a type that `da.from_array` can cope with,
         # so convert it to a numpy array.

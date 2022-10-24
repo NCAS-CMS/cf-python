@@ -1,12 +1,11 @@
-import numpy as np
-
-from ...functions import inspect as cf_inspect
+from ...functions import _DEPRECATION_ERROR_ATTRIBUTE
 from ..mixin import FileArrayMixin
 from .array import Array
 
 
 class FileArray(FileArrayMixin, Array):
     """Abstract base class for an array stored in a file."""
+
     def __getitem__(self, indices):
         """Return a subspace of the array.
 
@@ -60,7 +59,7 @@ class FileArray(FileArrayMixin, Array):
         )  # pragma: no cover
 
     def get_address(self):
-        """TODODASKDOCS
+        """TODODASKDOCS.
 
         :Returns:
 

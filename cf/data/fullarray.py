@@ -5,11 +5,11 @@ from .abstract import Array
 
 class FullArray(Array):
     """A array filled with a given value.
-    
-    The array may be empty or all missing values.    
+
+    The array may be empty or all missing values.
 
     """
-   
+
     def __init__(
         self,
         fill_value=None,
@@ -123,7 +123,9 @@ class FullArray(Array):
     def __repr__(self):
         """Called by the `repr` built-in function.
 
-        x.__repr__() <==> repr(x)"""
+        x.__repr__() <==> repr(x)
+
+        """
         return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
