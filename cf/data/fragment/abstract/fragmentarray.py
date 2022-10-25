@@ -151,7 +151,7 @@ class FragmentArray(Array):
     def _conform_indices(self, indices):
         """Conform the indices that retrieve the fragment data.
 
-        The indicies may need modification in order to ensure that 
+        The indicies may need modification in order to ensure that
 
         .. versionadded:: TODODASKVER
 

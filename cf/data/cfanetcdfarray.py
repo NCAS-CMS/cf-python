@@ -103,12 +103,14 @@ class CFANetCDFArray(NetCDFArray):
 
             units: `str` or `None`, optional
                 The units of the netCDF variable. Set to `None` to
-                indicate that there are no units.
+                indicate that there are no units. If unset then the
+                units will be set during the first `__getitem__` call.
 
             calendar: `str`, optional
                 The calendar of the netCDF variable. By default, or if
                 set to `None`, then the CF default calendar is
-                assumed, if applicable.
+                assumed, if applicable. If unset then the calendar
+                will be set during the first `__getitem__` call.
 
             source: optional
                 Initialise the array from the given object.
@@ -168,13 +170,13 @@ class CFANetCDFArray(NetCDFArray):
 
             fragment_shape = tuple(var.getFragDef())
 
-            # Note: It is an as-yet-untested assertion that creating
+            # Note: It is an as-yet-untested hypothesis that creating
             #       the 'aggregated_data' dictionary for massive
             #       aggretations (e.g. with O(10e6) fragments) will be
             #       slow, hence the parallelisation of the process
             #       with delayed + compute, and that the
             #       parallelisation overheads won't be noticeable for
-            #       small aggregations (e.g. O(10) fragments.
+            #       small aggregations (e.g. O(10) fragments).
             aggregated_data = {}
             compute(
                 *[
@@ -192,7 +194,11 @@ class CFANetCDFArray(NetCDFArray):
         self._set_component("instructions", instructions, copy=False)
 
     def __dask_tokenize__(self):
-        """Used by `dask.base.tokenize`."""
+        """Used by `dask.base.tokenize`.
+
+        .. versionadded:: TODODASKVER
+
+        """
         aggregated_data = self._get_component("instructions", None)
         if aggregated_data is None:
             aggregated_data = self.get_aggregated_data(copy=False)
@@ -205,8 +211,14 @@ class CFANetCDFArray(NetCDFArray):
             aggregated_data,
         )
 
+    def __getitem__(self, indices):
+        raise NotImplementedError(
+            f"{self.__class__.__name__}.__getitem__ is not implemented"
+        )  # pragma: no cover
+
     def _set_fragment(self, var, frag_loc, aggregated_data, cfa_filename):
-        """Set a new key/value pair in the *aggregated_data* dictionary.
+        """Create a new key/value pair in the *aggregated_data*
+        dictionary.
 
         The *aggregated_data* dictionary contains the definitions of
         the fragments and the instructions on how to aggregate them,
@@ -220,12 +232,11 @@ class CFANetCDFArray(NetCDFArray):
                 The CFA aggregation variable.
 
             frag_loc: `tuple` of `int`
-                The new key to the *aggregated_data* dictionary, that
-                is an index of the CFA fragment dimensions, e.g. ``(1,
-                0, 0 ,0)``.
+                The new key, that must be index of the CFA fragment
+                dimensions, e.g. ``(1, 0, 0, 0)``.
 
             aggregated_data: `dict`
-                The aggregated data dictionary.
+                The aggregated data dictionary to be updated in-place.
 
         :Returns:
 
@@ -235,21 +246,265 @@ class CFANetCDFArray(NetCDFArray):
         fragment = var.getFrag(frag_loc=frag_loc)
 
         filename = fragment.file
-        if filename is None:
-            filename = cfa_filename
-        else:
-            filename = abspath(fragment.file)
-
         fmt = fragment.format
-        if fmt is None:
-            fmt = "nc"
+        address = fragment.address
+
+        if address is not None:
+            if filename is None:
+                if fmt is None:
+                    fmt = "nc"
+
+                filename = cfa_filename
+            else:
+                filename = abspath(fragment.file)
 
         aggregated_data[frag_loc] = {
             "file": filename,
-            "address": fragment.address,
+            "address": address,
             "format": fmt,
             "location": fragment.location,
         }
+
+    def _subarray_shapes(self, shapes):
+        """Create the subarray shapes.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `subarrays`
+
+        :Parameters:
+
+            {{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}
+
+        :Returns:
+
+            `list`
+                The subarray sizes along each uncompressed dimension.
+
+        **Examples**
+
+        >>> a.shape
+        (12, 1, 73, 144)
+        >>> a.get_fragement_shape()
+        (2, 1, 1, 1)
+        >>> a.fragemented_dimensions()
+        [0]
+        >>> a.subarray_shapes(-1)
+        ((6, 6), (1,), (73,), (144,))
+        >>> a.subarray_shapes(None)
+        ((6, 6), (1,), (73,), (144,))
+        >>> a.subarray_shapes("auto")
+        ((6, 6), (1,), (73,), (144,))
+        >>> a.subarray_shapes((None, 1, 40, 50))
+        ((6, 6), (1,), (40, 33), (50, 50, 44))
+        >>>  a.subarray_shapes((None, None, "auto", 50))
+        ((6, 6), (1,), (73,), (50, 50, 44))
+        >>>  a.subarray_shapes({2: 40})
+        ((6, 6), (1,), (40, 33), (144,))
+
+        """
+        from dask.array.core import normalize_chunks
+
+        # Indices of fragmented dimensions
+        f_dims = self.get_fragmented_dimensions()
+
+        shape = self.shape
+        aggregated_data = self.get_aggregated_data(copy=False)
+
+        # Create the base chunks.
+        chunks = []
+        ndim = self.ndim
+        for dim, (n_fragments, size) in enumerate(
+            zip(self.get_fragment_shape(), self.shape)
+        ):
+            if dim in f_dims:
+                # This aggregated dimension is spanned by more than
+                # one fragment.
+                c = []
+                index = [0] * ndim
+                for j in range(n_fragments):
+                    index[dim] = j
+                    loc = aggregated_data[tuple(index)]["location"][dim]
+                    chunk_size = loc[1] - loc[0]
+                    c.append(chunk_size)
+
+                chunks.append(tuple(c))
+            else:
+                # This aggregated dimension is spanned by exactly one
+                # fragment. Store None, for now, in the expectation
+                # that it will get overwrittten.
+                chunks.append(None)
+
+        if isinstance(shapes, (str, Number)) or shapes is None:
+            chunks = [
+                c if i in f_dims else shapes for i, c in enumerate(chunks)
+            ]
+        elif isinstance(shapes, dict):
+            chunks = [
+                chunks[i] if i in f_dims else shapes.get(i, "auto")
+                for i, c in enumerate(chunks)
+            ]
+        else:
+            # chunks is a sequence
+            if len(shapes) != ndim:
+                raise ValueError(
+                    f"Wrong number of 'shapes' elements in {shapes}: "
+                    f"Got {len(shapes)}, expected {self.ndim}"
+                )
+
+            chunks = [
+                c if i in f_dims else shapes[i] for i, c in enumerate(chunks)
+            ]
+
+        return normalize_chunks(chunks, shape=shape, dtype=self.dtype)
+
+    def _subarrays(self, subarray_shapes):
+        """Return descriptors for every subarray.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `subarray_shapes`
+
+        :Parameters:
+
+            subarray_shapes: `tuple`
+                The subarray sizes along each dimension, as returned
+                by a prior call to `subarray_shapes`.
+
+        :Returns:
+
+            6-`tuple` of iterators
+               Each iterator iterates over a particular descriptor
+               from each subarray.
+
+               1. The indices of the aggregated array that correspond
+                  to each subarray.
+
+               2. The shape of each subarray.
+
+               3. The indices of the fragment that corresponds to each
+                  subarray (some subarrays may be represented by a
+                  part of a fragment).
+
+               4. The location of each subarray.
+
+               5. The location on the fragment dimensions of the
+                  fragment that corresponds to each subarray.
+
+               6. The shape of each fragment that overlaps each chunk.
+
+        **Examples**
+
+        An aggregated array with shape (12, 73, 144) has two
+        fragments, both with with shape (6, 73, 144).
+
+        >>> a.shape
+        (12, 73, 144)
+        >>> a.get_fragement_shape()
+        (2, 1, 1)
+        >>> a.fragemented_dimensions()
+        [0]
+        >>> subarray_shapes = a.subarray_shapes({1: 40})
+        >>> print(subarray_shapes)
+        ((6, 6), (40, 33), (144,))
+        >>> (
+        ...  u_indices,
+        ...  u_shapes,
+        ...  f_indices,
+        ...  s_locations,
+        ...  f_locations,
+        ...  f_shapes,
+        ... ) = a.subarrays(subarray_shapes)
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 6, None), slice(0, 40, None), slice(0, 144, None))
+        (slice(0, 6, None), slice(40, 73, None), slice(0, 144, None))
+        (slice(6, 12, None), slice(0, 40, None), slice(0, 144, None))
+        (slice(6, 12, None), slice(40, 73, None), slice(0, 144, None))
+
+        >>> for i in u_shapes
+        ...    print(i)
+        ...
+        (6, 40, 144)
+        (6, 33, 144)
+        (6, 40, 144)
+        (6, 33, 144)
+        >>> for i in f_indices:
+        ...    print(i)
+        ...
+        (slice(None, None, None), slice(0, 40, None), slice(0, 144, None))
+        (slice(None, None, None), slice(40, 73, None), slice(0, 144, None))
+        (slice(None, None, None), slice(0, 40, None), slice(0, 144, None))
+        (slice(None, None, None), slice(40, 73, None), slice(0, 144, None))
+        >>> for i in s_locations:
+        ...    print(i)
+        ...
+        (0, 0, 0)
+        (0, 1, 0)
+        (1, 0, 0)
+        (1, 1, 0)
+        >>> for i in f_locations:
+        ...    print(i)
+        ...
+        (0, 0, 0)
+        (0, 0, 0)
+        (1, 0, 0)
+        (1, 0, 0)
+        >>> for i in f_shapes:
+        ...    print(i)
+        ...
+        (6, 73, 144)
+        (6, 73, 144)
+        (6, 73, 144)
+        (6, 73, 144)
+
+        """
+        f_dims = self.get_fragmented_dimensions()
+
+        # The indices of the uncompressed array that correspond to
+        # each subarray, the shape of each uncompressed subarray, and
+        # the location of each subarray
+        s_locations = []
+        u_shapes = []
+        u_indices = []
+        f_locations = []
+        for dim, c in enumerate(subarray_shapes):
+            nc = len(c)
+            s_locations.append(tuple(range(nc)))
+            u_shapes.append(c)
+
+            if dim in f_dims:
+                # no fragmentation along this dimension
+                f_locations.append(tuple(range(nc)))
+            else:
+                f_locations.append((0,) * nc)
+
+            c = tuple(accumulate((0,) + c))
+            u_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
+
+        # For each subarray, the part of the fragment that corresponds
+        # to it.
+        f_indices = [
+            (slice(None),) * len(u) if dim in f_dims else u
+            for dim, u in enumerate(u_indices)
+        ]
+
+        # For each subarray, the shape of the fragment that
+        # corresponds to it.
+        f_shapes = [
+            u_shape if dim in f_dims else (size,) * len(u_shape)
+            for dim, (u_shape, size) in enumerate(zip(u_shapes, self.shape))
+        ]
+
+        return (
+            product(*u_indices),
+            product(*u_shapes),
+            product(*f_indices),
+            product(*s_locations),
+            product(*f_locations),
+            product(*f_shapes),
+        )
 
     def get_FragmentArray(self, fragment_format):
         """Return the Fragment class.
@@ -262,13 +517,11 @@ class CFANetCDFArray(NetCDFArray):
                 The dataset format of the fragment. Either ``'nc'``,
                 ``'um'``, or `None`.
 
-                If the dataset format is unknown then it defaults to
-                `None`.
-
         :Returns:
 
             `FragmentArray`
-                The class for representing fragment arrays.
+                The class for representing a fragment array of the
+                given format.
 
         """
         try:
@@ -372,237 +625,6 @@ class CFANetCDFArray(NetCDFArray):
         """
         return self._get_component("fragment_shape")
 
-    def is_cfa(self):
-        """True if the array is stored as a CFA aggregated variable.
-
-        .. versionadded:: TODODASKVER
-
-        """
-        return True
-
-    def subarray_shapes(self, shapes):
-        """Create the subarray shapes.
-
-        .. versionadded:: TODODASKVER
-
-        .. seealso:: `subarrays`
-
-        :Parameters:
-
-            {{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}
-
-        :Returns:
-
-            `list`
-                The subarray sizes along each uncompressed dimension.
-
-        **Examples**
-
-        >>> a.shape
-        (12, 1, 73, 144)
-        >>> a.get_fragement_shape()
-        (2, 1, 1, 1)
-        >>> a.fragemented_dimensions()
-        [0]
-        >>> a.subarray_shapes(-1)
-        ((6, 6), (1,), (73,), (144,))
-        >>> a.subarray_shapes(None)
-        ((6, 6), (1,), (73,), (144,))
-        >>> a.subarray_shapes("auto")
-        ((6, 6), (1,), (73,), (144,))
-        >>> a.subarray_shapes((None, 1, 40, 50))
-        ((6, 6), (1,), (40, 33), (50, 50, 44))
-        >>>  a.subarray_shapes((None, None, "auto", 50))
-        ((6, 6), (1,), (73,), (50, 50, 44))
-        >>>  a.subarray_shapes({2: 40})
-        ((6, 6), (1,), (40, 33), (144,))
-
-        """
-        from dask.array.core import normalize_chunks
-
-        # Indices of fragmented dimensions
-        f_dims = self.get_fragmented_dimensions()
-
-        shape = self.shape
-        aggregated_data = self.get_aggregated_data(copy=False)
-
-        # Create the base chunks.
-        chunks = []
-        ndim = self.ndim
-        for dim, (n_fragments, size) in enumerate(
-            zip(self.get_fragment_shape(), self.shape)
-        ):
-            if dim in f_dims:
-                # This aggregated dimension is spanned by more than
-                # one fragment.
-                c = []
-                index = [0] * ndim
-                for j in range(n_fragments):
-                    index[dim] = j
-                    loc = aggregated_data[tuple(index)]["location"][dim]
-                    chunk_size = loc[1] - loc[0]
-                    c.append(chunk_size)
-
-                chunks.append(tuple(c))
-            else:
-                # This aggregated dimension is spanned by exactly one
-                # fragment. Store None, for now, in the expectation
-                # that it will get overwrittten.
-                chunks.append(None)
-
-        if isinstance(shapes, (str, Number)) or shapes is None:
-            chunks = [
-                c if i in f_dims else shapes for i, c in enumerate(chunks)
-            ]
-        elif isinstance(shapes, dict):
-            chunks = [
-                chunks[i] if i in f_dims else shapes.get(i, "auto")
-                for i, c in enumerate(chunks)
-            ]
-        else:
-            # chunks is a sequence
-            if len(shapes) != ndim:
-                raise ValueError(
-                    f"Wrong number of 'shapes' elements in {shapes}: "
-                    f"Got {len(shapes)}, expected {self.ndim}"
-                )
-
-            chunks = [
-                c if i in f_dims else shapes[i] for i, c in enumerate(chunks)
-            ]
-
-        return normalize_chunks(chunks, shape=shape, dtype=self.dtype)
-
-    def subarrays(self, subarray_shapes):
-        """Return descriptors for every subarray.
-
-        .. versionadded:: TODODASKVER
-
-        .. seealso:: `subarray_shapes`
-
-        :Parameters:
-
-            subarray_shapes: `tuple`
-                The subarray sizes along each dimension, as returned
-                by a prior call to `subarray_shapes`.
-
-        :Returns:
-
-            5-`tuple` of iterators
-               Each iterator iterates over a particular descriptor
-               from each subarray.
-
-               1. The indices of the aggregated array that correspond
-                  to each subarray.
-
-               2. The shape of each subarray.
-
-               3. The indices of the fragment that corresponds to each
-                  subarray (some subarrays may be represented by a
-                  part of a fragment).
-
-               4. The location of each subarray.
-
-               5. The location on the fragment dimensions of the
-                  fragment that corresponds to each subarray.
-
-        **Examples**
-
-        An aggregated array with shape (12, 73, 144) has two
-        fragments, both with with shape (6, 73, 144).
-
-        >>> a.shape
-        (12, 73, 144)
-        >>> a.get_fragement_shape()
-        (2, 1, 1)
-        >>> a.fragemented_dimensions()
-        [0]
-        >>> subarray_shapes = a.subarray_shapes({1: 40})
-        >>> print(subarray_shapes)
-        ((6, 6), (40, 33), (144,))
-        >>> (
-        ...  u_indices,
-        ...  u_shapes,
-        ...  f_indices,
-        ...  s_locations,
-        ...  f_locations,
-        ... ) = a.subarrays(subarray_shapes)
-        >>> for i in u_indices:
-        ...    print(i)
-        ...
-        (slice(0, 6, None), slice(0, 40, None), slice(0, 144, None))
-        (slice(0, 6, None), slice(40, 73, None), slice(0, 144, None))
-        (slice(6, 12, None), slice(0, 40, None), slice(0, 144, None))
-        (slice(6, 12, None), slice(40, 73, None), slice(0, 144, None))
-
-        >>> for i in u_shapes
-        ...    print(i)
-        ...
-        (6, 40, 144)
-        (6, 33, 144)
-        (6, 40, 144)
-        (6, 33, 144)
-        >>> for i in f_indices:
-        ...    print(i)
-        ...
-        (slice(None, None, None), slice(0, 40, None), slice(0, 144, None))
-        (slice(None, None, None), slice(40, 73, None), slice(0, 144, None))
-        (slice(None, None, None), slice(0, 40, None), slice(0, 144, None))
-        (slice(None, None, None), slice(40, 73, None), slice(0, 144, None))
-        >>> for i in s_locations:
-        ...    print(i)
-        ...
-        (0, 0, 0)
-        (0, 1, 0)
-        (1, 0, 0)
-        (1, 1, 0)
-        >>> for i in f_locations:
-        ...    print(i)
-        ...
-        (0, 0, 0)
-        (0, 0, 0)
-        (1, 0, 0)
-        (1, 0, 0)
-
-        """
-        f_dims = self.get_fragmented_dimensions()
-
-        # The indices of the uncompressed array that correspond to
-        # each subarray, the shape of each uncompressed subarray, and
-        # the location of each subarray
-        s_locations = []
-        u_shapes = []
-        u_indices = []
-        f_locations = []
-        for dim, c in enumerate(subarray_shapes):
-            nc = len(c)
-            s_locations.append(tuple(range(nc)))
-            u_shapes.append(c)
-
-            if dim in f_dims:
-                # no fragmentation along this dimension
-                f_locations.append(tuple(range(nc)))
-            else:
-                f_locations.append((0,) * nc)
-
-            c = tuple(accumulate((0,) + c))
-            u_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
-
-        # For each subarray, the part of the fragment that corresponds
-        # to it.
-        f_indices = [
-            (slice(None),) * len(u) if dim in f_dims else u
-            for dim, u in enumerate(u_indices)
-        ]
-
-        return (
-            product(*u_indices),
-            product(*u_shapes),
-            product(*f_indices),
-            product(*s_locations),
-            product(*f_locations),
-        )
-
     def to_dask_array(self, chunks="auto"):
         """Create a dask array with `FragmentArray` chunks.
 
@@ -637,7 +659,7 @@ class CFANetCDFArray(NetCDFArray):
         aggregated_data = self.get_aggregated_data(copy=False)
 
         # Set the chunk sizes for the dask array
-        chunks = self.subarray_shapes(chunks)
+        chunks = self._subarray_shapes(chunks)
 
         # Create a FragmentArray for each chunk
         get_FragmentArray = self.get_FragmentArray
@@ -649,7 +671,8 @@ class CFANetCDFArray(NetCDFArray):
             f_indices,
             chunk_location,
             fragment_location,
-        ) in zip(*self.subarrays(chunks)):
+            fragment_shape,
+        ) in zip(*self._subarrays(chunks)):
             d = aggregated_data[fragment_location]
 
             FragmentArray = get_FragmentArray(d["format"])
@@ -658,7 +681,7 @@ class CFANetCDFArray(NetCDFArray):
                 filename=d["file"],
                 address=d["address"],
                 dtype=dtype,
-                shape=u_shape,
+                shape=fragment_shape,
                 aggregated_units=units,
                 aggregated_calendar=calendar,
             )

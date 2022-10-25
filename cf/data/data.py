@@ -463,6 +463,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if compressed:
             # The input data is compressed
             if chunks != _DEFAULT_CHUNKS:
+                # TODODASK: Is this restriction necessary?
                 raise ValueError(
                     "Can't define chunks for compressed input arrays. "
                     "Consider rechunking after initialisation."

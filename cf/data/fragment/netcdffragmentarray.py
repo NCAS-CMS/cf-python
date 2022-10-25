@@ -148,7 +148,7 @@ class NetCDFFragmentArray(FragmentArray):
         """
         indices = self._conform_indices(indices)
         array = self.get_array()
-        
+
         try:
             array = array[indices]
         except ValueError:
@@ -158,7 +158,7 @@ class NetCDFFragmentArray(FragmentArray):
             # array, insert the missing size 1 dimensions, and then
             # apply the requested slice.
             array = array[Ellipsis]
-            if array.ndim < ndim:
+            if array.ndim < self.ndim:
                 array = array.reshape(self.shape)
 
             array = array[indices]
