@@ -2220,9 +2220,9 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f[0].minimum() == 45)
         self.assertTrue(f[0].maximum() == 45)
 
-    def test_Field_mask_invalid(self):
+    def test_Field_masked_invalid(self):
         f = self.f.copy()
-        self.assertIsNone(f.mask_invalid(inplace=True))
+        self.assertIsNone(f.masked_invalid(inplace=True))
 
     def test_Field_del_domain_axis(self):
         f = cf.example_field(0)

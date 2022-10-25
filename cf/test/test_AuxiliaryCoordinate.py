@@ -39,15 +39,15 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     bounds.set_data(cf.Data(b))
     aux1.set_bounds(bounds)
 
-    def test_AuxiliaryCoordinate_mask_invalid(self):
+    def test_AuxiliaryCoordinate_masked_invalid(self):
         a = self.aux1.copy()
 
-        a.mask_invalid()
-        self.assertIsNone(a.mask_invalid(inplace=True))
+        a.masked_invalid()
+        self.assertIsNone(a.masked_invalid(inplace=True))
 
         a.del_bounds()
-        a.mask_invalid()
-        self.assertIsNone(a.mask_invalid(inplace=True))
+        a.masked_invalid()
+        self.assertIsNone(a.masked_invalid(inplace=True))
 
     def test_AuxiliaryCoordinate_chunk(self):
         a = self.aux1.copy()
