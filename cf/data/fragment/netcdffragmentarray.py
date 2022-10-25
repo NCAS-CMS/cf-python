@@ -1,4 +1,4 @@
-from ..netcdfarray import NetCDFArray
+from ..array.netcdfarray import NetCDFArray
 from .abstract import FragmentArray
 
 
@@ -56,23 +56,20 @@ class NetCDFFragmentArray(FragmentArray):
                 ``valid_max``, ``valid_range``, ``_FillValue`` and
                 ``missing_value``.
 
-            units: `str`, optional
-                The units of the netCDF fragment variable. Set to
-                `None` to indicate that there are no units. If units is False then units will be grappded on the fly TODO
+            units: `str` or `None`, optional
+                The units of the fragment data. Set to `None` to
+                indicate that there are no units. If unset then the
+                units will be set during the first `__getitem__` call.
 
-            calendar: `str`, optional
-                The calendar of the netCDF fragment variable. By
-                default, or if set to `None`, then the CF default
-                calendar is assumed, if applicable.
+            calendar: `str` or `None`, optional
+                The calendar of the fragment data. Set to `None` to
+                indicate the CF default calendar, if applicable. If
+                unset then the calendar will be set during the first
+                `__getitem__` call.
 
-            aggregated_units: `str` or `None`, optional
-                The units of the aggregated array. Set to `None` to
-                indicate that there are no units.
+            {{aggregated_units: `str` or `None`, optional}}"
 
-            aggregated_calendar: `str` or `None`, optional
-                The calendar of the aggregated array. By default, or
-                if set to `None`, then the CF default calendar is
-                assumed, if applicable.
+            {{aggregated_calendar: `str` or `None`, optional}}
 
             source: optional
                 Initialise the array from the given object.

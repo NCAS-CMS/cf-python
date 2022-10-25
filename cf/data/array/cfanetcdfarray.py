@@ -1,13 +1,8 @@
 from copy import deepcopy
 from itertools import accumulate, product
-from numbers import Number
 
-from CFAPython import CFAFileFormat
-from CFAPython.CFADataset import CFADataset
-from dask import compute, delayed
-
-from ..functions import abspath
-from .fragment import (
+from ...functions import abspath
+from ..fragment import (
     MissingFragmentArray,
     NetCDFFragmentArray,
     UMFragmentArray,
@@ -138,19 +133,17 @@ class CFANetCDFArray(NetCDFArray):
             except AttributeError:
                 aggregated_data = {}
         else:
+            from CFAPython import CFAFileFormat
+            from CFAPython.CFADataset import CFADataset
+            from CFAPython.CFAExceptions import CFAException
+            from dask import compute, delayed
+
             cfa = CFADataset(filename, CFAFileFormat.CFANetCDF, "r")
-
-            found_var = False
-            for var in cfa.getVars():
-                # groups??
-                if var.name == ncvar:
-                    found_var = True
-                    break
-
-            if not found_var:
+            try:
+                var = cfa.getVar(ncvar)
+            except CFAException:
                 raise ValueError(
-                    f"Can't find CFA-netCDF variable {ncvar} in file "
-                    f"{filename}"
+                    f"CFA variable {ncvar} not found in file {filename}"
                 )
 
             shape = tuple([d.len for d in var.getDims()])
@@ -178,11 +171,10 @@ class CFANetCDFArray(NetCDFArray):
             #       parallelisation overheads won't be noticeable for
             #       small aggregations (e.g. O(10) fragments).
             aggregated_data = {}
+            set_fragment = self._set_fragment
             compute(
                 *[
-                    delayed(
-                        self._set_fragment(var, loc, aggregated_data, filename)
-                    )
+                    delayed(set_fragment(var, loc, aggregated_data, filename))
                     for loc in product(*[range(i) for i in fragment_shape])
                 ]
             )
@@ -192,6 +184,12 @@ class CFANetCDFArray(NetCDFArray):
         self._set_component("fragment_shape", fragment_shape, copy=False)
         self._set_component("aggregated_data", aggregated_data, copy=False)
         self._set_component("instructions", instructions, copy=False)
+
+        if self.get_units(False) is False:
+            raise ValueError(99999)
+
+        if self.get_calendar(False) is False:
+            raise ValueError(99999)
 
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
@@ -303,6 +301,8 @@ class CFANetCDFArray(NetCDFArray):
         ((6, 6), (1,), (40, 33), (144,))
 
         """
+        from numbers import Number
+
         from dask.array.core import normalize_chunks
 
         # Indices of fragmented dimensions
@@ -506,32 +506,6 @@ class CFANetCDFArray(NetCDFArray):
             product(*f_shapes),
         )
 
-    def get_FragmentArray(self, fragment_format):
-        """Return the Fragment class.
-
-        .. versionadded:: TODODASKVER
-
-        :Parameters:
-
-            fragment_format: `str`
-                The dataset format of the fragment. Either ``'nc'``,
-                ``'um'``, or `None`.
-
-        :Returns:
-
-            `FragmentArray`
-                The class for representing a fragment array of the
-                given format.
-
-        """
-        try:
-            return self._FragmentArray[fragment_format]
-        except KeyError:
-            raise ValueError(
-                "Can't get FragmentArray class for unknown "
-                f"fragment dataset format: {fragment_format!r}"
-            )
-
     def get_aggregated_data(self, copy=True):
         """Get the aggregation data dictionary.
 
@@ -581,6 +555,32 @@ class CFANetCDFArray(NetCDFArray):
             aggregated_data = deepcopy(aggregated_data)
 
         return aggregated_data
+
+    def get_FragmentArray(self, fragment_format):
+        """Return the Fragment class.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            fragment_format: `str`
+                The dataset format of the fragment. Either ``'nc'``,
+                ``'um'``, or `None`.
+
+        :Returns:
+
+            `FragmentArray`
+                The class for representing a fragment array of the
+                given format.
+
+        """
+        try:
+            return self._FragmentArray[fragment_format]
+        except KeyError:
+            raise ValueError(
+                "Can't get FragmentArray class for unknown "
+                f"fragment dataset format: {fragment_format!r}"
+            )
 
     def get_fragmented_dimensions(self):
         """Get the positions dimension that have two or more fragments.

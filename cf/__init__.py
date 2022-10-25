@@ -248,9 +248,10 @@ from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
 from .fieldancillary import FieldAncillary
 from .field import Field
-from .data import (
+from .data import Data
+from .data.array import (
+    CachedArray,
     CFANetCDFArray,
-    Data,
     FullArray,
     GatheredArray,
     NetCDFArray,
@@ -260,7 +261,11 @@ from .data import (
     SubsampledArray,
 )
 
-from .data import NetCDFFragmentArray
+from .data.fragment import (
+    MissingFragmentArray,
+    NetCDFFragmentArray,
+    UMFragmentArray,
+)
 
 from .aggregate import aggregate
 from .query import (

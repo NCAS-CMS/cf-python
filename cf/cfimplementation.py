@@ -21,9 +21,9 @@ from . import (
     NodeCountProperties,
     PartNodeCountProperties,
 )
-from .data import (
+from .data import Data
+from .data.array import (
     CFANetCDFArray,
-    Data,
     GatheredArray,
     NetCDFArray,
     RaggedContiguousArray,

@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..fullarray import FullArray
+from ..array.fullarray import FullArray
 from .abstract import FragmentArray
 
 
@@ -20,7 +20,7 @@ class MissingFragmentArray(FragmentArray):
         aggregated_units=False,
         aggregated_calendar=False,
         units=False,
-        calendar=None,
+        calendar=False,
         source=None,
         copy=True,
     ):
@@ -58,23 +58,17 @@ class MissingFragmentArray(FragmentArray):
                 ``valid_max``, ``valid_range``, ``_FillValue`` and
                 ``missing_value``.
 
-            units: `str`, optional
-                The units of the netCDF fragment variable. Set to
-                `None` to indicate that there are no units. If units is False then units will be grappded on the fly TODO
+            units: `str` or `None`, optional
+                The units of the fragment data. Ignored, as the data
+                are all missing values.
 
-            calendar: `str`, optional
-                The calendar of the netCDF fragment variable. By
-                default, or if set to `None`, then the CF default
-                calendar is assumed, if applicable.
+            calendar: `str` or `None`, optional
+                The calendar of the fragment data. Ignored, as the data
+                are all missing values.
 
-            aggregated_units: `str` or `None`, optional
-                The units of the aggregated array. Set to `None` to
-                indicate that there are no units.
+            {{aggregated_units: `str` or `None`, optional}}"
 
-            aggregated_calendar: `str` or `None`, optional
-                The calendar of the aggregated array. By default, or
-                if set to `None`, then the CF default calendar is
-                assumed, if applicable.
+            {{aggregated_calendar: `str` or `None`, optional}}
 
             source: optional
                 Initialise the array from the given object.
@@ -92,8 +86,8 @@ class MissingFragmentArray(FragmentArray):
             fill_value=np.ma.masked,
             dtype=dtype,
             shape=shape,
-            units=units,
-            calendar=calendar,
+            units=None,
+            calendar=None,
             copy=False,
         )
 

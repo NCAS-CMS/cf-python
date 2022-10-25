@@ -1,4 +1,4 @@
-from ...units import Units
+from ....units import Units
 
 
 class ArrayMixin:

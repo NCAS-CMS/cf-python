@@ -22,6 +22,8 @@ class FullArray(Array):
     ):
         """**Initialization**
 
+        TODODASKDOCS
+
             :Parameters:
 
                 dtype : numpy.dtype
@@ -136,7 +138,7 @@ class FullArray(Array):
         """
         fill_value = self.get_fill_value()
         if fill_value is None:
-            return "Empty"
+            return "Uninitialised"
 
         return f"Filled with {fill_value!r}"
 

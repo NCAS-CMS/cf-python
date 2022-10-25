@@ -1,4 +1,4 @@
-from ...functions import _DEPRECATION_ERROR_ATTRIBUTE
+from ....functions import _DEPRECATION_ERROR_ATTRIBUTE
 from ..mixin import FileArrayMixin
 from .array import Array
 

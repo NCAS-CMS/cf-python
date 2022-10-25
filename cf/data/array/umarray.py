@@ -1,7 +1,13 @@
 import numpy as np
 
-from ..functions import get_subspace, parse_indices
-from ..umread_lib.umfile import File, Rec
+from ...constants import _stash2standard_name
+from ...functions import (
+    _DEPRECATION_ERROR_ATTRIBUTE,
+    get_subspace,
+    load_stash2standard_name,
+    parse_indices,
+)
+from ...umread_lib.umfile import File, Rec
 from .abstract import FileArray
 
 
@@ -22,7 +28,7 @@ class UMArray(FileArray):
         word_size=None,
         byte_ordering=None,
         units=False,
-        calendar=None,
+        calendar=False,
         source=None,
         copy=True,
     ):
@@ -71,21 +77,6 @@ class UMArray(FileArray):
                 ignored.
 
                 The number of uncompressed array dimensions.
-
-        **Examples**
-
-        >>> a = UMFileArray(file='file.pp', header_offset=3156,
-        ...                 data_offset=3420,
-        ...                 dtype=numpy.dtype('float32'),
-        ...                 shape=(1, 1, 30, 24),
-        ...                 disk_length=0)
-
-        >>> a = UMFileArray(
-        ...         file='packed_file.pp', header_offset=3156,
-        ...         data_offset=3420,
-        ...         dtype=numpy.dtype('float32'), shape=(30, 24),
-        ...         disk_length=423
-        ... )
 
         """
         super().__init__(source=source, copy=copy)
@@ -136,12 +127,24 @@ class UMArray(FileArray):
             except AttributeError:
                 byte_ordering = None
 
+            try:
+                units = source._get_component("units", False)
+            except AttributeError:
+                units = False
+
+            try:
+                calendar = source._get_component("calendar", False)
+            except AttributeError:
+                calendar = False
+
         self._set_component("shape", shape, copy=False)
         self._set_component("filename", filename, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("header_offset", header_offset, copy=False)
         self._set_component("data_offset", data_offset, copy=False)
         self._set_component("disk_length", disk_length, copy=False)
+        self._set_component("units", units, copy=False)
+        self._set_component("calendar", calendar, copy=False)
 
         if fmt is not None:
             self._set_component("fmt", fmt, copy=False)
@@ -164,25 +167,27 @@ class UMArray(FileArray):
 
         """
         f = self.open()
-
+        print(f.__dict__)
         rec = self._get_rec(f)
 
         int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
+        array = rec.get_data().reshape(self.shape)
 
         self.close(f)
         del f
-
-        array = rec.get_data().reshape(self.shape)
 
         if indices is not Ellipsis:
             indices = parse_indices(array.shape, indices)
             array = get_subspace(array, indices)
 
-        LBUSER2 = int_hdr.item(38)
+        # Set the units, if they haven't been set already.
+        self._set_units(int_hdr)
 
+        LBUSER2 = int_hdr.item(38)
         if LBUSER2 == 3:
             # Return the numpy array now if it is a boolean array
+            self._set_component("dtype", np.dtype(bool), copy=False)
             return array.astype(bool)
 
         integer_array = LBUSER2 == 2
@@ -224,28 +229,30 @@ class UMArray(FileArray):
 
             array += add_offset
 
+        # Set the data type
+        self._set_component("dtype", array.dtype, copy=False)
+
         # Return the numpy array
         return array
 
-    def __repr__(self):
-        """x.__repr__() <==> repr(x)"""
-        out = super().__repr__()
-        return out[:-1] + f", {self.header_offset}>"
-
     def _get_rec(self, f):
-        """TODODASKDOCS.
+        """Get a container for a record.
+
+        This includes the lookup header and file offsets.
 
         .. versionadded:: TODODASKVER
+
+        .. seealso:: `close`, `open`
 
         :Parameters:
 
             f: `umread_lib.umfile.File`
-                TODODASKDOCS
+                The open PP or FF file.
 
         :Returns:
 
             `umread_lib.umfile.Rec`
-                TODODASKDOCS
+                The record container.
 
         """
         header_offset = self.header_offset
@@ -264,11 +271,163 @@ class UMArray(FileArray):
                 f, header_offset, data_offset, disk_length
             )
 
+    def _set_units(self, int_hdr):
+        """The units and calendar properties.
+
+        These are set from inpection of the integer header, but only
+        if they have already not been defined, either during {{class}}
+        instantiation or by a previous call to `_set_units`.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            int_hdr: `numpy.ndarray`
+                The integer header of the data.
+
+        :Returns:
+
+            `tuple`
+                The units and calendar values, either of which may be
+                `None`.
+
+        """
+        units = self._get_component("units", False)
+        if units is False:
+            units = None
+
+            if not _stash2standard_name:
+                load_stash2standard_name()
+
+            submodel = int_hdr[44]
+            stash = int_hdr[41]
+            records = _stash2standard_name.get((submodel, stash))
+            if records:
+                LBSRCE = int_hdr[37]
+                version, source = divmod(LBSRCE, 10000)
+                if version <= 0:
+                    version = 405.0
+
+                for (
+                    long_name,
+                    units0,
+                    valid_from,
+                    valid_to,
+                    standard_name,
+                    cf_info,
+                    condition,
+                ) in records:
+                    if not self._test_version(valid_from, valid_to, version):
+                        continue
+
+                    if not self._test_condition(condition, int_hdr):
+                        continue
+
+                    units = units0
+                    break
+
+            self._set_component("units", units, copy=False)
+
+        calendar = self._get_component("calendar", False)
+        if calendar is False:
+            calendar = None
+            self._set_component("calendar", calendar, copy=False)
+
+        return units, calendar
+
+    def _test_condition(self, condition, int_hdr):
+        """Return `True` if a field satisfies the condition specified
+        for a STASH code to standard name conversion.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            condition: `str`
+                TODODASKDOCS
+
+            int_hdr: `numpy.ndarray`
+                TODODASKDOCS
+
+        :Returns:
+
+            `bool`
+                `True` if the data satisfies the condition specified,
+                `False` otherwise.
+
+        """
+        if not condition:
+            return True
+
+        if condition == "true_latitude_longitude":
+            LBCODE = int_hdr[15]
+            # LBCODE 1: Unrotated regular lat/long grid
+            # LBCODE 2 = Regular lat/lon grid boxes (grid points are
+            #            box centres)
+            if LBCODE in (1, 2):
+                return True
+        elif condition == "rotated_latitude_longitude":
+            LBCODE = int_hdr[15]
+            # LBCODE 101: Rotated regular lat/long grid
+            # LBCODE 102: Rotated regular lat/lon grid boxes (grid
+            #             points are box centres)
+            # LBCODE 111: ?
+            if LBCODE in (101, 102, 111):
+                return True
+        else:
+            return False
+
+    def _test_version(self, valid_from, valid_to, version):
+        """Return `True` if the UM version applicable to this field is
+        within the given range.
+
+        If possible, the UM version is derived from the PP header and
+        stored in the metadata object. Otherwise it is taken from the
+        *version* parameter.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            valid_from: number or `None`
+                TODODASKDOCS
+
+            valid_to: number or `None`
+                TODODASKDOCS
+
+            version: number
+                TODODASKDOCS
+
+            int_hdr: `numpy.ndarray`
+                TODODASKDOCS
+
+        :Returns:
+
+            `bool`
+                `True` if the UM version applicable to this data is
+                within the given range, `False` otherwise.
+
+        """
+        if valid_to is None:
+            if valid_from is None:
+                return True
+
+            if valid_from <= version:
+                return True
+        elif valid_from is None:
+            if version <= valid_to:
+                return True
+        elif valid_from <= version <= valid_to:
+            return True
+
+        return False
+
     @property
     def file_address(self):
         """The file name and address.
 
-        .. versionadded:: ???
+        Deprecated at version TODODASKVER.Use methods `get_filename`
+        and `get_address` instead.
 
         :Returns:
 
@@ -281,7 +440,13 @@ class UMArray(FileArray):
         ('file.pp', 234835)
 
         """
-        return (self.filename, self.header_offset)
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "file_address",
+            "Use methods 'get_filename' and 'get_address' instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @property
     def header_offset(self):
@@ -320,6 +485,9 @@ class UMArray(FileArray):
     def fmt(self):
         """The file format of the UM file containing the array.
 
+        Deprecated at version TODODASKVER. Use method `get_fmt`
+        instead.
+
         :Returns:
 
             `str`
@@ -328,9 +496,20 @@ class UMArray(FileArray):
         """
         return self._get_component("fmt")
 
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "fmt",
+            "Use method 'get_fmt' instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     @property
     def byte_ordering(self):
         """The endianness of the data.
+
+        Deprecated at version TODODASKVER. Use method
+        `get_byte_ordering` instead.
 
         :Returns:
 
@@ -338,11 +517,20 @@ class UMArray(FileArray):
                 'little_endian' or 'big_endian'
 
         """
-        return self._get_component("byte_ordering")
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "byte_ordering",
+            "Use method 'get_byte_ordering' instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @property
     def word_size(self):
         """Word size in bytes.
+
+        Deprecated at version TODODASKVER. Use method `get_word_size`
+        instead.
 
         :Returns:
 
@@ -351,6 +539,14 @@ class UMArray(FileArray):
 
         """
         return self._get_component("word_size")
+
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "word_size",
+            "Use method 'get_word_size' instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def close(self, f):
         """Close the dataset containing the data.
@@ -371,15 +567,74 @@ class UMArray(FileArray):
             f.close_fd()
 
     def get_address(self):
-        """TODODASKDOCS.
+        """The address in the file of the variable.
+
+        The address is the word offset of the lookup header.
+
+        .. versionadded:: TODODASKVER
 
         :Returns:
 
             `str` or `None`
-                TODODASKDOCS, or `None` if there isn't one.
+                The address, or `None` if there isn't one.
 
         """
         return self.header_offset
+
+    def get_byte_ordering(self):
+        """The endianness of the data.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `open`
+
+        :Returns:
+
+            `str` or `None`
+                ``'little_endian'`` or ``'big_endian'``. If the byte
+                ordereing has not been set the `None` is returned, in
+                which case byte ordering will be detected
+                automatically (if possible) when the file is opened
+                with `open`.
+
+        """
+        return self._get_component("byte_ordering", None)
+
+    def get_fmt(self):
+        """The file format of the UM file containing the array.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `open`
+
+        :Returns:
+
+            `str` or `None`
+                ``'FF'`` or ``'PP'``. If the word size has not been
+                set the `None` is returned, in which case file format
+                will be detected automatically (if possible) when the
+                file is opened with `open`.
+
+        """
+        return self._get_component("fmt", None)
+
+    def get_word_size(self):
+        """Word size in bytes.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `open`
+
+        :Returns:
+
+            `int` or `None`
+                ``4`` or ``8``. If the word size has not been set the
+                `None` is returned, in which case word size will be
+                detected automatically (if possible) when the file is
+                opened with `open`.
+
+        """
+        return self._get_component("word_size", None)
 
     def open(self):
         """Returns an open dataset containing the data array.
@@ -395,10 +650,10 @@ class UMArray(FileArray):
         """
         try:
             f = File(
-                path=self.filename,
-                byte_ordering=self.byte_ordering,
-                word_size=self.word_size,
-                fmt=self.fmt,
+                path=self.get_filename(),
+                byte_ordering=self.get_byte_ordering(),
+                word_size=self.get_word_size(),
+                fmt=self.get_fmt(),
             )
         except Exception as error:
             try:

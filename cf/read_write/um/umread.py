@@ -15,8 +15,8 @@ from netCDF4 import date2num as netCDF4_date2num
 
 from ... import __Conventions__, __version__
 from ...constants import _stash2standard_name
-from ...data import UMArray
-from ...data.data import Data
+from ...data import Data
+from ...data.array import UMArray
 from ...data.functions import _close_um_file, _open_um_file
 from ...decorators import (
     _manage_log_level_via_verbose_attr,
@@ -1844,7 +1844,9 @@ class UMField:
         nt = self.nt
         recs = self.recs
 
-        units = self.um_Units
+        um_Units = self.um_Units
+        units = um_Units.units
+        calendar = getattr(um_Units, "calendar", None)
 
         data_type_in_file = self.data_type_in_file
 
@@ -1884,6 +1886,8 @@ class UMField:
                 fmt=self.fmt,
                 word_size=self.word_size,
                 byte_ordering=self.byte_ordering,
+                units=units,
+                calendar=calendar,
             )
 
             dsk[name + (0, 0)] = (getter, subarray, full_slice, False, False)
@@ -1931,6 +1935,8 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
+                        units=units,
+                        calendar=calendar,
                     )
 
                     dsk[name + (i, 0, 0)] = (
@@ -1976,6 +1982,8 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
+                        units=units,
+                        calendar=calendar,
                     )
 
                     dsk[name + (t, z, 0, 0)] = (
@@ -2002,7 +2010,7 @@ class UMField:
         array = da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
 
         # Create the Data object
-        data = Data(array, units=units, fill_value=fill_value)
+        data = Data(array, units=um_Units, fill_value=fill_value)
 
         self.data = data
         self.data_axes = data_axes

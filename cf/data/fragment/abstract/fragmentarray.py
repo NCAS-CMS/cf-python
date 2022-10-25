@@ -1,7 +1,7 @@
 from numbers import Integral
 
 from ....units import Units
-from ...abstract import Array
+from ...array.abstract import Array
 
 
 class FragmentArray(Array):
@@ -48,14 +48,9 @@ class FragmentArray(Array):
                 fragment variable in that the latter may have fewer
                 size 1 dimensions.
 
-            aggregated_units: `str` or `None`, optional
-                The units of the aggregated array. Set to `None` to
-                indicate that there are no units.
+            {{aggregated_units: `str` or `None`, optional}}
 
-            aggregated_calendar: `str` or `None`, optional
-                The calendar of the aggregated array. By default, or
-                if set to `None`, then the CF default calendar is
-                assumed, if applicable.
+            {{aggregated_calendar: `str` or `None`, optional}}
 
             source: optional
                 Initialise the array from the given object.
@@ -216,7 +211,8 @@ class FragmentArray(Array):
 
         :Parameters:
 
-            TODODASKDOCS
+            array: `numpy.ndarray`
+                TODODASKDOCS
 
         :Returns:
 
@@ -227,6 +223,12 @@ class FragmentArray(Array):
         units = self.Units
         if units:
             aggregated_units = self.aggregated_Units
+            if not units.equivalent(aggregated_units):
+                raise ValueError(
+                    f"Can't convert fragment data with units {units!r} to "
+                    f"have aggregated units {aggregated_units!r}"
+                )
+
             if units != aggregated_units:
                 array = Units.conform(
                     array, units, aggregated_units, inplace=True
@@ -319,11 +321,15 @@ class FragmentArray(Array):
 
         :Parameters:
 
-            TODODASKDOCS
+            default: optional
+                Return the value of the *default* parameter if the
+                units have not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
             `str` or `None`
+                The units value.
 
         """
         units = self._get_component("aggregated_units", False)
@@ -347,6 +353,7 @@ class FragmentArray(Array):
         :Returns:
 
             `Array` or `None`
+                TODODASKDOCS
 
         """
         return self._get_component("array", None)

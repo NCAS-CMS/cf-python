@@ -1,4 +1,4 @@
-from ..umarray import UMArray
+from ..array.umarray import UMArray
 from .abstract import FragmentArray
 
 
@@ -46,22 +46,29 @@ class UMFragmentArray(FragmentArray):
                 size 1 dimensions.
 
             units: `str`, optional
-                The units of the fragment variable. Set to `None` to
-                indicate that there are no units. By default, or if TODO
+                The units of the fragment data. By defaultSet to `None` to
+                indicate that there are no units. By default, or if
+                TODO
 
             calendar: `str`, optional
                 The calendar of the fragment variable. By default, or
                 if set to `None`, then the CF default calendar is
                 assumed, if applicable.
 
-            aggregated_units: `str` or `None`, optional
-                The units of the aggregated array. Set to `None` to
-                indicate that there are no units.
+            units: `str` or `None`, optional
+                The units of the fragment data. Set to `None` to
+                indicate that there are no units. If unset then the
+                units will be set during the first `__getitem__` call.
 
-            aggregated_calendar: `str` or `None`, optional
-                The calendar of the aggregated array. By default, or
-                if set to `None`, then the CF default calendar is
-                assumed, if applicable.
+            calendar: `str` or `None`, optional
+                The calendar of the fragment data. Set to `None` to
+                indicate the CF default calendar, if applicable. If
+                unset then the calendar will be set during the first
+                `__getitem__` call.
+
+            {{aggregated_units: `str` or `None`, optional}}"
+
+            {{aggregated_calendar: `str` or `None`, optional}}
 
             source: optional
                 Initialise the array from the given object.
