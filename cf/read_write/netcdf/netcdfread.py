@@ -237,6 +237,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         units=None,
         calendar=None,
         ncvar=None,
+        ncdimensions=(),
         **kwargs,
     ):
         """Create a Data object.
@@ -246,7 +247,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         :Parameters:
 
             ncvar: `str`
-                The netCDF variable from which to get units and calendar.
+                The netCDF variable containing the array.
+
+            ncdimensions: sequence of `str`, optional
+                The netCDF dimensions spanned by the array.
+
+                .. versionadded:: TODODASKVER
 
         """
         if array.dtype is None:
@@ -256,7 +262,23 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # memory.
             array = self._array_from_variable(ncvar)
 
-        chunks = self.read_vars.get("chunks", "auto")
+        # Parse chunks
+        _DEFAULT_CHUNKS = "auto"
+        chunks = self.read_vars.get("chunks", _DEFAULT_CHUNKS)
+        if isinstance(chunks, dict):
+            # For ncdimensions = ('time', 'lat'):
+            #
+            # {} -> ["auto", "auto"]
+            # {'time': 12} -> [12, "auto"]
+            # {'time': 12, 'lat': 10000} -> [12, 10000]
+            # {'time': 12, 'lat': "20MB"} -> [12, "20MB"]
+            # {'time': 12, 'lat': -1} -> [12, -1]
+            # {'time': 12, 'lat': None} -> [12, None]
+            # {'time': 12, 'lat': (30, 90)} -> [12, (30, 90)]
+            # {'time': 12, 'lat': None, 'lon': 4500} -> [12, None]
+            chunks = [
+                chunks.get(ncdim, _DEFAULT_CHUNKS) for ncdim in ncdimensions
+            ]
 
         return super()._create_Data(
             array=array,

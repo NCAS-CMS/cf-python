@@ -2,6 +2,7 @@ import logging
 import os
 import tempfile
 from glob import glob
+from numbers import Integral
 from os.path import isdir
 from re import Pattern
 
@@ -155,7 +156,8 @@ def read(
     constructs that may be read within a session, and makes the read
     operation fast.
 
-    .. seealso:: `cf.aggregate`,`cf.write`, `cf.Field`, `cf.Domain`,
+    .. seealso:: `cf.aggregate`, `cf.chunksize`, `cf.write`,
+                 `cf.Field`, `cf.Domain`,
                  `cf.load_stash2standard_name`, `cf.unique_constructs`
 
     :Parameters:
@@ -519,9 +521,57 @@ def read(
 
             .. versionadded:: 1.5
 
-        chunks: TODODASK
+        chunks: `str` or `int` or `None` or `dict`
+                Specify the chunking of dask dimensions for data in
+                the input files.
 
-            .. versionadded:: TODODASKVER
+                If *chunks* is a `str`, `int`, or `None` then it
+                defines the blocksize applied over all data
+                dimensions, and may be any value of those types
+                accepted by the *chunks* parameter of the
+                `dask.array.from_array` function.
+
+                By default, ``'auto'`` is used to specify the array
+                chunking, which uses a chunk size in bytes defined by
+                the `cf.chunksize` function, preferring square-like
+                chunk shapes across all data dimensions.
+
+                If *chunks* is a `dict`, then each of its keys
+                specifies a named dimension in the file, with a value
+                that defines the chunking for that dimension whenever
+                it is spanned any data. The dictionary values may be
+                any non-`dict` value accepted by the *chunks*
+                parameter of the `dask.array.from_array` function. Not
+                specifying a file dimension in the dictionary is
+                equivalent to it being defined as a key with a value
+                of ``'auto'``.
+
+                .. note:: Specifying *chunks* as a string (such as
+                          ``'10MiB'``), or giving such a string as a
+                          dictionary value, can allow variables in the
+                          same file that have different data shapes to
+                          have different chunking patterns. For
+                          example, for *chunks* of ``'2KiB'``, an
+                          array of double precision floats with shape
+                          ``(10, 10, 10)`` has chunk sizes of ``((6,
+                          4), (6, 4), (6, 4))``, but an array with
+                          shape ``(10,)`` has chunk sizes of
+                          ``((10,),)``.
+
+                .. note:: The *chunks* parameter is ignored for PP and
+                          UM fields files, for which the chunking is
+                          predetermined by the file format.
+
+                *Parameter example:*
+                  If a netCDF file contains dimensions ``time``,
+                  ``z``, ``lat`` and ``lon``, then ``{'time': 12,
+                  'lat', None, 'lon': None}`` will ensure that all
+                  ``time`` axes have a chunksize of 12; and all
+                  ``lat`` and ``lon`` axes are not chunked; and all
+                  ``z`` axes are chunked to comply as closely as
+                  possible with the default blocksize.
+
+                .. versionadded:: TODODASKVER
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -646,6 +696,13 @@ def read(
     # Parse select
     if isinstance(select, (str, Query, Pattern)):
         select = (select,)
+
+    # Parse chunks
+    if chunks is not None and not isinstance(chunks, (str, Integral, dict)):
+        raise ValueError(
+            "'chunks' parameter must be of type str, int, None or dict. "
+            f"Got: {chunks!r}"
+        )
 
     # Manage input parameters where contradictions are possible:
     if cdl_string and fmt:
@@ -791,7 +848,6 @@ def read(
                 um=um,
                 extra=extra,
                 height_at_top_of_model=height_at_top_of_model,
-                #                chunk=chunk,
                 chunks=chunks,
                 mask=mask,
                 warn_valid=warn_valid,

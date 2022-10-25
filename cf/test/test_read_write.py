@@ -869,6 +869,33 @@ class read_writeTest(unittest.TestCase):
         self.assertIsInstance(e[1], cf.Domain)
         self.assertTrue(e[0].equals(e[1]))
 
+    def test_read_chunks(self):
+        with cf.chunksize("200GB"):
+            f = cf.read(self.filename)[0]
+            self.assertEqual(f.data.chunks, ((1,), (10,), (9,)))
+
+        with cf.chunksize("200B"):
+            f = cf.read("/home/david/cf-python/cf/test/test_file.nc")[0]
+            self.assertEqual(f.data.chunks, ((1,), (5, 5), (5, 4)))
+
+        f = cf.read(self.filename, chunks=6)[0]
+        self.assertEqual(f.data.chunks, ((1,), (6, 4), (6, 3)))
+
+        y = f.construct("grid_latitude")
+        self.assertEqual(y.data.chunks, ((6, 4),))
+
+        f = cf.read(self.filename, chunks={"grid_longitude": 7})[0]
+        self.assertEqual(f.data.chunks, ((1,), (10,), (7, 2)))
+
+        f = cf.read(
+            self.filename,
+            chunks={"grid_longitude": 7, "grid_latitude": "200B"},
+        )[0]
+        self.assertEqual(f.data.chunks, ((1,), (3, 3, 3, 1), (7, 2)))
+
+        y = f.construct("grid_latitude")
+        self.assertEqual(y.data.chunks, ((10,),))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

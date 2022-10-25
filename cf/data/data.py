@@ -461,6 +461,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # The data is compressed, so create a uncompressed dask
             # view of it.
             if chunks != _DEFAULT_CHUNKS:
+                # TODODASK: check this! we should be able to chunk
+                #           non-compressed axes, and ignore the
+                #           specified chunking for compressed axesx
                 raise ValueError(
                     "Can't define chunks for compressed input arrays. "
                     "Consider rechunking after initialisation."
