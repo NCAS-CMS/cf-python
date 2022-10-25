@@ -9345,6 +9345,58 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          'sample_size': 5}
 
         """
+        # First define an inner function for each statistic to enable
+        # the sharing of any of the same underlying data, in order to
+        # avoid potentially having to read the data from disk each time.
+
+        def minimum(x):
+            return x.minimum()
+
+        def maximum(x):
+            return x.maximum()
+
+        def maximum_absolute_value(x):
+            return x.maximum_absolute_value()
+
+        def minimum_absolute_value(x):
+            return x.minimum_absolute_value()
+
+        def mid_range(x):
+            return x.mid_range()
+
+        def median(x):
+            return x.median()
+
+        def range(x):
+            return x.range()
+
+        def sum(x):
+            return x.sum()
+
+        def sum_of_squares(x):
+            return x.sum_of_squares()
+
+        def sample_size(x):
+            return x.sample_size()
+
+        def mean(x):
+            return x.mean()
+
+        def mean_absolute_value(x):
+            return x.mean_absolute_value()
+
+        def mean_of_upper_decile(x):
+            return x.mean_of_upper_decile()
+
+        def variance(x):
+            return x.variance()
+
+        def standard_deviation(x):
+            return x.standard_deviation()
+
+        def root_mean_square(x):
+            return x.root_mean_square()
+
         no_weights = (
             "minimum",
             "median",
