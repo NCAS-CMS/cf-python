@@ -2359,7 +2359,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
-                  dimensions `depth=2, axes=[0, -1]`` or equivalently
+                  dimensions ``depth=2, axes=[0, -1]`` or equivalently
                   ``depth={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
