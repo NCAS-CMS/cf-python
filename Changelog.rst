@@ -21,8 +21,6 @@ version 3.13.1
 * Fix bug when setting coordinate bounds with different units to their
   parent coordinates
   (https://github.com/NCAS-CMS/cf-python/issues/417)
-<<<<<<< HEAD
-=======
 * Fixed bug that created incorrect hybrid height levels when reading
   UM fields that also have pseudolevels
   (https://github.com/NCAS-CMS/cf-python/issues/468)
