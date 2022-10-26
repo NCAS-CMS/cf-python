@@ -1203,8 +1203,8 @@ class UMField:
         )
 
         # Height at top of atmosphere
-        TOA_height = self.height_at_top_of_model
-        if TOA_height is None:
+        toa_height = self.height_at_top_of_model
+        if toa_height is None:
             pseudolevels = any(
                 [
                     rec.int_hdr.item(
@@ -1220,22 +1220,22 @@ class UMField:
                 # library that means it can ony create Z-T
                 # aggregations, rather than the required Z-T-P
                 # aggregations.
-                TOA_height = -1
+                toa_height = -1
 
-        if TOA_height is None:
-            TOA_height = bounds1.max()
-            if TOA_height <= 0:
-                TOA_height = None
-        elif TOA_height <= 0:
-            TOA_height = None
+        if toa_height is None:
+            toa_height = bounds1.max()
+            if toa_height <= 0:
+                toa_height = None
+        elif toa_height <= 0:
+            toa_height = None
         else:
-            TOA_height = float(TOA_height)
+            toa_height = float(toa_height)
 
         # atmosphere_hybrid_height_coordinate dimension coordinate
-        if TOA_height is None:
+        if toa_height is None:
             dc = None
         else:
-            array = array / TOA_height
+            array = array / toa_height
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(dc, array, bounds, units=_Units[""])
             self.implementation.set_properties(
