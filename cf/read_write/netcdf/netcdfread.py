@@ -255,6 +255,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 .. versionadded:: TODODASKVER
 
         """
+        g = self.read_vars
+
         if array.dtype is None:
             # The array is based on a netCDF VLEN variable, and
             # therefore has unknown data type. To find the correct
@@ -262,23 +264,42 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # memory.
             array = self._array_from_variable(ncvar)
 
-        # Parse chunks
+        # Parse dask chunks
         _DEFAULT_CHUNKS = "auto"
-        chunks = self.read_vars.get("chunks", _DEFAULT_CHUNKS)
+        chunks = g.get("chunks", _DEFAULT_CHUNKS)
         if isinstance(chunks, dict):
             # For ncdimensions = ('time', 'lat'):
             #
             # {} -> ["auto", "auto"]
-            # {'time': 12} -> [12, "auto"]
-            # {'time': 12, 'lat': 10000} -> [12, 10000]
-            # {'time': 12, 'lat': "20MB"} -> [12, "20MB"]
-            # {'time': 12, 'lat': -1} -> [12, -1]
-            # {'time': 12, 'lat': None} -> [12, None]
-            # {'time': 12, 'lat': (30, 90)} -> [12, (30, 90)]
-            # {'time': 12, 'lat': None, 'lon': 4500} -> [12, None]
-            chunks = [
-                chunks.get(ncdim, _DEFAULT_CHUNKS) for ncdim in ncdimensions
-            ]
+            # {'ncdim%time': 12} -> [12, "auto"]
+            # {'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
+            # {'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
+            # {'ncdim%time': 12, 'latitude': -1} -> [12, -1]
+            # {'ncdim%time': 12, 'Y': None} -> [12, None]
+            # {'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
+            # {'ncdim%time': 12, 'ncdim%lat': None, 'X': 4500} -> [12, None]
+            attributes = g["variable_attributes"]
+            chunks2 = []
+            for ncdim in ncdimensions:
+                key = f"ncdim%{ncdim}"
+                if key in chunks:
+                    chunks2.append(chunks[key])
+                    continue
+
+                c = False
+                dc = attributes.get(ncdim)
+                if dc is not None:
+                    for attr in ("standard_name", "axis"):
+                        value = dc.get(attr)
+                        if value in chunks:
+                            c = True
+                            chunks2.append(chunks[value])
+                            break
+
+                if not c:
+                    chunks2.append(_DEFAULT_CHUNKS)
+
+            chunks = chunks2
 
         return super()._create_Data(
             array=array,

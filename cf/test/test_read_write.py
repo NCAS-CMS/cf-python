@@ -870,31 +870,35 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(e[0].equals(e[1]))
 
     def test_read_chunks(self):
+        f = cf.example_field(0)
+        f.construct("latitude").axis = "Y"
+        cf.write(f, tmpfile)
+
         with cf.chunksize("200GB"):
-            f = cf.read(self.filename)[0]
-            self.assertEqual(f.data.chunks, ((1,), (10,), (9,)))
+            f = cf.read(tmpfile)[0]
+            self.assertEqual(f.data.chunks, ((5,), (8,)))
 
-        with cf.chunksize("200B"):
-            f = cf.read("/home/david/cf-python/cf/test/test_file.nc")[0]
-            self.assertEqual(f.data.chunks, ((1,), (5, 5), (5, 4)))
+        with cf.chunksize("150B"):
+            f = cf.read(tmpfile)[0]
+            self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
 
-        f = cf.read(self.filename, chunks=6)[0]
-        self.assertEqual(f.data.chunks, ((1,), (6, 4), (6, 3)))
+        f = cf.read(tmpfile, chunks=3)[0]
+        self.assertEqual(f.data.chunks, ((3, 2), (3, 3, 2)))
 
-        y = f.construct("grid_latitude")
-        self.assertEqual(y.data.chunks, ((6, 4),))
+        y = f.construct("Y")
+        self.assertEqual(y.data.chunks, ((3, 2),))
 
-        f = cf.read(self.filename, chunks={"grid_longitude": 7})[0]
-        self.assertEqual(f.data.chunks, ((1,), (10,), (7, 2)))
+        f = cf.read(tmpfile, chunks={"ncdim%lon": 3})[0]
+        self.assertEqual(f.data.chunks, ((5,), (3, 3, 2)))
 
-        f = cf.read(
-            self.filename,
-            chunks={"grid_longitude": 7, "grid_latitude": "200B"},
-        )[0]
-        self.assertEqual(f.data.chunks, ((1,), (3, 3, 3, 1), (7, 2)))
+        f = cf.read(tmpfile, chunks={"longitude": 5, "Y": "150B"})[0]
+        self.assertEqual(f.data.chunks, ((3, 2), (5, 3)))
 
-        y = f.construct("grid_latitude")
-        self.assertEqual(y.data.chunks, ((10,),))
+        y = f.construct("Y")
+        self.assertEqual(y.data.chunks, ((5,),))
+
+        f = cf.read(tmpfile, chunks={"foo": 2, "bar": 3})[0]
+        self.assertEqual(f.data.chunks, ((5,), (8,)))
 
 
 if __name__ == "__main__":
