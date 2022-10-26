@@ -227,12 +227,32 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         """
         g = self.read_vars
-        return (
+
+        
+        if cfa04:
+            raise ValueError(
+                "The reading CFA files has been temporarily disabled, "
+                "and will return at version 4.0.0. "
+                "CFA-0.4 functionality is still available at version 3.13.1."
+            )
+            
+        return cfa
+       
+        cfa =  (
             g["cfa"]
             and ncvar not in g["external_variables"]
             and "aggregated_dimensions" in g["variable_attributes"][ncvar]
         )
 
+        if cfa:
+            _cfa_message = (
+                "The reading CFA files has been temporarily disabled, "
+                "and will return at version 4.0.0. "
+                "CFA-0.4 functionality is still available at version 3.13.1."
+            )
+            
+        return cfa
+       
     def _create_Data(
         self,
         array=None,
