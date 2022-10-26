@@ -4,8 +4,8 @@ import numpy as np
 
 _cfa_message = (
     "Reading CFA files has been temporarily disabled, "
-    "and will return at version 4.0.0. "
-    "CFA-0.4 functionality is still available at version 3.13.x."
+    "but will return at a version later soon after TODODASKVER."
+    "CFA-0.4 functionality is still available at versions<=3.13.1"
 )
 
 
@@ -81,7 +81,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         g = self.read_vars
 
         cfa = (
-            g["cfa"]
+            g.get("cfa")
             and ncvar not in g["external_variables"]
             and g["variable_attributes"][ncvar].get("cf_role")
             == "cfa_variable"
@@ -95,8 +95,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # Still here? Then we have a CFA variable.
         raise ValueError(_cfa_message)
 
-        # Leave the following CFA code here, as it may be useful at
-        # v4.0.0.
+        # Leave the following CFA code here for now, as it may be
+        # useful at version>TODODASKVER
         ncdimensions = (
             g["variable_attributes"][ncvar].get("cfa_dimensions", "").split()
         )
@@ -140,7 +140,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         g = self.read_vars
 
         cfa = (
-            g["cfa"]
+            g.get("cfa")
             and ncvar not in g["external_variables"]
             and g["variable_attributes"][ncvar].get("cf_role")
             == "cfa_variable"
@@ -209,7 +209,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         g = self.read_vars
 
         is_cfa_variable = (
-            g["cfa"]
+            g.get("cfa")
             and construct.get_property("cf_role", None) == "cfa_variable"
         )
 
@@ -290,6 +290,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if g["cfa"]:
             raise ValueError(_cfa_message)
 
+            # Leave the following CFA code here for now, as it may be
+            # useful at version>TODODASKVER
             for ncvar in g["variables"]:
                 if (
                     g["variable_attributes"][ncvar].get("cf_role", None)
@@ -303,8 +305,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if g["cfa"]:
             raise ValueError(_cfa_message)
 
-            # Leave the following CFA code here, as it may be useful
-            # at v4.0.0.
+            # Leave the following CFA code here for now, as it may be
+            # useful at version>TODODASKVER
             for ncvar, ncdims in tuple(g["variable_dimensions"].items()):
                 if ncdims != ():
                     continue
