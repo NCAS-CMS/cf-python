@@ -15,7 +15,6 @@ version 3.13.1
 --------------
 
 **2022-10-17**
->>>>>>> a34a3cb77b491048e5520c5171e69c4673a3929a
 
 * Upgrade to allow cf to work with Python 3.10
   (https://github.com/NCAS-CMS/cf-python/issues/419)
