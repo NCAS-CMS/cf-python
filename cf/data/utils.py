@@ -553,18 +553,18 @@ def scalar_masked_array(dtype=float):
     return a
 
 
-def conform_units(value, units):
+def conform_units(value, units, message=None):
     """Conform units.
 
     If *value* has units defined by its `Units` attribute then
 
-    * if the value units are equal to *units* then *value* is returned
+    * If the value units are equal to *units* then *value* is returned
       unchanged;
 
-    * if the value units are equivalent to *units* then a copy of
+    * If the value units are equivalent to *units* then a copy of
       *value* converted to *units* is returned;
 
-    * if the value units are not equivalent to *units* then an
+    * If the value units are not equivalent to *units* then an
       exception is raised.
 
     In all other cases *value* is returned unchanged.
@@ -578,6 +578,12 @@ def conform_units(value, units):
 
         units: `Units`
             The units to conform to.
+
+        message: `str`, optional
+            If the value units are not equivalent to *units* then use
+            this message when the exception is raised. By default a
+            message that is independent of the calling context is
+            used.
 
     **Examples**
 
@@ -600,6 +606,10 @@ def conform_units(value, units):
     Traceback (most recent call last):
         ...
     ValueError: Units <Units: km> are incompatible with units <Units: s>
+    >>> cf.data.utils.conform_units(d, cf.Units('s'), message='My message')
+    Traceback (most recent call last):
+        ...
+    ValueError: My message
 
     """
     value_units = getattr(value, "Units", None)
@@ -611,9 +621,12 @@ def conform_units(value, units):
             value = value.copy()
             value.Units = units
     elif value_units and units:
-        raise ValueError(
-            f"Units {value_units!r} are incompatible with units {units!r}"
-        )
+        if message is None:
+            message = (
+                f"Units {value_units!r} are incompatible with units {units!r}"
+            )
+
+        raise ValueError(message)
 
     return value
 
@@ -661,3 +674,72 @@ def YMDhms(d, attr):
     d._set_dask(dx)
     d.override_units(Units(None), inplace=True)
     return d
+
+
+def where_broadcastable(data, x, name):
+    """Check broadcastability for `cf.Data.where` assignments.
+
+    Raises an exception unless the *data* and *x* parameters are
+    broadcastable across each other, such that the size of the result
+    is identical to the size of *data*. Leading size 1 dimensions of
+    *x* are ignored, thereby also ensuring that the shape of the
+    result is identical to the shape of *data*.
+
+    .. versionadded:: TODODASKVER
+
+    .. seealso:: `cf.Data.where`
+
+    :Parameters:
+
+        data, x: `Data`
+            The arrays to compare.
+
+        name: `str`
+            A name for *x* that is used in exception error messages.
+
+    :Returns:
+
+        `Data`
+             The input parameter *x*, or a modified copy without
+             leading size 1 dimensions. If *x* can not be acceptably
+             broadcast to *data* then a `ValueError` is raised.
+
+    """
+    ndim_x = x.ndim
+    if not ndim_x:
+        return x
+
+    error = 0
+
+    shape_x = x.shape
+    shape_data = data.shape
+
+    shape_x0 = shape_x
+    ndim_difference = ndim_x - data.ndim
+
+    if ndim_difference > 0:
+        if shape_x[:ndim_difference] == (1,) * ndim_difference:
+            # Remove leading ize 1 dimensions
+            x = x.reshape(shape_x[ndim_difference:])
+            shape_x = x.shape
+        else:
+            error += 1
+
+    for n, m in zip(shape_x[::-1], shape_data[::-1]):
+        if n != m and m > 1 and n > 1:
+            raise ValueError(
+                f"where: {name!r} parameter with shape {shape_x0} can not "
+                f"be broadcast across data with shape {shape_data}"
+            )
+
+        if m == 1 and n > 1:
+            error += 1
+
+    if error:
+        raise ValueError(
+            f"where: {name!r} parameter with shape {shape_x0} can not "
+            f"be broadcast across data with shape {shape_data} when the "
+            "result will have a different shape to the data"
+        )
+
+    return x

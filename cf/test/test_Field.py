@@ -2205,20 +2205,19 @@ class FieldTest(unittest.TestCase):
 
         for condition in (True, 1, [[[True]]], [[[[[456]]]]]):
             g = f.where(condition, -9)
-            self.assertTrue(g[0].minimum() == -9, str(condition))
-            self.assertTrue(g[0].maximum() == -9, str(condition))
+            self.assertTrue((g.array == -9).all())
 
         g = f.where(cf.le(34), 34)
-        self.assertTrue(g[0].minimum() == 34)
-        self.assertTrue(g[0].maximum() == 89)
+        self.assertTrue(g.min() == 34)
+        self.assertTrue(g.max() == 89)
 
         g = f.where(cf.le(34), cf.masked)
-        self.assertTrue(g[0].minimum() == 35)
-        self.assertTrue(g[0].maximum() == 89)
+        self.assertTrue(g.min() == 35)
+        self.assertTrue(g.max() == 89)
 
         self.assertIsNone(f.where(cf.le(34), cf.masked, 45, inplace=True))
-        self.assertTrue(f[0].minimum() == 45)
-        self.assertTrue(f[0].maximum() == 45)
+        self.assertTrue(f.min() == 45)
+        self.assertTrue(f.max() == 45)
 
     def test_Field_masked_invalid(self):
         f = self.f.copy()
