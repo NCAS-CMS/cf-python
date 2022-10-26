@@ -13490,7 +13490,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Parameter example:*
                   Specify a halo size of 2 for the "longitude" and
                   "latitude" axes: ``depth=2, axes=['latutude',
-                  'longitude']``, or equivalently ``depth={'latutude':
+                  'longitude']``, or equivalently ``depth={'latitude':
                   2, 'longitude': 2}``.
 
             axes: (sequence of) `str` or `int`, optional
