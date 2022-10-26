@@ -1561,7 +1561,7 @@ def close_one_file(file_format=None):
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "close_one__file", version="TODODASKVER", removed_at="5.0.0"
+        "close_one_file", version="TODODASKVER", removed_at="5.0.0"
     )  # pragma: no cover
 
 
