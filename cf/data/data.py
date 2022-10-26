@@ -9565,7 +9565,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         The array and the *condition*, *x* and *y* parameters must all
         be broadcastable across the original array, such that the size
-        of the result is identical to the orginal size of the
+        of the result is identical to the original size of the
         array. Leading size 1 dimensions of these parameters are
         ignored, thereby also ensuring that the shape of the result is
         identical to the orginal shape of the array.
