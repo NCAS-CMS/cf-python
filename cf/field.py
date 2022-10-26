@@ -14632,7 +14632,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             construct: `str`, optional
                 Define the condition by applying the *construct*
                 parameter to the given metadata construct's data,
-                rather then the data of the field construct. Must be
+                rather than the data of the field construct. Must be
 
                 * The identity or key of a metadata coordinate
                   construct that has data.
