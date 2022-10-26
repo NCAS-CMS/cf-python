@@ -469,7 +469,7 @@ def read(
                                           from the top level’s upper
                                           bound defined by BRSVD1 in
                                           the lookup header. If the
-                                          height can’t be determined
+                                          height can't be determined
                                           from the header, or the
                                           given height is less than or
                                           equal to 0, then a
