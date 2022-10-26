@@ -134,28 +134,13 @@ Resource management
 
    cf.configuration
    cf.chunksize
-   cf.collapse_parallel_mode
    cf.free_memory
-   cf.free_memory_factor
-   cf.fm_threshold
-   cf.of_fraction
    cf.regrid_logging
-   cf.set_performance
    cf.tempdir
    cf.total_memory
-   cf.close_files
-   cf.close_one_file
-   cf.open_files
-   cf.open_files_threshold_exceeded
    cf.CHUNKSIZE
-   cf.COLLAPSE_PARALLEL_MODE
    cf.FREE_MEMORY
-   cf.FREE_MEMORY_FACTOR
-   cf.FM_THRESHOLD
-   cf.MINNCFM
-   cf.OF_FRACTION
    cf.REGRID_LOGGING
-   cf.SET_PERFORMANCE
    cf.TEMPDIR
    cf.TOTAL_MEMORY
 
@@ -189,3 +174,30 @@ Miscellaneous
    cf.stash2standard_name 
    cf.LOG_LEVEL
    cf.RELAXED_IDENTITIES
+
+Deprecated
+----------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: function/
+   :template: function.rst
+
+   cf.close_files
+   cf.close_one_file   
+   cf.collapse_parallel_mode
+   cf.fm_threshold
+   cf.free_memory_factor
+   cf.min_total_memory
+   cf.of_fraction
+   cf.open_files
+   cf.open_files_threshold_exceeded
+   cf.set_performance
+   cf.COLLAPSE_PARALLEL_MODE
+   cf.FM_THRESHOLD
+   cf.FREE_MEMORY_FACTOR
+   cf.MIN_TOTAL_MEMORY
+   cf.MINNCFM
+   cf.OF_FRACTION
+   cf.SET_PERFORMANCE
+   

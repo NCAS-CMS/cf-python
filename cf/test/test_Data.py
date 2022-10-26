@@ -913,25 +913,6 @@ class DataTest(unittest.TestCase):
         f = d - e
         self.assertEqual(f.Units, cf.Units("days"))
 
-        # Repeat with caching partitions to disk
-        fmt = cf.constants.CONSTANTS["FM_THRESHOLD"]
-        cf.constants.CONSTANTS["FM_THRESHOLD"] = cf.total_memory()
-
-        d = cf.Data(self.a, "m")
-        e = cf.Data(self.a, "s")
-
-        f = d / e
-        self.assertEqual(f.Units, cf.Units("m s-1"))
-
-        d = cf.Data(self.a, "days since 2000-01-02")
-        e = cf.Data(self.a, "days since 1999-01-02")
-
-        f = d - e
-        self.assertEqual(f.Units, cf.Units("days"))
-
-        # Reset
-        cf.constants.CONSTANTS["FM_THRESHOLD"] = fmt
-
     def test_Data_concatenate(self):
         """Test the `concatenate` Data method."""
         # Unitless operation with default axis (axis=0):
