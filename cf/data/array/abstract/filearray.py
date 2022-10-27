@@ -59,12 +59,14 @@ class FileArray(FileArrayMixin, Array):
         )  # pragma: no cover
 
     def get_address(self):
-        """TODODASKDOCS.
+        """The address in the file of the variable.
+
+        .. versionadded:: TODODASKVER
 
         :Returns:
 
             `str` or `None`
-                TODODASKDOCS, or `None` if there isn't one.
+                The address, or `None` if there isn't one.
 
         """
         raise NotImplementedError(

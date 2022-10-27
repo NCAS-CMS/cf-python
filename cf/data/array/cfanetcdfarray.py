@@ -40,7 +40,7 @@ class CFANetCDFArray(NetCDFArray):
         dtype=None,
         mask=True,
         units=False,
-        calendar=None,
+        calendar=False,
         instructions=None,
         source=None,
         copy=True,
@@ -97,15 +97,12 @@ class CFANetCDFArray(NetCDFArray):
                 ``missing_value``.
 
             units: `str` or `None`, optional
-                The units of the netCDF variable. Set to `None` to
-                indicate that there are no units. If unset then the
-                units will be set during the first `__getitem__` call.
+                The units of the aggregated data. Set to `None` to
+                indicate that there are no units.
 
-            calendar: `str`, optional
-                The calendar of the netCDF variable. By default, or if
-                set to `None`, then the CF default calendar is
-                assumed, if applicable. If unset then the calendar
-                will be set during the first `__getitem__` call.
+            calendar: `str` or `None`, optional
+                The calendar of the aggregated data. Set to `None` to
+                indicate the CF default calendar, if applicable.
 
             source: optional
                 Initialise the array from the given object.
@@ -117,7 +114,7 @@ class CFANetCDFArray(NetCDFArray):
             instructions: `str`, optional
                 The ``aggregated_data`` attribute value found on the
                 CFA netCDF variable. If set then this will be used by
-                `__dask__tokenize__`.
+                `__dask_tokenize__` to improve performance.
 
         """
         if source is not None:
@@ -184,12 +181,8 @@ class CFANetCDFArray(NetCDFArray):
         self._set_component("fragment_shape", fragment_shape, copy=False)
         self._set_component("aggregated_data", aggregated_data, copy=False)
         self._set_component("instructions", instructions, copy=False)
-
-        if self.get_units(False) is False:
-            raise ValueError(99999)
-
-        if self.get_calendar(False) is False:
-            raise ValueError(99999)
+        self._set_component("units", units, copy=False)
+        self._set_component("calendar", calendar, copy=False)
 
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
@@ -210,9 +203,7 @@ class CFANetCDFArray(NetCDFArray):
         )
 
     def __getitem__(self, indices):
-        raise NotImplementedError(
-            f"{self.__class__.__name__}.__getitem__ is not implemented"
-        )  # pragma: no cover
+        return NotImplemented  # pragma: no cover
 
     def _set_fragment(self, var, frag_loc, aggregated_data, cfa_filename):
         """Create a new key/value pair in the *aggregated_data*

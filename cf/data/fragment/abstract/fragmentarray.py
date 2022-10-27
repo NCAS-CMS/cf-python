@@ -1,10 +1,10 @@
 from numbers import Integral
 
 from ....units import Units
-from ...array.abstract import Array
+from ...array.abstract import FileArray
 
 
-class FragmentArray(Array):
+class FragmentArray(FileArray):
     """A CFA fragment array.
 
     .. versionadded:: TODODASKVER
@@ -52,6 +52,9 @@ class FragmentArray(Array):
 
             {{aggregated_calendar: `str` or `None`, optional}}
 
+            array: `Array`
+                The fragment array stored in a file.
+
             source: optional
                 Initialise the array from the given object.
 
@@ -98,7 +101,7 @@ class FragmentArray(Array):
                 aggregated_calendar = False
 
             try:
-                array = source._get_component("array")
+                array = source._get_component("array", None)
             except AttributeError:
                 array = None
 
@@ -106,11 +109,13 @@ class FragmentArray(Array):
         self._set_component("address", address, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("shape", shape, copy=False)
-        self._set_component("array", array, copy=copy)
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
+
+        if array is not None:
+            self._set_component("array", array, copy=copy)
 
     def __getitem__(self, indices):
         """Returns a subspace of the fragment as a numpy array.
@@ -137,16 +142,17 @@ class FragmentArray(Array):
         array = self._conform_units(array)
         return array
 
-    def __repr__(self):
-        """x.__repr__() <==> repr(x)"""
-        return (
-            f"<CF {self.__class__.__name__}{self.shape}: {self.get_array()}>"
-        )
+#    def __repr__(self):
+#        """x.__repr__() <==> repr(x)"""
+#        return (
+#            f"<CF {self.__class__.__name__}{self.shape}: {self.get_array()}>"
+#        )
 
     def _conform_indices(self, indices):
         """Conform the indices that retrieve the fragment data.
 
         The indicies may need modification in order to ensure that
+        TODODASKDOCS.
 
         .. versionadded:: TODODASKVER
 
@@ -252,25 +258,29 @@ class FragmentArray(Array):
             self.get_aggregated_units(), self.get_aggregated_calendar(None)
         )
 
-    @property
-    def dtype(self):
-        """Data-type of the data elements."""
-        return self._get_component("dtype")
-
-    @property
-    def shape(self):
-        """Tuple of array dimension sizes."""
-        return self._get_component("shape")
+#    @property
+#    def dtype(self):
+#        """Data-type of the data elements."""
+#        return self._get_component("dtype")
+#
+#    @property
+#    def shape(self):
+#        """Tuple of array dimension sizes."""
+#        return self._get_component("shape")
+#
+    def close(self):
+        """Close the dataset containing the data."""
+        return NotImplemented  # pragma: no cover
 
     def get_address(self):
-        """TODODASKDOCS.
+        """The address of the fragment in the file.
 
         .. versionadded:: TODODASKVER
 
         :Returns:
 
-                The file address of the fragment. If no address has
-                been set then `None` is returned.
+                The file address of the fragment, or `None` if there
+                isn't one.
 
         """
         return self._get_component("address", None)
@@ -346,17 +356,17 @@ class FragmentArray(Array):
         return units
 
     def get_array(self):
-        """TODODASKDOCS.
+        """The fragment array stored in a file.
 
         .. versionadded:: TODODASKVER
 
         :Returns:
 
-            `Array` or `None`
-                TODODASKDOCS
+            `Array`
+                The object defining the fragment array.                
 
         """
-        return self._get_component("array", None)
+        return self._get_component("array")
 
     def get_units(self, default=ValueError()):
         """The units of the netCDF variable.
@@ -379,3 +389,7 @@ class FragmentArray(Array):
 
         """
         return self.get_array().get_units(default)
+
+    def open(self):
+        """Returns an open dataset containing the data array."""
+        return NotImplemented  # pragma: no cover

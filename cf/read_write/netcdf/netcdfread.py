@@ -228,30 +228,37 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         """
         g = self.read_vars
 
-        
-        if cfa04:
-            raise ValueError(
-                "The reading CFA files has been temporarily disabled, "
-                "and will return at version 4.0.0. "
-                "CFA-0.4 functionality is still available at version 3.13.1."
-            )
-            
-        return cfa
-       
-        cfa =  (
-            g["cfa"]
-            and ncvar not in g["external_variables"]
-            and "aggregated_dimensions" in g["variable_attributes"][ncvar]
-        )
+        if not g["cfa"] or ncvar in g["external_variables"]
+            return False
 
+        attributes = g["variable_attributes"][ncvar]
+        
+        # TODOCFA: test on the version of CFA given by g["cfa"]. See
+        #          also `_customize_read_vars`.
+        cfa = "aggregated_dimensions" in attributes
         if cfa:
-            _cfa_message = (
+             # TODOCFA: Modify this message for v4.0.0
+             raise ValueError(
                 "The reading CFA files has been temporarily disabled, "
-                "and will return at version 4.0.0. "
+                "but will return for CFA-0.6 files at version 4.0.0. "
                 "CFA-0.4 functionality is still available at version 3.13.1."
             )
-            
-        return cfa
+            # TODOCFA: This return remains when the exception is
+            #          removed at v4.0.0.
+            return True
+       
+        cfa_04 = attributes.get("cf_role") == "cfa_variable"        
+        if cfa_04:
+            # TODOCFA: Modify this message for v4.0.0.
+            raise ValueError(
+                "The reading of CFA-0.4 files was permanently disabled at "
+                "version TODODASKVER. However, CFA-0.4 functionality is "
+                "still available at version 3.13.1. "
+                "The reading and writing of CFA-0.6 files will become "
+                "available at version 4.0.0."
+            )
+                   
+        return False
        
     def _create_Data(
         self,
@@ -302,7 +309,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # ------------------------------------------------------------
         # Find out if this is a CFA file
         # ------------------------------------------------------------
-        g["cfa"] = "CFA-" in g["global_attributes"].get("Conventions", ())
+        g["cfa"] = "CFA" in g["global_attributes"].get("Conventions", ())
 
         if g["cfa"]:
             attributes = g["variable_attributes"]
