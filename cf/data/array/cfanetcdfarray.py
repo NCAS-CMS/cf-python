@@ -181,8 +181,6 @@ class CFANetCDFArray(NetCDFArray):
         self._set_component("fragment_shape", fragment_shape, copy=False)
         self._set_component("aggregated_data", aggregated_data, copy=False)
         self._set_component("instructions", instructions, copy=False)
-        self._set_component("units", units, copy=False)
-        self._set_component("calendar", calendar, copy=False)
 
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
@@ -240,11 +238,11 @@ class CFANetCDFArray(NetCDFArray):
 
         if address is not None:
             if filename is None:
-                if fmt is None:
-                    fmt = "nc"
-
+                # This fragment is in the CFA-netCDF file
                 filename = cfa_filename
+                fmt = "nc"
             else:
+                # This fragment is in its own file
                 filename = abspath(fragment.file)
 
         aggregated_data[frag_loc] = {

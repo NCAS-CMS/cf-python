@@ -2,14 +2,7 @@ import cfdm
 import netCDF4
 import numpy as np
 
-_cfa_message = (
-    "Reading CFA files has been temporarily disabled, "
-    "and will return at version ?.?.?. "
-    "CFA-0.4 functionality is still available at version 3.13.x."
-)
-
-# TODODASKCFA: remove aggregation_* properties from constructs
-
+# TODOCFA: remove aggregation_* properties from constructs
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     """A container for instantiating Fields from a netCDF dataset.
@@ -228,7 +221,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         """
         g = self.read_vars
 
-        if not g["cfa"] or ncvar in g["external_variables"]
+        if not g["cfa"] or ncvar in g["external_variables"]:
             return False
 
         attributes = g["variable_attributes"][ncvar]
