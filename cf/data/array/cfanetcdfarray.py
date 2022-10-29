@@ -126,6 +126,11 @@ class CFANetCDFArray(NetCDFArray):
                 fragment_shape = None
 
             try:
+                instructions = source._get_component("instructions")
+            except AttributeError:
+                instructions = None
+                
+            try:
                 aggregated_data = source.get_aggregated_data(copy=False)
             except AttributeError:
                 aggregated_data = {}
@@ -261,7 +266,8 @@ class CFANetCDFArray(NetCDFArray):
 
         :Parameters:
 
-            {{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}
+            shapes: 
+                TODODASKDOCS
 
         :Returns:
 
@@ -546,7 +552,7 @@ class CFANetCDFArray(NetCDFArray):
         return aggregated_data
 
     def get_FragmentArray(self, fragment_format):
-        """Return the Fragment class.
+        """Return a Fragment class.
 
         .. versionadded:: TODODASKVER
 

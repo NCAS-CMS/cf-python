@@ -137,7 +137,7 @@ class FragmentArray(FileArray):
 
         """
         array = self.get_array()
-        indices = self._conform_indices(indices)
+        indices = self._parse_indices(indices)
         array = array[indices]
         array = self._conform_units(array)
         return array
@@ -148,23 +148,31 @@ class FragmentArray(FileArray):
 #            f"<CF {self.__class__.__name__}{self.shape}: {self.get_array()}>"
 #        )
 
-    def _conform_indices(self, indices):
-        """Conform the indices that retrieve the fragment data.
+    def _parse_indices(self, indices):
+        """Parse the indices that retrieve the fragment data.
 
-        The indicies may need modification in order to ensure that
-        TODODASKDOCS.
+        Ellipses are replaced with the approriate number `slice(None)`
+        instances, and rank-reducing indices (such as an integer or
+        scalar array) are disallowed.
 
         .. versionadded:: TODODASKVER
 
         :Parameters:
 
             indices: `tuple` or `Ellipsis`
-                TODODASKDOCS
+                The array indices to be parsed.
 
         :Returns:
 
             `tuple`
-                TODODASKDOCS
+                The parsed indices.
+
+        **Examples**
+
+        >>> a.shape
+        (12, 1, 73, 144)
+        >>> a._parse_indices(([2, 4, 5], Ellipsis, slice(45, 67))
+        ([2, 4, 5], slice(None), slice(None), slice(45, 67))
 
         """
         ndim = self.ndim
@@ -218,12 +226,15 @@ class FragmentArray(FileArray):
         :Parameters:
 
             array: `numpy.ndarray`
-                TODODASKDOCS
+                The array to be conformed.
 
         :Returns:
 
             `numpy.ndarray`
-                TODODASKDOCS
+                The conformed array. The returned array may or may not
+                be the input array updated in-place, depending on its
+                data type and the nature of its units and the
+                aggregated units.
 
         """
         units = self.Units
@@ -244,14 +255,14 @@ class FragmentArray(FileArray):
 
     @property
     def aggregated_Units(self):
-        """TODODASKDOCS.
+        """The units of the aggregated data.
 
         .. versionadded:: TODODASKVER
 
         :Returns:
 
             `Units`
-                TODODASKDOCS
+                The units of the aggregated data.
 
         """
         return Units(
