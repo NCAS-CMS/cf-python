@@ -257,7 +257,7 @@ class DSGTest(unittest.TestCase):
 
         # Set the data for the field
         tas.set_data(cf.Data(array), axes=[T, Y, X])
-        
+
         self.assertTrue(
             (
                 tas.data.array
@@ -277,7 +277,7 @@ class DSGTest(unittest.TestCase):
         )
 
         self.assertEqual(tas.data.get_compression_type(), "gathered")
-        
+
         self.assertTrue(
             (
                 tas.data.compressed_array
@@ -287,11 +287,9 @@ class DSGTest(unittest.TestCase):
                 )
             ).all()
         )
-        
+
         self.assertTrue(
-            (
-                tas.data.get_list().data.array == numpy.array([1, 4, 5])
-            ).all(),
+            (tas.data.get_list().data.array == numpy.array([1, 4, 5])).all(),
         )
 
 

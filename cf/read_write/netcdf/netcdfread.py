@@ -18,8 +18,9 @@ TODODASKCFA: Consider scanning for cfa variables to the top
              hook can be overlaoded (cf. `_customize_read_vars`).
 
 TODODASKCFA: What about groups/netcdf_flattener?
-        
+
 """
+
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     """A container for instantiating Fields from a netCDF dataset.
@@ -222,7 +223,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=kwargs["calendar"],
             ncvar=ncvar,
         )
-     
+
     def _is_cfa_variable(self, ncvar):
         """Return True if *ncvar* is a CFA variable.
 
@@ -251,11 +252,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         cfa = "aggregated_dimensions" in attributes
         if cfa:
             # TODOCFA: Modify this message for v4.0.0
-#            raise ValueError(
-#                "The reading CFA files has been temporarily disabled, "
-#                "but will return for CFA-0.6 files at version 4.0.0. "
-#                "CFA-0.4 functionality is still available at version 3.13.1."
-#            )
+            #            raise ValueError(
+            #                "The reading CFA files has been temporarily disabled, "
+            #                "but will return for CFA-0.6 files at version 4.0.0. "
+            #                "CFA-0.4 functionality is still available at version 3.13.1."
+            #            )
 
             # TODOCFA: The 'return' remains when the exception is
             #          removed at v4.0.0.
