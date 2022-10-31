@@ -49,10 +49,6 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         a.masked_invalid()
         self.assertIsNone(a.masked_invalid(inplace=True))
 
-    def test_AuxiliaryCoordinate_chunk(self):
-        a = self.aux1.copy()
-        a.chunk()
-
     def test_AuxiliaryCoordinate__repr__str__dump(self):
         x = self.f.auxiliary_coordinate("latitude")
         repr(x)
@@ -219,10 +215,6 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
         self.assertIsNone(aux.rint(inplace=True))
         self.assertTrue((aux.array == numpy.rint(a)).all())
-
-    def test_AuxiliaryCoordinate_close(self):
-        aux = self.aux1.copy()
-        aux.close()
 
     def test_AuxiliaryCoordinate_sin_cos_tan(self):
         aux = self.aux1.copy()

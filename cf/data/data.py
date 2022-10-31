@@ -2114,10 +2114,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{inplace: `bool`, optional}}
 
-            interpolation: deprecated at version 4.0.0
+            interpolation: deprecated at version TODODASKVER
                 Use the *method* parameter instead.
 
-            _preserve_partitions: deprecated at version 4.0.0
+            _preserve_partitions: deprecated at version TODODASKVER
 
         :Returns:
 
@@ -2355,7 +2355,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         3. Any computations stored after initialisation consist only
            subspace, concatenate, reshape, and copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `force_compute`, `cf.log_level`
 
@@ -7385,7 +7385,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("size")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
@@ -7572,6 +7571,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         from dask.array.core import concatenate
+
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -7921,7 +7930,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * The stored computations consist only of initialisation,
           subspace or copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `last_element`, `second_element`
 
@@ -7962,7 +7971,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * The stored computations consist only of initialisation,
           subspace or copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `last_element`, `first_element`
 
@@ -8003,7 +8012,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * The stored computations consist only of initialisation,
           subspace or copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `first_element`, `second_element`
 
@@ -8305,10 +8314,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Cast 'a' as a Data object so that it definitely has sensible
-        # Units
+        # Units. We don't mind if the units of 'a' are incompatible
+        # with those of 'self', but if they are then it's nice if the
+        # units are conformed.
         a = self.asdata(a)
         try:
-            a = conform_units(a, d.Units)
+            a = conform_units(a, d.Units, message="")
         except ValueError:
             pass
 
@@ -8853,7 +8864,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -9597,10 +9608,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         operations computed, always including space for a full boolean
         mask, is small enough to be retained in available memory.
 
-        .. note:: The delayed operations are actually not computed by
-                  `fits_in_memory`, so it is possible that an
-                  intermediate operation may require more than the
-                  available memory, even if the final array does not.
+        **Performance**
+
+        The delayed operations are actually not computed by
+        `fits_in_memory`, so it is possible that an intermediate
+        operation may require more than the available memory, even if
+        the final array does not.
 
         .. seealso:: `array`, `compute`, `nbytes`, `persist`,
                      `cf.free_memory`
@@ -9665,8 +9678,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Broadcasting**
 
         The array and the *condition*, *x* and *y* parameters must all
-        be broadcastable to each other, such that the shape of the
-        result is identical to the orginal shape of the array.
+        be broadcastable across the original array, such that the size
+        of the result is identical to the original size of the
+        array. Leading size 1 dimensions of these parameters are
+        ignored, thereby also ensuring that the shape of the result is
+        identical to the orginal shape of the array.
 
         If *condition* is a `Query` object then for the purposes of
         broadcasting, the condition is considered to be that which is
@@ -9684,7 +9700,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Parameters:
 
-            condition: array-like or `Query`
+            condition: array_like or `Query`
                 The condition which determines how to assign values to
                 the data.
 
@@ -9817,7 +9833,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data(x)
         >>> e = d.where(condition, d, 10 + y)
             ...
-        ValueError: where: Broadcasting the 'condition' parameter with shape (3, 4) would change the shape of the data with shape (3, 1)
+        ValueError: where: 'condition' parameter with shape (3, 4) can not be broadcast across data with shape (3, 1) when the result will have a different shape to the data
 
         >>> d = cf.Data(np.arange(9).reshape(3, 3))
         >>> e = d.copy()
@@ -9835,6 +9851,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [ 6.      7.      8.    ]]
 
         """
+        from .utils import where_broadcastable
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Missing values could be affected, so make sure that the mask
@@ -9847,13 +9865,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if getattr(condition, "isquery", False):
             # Condition is a cf.Query object: Make sure that the
             # condition units are OK, and convert the condition to a
-            # boolean dask array with the same shape as the data.
+            # boolean Data instance with the same shape as the data.
             condition = condition.copy()
-            condition = condition.set_condition_units(units)
+            condition.set_condition_units(units)
             condition = condition.evaluate(d)
 
         condition = type(self).asdata(condition)
-        _where_broadcastable(d, condition, "condition")
+        condition = where_broadcastable(d, condition, "condition")
 
         # If x or y is self then change it to None. This prevents an
         # unnecessary copy; and, at compute time, an unncessary numpy
@@ -9881,18 +9899,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 continue
 
             arg = type(self).asdata(arg)
-            _where_broadcastable(d, arg, name)
+            arg = where_broadcastable(d, arg, name)
 
-            if arg.Units:
-                # Make sure that units are OK.
-                arg = arg.copy()
-                try:
-                    arg.Units = units
-                except ValueError:
-                    raise ValueError(
-                        f"where: {name!r} parameter units {arg.Units!r} "
-                        f"are not equivalent to data units {units!r}"
-                    )
+            arg_units = arg.Units
+            if arg_units:
+                arg = conform_units(
+                    arg,
+                    units,
+                    message=f"where: {name!r} parameter units {arg_units!r} "
+                    f"are not equivalent to data units {units!r}",
+                )
 
             xy.append(arg.to_dask_array())
 
@@ -10538,9 +10554,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
-            fill_value: deprecated at version 4.0.0
+            fill_value: deprecated at version TODODASKVER
                 Use `set_fill_value` instead.
 
         :Returns:
@@ -10599,7 +10615,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -10663,7 +10679,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -10715,7 +10731,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -10760,7 +10776,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             units: `Units`, optional
 
-            out: deprecated at version 4.0.0
+            out: deprecated at version TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11875,90 +11891,6 @@ def _size_of_index(index, size=None):
     else:
         # Index is a list of integers
         return len(index)
-
-
-def _broadcast(a, shape):
-    """Broadcast an array to a given shape.
-
-    It is assumed that ``len(array.shape) <= len(shape)`` and that the
-    array is broadcastable to the shape by the normal numpy
-    boradcasting rules, but neither of these things are checked.
-
-    For example, ``d[...] = d._broadcast(e, d.shape)`` gives the same
-    result as ``d[...] = e``
-
-    :Parameters:
-
-        a: numpy array-like
-
-        shape: `tuple`
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    # Replace with numpy.broadcast_to v1.10 ??/ TODO
-
-    a_shape = np.shape(a)
-    if a_shape == shape:
-        return a
-
-    tile = [(m if n == 1 else 1) for n, m in zip(a_shape[::-1], shape[::-1])]
-    tile = shape[0 : len(shape) - len(a_shape)] + tuple(tile[::-1])
-
-    return np.tile(a, tile)
-
-
-def _where_broadcastable(data, x, name):
-    """Check broadcastability for `where` assignments.
-
-    Raises an exception if the result of broadcasting *data* and *x*
-    together does not have the same shape as *data*.
-
-    .. versionadded:: TODODASKVER
-
-    .. seealso:: `where`
-
-    :Parameters:
-
-        data, x: `Data`
-            The arrays to compare.
-
-        name: `str`
-            A name for *x* that is used in any exception error
-            message.
-
-    :Returns:
-
-        `bool`
-             If *x* is acceptably broadcastable to *data* then `True`
-             is returned, otherwise a `ValueError` is raised.
-
-    """
-    ndim_x = x.ndim
-    if not ndim_x:
-        return True
-
-    ndim_data = data.ndim
-    if ndim_x > ndim_data:
-        raise ValueError(
-            f"where: Broadcasting the {name!r} parameter with {ndim_x} "
-            f"dimensions would change the shape of the data with "
-            f"{ndim_data} dimensions"
-        )
-
-    shape_x = x.shape
-    shape_data = data.shape
-    for n, m in zip(shape_x[::-1], shape_data[::-1]):
-        if n != m and n != 1:
-            raise ValueError(
-                f"where: Broadcasting the {name!r} parameter with shape "
-                f"{shape_x} would change the shape of the data with shape "
-                f"{shape_data}"
-            )
-
-    return True
 
 
 def _collapse(
