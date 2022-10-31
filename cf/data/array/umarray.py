@@ -167,7 +167,6 @@ class UMArray(FileArray):
 
         """
         f = self.open()
-        print(f.__dict__)
         rec = self._get_rec(f)
 
         int_hdr = rec.int_hdr
