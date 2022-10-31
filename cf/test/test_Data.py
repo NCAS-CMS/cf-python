@@ -704,16 +704,16 @@ class DataTest(unittest.TestCase):
         self.assertEqual(
             d.stats(sum=True, weights=1),
             {
-                "minimum": 1,
-                "mean": 1.0,
-                "median": 1.0,
-                "maximum": 1,
-                "range": 0,
-                "mid_range": 1.0,
-                "standard_deviation": 0.0,
-                "root_mean_square": 1.0,
-                "sum": 2,
-                "sample_size": 2,
+                "minimum": cf.Data(1),
+                "mean": cf.Data(1.0),
+                "median": cf.Data(1.0),
+                "maximum": cf.Data(1),
+                "range": cf.Data(0),
+                "mid_range": cf.Data(1.0),
+                "standard_deviation": cf.Data(0.0),
+                "root_mean_square": cf.Data(1.0),
+                "sum": cf.Data(2),
+                "sample_size": cf.Data(2),
             },
         )
 

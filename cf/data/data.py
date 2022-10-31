@@ -9437,7 +9437,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 out[stat] = value
 
         if all or sample_size:
-            out["sample_size"] = delayed(lambda: int(self.sample_size()))()
+            out["sample_size"] = delayed(lambda: self.sample_size())()
 
         return compute(out)[0]
 
