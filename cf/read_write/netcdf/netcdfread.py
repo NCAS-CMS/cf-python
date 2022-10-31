@@ -257,7 +257,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 "but will return for CFA-0.6 files at version 4.0.0. "
                 "CFA-0.4 functionality is still available at version 3.13.1."
             )
-        
+
             # TODOCFA: The 'return' remains when the exception is
             #          removed at v4.0.0.
             return True
