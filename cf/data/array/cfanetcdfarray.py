@@ -129,7 +129,7 @@ class CFANetCDFArray(NetCDFArray):
                 instructions = source._get_component("instructions")
             except AttributeError:
                 instructions = None
-                
+
             try:
                 aggregated_data = source.get_aggregated_data(copy=False)
             except AttributeError:
@@ -266,7 +266,7 @@ class CFANetCDFArray(NetCDFArray):
 
         :Parameters:
 
-            shapes: 
+            shapes:
                 TODODASKDOCS
 
         :Returns:
@@ -650,7 +650,7 @@ class CFANetCDFArray(NetCDFArray):
 
         dtype = self.dtype
         units = self.get_units()
-        calendar = self.get_calendar()
+        calendar = self.get_calendar(None)
         aggregated_data = self.get_aggregated_data(copy=False)
 
         # Set the chunk sizes for the dask array

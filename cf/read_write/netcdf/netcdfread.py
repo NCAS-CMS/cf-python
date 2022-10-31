@@ -2,7 +2,24 @@ import cfdm
 import netCDF4
 import numpy as np
 
-# TODOCFA: remove aggregation_* properties from constructs
+"""
+TODODASKCFA: remove aggregation_* properties from constructs
+
+TODODASKCFA: Create auxiliary coordinates from non-standardized terms
+
+TODODASKCFA: Reference instruction variables (and/or set as
+            "do_not_create_field")
+
+TODODASKCFA: Create auxiliary coordinates from non-standardized terms
+
+TODODASKCFA: Consider scanning for cfa variables to the top
+             (e.g. where scanning for geometry varables is). This will
+             probably need a change in cfdm so that a customizable
+             hook can be overlaoded (cf. `_customize_read_vars`).
+
+TODODASKCFA: What about groups/netcdf_flattener?
+        
+"""
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     """A container for instantiating Fields from a netCDF dataset.
@@ -189,20 +206,23 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 coord_ncvar=coord_ncvar,
             )
 
+        # ------------------------------------------------------------
         # Still here? Then create data for a CFA-netCDF variable
+        # ------------------------------------------------------------
         cfa_array, kwargs = self._create_cfanetcdfarray(
             ncvar,
             unpacked_dtype=unpacked_dtype,
             coord_ncvar=coord_ncvar,
         )
 
+        # Return the data
         return self._create_Data(
             cfa_array,
             units=kwargs["units"],
             calendar=kwargs["calendar"],
             ncvar=ncvar,
         )
-
+     
     def _is_cfa_variable(self, ncvar):
         """Return True if *ncvar* is a CFA variable.
 
@@ -215,7 +235,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         :Returns:
 
-            `bool`
+            `str` or `False` ##`bool`
                 Whether or not *ncvar* is a CFA variable.
 
         """
@@ -225,22 +245,23 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             return False
 
         attributes = g["variable_attributes"][ncvar]
-        
+
         # TODOCFA: test on the version of CFA given by g["cfa"]. See
         #          also `_customize_read_vars`.
         cfa = "aggregated_dimensions" in attributes
         if cfa:
-             # TODOCFA: Modify this message for v4.0.0
-             raise ValueError(
-                "The reading CFA files has been temporarily disabled, "
-                "but will return for CFA-0.6 files at version 4.0.0. "
-                "CFA-0.4 functionality is still available at version 3.13.1."
-            )
-            # TODOCFA: This return remains when the exception is
+            # TODOCFA: Modify this message for v4.0.0
+#            raise ValueError(
+#                "The reading CFA files has been temporarily disabled, "
+#                "but will return for CFA-0.6 files at version 4.0.0. "
+#                "CFA-0.4 functionality is still available at version 3.13.1."
+#            )
+
+            # TODOCFA: The 'return' remains when the exception is
             #          removed at v4.0.0.
             return True
-       
-        cfa_04 = attributes.get("cf_role") == "cfa_variable"        
+
+        cfa_04 = attributes.get("cf_role") == "cfa_variable"
         if cfa_04:
             # TODOCFA: Modify this message for v4.0.0.
             raise ValueError(
@@ -250,9 +271,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 "The reading and writing of CFA-0.6 files will become "
                 "available at version 4.0.0."
             )
-                   
+
         return False
-       
+
     def _create_Data(
         self,
         array=None,
@@ -411,7 +432,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         unpacked_dtype=False,
         coord_ncvar=None,
     ):
-        """Set the Data attribute of a variable.
+        """Create a CFA-netCDF variable array.
 
         .. versionadded:: (cfdm) 1.10.0.1
 
@@ -425,7 +446,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         :Returns:
 
-            (`CFANetCDFArray`, `dict`)
+            `CFANetCDFArray`, `dict`
                 The new `NetCDFArray` instance and dictionary of the
                 kwargs used to create it.
 
@@ -452,4 +473,4 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # instance
         array = self.implementation.initialise_CFANetCDFArray(**kwargs)
 
-        return (array, kwargs)
+        return array, kwargs

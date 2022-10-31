@@ -143,7 +143,7 @@ class NetCDFFragmentArray(FragmentArray):
         .. versionadded:: TODODASKVER
 
         """
-        indices = self._conform_indices(indices)
+        indices = self._parse_indices(indices)
         array = self.get_array()
 
         try:

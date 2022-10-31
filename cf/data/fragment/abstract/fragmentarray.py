@@ -142,12 +142,6 @@ class FragmentArray(FileArray):
         array = self._conform_units(array)
         return array
 
-#    def __repr__(self):
-#        """x.__repr__() <==> repr(x)"""
-#        return (
-#            f"<CF {self.__class__.__name__}{self.shape}: {self.get_array()}>"
-#        )
-
     def _parse_indices(self, indices):
         """Parse the indices that retrieve the fragment data.
 
@@ -269,16 +263,6 @@ class FragmentArray(FileArray):
             self.get_aggregated_units(), self.get_aggregated_calendar(None)
         )
 
-#    @property
-#    def dtype(self):
-#        """Data-type of the data elements."""
-#        return self._get_component("dtype")
-#
-#    @property
-#    def shape(self):
-#        """Tuple of array dimension sizes."""
-#        return self._get_component("shape")
-#
     def close(self):
         """Close the dataset containing the data."""
         return NotImplemented  # pragma: no cover
@@ -374,7 +358,7 @@ class FragmentArray(FileArray):
         :Returns:
 
             `Array`
-                The object defining the fragment array.                
+                The object defining the fragment array.
 
         """
         return self._get_component("array")
