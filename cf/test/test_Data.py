@@ -713,7 +713,7 @@ class DataTest(unittest.TestCase):
                 "standard_deviation": cf.Data(0.0),
                 "root_mean_square": cf.Data(1.0),
                 "sum": cf.Data(2),
-                "sample_size": cf.Data(2),
+                "sample_size": cf.Data([2]),
             },
         )
 
