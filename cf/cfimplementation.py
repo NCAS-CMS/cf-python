@@ -20,6 +20,7 @@ from . import (
     List,
     NodeCountProperties,
     PartNodeCountProperties,
+    TiePointIndex
 )
 from .data import (
     Data,
@@ -28,6 +29,7 @@ from .data import (
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SubsampledArray,
 )
 from .functions import CF
 
@@ -99,6 +101,8 @@ _implementation = CFImplementation(
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+    SubsampledArray=SubsampledArray,
+    TiePointIndex=TiePointIndex,
 )
 
 
