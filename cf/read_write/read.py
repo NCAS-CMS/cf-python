@@ -108,18 +108,6 @@ def read(
     well as optionally displayed when the dataset is read by setting
     the warnings parameter.
 
-    **Cell methods**
-
-    When a netCDF file contains a CF-netCDF data variable cell method
-    attribute that includes a "name" token that is a standard name or
-    the string ``'area'`` (rather than identifying a netCDF dimension
-    nor a scalar coordinate variable), then if the resulting field
-    construct also has a dimension coordinate or 1-d auxiliary
-    coordinate construct with a matching standard name, then the
-    "name" token will instead be interpreted as applying to the domain
-    axis of the coordinate construct. If this is not desired then the
-    returned field's cell method construct must be modified manually.
-
     **CDL files**
 
     A file is considered to be a CDL representation of a netCDF
