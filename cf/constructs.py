@@ -10,6 +10,20 @@ logger = logging.getLogger(__name__)
 class Constructs(cfdm.Constructs):
     """A container for metadata constructs.
 
+    The container is like a dictionary in many ways, in that it stores
+    key/value pairs where the key is the unique construct key with
+    corresponding metadata construct value, and provides some of the
+    usual dictionary methods.
+
+    **Calling**
+
+    Calling a `Constructs` instance selects metadata constructs by
+    identity and is an alias for the `filter_by_identity` method. For
+    example, to select constructs that have an identity of
+    'air_temperature': ``d = c('air_temperature')``.
+
+    **Metadata constructs**
+
     The following metadata constructs can be included:
 
     * auxiliary coordinate constructs
@@ -24,18 +38,6 @@ class Constructs(cfdm.Constructs):
     The container may be used by `Field` and `Domain` instances. In
     the latter case cell method and field ancillary constructs must be
     flagged as "ignored" (see the *_ignore* parameter).
-
-    The container is like a dictionary in many ways, in that it stores
-    key/value pairs where the key is the unique construct key with
-    corresponding metadata construct value, and provides some of the
-    usual dictionary methods.
-
-    **Calling**
-
-    Calling a `Constructs` instance selects metadata constructs by
-    identity and is an alias for the `filter_by_identity` method. For
-    example, to select constructs that have an identity of
-    'air_temperature': ``d = c('air_temperature')``.
 
     .. versionadded:: 3.0.0
 
