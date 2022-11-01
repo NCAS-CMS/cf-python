@@ -2037,6 +2037,7 @@ class FieldDomain:
         set_axes=True,
         copy=True,
         autocyclic={},
+        conform=True,
     ):
         """Set a metadata construct.
 
@@ -2167,27 +2168,35 @@ class FieldDomain:
 
         if construct_type == "dimension_coordinate":
             construct.autoperiod(inplace=True, config=autocyclic)
-            self._conform_coordinate_references(out)
+            if conform:
+                self._conform_coordinate_references(out)
+
             self.autocyclic(key=out, coord=construct, config=autocyclic)
-            try:
-                self._conform_cell_methods()
-            except AttributeError:
-                pass
+            if conform:
+                try:
+                    self._conform_cell_methods()
+                except AttributeError:
+                    pass
 
         elif construct_type == "auxiliary_coordinate":
             construct.autoperiod(inplace=True, config=autocyclic)
-            self._conform_coordinate_references(out)
-            try:
-                self._conform_cell_methods()
-            except AttributeError:
-                pass
+            if conform:
+                self._conform_coordinate_references(out)
+                try:
+                    self._conform_cell_methods()
+                except AttributeError:
+                    pass
 
         elif construct_type == "cell_method":
-            self._conform_cell_methods()
+            if conform:
+                self._conform_cell_methods()
 
         elif construct_type == "coordinate_reference":
-            for ckey in self.coordinates(todict=True):
-                self._conform_coordinate_references(ckey, coordref=construct)
+            if conform:
+                for ckey in self.coordinates(todict=True):
+                    self._conform_coordinate_references(
+                        ckey, coordref=construct
+                    )
 
         # Return the construct key
         return out

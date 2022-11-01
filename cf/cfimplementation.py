@@ -39,37 +39,42 @@ class CFImplementation(cfdm.CFDMImplementation):
 
     """
 
+    def set_construct(self, parent, construct, axes=None, copy=True, **kwargs):
+        """Insert a construct into a field or domain.
 
-#    def set_bounds(self, construct, bounds, copy=True):
-#        '''Set the bounds component of a construct.
-#
-#    If a ValueError is raised by the called set_bounds method then
-#    this is trapped and no action is carried out.
-#
-#    .. versionadded:: 3.7.0
-#
-#    :Parameters:
-#
-#        construct: construct
-#
-#        bounds: bounds component
-#
-#        copy: `bool`, optional
-#
-#    :Returns:
-#
-#        `bool`
-#            Return `True` if the bounds were set successfully,
-#            otherwise return False.
-#
-#
-#        '''
-#        try:
-#            construct.set_bounds(bounds, copy=copy)
-#        except ValueError as error:
-#            return error
-#
-#        return ''
+        Does not attempt to conform cell method nor coordinate
+        reference constructs, as that has been handled by `cfdm`.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+               On what to set the construct
+
+            construct:
+                The construct to set.
+
+            axes: `tuple` or `None`, optional
+                The construct domain axes, if applicable.
+
+            copy: `bool`, optional
+                Whether or not to set a copy of *construct*.
+
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *parent* that may be used by subclasses.
+
+        :Returns:
+
+            `str`
+                The construct identifier.
+
+        """
+        kwargs.setdefault("conform", False)
+        return super().set_construct(
+            parent, construct, axes=axes, copy=copy, **kwargs
+        )
 
 
 _implementation = CFImplementation(
