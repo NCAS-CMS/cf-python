@@ -220,6 +220,7 @@ from .mixin import Coordinate
 
 from .count import Count
 from .index import Index
+from .interpolationparameter import InterpolationParameter
 from .list import List
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
