@@ -713,7 +713,13 @@ class DataTest(unittest.TestCase):
                 "standard_deviation": cf.Data(0.0),
                 "root_mean_square": cf.Data(1.0),
                 "sum": cf.Data(2),
-                "sample_size": cf.Data([2]),
+                "variance": cf.Data(0.0),
+                "minimum_absolute_value": cf.Data(1),
+                "maximum_absolute_value": cf.Data(1),
+                "mean_absolute_value": cf.Data(1.0),
+                "mean_of_upper_decile": cf.Data(1.0),
+                "sum_of_squares": cf.Data(2),
+                "sample_size": cf.Data([2]),  # note the different dim here!
             },
         )
 
