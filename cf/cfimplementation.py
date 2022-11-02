@@ -62,8 +62,8 @@ class CFImplementation(cfdm.CFDMImplementation):
                 Whether or not to set a copy of *construct*.
 
             kwargs: optional
-                Additional parameters to the `set_construct` of
-                *parent* that may be used by subclasses.
+                Additional parameters to the `set_construct` method of
+                *parent*.
 
         :Returns:
 
