@@ -576,7 +576,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         # Get the indices for every domain axis in the domain, without
         # any auxiliary masks.
-        domain_indices = self._indices(mode, None, False, **kwargs)
+        domain_indices = self._indices(mode, None, False, kwargs)
 
         return domain_indices["indices"]
 
@@ -1022,9 +1022,10 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         construct_data_axes = new.constructs.data_axes()
 
         for key, construct in new.constructs.filter_by_data().items():
+            print (key, repr(construct))
             construct_axes = construct_data_axes[key]
             dice = [indices[axes.index(axis)] for axis in construct_axes]
-
+            print (dice)
             # Replace existing construct with its subspace
             new.set_construct(
                 construct[tuple(dice)],

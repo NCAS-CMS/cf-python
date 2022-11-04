@@ -101,13 +101,13 @@ class DomainTest(unittest.TestCase):
         f = self.d.copy()
 
         x = f.dimension_coordinate("X")
-        a = x.varray
-        a[...] = numpy.arange(0, 360, 40)
+#        a = x.varray
+        x[...] = numpy.arange(0, 360, 40)
         x.set_bounds(x.create_bounds())
         f.cyclic("X", iscyclic=True, period=360)
 
         f0 = f.copy()
-
+        print(f)
         # wi (increasing)
         g = f.subspace(grid_longitude=cf.wi(50, 130))
         self.assertEqual(g.size, 20)
