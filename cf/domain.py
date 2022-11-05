@@ -1,9 +1,11 @@
 import logging
+import math
 from functools import reduce
 from operator import mul as operator_mul
 
 import cfdm
 import numpy as np
+from dask.base import is_dask_collection
 
 from . import mixin
 from .constructs import Constructs
@@ -1011,8 +1013,23 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                     size = int_size + 1
                 else:
                     size = int_size
+            elif is_dask_collection(index) or isinstance(index, np.ndarray):
+                if index.dtype == bool:
+                    # size is the number of True values in the array
+                    size = int(index.sum())
+                else:
+                    size = index.size
+                    if math.isnan(size):
+                        index.compute_chunk_sizes()
+                        size = index.size
             else:
-                size = np.size(index)
+                # Index is a list
+                i = index[0]
+                if i is False or i is True:
+                    # size is the number of True values in the list
+                    size = sum(index)
+                else:
+                    size = len(index)
 
             domain_axes[axis].set_size(size)
 
@@ -1022,10 +1039,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         construct_data_axes = new.constructs.data_axes()
 
         for key, construct in new.constructs.filter_by_data().items():
-            print (key, repr(construct))
             construct_axes = construct_data_axes[key]
             dice = [indices[axes.index(axis)] for axis in construct_axes]
-            print (dice)
+
             # Replace existing construct with its subspace
             new.set_construct(
                 construct[tuple(dice)],
