@@ -701,8 +701,51 @@ class DataTest(unittest.TestCase):
         """Test the `stats` Data method."""
         d = cf.Data([1, 1])
 
+        s1 = d.stats()
+        self.assertEqual(len(s1), 9)
         self.assertEqual(
-            d.stats(sum=True, weights=1),
+            s1,
+            {
+                "minimum": cf.Data(1),
+                "mean": cf.Data(1.0),
+                "median": cf.Data(1.0),
+                "maximum": cf.Data(1),
+                "range": cf.Data(0),
+                "mid_range": cf.Data(1.0),
+                "standard_deviation": cf.Data(0.0),
+                "root_mean_square": cf.Data(1.0),
+                "sample_size": cf.Data([2]),
+            },
+        )
+
+        s2 = d.stats(all=True)
+        self.assertEqual(len(s2), 16)
+        self.assertEqual(
+            s2,
+            {
+                "minimum": cf.Data(1),
+                "mean": cf.Data(1.0),
+                "median": cf.Data(1.0),
+                "maximum": cf.Data(1),
+                "range": cf.Data(0),
+                "mid_range": cf.Data(1.0),
+                "standard_deviation": cf.Data(0.0),
+                "root_mean_square": cf.Data(1.0),
+                "minimum_absolute_value": cf.Data(1),
+                "maximum_absolute_value": cf.Data(1),
+                "mean_absolute_value": cf.Data(1.0),
+                "mean_of_upper_decile": cf.Data(1.0),
+                "sum": cf.Data(2),
+                "sum_of_squares": cf.Data(2),
+                "variance": cf.Data(0.0),
+                "sample_size": cf.Data([2]),
+            },
+        )
+
+        s3 = d.stats(sum=True, weights=1)
+        self.assertEqual(len(s3), 10)  # 9 + 1 because the 'sum' op. is added
+        self.assertEqual(
+            s3,
             {
                 "minimum": cf.Data(1),
                 "mean": cf.Data(1.0),
@@ -713,13 +756,24 @@ class DataTest(unittest.TestCase):
                 "standard_deviation": cf.Data(0.0),
                 "root_mean_square": cf.Data(1.0),
                 "sum": cf.Data(2),
-                "variance": cf.Data(0.0),
-                "minimum_absolute_value": cf.Data(1),
-                "maximum_absolute_value": cf.Data(1),
-                "mean_absolute_value": cf.Data(1.0),
+                "sample_size": cf.Data([2]),
+            },
+        )
+
+        s4 = d.stats(mean_of_upper_decile=True, range=False, weights=2.0)
+        self.assertEqual(len(s4), 9)  # 9 + 1 - 1 for adding MOUD, losing range
+        self.assertEqual(
+            s4,
+            {
+                "minimum": cf.Data(1),
+                "mean": cf.Data(1.0),
+                "median": cf.Data(1.0),
+                "maximum": cf.Data(1),
+                "mid_range": cf.Data(1.0),
+                "standard_deviation": cf.Data(0.0),
+                "root_mean_square": cf.Data(1.0),
                 "mean_of_upper_decile": cf.Data(1.0),
-                "sum_of_squares": cf.Data(2),
-                "sample_size": cf.Data([2]),  # note the different dim here!
+                "sample_size": cf.Data([2]),
             },
         )
 
