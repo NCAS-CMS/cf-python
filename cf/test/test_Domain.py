@@ -292,6 +292,9 @@ class DomainTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.transpose(["Y", "X", "Z", 1])
 
+    def test_Domain_size(self):
+        self.assertEqual(self.d.size, 90)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

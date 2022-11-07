@@ -12,6 +12,7 @@ import warnings
 from collections.abc import Iterable
 from itertools import product
 from marshal import dumps
+from math import isnan
 from numbers import Integral
 from os import mkdir
 from os.path import abspath as _os_path_abspath
@@ -25,6 +26,7 @@ import cfdm
 import netCDF4
 import numpy as np
 from dask import config
+from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from psutil import virtual_memory
 
@@ -1727,6 +1729,126 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
                 return True
             else:
                 return out
+
+
+def indices_shape(indices, full_shape, keepdims=True):
+    """Return the shape of the array subspace implied by indices.
+
+    **Performance**
+
+    Boolean `dask` arrays will be computed, and `dask` arrays with
+    unknown size will have their chunk sizes computed.
+
+    .. versionadded:: TODODASKVER
+
+    .. seealso:: `cf.parse_indices`
+
+    :Parameters:
+
+        indices: `tuple`
+            The indices to be applied to an array with shape
+            *full_shape*.
+
+        full_shape: sequence of `ints`
+            The shape of the array to be subspaced.
+
+        keepdims: `bool`, optional
+            If True then an integral index is converted to a
+            slice. For instance, ``3`` would become ``slice(3, 4)``.
+
+    :Returns:
+
+        `list`
+            The shape of the subspace defined by the *indices*.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> import dask.array as da
+
+    >>> cf.indices_shape((slice(2, 5), 4), (5, 6))
+    [3, 1]
+    >>> cf.indices_shape(([2, 3, 4], np.arange(1, 6)), (5, 6))
+    [3, 5]
+    >>> index0 = [False] * 5
+    >>> index0[2:5] = [True] * 3
+    >>> cf.indices_shape((index0, da.arange(1, 6)), (5, 6))
+    [3, 5]
+    >>> index0 = da.full((5,), False, dtype=bool)
+    >>> index0[2:5] = True
+    >>> index1 = np.full((6,), False, dtype=bool)
+    >>> index1[1:6] = True
+    >>> cf.indices_shape((index0, index1), (5, 6))
+    [3, 5]
+    >>> index0 = da.arange(5)
+    >>> index0 = index0[index0 < 3]
+    >>> cf.indices_shape((index0, []), (5, 6))
+    [3, 0]
+    >>> cf.indices_shape((da.from_array(2), np.array(3)), (5, 6))
+    [1, 1]
+    >>> cf.indices_shape((da.from_array([]), np.array(())), (5, 6))
+    [0, 0]
+    >>> cf.indices_shape((slice(1, 5, 3), 3), (5, 6))
+    [2, 1]
+    >>> cf.indices_shape((slice(5, 1, -2), 3), (5, 6))
+    [2, 1]
+    >>> cf.indices_shape((slice(5, 1, 3), 3), (5, 6))
+    [0, 1]
+    >>> cf.indices_shape((slice(1, 5, -3), 3), (5, 6))
+    [0, 1]
+
+    >>> cf.indices_shape((slice(2, 5), 4), (5, 6), keepdims=False)
+    [3]
+    >>> cf.indices_shape((da.from_array(2), 3), (5, 6), keepdims=False)
+    []
+    >>> cf.indices_shape((2, np.array(3)), (5, 6), keepdims=False)
+    []
+
+    """
+    shape = []
+    for index, full_size in zip(indices, full_shape):
+        if isinstance(index, slice):
+            start, stop, step = index.indices(full_size)
+            if (stop - start) * step < 0:
+                # E.g. 5:1:3 or 1:5:-3
+                size = 0
+            else:
+                size = abs((stop - start) / step)
+                int_size = round(size)
+                if size > int_size:
+                    size = int_size + 1
+                else:
+                    size = int_size
+        elif is_dask_collection(index) or isinstance(index, np.ndarray):
+            if index.dtype == bool:
+                # Size is the number of True values in the array
+                size = int(index.sum())
+            else:
+                size = index.size
+                if isnan(size):
+                    index.compute_chunk_sizes()
+                    size = index.size
+
+            if not keepdims and not index.ndim:
+                # Scalar array
+                continue
+        elif isinstance(index, list):
+            size = len(index)
+            if size:
+                i = index[0]
+                if i is False or i is True:
+                    # Size is the number of True values in the list
+                    size = sum(index)
+        else:
+            # Index is Integral
+            if not keepdims:
+                continue
+
+            size = 1
+
+        shape.append(size)
+
+    return shape
 
 
 def parse_indices(shape, indices, cyclic=False, keepdims=True):
