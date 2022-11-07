@@ -146,7 +146,7 @@ def read(
     **Performance**
 
     Descriptive properties are always read into memory, but lazy
-    loading is employed for all data arrays, which means that, in
+    loading is employed for all data arrays which means that, in
     general, data is not read into memory until the data is required
     for inspection or to modify the array contents. This maximises the
     number of field constructs that may be read within a session, and
@@ -164,7 +164,7 @@ def read(
       particular field or domain's metadata, though, if it can be
       ascertained from descriptive properties alone that it can't be
       aggregated with anything else (as would be the case, for
-      instance, when the field has a unique standard name).
+      instance, when a field has a unique standard name).
 
     .. seealso:: `cf.aggregate`,`cf.write`, `cf.Field`, `cf.Domain`,
                  `cf.load_stash2standard_name`, `cf.unique_constructs`
