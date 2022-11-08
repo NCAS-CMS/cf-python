@@ -12264,57 +12264,38 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 3.0.0
 
-        .. seealso:: `collapse`, `convolution_filter`, `moving_window`,
-                     `sum`
+        .. seealso:: `collapse`, `convolution_filter`,
+                     `moving_window`, `sum`
 
         :Parameters:
 
             axis:
-                Select the domain axis over which the cumulative sums are
-                to be calculated, defined by that which would be selected
-                by passing the given axis description to a call of the
-                field construct's `domain_axis` method. For example, for a
-                value of ``'X'``, the domain axis construct returned by
+                Select the domain axis over which the cumulative sums
+                are to be calculated, defined by that which would be
+                selected by passing the given axis description to a
+                call of the field construct's `domain_axis`
+                method. For example, for a value of ``'X'``, the
+                domain axis construct returned by
                 ``f.domain_axis('X')`` is selected.
 
-            masked_as_zero: `bool`, optional
-                If True then set missing data values to zero before
-                calculating the cumulative sum. By default the output data
-                will be masked at the same locations as the original data.
-                .. note:: Sums produced entirely from masked elements will
-                          always result in masked values in the output
-                          data, regardless of the setting of
-                          *masked_as_zero*.
-
-            coordinate: `str`, optional
-                Set how the cell coordinate values for the summed axis are
-                defined, relative to the new cell bounds. By default they
-                are unchanged from the original field construct. The
-                *coordinate* parameter may be one of:
-
-                ===============  =========================================
-                *coordinate*     Description
-                ===============  =========================================
-                `None`           This is the default.
-                                 Output coordinates are unchanged.
-                ``'mid_range'``  An output coordinate is the average of
-                                 its output coordinate bounds.
-                ``'minimum'``    An output coordinate is the minimum of
-                                 its output coordinate bounds.
-                ``'maximum'``    An output coordinate is the maximum of
-                                 its output coordinate bounds.
-                ===============  =========================================
-
-                *Parameter Example:*
-                  ``coordinate='maximum'``
             {{inplace: `bool`, optional}}
 
+            coordinate: deprecated at version TODODASKVER
+                Set how the cell coordinate values for the summed axis
+                are defined, relative to the new cell bounds.
+
+            masked_as_zero: deprecated at version TODODASKVER
+                See `Data.cumsum` for examples of the new behaviour
+                when there are masked values.
+
         :Returns:
+
             `Field` or `None`
-                The field construct with the cumulatively summed axis, or
-                `None` if the operation was in-place.
+                The field construct with the cumulatively summed axis,
+                or `None` if the operation was in-place.
 
         **Examples**
+
         >>> f = cf.example_field(2)
         >>> print(f)
         Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -12354,13 +12335,34 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          2678.7 2934.9 3147.2 3378.9 3634.  3847.9 4103.7 4404.9 4618.2 4818.3
          5022.9 5226.1 5470.7 5709.1 6013.6 6283.4 6551.3 6833.7 7048.7 7337.4
          7554.7 7861.8 8161.1 8377.  8667.2 8907.1]
-        >>> g = f.cumsum('latitude', masked_as_zero=True)
-        >>> g = f.cumsum('latitude', coordinate='mid_range')
-        >>> f.cumsum('latitude', inplace=True)
 
         """
+        # TODODASKAPI
+        if masked_as_zero:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "cumsum",
+                {"masked_as_zero": None},
+                message="",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
+        # TODODASKAPI
+        if coordinate is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "cumsum",
+                {"coordinate": None},
+                message="",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         # Retrieve the axis
-        axis_key = self.domain_axis(axis, key=True)
+        axis_key, domain_axis = self.domain_axis(
+            axis, item=True, default=(None, None)
+        )
         if axis_key is None:
             raise ValueError(f"Invalid axis specifier: {axis!r}")
 
@@ -12370,38 +12372,21 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Get the axis index
         axis_index = f.get_data_axes().index(axis_key)
 
-        f.data.cumsum(axis_index, masked_as_zero=masked_as_zero, inplace=True)
+        f.data.cumsum(axis_index, inplace=True)
 
-        if self.domain_axis(axis_key).get_size() > 1:
-            # Update the bounds of the summed axis if necessary
+        if domain_axis.get_size() > 1:
+            # Update the bounds of the summed axis
             coord = f.dimension_coordinate(
                 filter_by_axis=(axis_key,), default=None
             )
             if coord is not None and coord.has_bounds():
-                bounds = coord.get_bounds()
-                bounds[:, 0] = bounds[0, 0]
-
-                data = coord.get_data(None, _fill_value=False)
-
-                if coordinate is not None and data is not None:
-                    if coordinate == "mid_range":
-                        data[...] = (
-                            (bounds[:, 0] + bounds[:, 1]) * 0.5
-                        ).squeeze()
-                    elif coordinate == "minimum":
-                        data[...] = coord.lower_bounds
-                    elif coordinate == "maximum":
-                        data[...] = coord.upper_bounds
-                    else:
-                        raise ValueError(
-                            "'coordinate' parameter must be one of "
-                            "(None, 'mid_range', 'minimum', 'maximum'). "
-                            f"Got {coordinate!r}"
-                        )
+                bounds = coord.get_bounds_data(None)
+                if bounds is not None:
+                    bounds[:, 0] = bounds[0, 0]
 
             # Add a cell method
             f._update_cell_methods(
-                method="sum", domain_axes=f.domain_axes(axis_key, todict=True)
+                method="sum", domain_axes={axis_key: domain_axis}
             )
 
         return f
@@ -13193,12 +13178,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the field construct by adding a halo to its data.
 
@@ -13226,42 +13212,43 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            size:  `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the halo
-                size that is applied to all of the axes defined by the
-                *axes* parameter.
+                If *depth* is a non-negative `int` then this is the
+                halo size that is applied to all of the axes defined
+                by the *axes* parameter.
 
                 Alternatively, halo sizes may be assigned to axes
                 individually by providing a `dict` for which a key
-                specifies an axis (by passing the axis description to a
-                call of the field construct's `domain_axis` method. For
-                example, for a value of ``'X'``, the domain axis construct
-                returned by ``f.domain_axis('X')``) with a corresponding
-                value of the halo size for that axis. Axes not specified
-                by the dictionary are not expanded, and the *axes*
-                parameter must not also be set.
+                specifies an axis (by passing the axis description to
+                a call of the field construct's `domain_axis`
+                method. For example, for a value of ``'X'``, the
+                domain axis construct returned by
+                ``f.domain_axis('X')``) with a corresponding value of
+                the halo size for that axis. Axes not specified by the
+                dictionary are not expanded, and the *axes* parameter
+                must not also be set.
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``1``
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results in
+                  Specify a halo size of zero: ``0``. This results in
                   no change to the data shape.
 
                 *Parameter example:*
-                  For data with three dimensions, specify a halo size of 3
-                  for the first dimension and 1 for the second dimension:
-                  ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
-                  3, 1: 1, 2: 0}``
+                  For data with three dimensions, specify a halo size
+                  of 3 for the first dimension and 1 for the second
+                  dimension: ``{0: 3, 1: 1}``. This is equivalent to
+                  ``{0: 3, 1: 1, 2: 0}``
 
                 *Parameter example:*
                   Specify a halo size of 2 for the "longitude" and
-                  "latitude" axes: ``size=2, axes=['latutude',
-                  'longitude']``, or equivalently ``size={'latutude': 2,
-                  'longitude': 2}``.
+                  "latitude" axes: ``depth=2, axes=['latutude',
+                  'longitude']``, or equivalently ``depth={'latitude':
+                  2, 'longitude': 2}``.
 
             axes: (sequence of) `str` or `int`, optional
                 Select the domain axes to be expanded, defined by the
@@ -13295,27 +13282,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             tripolar: `dict`, optional
                 A dictionary defining the "X" and "Y" axes of a global
-                tripolar domain. This is necessary because in the global
-                tripolar case the "X" and "Y" axes need special treatment,
-                as described above. It must have keys ``'X'`` and ``'Y'``,
-                whose values identify the corresponding domain axis
-                construct by passing the value to a call of the field
-                construct's `domain_axis` method. For example, for a value
-                of ``'ncdim%i'``, the domain axis construct returned by
+                tripolar domain. This is necessary because in the
+                global tripolar case the "X" and "Y" axes need special
+                treatment, as described above. It must have keys
+                ``'X'`` and ``'Y'``, whose values identify the
+                corresponding domain axis construct by passing the
+                value to a call of the field construct's `domain_axis`
+                method. For example, for a value of ``'ncdim%i'``, the
+                domain axis construct returned by
                 ``f.domain_axis('ncdim%i')``.
 
-                The "X" and "Y" axes must be a subset of those identified
-                by the *size* or *axes* parameter.
+                The "X" and "Y" axes must be a subset of those
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by their netCDF dimension
-                  names: ``tripolar={'X': 'ncdim%i', 'Y': 'ncdim%j'}``
+                  names: ``{'X': 'ncdim%i', 'Y': 'ncdim%j'}``
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+                  respectively of the data: ``{'X': 2, 'Y': 1}``
 
             fold_index: `int`, optional
                 Identify which index of the "Y" axis corresponds to the
@@ -13327,6 +13315,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             {{inplace: `bool`, optional}}
 
             {{verbose: `int` or `str` or `None`, optional}}
+
+            size: deprecated at version TODODASKVER
+                Use the *depth* parameter instead.
 
         :Returns:
 
@@ -13418,21 +13409,32 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        # Set the halo size for each axis.
+        # TODODASKAPI
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
+        # Set the halo depth for each axis.
         data_axes = f.get_data_axes(default=())
-        if isinstance(size, dict):
+        if isinstance(depth, dict):
             if axes is not None:
                 raise ValueError(
-                    "Can't set existing axes when size is a dict."
+                    "Can't set existing axes when depth is a dict."
                 )
 
             axis_halo = {
-                self.domain_axis(k, key=True): v for k, v in size.items()
+                self.domain_axis(k, key=True): v for k, v in depth.items()
             }
 
             if not set(data_axes).issuperset(axis_halo):
                 raise ValueError(
-                    f"Can't apply halo: Bad axis specification: {size!r}"
+                    f"Can't apply halo: Bad axis specification: {depth!r}"
                 )
         else:
             if axes is None:
@@ -13441,7 +13443,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if isinstance(axes, (str, int)):
                 axes = (axes,)
 
-            axis_halo = {self.domain_axis(k, key=True): size for k in axes}
+            axis_halo = {self.domain_axis(k, key=True): depth for k in axes}
 
         if tripolar:
             # Find the X and Y axes of a tripolar grid
@@ -13474,10 +13476,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             tripolar_axes = {X: "X", Y: "Y"}
 
         # Add halos to the field construct's data
-        size = {data_axes.index(axis): h for axis, h, in axis_halo.items()}
+        depth = {data_axes.index(axis): h for axis, h, in axis_halo.items()}
 
         f.data.halo(
-            size=size,
+            depth,
             tripolar=tripolar,
             fold_index=fold_index,
             inplace=True,
@@ -13510,7 +13512,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 }
 
             c.halo(
-                size=construct_size,
+                construct_size,
                 tripolar=construct_tripolar,
                 fold_index=fold_index,
                 inplace=True,
@@ -14230,163 +14232,197 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Assign to data elements depending on a condition.
 
-        Data can be changed by assigning to elements that are selected by
-        a condition based on the data values of the field construct or on
-        its metadata constructs.
-
-        Different values can be assigned to where the conditions are, and
-        are not, met.
+        The elements to be changed are identified by a
+        condition. Different values can be assigned according to where
+        the condition is True (assignment from the *x* parameter) or
+        False (assignment from the *y* parameter).
 
         **Missing data**
 
-        Data array elements may be set to missing values by assigning them
-        to the `cf.masked` constant, or by assignment missing data
-        elements of array-valued *x* and *y* parameters.
+        Array elements may be set to missing values if either *x* or
+        *y* are the `cf.masked` constant, or by assignment from any
+        missing data elements in *x* or *y*.
 
-        By default the data mask is "hard", meaning that masked values can
-        not be changed by assigning them to another value. This behaviour
-        may be changed by setting the `hardmask` attribute of the field
-        construct to `False`, thereby making the data mask "soft" and
-        allowing masked elements to be set to non-masked values.
+        If the data mask is hard (see the `hardmask` attribute) then
+        missing data values in the array will not be overwritten,
+        regardless of the content of *x* and *y*.
 
-        .. seealso:: `cf.masked`, `hardmask`, `indices`, `mask`,
-                     `subspace`, `__setitem__`
+        If the *condition* contains missing data then the
+        corresponding elements in the array will not be assigned to,
+        regardless of the contents of *x* and *y*.
+
+        **Broadcasting**
+
+        The array and the *condition*, *x* and *y* parameters must all
+        be broadcastable across the original array, such that the size
+        of the result is identical to the orginal size of the
+        array. Leading size 1 dimensions of these parameters are
+        ignored, thereby also ensuring that the shape of the result is
+        identical to the orginal shape of the array.
+
+        If *condition* is a `Query` object then for the purposes of
+        broadcasting, the condition is considered to be that which is
+        produced by applying the query to the field's array.
+
+        **Performance**
+
+        If any of the shapes of the *condition*, *x*, or *y*
+        parameters, or the field, is unknown, then there is a
+        possibility that an unknown shape will need to be calculated
+        immediately by executing all delayed operations on that
+        object.
+
+        .. seealso:: `hardmask`, `indices`, `mask`, `subspace`,
+                     `__setitem__`, `cf.masked`
 
         :Parameters:
 
-            condition:
-                The condition which determines how to assign values to the
-                data.
+            condition: array_like, `Field` or `Query`
+                The condition which determines how to assign values to
+                the field's data.
 
-                In general it may be any scalar or array-like object (such
-                as a `numpy`, `Data` or `Field` object) that is
-                broadcastable to the shape of the data. Assignment from
-                the *x* and *y* parameters will be done where elements of
-                the condition evaluate to `True` and `False` respectively.
+                Assignment from the *x* and *y* parameters will be
+                done where elements of the condition evaluate to
+                `True` and `False` respectively.
 
-                *Parameter example:*
-                  ``f.where(f.data<0, x=-999)`` will set all data values
-                  that are less than zero to -999.
+                If *condition* is a `Query` object then this implies a
+                condition defined by applying the query to the data.
 
                 *Parameter example:*
-                  ``f.where(True, x=-999)`` will set all data values to
-                  -999. This is equivalent to ``f[...] = -999``.
+                  ``f.where(f.data<0, x=-999)`` will set all data
+                  values that are less than zero to -999.
 
                 *Parameter example:*
-                  ``f.where(False, y=-999)`` will set all data values to
-                  -999. This is equivalent to ``f[...] = -999``.
+                  ``f.where(True, x=-999)`` will set all data values
+                  to -999. This is equivalent to ``f[...] = -999``.
+
+                *Parameter example:*
+                  ``f.where(False, y=-999)`` will set all data values
+                  to -999. This is equivalent to ``f[...] = -999``.
 
                 *Parameter example:*
                   If field construct ``f`` has shape ``(5, 3)`` then
-                  ``f.where([True, False, True], x=-999, y=cf.masked)``
-                  will set data values in columns 0 and 2 to -999, and
-                  data values in column 1 to missing data. This works
-                  because the condition has shape ``(3,)`` which
-                  broadcasts to the field construct's shape.
-
-                If, however, *condition* is a `Query` object then this
-                implies a condition defined by applying the query to the
-                field construct's data (or a metadata construct's data if
-                the *construct* parameter is set).
+                  ``f.where([True, False, True], x=-999,
+                  y=cf.masked)`` will set data values in columns 0 and
+                  2 to -999, and data values in column 1 to missing
+                  data. This works because the condition has shape
+                  ``(3,)`` which broadcasts to the field construct's
+                  shape.
 
                 *Parameter example:*
-                  ``f.where(cf.lt(0), x=-999)`` will set all data values
-                  that are less than zero to -999. This is equivalent to
-                  ``f.where(f.data<0, x=-999)``.
+                  ``f.where(cf.lt(0), x=-999)`` will set all data
+                  values that are less than zero to -999. This is
+                  equivalent to ``f.where(f.data<0, x=-999)``.
 
-                If *condition* is another field construct then it is first
-                transformed so that it is broadcastable to the data being
-                assigned to. This is done by using the metadata constructs
-                of the two field constructs to create a mapping of
-                physically identical dimensions between the fields, and
-                then manipulating the dimensions of other field
-                construct's data to ensure that they are broadcastable. If
-                either of the field constructs does not have sufficient
-                metadata to create such a mapping then an exception will
-                be raised. In this case, any manipulation of the
-                dimensions must be done manually, and the `Data` instance
-                of *construct* (rather than the field construct itself)
-                may be used for the condition.
+                If *condition* is a `Field` then it is first
+                transformed so that it is broadcastable to the data
+                being assigned to. This is done by using the metadata
+                constructs of the two field constructs to create a
+                mapping of physically identical dimensions between the
+                fields, and then manipulating the dimensions of other
+                field construct's data to ensure that they are
+                broadcastable. If either of the field constructs does
+                not have sufficient metadata to create such a mapping
+                then an exception will be raised. In this case, any
+                manipulation of the dimensions must be done manually,
+                and the `Data` instance of *construct* (rather than
+                the field construct itself) may be used for the
+                condition.
 
                 *Parameter example:*
-                  If field construct ``f`` has shape ``(5, 3)`` and ``g =
-                  f.transpose() < 0`` then ``f.where(g, x=-999)`` will set
-                  all data values that are less than zero to -999,
-                  provided there are sufficient metadata for the data
-                  dimensions to be mapped. However, ``f.where(g.data,
-                  x=-999)`` will always fail in this example, because the
-                  shape of the condition is ``(3, 5)``, which does not
+                  If field construct ``f`` has shape ``(5, 3)`` and
+                  ``g = f.transpose() < 0`` then ``f.where(g,
+                  x=-999)`` will set all data values that are less
+                  than zero to -999, provided there are sufficient
+                  metadata for the data dimensions to be
+                  mapped. However, ``f.where(g.data, x=-999)`` will
+                  always fail in this example, because the shape of
+                  the condition is ``(3, 5)``, which does not
                   broadcast to the shape of the ``f``.
 
-            x, y: *optional*
-                Specify the assignment values. Where the condition
-                evaluates to `True`, assign to the field construct's data
-                from *x*, and where the condition evaluates to `False`,
-                assign to the field construct's data from *y*. The *x* and
-                *y* parameters are each one of:
+            x, y:  array-like or `Field` or `None`
+                Specify the assignment values. Where the condition is
+                True assign to the data from *x*, and where the
+                condition is False assign to the data from *y*.
 
-                * `None`. The appropriate data elements array are
-                  unchanged. This the default.
+                If *x* is `None` (the default) then no assignment is
+                carried out where the condition is True.
 
-                * Any scalar or array-like object (such as a `numpy`,
-                  `Data` or `Field` object) that is broadcastable to the
-                  shape of the data.
-
-            ..
+                If *y* is `None` (the default) then no assignment is
+                carried out where the condition is False.
 
                 *Parameter example:*
-                  ``f.where(condition)``, for any ``condition``, returns a
-                  field construct with identical data values.
+                  ``d.where(condition)``, for any ``condition``,
+                  returns data with identical data values.
+
+                *Parameter example:*
+                  ``d.where(cf.lt(0), x=-d, y=cf.masked)`` will change
+                  the sign of all negative data values, and set all
+                  other data values to missing data.
+
+                *Parameter example:*
+                  ``d.where(cf.lt(0), x=-d)`` will change the sign of
+                  all negative data values, and leave all other data
+                  values unchanged. This is equivalent to, but faster
+                  than, ``d.where(cf.lt(0), x=-d, y=d)``
+
+                *Parameter example:*
+                  ``f.where(condition)``, for any ``condition``,
+                  returns a field construct with identical data
+                  values.
 
                 *Parameter example:*
                   ``f.where(cf.lt(0), x=-f.data, y=cf.masked)`` will
-                  change the sign of all negative data values, and set all
-                  other data values to missing data.
+                  change the sign of all negative data values, and set
+                  all other data values to missing data.
 
-                If *x* or *y* is another field construct then it is first
-                transformed so that its data is broadcastable to the data
-                being assigned to. This is done by using the metadata
-                constructs of the two field constructs to create a mapping
-                of physically identical dimensions between the fields, and
-                then manipulating the dimensions of other field
-                construct's data to ensure that they are broadcastable. If
-                either of the field constructs does not have sufficient
-                metadata to create such a mapping then an exception will
-                be raised. In this case, any manipulation of the
-                dimensions must be done manually, and the `Data` instance
-                of *x* or *y* (rather than the field construct itself) may
-                be used for the condition.
+                If *x* or *y* is a `Field` then it is first
+                transformed so that its data is broadcastable to the
+                data being assigned to. This is done by using the
+                metadata constructs of the two field constructs to
+                create a mapping of physically identical dimensions
+                between the fields, and then manipulating the
+                dimensions of other field construct's data to ensure
+                that they are broadcastable. If either of the field
+                constructs does not have sufficient metadata to create
+                such a mapping then an exception will be raised. In
+                this case, any manipulation of the dimensions must be
+                done manually, and the `Data` instance of *x* or *y*
+                (rather than the field construct itself) may be used
+                for the condition.
 
                 *Parameter example:*
-                  If field construct ``f`` has shape ``(5, 3)`` and ``g =
-                  f.transpose() * 10`` then ``f.where(cf.lt(0), x=g)``
-                  will set all data values that are less than zero to the
-                  equivalent elements of field construct ``g``, provided
-                  there are sufficient metadata for the data dimensions to
-                  be mapped. However, ``f.where(cf.lt(0), x=g.data)`` will
-                  always fail in this example, because the shape of the
-                  condition is ``(3, 5)``, which does not broadcast to the
-                  shape of the ``f``.
+                  If field construct ``f`` has shape ``(5, 3)`` and
+                  ``g = f.transpose() * 10`` then ``f.where(cf.lt(0),
+                  x=g)`` will set all data values that are less than
+                  zero to the equivalent elements of field construct
+                  ``g``, provided there are sufficient metadata for
+                  the data dimensions to be mapped. However,
+                  ``f.where(cf.lt(0), x=g.data)`` will always fail in
+                  this example, because the shape of the condition is
+                  ``(3, 5)``, which does not broadcast to the shape of
+                  the ``f``.
 
             construct: `str`, optional
-                Define the condition by applying the *construct* parameter
-                to the given metadata construct's data, rather then the
-                data of the field construct. Must be
+                Define the condition by applying the *construct*
+                parameter to the given metadata construct's data,
+                rather than the data of the field construct. Must be
 
-                * The identity or key of a metadata coordinate construct
-                  that has data.
+                * The identity or key of a metadata coordinate
+                  construct that has data.
 
             ..
 
-                The *construct* parameter selects the metadata construct
-                that is returned by this call of the field construct's
-                `construct` method: ``f.construct(construct)``. See
-                `cf.Field.construct` for details.
+                The *construct* parameter selects the metadata
+                construct that is returned by this call of the field
+                construct's `construct` method:
+                ``f.construct(construct)``. See `cf.Field.construct`
+                for details.
 
                 *Parameter example:*
                   ``f.where(cf.wi(-30, 30), x=cf.masked,
-                  construct='latitude')`` will set all data values within
-                  30 degrees of the equator to missing data.
+                  construct='latitude')`` will set all data values
+                  within 30 degrees of the equator to missing data.
 
             {{inplace: `bool`, optional}}
 

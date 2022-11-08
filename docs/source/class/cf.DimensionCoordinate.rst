@@ -278,6 +278,7 @@ Data
    ~cf.DimensionCoordinate.count
    ~cf.DimensionCoordinate.count_masked
    ~cf.DimensionCoordinate.fill_value
+   ~cf.DimensionCoordinate.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -302,7 +303,7 @@ Data
 
    ~cf.DimensionCoordinate.__setitem__
    ~cf.DimensionCoordinate.halo
-   ~cf.DimensionCoordinate.mask_invalid
+   ~cf.DimensionCoordinate.masked_invalid
    ~cf.DimensionCoordinate.subspace
    ~cf.DimensionCoordinate.where
 

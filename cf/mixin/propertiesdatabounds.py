@@ -11,6 +11,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
     bounds_combination_mode,
 )
@@ -1126,10 +1127,7 @@ class PropertiesDataBounds(PropertiesData):
             inplace=inplace,
             i=i,
         )
-
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
+        
     @property
     def dtype(self):
         """The `numpy` data type of the data array.
@@ -1206,10 +1204,6 @@ class PropertiesDataBounds(PropertiesData):
         data = self.get_data(None, _fill_value=False)
         if data is not None:
             del data.dtype
-
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -2102,6 +2096,124 @@ class PropertiesDataBounds(PropertiesData):
         """
         return
 
+    @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
+    def mask_invalid(self, inplace=False, i=False):
+        """Mask the array where invalid values occur.
+
+        Deprecated at version TODODASKVER. Use the method
+        `masked_invalid` instead.
+
+        Note that:
+
+        * Invalid values are Nan or inf
+
+        * Invalid values in the results of arithmetic operations only
+          occur if the raising of `FloatingPointError` exceptions has been
+          suppressed by `cf.Data.seterr`.
+
+        * If the raising of `FloatingPointError` exceptions has been
+          allowed then invalid values in the results of arithmetic
+          operations it is possible for them to be automatically converted
+          to masked values, depending on the setting of
+          `cf.Data.mask_fpe`. In this case, such automatic conversion
+          might be faster than calling `mask_invalid`.
+
+        .. seealso:: `cf.Data.mask_fpe`, `cf.Data.seterr`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with masked elements.
+
+        **Examples**
+
+        >>> print(f.array)
+        [ 0.  1.]
+        >>> print(g.array)
+        [ 1.  2.]
+
+        >>> old = cf.data.seterr('ignore')
+        >>> h = g/f
+        >>> print(h.array)
+        [ inf   2.]
+        >>> h.mask_invalid(inplace=True)
+        >>> print(h.array)
+        [--  2.]
+
+        >>> h = g**12345
+        >>> print(h.array)
+        [ 1.  inf]
+        >>> h.mask_invalid(inplace=True)
+        >>> print(h.array)
+        [1.  --]
+
+        >>> old = cf.data.seterr('raise')
+        >>> old = cf.data.mask_fpe(True)
+        >>> print((g/f).array)
+        [ --  2]
+        >>> print((g**12345).array)
+        [1.  -- ]
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "mask_invalid",
+            message="Use the method 'masked_invalid' instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
+    def masked_invalid(self, inplace=False, i=False):
+        """Mask the array where invalid values occur (NaN or inf).
+
+        Invalid values in any bounds are also masked.
+
+        .. seealso:: `numpy.ma.masked_invalid`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with masked values, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> print(f.array)
+        [0 1 2]
+        >>> print(g.array)
+        [0 2 0]
+        >>> h = f / g
+        >>> print(h.array)
+        [nan 0.5 inf]
+        >>> i = h.masked_invalid()
+        >>> print(i.array)
+        [-- 0.5 --]
+
+        """
+        # Set bounds to True to bypass 'if bounds' check in call:
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "masked_invalid",
+            bounds=True,
+            inplace=inplace,
+            i=i,
+        )
+
     def match_by_property(self, *mode, **properties):
         """Determine whether or not a variable satisfies conditions.
 
@@ -2295,12 +2407,13 @@ class PropertiesDataBounds(PropertiesData):
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the data by adding a halo.
 
@@ -2327,10 +2440,10 @@ class PropertiesDataBounds(PropertiesData):
 
         :Parameters:
 
-            size: `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the halo
+                If *depth* is a non-negative `int` then this is the halo
                 size that is applied to all of the axes defined by the
                 *axes* parameter.
 
@@ -2343,22 +2456,22 @@ class PropertiesDataBounds(PropertiesData):
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``1``
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results in
+                  Specify a halo size of zero: ``0``. This results in
                   no change to the data shape.
 
                 *Parameter example:*
-                  For data with three dimensions, specify a halo size of 3
-                  for the first dimension and 1 for the second dimension:
-                  ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
-                  3, 1: 1, 2: 0}``
+                  For data with three dimensions, specify a halo size
+                  of 3 for the first dimension and 1 for the second
+                  dimension: ``{0: 3, 1: 1}``. This is equivalent to
+                  ``{0: 3, 1: 1, 2: 0}``
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
-                  dimensions `size=2, axes=[0, -1]`` or equivalently
-                  ``size={0: 2, -1: 2}``.
+                  dimensions ``depth=2, axes=[0, -1]`` or equivalently
+                  ``depth={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
                 Select the domain axes to be expanded, defined by their
@@ -2374,14 +2487,14 @@ class PropertiesDataBounds(PropertiesData):
                 whose values identify the corresponding domain axis
                 construct by their integer positions in the data.
 
-                The "X" and "Y" axes must be a subset of those identified
-                by the *size* or *axes* parameter.
+                The "X" and "Y" axes must be a subset of those
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+                  respectively of the data: ``{'X': 2, 'Y': 1}``
 
             fold_index: `int`, optional
                 Identify which index of the "Y" axis corresponds to the
@@ -2394,8 +2507,12 @@ class PropertiesDataBounds(PropertiesData):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
+            size: deprecated at version TODODASKVER
+                Use the *depth* parameter instead.
+
         :Returns:
 
+            `{{class}}` or `None`
                 The expanded data, or `None` if the operation was
                 in-place.
 
@@ -2404,13 +2521,23 @@ class PropertiesDataBounds(PropertiesData):
         TODO
 
         """
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self),
             "halo",
             bounds=True,
             interior_ring=True,
             inplace=inplace,
-            size=size,
+            depth=depth,
             axes=axes,
             tripolar=tripolar,
             fold_index=fold_index,

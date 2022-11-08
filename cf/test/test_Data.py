@@ -913,25 +913,6 @@ class DataTest(unittest.TestCase):
         f = d - e
         self.assertEqual(f.Units, cf.Units("days"))
 
-        # Repeat with caching partitions to disk
-        fmt = cf.constants.CONSTANTS["FM_THRESHOLD"]
-        cf.constants.CONSTANTS["FM_THRESHOLD"] = cf.total_memory()
-
-        d = cf.Data(self.a, "m")
-        e = cf.Data(self.a, "s")
-
-        f = d / e
-        self.assertEqual(f.Units, cf.Units("m s-1"))
-
-        d = cf.Data(self.a, "days since 2000-01-02")
-        e = cf.Data(self.a, "days since 1999-01-02")
-
-        f = d - e
-        self.assertEqual(f.Units, cf.Units("days"))
-
-        # Reset
-        cf.constants.CONSTANTS["FM_THRESHOLD"] = fmt
-
     def test_Data_concatenate(self):
         """Test the `concatenate` Data method."""
         # Unitless operation with default axis (axis=0):
@@ -2830,6 +2811,12 @@ class DataTest(unittest.TestCase):
         e = d.where(a < 5, cf.masked)
         self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
         self.assertTrue((e.array == a).all())
+
+        d = cf.Data(np.arange(12).reshape(3, 4))
+        for condition in (True, 3, [True], [[1]], [[[1]]], [[[1, 1, 1, 1]]]):
+            e = d.where(condition, -9)
+            self.assertEqual(e.shape, d.shape)
+            self.assertTrue((e.array == -9).all())
 
     def test_Data__init__compression(self):
         """Test Data initialised from compressed data sources."""
