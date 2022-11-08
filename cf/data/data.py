@@ -9410,7 +9410,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             out["sample_size"] = delayed(lambda: self.sample_size())()
 
         if compute:
-            return globals()["compute"](out)[0]  # noqa: F811
+            data_values = globals()["compute"](out)[0]  # noqa: F811
+
+            # Convert cf.Data objects holding the scalars (or ndim value
+            # for the case of sample_size only) to scalar values
+            scalar_values = {
+                op: val.array.item() for op, val in data_values.items()
+            }
+            return scalar_values
         else:
             return out
 

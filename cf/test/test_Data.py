@@ -720,15 +720,15 @@ class DataTest(unittest.TestCase):
         self.assertEqual(
             s1,
             {
-                "minimum": cf.Data(1),
-                "mean": cf.Data(1.0),
-                "median": cf.Data(1.0),
-                "maximum": cf.Data(1),
-                "range": cf.Data(0),
-                "mid_range": cf.Data(1.0),
-                "standard_deviation": cf.Data(0.0),
-                "root_mean_square": cf.Data(1.0),
-                "sample_size": cf.Data([2]),
+                "minimum": 1,
+                "mean": 1.0,
+                "median": 1.0,
+                "maximum": 1,
+                "range": 0,
+                "mid_range": 1.0,
+                "standard_deviation": 0.0,
+                "root_mean_square": 1.0,
+                "sample_size": 2,
             },
         )
 
@@ -745,22 +745,22 @@ class DataTest(unittest.TestCase):
         self.assertEqual(
             s2,
             {
-                "minimum": cf.Data(1),
-                "mean": cf.Data(1.0),
-                "median": cf.Data(1.0),
-                "maximum": cf.Data(1),
-                "range": cf.Data(0),
-                "mid_range": cf.Data(1.0),
-                "standard_deviation": cf.Data(0.0),
-                "root_mean_square": cf.Data(1.0),
-                "minimum_absolute_value": cf.Data(1),
-                "maximum_absolute_value": cf.Data(1),
-                "mean_absolute_value": cf.Data(1.0),
-                "mean_of_upper_decile": cf.Data(1.0),
-                "sum": cf.Data(2),
-                "sum_of_squares": cf.Data(2),
-                "variance": cf.Data(0.0),
-                "sample_size": cf.Data([2]),
+                "minimum": 1,
+                "mean": 1.0,
+                "median": 1.0,
+                "maximum": 1,
+                "range": 0,
+                "mid_range": 1.0,
+                "standard_deviation": 0.0,
+                "root_mean_square": 1.0,
+                "minimum_absolute_value": 1,
+                "maximum_absolute_value": 1,
+                "mean_absolute_value": 1.0,
+                "mean_of_upper_decile": 1.0,
+                "sum": 2,
+                "sum_of_squares": 2,
+                "variance": 0.0,
+                "sample_size": 2,
             },
         )
         s3 = d.stats(sum=True, weights=1)
@@ -768,16 +768,16 @@ class DataTest(unittest.TestCase):
         self.assertEqual(
             s3,
             {
-                "minimum": cf.Data(1),
-                "mean": cf.Data(1.0),
-                "median": cf.Data(1.0),
-                "maximum": cf.Data(1),
-                "range": cf.Data(0),
-                "mid_range": cf.Data(1.0),
-                "standard_deviation": cf.Data(0.0),
-                "root_mean_square": cf.Data(1.0),
-                "sum": cf.Data(2),
-                "sample_size": cf.Data([2]),
+                "minimum": 1,
+                "mean": 1.0,
+                "median": 1.0,
+                "maximum": 1,
+                "range": 0,
+                "mid_range": 1.0,
+                "standard_deviation": 0.0,
+                "root_mean_square": 1.0,
+                "sum": 2,
+                "sample_size": 2,
             },
         )
         s4 = d.stats(mean_of_upper_decile=True, range=False, weights=2.0)
@@ -785,15 +785,15 @@ class DataTest(unittest.TestCase):
         self.assertEqual(
             s4,
             {
-                "minimum": cf.Data(1),
-                "mean": cf.Data(1.0),
-                "median": cf.Data(1.0),
-                "maximum": cf.Data(1),
-                "mid_range": cf.Data(1.0),
-                "standard_deviation": cf.Data(0.0),
-                "root_mean_square": cf.Data(1.0),
-                "mean_of_upper_decile": cf.Data(1.0),
-                "sample_size": cf.Data([2]),
+                "minimum": 1,
+                "mean": 1.0,
+                "median": 1.0,
+                "maximum": 1,
+                "mid_range": 1.0,
+                "standard_deviation": 0.0,
+                "root_mean_square": 1.0,
+                "mean_of_upper_decile": 1.0,
+                "sample_size": 2,
             },
         )
 
@@ -801,24 +801,24 @@ class DataTest(unittest.TestCase):
         self.assertEqual(
             cf.Data(10).stats(),
             {
-                "minimum": cf.Data(10),
-                "mean": cf.Data(10.0),
-                "median": cf.Data(10.0),
-                "maximum": cf.Data(10),
-                "range": cf.Data(0),
-                "mid_range": cf.Data(10.0),
-                "standard_deviation": cf.Data(0.0),
-                "root_mean_square": cf.Data(10.0),
-                "sample_size": cf.Data(1),
+                "minimum": 10,
+                "mean": 10.0,
+                "median": 10.0,
+                "maximum": 10,
+                "range": 0,
+                "mid_range": 10.0,
+                "standard_deviation": 0.0,
+                "root_mean_square": 10.0,
+                "sample_size": 1,
             },
         )
         # NaN values aren't 'equal' to e/o, so check call works and that some
         # representative values are as expected, in this case
         s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
         self.assertEqual(len(s5), 16)
-        self.assertEqual(s5["minimum"], cf.Data(-2))
-        self.assertEqual(s5["sum"], cf.Data(3))
-        self.assertEqual(s5["sample_size"], cf.Data([[6]]))
+        self.assertEqual(s5["minimum"], -2)
+        self.assertEqual(s5["sum"], 3)
+        self.assertEqual(s5["sample_size"], 6)
         self.assertTrue(np.isnan(s5["mean"]))
         self.assertTrue(np.isnan(s5["variance"]))  # needs all=True to show up
 
