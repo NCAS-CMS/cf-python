@@ -11,6 +11,7 @@ from operator import mul
 
 import dask.array as da
 import numpy as np
+from dask.delayed import Delayed
 
 SCIPY_AVAILABLE = False
 try:
@@ -731,6 +732,14 @@ class DataTest(unittest.TestCase):
             },
         )
 
+        # Check compute parameter i.e. delayed value return
+        s1_del = d.stats(compute=False)
+        self.assertEqual(len(s1_del), 9)
+        self.assertIsInstance(s1_del["mean"], Delayed)
+        s1_del_computed = {op: val.compute() for op, val in s1_del.items()}
+        self.assertEqual(s1_del_computed, s1)
+
+        # Other parameter testing...
         s2 = d.stats(all=True)
         self.assertEqual(len(s2), 16)
         self.assertEqual(
@@ -754,7 +763,6 @@ class DataTest(unittest.TestCase):
                 "sample_size": cf.Data([2]),
             },
         )
-
         s3 = d.stats(sum=True, weights=1)
         self.assertEqual(len(s3), 10)  # 9 + 1 because the 'sum' op. is added
         self.assertEqual(
@@ -772,7 +780,6 @@ class DataTest(unittest.TestCase):
                 "sample_size": cf.Data([2]),
             },
         )
-
         s4 = d.stats(mean_of_upper_decile=True, range=False, weights=2.0)
         self.assertEqual(len(s4), 9)  # 9 + 1 - 1 for adding MOUD, losing range
         self.assertEqual(

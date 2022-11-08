@@ -9354,6 +9354,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          'mean_of_upper_decile': <CF Data(): 5.0>,
          'sample_size': 5}
 
+        # Ask for delayed operations instead of computed values for the stats:
+        >>> d.stats(compute=False)
+        {'minimum': Delayed('minimum-0161ad64-aa89-43a7-b651-85a939822f7d'),
+         'mean': Delayed('mean-cef11472-c0b2-4f92-b19a-41295758a870'),
+         'median': Delayed('median-22330dad-f9ff-4337-ae66-03545a529021'),
+         'maximum': Delayed('maximum-81e21125-e99e-4d4f-9131-9c3d95b9fcc1'),
+         'range': Delayed('range-6adfd9a0-d2c3-4262-b7b7-d2e69b28ce2f'),
+         'mid_range': Delayed('mid_range-60d75030-78dc-4f41-befd-380190282da2'),
+         'standard_deviation': Delayed('standard_deviation-804f3fe4-c3e6-4a96-a895-f403f9fbc43a'),
+         'root_mean_square': Delayed('root_mean_square-1ff687b2-2988-4512-937d-198b5477b216'),
+         'sample_size': Delayed('lambda-5498333c-9889-4442-869e-81cfead6196b')}
+
         """
         no_weights = (
             "minimum",
