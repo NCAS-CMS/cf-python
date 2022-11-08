@@ -103,17 +103,24 @@ class DataTest(unittest.TestCase):
         # Suppress the warning output for some specific warnings which are
         # expected due to the nature of the tests being performed.
         expexted_warning_msgs = [
-            "divide by zero encountered in arctanh",
-            "divide by zero encountered in log",
-            "divide by zero encountered in double_scalars",
-            "invalid value encountered in arcsin",
-            "invalid value encountered in arccos",
-            "invalid value encountered in arctanh",
-            "invalid value encountered in arccosh",
-            "invalid value encountered in log",
-            "invalid value encountered in sqrt",
-            "invalid value encountered in double_scalars",
-            "invalid value encountered in true_divide",
+            "divide by zero encountered in " + np_method
+            for np_method in (
+                "arctanh",
+                "log",
+                "double_scalars",
+            )
+        ] + [
+            "invalid value encountered in " + np_method
+            for np_method in (
+                "arcsin",
+                "arccos",
+                "arctanh",
+                "arccosh",
+                "log",
+                "sqrt",
+                "double_scalars",
+                "true_divide",
+            )
         ]
         for expected_warning in expexted_warning_msgs:
             warnings.filterwarnings(
