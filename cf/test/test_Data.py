@@ -104,10 +104,16 @@ class DataTest(unittest.TestCase):
         # expected due to the nature of the tests being performed.
         expexted_warning_msgs = [
             "divide by zero encountered in arctanh",
-            "invalid value encountered in arctanh",
             "divide by zero encountered in log",
-            "invalid value encountered in log",
+            "divide by zero encountered in double_scalars",
             "invalid value encountered in arcsin",
+            "invalid value encountered in arccos",
+            "invalid value encountered in arctanh",
+            "invalid value encountered in arccosh",
+            "invalid value encountered in log",
+            "invalid value encountered in sqrt",
+            "invalid value encountered in double_scalars",
+            "invalid value encountered in true_divide",
         ]
         for expected_warning in expexted_warning_msgs:
             warnings.filterwarnings(
