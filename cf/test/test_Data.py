@@ -777,6 +777,31 @@ class DataTest(unittest.TestCase):
             },
         )
 
+        # Check some weird/edge cases to ensure they are handled elegantly...
+        self.assertEqual(
+            cf.Data(10).stats(),
+            {
+                "minimum": cf.Data(10),
+                "mean": cf.Data(10.0),
+                "median": cf.Data(10.0),
+                "maximum": cf.Data(10),
+                "range": cf.Data(0),
+                "mid_range": cf.Data(10.0),
+                "standard_deviation": cf.Data(0.0),
+                "root_mean_square": cf.Data(10.0),
+                "sample_size": cf.Data(1),
+            },
+        )
+        # NaN values aren't 'equal' to e/o, so check call works and that some
+        # representative values are as expected, in this case
+        s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
+        self.assertEqual(len(s5), 16)
+        self.assertEqual(s5["minimum"], cf.Data(-2))
+        self.assertEqual(s5["sum"], cf.Data(3))
+        self.assertEqual(s5["sample_size"], cf.Data([[6]]))
+        self.assertTrue(np.isnan(s5["mean"]))
+        self.assertTrue(np.isnan(s5["variance"]))  # needs all=True to show up
+
     def test_Data__init__dtype_mask(self):
         """Test `__init__` for Data with `dtype` and `mask` keywords."""
         for m in (1, 20, True):
