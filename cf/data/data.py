@@ -10,7 +10,7 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
-from dask import compute, delayed
+from dask import compute, delayed  # noqa: F401
 from dask.array import Array
 from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
@@ -2350,7 +2350,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @daskified(_DASKIFIED_VERBOSE)
-    def compute(self):
+    def compute(self):  # noqa: F811
         """A numpy view the data.
 
         In-place changes to the returned numpy array *might* affect
@@ -9200,6 +9200,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def stats(
         self,
         all=False,
+        compute=True,
         minimum=True,
         mean=True,
         median=True,
@@ -9237,6 +9238,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             all: `bool`, optional
                 Calculate all possible statistics, regardless of the value
                 of individual metric parameters.
+
+            compute: `bool`, optional
+                If True (the default), returned values for the statistical
+                calculations in the output dictionary are computed, else
+                each is given in the form of a delayed `Data` operation.
 
             minimum: `bool`, optional
                 Calculate the minimum of the values.
@@ -9298,7 +9304,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `dict`
-                The statistics.
+                The statistics, with keys giving the operation names and
+                values being the result of the corresponding statistical
+                calculation, which are either the computed numerical
+                values if `compute` is True, else the delayed `Data`
+                operations which encapsulate those.
 
         **Examples**
 
@@ -9387,7 +9397,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if all or sample_size:
             out["sample_size"] = delayed(lambda: self.sample_size())()
 
-        return compute(out)[0]
+        if compute:
+            return globals()["compute"](out)[0]  # noqa: F811
+        else:
+            return out
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
