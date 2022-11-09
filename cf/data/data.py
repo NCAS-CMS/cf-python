@@ -9354,7 +9354,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          'mean_of_upper_decile': <CF Data(): 5.0>,
          'sample_size': 5}
 
-        # Ask for delayed operations instead of computed values for the stats:
+        Ask for delayed operations instead of computed values for the stats:
+        
         >>> d.stats(compute=False)
         {'minimum': Delayed('minimum-0161ad64-aa89-43a7-b651-85a939822f7d'),
          'mean': Delayed('mean-cef11472-c0b2-4f92-b19a-41295758a870'),
