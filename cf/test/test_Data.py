@@ -4168,46 +4168,34 @@ class DataTest(unittest.TestCase):
 
     def test_Data__str__(self):
         """Test `Data.__str__`"""
+        elements0 = ("first_element", "last_element", "second_element")
+        for array in ([1], [1, 2], [1, 2, 3]):
+            elements = elements0[: len(array)]
 
-        elements = ('first_element', 'last_element', 'second_element')
-        for array in  ([1], [1, 2], [1, 2, 3]):
             d = cf.Data(array)
-            for element in elements[:len(array)]:
+            for element in elements:
                 self.assertNotIn(element, d._custom)
 
             self.assertEqual(str(d), str(array))
-            for element in elements[:len(array)]:
+            for element in elements:
                 self.assertIn(element, d._custom)
-                
-            self.assertEqual(str(d), str(array))
-            d[0] = 999           
-            for element in elements[:len(array)]:
+
+            d[0] = 1
+            for element in elements:
                 self.assertNotIn(element, d._custom)
 
-            
-        d = cf.Data([1])
-        self.assertNotIn('first_element', d._custom)
-        self.assertEqual(str(d), '[1]')
-        self.assertIn('first_element', d._custom)
-        self.assertEqual(str(d), '[1]')
+            self.assertEqual(str(d), str(array))
+            for element in elements:
+                self.assertIn(element, d._custom)
 
-        d = cf.Data([1, 2])
-        self.assertNotIn('first_element', d._custom)
-        self.assertNotIn('last_element', d._custom)
-        self.assertEqual(str(d), '[1, 2]')
-        self.assertIn('first_element', d._custom)
-        self.assertIn('last_element', d._custom)
-        self.assertEqual(str(d), '[1, 2]')
+            d += 0
+            for element in elements:
+                self.assertNotIn(element, d._custom)
 
-        d = cf.Data([1, 2, 3])
-        self.assertNotIn('first_element', d._custom)
-        self.assertNotIn('last_element', d._custom)
-        self.assertNotIn('second_element', d._custom)
-        self.assertEqual(str(d), '[1, 2, 3]')
-        self.assertIn('first_element', d._custom)
-        self.assertIn('last_element', d._custom)
-        self.assertIn('second_element', d._custom)
-        self.assertEqual(str(d), '[1, 2, 3]')
+            self.assertEqual(str(d), str(array))
+            for element in elements:
+                self.assertIn(element, d._custom)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

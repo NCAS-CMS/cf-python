@@ -266,8 +266,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             chunks=chunks,
             **kwargs,
         )
+        self._cache_data_elements(data, ncvar)
 
-        self._set_data_elements(data, ncvar)        
         return data
 
     def _customize_read_vars(self):
@@ -405,8 +405,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return array
 
-    def _set_data_elements(self, data, ncvar):
-        """Store selected element values of the data.
+    def _cache_data_elements(self, data, ncvar):
+        """Cache selected element values.
 
         Updates *data* in-place to store its first, second and last
         element values inside its ``custom`` dictionary.
@@ -444,7 +444,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         else:
             variable = g["variables"].get(ncvar)
 
-        # Get the required elements
+        # Get the required element values
         size = variable.size
         if size == 1:
             value = variable[(slice(0, 1, 1),) * variable.ndim]
@@ -459,7 +459,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 variable[(slice(-1, None, 1),) * ndim],
             )
 
-        # Store the elements on the data
+        # Create a dictionary of the element values
+        elements = {}
         for element, value in zip(
             ("first_element", "second_element", "last_element"),
             values,
@@ -472,4 +473,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             else:
                 value = value.item()
 
-            custom[element] = value
+            elements[element] = value
+
+        # Store the elements in the data object
+        data._set_cached_elements(elements)

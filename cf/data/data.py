@@ -1,7 +1,7 @@
 import logging
 import math
 import operator
-from functools import cached_property, partial, reduce, wraps
+from functools import partial, reduce, wraps
 from itertools import product
 from numbers import Integral
 from operator import mul
@@ -407,7 +407,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         array,
                         copy=copy,
                         delete_source=False,
-                        delete_cached_elements=False,
                     )
             else:
                 self._del_dask(None)
@@ -1179,6 +1178,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # guarantee its consistency with the updated dask array.
         self._del_Array(None)
 
+        # Remove cached element values
+        self._del_cached_elements()
+
         return
 
     # ----------------------------------------------------------------
@@ -1302,7 +1304,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         array,
         copy=False,
         delete_source=True,
-        delete_cached_elements=True,
     ):
         """Set the dask array.
 
@@ -1321,8 +1322,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             delete_source: `bool`, optional
                 If False then do not delete a source array, if one
-                exists, after setting the new dask array. By default a
-                source array is deleted.
+                exists, after setting the new dask array, nor any
+                cached element values.
 
         :Returns:
 
@@ -1357,15 +1358,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # guarantee its consistency with the new dask array.
             self._del_Array(None)
 
-        # Remove cached element values
-        if delete_cached_elements:
-            self._delete_cached_elements()
+            # Remove cached element values
+            self._del_cached_elements()
 
     def _del_dask(
         self,
         default=ValueError(),
         delete_source=True,
-        delete_cached_elements=True,
     ):
         """Remove the dask array.
 
@@ -1383,7 +1382,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             delete_source: `bool`, optional
                 If False then do not delete a compressed source array,
-                if one exists.
+                if one exists, nor any cached element values.
 
         :Returns:
 
@@ -1419,16 +1418,53 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # array.
             self._del_Array(None)
 
-        # Remove cached element values
-        if delete_cached_elements:
-            self._delete_cached_elements()
+            # Remove cached element values
+            self._del_cached_elements()
 
         return out
 
-    def _delete_cached_elements(self):
+    def _del_cached_elements(self):
+        """Delete any cached element values.
+
+        Updates *data* in-place to remove the cached element values
+        ``'first_element'``, ``'second_element'`` and
+        ``'last_element'``.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `_set_cached_elements`
+
+        :Returns:
+
+            `None`
+
+        """
         custom = self._custom
         for element in ("first_element", "second_element", "last_element"):
             custom.pop(element, None)
+
+    def _set_cached_elements(self, elements):
+        """Cache selected element values.
+
+        Updates *data* in-place to store the given element values
+        within its ``custom`` dictionary.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `_del_cached_elements`
+
+        :Parameters:
+
+            elements: `dict`
+               Zero or more element values to be cached, each keyed by
+               a unique identifier to allow unambiguous retrieval.
+
+        :Returns:
+
+            `None`
+
+        """
+        self._custom.update(elements)
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -7894,12 +7930,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        custom = self._custom
         try:
-            return custom["first_element"]
+            return self._custom["first_element"]
         except KeyError:
             item = super().first_element()
-            custom["first_element"] = item
+            self._set_cached_elements({"first_element": item})
             return item
 
     def second_element(self):
@@ -7934,12 +7969,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        custom = self._custom
         try:
-            return custom["second_element"]
+            return self._custom["second_element"]
         except KeyError:
             item = super().second_element()
-            custom["second_element"] = item
+            self._set_cached_elements({"second_element": item})
             return item
 
     def last_element(self):
@@ -7974,12 +8008,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        custom = self._custom
         try:
-            return custom["last_element"]
+            return self._custom["last_element"]
         except KeyError:
             item = super().last_element()
-            custom["last_element"] = item
+            self._set_cached_elements({"last_element": item})
             return item
 
     @daskified(_DASKIFIED_VERBOSE)
