@@ -11,7 +11,6 @@ from operator import mul
 
 import dask.array as da
 import numpy as np
-from dask.delayed import Delayed
 
 SCIPY_AVAILABLE = False
 try:
@@ -715,86 +714,95 @@ class DataTest(unittest.TestCase):
         """Test the `stats` Data method."""
         d = cf.Data([1, 1])
 
+        # Test outputs covering a representative selection of parameters
         s1 = d.stats()
+        s1_lazy = d.stats(compute=False)
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "range": 0,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "sample_size": 2,
+        }
         self.assertEqual(len(s1), 9)
+        self.assertEqual(s1, exp_result)
+        self.assertEqual(len(s1_lazy), len(s1))
         self.assertEqual(
-            s1,
-            {
-                "minimum": 1,
-                "mean": 1.0,
-                "median": 1.0,
-                "maximum": 1,
-                "range": 0,
-                "mid_range": 1.0,
-                "standard_deviation": 0.0,
-                "root_mean_square": 1.0,
-                "sample_size": 2,
-            },
+            s1_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
         )
 
-        # Check compute parameter i.e. delayed value return
-        s1_del = d.stats(compute=False)
-        self.assertEqual(len(s1_del), 9)
-        self.assertIsInstance(s1_del["mean"], Delayed)
-        s1_del_computed = {op: val.compute() for op, val in s1_del.items()}
-        self.assertEqual(s1_del_computed, s1)
-
-        # Other parameter testing...
         s2 = d.stats(all=True)
+        s2_lazy = d.stats(compute=False, all=True)
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "range": 0,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "minimum_absolute_value": 1,
+            "maximum_absolute_value": 1,
+            "mean_absolute_value": 1.0,
+            "mean_of_upper_decile": 1.0,
+            "sum": 2,
+            "sum_of_squares": 2,
+            "variance": 0.0,
+            "sample_size": 2,
+        }
         self.assertEqual(len(s2), 16)
+        self.assertEqual(s2, exp_result)
+        self.assertEqual(len(s2_lazy), len(s2))
         self.assertEqual(
-            s2,
-            {
-                "minimum": 1,
-                "mean": 1.0,
-                "median": 1.0,
-                "maximum": 1,
-                "range": 0,
-                "mid_range": 1.0,
-                "standard_deviation": 0.0,
-                "root_mean_square": 1.0,
-                "minimum_absolute_value": 1,
-                "maximum_absolute_value": 1,
-                "mean_absolute_value": 1.0,
-                "mean_of_upper_decile": 1.0,
-                "sum": 2,
-                "sum_of_squares": 2,
-                "variance": 0.0,
-                "sample_size": 2,
-            },
+            s2_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
         )
+
         s3 = d.stats(sum=True, weights=1)
+        s3_lazy = d.stats(compute=False, sum=True, weights=1)
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "range": 0,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "sum": 2,
+            "sample_size": 2,
+        }
         self.assertEqual(len(s3), 10)  # 9 + 1 because the 'sum' op. is added
+        self.assertEqual(s3, exp_result)
+        self.assertEqual(len(s3_lazy), len(s3))
         self.assertEqual(
-            s3,
-            {
-                "minimum": 1,
-                "mean": 1.0,
-                "median": 1.0,
-                "maximum": 1,
-                "range": 0,
-                "mid_range": 1.0,
-                "standard_deviation": 0.0,
-                "root_mean_square": 1.0,
-                "sum": 2,
-                "sample_size": 2,
-            },
+            s3_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
         )
+
         s4 = d.stats(mean_of_upper_decile=True, range=False, weights=2.0)
+        s4_lazy = d.stats(
+            compute=False, mean_of_upper_decile=True, range=False, weights=2.0
+        )
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "mean_of_upper_decile": 1.0,
+            "sample_size": 2,
+        }
         self.assertEqual(len(s4), 9)  # 9 + 1 - 1 for adding MOUD, losing range
+        self.assertEqual(s4, exp_result)
+        self.assertEqual(len(s4_lazy), len(s4))
         self.assertEqual(
-            s4,
-            {
-                "minimum": 1,
-                "mean": 1.0,
-                "median": 1.0,
-                "maximum": 1,
-                "mid_range": 1.0,
-                "standard_deviation": 0.0,
-                "root_mean_square": 1.0,
-                "mean_of_upper_decile": 1.0,
-                "sample_size": 2,
-            },
+            s4_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
         )
 
         # Check some weird/edge cases to ensure they are handled elegantly...

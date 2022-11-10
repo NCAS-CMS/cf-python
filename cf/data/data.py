@@ -9355,7 +9355,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          'sample_size': 5}
 
         Ask for delayed operations instead of computed values for the stats:
-        
+
         >>> d.stats(compute=False)
         {'minimum': Delayed('minimum-0161ad64-aa89-43a7-b651-85a939822f7d'),
          'mean': Delayed('mean-cef11472-c0b2-4f92-b19a-41295758a870'),
@@ -9410,17 +9410,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if all or sample_size:
             out["sample_size"] = delayed(lambda: self.sample_size())()
 
+        data_values = globals()["compute"](out)[0]  # noqa: F811
         if compute:
-            data_values = globals()["compute"](out)[0]  # noqa: F811
-
-            # Convert cf.Data objects holding the scalars (or ndim value
+            # Convert cf.Data objects holding the scalars (or scalar array
             # for the case of sample_size only) to scalar values
-            scalar_values = {
-                op: val.array.item() for op, val in data_values.items()
-            }
-            return scalar_values
+            return {op: val.array.item() for op, val in data_values.items()}
         else:
-            return out
+            return data_values
 
     @daskified(_DASKIFIED_VERBOSE)
     @_deprecated_kwarg_check("i")
