@@ -9317,55 +9317,55 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0  1  2]
          [3 --  5]]
         >>> d.stats()
-        {'minimum': <CF Data(): 0>,
-         'mean': <CF Data(): 2.2>,
-         'median': <CF Data(): 2.0>,
-         'maximum': <CF Data(): 5>,
-         'range': <CF Data(): 5>,
-         'mid_range': <CF Data(): 2.5>,
-         'standard_deviation': <CF Data(): 1.7204650534085253>,
-         'root_mean_square': <CF Data(): 2.792848008753788>,
+        {'minimum': 0,
+         'mean': 2.2,
+         'median': 2.0,
+         'maximum': 5,
+         'range': 5,
+         'mid_range': 2.5,
+         'standard_deviation': 1.7204650534085255,
+         'root_mean_square': 2.792848008753788,
          'sample_size': 5}
         >>> d.stats(all=True)
+        {'minimum': 0,
+         'mean': 2.2,
+         'median': 2.0,
+         'maximum': 5,
+         'range': 5,
+         'mid_range': 2.5,
+         'standard_deviation': 1.7204650534085255,
+         'root_mean_square': 2.792848008753788,
+         'minimum_absolute_value': 0,
+         'maximum_absolute_value': 5,
+         'mean_absolute_value': 2.2,
+         'mean_of_upper_decile': 5.0,
+         'sum': 11,
+         'sum_of_squares': 39,
+         'variance': 2.9600000000000004,
+         'sample_size': 5}
+        >>> d.stats(mean_of_upper_decile=True, range=False)
+        {'minimum': 0,
+         'mean': 2.2,
+         'median': 2.0,
+         'maximum': 5,
+         'mid_range': 2.5,
+         'standard_deviation': 1.7204650534085255,
+         'root_mean_square': 2.792848008753788,
+         'mean_of_upper_decile': 5.0,
+         'sample_size': 5}
+
+        To ask for delayed operations instead of computed values:
+
+        >>> d.stats(compute=False)
         {'minimum': <CF Data(): 0>,
          'mean': <CF Data(): 2.2>,
          'median': <CF Data(): 2.0>,
          'maximum': <CF Data(): 5>,
          'range': <CF Data(): 5>,
          'mid_range': <CF Data(): 2.5>,
-         'standard_deviation': <CF Data(): 1.7204650534085253>,
+         'standard_deviation': <CF Data(): 1.7204650534085255>,
          'root_mean_square': <CF Data(): 2.792848008753788>,
-         'minimum_absolute_value': <CF Data(): 0>,
-         'maximum_absolute_value': <CF Data(): 5>,
-         'mean_absolute_value': <CF Data(): 2.2>,
-         'mean_of_upper_decile': <CF Data(): 5.0>,
-         'sum': <CF Data(): 11>,
-         'sum_of_squares': <CF Data(): 39>,
-         'variance': <CF Data(): 2.96>,
-         'sample_size': 5}
-        >>> d.stats(mean_of_upper_decile=True, range=False)
-        {'minimum': <CF Data(): 0>,
-         'mean': <CF Data(): 2.2>,
-         'median': <CF Data(): 2.0>,
-         'maximum': <CF Data(): 5>,
-         'mid_range': <CF Data(): 2.5>,
-         'standard_deviation': <CF Data(): 1.7204650534085253>,
-         'root_mean_square': <CF Data(): 2.792848008753788>,
-         'mean_of_upper_decile': <CF Data(): 5.0>,
-         'sample_size': 5}
-
-        Ask for delayed operations instead of computed values for the stats:
-
-        >>> d.stats(compute=False)
-        {'minimum': Delayed('minimum-0161ad64-aa89-43a7-b651-85a939822f7d'),
-         'mean': Delayed('mean-cef11472-c0b2-4f92-b19a-41295758a870'),
-         'median': Delayed('median-22330dad-f9ff-4337-ae66-03545a529021'),
-         'maximum': Delayed('maximum-81e21125-e99e-4d4f-9131-9c3d95b9fcc1'),
-         'range': Delayed('range-6adfd9a0-d2c3-4262-b7b7-d2e69b28ce2f'),
-         'mid_range': Delayed('mid_range-60d75030-78dc-4f41-befd-380190282da2'),
-         'standard_deviation': Delayed('standard_deviation-804f3fe4-c3e6-4a96-a895-f403f9fbc43a'),
-         'root_mean_square': Delayed('root_mean_square-1ff687b2-2988-4512-937d-198b5477b216'),
-         'sample_size': Delayed('lambda-5498333c-9889-4442-869e-81cfead6196b')}
+         'sample_size': <CF Data(1, 1): [[5]]>}
 
         """
         no_weights = (
