@@ -4166,6 +4166,48 @@ class DataTest(unittest.TestCase):
         self.assertTrue((q == d).array.all())
         self.assertTrue((d == q).array.all())
 
+    def test_Data__str__(self):
+        """Test `Data.__str__`"""
+
+        elements = ('first_element', 'last_element', 'second_element')
+        for array in  ([1], [1, 2], [1, 2, 3]):
+            d = cf.Data(array)
+            for element in elements[:len(array)]:
+                self.assertNotIn(element, d._custom)
+
+            self.assertEqual(str(d), str(array))
+            for element in elements[:len(array)]:
+                self.assertIn(element, d._custom)
+                
+            self.assertEqual(str(d), str(array))
+            d[0] = 999           
+            for element in elements[:len(array)]:
+                self.assertNotIn(element, d._custom)
+
+            
+        d = cf.Data([1])
+        self.assertNotIn('first_element', d._custom)
+        self.assertEqual(str(d), '[1]')
+        self.assertIn('first_element', d._custom)
+        self.assertEqual(str(d), '[1]')
+
+        d = cf.Data([1, 2])
+        self.assertNotIn('first_element', d._custom)
+        self.assertNotIn('last_element', d._custom)
+        self.assertEqual(str(d), '[1, 2]')
+        self.assertIn('first_element', d._custom)
+        self.assertIn('last_element', d._custom)
+        self.assertEqual(str(d), '[1, 2]')
+
+        d = cf.Data([1, 2, 3])
+        self.assertNotIn('first_element', d._custom)
+        self.assertNotIn('last_element', d._custom)
+        self.assertNotIn('second_element', d._custom)
+        self.assertEqual(str(d), '[1, 2, 3]')
+        self.assertIn('first_element', d._custom)
+        self.assertIn('last_element', d._custom)
+        self.assertIn('second_element', d._custom)
+        self.assertEqual(str(d), '[1, 2, 3]')
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

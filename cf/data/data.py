@@ -1,7 +1,7 @@
 import logging
 import math
 import operator
-from functools import partial, reduce, wraps
+from functools import cached_property, partial, reduce, wraps
 from itertools import product
 from numbers import Integral
 from operator import mul
@@ -403,7 +403,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(array, copy=copy, delete_source=False)
+                    self._set_dask(
+                        array,
+                        copy=copy,
+                        delete_source=False,
+                        delete_cached_elements=False,
+                    )
             else:
                 self._del_dask(None)
 
@@ -1292,7 +1297,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    def _set_dask(self, array, copy=False, delete_source=True):
+    def _set_dask(
+        self,
+        array,
+        copy=False,
+        delete_source=True,
+        delete_cached_elements=True,
+    ):
         """Set the dask array.
 
         .. versionadded:: TODODASKVER
@@ -1320,18 +1331,21 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         if array is NotImplemented:
             logger.warning(
-                "NotImplemented has been set in the place of a dask array"
+                "NotImplemented has been set in the place of a dask array."
+                "\n\n"
+                "This could occur if any sort of exception is raised "
+                "by function that is run on chunks (via, for "
+                "instance, da.map_blocks or "
+                "dask.array.core.elemwise). Such a function could get "
+                "run at definition time in order to ascertain "
+                "suitability (such as data type casting, "
+                "broadcasting, etc.). Note that the exception may be "
+                "difficult to diagnose, as dask will have silently "
+                "trapped it and returned NotImplemented (for "
+                "instance, see dask.array.core.elemwise). Print "
+                "statements in a local copy of dask are prossibly the "
+                "way to go if the cause of the error is not obvious."
             )
-            # This could occur if any sort of exception is raised by
-            # function that is run on chunks (such as
-            # `cf_where`). Such a function could get run at definition
-            # time in order to ascertain suitability (such as data
-            # type casting, broadcasting, etc.). Note that the
-            # exception may be difficult to diagnose, as dask will
-            # have silently trapped it and returned NotImplemented
-            # (for instance, see `dask.array.core.elemwise`). Print
-            # statements in a local copy of dask are prossibly the way
-            # to go if the cause of the error is not obvious.
 
         if copy:
             array = array.copy()
@@ -1343,7 +1357,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # guarantee its consistency with the new dask array.
             self._del_Array(None)
 
-    def _del_dask(self, default=ValueError(), delete_source=True):
+        # Remove cached element values
+        if delete_cached_elements:
+            self._delete_cached_elements()
+
+    def _del_dask(
+        self,
+        default=ValueError(),
+        delete_source=True,
+        delete_cached_elements=True,
+    ):
         """Remove the dask array.
 
         .. versionadded:: TODODASKVER
@@ -1396,7 +1419,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # array.
             self._del_Array(None)
 
+        # Remove cached element values
+        if delete_cached_elements:
+            self._delete_cached_elements()
+
         return out
+
+    def _delete_cached_elements(self):
+        custom = self._custom
+        for element in ("first_element", "second_element", "last_element"):
+            custom.pop(element, None)
 
     @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
@@ -7830,7 +7862,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def first_element(self, verbose=None):
+    def first_element(self):
         """Return the first element of the data as a scalar.
 
         If the value is deemed too expensive to compute then a
@@ -7862,16 +7894,15 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        if self.can_compute():
-            return super().first_element()
+        custom = self._custom
+        try:
+            return custom["first_element"]
+        except KeyError:
+            item = super().first_element()
+            custom["first_element"] = item
+            return item
 
-        raise ValueError(
-            "First element of the data is considered too expensive "
-            "to compute. Consider setting the 'force_compute' attribute, or "
-            "setting the log level to 'DEBUG'."
-        )
-
-    def second_element(self, verbose=None):
+    def second_element(self):
         """Return the second element of the data as a scalar.
 
         If the value is deemed too expensive to compute then a
@@ -7903,14 +7934,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        if self.can_compute():
-            return super().second_element()
-
-        raise ValueError(
-            "Second element of the data is considered too expensive "
-            "to compute. Consider setting the 'force_compute' atribute, or "
-            "setting the log level to 'DEBUG'."
-        )
+        custom = self._custom
+        try:
+            return custom["second_element"]
+        except KeyError:
+            item = super().second_element()
+            custom["second_element"] = item
+            return item
 
     def last_element(self):
         """Return the last element of the data as a scalar.
@@ -7944,14 +7974,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        if self.can_compute():
-            return super().last_element()
-
-        raise ValueError(
-            "First element of the data is considered too expensive "
-            "to compute. Consider setting the 'force_compute' attribute, or "
-            "setting the log level to 'DEBUG'."
-        )
+        custom = self._custom
+        try:
+            return custom["last_element"]
+        except KeyError:
+            item = super().last_element()
+            custom["last_element"] = item
+            return item
 
     @daskified(_DASKIFIED_VERBOSE)
     def flat(self, ignore_masked=True):
