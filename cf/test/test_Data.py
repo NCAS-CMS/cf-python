@@ -103,16 +103,41 @@ class DataTest(unittest.TestCase):
         # Suppress the warning output for some specific warnings which are
         # expected due to the nature of the tests being performed.
         expexted_warning_msgs = [
-            "divide by zero encountered in arctanh",
-            "invalid value encountered in arctanh",
-            "divide by zero encountered in log",
-            "invalid value encountered in log",
-            "invalid value encountered in arcsin",
+            "divide by zero encountered in " + np_method
+            for np_method in (
+                "arctanh",
+                "log",
+                "double_scalars",
+            )
+        ] + [
+            "invalid value encountered in " + np_method
+            for np_method in (
+                "arcsin",
+                "arccos",
+                "arctanh",
+                "arccosh",
+                "log",
+                "sqrt",
+                "double_scalars",
+                "true_divide",
+            )
         ]
         for expected_warning in expexted_warning_msgs:
             warnings.filterwarnings(
                 "ignore", category=RuntimeWarning, message=expected_warning
             )
+
+    def test_Data__init__basic(self):
+        """Test basic `__init__` cases for Data."""
+        # Most __init__ parameters are covered by the various other tests,
+        # so this is mainly to check trivial cases and especially the edge
+        # case of 'default' Data i.e. if no parameters are specified.
+        cf.Data(0, "s")
+        cf.Data(array=np.arange(5))
+        cf.Data(source=self.filename)
+
+        with self.assertRaises(ValueError):
+            cf.Data()
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""
@@ -697,26 +722,125 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.shape, (0,))
         self.assertTrue((e.array == a.compressed()).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __eq__")
     def test_Data_stats(self):
         """Test the `stats` Data method."""
         d = cf.Data([1, 1])
 
+        # Test outputs covering a representative selection of parameters
+        s1 = d.stats()
+        s1_lazy = d.stats(compute=False)
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "range": 0,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "sample_size": 2,
+        }
+        self.assertEqual(len(s1), 9)
+        self.assertEqual(s1, exp_result)
+        self.assertEqual(len(s1_lazy), len(s1))
         self.assertEqual(
-            d.stats(sum=True, weights=1),
+            s1_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
+        )
+
+        s2 = d.stats(all=True)
+        s2_lazy = d.stats(compute=False, all=True)
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "range": 0,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "minimum_absolute_value": 1,
+            "maximum_absolute_value": 1,
+            "mean_absolute_value": 1.0,
+            "mean_of_upper_decile": 1.0,
+            "sum": 2,
+            "sum_of_squares": 2,
+            "variance": 0.0,
+            "sample_size": 2,
+        }
+        self.assertEqual(len(s2), 16)
+        self.assertEqual(s2, exp_result)
+        self.assertEqual(len(s2_lazy), len(s2))
+        self.assertEqual(
+            s2_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
+        )
+
+        s3 = d.stats(sum=True, weights=1)
+        s3_lazy = d.stats(compute=False, sum=True, weights=1)
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "range": 0,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "sum": 2,
+            "sample_size": 2,
+        }
+        self.assertEqual(len(s3), 10)  # 9 + 1 because the 'sum' op. is added
+        self.assertEqual(s3, exp_result)
+        self.assertEqual(len(s3_lazy), len(s3))
+        self.assertEqual(
+            s3_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
+        )
+
+        s4 = d.stats(mean_of_upper_decile=True, range=False, weights=2.0)
+        s4_lazy = d.stats(
+            compute=False, mean_of_upper_decile=True, range=False, weights=2.0
+        )
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "mean_of_upper_decile": 1.0,
+            "sample_size": 2,
+        }
+        self.assertEqual(len(s4), 9)  # 9 + 1 - 1 for adding MOUD, losing range
+        self.assertEqual(s4, exp_result)
+        self.assertEqual(len(s4_lazy), len(s4))
+        self.assertEqual(
+            s4_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
+        )
+
+        # Check some weird/edge cases to ensure they are handled elegantly...
+        self.assertEqual(
+            cf.Data(10).stats(),
             {
-                "minimum": 1,
-                "mean": 1.0,
-                "median": 1.0,
-                "maximum": 1,
+                "minimum": 10,
+                "mean": 10.0,
+                "median": 10.0,
+                "maximum": 10,
                 "range": 0,
-                "mid_range": 1.0,
+                "mid_range": 10.0,
                 "standard_deviation": 0.0,
-                "root_mean_square": 1.0,
-                "sum": 2,
-                "sample_size": 2,
+                "root_mean_square": 10.0,
+                "sample_size": 1,
             },
         )
+        # NaN values aren't 'equal' to e/o, so check call works and that some
+        # representative values are as expected, in this case
+        s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
+        self.assertEqual(len(s5), 16)
+        self.assertEqual(s5["minimum"], -2)
+        self.assertEqual(s5["sum"], 3)
+        self.assertEqual(s5["sample_size"], 6)
+        self.assertTrue(np.isnan(s5["mean"]))
+        self.assertTrue(np.isnan(s5["variance"]))  # needs all=True to show up
 
     def test_Data__init__dtype_mask(self):
         """Test `__init__` for Data with `dtype` and `mask` keywords."""

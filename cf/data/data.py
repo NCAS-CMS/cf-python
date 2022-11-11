@@ -10,6 +10,7 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
+from dask import compute, delayed  # noqa: F401
 from dask.array import Array
 from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
@@ -334,6 +335,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data(tuple('fly'))
 
         """
+        if array is None and source is None:  # don't create no/empty Data
+            raise ValueError(
+                "Can't create empty data: some input data or datum must be "
+                "provided via the 'source' or 'array' parameters."
+            )
+
         if source is None and isinstance(array, self.__class__):
             source = array
 
@@ -2332,7 +2339,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(da.ceil(dx))
         return d
 
-    def compute(self):
+    def compute(self):  # noqa: F811
         """A numpy view the data.
 
         In-place changes to the returned numpy array *might* affect
@@ -9083,9 +9090,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(da.round(dx, decimals=decimals))
         return d
 
+    @daskified(_DASKIFIED_VERBOSE)
     def stats(
         self,
         all=False,
+        compute=True,
         minimum=True,
         mean=True,
         median=True,
@@ -9123,6 +9132,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             all: `bool`, optional
                 Calculate all possible statistics, regardless of the value
                 of individual metric parameters.
+
+            compute: `bool`, optional
+                If True (the default), returned values for the statistical
+                calculations in the output dictionary are computed, else
+                each is given in the form of a delayed `Data` operation.
 
             minimum: `bool`, optional
                 Calculate the minimum of the values.
@@ -9184,7 +9198,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `dict`
-                The statistics.
+                The statistics, with keys giving the operation names and
+                values being the result of the corresponding statistical
+                calculation, which are either the computed numerical
+                values if `compute` is True, else the delayed `Data`
+                operations which encapsulate those.
 
         **Examples**
 
@@ -9193,42 +9211,55 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0  1  2]
          [3 --  5]]
         >>> d.stats()
-        {'minimum': <CF Data(): 0>,
-         'mean': <CF Data(): 2.2>,
-         'median': <CF Data(): 2.0>,
-         'maximum': <CF Data(): 5>,
-         'range': <CF Data(): 5>,
-         'mid_range': <CF Data(): 2.5>,
-         'standard_deviation': <CF Data(): 1.7204650534085253>,
-         'root_mean_square': <CF Data(): 2.792848008753788>,
+        {'minimum': 0,
+         'mean': 2.2,
+         'median': 2.0,
+         'maximum': 5,
+         'range': 5,
+         'mid_range': 2.5,
+         'standard_deviation': 1.7204650534085255,
+         'root_mean_square': 2.792848008753788,
          'sample_size': 5}
         >>> d.stats(all=True)
+        {'minimum': 0,
+         'mean': 2.2,
+         'median': 2.0,
+         'maximum': 5,
+         'range': 5,
+         'mid_range': 2.5,
+         'standard_deviation': 1.7204650534085255,
+         'root_mean_square': 2.792848008753788,
+         'minimum_absolute_value': 0,
+         'maximum_absolute_value': 5,
+         'mean_absolute_value': 2.2,
+         'mean_of_upper_decile': 5.0,
+         'sum': 11,
+         'sum_of_squares': 39,
+         'variance': 2.9600000000000004,
+         'sample_size': 5}
+        >>> d.stats(mean_of_upper_decile=True, range=False)
+        {'minimum': 0,
+         'mean': 2.2,
+         'median': 2.0,
+         'maximum': 5,
+         'mid_range': 2.5,
+         'standard_deviation': 1.7204650534085255,
+         'root_mean_square': 2.792848008753788,
+         'mean_of_upper_decile': 5.0,
+         'sample_size': 5}
+
+        To ask for delayed operations instead of computed values:
+
+        >>> d.stats(compute=False)
         {'minimum': <CF Data(): 0>,
          'mean': <CF Data(): 2.2>,
          'median': <CF Data(): 2.0>,
          'maximum': <CF Data(): 5>,
          'range': <CF Data(): 5>,
          'mid_range': <CF Data(): 2.5>,
-         'standard_deviation': <CF Data(): 1.7204650534085253>,
+         'standard_deviation': <CF Data(): 1.7204650534085255>,
          'root_mean_square': <CF Data(): 2.792848008753788>,
-         'minimum_absolute_value': <CF Data(): 0>,
-         'maximum_absolute_value': <CF Data(): 5>,
-         'mean_absolute_value': <CF Data(): 2.2>,
-         'mean_of_upper_decile': <CF Data(): 5.0>,
-         'sum': <CF Data(): 11>,
-         'sum_of_squares': <CF Data(): 39>,
-         'variance': <CF Data(): 2.96>,
-         'sample_size': 5}
-        >>> d.stats(mean_of_upper_decile=True, range=False)
-        {'minimum': <CF Data(): 0>,
-         'mean': <CF Data(): 2.2>,
-         'median': <CF Data(): 2.0>,
-         'maximum': <CF Data(): 5>,
-         'mid_range': <CF Data(): 2.5>,
-         'standard_deviation': <CF Data(): 1.7204650534085253>,
-         'root_mean_square': <CF Data(): 2.792848008753788>,
-         'mean_of_upper_decile': <CF Data(): 5.0>,
-         'sample_size': 5}
+         'sample_size': <CF Data(1, 1): [[5]]>}
 
         """
         no_weights = (
@@ -9264,16 +9295,22 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if all or locals()[stat]:
                 func = getattr(self, stat)
                 if stat in no_weights:
-                    value = func(squeeze=True)
+                    value = delayed(func)(squeeze=True)
                 else:
-                    value = func(squeeze=True, weights=weights)
+                    value = delayed(func)(squeeze=True, weights=weights)
 
                 out[stat] = value
 
         if all or sample_size:
-            out["sample_size"] = int(self.sample_size())
+            out["sample_size"] = delayed(lambda: self.sample_size())()
 
-        return out
+        data_values = globals()["compute"](out)[0]  # noqa: F811
+        if compute:
+            # Convert cf.Data objects holding the scalars (or scalar array
+            # for the case of sample_size only) to scalar values
+            return {op: val.array.item() for op, val in data_values.items()}
+        else:
+            return data_values
 
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
