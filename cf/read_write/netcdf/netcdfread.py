@@ -433,7 +433,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         """
         g = self.read_vars
-        custom = data._get_component("custom")
 
         # Get the netCDF4.Variable for the data
         if g["has_groups"]:
