@@ -3444,13 +3444,31 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         else:
             result = getattr(dx0, method)(dx1)
 
+        # Set axes when other has more dimensions than self
+        axes = None
+        ndim0 = dx0.ndim
+        if not ndim0:
+            axes = other._axes
+        else:
+            diff = dx1.ndim - ndim0
+            if diff > 0:
+                axes = list(self._axes)
+                for _ in range(diff):
+                    axes.insert(0, new_axis_identifier(tuple(axes)))
+
         if inplace:  # in-place so concerns original self
             self._set_dask(result)
             self.override_units(new_Units, inplace=True)
+            if axes is not None:
+                self._axes = axes
+
             return self
         else:  # not, so concerns a new Data object copied from self, data0
             data0._set_dask(result)
             data0.override_units(new_Units, inplace=True)
+            if axes is not None:
+                data0._axes = axes
+
             return data0
 
     def _parse_indices(self, *args, **kwargs):
@@ -9126,7 +9144,24 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
+
+        # Set axes when the new array has more dimensions than self
+        axes = None
+        ndim0 = self.ndim
+        if not ndim0:
+            axes = generate_axis_identifiers(dx.ndim)
+        else:
+            diff = dx.ndim - ndim0
+            if diff > 0:
+                axes = list(self._axes)
+                for _ in range(diff):
+                    axes.insert(0, new_axis_identifier(tuple(axes)))
+
+        if axes is not None:
+            d._axes = axes
+
         d._set_dask(dx)
+
         return d
 
     @daskified(_DASKIFIED_VERBOSE)

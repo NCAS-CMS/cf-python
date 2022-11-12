@@ -2356,6 +2356,17 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(de.shape, ab.shape)
                 self.assertTrue((de.array == ab).all())
 
+        # Test setting of _axes during broadcasting
+        d = cf.Data([8, 9])
+        e = d.reshape(1, 2)
+        self.assertEqual(len((d * e)._axes), 2)
+        self.assertEqual(len((e * d)._axes), 2)
+
+        d = cf.Data(8)
+        e = d.reshape(1, 1)
+        self.assertEqual(len((d * e)._axes), 2)
+        self.assertEqual(len((e * d)._axes), 2)
+
     def test_Data__len__(self):
         """Test the `__len__` Data method."""
         self.assertEqual(3, len(cf.Data([1, 2, 3])))
@@ -3222,6 +3233,13 @@ class DataTest(unittest.TestCase):
 
             self.assertEqual(d.shape, a.shape)
             self.assertTrue((d.array == a).all())
+
+        # Test setting of _axes
+        d = cf.Data(8)
+        self.assertEqual(len(d.reshape(1, 1)._axes), 2)
+
+        d = cf.Data([8, 9])
+        self.assertEqual(len(d.reshape(1, 2)._axes), 2)
 
     def test_Data_square(self):
         """Test the `square` Data method."""
