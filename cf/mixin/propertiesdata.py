@@ -16,6 +16,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
     default_netCDF_fillvals,
 )
@@ -1595,13 +1596,13 @@ class PropertiesData(Properties):
 
         self.Units = Units(None, getattr(self, "calendar", None))
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
+
+        Deprecated at version TODODASKVER. Use the method
+        `masked_invalid` instead.
 
         Note that:
 
@@ -1661,11 +1662,53 @@ class PropertiesData(Properties):
         [1.  -- ]
 
         """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "mask_invalid",
+            message="Use the method 'masked_invalid' instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    @_deprecated_kwarg_check("i")
+    @_inplace_enabled(default=False)
+    def masked_invalid(self, inplace=False, i=False):
+        """Mask the array where invalid values occur (NaN or inf).
+
+        .. seealso:: `numpy.ma.masked_invalid`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with masked values, or `None` if the
+                operation was in-place.
+
+
+        **Examples**
+
+        >>> print(f.array)
+        [0 1 2]
+        >>> print(g.array)
+        [0 2 0]
+        >>> h = f / g
+        >>> print(h.array)
+        [nan 0.5 inf]
+        >>> i = h.masked_invalid()
+        >>> print(i.array)
+        [-- 0.5 --]
+
+        """
         v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None, _fill_value=False)
         if data is not None:
-            data.mask_invalid(inplace=True)
+            data.masked_invalid(inplace=True)
 
         return v
 
@@ -3899,7 +3942,7 @@ class PropertiesData(Properties):
         >>> f.arctanh(inplace=True)
         >>> print(f.array)
         [nan inf 1.0986122886681098 0.6931471805599453 --]
-        >>> f.mask_invalid(inplace=True)
+        >>> f.masked_invalid(inplace=True)
         >>> print(f.array)
         [-- -- 1.0986122886681098 0.6931471805599453 --]
 
@@ -3954,7 +3997,7 @@ class PropertiesData(Properties):
         >>> f.arcsin(inplace=True)
         >>> print(f.array)
         [nan 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
-        >>> f.mask_invalid(inplace=True)
+        >>> f.masked_invalid(inplace=True)
         >>> print(f.array)
         [-- 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
 
@@ -4063,7 +4106,7 @@ class PropertiesData(Properties):
         >>> f.arccos(inplace=True)
         >>> print(f.array)
         [nan 0.0 0.6435011087932843 0.9272952180016123 --]
-        >>> f.mask_invalid(inplace=True)
+        >>> f.masked_invalid(inplace=True)
         >>> print(f.array)
         [-- 0.0 0.6435011087932843 0.9272952180016123 --]
 
@@ -4118,7 +4161,7 @@ class PropertiesData(Properties):
         >>> f.arccosh(inplace=True)
         >>> print(f.array)
         [0.6223625037147786 0.0 nan nan --]
-        >>> f.mask_invalid(inplace=True)
+        >>> f.masked_invalid(inplace=True)
         >>> print(f.array)
         [0.6223625037147786 0.0 -- -- --]
 
@@ -4857,12 +4900,13 @@ class PropertiesData(Properties):
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the data by adding a halo.
 
@@ -4887,10 +4931,10 @@ class PropertiesData(Properties):
 
         :Parameters:
 
-            size: `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the
+                If *depth* is a non-negative `int` then this is the
                 halo size that is applied to all of the axes defined
                 by the *axes* parameter.
 
@@ -4904,22 +4948,22 @@ class PropertiesData(Properties):
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``1``
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results
-                  in no change to the data shape.
+                  Specify a halo size of zero: ``0``. This results in
+                  no change to the data shape.
 
                 *Parameter example:*
                   For data with three dimensions, specify a halo size
                   of 3 for the first dimension and 1 for the second
-                  dimension: ``size={0: 3, 1: 1}``. This is equivalent
-                  to ``size={0: 3, 1: 1, 2: 0}``
+                  dimension: ``{0: 3, 1: 1}``. This is equivalent to
+                  ``{0: 3, 1: 1, 2: 0}``
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
-                  dimensions `size=2, axes=[0, -1]`` or equivalently
-                  ``size={0: 2, -1: 2}``.
+                  dimensions `depth=2, axes=[0, -1]`` or equivalently
+                  ``depth={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
                 Select the domain axes to be expanded, defined by
@@ -4937,14 +4981,13 @@ class PropertiesData(Properties):
                 positions in the data.
 
                 The "X" and "Y" axes must be a subset of those
-                identified by the *size* or *axes* parameter.
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y':
-                  1}``
+                  respectively of the data: ``{'X': 2, 'Y': 1}``
 
             fold_index: `int`, optional
                 Identify which index of the "Y" axis corresponds to
@@ -4957,6 +5000,9 @@ class PropertiesData(Properties):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
+            size: deprecated at version TODODASKVER
+                Use the *depth* parameter instead.
+
         :Returns:
 
             `{{class}}` or `None`
@@ -4965,19 +5011,25 @@ class PropertiesData(Properties):
 
         **Examples**
 
-            TODO
+        TODO
 
         """
-        _kwargs = [f"{k}={v!r}" for k, v in locals().items()]
-        _ = f"{self.__class__.__name__}.halo("
-        logger.info("{}{}".format(_, (",\n" + " " * len(_)).join(_kwargs)))
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
 
         v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None)
         if data is not None:
             data.halo(
-                size=size,
+                depth,
                 axes=axes,
                 tripolar=tripolar,
                 fold_index=fold_index,

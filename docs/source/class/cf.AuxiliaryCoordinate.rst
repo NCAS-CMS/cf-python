@@ -272,6 +272,7 @@ Data
    ~cf.AuxiliaryCoordinate.count
    ~cf.AuxiliaryCoordinate.count_masked
    ~cf.AuxiliaryCoordinate.fill_value
+   ~cf.AuxiliaryCoordinate.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -281,7 +282,6 @@ Data
    ~cf.AuxiliaryCoordinate.binary_mask
    ~cf.AuxiliaryCoordinate.hardmask
    ~cf.AuxiliaryCoordinate.mask
-   ~cf.AuxiliaryCoordinate.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -296,7 +296,7 @@ Data
    :template: method.rst
 
    ~cf.AuxiliaryCoordinate.__setitem__
-   ~cf.AuxiliaryCoordinate.mask_invalid
+   ~cf.AuxiliaryCoordinate.masked_invalid
    ~cf.AuxiliaryCoordinate.subspace
    ~cf.AuxiliaryCoordinate.where
 

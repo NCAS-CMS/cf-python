@@ -178,6 +178,7 @@ Data
    ~cf.FieldAncillary.count
    ~cf.FieldAncillary.count_masked
    ~cf.FieldAncillary.fill_value
+   ~cf.FieldAncillary.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -187,7 +188,6 @@ Data
    ~cf.FieldAncillary.binary_mask
    ~cf.FieldAncillary.hardmask
    ~cf.FieldAncillary.mask
-   ~cf.FieldAncillary.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -203,7 +203,7 @@ Data
 
    ~cf.FieldAncillary.__setitem__
    ~cf.FieldAncillary.halo
-   ~cf.FieldAncillary.mask_invalid
+   ~cf.FieldAncillary.masked_invalid
    ~cf.FieldAncillary.subspace
    ~cf.FieldAncillary.where
 

@@ -202,6 +202,7 @@ Data
    ~cf.CellMeasure.count
    ~cf.CellMeasure.count_masked
    ~cf.CellMeasure.fill_value
+   ~cf.CellMeasure.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -211,7 +212,6 @@ Data
    ~cf.CellMeasure.binary_mask
    ~cf.CellMeasure.hardmask
    ~cf.CellMeasure.mask
-   ~cf.CellMeasure.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -227,7 +227,7 @@ Data
 
    ~cf.CellMeasure.__setitem__
    ~cf.CellMeasure.halo
-   ~cf.CellMeasure.mask_invalid
+   ~cf.CellMeasure.masked_invalid
    ~cf.CellMeasure.subspace
    ~cf.CellMeasure.where
 

@@ -72,13 +72,13 @@ class UMArray(FileArray):
 
         **Examples**
 
-        >>> a = UMFileArray(file='file.pp', header_offset=3156,
-        ...                 data_offset=3420,
-        ...                 dtype=numpy.dtype('float32'),
-        ...                 shape=(1, 1, 30, 24),
-        ...                 disk_length=0)
+        >>> a = UMArray(file='file.pp', header_offset=3156,
+        ...             data_offset=3420,
+        ...             dtype=numpy.dtype('float32'),
+        ...             shape=(1, 1, 30, 24),
+        ...             disk_length=0)
 
-        >>> a = UMFileArray(
+        >>> a = UMArray(
         ...         file='packed_file.pp', header_offset=3156,
         ...         data_offset=3420,
         ...         dtype=numpy.dtype('float32'), shape=(30, 24),

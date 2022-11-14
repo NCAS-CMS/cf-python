@@ -14,13 +14,19 @@ version 3.14.0
 version 3.13.1
 --------------
 
-**2022-07-??**
+**2022-10-17**
 
 * Upgrade to allow cf to work with Python 3.10
   (https://github.com/NCAS-CMS/cf-python/issues/419)
 * Fix bug when setting coordinate bounds with different units to their
   parent coordinates
   (https://github.com/NCAS-CMS/cf-python/issues/417)
+* Fixed bug that created incorrect hybrid height levels when reading
+  UM fields that also have pseudolevels
+  (https://github.com/NCAS-CMS/cf-python/issues/468)
+* Fixed bug when reading zero length netCDF or PP files caused
+  cf-python to hang (https://github.com/NCAS-CMS/cf-python/issues/422)
+* Changed dependency: ``1.9.0.4<=cfdm<1.9.1.0``
 
 ----
 

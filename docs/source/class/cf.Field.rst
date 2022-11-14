@@ -207,6 +207,7 @@ Data
    ~cf.Field.count
    ~cf.Field.count_masked
    ~cf.Field.fill_value
+   ~cf.Field.masked_invalid
 	    
 .. autosummary::
    :nosignatures:
@@ -216,7 +217,6 @@ Data
    ~cf.Field.binary_mask
    ~cf.Field.hardmask
    ~cf.Field.mask
-   ~cf.Field.mask_invalid
    
 .. rubric:: *Changing data values*
 
@@ -230,7 +230,7 @@ Data
    ~cf.Field.indices
    ~cf.Field.where
    ~cf.Field.apply_masking
-   ~cf.Field.mask_invalid
+   ~cf.Field.masked_invalid
 
 Miscellaneous data operations
 -----------------------------

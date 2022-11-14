@@ -171,7 +171,11 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Index.apply_masking
+   ~cf.Index.count
+   ~cf.Index.count_masked
    ~cf.Index.fill_value
+   ~cf.Index.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -179,12 +183,8 @@ Data
    :template: attribute.rst
 
    ~cf.Index.binary_mask
-   ~cf.Index.apply_masking
-   ~cf.Index.count
-   ~cf.Index.count_masked
    ~cf.Index.hardmask
    ~cf.Index.mask
-   ~cf.Index.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -200,7 +200,7 @@ Data
 
    ~cf.Index.__setitem__
    ~cf.Index.halo
-   ~cf.Index.mask_invalid
+   ~cf.Index.masked_invalid
    ~cf.Index.subspace
    ~cf.Index.where
 
