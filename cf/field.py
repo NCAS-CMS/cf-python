@@ -14791,7 +14791,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             tuple(_section(self, axes, min_step=min_step).values())
         )
 
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
+    @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def regrids(
         self,
@@ -15068,7 +15068,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             inplace=inplace,
         )
 
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
+    @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
     def regridc(
         self,
