@@ -1430,9 +1430,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         ``'first_element'``, ``'second_element'`` and
         ``'last_element'``.
 
+        .. note:: By default, `_del_cached_elements` is run whenever
+                  the `_set_dask` and `del_dask` methods are used. If
+                  the `dask` array is updated or changed without using
+                  the default behaviour of either of these two
+                  methods, and there is any chance that the cached
+                  values might be inconsistent with the new data, then
+                  `_del_cached_elements` must be called explicitly to
+                  ensure consistency.
+
         .. versionadded:: TODODASKVER
 
-        .. seealso:: `_set_cached_elements`
+        .. seealso:: `_del_dask`, `_set_cached_elements`, `_set_dask`
 
         :Returns:
 
@@ -1458,10 +1467,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             elements: `dict`
                Zero or more element values to be cached, each keyed by
                a unique identifier to allow unambiguous retrieval.
+               Existing cached elements not specified by *elements*
+               will not be removed.
 
         :Returns:
 
             `None`
+
+        **Examples**
+
+        >>> d._set_cached_elements({'first_element': 273.15})
 
         """
         self._custom.update(elements)

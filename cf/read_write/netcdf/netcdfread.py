@@ -412,16 +412,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         element values inside its ``custom`` dictionary.
 
         Doing this here is cheap because only the individual elements
-        are read from the already-open-file, as opposed to being
-        retrieved from *data* (which require a whole dask chunk to be
-        read to get each single value).
+        are read from the already-open file, as opposed to being
+        retrieved from *data* (which would require a whole dask chunk
+        to be read to get each single value).
 
         .. versionadded:: TODODASKVER
 
         :Parameters:
 
             data: `Data`
-                The data to be updated.
+                The data to be updated with its cached values.
 
             ncvar: `str`
                 The name of the netCDF variable that contains the
