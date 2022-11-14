@@ -3410,7 +3410,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "Use function 'cf.parse_indices' instead."
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
     def _regrid(
         self,
         method=None,
