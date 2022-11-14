@@ -3510,7 +3510,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if dst_mask is not None:
             dst_mask = da.asanyarray(dst_mask)
 
-        # Create a delayed object that calculates creates teh weights
+        # Create a delayed object that calculates creates the weights
         # matrix
         weights_func = partial(
             regrid_weights,
@@ -3519,7 +3519,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             dtype=dst_dtype,
             start_index=operator.start_index,
         )
-
         weights = delayed(weights_func, pure=True)(
             weights=weights,
             row=row,
@@ -3527,6 +3526,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             dst_mask=dst_mask,
         )
 
+        # Create a regridding function to apply to each chunk
         regrid_func = partial(
             regrid,
             method=method,

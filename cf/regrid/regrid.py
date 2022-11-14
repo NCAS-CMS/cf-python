@@ -371,8 +371,8 @@ def regrid(
                 method in ("patch", "conservative_2nd", "nearest_stod")
                 or return_ESMF_regrid_operator
             ):
-                # For these regridding methods, take the destination
-                # mask to be taken into account during the ESMF
+                # For these regridding methods, the destination mask
+                # must be taken into account during the ESMF
                 # calculation of the regrid weights, rather than the
                 # mask being applied retrospectively to weights that
                 # have been calculated assuming no destination grid

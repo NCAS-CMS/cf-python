@@ -352,7 +352,6 @@ class RegridOperator(mixin_Container, Container):
             src_axes=self.src_axes,
             dst_axes=self.dst_axes,
             dst=self.dst.copy()
-            #            parameters=deepcopy(self.parameters()),
         )
 
     @_display_or_return
@@ -399,8 +398,6 @@ class RegridOperator(mixin_Container, Container):
             "col",
         ):
             string.append(f"{attr}: {getattr(self, attr)!r}")
-
-        #        string.append(f"parameters: {self.parameters()}")
 
         return "\n".join(string)
 
@@ -457,8 +454,9 @@ class RegridOperator(mixin_Container, Container):
             )
 
     def parameters(self):
-        """Parameters that describe the CF metadata for the destination
-        grid.
+        """Get the CF metadata parameters for the destination grid.
+
+        Deprecated at version TODODASKVER.
 
         Any parameter names and values are allowed, and it is assumed
         that the these are well defined during the creation and
@@ -483,8 +481,6 @@ class RegridOperator(mixin_Container, Container):
             version="TODODASKVER",
             removed_at="5.0.0",
         )
-
-        return self._get_component("parameters").copy()
 
     def todense(self, order="C"):
         """Return the weights in dense format.

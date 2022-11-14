@@ -214,7 +214,7 @@ def regrid(
 
     if variable_mask:
         # Source data is masked and the source mask varies across
-        # slices => we have to regrid each slice separately, adjust
+        # slices => we have to regrid each slice separately, adjusting
         # the weights for the mask of each slice.
         #
         # However, if the mask of a regrid slice is the same as the
@@ -272,8 +272,8 @@ def _regrid(
     """Worker function for `regrid`.
 
     Modifies the *weights* matrix to account for missing data in *a*,
-    and creates the regridded array by forming the dot product of the
-    modified *weights* and *a*.
+    and then creates the regridded array by forming the dot product of
+    the modified *weights* and *a*.
 
     .. versionadded:: TODODASKVER
 
@@ -327,7 +327,7 @@ def _regrid(
             possibly modified to account for missing data. If
             *prev_mask* equals *src_mask* then the *prev_weights*
             weights matrix is used to calculate the regridded data,
-            bypassing any need to calcualte a new weights matrix.
+            bypassing any need to calculate a new weights matrix.
             Ignored if `prev_mask` is `None`.
 
     :Returns:
@@ -378,7 +378,7 @@ def _regrid(
             # destination cell j that intersects with unmasked cells
             # of the source grid.
             #
-            #     D_j = 1 - w_i1j - ... - wiNj
+            #     D_j = 1 - w_i1j - ... - w_iNj
             #
             # where w_iXj is the unmasked weight for masked source
             # cell i and destination cell j.
@@ -387,17 +387,18 @@ def _regrid(
             # Get rid of values that are approximately zero, or
             # spuriously negative. These values of 'D' correspond to
             # destination cells that overlap only masked source
-            # cells. These weights will imminently be zeroed, so it's
-            # OK to set their value to 1, i.e. a nice non-zero value
-            # that will allow us to divide by 'D' in the next step.
+            # cells. These weights will be zeroed later on, so it's OK
+            # to set their value to 1, i.e. a nice non-zero value that
+            # will allow us to divide by 'D' in the next step.
             D = np.where(D < min_weight, 1, D)
 
             # Divide the weights by 'D'. Note that for destination
             # cells which do not intersect any masked source grid
-            # cells, 'D' will be 1.
+            # cells, 'D' will now be 1.
             w = weights / D
 
-            # Zero weights associated with masked source grid cells
+            # Zero the weights associated with masked source grid
+            # cells
             w[:, src_mask] = 0
 
             # Mask out rows of the weights matrix which contain all
@@ -412,17 +413,17 @@ def _regrid(
 
         elif method in ("linear", "bilinear", "nearest_dtos"):
             # 2) Linear and nearest neighbour methods:
-            #
+            #            
             # Mask out any row j that contains at least one positive
-            # w_ji that corresponds to a masked source grid cell i.
+            # (i.e. greater than or equal to 'min_weight') w_ji that
+            # corresponds to a masked source grid cell i. Such a row 
+            # corresponds to a destination grid cell that intersects
+            # at least one masked source grid cell.
             if np.ma.isMA(weights):
                 where = np.ma.where
             else:
                 where = np.where
 
-            # Find the rows of 'weights' that contain at least one
-            # masked source cell with a non-zero weight. Each row
-            # corresponds to a destination grid cell.
             j = np.unique(where((weights >= min_weight) & (src_mask))[0])
             if j.size:
                 if np.ma.isMA(weights):
@@ -517,7 +518,7 @@ def regrid_weights(
             have no non-zero weights. If `None` (the default) then no
             additional destination grid cells are masked. If a Boolean
             `numpy` array then it must have shape *dst_shape*, and
-            `True` signifies as masked cell.
+            `True` signifies a masked cell.
 
         start_index: `int`, optional
             Specify whether the *row* and *col* parameters use 0- or
