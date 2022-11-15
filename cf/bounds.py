@@ -219,7 +219,9 @@ class Bounds(mixin.Coordinate, mixin.PropertiesData, cfdm.Bounds):
             else:
                 return (data[1:, 0] >= data[:-1, 1]).all()
 
-    @_deprecated_kwarg_check("relaxed_identity")
+    @_deprecated_kwarg_check(
+        "relaxed_identity", version="3.0.0", removed_at="4.0.0"
+    )
     def identity(
         self,
         default="",

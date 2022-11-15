@@ -3,7 +3,7 @@ import datetime
 import faulthandler
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -37,11 +37,9 @@ class TimeDurationTest(unittest.TestCase):
         self.assertLessEqual(cf.TimeDuration(2, "hours"), 2)
         self.assertEqual(cf.TimeDuration(0.1, units="seconds"), 0.1)
         self.assertNotEqual(cf.TimeDuration(2, "days"), 30.5)
-        self.assertGreater(
-            cf.TimeDuration(2, "calendar_years"), numpy.array(1.5)
-        )
+        self.assertGreater(cf.TimeDuration(2, "calendar_years"), np.array(1.5))
         self.assertLess(
-            cf.TimeDuration(2, "calendar_months"), numpy.array([[12]])
+            cf.TimeDuration(2, "calendar_months"), np.array([[12]])
         )
 
         self.assertGreater(
@@ -78,11 +76,9 @@ class TimeDurationTest(unittest.TestCase):
         )
         self.assertEqual(cf.TimeDuration(2, "hours"), 2)
         self.assertNotEqual(cf.TimeDuration(2, "days"), 30.5)
-        self.assertGreater(
-            cf.TimeDuration(2, "calendar_years"), numpy.array(1.5)
-        )
+        self.assertGreater(cf.TimeDuration(2, "calendar_years"), np.array(1.5))
         self.assertLess(
-            cf.TimeDuration(2, "calendar_months"), numpy.array([[12]])
+            cf.TimeDuration(2, "calendar_months"), np.array([[12]])
         )
 
         self.assertEqual(cf.TimeDuration(64, "calendar_years") + 2, cf.Y(66))
@@ -100,7 +96,7 @@ class TimeDurationTest(unittest.TestCase):
         self.assertEqual(cf.TimeDuration(36, "calendar_months") // 8, cf.M(4))
 
         self.assertEqual(
-            cf.TimeDuration(36, "calendar_months") / numpy.array(8.0),
+            cf.TimeDuration(36, "calendar_months") / np.array(8.0),
             cf.M(36 / 8.0),
         )
         self.assertEqual(
@@ -138,7 +134,7 @@ class TimeDurationTest(unittest.TestCase):
         self.assertEqual(t, cf.h(17))
         t += 5.5
         self.assertEqual(t, cf.h(22.5))
-        t //= numpy.array(2)
+        t //= np.array(2)
         self.assertEqual(t, cf.h(11.0))
         t *= 10
         self.assertEqual(t, cf.h(110.0))

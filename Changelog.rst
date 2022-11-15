@@ -28,7 +28,7 @@ version 3.13.1
   (https://github.com/NCAS-CMS/cf-python/issues/468)
 * Fixed bug when reading zero length netCDF or PP files caused
   cf-python to hang (https://github.com/NCAS-CMS/cf-python/issues/422)
-* Changed dependency: 1.9.0.4<=cfdm<1.9.1.0
+* Changed dependency: ``1.9.0.4<=cfdm<1.9.1.0``
 
 ----
 

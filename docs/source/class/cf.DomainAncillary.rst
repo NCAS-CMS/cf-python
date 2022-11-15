@@ -248,6 +248,7 @@ Data
    ~cf.DomainAncillary.count
    ~cf.DomainAncillary.count_masked
    ~cf.DomainAncillary.fill_value
+   ~cf.DomainAncillary.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -257,7 +258,6 @@ Data
    ~cf.DomainAncillary.binary_mask
    ~cf.DomainAncillary.hardmask
    ~cf.DomainAncillary.mask
-   ~cf.DomainAncillary.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -273,7 +273,7 @@ Data
 
    ~cf.DomainAncillary.__setitem__
    ~cf.DomainAncillary.halo
-   ~cf.DomainAncillary.mask_invalid
+   ~cf.DomainAncillary.masked_invalid
    ~cf.DomainAncillary.subspace
    ~cf.DomainAncillary.where
 

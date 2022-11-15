@@ -1,6 +1,5 @@
 import cfdm
-from numpy import empty as numpy_empty
-from numpy import result_type as numpy_result_type
+import numpy as np
 
 from . import Bounds, mixin
 from .data.data import Data
@@ -531,7 +530,7 @@ class DimensionCoordinate(
                 if not self.direction():
                     cellsize0, cellsize1 = -cellsize1, -cellsize0
 
-                bounds = numpy_empty((size, 2), dtype=array.dtype)
+                bounds = np.empty((size, 2), dtype=array.dtype)
                 bounds[:, 0] = array - cellsize0
                 bounds[:, 1] = array + cellsize1
             else:
@@ -556,7 +555,7 @@ class DimensionCoordinate(
                         f"non-reference time coordinates: {self.Units!r}"
                     )
 
-                bounds = numpy_empty((size, 2), dtype=object)
+                bounds = np.empty((size, 2), dtype=object)
 
                 cellsize_bounds = cellsize.bounds
                 direction = bool(self.direction())
@@ -617,7 +616,7 @@ class DimensionCoordinate(
                 if not direction:
                     bounds_1d = bounds_1d[::-1]
 
-            bounds = numpy_empty((size, 2), dtype=dtype)
+            bounds = np.empty((size, 2), dtype=dtype)
             bounds[:, 0] = bounds_1d[:-1]
             bounds[:, 1] = bounds_1d[1:]
 
@@ -626,7 +625,7 @@ class DimensionCoordinate(
 
         return bounds
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         """Flips the dimension coordinate, that is reverses its
@@ -753,7 +752,7 @@ class DimensionCoordinate(
     #
     #        return True
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False):
         """Rolls the dimension coordinate along a cyclic axis."""
@@ -788,35 +787,37 @@ class DimensionCoordinate(
 
         super(DimensionCoordinate, c).roll(axis, shift, inplace=True)
 
-        c.dtype = numpy_result_type(c.dtype, period.dtype)
+        c.dtype = np.result_type(c.dtype, period.dtype)
+
+        data = c.data
 
         b = c.get_bounds(None)
         bounds_data = c.get_bounds_data(None, _fill_value=False)
 
         if bounds_data is not None:
-            b.dtype = numpy_result_type(bounds_data.dtype, period.dtype)
+            b.dtype = np.result_type(bounds_data.dtype, period.dtype)
             bounds_data = b.get_data(None, _fill_value=False)
 
         if direction:
             # Increasing
-            c[:shift] -= period
+            data[:shift] -= period
             if bounds_data is not None:
-                b[:shift] -= period
+                bounds_data[:shift] -= period
 
-            if c.data[0] <= centre - period:
-                c += period
+            if data[0] <= centre - period:
+                data += period
                 if bounds_data is not None:
-                    b += period
+                    bounds_data += period
         else:
             # Decreasing
-            c[:shift] += period
+            data[:shift] += period
             if bounds_data is not None:
-                b[:shift] += period
+                bounds_data[:shift] += period
 
-            if c.data[0] >= centre + period:
-                c -= period
+            if data[0] >= centre + period:
+                data -= period
                 if bounds_data is not None:
-                    b -= period
+                    bounds_data -= period
 
         c._custom["direction"] = direction
 
