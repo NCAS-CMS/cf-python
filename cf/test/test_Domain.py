@@ -101,8 +101,7 @@ class DomainTest(unittest.TestCase):
         f = self.d.copy()
 
         x = f.dimension_coordinate("X")
-        a = x.varray
-        a[...] = numpy.arange(0, 360, 40)
+        x[...] = numpy.arange(0, 360, 40)
         x.set_bounds(x.create_bounds())
         f.cyclic("X", iscyclic=True, period=360)
 
@@ -141,7 +140,7 @@ class DomainTest(unittest.TestCase):
             (x == [-80, -40, 0, 40, 80, 120, 160, 200, 240.0]).all()
         )
 
-        with self.assertRaises(IndexError):
+        with self.assertRaises(ValueError):
             f.indices(grid_longitude=cf.wi(90, 100))
 
         # wi (decreasing)
@@ -172,7 +171,7 @@ class DomainTest(unittest.TestCase):
         x = g.construct("grid_longitude").array
         self.assertTrue((x == [-40, 0, 40, 80][::-1]).all())
 
-        with self.assertRaises(IndexError):
+        with self.assertRaises(ValueError):
             f.indices(grid_longitude=cf.wi(90, 100))
 
         # wo
@@ -183,7 +182,7 @@ class DomainTest(unittest.TestCase):
         x = g.construct("grid_longitude").array
         self.assertTrue((x == [-200, -160, -120, -80, -40, 0, 40]).all())
 
-        with self.assertRaises(IndexError):
+        with self.assertRaises(ValueError):
             f.indices(grid_longitude=cf.wo(-90, 370))
 
         # set
@@ -292,6 +291,9 @@ class DomainTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             d.transpose(["Y", "X", "Z", 1])
+
+    def test_Domain_size(self):
+        self.assertEqual(self.d.size, 90)
 
 
 if __name__ == "__main__":
