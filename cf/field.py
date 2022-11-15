@@ -4554,9 +4554,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def title(self):
         self.del_property("title")
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def cell_area(
         self,
         radius="earth",
