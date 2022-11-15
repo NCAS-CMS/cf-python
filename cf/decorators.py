@@ -36,7 +36,7 @@ def _deprecated_kwarg_check(*depr_kwargs, version=None, removed_at=None):
             @_deprecated_kwarg_check('i', version="3.0.0")
             @_deprecated_kwarg_check('i', version="3.0.0", removed_at="4.0.0")
 
-        For a specified list `deprecated_kwargs`, check if the
+        For a specified list `depr_kwargs`, check if the
         decorated method has been supplied with any of the elements as
         keyword arguments and if so, call _DEPRECATION_ERROR_KWARGS on
         them, optionally providing a custom message to raise inside
