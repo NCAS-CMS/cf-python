@@ -1056,78 +1056,6 @@ class PropertiesDataBounds(PropertiesData):
             "data"
         )
 
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
-    @_inplace_enabled(default=False)
-    def mask_invalid(self, inplace=False, i=False):
-        """Mask the array where invalid values occur.
-
-        Note that:
-
-        * Invalid values are Nan or inf
-
-        * Invalid values in the results of arithmetic operations only
-          occur if the raising of `FloatingPointError` exceptions has been
-          suppressed by `cf.Data.seterr`.
-
-        * If the raising of `FloatingPointError` exceptions has been
-          allowed then invalid values in the results of arithmetic
-          operations it is possible for them to be automatically converted
-          to masked values, depending on the setting of
-          `cf.Data.mask_fpe`. In this case, such automatic conversion
-          might be faster than calling `mask_invalid`.
-
-        .. seealso:: `cf.Data.mask_fpe`, `cf.Data.seterr`
-
-        :Parameters:
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The construct with masked elements.
-
-        **Examples**
-
-        >>> print(f.array)
-        [ 0.  1.]
-        >>> print(g.array)
-        [ 1.  2.]
-
-        >>> old = cf.data.seterr('ignore')
-        >>> h = g/f
-        >>> print(h.array)
-        [ inf   2.]
-        >>> h.mask_invalid(inplace=True)
-        >>> print(h.array)
-        [--  2.]
-
-        >>> h = g**12345
-        >>> print(h.array)
-        [ 1.  inf]
-        >>> h.mask_invalid(inplace=True)
-        >>> print(h.array)
-        [1.  --]
-
-        >>> old = cf.data.seterr('raise')
-        >>> old = cf.data.mask_fpe(True)
-        >>> print((g/f).array)
-        [ --  2]
-        >>> print((g**12345).array)
-        [1.  -- ]
-
-        """
-        # Set bounds to True to bypass 'if bounds' check in call:
-        return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self),
-            "mask_invalid",
-            bounds=True,
-            inplace=inplace,
-            i=i,
-        )
-        
     @property
     def dtype(self):
         """The `numpy` data type of the data array.
@@ -2096,7 +2024,7 @@ class PropertiesDataBounds(PropertiesData):
         """
         return
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
@@ -2170,9 +2098,8 @@ class PropertiesDataBounds(PropertiesData):
             removed_at="5.0.0",
         )  # pragma: no cover
 
-    @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
-    def masked_invalid(self, inplace=False, i=False):
+    def masked_invalid(self, inplace=False):
         """Mask the array where invalid values occur (NaN or inf).
 
         Invalid values in any bounds are also masked.
@@ -2182,8 +2109,6 @@ class PropertiesDataBounds(PropertiesData):
         :Parameters:
 
             {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
 
         :Returns:
 
@@ -2211,7 +2136,6 @@ class PropertiesDataBounds(PropertiesData):
             "masked_invalid",
             bounds=True,
             inplace=inplace,
-            i=i,
         )
 
     def match_by_property(self, *mode, **properties):

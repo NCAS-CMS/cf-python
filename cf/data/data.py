@@ -1,7 +1,7 @@
 import logging
 import math
 import operator
-from functools import partial, reduce, wraps
+from functools import partial, reduce
 from itertools import product
 from numbers import Integral
 from operator import mul
@@ -62,7 +62,6 @@ from .utils import (  # is_small,; is_very_small,
     new_axis_identifier,
     scalar_masked_array,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -2827,7 +2826,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """True if the internal representation is a datetime object."""
         return self.dtype.kind == "O" and self.Units.isreftime
 
-
     @_inplace_enabled(default=False)
     def _asreftime(self, inplace=False):
         """Change the internal representation of data array elements
@@ -3853,7 +3851,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         return self._binary_operation(other, "__iand__")
-
 
     def __rand__(self, other):
         """The binary bitwise operation ``&`` with reflected operands.
@@ -10914,7 +10911,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             inplace=True,
         )
         return d
-        
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sum_of_weights(

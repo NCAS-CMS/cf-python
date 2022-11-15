@@ -1670,9 +1670,8 @@ class PropertiesData(Properties):
             removed_at="5.0.0",
         )  # pragma: no cover
 
-    @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
-    def masked_invalid(self, inplace=False, i=False):
+    def masked_invalid(self, inplace=False):
         """Mask the array where invalid values occur (NaN or inf).
 
         .. seealso:: `numpy.ma.masked_invalid`
