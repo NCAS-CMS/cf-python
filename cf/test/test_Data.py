@@ -4316,6 +4316,37 @@ class DataTest(unittest.TestCase):
         self.assertTrue((q == d).array.all())
         self.assertTrue((d == q).array.all())
 
+    def test_Data_get_filenames(self):
+        """Test `Data.get_filenames`."""
+        d = cf.Data.full((5, 8), 1, chunks=4)
+        self.assertEqual(d.get_filenames(), set())
+
+        f = cf.example_field(0)
+        cf.write(f, "file_A.nc")
+        cf.write(f, "file_B.nc")
+
+        a = cf.read("file_A.nc", chunks=4)[0].data
+        b = cf.read("file_B.nc", chunks=4)[0].data
+        b += 999
+        c = cf.Data(b.array, units=b.Units, chunks=4)
+
+        d = cf.Data.concatenate([a, a + 999, b, c], axis=1)
+        self.assertEqual(d.shape, (5, 32))
+
+        self.assertEqual(d.get_filenames(), set(["file_A.nc", "file_B.nc"]))
+        self.assertEqual(d[:, 2:7].get_filenames(), set(["file_A.nc"]))
+        self.assertEqual(d[:, 2:14].get_filenames(), set(["file_A.nc"]))
+        self.assertEqual(
+            d[:, 2:20].get_filenames(), set(["file_A.nc", "file_B.nc"])
+        )
+        self.assertEqual(
+            d[:, 2:30].get_filenames(), set(["file_A.nc", "file_B.nc"])
+        )
+        self.assertEqual(d[:, 29:30].get_filenames(), set())
+
+        d[2, 3] = -99
+        self.assertEqual(d[2, 3].get_filenames(), set(["file_A.nc"]))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
