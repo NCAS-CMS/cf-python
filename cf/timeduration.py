@@ -1090,7 +1090,7 @@ class TimeDuration:
 
         return length
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equals(
         self, other, rtol=None, atol=None, verbose=None, traceback=False
@@ -1193,7 +1193,7 @@ class TimeDuration:
 
         return True
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equivalent(
         self, other, rtol=None, atol=None, verbose=None, traceback=False

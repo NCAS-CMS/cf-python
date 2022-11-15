@@ -19,22 +19,28 @@ _display_or_return = cfdm._display_or_return
 
 
 # @_deprecated_kwarg_check('i') -> example usage for decorating, using i kwarg
-def _deprecated_kwarg_check(*depr_kwargs):
+def _deprecated_kwarg_check(*depr_kwargs, version=None, removed_at=None):
     """A wrapper for provision of positional arguments to the
     decorator."""
 
     def deprecated_kwarg_check_decorator(operation_method):
         """A decorator for a deprecation check on given kwargs.
 
-        To specify deprecated kwargs, supply them as string arguments, e.g:
+        To specify deprecated kwargs, supply them as string arguments,
+        with the version at which they were deprecated, and optionally
+        the version at which the kwargs will be completely
+        removed. E.g:
 
-            @_deprecated_kwarg_check('i')
-            @_deprecated_kwarg_check('i', 'traceback')
+            @_deprecated_kwarg_check('i', version="3.0.0")
+            @_deprecated_kwarg_check('i', 'traceback', version="3.0.0")
+            @_deprecated_kwarg_check('i', version="3.0.0")
+            @_deprecated_kwarg_check('i', version="3.0.0", removed_at="4.0.0")
 
-        For a specified list `deprecated_kwargs`, check if the decorated
-        method has been supplied with any of the elements as keyword arguments
-        and if so, call _DEPRECATION_ERROR_KWARGS on them, optionally
-        providing a custom message to raise inside it.
+        For a specified list `depr_kwargs`, check if the
+        decorated method has been supplied with any of the elements as
+        keyword arguments and if so, call _DEPRECATION_ERROR_KWARGS on
+        them, optionally providing a custom message to raise inside
+        it.
 
         """
 
@@ -56,7 +62,11 @@ def _deprecated_kwarg_check(*depr_kwargs):
                 if kwargs.get(depr_kwarg):
                     pass_in_kwarg = {depr_kwarg: True}
                     _DEPRECATION_ERROR_KWARGS(
-                        self, operation_method.__name__, pass_in_kwarg
+                        self,
+                        operation_method.__name__,
+                        pass_in_kwarg,
+                        version=version,
+                        removed_at=removed_at,
                     )  # pragma: no cover
 
             operation_method_result = operation_method(self, *args, **kwargs)
