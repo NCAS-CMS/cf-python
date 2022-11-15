@@ -1,9 +1,11 @@
+import atexit
 import contextlib
 import datetime
 import faulthandler
 import io
 import itertools
 import os
+import tempfile
 import unittest
 import warnings
 from functools import reduce
@@ -24,6 +26,26 @@ except Exception:
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
+
+n_tmpfiles = 2
+tmpfiles = [
+    tempfile.mkstemp("_test_Data.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+file_A, file_B = tmpfiles
+
+
+def _remove_tmpfiles():
+    """Try to remove defined temporary files by deleting their paths."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
+
 
 # To facilitate the testing of logging outputs (see comment tag 'Logging note')
 logger = cf.logging.getLogger(__name__)
@@ -4322,30 +4344,26 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.get_filenames(), set())
 
         f = cf.example_field(0)
-        cf.write(f, "file_A.nc")
-        cf.write(f, "file_B.nc")
+        cf.write(f, file_A)
+        cf.write(f, file_B)
 
-        a = cf.read("file_A.nc", chunks=4)[0].data
-        b = cf.read("file_B.nc", chunks=4)[0].data
+        a = cf.read(file_A, chunks=4)[0].data
+        b = cf.read(file_B, chunks=4)[0].data
         b += 999
         c = cf.Data(b.array, units=b.Units, chunks=4)
 
         d = cf.Data.concatenate([a, a + 999, b, c], axis=1)
         self.assertEqual(d.shape, (5, 32))
 
-        self.assertEqual(d.get_filenames(), set(["file_A.nc", "file_B.nc"]))
-        self.assertEqual(d[:, 2:7].get_filenames(), set(["file_A.nc"]))
-        self.assertEqual(d[:, 2:14].get_filenames(), set(["file_A.nc"]))
-        self.assertEqual(
-            d[:, 2:20].get_filenames(), set(["file_A.nc", "file_B.nc"])
-        )
-        self.assertEqual(
-            d[:, 2:30].get_filenames(), set(["file_A.nc", "file_B.nc"])
-        )
+        self.assertEqual(d.get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d[:, 2:7].get_filenames(), set([file_A]))
+        self.assertEqual(d[:, 2:14].get_filenames(), set([file_A]))
+        self.assertEqual(d[:, 2:20].get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d[:, 2:30].get_filenames(), set([file_A, file_B]))
         self.assertEqual(d[:, 29:30].get_filenames(), set())
 
         d[2, 3] = -99
-        self.assertEqual(d[2, 3].get_filenames(), set(["file_A.nc"]))
+        self.assertEqual(d[2, 3].get_filenames(), set([file_A]))
 
 
 if __name__ == "__main__":
