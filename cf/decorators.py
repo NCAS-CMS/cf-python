@@ -27,7 +27,7 @@ def _deprecated_kwarg_check(*depr_kwargs, version=None, removed_at=None):
         """A decorator for a deprecation check on given kwargs.
 
         To specify deprecated kwargs, supply them as string arguments,
-        with the version at which they were deprecated, and optional
+        with the version at which they were deprecated, and optionally
         the version at which the kwargs will be completely
         removed. E.g:
 
