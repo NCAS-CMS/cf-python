@@ -308,7 +308,7 @@ class functionTest(unittest.TestCase):
     def test_indices_shape(self):
         import dask.array as da
 
-        shape = (5, 6)
+        shape = (10, 20)
 
         self.assertEqual(cf.indices_shape((slice(2, 5), 4), shape), [3, 1])
         self.assertEqual(

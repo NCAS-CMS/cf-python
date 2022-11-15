@@ -1766,42 +1766,46 @@ def indices_shape(indices, full_shape, keepdims=True):
     >>> import numpy as np
     >>> import dask.array as da
 
-    >>> cf.indices_shape((slice(2, 5), 4), (5, 6))
+    >>> cf.indices_shape((slice(2, 5), 4), (10, 20))
     [3, 1]
-    >>> cf.indices_shape(([2, 3, 4], np.arange(1, 6)), (5, 6))
+    >>> cf.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
     [3, 5]
+
     >>> index0 = [False] * 5
     >>> index0[2:5] = [True] * 3
-    >>> cf.indices_shape((index0, da.arange(1, 6)), (5, 6))
+    >>> cf.indices_shape((index0, da.arange(1, 6)), (10, 20))
     [3, 5]
+
     >>> index0 = da.full((5,), False, dtype=bool)
     >>> index0[2:5] = True
     >>> index1 = np.full((6,), False, dtype=bool)
     >>> index1[1:6] = True
-    >>> cf.indices_shape((index0, index1), (5, 6))
+    >>> cf.indices_shape((index0, index1), (10, 20))
     [3, 5]
+
     >>> index0 = da.arange(5)
     >>> index0 = index0[index0 < 3]
-    >>> cf.indices_shape((index0, []), (5, 6))
+    >>> cf.indices_shape((index0, []), (10, 20))
     [3, 0]
-    >>> cf.indices_shape((da.from_array(2), np.array(3)), (5, 6))
+
+    >>> cf.indices_shape((da.from_array(2), np.array(3)), (10, 20))
     [1, 1]
-    >>> cf.indices_shape((da.from_array([]), np.array(())), (5, 6))
+    >>> cf.indices_shape((da.from_array([]), np.array(())), (10, 20))
     [0, 0]
-    >>> cf.indices_shape((slice(1, 5, 3), 3), (5, 6))
+    >>> cf.indices_shape((slice(1, 5, 3), 3), (10, 20))
     [2, 1]
-    >>> cf.indices_shape((slice(5, 1, -2), 3), (5, 6))
+    >>> cf.indices_shape((slice(5, 1, -2), 3), (10, 20))
     [2, 1]
-    >>> cf.indices_shape((slice(5, 1, 3), 3), (5, 6))
+    >>> cf.indices_shape((slice(5, 1, 3), 3), (10, 20))
     [0, 1]
-    >>> cf.indices_shape((slice(1, 5, -3), 3), (5, 6))
+    >>> cf.indices_shape((slice(1, 5, -3), 3), (10, 20))
     [0, 1]
 
-    >>> cf.indices_shape((slice(2, 5), 4), (5, 6), keepdims=False)
+    >>> cf.indices_shape((slice(2, 5), 4), (10, 20), keepdims=False)
     [3]
-    >>> cf.indices_shape((da.from_array(2), 3), (5, 6), keepdims=False)
+    >>> cf.indices_shape((da.from_array(2), 3), (10, 20), keepdims=False)
     []
-    >>> cf.indices_shape((2, np.array(3)), (5, 6), keepdims=False)
+    >>> cf.indices_shape((2, np.array(3)), (10, 20), keepdims=False)
     []
 
     """
