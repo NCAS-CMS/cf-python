@@ -199,7 +199,7 @@ if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     )
 
 # Check the version of dask
-_minimum_vn = "2022.6.0"
+_minimum_vn = "2022.1.0"
 if Version(dask.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad dask version: cf requires dask>={_minimum_vn}. "
@@ -248,14 +248,23 @@ from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
 from .fieldancillary import FieldAncillary
 from .field import Field
-from .data import (
-    Data,
+from .data import Data
+from .data.array import (
+    CachedArray,
+    CFANetCDFArray,
+    FullArray,
     GatheredArray,
     NetCDFArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+)
+
+from .data.fragment import (
+    MissingFragmentArray,
+    NetCDFFragmentArray,
+    UMFragmentArray,
 )
 
 from .aggregate import aggregate
