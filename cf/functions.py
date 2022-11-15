@@ -1836,7 +1836,7 @@ def indices_shape(indices, full_shape, keepdims=True):
             size = len(index)
             if size:
                 i = index[0]
-                if i is False or i is True:
+                if isinstance(i, bool):
                     # Size is the number of True values in the list
                     size = sum(index)
         else:
