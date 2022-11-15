@@ -6923,7 +6923,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         raise RuntimeError("Use cf.histogram instead.")
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def collapse(
         self,
@@ -11818,7 +11818,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def convolution_filter(
         self,
@@ -12564,7 +12564,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     #
     #        return out
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
         """Remove size 1 axes from the data.
 
@@ -12703,7 +12703,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def transpose(
         self,
         axes=None,
@@ -12802,7 +12802,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Transpose the field's data array
         return super().transpose(iaxes, constructs=constructs, inplace=inplace)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         """Insert size 1 axes into the data array.
@@ -14148,7 +14148,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False, **kwargs):
         """Roll the field along a cyclic axis.
@@ -14222,7 +14222,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def where(
         self,
@@ -14825,7 +14825,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             tuple(_section(self, axes, min_step=min_step).values())
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def regrids(
         self,
@@ -15672,7 +15672,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def regridc(
         self,
@@ -16405,7 +16405,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def derivative(
         self,
