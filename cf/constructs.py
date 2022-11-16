@@ -26,11 +26,13 @@ class Constructs(cfdm.Constructs):
 
     **Calling**
 
-    Calling a `Constructs` instance selects metadata constructs
-    primarily by identity. For instance, selecting constructs that
-    have an identity of 'latitude' could be done by either ``x =
-    c('latitude')`` or ``x = c.filter_by_identity('latitude')``. More
-    generally, ``c(*identities, **filter_kwargs)`` is equivalent to
+    Calling a `Constructs` instance also creates a new `Constructs`
+    instance that contians subset of the metadata constructs,
+    primarily selecting by construct identity. For instance, selecting
+    constructs that have an identity of 'latitude' could be done by
+    either ``x = c('latitude')`` or ``x =
+    c.filter_by_identity('latitude')``. More generally,
+    ``c(*identities, **filter_kwargs)`` is equivalent to
     ``c.filter(filter_by_identity=identities, **filter_kwargs)``
 
     **Metadata constructs**
@@ -161,37 +163,6 @@ class Constructs(cfdm.Constructs):
 
         return super()._filter_by_identity(arg, identities, todict, config)
 
-    #    def _filter_by_coordinate_type(self, arg, ctypes, todict):
-    #        """Worker function for `filter_by_identity` and `filter`.
-    #
-    #        See `filter_by_identity` for details.
-    #
-    #        .. versionadded:: 3.9.0
-    #
-    #        """
-    #        out, pop = self._filter_preprocess(
-    #            arg,
-    #            filter_applied={"filter_by_identity": ctypes},
-    #            todict=todict,
-    #        )
-    #
-    #        if not ctypes:
-    #            # Return all constructs if no coordinate types have been
-    #            # provided
-    #            return out
-    #
-    #        for cid, construct in tuple(out.items()):
-    #            ok = False
-    #            for ctype in ctypes:
-    #                if getattr(construct, ctype, False):
-    #                    ok = True
-    #                    break
-    #
-    #            if not ok:
-    #                pop(cid)
-    #
-    #        return out
-
     @classmethod
     def _short_iteration(cls, x):
         """The default short circuit test.
@@ -202,7 +173,7 @@ class Constructs(cfdm.Constructs):
 
         See `_filter_by_identity` for details.
 
-        .. versionadded:: (cfdm) 1.8.9.0
+        .. versionadded:: 3.9.0
 
         :Parameters:
 
