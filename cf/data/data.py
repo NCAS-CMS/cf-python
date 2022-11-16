@@ -403,11 +403,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(
-                        array,
-                        copy=copy,
-                        delete_source=False,
-                    )
+                    self._set_dask(array, copy=copy, conform=False)
             else:
                 self._del_dask(None)
 
@@ -537,7 +533,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, delete_source=False)
+        self._set_dask(array, conform=False)
 
         # Override the data type
         if dtype is not None:
@@ -1178,8 +1174,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # guarantee its consistency with the updated dask array.
         self._del_Array(None)
 
-        # Remove cached element values
-        self._del_cached_elements()
+        # Remove elements made invalid by updating the `dask` array
+        self._conform_after_dask_update()
 
         return
 
@@ -1299,17 +1295,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    def _set_dask(
-        self,
-        array,
-        copy=False,
-        delete_source=True,
-    ):
+    def _conform_after_dask_update(self):
+        """Remove elements made invalid by updating the `dask` array.
+
+        Removes or modifies components that can't be guaranteed to be
+        consistent with an updated `dask` array`:
+
+        * Deletes a source array.
+        * Deletes cached element values.
+
+        .. versionadded:: TODODASKVER
+
+        :Returns:
+
+            `None`
+
+        """
+        self._del_Array(None)
+        self._del_cached_elements()
+
+    def _set_dask(self, array, copy=False, conform=True):
         """Set the dask array.
 
         .. versionadded:: TODODASKVER
 
-        .. seealso:: `to_dask_array`, `_del_dask`
+        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+                     `_del_dask`
 
         :Parameters:
 
@@ -1320,10 +1331,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If True then copy *array* before setting it. By
                 default it is not copied.
 
-            delete_source: `bool`, optional
-                If False then do not delete a source array, if one
-                exists, after setting the new dask array, nor any
-                cached element values.
+            conform: `bool`, optional
+                If True, the default, then remove elements made
+                invalid by updating the `dask` array. See
+                `_conform_after_dask_update` for details.
 
         :Returns:
 
@@ -1353,24 +1364,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         self._custom["dask"] = array
 
-        if delete_source:
-            # Remove a source array, on the grounds that we can't
-            # guarantee its consistency with the new dask array.
-            self._del_Array(None)
+        if conform:
+            # Remove elements made invalid by updating the `dask`
+            # array
+            self._conform_after_dask_update()
 
-            # Remove cached element values
-            self._del_cached_elements()
-
-    def _del_dask(
-        self,
-        default=ValueError(),
-        delete_source=True,
-    ):
+    def _del_dask(self, default=ValueError(), conform=True):
         """Remove the dask array.
 
         .. versionadded:: TODODASKVER
 
-        .. seealso:: `_set_dask`, `to_dask_array`
+        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+                     `_set_dask`
+
 
         :Parameters:
 
@@ -1380,9 +1386,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 {{default Exception}}
 
-            delete_source: `bool`, optional
-                If False then do not delete a compressed source array,
-                if one exists, nor any cached element values.
+            conform: `bool`, optional
+                If True, the default, then remove elements made
+                invalid by updating the `dask` array. See
+                `_conform_after_dask_update` for details.
 
         :Returns:
 
@@ -1412,14 +1419,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 default, f"{self.__class__.__name__!r} has no dask array"
             )
 
-        if delete_source:
-            # Remove a source array, on the grounds that we can't
-            # guarantee its consistency with any future new dask
-            # array.
-            self._del_Array(None)
-
-            # Remove cached element values
-            self._del_cached_elements()
+        if conform:
+            # Remove elements made invalid by deleting the `dask`
+            # array
+            self._conform_after_dask_update()
 
         return out
 
@@ -2324,7 +2327,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = self.to_dask_array()
         dx = dx.persist()
-        d._set_dask(dx, delete_source=False)
+        d._set_dask(dx, conform=False)
 
         return d
 
@@ -2899,7 +2902,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, delete_source=False)
+        d._set_dask(dx, conform=False)
 
         return d
 
@@ -7757,7 +7760,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
-        self._set_dask(dx, delete_source=False)
+        self._set_dask(dx, conform=False)
         self.hardmask = True
 
     def has_calendar(self):
@@ -7854,7 +7857,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
-        self._set_dask(dx, delete_source=False)
+        self._set_dask(dx, conform=False)
         self.hardmask = False
 
     @daskified(_DASKIFIED_VERBOSE)
