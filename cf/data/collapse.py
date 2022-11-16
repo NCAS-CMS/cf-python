@@ -1,259 +1,12 @@
-"""Functions used during `Data` object collapses."""
-import inspect
-from functools import partial, reduce, wraps
-from numbers import Integral
-from operator import mul
+"""Functions used for `Data` object collapses."""
+from functools import partial
 
-import dask.array as da
 import numpy as np
 from cfdm.core import DocstringRewriteMeta
-from dask.array import chunk
-from dask.array.core import _concatenate2
-from dask.array.reductions import divide, numel, reduction
-from dask.array.utils import validate_axis
-from dask.base import collections_to_dsk
-from dask.core import flatten
-from dask.utils import deepmap
+from dask.array.reductions import reduction
 
 from ..docstring import _docstring_substitution_definitions
-
-
-def actify(
-    cls, a, op, axis=None, chunk_function=None, active_storage=False
-):
-    """TODODASKDOCS.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        a: `dask.array.Array`
-            The array to be collapsed.
-
-        op: `str`
-            TODODASKDOCS
-
-        axis: (sequence of) `int`, optional
-            TODODASKDOCS
-
-        chunk_function: function
-            TODODASKDOCS
-
-        {{active_storage: `bool`, optional}}
-
-    :Returns:
-
-        `dask.array.Array`, function
-            TODODASKDOCS
-
-    """
-    if not active_storage:
-        # It has been determined externally that an active storage
-        # reduction is not possible
-        return a, chunk_function
-
-    # Still here? Then it is assumed that the dask array is of a form
-    # which might be able to exploit active storage. In particular, it
-    # is assumed that all data definitions point to files.
-
-    # Parse axis
-    if axis is None:
-        axis = tuple(range(a.ndim))
-    else:
-        if isinstance(axis, Integral):
-            axis = (axis,)
-
-        if len(axis) != a.ndim:
-            # Can't (yet) use active storage to collapse a subset
-            # of the axes
-            return a, chunk_function
-
-        axis = validate_axis(axis, a.ndim)
-
-    active_chunk_functions = set()
-
-    # Loop round elements of the dask graph, looking for data
-    # definitions that point to a file and which support active
-    # storage operations. The elements are traversed in reverse order
-    # so that the data defintions come out first, allowing for a fast
-    # short circuit in the common case when using active storage is no
-    # feasible.
-    dsk = collections_to_dsk((a,), optimize_graph=True)
-    for key, value in reversed(dsk.items()):
-        try:
-            value.get_filename()
-        except AttributeError:
-            # This value is not a data definition (it is assumed that
-            # all data definitions point to files).
-            continue
-
-        try:
-            # Create a new actified data definition value
-            value = value.set_active_storage_op(op, axis)
-        except (AttributeError, ValueError):
-            # This data definition value does not support active
-            # storage reductions, or does not support the requested
-            # active storage reduction defined by 'op'.
-            active_chunk_functions = ()
-            break
-
-        try:
-            # Get the active storage chunk function
-            active_chunk_functions.add(value.get_active_chunk_function())
-        except AttributeError:
-            # This data definition value does not support active
-            # storage reductions
-            active_chunk_functions = ()
-            break
-
-        # Still here? Then update the dask graph in-place with the
-        # actified data definition value.
-        dsk[key] = value
-
-    if len(active_chunk_functions) == 1:
-        # All data definitions in the dask graph support active
-        # storage reductions with the same chunk function => redefine
-        # the array from the actified dask graph, and redefine the
-        # reduction chunk function.
-        a = da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
-        chunk_function = active_chunk_functions.pop()
-
-    return a, chunk_function
-
-
-def actify_collapse(collapse_method, chunk_function=None):
-    """A decorator for `Collapse` methods that enables active storage
-    operations, when the conditions are right.
-
-    """
-    def decorator(collapse_method, chunk_function=None):
-        print (chunk_function)
-        @wraps(collapse_method)
-        def wrapper(cls, *args, **kwargs):
-            print (args, kwargs, cf_max_chunk.op)
-            if kwargs.get("weights") is None and "axis" in kwargs:
-                # Collapse is unweighted over defined axes => attempt to
-                # actify the dask array and chunk function.
-                chunk_function = kwargs["chunk_function"]
-                
-                a, chunk_function = actify(
-                    args[0],
-                    op=chunk_function.op,
-                    axis=kwargs["axis"],
-                    chunk_function=chunk_function,
-                    active_storage=kwargs["active_storage"],
-                    )
-                
-                args = (a,)
-                kwargs["chunk_function"] = chunk_function
-                
-            return collapse_method(cls, *args, **kwargs)
-        
-        return wrapper
-
-# --------------------------------------------------------------------
-# sample size
-# --------------------------------------------------------------------
-def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
-    """Chunk calculations for the sample size.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-
-    """
-    if computing_meta:
-        return x
-
-    if np.ma.isMA(x):
-        N = chunk.sum(np.ones_like(x, dtype=dtype), **kwargs)
-    else:
-        if dtype:
-            kwargs["dtype"] = dtype
-
-        N = numel(x, **kwargs)
-
-    return {"N": N}
-
-# --------------------------------------------------------------------
-# maximum
-# --------------------------------------------------------------------
-def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
-    """Chunk calculations for the maximum.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * max: The maximum of `x``.
-
-    """
-    if computing_meta:
-        return x
-
-    return {
-        "max": chunk.max(x, **kwargs),
-        "N": cf_sample_size_chunk(x, **kwargs)["N"],
-    }
-
-cf_max_chunk.op = "max"
-
-# --------------------------------------------------------------------
-# minimum
-# --------------------------------------------------------------------
-def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
-    """Chunk calculations for the minimum.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * min: The minimum of ``x``.
-
-    """
-    if computing_meta:
-        return x
-
-    return {
-        "min": chunk.min(x, **kwargs),
-        "N": cf_sample_size_chunk(x, **kwargs)["N"],
-    }
-
-cf_min_chunk.op = "min"
+from .collapse_utils import actify, check_input_dtype, double_precision_dtype
 
 
 class Collapse(metaclass=DocstringRewriteMeta):
@@ -296,117 +49,12 @@ class Collapse(metaclass=DocstringRewriteMeta):
         return 0
 
     @classmethod
-    def actify(
-        cls, a, op, axis=None, chunk_function=None, active_storage=False
-    ):
-        """TODODASKDOCS.
-
-        .. versionadded:: TODODASKVER
-
-        :Parameters:
-
-            a: `dask.array.Array`
-                The array to be collapsed.
-
-            op: `str`
-                TODODASKDOCS
-
-            axis: (sequence of) `int`, optional
-                TODODASKDOCS
-
-            chunk_function: function
-                TODODASKDOCS
-
-            {{active_storage: `bool`, optional}}
-
-        :Returns:
-
-            `dask.array.Array`, function
-                TODODASKDOCS
-
-        """
-        if not active_storage:
-            # It has been determined externally that an active storage
-            # reduction is not possible
-            return a, chunk_function
-
-        # Still here? Then it is assumed that the dask array is of a
-        # form which might be able to exploit active storage. In
-        # particular, it is assumed that all data definitions point to
-        # files.
-
-        # Parse axis
-        if axis is None:
-            axis = tuple(range(a.ndim))
-        else:
-            if isinstance(axis, Integral):
-                axis = (axis,)
-
-            if len(axis) != a.ndim:
-                # Can't (yet) use active storage to collapse a subset
-                # of the axes
-                return a, chunk_function
-
-            axis = validate_axis(axis, a.ndim)
-
-        active_chunk_functions = set()
-
-        # Loop round elements of the dask graph, looking for data
-        # definitions that point to a file and which support active
-        # storage operations. The elements are traversed in reverse
-        # order so that the data defintions come out first, allowing
-        # for a fast short circuit in the common case when using
-        # active storage is no feasible.
-        dsk = collections_to_dsk((a,), optimize_graph=True)
-        for key, value in reversed(dsk.items()):
-            try:
-                value.get_filename()
-            except AttributeError:
-                # This value is not a data definition (it is assumed
-                # that all data definitions point to files).
-                continue
-
-            try:
-                # Create a new actified data definition value
-                value = value.set_active_storage_op(op, axis)
-            except (AttributeError, ValueError):
-                # This data definition value does not support active
-                # storage reductions, or does not support the
-                # requested active storage reduction defined by 'op'.
-                active_chunk_functions = ()
-                break
-
-            try:
-                # Get the active storage chunk function
-                active_chunk_functions.add(value.get_active_chunk_function())
-            except AttributeError:
-                # This data definition value does not support active
-                # storage reductions
-                active_chunk_functions = ()
-                break
-
-            # Still here? Then update the dask graph in-place with the
-            # actified data definition value.
-            dsk[key] = value
-
-        if len(active_chunk_functions) == 1:
-            # All data definitions in the dask graph support active
-            # storage reductions with the same chunk function =>
-            # redefine the array from the actified dask graph, and
-            # redefine the reduction chunk function.
-            a = da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
-            chunk_function = active_chunk_functions.pop()
-
-        return a, chunk_function
-
-    @classmethod
-    @actify_collapse(chunk_function=cf_max_chunk)
     def max(
         cls,
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -436,24 +84,30 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function}}
-
         :Returns:
 
             `dask.array.Array`
                 The collapsed array.
 
         """
+        from .dask_collapse import cf_max_agg, cf_max_chunk, cf_max_combine
+
         check_input_dtype(a)
         dtype = a.dtype
 
-        #        a, cf_max_chunk = cls.actify(
-        #            a, "max", axis, cf_max_chunk, active_storage
-        #        )
+        # Rewrite data and chunk function if active storage operations
+        # are available.
+        a, chunk_function = actify(
+            a,
+            method="max",
+            axis=axis,
+            chunk_function=cf_max_chunk,
+            active_storage=active_storage,
+        )
 
         return reduction(
             a,
-            chunk_function,  # cf_max_chunk,
+            chunk_function,
             partial(cf_max_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -470,7 +124,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -521,7 +175,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -559,17 +213,24 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import cf_mean_agg, cf_mean_chunk, cf_mean_combine
+
         check_input_dtype(a)
         dtype = "f8"
 
-#        if weights is None:
-#            a, cf_mean_chunk = cls.actify(
-#                a, "mean", axis, cf_mean_chunk, active_storage
-#            )
+        # Rewrite data and chunk function if active storage operations
+        # are available.
+        a, chunk_function = actify(
+            a,
+            method="mean",
+            axis=axis,
+            chunk_function=cf_mean_chunk,
+            active_storage=active_storage,
+        )
 
         return reduction(
             a,
-            cf_mean_chunk,
+            chunk_function,
             partial(cf_mean_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -588,7 +249,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         weights=None,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -642,7 +303,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         dtype=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -678,6 +339,12 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import (
+            cf_mid_range_agg,
+            cf_range_chunk,
+            cf_range_combine,
+        )
+
         check_input_dtype(a, allowed="fi")
         dtype = "f8"
         return reduction(
@@ -699,7 +366,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -735,16 +402,24 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import cf_min_agg, cf_min_chunk, cf_min_combine
+
         check_input_dtype(a)
         dtype = a.dtype
 
-#        a, cf_min_chunk = cls.actify(
-#            a, "min", axis, cf_min_chunk, active_storage
-#        )
+        # Rewrite data and chunk function if active storage operations
+        # are available.
+        a, chunk_function = actify(
+            a,
+            method="min",
+            axis=axis,
+            chunk_function=cf_min_chunk,
+            active_storage=active_storage,
+        )
 
         return reduction(
             a,
-            cf_min_chunk,
+            chunk_function,
             partial(cf_min_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -761,7 +436,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -811,7 +486,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -847,6 +522,12 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import (
+            cf_range_agg,
+            cf_range_chunk,
+            cf_range_combine,
+        )
+
         check_input_dtype(a, allowed="fi")
         dtype = a.dtype
         return reduction(
@@ -869,7 +550,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -907,6 +588,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import cf_mean_combine, cf_rms_agg, cf_rms_chunk
+
         check_input_dtype(a)
         dtype = "f8"
         return reduction(
@@ -929,7 +612,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -965,6 +648,12 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import (
+            cf_sample_size_agg,
+            cf_sample_size_chunk,
+            cf_sample_size_combine,
+        )
+
         check_input_dtype(a)
         dtype = "i8"
         return reduction(
@@ -987,7 +676,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -1025,14 +714,26 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import cf_sum_agg, cf_sum_chunk, cf_sum_combine
+
         check_input_dtype(a)
         dtype = double_precision_dtype(a)
         if weights is not None:
             dtype = np.result_type(double_precision_dtype(weights), dtype)
 
+        # Rewrite data and chunk function if active storage operations
+        # are available.
+        a, chunk_function = actify(
+            a,
+            method="sum",
+            axis=axis,
+            chunk_function=cf_sum_chunk,
+            active_storage=active_storage,
+        )
+
         return reduction(
             a,
-            cf_sum_chunk,
+            chunk_function,
             partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -1051,7 +752,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -1089,6 +790,12 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import (
+            cf_sum_agg,
+            cf_sum_combine,
+            cf_sum_of_weights_chunk,
+        )
+
         check_input_dtype(a)
         dtype = double_precision_dtype(weights, default="i8")
         return reduction(
@@ -1112,7 +819,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         split_every=None,
         active_storage=False,
     ):
@@ -1150,6 +857,12 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import (
+            cf_sum_agg,
+            cf_sum_combine,
+            cf_sum_of_weights_chunk,
+        )
+
         check_input_dtype(a)
         dtype = double_precision_dtype(weights, default="i8")
         return reduction(
@@ -1173,7 +886,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=None,
+        mtol=1,
         ddof=None,
         split_every=None,
         active_storage=False,
@@ -1214,6 +927,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
+        from .dask_collapse import cf_var_agg, cf_var_chunk, cf_var_combine
+
         check_input_dtype(a)
         dtype = "f8"
         return reduction(
@@ -1243,7 +958,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
-            {{active_storage: `bool`, optional}}                
+            {{active_storage: `bool`, optional}}
 
         :Returns:
 
@@ -1251,6 +966,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The unique values in a 1-d array.
 
         """
+        from .dask_collapse import cf_unique_agg, cf_unique_chunk
+
         check_input_dtype(a, "fibUS")
 
         # Flatten the array so that it has the same number of
@@ -1272,1257 +989,3 @@ class Collapse(metaclass=DocstringRewriteMeta):
             concatenate=False,
             meta=np.array((), dtype=dtype),
         )
-
-
-def check_input_dtype(a, allowed="fib"):
-    """Check that data has a data type allowed by a collapse method.
-
-    The collapse method is assumed to be defined by the calling
-    function.
-
-    :Parameters:
-
-        a: `dask.array.Array`
-            The data.
-
-        allowed: `str`, optional
-            The data type kinds allowed by the collapse
-            method. Defaults to ``'fib'``, meaning that only float,
-            integer and Boolean data types are allowed.
-
-    :Returns:
-
-        `None`
-
-    """
-    if a.dtype.kind not in allowed:
-        method = inspect.currentframe().f_back.f_code.co_name
-        raise TypeError(f"Can't calculate {method} of data with {a.dtype!r}")
-
-
-def double_precision_dtype(a, default=None, bool_type="i"):
-    """Returns the corresponding double precision data type of an array.
-
-    :Parameters:
-
-        a: `dask.array.Array` or `None`
-            The data. If `None` then the value of *default* is
-            returned*.
-
-        default: `str`, optional
-            If *a* is `None`, then return this data type.
-
-        bool_type: `str`, optional
-            The corresponding double data type kind for Boolean
-            data. Defaults to ``'i'``, meaning ``'i8'`` is
-            returned. Set to ``'f'` to return ``'f8'`` instead.
-
-    :Returns:
-
-        `str`
-            The double precision type.
-
-    **Examples**
-
-    >>> for d in (int, 'int32', float, 'float32', bool):
-    ...     print(double_precision_dtype(np.array(1, dtype=d)))
-    ...
-    i8
-    i8
-    f8
-    f8
-    i8
-
-    >>> double_precision_dtype(np.array(1, dtype=bool), bool_type='f')
-    'f8'
-    >>> double_precision_dtype(None, default="i8")
-    'i8'
-
-    """
-    if a is None:
-        return default
-
-    kind = a.dtype.kind
-    if kind == "b":
-        return bool_type + "8"
-
-    if kind in "fi":
-        return kind + "8"
-
-    raise TypeError(f"Can't collapse data with {a.dtype!r}")
-
-
-def mask_small_sample_size(x, N, axis, mtol, original_shape):
-    """Mask elements where the sample size is below a threshold.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        x: `numpy.ndarray`
-            The collapsed data.
-
-        N: `numpy.ndarray`
-            The sample sizes of the collapsed values.
-
-        axis: sequence of `int`
-            The axes being collapsed.
-
-        mtol: number
-            The sample size threshold below which collapsed values are
-            set to missing data. It is defined as a fraction (between
-            0 and 1 inclusive) of the contributing input data values.
-
-            The default of *mtol* is 1, meaning that a missing datum
-            in the output array occurs whenever all of its
-            contributing input array elements are missing data.
-
-            For other values, a missing datum in the output array
-            occurs whenever more than ``100*mtol%`` of its
-            contributing input array elements are missing data.
-
-            Note that for non-zero values of *mtol*, different
-            collapsed elements may have different sample sizes,
-            depending on the distribution of missing data in the input
-            data.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-    :Returns:
-
-        `numpy.ndarray`
-            Array *x* masked where *N* is sufficiently small. Note
-            that the input *x* might be modified in-place with the
-            contents of the output.
-
-    """
-    if not x.ndim:
-        # Make sure that we have a numpy array (e.g. as opposed to a
-        # numpy.float64)
-        x = np.asanyarray(x)
-
-    if mtol < 1:
-        # Nmax = total number of elements, including missing values
-        Nmax = reduce(mul, [original_shape[i] for i in axis], 1)
-        x = np.ma.masked_where(N < (1 - mtol) * Nmax, x, copy=False)
-
-    return x
-
-
-def sum_weights_chunk(x, weights=None, square=False, N=None, **kwargs):
-    """Sum the weights.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        x: `numpy.ndarray`
-            The data.
-
-        weights: `numpy.ndarray`, optional
-            The weights associated with values of the data. Must have
-            the same shape as *x*. By default *weights* is `None`,
-            meaning that all non-missing elements of the data have a
-            weight of 1 and all missing elements have a weight of
-            0. If given as an array then those weights that are
-            missing data, or that correspond to the missing elements
-            of the data, are assigned a weight of 0.
-
-        square: `bool`, optional
-            If True calculate the sum of the squares of the weights.
-
-        N: `numpy.ndarray`, optional
-            The sample size. If provided as an array and there are no
-            weights, then the *N* is returned instead of calculating
-            the sum (of the squares) of weights. Ignored of *weights*
-            is not `None`.
-
-    :Returns:
-
-        `numpy.ndarray`
-            The sum of the weights, with data type "i8" or "f8".
-
-    """
-    if weights is None:
-        # All weights are 1, so the sum of the weights and the sum of
-        # the squares of the weights are both equal to the sample
-        # size.
-        if N is None:
-            N = cf_sample_size_chunk(x, **kwargs)["N"]
-
-        return N
-
-    dtype = double_precision_dtype(weights)
-    if square:
-        weights = np.multiply(weights, weights, dtype=dtype)
-
-    if np.ma.is_masked(x):
-        weights = np.ma.masked_where(x.mask, weights)
-
-    return chunk.sum(weights, dtype=dtype, **kwargs)
-
-
-def combine_arrays(
-    pairs, key, func, axis, dtype=None, computing_meta=False, **kwargs
-):
-    """Worker function for Combine callables.
-
-    Select arrays by dictionary key from a nested list of
-    dictionaries, concatenate the resulting nested list of arrays
-    along the specified axes, and then apply a function to the result
-    along those same axes.
-
-    See `dask.array.reductions.mean_combine` for an example.
-
-    .. versionadded:: TODODASKVER
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    x = deepmap(lambda pair: pair[key], pairs) if not computing_meta else pairs
-
-    if dtype:
-        kwargs["dtype"] = dtype
-
-    x = _concatenate2(x, axes=axis)
-    return func(x, axis=axis, **kwargs)
-
-
-def sum_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
-    """Alias of `combine_arrays` with ``func=chunk.sum``.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return combine_arrays(
-        pairs, key, chunk.sum, axis, dtype, computing_meta, **kwargs
-    )
-
-
-def max_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
-    """Alias of `combine_arrays` with ``func=chunk.max``.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return combine_arrays(
-        pairs, key, chunk.max, axis, dtype, computing_meta, **kwargs
-    )
-
-
-def min_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
-    """Alias of `combine_arrays` with ``func=chunk.min``.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return combine_arrays(
-        pairs, key, chunk.min, axis, dtype, computing_meta, **kwargs
-    )
-
-
-def sum_sample_sizes(pairs, axis, computing_meta=False, **kwargs):
-    """Alias of `combine_arrays` with ``key="N", func=chunk.sum,
-    dtype="i8"``.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return combine_arrays(
-        pairs,
-        "N",
-        chunk.sum,
-        axis,
-        dtype="i8",
-        computing_meta=computing_meta,
-        **kwargs,
-    )
-
-
-# --------------------------------------------------------------------
-# mean
-# --------------------------------------------------------------------
-def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
-    """Chunk calculations for the mean.
-
-     This function is passed to `dask.array.reduction` as its *chunk*
-     parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * V1: The sum of ``weights`` (equal to ``N`` if weights
-                  are not set).
-            * sum: The weighted sum of ``x``.
-            * weighted: True if weights have been set.
-
-    """
-    if computing_meta:
-        return x
-
-    # N, sum
-    d = cf_sum_chunk(x, weights, dtype=dtype, **kwargs)
-
-    d["V1"] = sum_weights_chunk(x, weights, N=d["N"], **kwargs)
-    d["weighted"] = weights is not None
-
-    return d
-
-
-def cf_mean_combine(
-    pairs, axis=None, dtype="f8", computing_meta=False, **kwargs
-):
-    """Combination calculations for the mean.
-
-    This function is passed to `dask.array.reduction` as its *combine*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        As for `cf_mean_chunk`.
-
-    """
-    if not isinstance(pairs, list):
-        pairs = [pairs]
-
-    weighted = next(flatten(pairs))["weighted"]
-    d = {"weighted": weighted}
-
-    d["sum"] = sum_arrays(pairs, "sum", axis, dtype, computing_meta, **kwargs)
-    if computing_meta:
-        return d["sum"]
-
-    d["N"] = sum_sample_sizes(pairs, axis, **kwargs)
-    if weighted:
-        d["V1"] = sum_arrays(pairs, "V1", axis, dtype, **kwargs)
-    else:
-        d["V1"] = d["N"]
-
-    return d
-
-
-def cf_mean_agg(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    mtol=None,
-    original_shape=None,
-    **kwargs,
-):
-    """Aggregation calculations for the mean.
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The collapsed array.
-
-    """
-    d = cf_mean_combine(pairs, axis, dtype, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    x = divide(d["sum"], d["V1"], dtype=dtype)
-    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
-    return x
-
-
-def cf_max_combine(pairs, axis=None, computing_meta=False, **kwargs):
-    """Combination calculations for the maximum.
-
-    This function is passed to `dask.array.reduction` as its *combine*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        As for `cf_max_chunk`.
-
-    """
-    if not isinstance(pairs, list):
-        pairs = [pairs]
-
-    mx = max_arrays(pairs, "max", axis, None, computing_meta, **kwargs)
-    if computing_meta:
-        return mx
-
-    return {"max": mx, "N": sum_sample_sizes(pairs, axis, **kwargs)}
-
-
-def cf_max_agg(
-    pairs,
-    axis=None,
-    computing_meta=False,
-    mtol=None,
-    original_shape=None,
-    **kwargs,
-):
-    """Aggregation calculations for the maximum.
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The collapsed array.
-
-    """
-    d = cf_max_combine(pairs, axis, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    x = d["max"]
-    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
-    return x
-
-
-# --------------------------------------------------------------------
-# mid-range
-# --------------------------------------------------------------------
-def cf_mid_range_agg(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    mtol=None,
-    original_shape=None,
-    **kwargs,
-):
-    """Aggregation calculations for the mid-range.
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The collapsed array.
-
-    """
-    d = cf_range_combine(pairs, axis, dtype, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    # Calculate the mid-range
-    x = divide(d["max"] + d["min"], 2.0, dtype=dtype)
-    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
-    return x
-
-
-
-def cf_min_combine(pairs, axis=None, computing_meta=False, **kwargs):
-    """Combination calculations for the minimum.
-
-    This function is passed to `dask.array.reduction` as its *combine*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        As for `cf_min_chunk`.
-
-    """
-    if not isinstance(pairs, list):
-        pairs = [pairs]
-
-    mn = min_arrays(pairs, "min", axis, None, computing_meta, **kwargs)
-    if computing_meta:
-        return mn
-
-    return {"min": mn, "N": sum_sample_sizes(pairs, axis, **kwargs)}
-
-
-def cf_min_agg(
-    pairs,
-    axis=None,
-    computing_meta=False,
-    mtol=None,
-    original_shape=None,
-    **kwargs,
-):
-    """Aggregation calculations for the minimum.
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The collapsed array.
-
-    """
-    d = cf_min_combine(pairs, axis, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    x = d["min"]
-    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
-    return x
-
-
-# --------------------------------------------------------------------
-# range
-# --------------------------------------------------------------------
-def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
-    """Chunk calculations for the range.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * min: The minimum of ``x``.
-            * max: The maximum of ``x`.
-
-    """
-    if computing_meta:
-        return x
-
-    # N, max
-    d = cf_max_chunk(x, **kwargs)
-
-    d["min"] = chunk.min(x, **kwargs)
-    return d
-
-
-def cf_range_combine(
-    pairs, axis=None, dtype=None, computing_meta=False, **kwargs
-):
-    """Combination calculations for the range.
-
-    This function is passed to `dask.array.reduction` as its *combine*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        As for `cf_range_chunk`.
-
-    """
-    if not isinstance(pairs, list):
-        pairs = [pairs]
-
-    mx = max_arrays(pairs, "max", axis, None, computing_meta, **kwargs)
-    if computing_meta:
-        return mx
-
-    mn = min_arrays(pairs, "min", axis, None, **kwargs)
-
-    return {"max": mx, "min": mn, "N": sum_sample_sizes(pairs, axis, **kwargs)}
-
-
-def cf_range_agg(
-    pairs,
-    axis=None,
-    computing_meta=False,
-    mtol=None,
-    original_shape=None,
-    **kwargs,
-):
-    """Aggregation calculations for the range.
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The collapsed array.
-
-    """
-    d = cf_range_combine(pairs, axis, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    # Calculate the range
-    x = d["max"] - d["min"]
-    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
-    return x
-
-
-# --------------------------------------------------------------------
-# root mean square
-# --------------------------------------------------------------------
-def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
-    """Chunk calculations for the root mean square (RMS).
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * sum: The weighted sum of ``x**2``.
-
-    """
-    if computing_meta:
-        return x
-
-    return cf_mean_chunk(
-        np.multiply(x, x, dtype=dtype), weights=weights, dtype=dtype, **kwargs
-    )
-
-
-def cf_rms_agg(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    mtol=None,
-    original_shape=None,
-    **kwargs,
-):
-    """Aggregation calculations for the root mean square (RMS).
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The collapsed array.
-
-    """
-    d = cf_mean_combine(pairs, axis, dtype, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    x = np.sqrt(d["sum"] / d["V1"], dtype=dtype)
-    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
-    return x
-
-
-
-def cf_sample_size_combine(
-    pairs, axis=None, dtype="i8", computing_meta=False, **kwargs
-):
-    """Combination calculations for the sample size.
-
-    This function is passed to `dask.array.reduction` as its *combine*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        As for `cf_sample_size_chunk`.
-
-    """
-    if not isinstance(pairs, list):
-        pairs = [pairs]
-
-    x = sum_arrays(pairs, "N", axis, dtype, computing_meta, **kwargs)
-    if computing_meta:
-        return x
-
-    return {"N": x}
-
-
-def cf_sample_size_agg(
-    pairs,
-    axis=None,
-    computing_meta=False,
-    dtype="i8",
-    mtol=None,
-    original_shape=None,
-    **kwargs,
-):
-    """Aggregation calculations for the sample size.
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The collapsed array.
-
-    """
-    d = cf_sample_size_combine(pairs, axis, dtype, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    x = d["N"]
-    x = mask_small_sample_size(x, x, axis, mtol, original_shape)
-    return x
-
-
-# --------------------------------------------------------------------
-# sum
-# --------------------------------------------------------------------
-def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
-    """Chunk calculations for the sum.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * sum: The weighted sum of ``x``
-
-    """
-    if computing_meta:
-        return x
-
-    if weights is not None:
-        x = np.multiply(x, weights, dtype=dtype)
-
-    d = cf_sample_size_chunk(x, **kwargs)
-    d["sum"] = chunk.sum(x, dtype=dtype, **kwargs)
-    return d
-
-
-def cf_sum_combine(
-    pairs, axis=None, dtype="f8", computing_meta=False, **kwargs
-):
-    """Combination calculations for the sum.
-
-    This function is passed to `dask.array.reduction` as its *combine*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        As for `cf_sum_chunk`.
-
-    """
-    if not isinstance(pairs, list):
-        pairs = [pairs]
-
-    x = sum_arrays(pairs, "sum", axis, dtype, computing_meta, **kwargs)
-    if computing_meta:
-        return x
-
-    return {"sum": x, "N": sum_sample_sizes(pairs, axis, **kwargs)}
-
-
-def cf_sum_agg(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    mtol=None,
-    original_shape=None,
-    **kwargs,
-):
-    """Aggregation calculations for the sum.
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The collapsed array.
-
-    """
-    d = cf_sum_combine(pairs, axis, dtype, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    x = d["sum"]
-    x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
-    return x
-
-
-# --------------------------------------------------------------------
-# sum of weights
-# --------------------------------------------------------------------
-def cf_sum_of_weights_chunk(
-    x, weights=None, dtype="f8", computing_meta=False, square=False, **kwargs
-):
-    """Chunk calculations for the sum of the weights.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    :Parameters:
-
-        square: `bool`, optional
-            If True then calculate the sum of the squares of the
-            weights.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * sum: The sum of ``weights``, or the sum of
-                   ``weights**2`` if *square* is True.
-
-    """
-    if computing_meta:
-        return x
-
-    # N
-    d = cf_sample_size_chunk(x, **kwargs)
-
-    d["sum"] = sum_weights_chunk(
-        x, weights=weights, square=square, N=d["N"], **kwargs
-    )
-
-    return d
-
-
-# --------------------------------------------------------------------
-# unique
-# --------------------------------------------------------------------
-def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
-    """Chunk calculations for the unique values.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-    See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * unique: The unique values.
-
-    """
-    if computing_meta:
-        return x
-
-    return {"unique": np.unique(x)}
-
-
-def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
-    """Aggregation calculations for the unique values.
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    It is assumed that the arrays are one-dimensional.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-    See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The unique values.
-
-    """
-    x = (
-        deepmap(lambda pair: pair["unique"], pairs)
-        if not computing_meta
-        else pairs
-    )
-    if computing_meta:
-        return x
-
-    x = _concatenate2(x, axes=[0])
-    return np.unique(x)
-
-
-# --------------------------------------------------------------------
-# variance
-# --------------------------------------------------------------------
-def cf_var_chunk(
-    x, weights=None, dtype="f8", computing_meta=False, ddof=None, **kwargs
-):
-    """Chunk calculations for the variance.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    See
-    https://en.wikipedia.org/wiki/Pooled_variance#Sample-based_statistics
-    for details.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        ddof: number
-            The delta degrees of freedom. The number of degrees of
-            freedom used in the calculation is (N-*ddof*) where N
-            represents the number of non-missing elements. A value of
-            1 applies Bessel's correction.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * V1: The sum of ``weights`` (equal to ``N`` if weights
-                  are not set).
-            * V2: The sum of ``weights**2``, or `None` of not
-                  required.
-            * sum: The weighted sum of ``x``.
-            * part: ``V1 * (sigma**2 + mu**2)``, where ``sigma**2`` is
-                    the weighted biased (i.e. ``ddof=0``) variance of
-                    ``x``, and ``mu`` is the weighted mean of ``x``.
-            * weighted: True if weights have been set.
-            * ddof: The delta degrees of freedom.
-
-    """
-    if computing_meta:
-        return x
-
-    weighted = weights is not None
-
-    # N, V1, sum
-    d = cf_mean_chunk(x, weights, dtype=dtype, **kwargs)
-
-    wsum = d["sum"]
-    V1 = d["V1"]
-
-    avg = divide(wsum, V1, dtype=dtype)
-    part = x - avg
-    part *= part
-    if weighted:
-        part = part * weights
-
-    part = chunk.sum(part, dtype=dtype, **kwargs)
-    part = part + avg * wsum
-
-    d["part"] = part
-
-    if weighted and ddof == 1:
-        d["V2"] = sum_weights_chunk(x, weights, square=True, **kwargs)
-    else:
-        d["V2"] = None
-
-    d["weighted"] = weighted
-    d["ddof"] = ddof
-
-    return d
-
-
-def cf_var_combine(
-    pairs, axis=None, dtype="f8", computing_meta=False, **kwargs
-):
-    """Combination calculations for the variance.
-
-    This function is passed to `dask.array.reduction` as its *combine*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        As for `cf_var_chunk`.
-
-    """
-    if not isinstance(pairs, list):
-        pairs = [pairs]
-
-    d = next(flatten(pairs))
-    weighted = d["weighted"]
-    ddof = d["ddof"]
-    d = {"weighted": weighted, "ddof": ddof}
-
-    d["part"] = sum_arrays(
-        pairs, "part", axis, dtype, computing_meta, **kwargs
-    )
-    if computing_meta:
-        return d["part"]
-
-    d["sum"] = sum_arrays(pairs, "sum", axis, dtype, **kwargs)
-
-    d["N"] = sum_sample_sizes(pairs, axis, **kwargs)
-    d["V1"] = d["N"]
-    d["V2"] = None
-    if weighted:
-        d["V1"] = sum_arrays(pairs, "V1", axis, dtype, **kwargs)
-        if ddof == 1:
-            d["V2"] = sum_arrays(pairs, "V2", axis, dtype, **kwargs)
-
-    return d
-
-
-def cf_var_agg(
-    pairs,
-    axis=None,
-    dtype="f8",
-    computing_meta=False,
-    mtol=None,
-    original_shape=None,
-    **kwargs,
-):
-    """Aggregation calculations for the variance.
-
-    This function is passed to `dask.array.reduction` as its
-    *aggregate* parameter.
-
-    .. note:: Weights are interpreted as reliability weights, as
-              opposed to frequency weights.
-
-    See
-    https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
-    for details.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. See `mask_small_sample_size` for
-            details.
-
-        original_shape: `tuple`
-            The shape of the original, uncollapsed data.
-
-        See `dask.array.reductions` for details of the other
-        parameters.
-
-    :Returns:
-
-        `dask.array.Array`
-            The collapsed array.
-
-    """
-    d = cf_var_combine(pairs, axis, dtype, computing_meta, **kwargs)
-    if computing_meta:
-        return d
-
-    ddof = d["ddof"]
-    V1 = d["V1"]
-    wsum = d["sum"]
-    var = d["part"] - wsum * wsum / V1
-
-    # Note: var is now the global value of V1 * sigma**2, where sigma
-    #       is the global weighted biased (i.e. ddof=0) variance.
-
-    if ddof is None:
-        raise ValueError(f"Must set ddof to a numeric value. Got: {ddof!r}")
-
-    if not ddof:
-        # Weighted or unweighted variance with ddof=0
-        f = 1 / V1
-    elif not d["weighted"]:
-        # Unweighted variance with any non-zero value of ddof
-        f = 1 / (V1 - ddof)
-    elif ddof == 1:
-        # Weighted variance with ddof=1
-        f = V1 / (V1 * V1 - d["V2"])
-    else:
-        raise ValueError(
-            "Can only calculate a weighted variance with ddof=0 or ddof=1. "
-            f"Got: {ddof!r}"
-        )
-
-    # Now get the required global variance with the requested ddof
-    var = f * var
-
-    var = mask_small_sample_size(var, d["N"], axis, mtol, original_shape)
-    return var

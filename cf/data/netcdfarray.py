@@ -4,7 +4,11 @@ from .abstract import FileArray
 
 
 class NetCDFArray(cfdm.NetCDFArray, FileArray):
-    """An array stored in a netCDF file."""
+    """An array stored in a netCDF file.
+
+    TODOACTIVEDOC
+
+    """
 
     def __getitem__(self, indices):
         """Returns a subspace of the array as a numpy array.
@@ -24,45 +28,68 @@ class NetCDFArray(cfdm.NetCDFArray, FileArray):
             then these indices work independently along each dimension
             (similar to the way vector subscripts work in Fortran).
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: TODOACTIVEVER
 
         """
-        if self.active_storage_op:
-            # Active storage read. Returns a dictionary.
+        method = self.get_active_method()
+        if method:
+            # Active storage read by server. Returns a dictionary.
             active = Active(self.filename, self.ncvar)
-            active.method = self.active_storage_op
+            active.method = method
             active.components = True
 
             return active[indices]
 
         # Normal read by local client. Returns a numpy array.
-        #
-        # In production code groups, masks, string types, etc. will
-        # need to be accounted for here.
-        return super().__getitme__(indices)
+        return super().__getitem__(indices)
 
     def _active_chunk_functions(self):
+        """Mapping of method names to active chunk functions.
+
+        .. versionadded:: TODOACTIVEVER
+
+        :Returns:
+
+            `dict`
+                The mapping.
+
+        """
         return {
             "min": self.active_min,
             "max": self.active_max,
             "mean": self.active_mean,
+            "sum": self.active_sum,
         }
 
-    @property
-    def active_storage_op(self):
-        return self._custom.get("active_storage_op")
+    def actify(self, method, axis=None):
+        """Return a new actified {{class}} instance.
 
-    @active_storage_op.setter
-    def active_storage_op(self, value):
-        self._custom["active_storage_op"] = value
+        The new instance is a deep copy of the original, including the
+        definitions of the active storage method and axis.
 
-    @property
-    def op_axis(self):
-        return self._custom.get("op_axis")
+        .. versionadded:: TODOACTIVEVER
 
-    @op_axis.setter
-    def op_axis(self, value):
-        self._custom["op_axis"] = value
+        :Parameters:
+
+            method: `str`
+                TODOACTIVEDOCS
+
+            axis: (sequence of) `int`, optional
+                TODOACTIVEDOCS
+
+        :Returns:
+
+            {{class}}
+                TODOACTIVEDOCS
+
+        """
+        if method not in self._active_chunk_functions():
+            raise ValueError(f"Invalid active storage operation: {method!r}")
+
+        a = self.copy()
+        a.set_active_method(method)
+        a.set_active_axis(axis)
+        return a
 
     @staticmethod
     def active_min(a, **kwargs):
@@ -71,16 +98,17 @@ class NetCDFArray(cfdm.NetCDFArray, FileArray):
         Assumes that the calculations have already been done,
         i.e. that *a* is already the minimum.
 
-        This function is intended to be passed in to
-        `dask.array.reduction()` as the ``chunk`` parameter. Its
-        return signature must be the same as the non-active chunks
-        function that it is replacing.
+        This function is intended to be passed to
+        `dask.array.reduction` as the ``chunk`` parameter. Its return
+        signature must be the same as the non-active chunk function
+        that it is replacing.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: TODOACTIVEVER
 
         :Parameters:
 
             a: `dict`
+                TODOACTIVEDOCS
 
         :Returns:
 
@@ -100,16 +128,17 @@ class NetCDFArray(cfdm.NetCDFArray, FileArray):
         Assumes that the calculations have already been done,
         i.e. that *a* is already the maximum.
 
-        This function is intended to be passed in to
-        `dask.array.reduction()` as the ``chunk`` parameter. Its
-        return signature must be consistent with that expected by the
-        functions of the ``aggregate`` and ``combine`` parameters.
+        This function is intended to be passed to
+        `dask.array.reduction` as the ``chunk`` parameter. Its return
+        signature must be the same as the non-active chunk function
+        that it is replacing.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: TODOACTIVEVER
 
         :Parameters:
 
             a: `dict`
+                TODOACTIVEDOCS
 
         :Returns:
 
@@ -124,21 +153,22 @@ class NetCDFArray(cfdm.NetCDFArray, FileArray):
 
     @staticmethod
     def active_mean(a, **kwargs):
-        """Chunk calculations for the mean.
+        """Chunk calculations for the unweighted mean.
 
         Assumes that the calculations have already been done,
-        i.e. that *a* is already the mean.
+        i.e. that *a* is already the uweighted mean.
 
-        This function is intended to be passed in to
-        `dask.array.reduction()` as the ``chunk`` parameter. Its
-        return signature must be the same as the non-active chunks
-        function that it is replacing.
+        This function is intended to be passed to
+        `dask.array.reduction` as the ``chunk`` parameter. Its return
+        signature must be the same as the non-active chunk function
+        that it is replacing.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: TODOACTIVEVER
 
         :Parameters:
 
             a: `dict`
+                TODOACTIVEDOCS
 
         :Returns:
 
@@ -148,24 +178,110 @@ class NetCDFArray(cfdm.NetCDFArray, FileArray):
                 * N: The sample size.
                 * V1: The sum of ``weights``. Equal to ``N`` because
                       weights have not been set.
-                * sum: The weighted sum of ``x``.
+                * sum: The weighted sum of ``a``.
                 * weighted: True if weights have been set. Always
                             False.
 
         """
         return {"N": a["n"], "V1": a["n"], "sum": a["sum"], "weighted": False}
 
+    @staticmethod
+    def active_sum(a, **kwargs):
+        """Chunk calculations for the unweighted sum.
+
+        Assumes that the calculations have already been done,
+        i.e. that *a* is already the uweighted sum.
+
+        This function is intended to be passed to
+        `dask.array.reduction` as the ``chunk`` parameter. Its return
+        signature must be the same as the non-active chunk function
+        that it is replacing.
+
+        .. versionadded:: TODOACTIVEVER
+
+        :Parameters:
+
+            a: `dict`
+                TODOACTIVEDOCS
+
+        :Returns:
+
+            `dict`
+                Dictionary with the keys:
+
+                * N: The sample size.
+                * sum: The weighted sum of ``a``
+
+        """
+        return {"N": a["n"], "sum": a["sum"]}
+
+    def get_active_method(self):
+        """TODOACTIVEDOC.
+
+        .. versionadded:: TODOACTIVEVER
+
+        :Returns:
+
+            TODOACTIVEDOC
+
+        """
+        return self._custom.get("active_method")
+
+    def get_active_axis(self):
+        """TODOACTIVEDOC.
+
+        .. versionadded:: TODOACTIVEVER
+
+        :Returns:
+
+            TODOACTIVEDOC
+
+        """
+        return self._custom.get("active_axis")
+
     def get_active_chunk_function(self):
+        """TODOACTIVEDOC.
+
+        .. versionadded:: TODOACTIVEVER
+
+        :Returns:
+
+            TODOACTIVEDOC
+
+        """
         try:
-            return self._active_chunk_functions()[self.active_storage_op]
+            return self._active_chunk_functions()[self.get_active_method()]
         except KeyError:
             raise ValueError("no active storage operation has been set")
 
-    def set_active_storage_op(self, op, axis=None):
-        if op not in self._active_chunk_functions():
-            raise ValueError(f"Invalid active storage operation: {op!r}")
+    def set_active_method(self, value):
+        """TODOACTIVEDOC.
 
-        a = self.copy()
-        a.active_storage_op = op
-        a.op_axis = axis
-        return a
+        .. versionadded:: TODOACTIVEVER
+
+        :Parameters:
+
+            TODOACTIVEDOCS
+
+        :Returns:
+
+            `None`
+
+        """
+        self._custom["active_method"] = value
+
+    def set_active_axis(self, value):
+        """TODOACTIVEDOC.
+
+        .. versionadded:: TODOACTIVEVER
+
+        :Parameters:
+
+            TODOACTIVEDOCS
+
+        :Returns:
+
+            `None`
+
+        """
+        self._custom["active_axis"] = value
