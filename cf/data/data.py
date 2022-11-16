@@ -1121,10 +1121,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             shifts = [-shift for shift in shifts]
             self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
-        # Remove a source array, on the grounds that we can't
-        # guarantee its consistency with the updated dask array.
-        self._del_Array(None)
-
         # Remove elements made invalid by updating the `dask` array
         self._conform_after_dask_update()
 
