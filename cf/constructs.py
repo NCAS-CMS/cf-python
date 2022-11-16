@@ -10,17 +10,28 @@ logger = logging.getLogger(__name__)
 class Constructs(cfdm.Constructs):
     """A container for metadata constructs.
 
-    The container is like a dictionary in many ways, in that it stores
-    key/value pairs where the key is the unique construct key with
-    corresponding metadata construct value, and provides some of the
-    usual dictionary methods.
+    The container has similarities to a `dict` in that it presents the
+    metadata constructs as key/value pairs, where the key is the
+    unique identifier that corresponds to a metadata construct value;
+    is indexable by metadata construct identifier; and provides a
+    subset of the usual dictionary methods: `get`, `items`, `keys`,
+    and `values`. The container can be converted to an actual `dict`
+    with the `todict` method.
+
+    **Filtering**
+
+    A subset of the metadata constructs can be defined and returned in
+    a new `Constructs` instance by using the various filter
+    methods. See `filter` for more details.
 
     **Calling**
 
-    Calling a `Constructs` instance selects metadata constructs by
-    identity and is an alias for the `filter_by_identity` method. For
-    example, to select constructs that have an identity of
-    'air_temperature': ``d = c('air_temperature')``.
+    Calling a `Constructs` instance selects metadata constructs
+    primarily by identity. For instance, selecting constructs that
+    have an identity of 'latitude' could be done by either ``x =
+    c('latitude')`` or ``x = c.filter_by_identity('latitude')``. More
+    generally, ``c(*identities, **filter_kwargs)`` is equivalent to
+    ``c.filter(filter_by_identity=identities, **filter_kwargs)``
 
     **Metadata constructs**
 
@@ -34,10 +45,6 @@ class Constructs(cfdm.Constructs):
     * domain axis constructs
     * cell method constructs
     * field ancillary constructs
-
-    The container may be used by `Field` and `Domain` instances. In
-    the latter case cell method and field ancillary constructs must be
-    flagged as "ignored" (see the *_ignore* parameter).
 
     .. versionadded:: 3.0.0
 
