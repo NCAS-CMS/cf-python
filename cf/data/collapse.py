@@ -1,17 +1,259 @@
 """Functions used during `Data` object collapses."""
 import inspect
-from functools import partial, reduce
+from functools import partial, reduce, wraps
+from numbers import Integral
 from operator import mul
 
+import dask.array as da
 import numpy as np
 from cfdm.core import DocstringRewriteMeta
 from dask.array import chunk
 from dask.array.core import _concatenate2
 from dask.array.reductions import divide, numel, reduction
+from dask.array.utils import validate_axis
+from dask.base import collections_to_dsk
 from dask.core import flatten
 from dask.utils import deepmap
 
 from ..docstring import _docstring_substitution_definitions
+
+
+def actify(
+    cls, a, op, axis=None, chunk_function=None, active_storage=False
+):
+    """TODODASKDOCS.
+
+    .. versionadded:: TODODASKVER
+
+    :Parameters:
+
+        a: `dask.array.Array`
+            The array to be collapsed.
+
+        op: `str`
+            TODODASKDOCS
+
+        axis: (sequence of) `int`, optional
+            TODODASKDOCS
+
+        chunk_function: function
+            TODODASKDOCS
+
+        {{active_storage: `bool`, optional}}
+
+    :Returns:
+
+        `dask.array.Array`, function
+            TODODASKDOCS
+
+    """
+    if not active_storage:
+        # It has been determined externally that an active storage
+        # reduction is not possible
+        return a, chunk_function
+
+    # Still here? Then it is assumed that the dask array is of a form
+    # which might be able to exploit active storage. In particular, it
+    # is assumed that all data definitions point to files.
+
+    # Parse axis
+    if axis is None:
+        axis = tuple(range(a.ndim))
+    else:
+        if isinstance(axis, Integral):
+            axis = (axis,)
+
+        if len(axis) != a.ndim:
+            # Can't (yet) use active storage to collapse a subset
+            # of the axes
+            return a, chunk_function
+
+        axis = validate_axis(axis, a.ndim)
+
+    active_chunk_functions = set()
+
+    # Loop round elements of the dask graph, looking for data
+    # definitions that point to a file and which support active
+    # storage operations. The elements are traversed in reverse order
+    # so that the data defintions come out first, allowing for a fast
+    # short circuit in the common case when using active storage is no
+    # feasible.
+    dsk = collections_to_dsk((a,), optimize_graph=True)
+    for key, value in reversed(dsk.items()):
+        try:
+            value.get_filename()
+        except AttributeError:
+            # This value is not a data definition (it is assumed that
+            # all data definitions point to files).
+            continue
+
+        try:
+            # Create a new actified data definition value
+            value = value.set_active_storage_op(op, axis)
+        except (AttributeError, ValueError):
+            # This data definition value does not support active
+            # storage reductions, or does not support the requested
+            # active storage reduction defined by 'op'.
+            active_chunk_functions = ()
+            break
+
+        try:
+            # Get the active storage chunk function
+            active_chunk_functions.add(value.get_active_chunk_function())
+        except AttributeError:
+            # This data definition value does not support active
+            # storage reductions
+            active_chunk_functions = ()
+            break
+
+        # Still here? Then update the dask graph in-place with the
+        # actified data definition value.
+        dsk[key] = value
+
+    if len(active_chunk_functions) == 1:
+        # All data definitions in the dask graph support active
+        # storage reductions with the same chunk function => redefine
+        # the array from the actified dask graph, and redefine the
+        # reduction chunk function.
+        a = da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
+        chunk_function = active_chunk_functions.pop()
+
+    return a, chunk_function
+
+
+def actify_collapse(collapse_method, chunk_function=None):
+    """A decorator for `Collapse` methods that enables active storage
+    operations, when the conditions are right.
+
+    """
+    def decorator(collapse_method, chunk_function=None):
+        print (chunk_function)
+        @wraps(collapse_method)
+        def wrapper(cls, *args, **kwargs):
+            print (args, kwargs, cf_max_chunk.op)
+            if kwargs.get("weights") is None and "axis" in kwargs:
+                # Collapse is unweighted over defined axes => attempt to
+                # actify the dask array and chunk function.
+                chunk_function = kwargs["chunk_function"]
+                
+                a, chunk_function = actify(
+                    args[0],
+                    op=chunk_function.op,
+                    axis=kwargs["axis"],
+                    chunk_function=chunk_function,
+                    active_storage=kwargs["active_storage"],
+                    )
+                
+                args = (a,)
+                kwargs["chunk_function"] = chunk_function
+                
+            return collapse_method(cls, *args, **kwargs)
+        
+        return wrapper
+
+# --------------------------------------------------------------------
+# sample size
+# --------------------------------------------------------------------
+def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
+    """Chunk calculations for the sample size.
+
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
+
+    .. versionadded:: TODODASKVER
+
+    :Parameters:
+
+        See `dask.array.reductions` for details of the parameters.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+
+    """
+    if computing_meta:
+        return x
+
+    if np.ma.isMA(x):
+        N = chunk.sum(np.ones_like(x, dtype=dtype), **kwargs)
+    else:
+        if dtype:
+            kwargs["dtype"] = dtype
+
+        N = numel(x, **kwargs)
+
+    return {"N": N}
+
+# --------------------------------------------------------------------
+# maximum
+# --------------------------------------------------------------------
+def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
+    """Chunk calculations for the maximum.
+
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
+
+    .. versionadded:: TODODASKVER
+
+    :Parameters:
+
+        See `dask.array.reductions` for details of the parameters.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+            * max: The maximum of `x``.
+
+    """
+    if computing_meta:
+        return x
+
+    return {
+        "max": chunk.max(x, **kwargs),
+        "N": cf_sample_size_chunk(x, **kwargs)["N"],
+    }
+
+cf_max_chunk.op = "max"
+
+# --------------------------------------------------------------------
+# minimum
+# --------------------------------------------------------------------
+def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
+    """Chunk calculations for the minimum.
+
+    This function is passed to `dask.array.reduction` as its *chunk*
+    parameter.
+
+    .. versionadded:: TODODASKVER
+
+    :Parameters:
+
+        See `dask.array.reductions` for details of the parameters.
+
+    :Returns:
+
+        `dict`
+            Dictionary with the keys:
+
+            * N: The sample size.
+            * min: The minimum of ``x``.
+
+    """
+    if computing_meta:
+        return x
+
+    return {
+        "min": chunk.min(x, **kwargs),
+        "N": cf_sample_size_chunk(x, **kwargs)["N"],
+    }
+
+cf_min_chunk.op = "min"
 
 
 class Collapse(metaclass=DocstringRewriteMeta):
@@ -54,7 +296,120 @@ class Collapse(metaclass=DocstringRewriteMeta):
         return 0
 
     @classmethod
-    def max(cls, a, axis=None, keepdims=False, mtol=None, split_every=None):
+    def actify(
+        cls, a, op, axis=None, chunk_function=None, active_storage=False
+    ):
+        """TODODASKDOCS.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            a: `dask.array.Array`
+                The array to be collapsed.
+
+            op: `str`
+                TODODASKDOCS
+
+            axis: (sequence of) `int`, optional
+                TODODASKDOCS
+
+            chunk_function: function
+                TODODASKDOCS
+
+            {{active_storage: `bool`, optional}}
+
+        :Returns:
+
+            `dask.array.Array`, function
+                TODODASKDOCS
+
+        """
+        if not active_storage:
+            # It has been determined externally that an active storage
+            # reduction is not possible
+            return a, chunk_function
+
+        # Still here? Then it is assumed that the dask array is of a
+        # form which might be able to exploit active storage. In
+        # particular, it is assumed that all data definitions point to
+        # files.
+
+        # Parse axis
+        if axis is None:
+            axis = tuple(range(a.ndim))
+        else:
+            if isinstance(axis, Integral):
+                axis = (axis,)
+
+            if len(axis) != a.ndim:
+                # Can't (yet) use active storage to collapse a subset
+                # of the axes
+                return a, chunk_function
+
+            axis = validate_axis(axis, a.ndim)
+
+        active_chunk_functions = set()
+
+        # Loop round elements of the dask graph, looking for data
+        # definitions that point to a file and which support active
+        # storage operations. The elements are traversed in reverse
+        # order so that the data defintions come out first, allowing
+        # for a fast short circuit in the common case when using
+        # active storage is no feasible.
+        dsk = collections_to_dsk((a,), optimize_graph=True)
+        for key, value in reversed(dsk.items()):
+            try:
+                value.get_filename()
+            except AttributeError:
+                # This value is not a data definition (it is assumed
+                # that all data definitions point to files).
+                continue
+
+            try:
+                # Create a new actified data definition value
+                value = value.set_active_storage_op(op, axis)
+            except (AttributeError, ValueError):
+                # This data definition value does not support active
+                # storage reductions, or does not support the
+                # requested active storage reduction defined by 'op'.
+                active_chunk_functions = ()
+                break
+
+            try:
+                # Get the active storage chunk function
+                active_chunk_functions.add(value.get_active_chunk_function())
+            except AttributeError:
+                # This data definition value does not support active
+                # storage reductions
+                active_chunk_functions = ()
+                break
+
+            # Still here? Then update the dask graph in-place with the
+            # actified data definition value.
+            dsk[key] = value
+
+        if len(active_chunk_functions) == 1:
+            # All data definitions in the dask graph support active
+            # storage reductions with the same chunk function =>
+            # redefine the array from the actified dask graph, and
+            # redefine the reduction chunk function.
+            a = da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
+            chunk_function = active_chunk_functions.pop()
+
+        return a, chunk_function
+
+    @classmethod
+    @actify_collapse(chunk_function=cf_max_chunk)
+    def max(
+        cls,
+        a,
+        axis=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
+        active_storage=False,
+    ):
         """Return maximum values of an array.
 
         Calculates the maximum value of an array or the maximum values
@@ -79,6 +434,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{active_storage: `bool`, optional}}
+
+            {{chunk_function: function}}
+
         :Returns:
 
             `dask.array.Array`
@@ -87,9 +446,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         check_input_dtype(a)
         dtype = a.dtype
+
+        #        a, cf_max_chunk = cls.actify(
+        #            a, "max", axis, cf_max_chunk, active_storage
+        #        )
+
         return reduction(
             a,
-            cf_max_chunk,
+            chunk_function,  # cf_max_chunk,
             partial(cf_max_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -102,7 +466,13 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     @classmethod
     def max_abs(
-        cls, a, axis=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        axis=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
+        active_storage=False,
     ):
         """Return maximum absolute values of an array.
 
@@ -128,6 +498,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{active_storage: `bool`, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -151,6 +523,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         keepdims=False,
         mtol=None,
         split_every=None,
+        active_storage=False,
     ):
         """Return mean values of an array.
 
@@ -178,6 +551,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{active_storage: `bool`, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -186,6 +561,12 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         check_input_dtype(a)
         dtype = "f8"
+
+#        if weights is None:
+#            a, cf_mean_chunk = cls.actify(
+#                a, "mean", axis, cf_mean_chunk, active_storage
+#            )
+
         return reduction(
             a,
             cf_mean_chunk,
@@ -209,6 +590,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         keepdims=False,
         mtol=None,
         split_every=None,
+        active_storage=False,
     ):
         """Return mean absolute values of an array.
 
@@ -236,6 +618,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{active_storage: `bool`, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -260,6 +644,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         keepdims=False,
         mtol=None,
         split_every=None,
+        active_storage=False,
     ):
         """Return mid-range values of an array.
 
@@ -285,6 +670,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{active_storage: `bool`, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -307,7 +694,15 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     @classmethod
-    def min(cls, a, axis=None, keepdims=False, mtol=None, split_every=None):
+    def min(
+        cls,
+        a,
+        axis=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
+        active_storage=False,
+    ):
         """Return minimum values of an array.
 
         Calculates the minimum value of an array or the minimum values
@@ -332,6 +727,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{active_storage: `bool`, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -340,6 +737,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         check_input_dtype(a)
         dtype = a.dtype
+
+#        a, cf_min_chunk = cls.actify(
+#            a, "min", axis, cf_min_chunk, active_storage
+#        )
+
         return reduction(
             a,
             cf_min_chunk,
@@ -355,7 +757,13 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     @classmethod
     def min_abs(
-        cls, a, axis=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        axis=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
+        active_storage=False,
     ):
         """Return minimum absolute values of an array.
 
@@ -381,6 +789,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{active_storage: `bool`, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -396,7 +806,15 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     @classmethod
-    def range(cls, a, axis=None, keepdims=False, mtol=None, split_every=None):
+    def range(
+        cls,
+        a,
+        axis=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
+        active_storage=False,
+    ):
         """Return range values of an array.
 
         Calculates the range value of an array or the range values
@@ -420,6 +838,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
             {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
+
+            {{active_storage: `bool`, optional}}
 
         :Returns:
 
@@ -451,6 +871,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         keepdims=False,
         mtol=None,
         split_every=None,
+        active_storage=False,
     ):
         """Return root mean square (RMS) values of an array.
 
@@ -478,6 +899,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{active_storage: `bool`, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -502,7 +925,13 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     @classmethod
     def sample_size(
-        cls, a, axis=None, keepdims=False, mtol=None, split_every=None
+        cls,
+        a,
+        axis=None,
+        keepdims=False,
+        mtol=None,
+        split_every=None,
+        active_storage=False,
     ):
         """Return sample size values of an array.
 
@@ -527,6 +956,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
             {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
+
+            {{active_storage: `bool`, optional}}
 
         :Returns:
 
@@ -558,6 +989,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         keepdims=False,
         mtol=None,
         split_every=None,
+        active_storage=False,
     ):
         """Return sum values of an array.
 
@@ -584,6 +1016,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
             {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
+
+            {{active_storage: `bool`, optional}}
 
         :Returns:
 
@@ -619,6 +1053,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         keepdims=False,
         mtol=None,
         split_every=None,
+        active_storage=False,
     ):
         """Return sum of weights values for an array.
 
@@ -645,6 +1080,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
             {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
+
+            {{active_storage: `bool`, optional}}
 
         :Returns:
 
@@ -677,6 +1114,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         keepdims=False,
         mtol=None,
         split_every=None,
+        active_storage=False,
     ):
         """Return sum of squares of weights values for an array.
 
@@ -703,6 +1141,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
             {{mtol: number, optional}}
 
             {{split_every: `int` or `dict`, optional}}
+
+            {{active_storage: `bool`, optional}}
 
         :Returns:
 
@@ -736,6 +1176,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=None,
         ddof=None,
         split_every=None,
+        active_storage=False,
     ):
         """Return variances of an array.
 
@@ -765,6 +1206,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{active_storage: `bool`, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -788,7 +1231,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     @classmethod
-    def unique(cls, a, split_every=None):
+    def unique(cls, a, split_every=None, active_storage=False):
         """Return unique elements of the data.
 
         .. versionadded:: TODODASKVER
@@ -799,6 +1242,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The array to be collapsed.
 
             {{split_every: `int` or `dict`, optional}}
+
+            {{active_storage: `bool`, optional}}                
 
         :Returns:
 
@@ -1218,39 +1663,6 @@ def cf_mean_agg(
     return x
 
 
-# --------------------------------------------------------------------
-# maximum
-# --------------------------------------------------------------------
-def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
-    """Chunk calculations for the maximum.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * max: The maximum of `x``.
-
-    """
-    if computing_meta:
-        return x
-
-    return {
-        "max": chunk.max(x, **kwargs),
-        "N": cf_sample_size_chunk(x, **kwargs)["N"],
-    }
-
-
 def cf_max_combine(pairs, axis=None, computing_meta=False, **kwargs):
     """Combination calculations for the maximum.
 
@@ -1368,38 +1780,6 @@ def cf_mid_range_agg(
     x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
     return x
 
-
-# --------------------------------------------------------------------
-# minimum
-# --------------------------------------------------------------------
-def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
-    """Chunk calculations for the minimum.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-            * min: The minimum of ``x``.
-
-    """
-    if computing_meta:
-        return x
-
-    return {
-        "min": chunk.min(x, **kwargs),
-        "N": cf_sample_size_chunk(x, **kwargs)["N"],
-    }
 
 
 def cf_min_combine(pairs, axis=None, computing_meta=False, **kwargs):
@@ -1657,42 +2037,6 @@ def cf_rms_agg(
     x = mask_small_sample_size(x, d["N"], axis, mtol, original_shape)
     return x
 
-
-# --------------------------------------------------------------------
-# sample size
-# --------------------------------------------------------------------
-def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
-    """Chunk calculations for the sample size.
-
-    This function is passed to `dask.array.reduction` as its *chunk*
-    parameter.
-
-    .. versionadded:: TODODASKVER
-
-    :Parameters:
-
-        See `dask.array.reductions` for details of the parameters.
-
-    :Returns:
-
-        `dict`
-            Dictionary with the keys:
-
-            * N: The sample size.
-
-    """
-    if computing_meta:
-        return x
-
-    if np.ma.isMA(x):
-        N = chunk.sum(np.ones_like(x, dtype=dtype), **kwargs)
-    else:
-        if dtype:
-            kwargs["dtype"] = dtype
-
-        N = numel(x, **kwargs)
-
-    return {"N": N}
 
 
 def cf_sample_size_combine(

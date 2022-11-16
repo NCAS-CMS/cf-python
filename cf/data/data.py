@@ -55,6 +55,7 @@ from .mixin import DataClassDeprecationsMixin
 from .utils import (  # is_small,; is_very_small,
     YMDhms,
     _is_numeric_dtype,
+    collapse,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
@@ -362,7 +363,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(array, copy=copy, delete_source=False)
+                    self._set_dask(array, copy=copy, conform=False)
             else:
                 self._del_dask(None)
 
@@ -455,12 +456,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     "Use the 'chunks' parameter instead."
                 )
 
-            # Bring the data into memory
             if to_memory:
+                # Bring the data into memory
                 try:
                     array = array.to_memory()
                 except AttributeError:
                     pass
+            elif self._is_abstract_Array_subclass(array):
+                self._set_active_storage(True)
 
             array = to_dask(array, chunks, **kwargs)
 
@@ -492,7 +495,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, delete_source=False)
+        self._set_dask(array, conform=False)
 
         # Override the data type
         if dtype is not None:
@@ -1121,9 +1124,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             shifts = [-shift for shift in shifts]
             self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
-        # Remove a source array, on the grounds that we can't
-        # guarantee its consistency with the updated dask array.
-        self._del_Array(None)
+        # Remove elements made invalid by updating the `dask` array
+        self._conform_after_dask_update()
 
         return
 
@@ -1241,12 +1243,85 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    def _set_dask(self, array, copy=False, delete_source=True):
-        """Set the dask array.
+    def _conform_after_dask_update(self):
+        """Remove elements made invalid by updating the `dask` array.
+
+        Removes or modifies components that can't be guaranteed to be
+        consistent with an updated `dask` array`:
+
+        * Deletes a source array.
+        * Sets "active storage" to `False`
 
         .. versionadded:: TODODASKVER
 
-        .. seealso:: `to_dask_array`, `_del_dask`
+        :Returns:
+
+            `None`
+
+        """
+        self._del_Array(None)
+        self._del_active_storage()
+
+    def _del_active_storage(self):
+        """TODODASKDOCS.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `_set_active_storage`
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d = cf.Data([9])
+        >>> d.active_storage()
+        False
+        >>> d._set_active_storage(True)
+        >>> d.active_storage()
+        True
+        >>> d._del_active_storage()
+        >>> d.active_storage()
+        False
+
+        """
+        self._custom.pop("active_storage", None)
+
+    def _set_active_storage(self, value):
+        """TODODASKDOCS.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `_del_active_storage`
+
+        :Returns:
+
+            `bool`
+                 TODODASKDOCS
+
+        **Examples**
+
+        >>> d = cf.Data([9])
+        >>> d.active_storage()
+        False
+        >>> d._set_active_storage(True)
+        >>> d.active_storage()
+        True
+        >>> d._del_active_storage()
+        >>> d.active_storage()
+        False
+
+        """
+        self._custom["active_storage"] = bool(value)
+
+    def _set_dask(self, array, copy=False, conform=True):
+        """Set the `dask` array.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `to_dask_array`, `_conform_after_dask_update`
+                     `_del_dask`
 
         :Parameters:
 
@@ -1257,10 +1332,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If True then copy *array* before setting it. By
                 default it is not copied.
 
-            delete_source: `bool`, optional
-                If False then do not delete a source array, if one
-                exists, after setting the new dask array. By default a
-                source array is deleted.
+            conform: `bool`, optional
+                If True, the default, then remove elements made
+                invalid by updating the `dask` array. See
+                `_conform_after_dask_update` for details.
 
         :Returns:
 
@@ -1287,17 +1362,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         self._custom["dask"] = array
 
-        if delete_source:
-            # Remove a source array, on the grounds that we can't
-            # guarantee its consistency with the new dask array.
-            self._del_Array(None)
+        if conform:
+            # Remove elements made invalid by updating the `dask`
+            # array
+            self._conform_after_dask_update()
 
-    def _del_dask(self, default=ValueError(), delete_source=True):
-        """Remove the dask array.
+    def _del_dask(self, default=ValueError(), conform=True):
+        """Remove the `dask` array.
 
         .. versionadded:: TODODASKVER
 
-        .. seealso:: `_set_dask`, `to_dask_array`
+        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+                     `_set_dask`
 
         :Parameters:
 
@@ -1307,9 +1383,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 {{default Exception}}
 
-            delete_source: `bool`, optional
-                If False then do not delete a compressed source array,
-                if one exists.
+            conform: `bool`, optional
+                If True, the default, then remove elements made
+                invalid by updating the `dask` array. See
+                `_conform_after_dask_update` for details.
 
         :Returns:
 
@@ -1339,11 +1416,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 default, f"{self.__class__.__name__!r} has no dask array"
             )
 
-        if delete_source:
-            # Remove a source array, on the grounds that we can't
-            # guarantee its consistency with any future new dask
-            # array.
-            self._del_Array(None)
+        if conform:
+            # Remove elements made invalid by deleting the `dask`
+            # array
+            self._conform_after_dask_update()
 
         return out
 
@@ -2195,7 +2271,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = self.to_dask_array()
         dx = dx.persist()
-        d._set_dask(dx, delete_source=False)
+        d._set_dask(dx, conform=False)
+        d._del_active_storage()
 
         return d
 
@@ -2765,7 +2842,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, delete_source=False)
+        d._set_dask(dx, conform=False)
+        d._del_active_storage()
 
         return d
 
@@ -4077,7 +4155,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     # ----------------------------------------------------------------
     @property
     def chunks(self):
-        """The chunk sizes for each dimension.
+        """The `dask` chunk sizes for each dimension.
 
         **Examples**
 
@@ -4100,6 +4178,27 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
+    @property
+    def active_storage(self):
+        """Whether or not active storage recductions are possible.
+
+        If the `active_storage` attribute is `True` then reductions
+        (such as calculating the minimum value of the data) will
+        attempt to use active storage capabilities, falling back on
+        the usual (non-active) techniques if an active storage
+        operation fails for any reason.
+
+        .. versionadded:: TODODASKVER
+
+        **Examples**
+
+        >>> d = cf.Data([9])
+        >>> d.active_storage
+        False
+
+        """
+        return self._custom.get("active_storage", False)
+
     @property
     def Units(self):
         """The `cf.Units` object containing the units of the data array.
@@ -5644,7 +5743,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.max,
             d,
             axis=axes,
@@ -5707,7 +5806,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.max_abs,
             d,
             axis=axes,
@@ -5776,7 +5875,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.min,
             d,
             axis=axes,
@@ -5839,7 +5938,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.min_abs,
             d,
             axis=axes,
@@ -5916,7 +6015,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.mean,
             d,
             axis=axes,
@@ -5992,7 +6091,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.mean_abs,
             d,
             axis=axes,
@@ -6072,7 +6171,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, weights = _collapse(
+        d, weights = collapse(
             Collapse.sum,
             d,
             axis=axes,
@@ -6154,7 +6253,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.sample_size,
             d,
             axis=axes,
@@ -7532,7 +7631,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
-        self._set_dask(dx, delete_source=False)
+        self._set_dask(dx, conform=False)
         self.hardmask = True
 
     def has_calendar(self):
@@ -7629,7 +7728,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
-        self._set_dask(dx, delete_source=False)
+        self._set_dask(dx, conform=False)
         self.hardmask = False
 
     @_inplace_enabled(default=False)
@@ -8720,7 +8819,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.mid_range,
             d,
             axis=axes,
@@ -9073,7 +9172,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.rms,
             d,
             axis=axes,
@@ -10697,7 +10796,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.range,
             d,
             axis=axes,
@@ -10825,7 +10924,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.sum,
             d,
             axis=axes,
@@ -10990,7 +11089,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, weights = _collapse(
+        d, weights = collapse(
             Collapse.sum_of_weights,
             d,
             axis=axes,
@@ -11088,7 +11187,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, weights = _collapse(
+        d, weights = collapse(
             Collapse.sum_of_weights2,
             d,
             axis=axes,
@@ -11272,7 +11371,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d, _ = _collapse(
+        d, _ = collapse(
             Collapse.var,
             d,
             axis=axes,
@@ -11661,252 +11760,3 @@ def _size_of_index(index, size=None):
     else:
         # Index is a list of integers
         return len(index)
-
-
-def _collapse(
-    func,
-    d,
-    axis=None,
-    weights=None,
-    keepdims=True,
-    mtol=1,
-    ddof=None,
-    split_every=None,
-):
-    """Collapse data in-place using a given funcion.
-
-     .. versionadded:: TODODASKVER
-
-     .. seealso:: `_parse_weights`
-
-    :Parameters:
-
-        func: callable
-            The function that collapses the underlying `dask` array of
-            *d*. Must have the minimum signature (parameters and
-            default values) ``func(dx, axis=None, keepdims=False,
-            mtol=None, split_every=None)`` (optionally including
-            ``weights=None`` or ``ddof=None``), where ``dx`` is a the
-            dask array contained in *d*.
-
-        d: `Data`
-            The data to be collapsed.
-
-        axis: (sequence of) int, optional
-            The axes to be collapsed. By default all axes are
-            collapsed, resulting in output with size 1. Each axis is
-            identified by its integer position. If *axes* is an empty
-            sequence then the collapse is applied to each scalar
-            element and the reuslt has the same shape as the input
-            data.
-
-        weights: data_like, `dict`, or `None`, optional
-            Weights associated with values of the data. By default
-            *weights* is `None`, meaning that all non-missing elements
-            of the data have a weight of 1 and all missing elements
-            have a weight of 0.
-
-            If *weights* is a data_like object then it must be
-            broadcastable to the array.
-
-            If *weights* is a dictionary then each key specifies axes
-            of the data (an `int` or `tuple` of `int`), with a
-            corresponding value of data_like weights for those
-            axes. The dimensions of a weights value must correspond to
-            its key axes in the same order. Not all of the axes need
-            weights assigned to them. The weights that will be used
-            will be an outer product of the dictionary's values.
-
-            However they are specified, the weights are internally
-            broadcast to the shape of the data, and those weights that
-            are missing data, or that correspond to the missing
-            elements of the data, are assigned a weight of 0.
-
-            For collapse functions that do not have a ``weights``
-            parameter, *weights* must be `None`.
-
-        keepdims: `bool`, optional
-            By default, the axes which are collapsed are left in the
-            result as dimensions with size one, so that the result
-            will broadcast correctly against the input array. If set
-            to False then collapsed axes are removed from the data.
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. It is defined as a fraction (between
-            0 and 1 inclusive) of the contributing input data values.
-
-            The default of *mtol* is 1, meaning that a missing datum
-            in the output array occurs whenever all of its
-            contributing input array elements are missing data.
-
-            For other values, a missing datum in the output array
-            occurs whenever more than ``100*mtol%`` of its
-            contributing input array elements are missing data.
-
-        ddof: number, optional
-            The delta degrees of freedom. The number of degrees of
-            freedom used in the calculation is (N-*ddof*) where N
-            represents the number of non-missing elements.
-
-            For collapse functions that do not have a ``ddof``
-            parameter, *ddof* must be `None`.
-
-        split_every: `int` or `dict`, optional
-            Determines the depth of the recursive aggregation. See
-            `dask.array.reduction` for details.
-
-    :Returns:
-
-        (`Data`, formatted weights)
-            The collapsed data and the output of ``_parse_weights(d,
-            weights, axis)``.
-
-    """
-    kwargs = {
-        "axis": axis,
-        "keepdims": keepdims,
-        "split_every": split_every,
-        "mtol": mtol,
-    }
-
-    weights = _parse_weights(d, weights, axis)
-    if weights is not None:
-        kwargs["weights"] = weights
-
-    if ddof is not None:
-        kwargs["ddof"] = ddof
-
-    dx = d.to_dask_array()
-    dx = func(dx, **kwargs)
-    d._set_dask(dx)
-
-    return d, weights
-
-
-def _parse_weights(d, weights, axis=None):
-    """Parse the weights input to `_collapse`.
-
-     .. versionadded:: TODODASKVER
-
-     .. seealso:: `_collapse`
-
-    :Parameters:
-
-        d: `Data`
-            The data to be collapsed.
-
-        weights: data_like or `dict`
-            See `_collapse` for details.
-
-        axis: (sequence of) `int`, optional
-            See `_collapse` for details.
-
-    :Returns:
-
-        `Data` or `None`
-            * If *weights* is a data_like object then they are
-              returned unchanged as a `Data` object. It is up to the
-              downstream functions to check if the weights can be
-              broadcast to the data.
-
-            * If *weights* is a dictionary then the dictionary
-              values', i.e. the weights components, outer product is
-              returned in `Data` object that is broadcastable to the
-              data.
-
-              If the dictionary is empty, or none of the axes defined
-              by the keys correspond to collapse axes defined by
-              *axis*, then then the collapse is unweighted and `None`
-              is returned.
-
-            Note that, in all cases, the returned weights are *not*
-            modified to account for missing values in the data.
-
-    **Examples**
-
-    >>> d = cf.Data(np.arange(12)).reshape(4, 3)
-
-    >>> _parse_weights(d, [1, 2, 1], (0, 1))
-    <CF Data(3): [1, 2, 1]>
-
-    >>> _parse_weights(d, [[1, 2, 1]], (0, 1))
-    <CF Data(1, 3): [[1, 2, 1]]>
-
-    >>> _parse_weights(d, {1: [1, 2, 1]}, (0, 1))
-    <CF Data(1, 3): [[1, 2, 1]]>
-
-    >>> print(_parse_weights(d, {0: [1, 2, 3, 4], 1: [1, 2, 1]}, (0, 1)))
-    [[1 2 1]
-     [2 4 2]
-     [3 6 3]
-     [4 8 4]]
-
-    >>> print(cf.data.data._parse_weights(d, {}, (0, 1)))
-    None
-
-    >>> print(cf.data.data._parse_weights(d, {1: [1, 2, 1]}, 0))
-    None
-
-    """
-    if weights is None:
-        # No weights
-        return
-
-    if not isinstance(weights, dict):
-        # Weights is data_like. Don't check broadcastability to d,
-        # leave that to whatever uses the weights.
-        return Data.asdata(weights)
-
-    if not weights:
-        # No weights (empty dictionary)
-        return
-
-    if axis is None:
-        axis = tuple(range(d.ndim))
-    else:
-        axis = d._parse_axes(axis)
-
-    weights = weights.copy()
-    weights_axes = set()
-    for key, value in tuple(weights.items()):
-        del weights[key]
-        key = d._parse_axes(key)
-        if weights_axes.intersection(key):
-            raise ValueError("Duplicate weights axis")
-
-        weights[tuple(key)] = value
-        weights_axes.update(key)
-
-    if not weights_axes.intersection(axis):
-        # No weights span collapse axes
-        return
-
-    # For each component, add missing dimensions as size 1.
-    w = []
-    shape = d.shape
-    for key, value in weights.items():
-        value = Data.asdata(value)
-
-        # Make sure axes are in ascending order
-        skey = tuple(sorted(key))
-        if key != skey:
-            value = value.transpose(skey)
-            key = skey
-
-        if not all(
-            True if i in (j, 1) else False
-            for i, j in zip(value.shape, [shape[i] for i in key])
-        ):
-            raise ValueError(
-                f"Weights component for axes {tuple(key)} with shape "
-                f"{value.shape} is not broadcastable to data with "
-                f"shape {shape}"
-            )
-
-        new_shape = [n if i in key else 1 for i, n in enumerate(shape)]
-        w.append(value.reshape(new_shape))
-
-    # Return the product of the weights components, which will be
-    # broadcastable to d
-    return reduce(mul, w)

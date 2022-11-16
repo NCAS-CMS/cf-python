@@ -4316,6 +4316,42 @@ class DataTest(unittest.TestCase):
         self.assertTrue((q == d).array.all())
         self.assertTrue((d == q).array.all())
 
+    def test_Data_active_storage(self):
+        """Test `Data.active_storage`."""
+        d = cf.Data([[9, 8]])
+        self.assertFalse(d.active_storage)
+
+        d._set_active_storage(True)
+        self.assertTrue(d.active_storage)
+
+        # Check that operations correctly set active_storage to False
+        d[...] = -1
+        self.assertFalse(d.active_storage)
+
+        d._set_active_storage(True)
+        d.transpose(inplace=True)
+        self.assertFalse(d.active_storage)
+
+        d._set_active_storage(True)
+        d.persist(inplace=True)
+        self.assertFalse(d.active_storage)
+
+        d._set_active_storage(True)
+        d.rechunk(1, inplace=True)
+        self.assertFalse(d.active_storage)
+
+        # Test with data on disk
+        n = cf.NetCDFArray(
+            "test_file.nc",
+            "eastward_wind",
+            shape=(1, 9, 10),
+            dtype=np.dtype(float),
+        )
+        d = cf.Data(n)
+        self.assertTrue(d.active_storage)
+        d = cf.Data(n, to_memory=True)
+        self.assertFalse(d.active_storage)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
