@@ -316,10 +316,8 @@ class UMArray(FileArray):
                     cf_info,
                     condition,
                 ) in records:
-                    if not self._test_version(valid_from, valid_to, version):
-                        continue
-
-                    if not self._test_condition(condition, int_hdr):
+                    if (not self._test_version(valid_from, valid_to, version) or
+                        not self._test_condition(condition, int_hdr)):
                         continue
 
                     units = units0

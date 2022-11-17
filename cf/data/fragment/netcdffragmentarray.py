@@ -47,15 +47,6 @@ class NetCDFFragmentArray(FragmentArray):
                 fragment variable in that the latter may have fewer
                 size 1 dimensions.
 
-            mask: `bool`
-                If True (the default) then mask by convention when
-                reading data from disk.
-
-                A netCDF array is masked depending on the values of
-                any of the netCDF variable attributes ``valid_min``,
-                ``valid_max``, ``valid_range``, ``_FillValue`` and
-                ``missing_value``.
-
             units: `str` or `None`, optional
                 The units of the fragment data. Set to `None` to
                 indicate that there are no units. If unset then the
