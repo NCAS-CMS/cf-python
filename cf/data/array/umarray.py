@@ -610,7 +610,7 @@ class UMArray(FileArray):
 
             `str` or `None`
                 ``'FF'`` or ``'PP'``. If the word size has not been
-                set the `None` is returned, in which case file format
+                set then `None` is returned, in which case file format
                 will be detected automatically (if possible) when the
                 file is opened with `open`.
 
