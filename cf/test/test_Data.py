@@ -4346,6 +4346,20 @@ class DataTest(unittest.TestCase):
             for element in elements:
                 self.assertIn(element, d._custom)
 
+        # Test when size > 3, i.e. second element is not there.
+        d = cf.Data([1, 2, 3, 4])
+        for element in elements0:
+            self.assertNotIn(element, d._custom)
+
+        self.assertEqual(str(d), "[1, ..., 4]")
+        self.assertNotIn("second_element", d._custom)
+        for element in elements0[:2]:
+            self.assertIn(element, d._custom)
+
+        d[0] = 1
+        for element in elements0:
+            self.assertNotIn(element, d._custom)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
