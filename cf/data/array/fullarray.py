@@ -29,8 +29,8 @@ class FullArray(Array):
                 dtype : numpy.dtype
                     The numpy data type of the data array.
 
-            shape : tuple
-                The data array's dimension sizes.
+                shape : tuple
+                    The data array's dimension sizes.
 
                 size : int
                     Number of elements indexin the data array.
