@@ -425,7 +425,7 @@ class UMArray(FileArray):
     def file_address(self):
         """The file name and address.
 
-        Deprecated at version TODODASKVER.Use methods `get_filename`
+        Deprecated at version TODODASKVER. Use methods `get_filename`
         and `get_address` instead.
 
         :Returns:
