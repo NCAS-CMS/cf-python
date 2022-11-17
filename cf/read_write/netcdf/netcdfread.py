@@ -3,21 +3,21 @@ import netCDF4
 import numpy as np
 
 """
-TODODASKCFA: remove aggregation_* properties from constructs
+TODOCFA: remove aggregation_* properties from constructs
 
-TODODASKCFA: Create auxiliary coordinates from non-standardized terms
+TODOCFA: Create auxiliary coordinates from non-standardized terms
 
-TODODASKCFA: Reference instruction variables (and/or set as
-            "do_not_create_field")
+TODOCFA: Reference instruction variables (and/or set as
+         "do_not_create_field")
 
-TODODASKCFA: Create auxiliary coordinates from non-standardized terms
+TODOCFA: Create auxiliary coordinates from non-standardized terms
 
-TODODASKCFA: Consider scanning for cfa variables to the top
-             (e.g. where scanning for geometry varables is). This will
-             probably need a change in cfdm so that a customizable
-             hook can be overlaoded (cf. `_customize_read_vars`).
+TODOCFA: Consider scanning for cfa variables to the top (e.g. where
+         scanning for geometry varables is). This will probably need a
+         change in cfdm so that a customizable hook can be overlaoded
+         (like `_customize_read_vars` does).
 
-TODODASKCFA: What about groups/netcdf_flattener?
+TODOCFA: What about groups/netcdf_flattener?
 
 """
 
@@ -330,7 +330,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             dimensions = g["variable_dimensions"]
 
             # Do not create fields from CFA private
-            # variables. TODODASKCFA: get private variables from
+            # variables. TODOCFA: get private variables from
             # CFANetCDFArray instances
             for ncvar in g["variables"]:
                 if attributes[ncvar].get("cf_role", None) == "cfa_private":
