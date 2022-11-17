@@ -1,11 +1,10 @@
-import numpy as np
-
-from ...functions import inspect as cf_inspect
+from ....functions import _DEPRECATION_ERROR_ATTRIBUTE
+from ..mixin import FileArrayMixin
 from .array import Array
 
 
-class FileArray(Array):
-    """An array stored in a file."""
+class FileArray(FileArrayMixin, Array):
+    """Abstract base class for an array stored in a file."""
 
     def __getitem__(self, indices):
         """Return a subspace of the array.
@@ -19,47 +18,13 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
+    def __repr__(self):
+        """x.__repr__() <==> repr(x)"""
+        return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
+
     def __str__(self):
         """x.__str__() <==> str(x)"""
-        return f"<{self.__class__.__name__}: {self.shape} in {self.file}>"
-
-    @property
-    def _dask_lock(self):
-        """TODODASKDOCS.
-
-        Concurrent reads are assumed to be not supported.
-
-        .. versionadded:: TODODASKVER
-
-        """
-        return True
-
-    @property
-    def _dask_meta(self):
-        """TODODASKDOCS.
-
-        .. versionadded:: TODODASKVER
-
-        """
-        return np.array((), dtype=self.dtype)
-
-    @property
-    def array(self):
-        """Return an independent numpy array containing the data.
-
-        :Returns:
-
-            `numpy.ndarray`
-                An independent numpy array of the data.
-
-        **Examples**
-
-        >>> n = numpy.asanyarray(a)
-        >>> isinstance(n, numpy.ndarray)
-        True
-
-        """
-        return self[...]
+        return f"{self.get_filename()}, {self.get_address()}"
 
     @property
     def dtype(self):
@@ -68,8 +33,19 @@ class FileArray(Array):
 
     @property
     def filename(self):
-        """The name of the file containing the array."""
-        return self._get_component("filename")
+        """The name of the file containing the array.
+
+        Deprecated at version TODODASKVER. Use method `get_filename`
+        instead.
+
+        """
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self,
+            "filename",
+            message="Use method 'get_filename' instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @property
     def shape(self):
@@ -82,25 +58,28 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}.close"
         )  # pragma: no cover
 
-    def inspect(self):
-        """Inspect the object for debugging.
+    def get_address(self):
+        """The address in the file of the variable.
 
-        .. seealso:: `cf.inspect`
+        .. versionadded:: TODODASKVER
 
         :Returns:
 
-            `None`
+            `str` or `None`
+                The address, or `None` if there isn't one.
 
         """
-        print(cf_inspect(self))  # pragma: no cover
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.get_address"
+        )  # pragma: no cover
 
     def get_filename(self):
         """Return the name of the file containing the array.
 
         :Returns:
 
-            `str`
-                The file name.
+            `str` or `None`
+                The filename, or `None` if there isn't one.
 
         **Examples**
 
@@ -108,7 +87,7 @@ class FileArray(Array):
         'file.nc'
 
         """
-        return self._get_component("filename")
+        return self._get_component("filename", None)
 
     def open(self):
         """Returns an open dataset containing the data array."""

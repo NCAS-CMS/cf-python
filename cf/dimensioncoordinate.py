@@ -625,7 +625,7 @@ class DimensionCoordinate(
 
         return bounds
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         """Flips the dimension coordinate, that is reverses its
@@ -752,7 +752,7 @@ class DimensionCoordinate(
     #
     #        return True
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False):
         """Rolls the dimension coordinate along a cyclic axis."""

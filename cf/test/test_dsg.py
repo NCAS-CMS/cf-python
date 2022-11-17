@@ -199,8 +199,6 @@ class DSGTest(unittest.TestCase):
         array = cf.RaggedContiguousArray(
             compressed_array=cf.Data(ragged_array),
             shape=(2, 4),
-            size=8,
-            ndim=2,
             count_variable=count_variable,
         )
 
@@ -303,8 +301,6 @@ class DSGTest(unittest.TestCase):
         array = cf.RaggedContiguousArray(
             compressed_array=cf.Data(ragged_array),
             shape=(2, 3),
-            size=6,
-            ndim=2,
             count_variable=count_variable,
         )
 

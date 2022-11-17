@@ -39,7 +39,10 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import compressed_to_dask, generate_axis_identifiers, to_dask
+from .creation import (  # cfa_to_dask,; compressed_to_dask,
+    generate_axis_identifiers,
+    to_dask,
+)
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -410,16 +413,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Still here? Then create a dask array and store it.
 
-        # Find out if the data is compressed
+        # Find out if the input data is compressed by convention
         try:
             compressed = array.get_compression_type()
         except AttributeError:
             compressed = ""
 
         if compressed:
-            # The data is compressed, so create a uncompressed dask
-            # view of it.
+            # The input data is compressed
             if chunks != _DEFAULT_CHUNKS:
+                # TODODASK: Is this restriction necessary?
                 raise ValueError(
                     "Can't define chunks for compressed input arrays. "
                     "Consider rechunking after initialisation."
@@ -443,34 +446,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # extra information, such as a count or index variable.
             self._set_Array(array)
 
-            array = compressed_to_dask(array, chunks)
-
-        elif not is_dask_collection(array):
-            # Turn the data into a dask array
-            kwargs = init_options.get("from_array", {})
-            if "chunks" in kwargs:
-                raise TypeError(
-                    "Can't define 'chunks' in the 'from_array' "
-                    "initialisation options. "
-                    "Use the 'chunks' parameter instead."
-                )
-
-            # Bring the data into memory
-            if to_memory:
-                try:
-                    array = array.to_memory()
-                except AttributeError:
-                    pass
-
-            array = to_dask(array, chunks, **kwargs)
-
-        elif chunks != _DEFAULT_CHUNKS:
-            # The data is already a dask array
-            raise ValueError(
-                "Can't define chunks for dask input arrays. Consider "
-                "rechunking the dask array before initialisation, or "
-                "rechunking the Data after initialisation."
+        # Cast the input data as a dask array
+        kwargs = init_options.get("from_array", {})
+        if "chunks" in kwargs:
+            raise TypeError(
+                "Can't define 'chunks' in the 'from_array' initialisation "
+                "options. Use the 'chunks' parameter instead."
             )
+
+        array = to_dask(
+            array, chunks, default_chunks=_DEFAULT_CHUNKS, **kwargs
+        )
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
@@ -1812,7 +1798,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("_preserve_partitions")
+    @_deprecated_kwarg_check(
+        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
+    )
     def median(self, axes=None, squeeze=False, mtol=1, inplace=False):
         """Calculate median values.
 
@@ -1967,7 +1955,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("_preserve_partitions")
+    @_deprecated_kwarg_check(
+        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
+    )
     @_inplace_enabled(default=False)
     def percentile(
         self,
@@ -1979,6 +1969,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         inplace=False,
         _preserve_partitions=False,
         interpolation=None,
+        interpolation2=None,
     ):
         """Compute percentiles of the data along the specified axes.
 
@@ -2388,7 +2379,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             ]
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def ceil(self, inplace=False, i=False):
         """The ceiling of the data, element-wise.
@@ -5664,7 +5655,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self.Units = Units(value, self.get_calendar(default=None))
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def max(
         self,
         axes=None,
@@ -5795,7 +5786,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def min(
         self,
         axes=None,
@@ -5927,7 +5918,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def mean(
         self,
         axes=None,
@@ -6175,7 +6166,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def sample_size(
         self,
         axes=None,
@@ -6276,7 +6267,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         m.override_units(_units_1, inplace=True)
         return m
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         """Clip (limit) the values in the data array in place.
@@ -6471,7 +6462,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx)
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cos(self, inplace=False, i=False):
         """Take the trigonometric cosine of the data element-wise.
@@ -7012,7 +7003,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return product(*[range(0, r) for r in self.shape])
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equals(
         self,
@@ -7144,7 +7135,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         else:
             return True
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def exp(self, inplace=False, i=False):
         """Take the exponential of the data array.
@@ -7233,6 +7224,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
+    @_deprecated_kwarg_check("size", version="TODODASKVER", removed_at="5.0.0")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
@@ -8060,7 +8052,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def floor(self, inplace=False, i=False):
         """Return the floor of the data array.
@@ -8094,7 +8086,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def outerproduct(self, a, inplace=False, i=False):
         """Compute the outer product with another data array.
 
@@ -8181,7 +8173,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def change_calendar(self, calendar, inplace=False, i=False):
         """Change the calendar of date-time array elements.
@@ -8249,7 +8241,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
         """Override the data array units.
@@ -8293,7 +8285,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._Units = Units(units)
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
         """Override the calendar of the data array elements.
@@ -8731,7 +8723,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def mid_range(
         self,
         axes=None,
@@ -8800,7 +8792,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         """Reverse the direction of axes of the data array.
@@ -9046,7 +9038,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def rint(self, inplace=False, i=False):
         """Round the data to the nearest integer, element-wise.
@@ -9154,7 +9146,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def round(self, decimals=0, inplace=False, i=False):
         """Evenly round elements of the data array to the given number
@@ -9425,7 +9417,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         else:
             return data_values
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         """Interchange two axes of an array.
@@ -9516,7 +9508,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self.size * (self.dtype.itemsize + 1) <= free_memory()
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def where(
@@ -9790,7 +9782,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sin(self, inplace=False, i=False):
         """Take the trigonometric sine of the data element-wise.
@@ -9849,7 +9841,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sinh(self, inplace=False):
         """Take the hyperbolic sine of the data element-wise.
@@ -9967,7 +9959,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tanh(self, inplace=False):
         """Take the hyperbolic tangent of the data element-wise.
@@ -10028,7 +10020,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
         """Takes the logarithm of the data array.
@@ -10067,7 +10059,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False, i=False):
         """Remove size 1 axes from the data array.
@@ -10171,7 +10163,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     # `arctan2`, AT2 seealso
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tan(self, inplace=False, i=False):
         """Take the trigonometric tangent of the data element-wise.
@@ -10277,7 +10269,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "Consider using 'Data.persist' instead."
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False, i=False):
         """Permute the axes of the data array.
@@ -10342,7 +10334,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def trunc(self, inplace=False, i=False):
         """Return the truncated values of the data array.
@@ -10610,8 +10602,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = da.zeros(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
-    @_deprecated_kwarg_check("out")
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("out", version="TODODASKVER", removed_at="5.0.0")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def func(
         self,
@@ -10709,7 +10701,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def range(
         self,
         axes=None,
@@ -10778,7 +10770,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def roll(self, axis, shift, inplace=False, i=False):
         """Roll array elements along a given axis.
 
@@ -10828,7 +10820,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def sum(
         self,
         axes=None,
@@ -10982,7 +10974,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sum_of_weights(
         self,
@@ -11080,7 +11072,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sum_of_weights2(
         self,
@@ -11180,7 +11172,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def std(
         self,
@@ -11268,7 +11260,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def var(
         self,
         axes=None,
@@ -11578,7 +11570,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return self.datetime_array
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def maximum(
         self,
         axes=None,
@@ -11599,7 +11591,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def minimum(
         self,
         axes=None,
@@ -11620,7 +11612,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def sd(
         self,
         axes=None,
@@ -11645,7 +11637,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def standard_deviation(
         self,
         axes=None,
@@ -11670,7 +11662,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def variance(
         self,
         axes=None,

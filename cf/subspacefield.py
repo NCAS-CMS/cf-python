@@ -281,13 +281,14 @@ class SubspaceField(mixin.Subspace):
 
         try:
             indices = field.indices(*args, **kwargs)
-        except ValueError as error:
+            out = field[indices]
+        except (ValueError, IndexError) as error:
             if test:
                 return False
 
-            raise ValueError(error)
+            raise error
         else:
             if test:
                 return True
 
-            return field[indices]
+            return out

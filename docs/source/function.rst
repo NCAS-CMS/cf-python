@@ -163,6 +163,7 @@ Miscellaneous
    cf.flat
    cf.hash_array
    cf.implementation
+   cf.indices_shape
    cf.inspect
    cf.log_level
    cf.pathjoin
