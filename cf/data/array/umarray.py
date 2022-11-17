@@ -493,8 +493,6 @@ class UMArray(FileArray):
                 'FF' or 'PP'
 
         """
-        return self._get_component("fmt")
-
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "fmt",
@@ -591,7 +589,7 @@ class UMArray(FileArray):
 
             `str` or `None`
                 ``'little_endian'`` or ``'big_endian'``. If the byte
-                ordereing has not been set the `None` is returned, in
+                ordereing has not been set then `None` is returned, in
                 which case byte ordering will be detected
                 automatically (if possible) when the file is opened
                 with `open`.
@@ -610,7 +608,7 @@ class UMArray(FileArray):
 
             `str` or `None`
                 ``'FF'`` or ``'PP'``. If the word size has not been
-                set the `None` is returned, in which case file format
+                set then `None` is returned, in which case file format
                 will be detected automatically (if possible) when the
                 file is opened with `open`.
 
