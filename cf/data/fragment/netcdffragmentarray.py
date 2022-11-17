@@ -136,7 +136,7 @@ class NetCDFFragmentArray(FragmentArray):
 
         **Performance**
 
-        If the netCDF fragment variable has fewer the `ndim`
+        If the netCDF fragment variable has fewer than `ndim`
         dimensions then the entire array is read into memory before
         the requested subspace of it is returned.
 
