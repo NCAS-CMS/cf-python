@@ -40,8 +40,8 @@ from . import (
     mixin,
 )
 from .constants import masked as cf_masked
-from .data import (
-    Data,
+from .data import Data
+from .data.array import (
     GatheredArray,
     RaggedContiguousArray,
     RaggedIndexedArray,

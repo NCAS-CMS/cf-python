@@ -39,7 +39,10 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import compressed_to_dask, generate_axis_identifiers, to_dask
+from .creation import (  # cfa_to_dask,; compressed_to_dask,
+    generate_axis_identifiers,
+    to_dask,
+)
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -410,16 +413,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Still here? Then create a dask array and store it.
 
-        # Find out if the data is compressed
+        # Find out if the input data is compressed by convention
         try:
             compressed = array.get_compression_type()
         except AttributeError:
             compressed = ""
 
         if compressed:
-            # The data is compressed, so create a uncompressed dask
-            # view of it.
+            # The input data is compressed
             if chunks != _DEFAULT_CHUNKS:
+                # TODODASK: Is this restriction necessary?
                 raise ValueError(
                     "Can't define chunks for compressed input arrays. "
                     "Consider rechunking after initialisation."
@@ -443,34 +446,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # extra information, such as a count or index variable.
             self._set_Array(array)
 
-            array = compressed_to_dask(array, chunks)
-
-        elif not is_dask_collection(array):
-            # Turn the data into a dask array
-            kwargs = init_options.get("from_array", {})
-            if "chunks" in kwargs:
-                raise TypeError(
-                    "Can't define 'chunks' in the 'from_array' "
-                    "initialisation options. "
-                    "Use the 'chunks' parameter instead."
-                )
-
-            # Bring the data into memory
-            if to_memory:
-                try:
-                    array = array.to_memory()
-                except AttributeError:
-                    pass
-
-            array = to_dask(array, chunks, **kwargs)
-
-        elif chunks != _DEFAULT_CHUNKS:
-            # The data is already a dask array
-            raise ValueError(
-                "Can't define chunks for dask input arrays. Consider "
-                "rechunking the dask array before initialisation, or "
-                "rechunking the Data after initialisation."
+        # Cast the input data as a dask array
+        kwargs = init_options.get("from_array", {})
+        if "chunks" in kwargs:
+            raise TypeError(
+                "Can't define 'chunks' in the 'from_array' initialisation "
+                "options. Use the 'chunks' parameter instead."
             )
+
+        array = to_dask(
+            array, chunks, default_chunks=_DEFAULT_CHUNKS, **kwargs
+        )
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
