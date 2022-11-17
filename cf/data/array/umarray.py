@@ -493,8 +493,6 @@ class UMArray(FileArray):
                 'FF' or 'PP'
 
         """
-        return self._get_component("fmt")
-
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "fmt",
