@@ -52,19 +52,22 @@ class UMArray(FileArray):
             header_offset: `int`
                 The start position in the file of the header.
 
-            data_offset: `int`
+            data_offset: `int`, optional
                 The start position in the file of the data array.
 
-            disk_length: `int`
+            disk_length: `int`, optional
                 The number of words on disk for the data array,
-                usually LBLREC-LBEXT. If set to 0 then `!size` is
+                usually LBLREC-LBEXT. If set to ``0`` then `!size` is
                 used.
 
             fmt: `str`, optional
+                ``'PP'`` or ``'FF'``
 
             word_size: `int`, optional
+                ``4`` or ``8``
 
             byte_ordering: `str`, optional
+                ``'little_endian'`` or ``'big_endian'``
 
             size: `int`
                 Deprecated at version TODODASKVER. If set will be
@@ -77,6 +80,24 @@ class UMArray(FileArray):
                 ignored.
 
                 The number of uncompressed array dimensions.
+
+            units: `str` or `None`, optional
+                The units of the fragment data. Set to `None` to
+                indicate that there are no units. If unset then the
+                units will be set during the first `__getitem__` call.
+
+            calendar: `str` or `None`, optional
+                The calendar of the fragment data. Set to `None` to
+                indicate the CF default calendar, if applicable. If
+                unset then the calendar will be set during the first
+                `__getitem__` call.
+
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+            {{deep copy}}
 
         """
         super().__init__(source=source, copy=copy)
