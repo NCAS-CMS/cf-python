@@ -66,7 +66,7 @@ class UMFragmentArray(FragmentArray):
                 unset then the calendar will be set during the first
                 `__getitem__` call.
 
-            {{aggregated_units: `str` or `None`, optional}}"
+            {{aggregated_units: `str` or `None`, optional}}
 
             {{aggregated_calendar: `str` or `None`, optional}}
 
