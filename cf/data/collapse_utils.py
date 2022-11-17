@@ -90,7 +90,7 @@ def check_input_dtype(a, allowed="fib"):
         raise TypeError(f"Can't calculate {method} of data with {a.dtype!r}")
 
 
-def actify(a, method, axis=None, active_storage=False):
+def actify(a, method, axis=None):
     """TODOACTIVEDOCS.
 
     .. versionadded:: TODOACTIVEVER
@@ -106,8 +106,6 @@ def actify(a, method, axis=None, active_storage=False):
         axis: (sequence of) `int`, optional
             TODOACTIVEDOCS
 
-        {{active_storage: `bool`, optional}}
-
     :Returns:
 
         `dask.array.Array`, function
@@ -115,15 +113,15 @@ def actify(a, method, axis=None, active_storage=False):
 
     """
     chunk_function = None
-    if not active_storage:
-        # It has been determined externally that an active storage
-        # reduction is not possible, so return the input data and
-        # chunk function unchanged.
-        return a, chunk_function
-
-    # Still here? Then it is assumed that the dask array is of a form
-    # which might be able to exploit active storage. In particular, it
-    # is assumed that all data definitions point to files.
+    #    if not active_storage:
+    #        # It has been determined externally that an active storage
+    #       # reduction is not possible, so return the input data and
+    #       # chunk function unchanged.
+    #       return a, chunk_function
+    #
+    #    # Still here? Then it is assumed that the dask array is of a form
+    #    # which might be able to exploit active storage. In particular, it
+    #    # is assumed that all data definitions point to files.
 
     # Parse axis
     if axis is None:
@@ -203,16 +201,16 @@ def active_storage(method):
         @wraps(collapse_method)
         def wrapper(self, *args, **kwargs):
             if (
-                kwargs.get("weights") is None
+                kwargs.get("active_storage")
+                and kwargs.get("weights") is None
                 and kwargs.get("chunk_function") is None
             ):
-                # The collapse is unweighted => attempt to actify the
-                # dask array and provide a new chunk function.
+                # Attempt to actify the dask array and provide a new
+                # chunk function
                 a, chunk_function = actify(
                     args[0],
                     method=method,
                     axis=kwargs.get("axis"),
-                    active_storage=kwargs.get("active_storage", False),
                 )
                 args = list(args)
                 args[0] = a

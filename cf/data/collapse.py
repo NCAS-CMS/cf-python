@@ -54,7 +54,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     @active_storage("max")
     def max(
-        cls,
+        self,
         a,
         axis=None,
         keepdims=False,
@@ -119,7 +119,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     def max_abs(
-        cls,
+        self,
         a,
         axis=None,
         keepdims=False,
@@ -154,7 +154,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: function, optional}} ppp
 
         :Returns:
 
@@ -162,17 +162,18 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        return cls.max(
+        return self.max(
             abs(a),
             axis=axis,
             keepdims=keepdims,
             mtol=mtol,
             split_every=split_every,
+            active_storage=False,
         )
 
     @active_storage("mean")
     def mean(
-        cls,
+        self,
         a,
         axis=None,
         weights=None,
@@ -241,7 +242,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     def mean_abs(
-        cls,
+        self,
         a,
         weights=None,
         axis=None,
@@ -279,7 +280,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: function, optional}} ppp
 
         :Returns:
 
@@ -287,13 +288,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        return cls.mean(
+        return self.mean(
             abs(a),
             weights=weights,
             axis=axis,
             keepdims=keepdims,
             mtol=mtol,
             split_every=split_every,
+            active_storage=False,
         )
 
     def mid_range(
@@ -432,7 +434,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     def min_abs(
-        cls,
+        self,
         a,
         axis=None,
         keepdims=False,
@@ -467,7 +469,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: function, optional}} ppp
 
         :Returns:
 
@@ -475,16 +477,17 @@ class Collapse(metaclass=DocstringRewriteMeta):
                 The collapsed array.
 
         """
-        return cls.min(
+        return self.min(
             abs(a),
             axis=axis,
             keepdims=keepdims,
             mtol=mtol,
             split_every=split_every,
+            active_storage=False,
         )
 
     def range(
-        cls,
+        self,
         a,
         axis=None,
         keepdims=False,
@@ -552,7 +555,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     def rms(
-        cls,
+        self,
         a,
         axis=None,
         weights=None,
@@ -620,7 +623,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     def sample_size(
-        cls,
+        self,
         a,
         axis=None,
         keepdims=False,
@@ -689,7 +692,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     @active_storage("sum")
     def sum(
-        cls,
+        self,
         a,
         axis=None,
         weights=None,
@@ -760,7 +763,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     def sum_of_weights(
-        cls,
+        self,
         a,
         axis=None,
         weights=None,
@@ -832,7 +835,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     def sum_of_weights2(
-        cls,
+        self,
         a,
         axis=None,
         weights=None,
@@ -904,7 +907,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     def var(
-        cls,
+        self,
         a,
         axis=None,
         weights=None,
@@ -975,7 +978,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         )
 
     def unique(
-        cls, a, split_every=None, active_storage=False, chunk_function=None
+        self, a, split_every=None, active_storage=False, chunk_function=None
     ):
         """Return unique elements of the data.
 
