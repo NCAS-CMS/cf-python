@@ -252,7 +252,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if cfa:
             # TODOCFA: Modify this message for v4.0.0
             raise ValueError(
-                "The reading CFA files has been temporarily disabled, "
+                "The reading of CFA files has been temporarily disabled, "
                 "but will return for CFA-0.6 files at version 4.0.0. "
                 "CFA-0.4 functionality is still available at version 3.13.1."
             )
