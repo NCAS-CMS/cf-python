@@ -21,7 +21,7 @@ from . import (
     List,
     NodeCountProperties,
     PartNodeCountProperties,
-    TiePointIndex
+    TiePointIndex,
 )
 from .data import Data
 from .data.array import (

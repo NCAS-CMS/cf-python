@@ -4,8 +4,7 @@ from . import mixin
 
 
 class InterpolationParameter(
-    mixin.PropertiesData,
-    cfdm.InterpolationParameter
+    mixin.PropertiesData, cfdm.InterpolationParameter
 ):
     """An interpolation parameter variable.
 
