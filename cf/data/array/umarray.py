@@ -627,7 +627,7 @@ class UMArray(FileArray):
         :Returns:
 
             `int` or `None`
-                ``4`` or ``8``. If the word size has not been set the
+                ``4`` or ``8``. If the word size has not been set then
                 `None` is returned, in which case word size will be
                 detected automatically (if possible) when the file is
                 opened with `open`.
