@@ -235,7 +235,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         :Returns:
 
-            `str` or `False` ##`bool`
+            `bool`
                 Whether or not *ncvar* is a CFA variable.
 
         """
