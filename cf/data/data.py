@@ -1300,7 +1300,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "difficult to diagnose, as dask will have silently "
                 "trapped it and returned NotImplemented (for "
                 "instance, see dask.array.core.elemwise). Print "
-                "statements in a local copy of dask are prossibly the "
+                "statements in a local copy of dask are possibly the "
                 "way to go if the cause of the error is not obvious."
             )
 
