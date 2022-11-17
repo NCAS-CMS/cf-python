@@ -447,7 +447,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         :Returns:
 
-            `CFANetCDFArray`, `dict`
+            (`CFANetCDFArray`, `dict`)
                 The new `NetCDFArray` instance and dictionary of the
                 kwargs used to create it.
 
