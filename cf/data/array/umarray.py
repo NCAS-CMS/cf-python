@@ -533,8 +533,6 @@ class UMArray(FileArray):
                 4 or 8
 
         """
-        return self._get_component("word_size")
-
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "word_size",
