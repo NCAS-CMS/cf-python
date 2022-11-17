@@ -37,8 +37,6 @@ class FullArray(Array):
 
                 fill_value : scalar, optional
 
-        #        masked_all: `bool`
-
         """
         super().__init__(source=source, copy=copy)
 
