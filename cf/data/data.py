@@ -1291,7 +1291,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "NotImplemented has been set in the place of a dask array."
                 "\n\n"
                 "This could occur if any sort of exception is raised "
-                "by function that is run on chunks (via, for "
+                "by a function that is run on chunks (via, for "
                 "instance, da.map_blocks or "
                 "dask.array.core.elemwise). Such a function could get "
                 "run at definition time in order to ascertain "
