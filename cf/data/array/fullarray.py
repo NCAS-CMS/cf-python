@@ -141,13 +141,14 @@ class FullArray(Array):
         return f"Filled with {fill_value!r}"
 
     def _set_units(self):
-        """TODO.
+        """TODODASKDOCS.
 
         .. versionadded:: TODODASKVER
 
-        To cfdm.Array ?
-
         """
+        # TODOCFA: Consider moving _set_units to cfdm.Array, or some
+        #          other common ancestor so that this, and other,
+        #          subclasses can access it.
         units = self.get_units(False)
         if units is False:
             units = None
