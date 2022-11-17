@@ -302,7 +302,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         chunks = self.read_vars.get("chunks", "auto")
 
-        return super()._create_Data(
+        data = super()._create_Data(
             array=array,
             units=units,
             calendar=calendar,
@@ -310,6 +310,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             chunks=chunks,
             **kwargs,
         )
+        self._cache_data_elements(data, ncvar)
+
+        return data
 
     def _customize_read_vars(self):
         """Customize the read parameters.
@@ -426,6 +429,78 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             array = array.astype("S")
 
         return array
+
+    def _cache_data_elements(self, data, ncvar):
+        """Cache selected element values.
+
+        Updates *data* in-place to store its first, second and last
+        element values inside its ``custom`` dictionary.
+
+        Doing this here is cheap because only the individual elements
+        are read from the already-open file, as opposed to being
+        retrieved from *data* (which would require a whole dask chunk
+        to be read to get each single value).
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            data: `Data`
+                The data to be updated with its cached values.
+
+            ncvar: `str`
+                The name of the netCDF variable that contains the
+                data.
+
+        :Returns:
+
+            `None`
+
+        """
+        g = self.read_vars
+
+        # Get the netCDF4.Variable for the data
+        if g["has_groups"]:
+            group, name = self._netCDF4_group(
+                g["variable_grouped_dataset"][ncvar], ncvar
+            )
+            variable = group.variables.get(name)
+        else:
+            variable = g["variables"].get(ncvar)
+
+        # Get the required element values
+        size = variable.size
+        if size == 1:
+            value = variable[(slice(0, 1, 1),) * variable.ndim]
+            values = (value, None, value)
+        elif size == 3:
+            values = variable[...].flatten()
+        else:
+            ndim = variable.ndim
+            values = (
+                variable[(slice(0, 1, 1),) * ndim],
+                None,
+                variable[(slice(-1, None, 1),) * ndim],
+            )
+
+        # Create a dictionary of the element values
+        elements = {}
+        for element, value in zip(
+            ("first_element", "second_element", "last_element"),
+            values,
+        ):
+            if value is None:
+                continue
+
+            if np.ma.is_masked(value):
+                value = np.ma.masked
+            else:
+                value = value.item()
+
+            elements[element] = value
+
+        # Store the elements in the data object
+        data._set_cached_elements(elements)
 
     def _create_cfanetcdfarray(
         self,
