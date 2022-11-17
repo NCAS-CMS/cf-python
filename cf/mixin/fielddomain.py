@@ -864,7 +864,7 @@ class FieldDomain:
         """
         return len(self.domain_axes(todict=True))
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def anchor(
         self, axis, value, inplace=False, dry_run=False, i=False, **kwargs
@@ -1627,7 +1627,7 @@ class FieldDomain:
 
         return old
 
-    @_deprecated_kwarg_check("axes")
+    @_deprecated_kwarg_check("axes", version="3.0.0", removed_at="4.0.0")
     def direction(self, identity, axes=None, **kwargs):
         """Whether or not a domain axis is increasing.
 

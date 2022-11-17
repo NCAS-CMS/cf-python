@@ -23,8 +23,9 @@ from . import (
     PartNodeCountProperties,
     TiePointIndex
 )
-from .data import (
-    Data,
+from .data import Data
+from .data.array import (
+    CFANetCDFArray,
     GatheredArray,
     NetCDFArray,
     RaggedContiguousArray,
@@ -42,44 +43,62 @@ class CFImplementation(cfdm.CFDMImplementation):
 
     """
 
+    def initialise_CFANetCDFArray(
+        self,
+        filename=None,
+        ncvar=None,
+        group=None,
+        dtype=None,
+        mask=True,
+        units=False,
+        calendar=False,
+        instructions=None,
+    ):
+        """Return a `CFANetCDFArray` instance.
 
-#    def set_bounds(self, construct, bounds, copy=True):
-#        '''Set the bounds component of a construct.
-#
-#    If a ValueError is raised by the called set_bounds method then
-#    this is trapped and no action is carried out.
-#
-#    .. versionadded:: 3.7.0
-#
-#    :Parameters:
-#
-#        construct: construct
-#
-#        bounds: bounds component
-#
-#        copy: `bool`, optional
-#
-#    :Returns:
-#
-#        `bool`
-#            Return `True` if the bounds were set successfully,
-#            otherwise return False.
-#
-#
-#        '''
-#        try:
-#            construct.set_bounds(bounds, copy=copy)
-#        except ValueError as error:
-#            return error
-#
-#        return ''
+        :Parameters:
+
+            filename: `str`
+
+            ncvar: `str`
+
+            group: `None` or sequence of str`
+
+            dytpe: `numpy.dtype`
+
+            mask: `bool`, optional
+
+            units: `str` or `None`, optional
+
+            calendar: `str` or `None`, optional
+
+            instructions: `str`, optional
+
+        :Returns:
+
+            `CFANetCDFArray`
+
+        """
+        cls = self.get_class("CFANetCDFArray")
+        return cls(
+            filename=filename,
+            ncvar=ncvar,
+            group=group,
+            dtype=dtype,
+            mask=mask,
+            units=units,
+            calendar=calendar,
+            instructions=instructions,
+        )
 
 
+# TODODASK: add missing classes, such as TiePointIndex
 _implementation = CFImplementation(
     cf_version=CF(),
     AuxiliaryCoordinate=AuxiliaryCoordinate,
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
+    CFANetCDFArray=CFANetCDFArray,
     CoordinateReference=CoordinateReference,
     DimensionCoordinate=DimensionCoordinate,
     Domain=Domain,

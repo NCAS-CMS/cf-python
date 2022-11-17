@@ -313,7 +313,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         """
         return cr_default_values.get(term, 0.0)
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equivalent(
         self, other, atol=None, rtol=None, verbose=None, traceback=False
@@ -584,7 +584,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         """Alias for `cf.CoordinateReference.match_by_identity`"""
         return self.match_by_identity(*identities)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def change_identifiers(
         self,
