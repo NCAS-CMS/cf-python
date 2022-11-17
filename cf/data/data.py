@@ -5744,7 +5744,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.max,
+            Collapse().max,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -5807,7 +5807,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.max_abs,
+            Collapse().max_abs,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -5876,7 +5876,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.min,
+            Collapse().min,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -5939,7 +5939,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.min_abs,
+            Collapse().min_abs,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -6016,7 +6016,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.mean,
+            Collapse().mean,
             d,
             axis=axes,
             weights=weights,
@@ -6092,7 +6092,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.mean_abs,
+            Collapse().mean_abs,
             d,
             axis=axes,
             weights=weights,
@@ -6172,7 +6172,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, weights = collapse(
-            Collapse.sum,
+            Collapse().sum,
             d,
             axis=axes,
             weights=weights,
@@ -6254,7 +6254,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.sample_size,
+            Collapse().sample_size,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -6951,7 +6951,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.soften_mask()
 
         dx = d.to_dask_array()
-        dx = Collapse.unique(dx, split_every=split_every)
+        dx = Collapse().unique(
+            dx, split_every=split_every, active_storage=d.active_storage
+        )
 
         d._set_dask(dx)
 
@@ -8820,7 +8822,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.mid_range,
+            Collapse().mid_range,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -9173,7 +9175,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.rms,
+            Collapse().rms,
             d,
             axis=axes,
             weights=weights,
@@ -10797,7 +10799,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.range,
+            Collapse().range,
             d,
             axis=axes,
             keepdims=not squeeze,
@@ -10925,7 +10927,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.sum,
+            Collapse().sum,
             d,
             axis=axes,
             weights=weights,
@@ -11090,7 +11092,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, weights = collapse(
-            Collapse.sum_of_weights,
+            Collapse().sum_of_weights,
             d,
             axis=axes,
             weights=weights,
@@ -11188,7 +11190,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, weights = collapse(
-            Collapse.sum_of_weights2,
+            Collapse().sum_of_weights2,
             d,
             axis=axes,
             weights=weights,
@@ -11372,7 +11374,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         d, _ = collapse(
-            Collapse.var,
+            Collapse().var,
             d,
             axis=axes,
             weights=weights,

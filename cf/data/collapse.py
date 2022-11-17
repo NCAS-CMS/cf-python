@@ -1,4 +1,4 @@
-"""Functions used for `Data` object collapses."""
+"""TODOACTIVEDOCS used for `Data` object collapses."""
 from functools import partial
 
 import numpy as np
@@ -6,7 +6,11 @@ from cfdm.core import DocstringRewriteMeta
 from dask.array.reductions import reduction
 
 from ..docstring import _docstring_substitution_definitions
-from .collapse_utils import actify, check_input_dtype, double_precision_dtype
+from .collapse_utils import (
+    active_storage,
+    check_input_dtype,
+    double_precision_dtype,
+)
 
 
 class Collapse(metaclass=DocstringRewriteMeta):
@@ -48,7 +52,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         return 0
 
-    @classmethod
+    @active_storage("max")
     def max(
         cls,
         a,
@@ -57,6 +61,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return maximum values of an array.
 
@@ -84,6 +89,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -92,18 +99,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         from .dask_collapse import cf_max_agg, cf_max_chunk, cf_max_combine
 
+        if chunk_function is None:
+            chunk_function = cf_max_chunk
+
         check_input_dtype(a)
         dtype = a.dtype
-
-        # Rewrite data and chunk function if active storage operations
-        # are available.
-        a, chunk_function = actify(
-            a,
-            method="max",
-            axis=axis,
-            chunk_function=cf_max_chunk,
-            active_storage=active_storage,
-        )
 
         return reduction(
             a,
@@ -118,7 +118,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @classmethod
     def max_abs(
         cls,
         a,
@@ -127,6 +126,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return maximum absolute values of an array.
 
@@ -154,6 +154,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -168,7 +170,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             split_every=split_every,
         )
 
-    @classmethod
+    @active_storage("mean")
     def mean(
         cls,
         a,
@@ -178,6 +180,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return mean values of an array.
 
@@ -207,6 +210,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -215,18 +220,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         from .dask_collapse import cf_mean_agg, cf_mean_chunk, cf_mean_combine
 
+        if chunk_function is None:
+            chunk_function = cf_mean_chunk
+
         check_input_dtype(a)
         dtype = "f8"
-
-        # Rewrite data and chunk function if active storage operations
-        # are available.
-        a, chunk_function = actify(
-            a,
-            method="mean",
-            axis=axis,
-            chunk_function=cf_mean_chunk,
-            active_storage=active_storage,
-        )
 
         return reduction(
             a,
@@ -242,7 +240,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @classmethod
     def mean_abs(
         cls,
         a,
@@ -252,6 +249,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return mean absolute values of an array.
 
@@ -281,6 +279,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -296,9 +296,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
             split_every=split_every,
         )
 
-    @classmethod
     def mid_range(
-        cls,
+        self,
         a,
         axis=None,
         dtype=None,
@@ -306,6 +305,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return mid-range values of an array.
 
@@ -333,6 +333,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -345,11 +347,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
             cf_range_combine,
         )
 
+        if chunk_function is None:
+            chunk_function = cf_range_chunk
+
         check_input_dtype(a, allowed="fi")
         dtype = "f8"
         return reduction(
             a,
-            cf_range_chunk,
+            chunk_function,
             partial(cf_mid_range_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -360,15 +365,16 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @classmethod
+    @active_storage("min")
     def min(
-        cls,
+        self,
         a,
         axis=None,
         keepdims=False,
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return minimum values of an array.
 
@@ -396,6 +402,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -404,18 +412,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         from .dask_collapse import cf_min_agg, cf_min_chunk, cf_min_combine
 
+        if chunk_function is None:
+            chunk_function = cf_min_chunk
+
         check_input_dtype(a)
         dtype = a.dtype
-
-        # Rewrite data and chunk function if active storage operations
-        # are available.
-        a, chunk_function = actify(
-            a,
-            method="min",
-            axis=axis,
-            chunk_function=cf_min_chunk,
-            active_storage=active_storage,
-        )
 
         return reduction(
             a,
@@ -430,7 +431,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @classmethod
     def min_abs(
         cls,
         a,
@@ -439,6 +439,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return minimum absolute values of an array.
 
@@ -466,6 +467,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -480,7 +483,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             split_every=split_every,
         )
 
-    @classmethod
     def range(
         cls,
         a,
@@ -489,6 +491,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return range values of an array.
 
@@ -516,6 +519,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -528,11 +533,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
             cf_range_combine,
         )
 
+        if chunk_function is None:
+            chunk_function = cf_range_chunk
+
         check_input_dtype(a, allowed="fi")
         dtype = a.dtype
         return reduction(
             a,
-            cf_range_chunk,
+            chunk_function,
             partial(cf_range_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -543,7 +551,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @classmethod
     def rms(
         cls,
         a,
@@ -553,6 +560,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return root mean square (RMS) values of an array.
 
@@ -582,6 +590,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -590,11 +600,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         from .dask_collapse import cf_mean_combine, cf_rms_agg, cf_rms_chunk
 
+        if chunk_function is None:
+            chunk_function = cf_rms_chunk
+
         check_input_dtype(a)
         dtype = "f8"
         return reduction(
             a,
-            cf_rms_chunk,
+            chunk_function,
             partial(cf_rms_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -606,7 +619,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @classmethod
     def sample_size(
         cls,
         a,
@@ -615,6 +627,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return sample size values of an array.
 
@@ -642,6 +655,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -654,11 +669,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
             cf_sample_size_combine,
         )
 
+        if chunk_function is None:
+            chunk_function = cf_sample_size_chunk
+
         check_input_dtype(a)
         dtype = "i8"
         return reduction(
             a,
-            cf_sample_size_chunk,
+            chunk_function,
             partial(cf_sample_size_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -669,7 +687,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
-    @classmethod
+    @active_storage("sum")
     def sum(
         cls,
         a,
@@ -679,6 +697,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return sum values of an array.
 
@@ -708,6 +727,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -716,20 +737,13 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         from .dask_collapse import cf_sum_agg, cf_sum_chunk, cf_sum_combine
 
+        if chunk_function is None:
+            chunk_function = cf_sum_chunk
+
         check_input_dtype(a)
         dtype = double_precision_dtype(a)
         if weights is not None:
             dtype = np.result_type(double_precision_dtype(weights), dtype)
-
-        # Rewrite data and chunk function if active storage operations
-        # are available.
-        a, chunk_function = actify(
-            a,
-            method="sum",
-            axis=axis,
-            chunk_function=cf_sum_chunk,
-            active_storage=active_storage,
-        )
 
         return reduction(
             a,
@@ -745,7 +759,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @classmethod
     def sum_of_weights(
         cls,
         a,
@@ -755,6 +768,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return sum of weights values for an array.
 
@@ -784,6 +798,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -796,11 +812,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
             cf_sum_of_weights_chunk,
         )
 
+        if chunk_function is None:
+            chunk_function = cf_sum_of_weights_chunk
+
         check_input_dtype(a)
         dtype = double_precision_dtype(weights, default="i8")
         return reduction(
             a,
-            cf_sum_of_weights_chunk,
+            chunk_function,
             partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -812,7 +831,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @classmethod
     def sum_of_weights2(
         cls,
         a,
@@ -822,6 +840,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         mtol=1,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return sum of squares of weights values for an array.
 
@@ -851,6 +870,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -863,11 +884,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
             cf_sum_of_weights_chunk,
         )
 
+        if chunk_function is None:
+            chunk_function = cf_sum_of_weights_chunk
+
         check_input_dtype(a)
         dtype = double_precision_dtype(weights, default="i8")
         return reduction(
             a,
-            partial(cf_sum_of_weights_chunk, square=True),
+            partial(chunk_function, square=True),
             partial(cf_sum_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -879,7 +903,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @classmethod
     def var(
         cls,
         a,
@@ -890,6 +913,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         ddof=None,
         split_every=None,
         active_storage=False,
+        chunk_function=None,
     ):
         """Return variances of an array.
 
@@ -921,6 +945,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -929,11 +955,14 @@ class Collapse(metaclass=DocstringRewriteMeta):
         """
         from .dask_collapse import cf_var_agg, cf_var_chunk, cf_var_combine
 
+        if chunk_function is None:
+            chunk_function = cf_var_chunk
+
         check_input_dtype(a)
         dtype = "f8"
         return reduction(
             a,
-            partial(cf_var_chunk, ddof=ddof),
+            partial(chunk_function, ddof=ddof),
             partial(cf_var_agg, mtol=mtol, original_shape=a.shape),
             axis=axis,
             keepdims=keepdims,
@@ -945,8 +974,9 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
-    @classmethod
-    def unique(cls, a, split_every=None, active_storage=False):
+    def unique(
+        cls, a, split_every=None, active_storage=False, chunk_function=None
+    ):
         """Return unique elements of the data.
 
         .. versionadded:: TODODASKVER
@@ -960,6 +990,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
+            {{chunk_function: function, optional}}
+
         :Returns:
 
             `dask.array.Array`
@@ -967,6 +999,9 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         """
         from .dask_collapse import cf_unique_agg, cf_unique_chunk
+
+        if chunk_function is None:
+            chunk_function = cf_unique_chunk
 
         check_input_dtype(a, "fibUS")
 
@@ -980,7 +1015,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         dtype = a.dtype
         return reduction(
             a,
-            cf_unique_chunk,
+            chunk_function,
             cf_unique_agg,
             keepdims=True,
             output_size=np.nan,

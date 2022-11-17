@@ -1,3 +1,4 @@
+from functools import wraps
 from numbers import Integral
 
 import dask.array as da
@@ -89,7 +90,7 @@ def check_input_dtype(a, allowed="fib"):
         raise TypeError(f"Can't calculate {method} of data with {a.dtype!r}")
 
 
-def actify(a, method, axis=None, chunk_function=None, active_storage=False):
+def actify(a, method, axis=None, active_storage=False):
     """TODOACTIVEDOCS.
 
     .. versionadded:: TODOACTIVEVER
@@ -105,9 +106,6 @@ def actify(a, method, axis=None, chunk_function=None, active_storage=False):
         axis: (sequence of) `int`, optional
             TODOACTIVEDOCS
 
-        chunk_function: function
-            TODOACTIVEDOCS
-
         {{active_storage: `bool`, optional}}
 
     :Returns:
@@ -116,6 +114,7 @@ def actify(a, method, axis=None, chunk_function=None, active_storage=False):
             TODOACTIVEDOCS
 
     """
+    chunk_function = None
     if not active_storage:
         # It has been determined externally that an active storage
         # reduction is not possible, so return the input data and
@@ -196,37 +195,36 @@ def actify(a, method, axis=None, chunk_function=None, active_storage=False):
     return a, chunk_function
 
 
-# def actify_collapse(method):
-#    """A wrapper to provide positional arguments to the decorator.
-#
-#    A decorator for `Collapse` methods that enables active storage
-#    operations, when the conditions are right.
-#
-#    """
-#    def decorator(collapse_method):
-#        @wraps(collapse_method)
-#        def wrapper(cls, *args, **kwargs):
-#            if kwargs.get("weights") is None:
-#                # The collapse is unweighted over defined axes =>
-#                # attempt to actify the dask array and provide a new
-#                # chunk function.
-#                a, chunk_function = actify(
-#                    args[0],
-#                    op=method,
-#                    axis=kwargs.get("axis"),
-#                    active_storage=kwargs.get("active_storage", False),
-#                    )
-#                args = list(args)
-#                args[0] = a
-#
-#                if chunk_function is not None:
-#                    kwargs["chunk_function"] = chunk_function
-#
-#            #Create the collapse
-#            return collapse_method(cls, *args, **kwargs)
-#
-#        return wrapper
-#
-#
-#
-#    return decorator
+def active_storage(method):
+    """A decorator for `Collapse` methods that enables active storage
+    operations, when the conditions are right."""
+
+    def decorator(collapse_method):
+        @wraps(collapse_method)
+        def wrapper(self, *args, **kwargs):
+            if (
+                kwargs.get("weights") is None
+                and kwargs.get("chunk_function") is None
+            ):
+                # The collapse is unweighted => attempt to actify the
+                # dask array and provide a new chunk function.
+                a, chunk_function = actify(
+                    args[0],
+                    method=method,
+                    axis=kwargs.get("axis"),
+                    active_storage=kwargs.get("active_storage", False),
+                )
+                args = list(args)
+                args[0] = a
+
+                if chunk_function is not None:
+                    # The dask array has been actified, so update the
+                    # chunk function.
+                    kwargs["chunk_function"] = chunk_function
+
+            # Create the collapse
+            return collapse_method(self, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
