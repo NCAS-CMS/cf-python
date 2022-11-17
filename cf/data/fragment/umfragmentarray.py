@@ -50,11 +50,6 @@ class UMFragmentArray(FragmentArray):
                 indicate that there are no units. By default, or if
                 TODO
 
-            calendar: `str`, optional
-                The calendar of the fragment variable. By default, or
-                if set to `None`, then the CF default calendar is
-                assumed, if applicable.
-
             units: `str` or `None`, optional
                 The units of the fragment data. Set to `None` to
                 indicate that there are no units. If unset then the
