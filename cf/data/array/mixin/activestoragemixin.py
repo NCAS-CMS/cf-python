@@ -1,12 +1,7 @@
-import cfdm
+class ActiveStorageMixin:
+    """TODOACTIVEDOCS.
 
-from .abstract import FileArray
-
-
-class NetCDFArray(cfdm.NetCDFArray, FileArray):
-    """An array stored in a netCDF file.
-
-    TODOACTIVEDOC
+    .. versionadded:: TODOACTIVEVER
 
     """
 
@@ -32,16 +27,16 @@ class NetCDFArray(cfdm.NetCDFArray, FileArray):
 
         """
         method = self.get_active_method()
-        if method:
-            # Active storage read by server. Returns a dictionary.
-            active = Active(self.filename, self.ncvar)
-            active.method = method
-            active.components = True
+        if not method:
+            # Normal read by local client. Returns a numpy array.
+            return super().__getitem__(indices)
 
-            return active[indices]
+        # Active storage read by server. Returns a dictionary.
+        active = Active(self.filename, self.ncvar)
+        active.method = method
+        active.components = True
 
-        # Normal read by local client. Returns a numpy array.
-        return super().__getitem__(indices)
+        return active[indices]
 
     def _active_chunk_functions(self):
         """Mapping of method names to active chunk functions.
@@ -62,7 +57,7 @@ class NetCDFArray(cfdm.NetCDFArray, FileArray):
         }
 
     def actify(self, method, axis=None):
-        """Return a new actified {{class}} instance.
+        """Return a new actified `{{class}}` instance.
 
         The new instance is a deep copy of the original, including the
         definitions of the active storage method and axis.

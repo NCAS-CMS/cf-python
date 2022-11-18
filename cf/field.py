@@ -40,8 +40,8 @@ from . import (
     mixin,
 )
 from .constants import masked as cf_masked
-from .data import (
-    Data,
+from .data import Data
+from .data.array import (
     GatheredArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
@@ -4554,9 +4554,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def title(self):
         self.del_property("title")
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def cell_area(
         self,
         radius="earth",

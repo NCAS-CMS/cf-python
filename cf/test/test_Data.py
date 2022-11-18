@@ -4316,6 +4316,50 @@ class DataTest(unittest.TestCase):
         self.assertTrue((q == d).array.all())
         self.assertTrue((d == q).array.all())
 
+    def test_Data__str__(self):
+        """Test `Data.__str__`"""
+        elements0 = ("first_element", "last_element", "second_element")
+        for array in ([1], [1, 2], [1, 2, 3]):
+            elements = elements0[: len(array)]
+
+            d = cf.Data(array)
+            for element in elements:
+                self.assertNotIn(element, d._custom)
+
+            self.assertEqual(str(d), str(array))
+            for element in elements:
+                self.assertIn(element, d._custom)
+
+            d[0] = 1
+            for element in elements:
+                self.assertNotIn(element, d._custom)
+
+            self.assertEqual(str(d), str(array))
+            for element in elements:
+                self.assertIn(element, d._custom)
+
+            d += 0
+            for element in elements:
+                self.assertNotIn(element, d._custom)
+
+            self.assertEqual(str(d), str(array))
+            for element in elements:
+                self.assertIn(element, d._custom)
+
+        # Test when size > 3, i.e. second element is not there.
+        d = cf.Data([1, 2, 3, 4])
+        for element in elements0:
+            self.assertNotIn(element, d._custom)
+
+        self.assertEqual(str(d), "[1, ..., 4]")
+        self.assertNotIn("second_element", d._custom)
+        for element in elements0[:2]:
+            self.assertIn(element, d._custom)
+
+        d[0] = 1
+        for element in elements0:
+            self.assertNotIn(element, d._custom)
+
     def test_Data_active_storage(self):
         """Test `Data.active_storage`."""
         d = cf.Data([[9, 8]])
@@ -4323,13 +4367,17 @@ class DataTest(unittest.TestCase):
 
         d._set_active_storage(True)
         self.assertTrue(d.active_storage)
+        d._del_active_storage()
+        self.assertFalse(d.active_storage)
 
-        # Check that operations correctly set active_storage to False
-        d[...] = -1
+        # Check that operations correctly set active_storage to False,
+        # in particular those that do not invokde `Data._set_dask`.
+        d._set_active_storage(True)
+        d.transpose(inplace=True)
         self.assertFalse(d.active_storage)
 
         d._set_active_storage(True)
-        d.transpose(inplace=True)
+        d[...] = -1
         self.assertFalse(d.active_storage)
 
         d._set_active_storage(True)

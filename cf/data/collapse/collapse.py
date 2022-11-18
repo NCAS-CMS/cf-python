@@ -5,12 +5,9 @@ import numpy as np
 from cfdm.core import DocstringRewriteMeta
 from dask.array.reductions import reduction
 
-from ..docstring import _docstring_substitution_definitions
-from .collapse_utils import (
-    active_storage,
-    check_input_dtype,
-    double_precision_dtype,
-)
+from ...docstring import _docstring_substitution_definitions
+from .collapse_active import active_storage
+from .collapse_utils import check_input_dtype, double_precision_dtype
 
 
 class Collapse(metaclass=DocstringRewriteMeta):

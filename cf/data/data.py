@@ -38,8 +38,12 @@ from ..functions import (
 )
 from ..mixin_container import Container
 from ..units import Units
+from .array.mixin import FileArrayMixin
 from .collapse import Collapse
-from .creation import compressed_to_dask, generate_axis_identifiers, to_dask
+from .creation import (  # cfa_to_dask,; compressed_to_dask,
+    generate_axis_identifiers,
+    to_dask,
+)
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -411,16 +415,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Still here? Then create a dask array and store it.
 
-        # Find out if the data is compressed
+        # Find out if the input data is compressed by convention
         try:
             compressed = array.get_compression_type()
         except AttributeError:
             compressed = ""
 
         if compressed:
-            # The data is compressed, so create a uncompressed dask
-            # view of it.
+            # The input data is compressed
             if chunks != _DEFAULT_CHUNKS:
+                # TODODASK: Is this restriction necessary?
                 raise ValueError(
                     "Can't define chunks for compressed input arrays. "
                     "Consider rechunking after initialisation."
@@ -432,48 +436,34 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     "for compressed input arrays"
                 )
 
-            # Bring the compressed data into memory without
-            # decompressing it
-            if to_memory:
-                try:
-                    array = array.to_memory()
-                except AttributeError:
-                    pass
-
             # Save the input compressed array, as this will contain
             # extra information, such as a count or index variable.
             self._set_Array(array)
 
-            array = compressed_to_dask(array, chunks)
-
-        elif not is_dask_collection(array):
-            # Turn the data into a dask array
-            kwargs = init_options.get("from_array", {})
-            if "chunks" in kwargs:
-                raise TypeError(
-                    "Can't define 'chunks' in the 'from_array' "
-                    "initialisation options. "
-                    "Use the 'chunks' parameter instead."
-                )
-
+        if self._is_file_array(array):
             if to_memory:
-                # Bring the data into memory
+                # Bring the compressed data into memory (without
+                # decompressing it if it's compressed)
                 try:
                     array = array.to_memory()
                 except AttributeError:
                     pass
-            elif self._is_abstract_Array_subclass(array):
+            elif hasattr(array, "actify"):
+                # Allow the possibilty of active storage operations on
+                # data that is wholly on disk
                 self._set_active_storage(True)
 
-            array = to_dask(array, chunks, **kwargs)
-
-        elif chunks != _DEFAULT_CHUNKS:
-            # The data is already a dask array
-            raise ValueError(
-                "Can't define chunks for dask input arrays. Consider "
-                "rechunking the dask array before initialisation, or "
-                "rechunking the Data after initialisation."
+        # Cast the input data as a dask array
+        kwargs = init_options.get("from_array", {})
+        if "chunks" in kwargs:
+            raise TypeError(
+                "Can't define 'chunks' in the 'from_array' initialisation "
+                "options. Use the 'chunks' parameter instead."
             )
+
+        array = to_dask(
+            array, chunks, default_chunks=_DEFAULT_CHUNKS, **kwargs
+        )
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
@@ -642,8 +632,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Return the current value of the `cf.rtol` function."""
         return rtol().value
 
-    def _is_abstract_Array_subclass(self, array):
-        """Whether or not an array is a type of abstract Array.
+    def _is_file_array(self, array):
+        """Whether or not an array is stored on disk.
 
         :Parameters:
 
@@ -654,7 +644,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             `bool`
 
         """
-        return isinstance(array, cfdm.Array)
+        return isinstance(array, FileArrayMixin)
 
     def __data__(self):
         """Returns a new reference to self."""
@@ -1250,6 +1240,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         consistent with an updated `dask` array`:
 
         * Deletes a source array.
+        * Deletes cached element values.
         * Sets "active storage" to `False`
 
         .. versionadded:: TODODASKVER
@@ -1260,6 +1251,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         self._del_Array(None)
+        self._del_cached_elements()
         self._del_active_storage()
 
     def _del_active_storage(self):
@@ -1344,18 +1336,21 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         if array is NotImplemented:
             logger.warning(
-                "NotImplemented has been set in the place of a dask array"
+                "NotImplemented has been set in the place of a dask array."
+                "\n\n"
+                "This could occur if any sort of exception is raised "
+                "by a function that is run on chunks (via, for "
+                "instance, da.map_blocks or "
+                "dask.array.core.elemwise). Such a function could get "
+                "run at definition time in order to ascertain "
+                "suitability (such as data type casting, "
+                "broadcasting, etc.). Note that the exception may be "
+                "difficult to diagnose, as dask will have silently "
+                "trapped it and returned NotImplemented (for "
+                "instance, see dask.array.core.elemwise). Print "
+                "statements in a local copy of dask are possibly the "
+                "way to go if the cause of the error is not obvious."
             )
-            # This could occur if any sort of exception is raised by
-            # function that is run on chunks (such as
-            # `cf_where`). Such a function could get run at definition
-            # time in order to ascertain suitability (such as data
-            # type casting, broadcasting, etc.). Note that the
-            # exception may be difficult to diagnose, as dask will
-            # have silently trapped it and returned NotImplemented
-            # (for instance, see `dask.array.core.elemwise`). Print
-            # statements in a local copy of dask are prossibly the way
-            # to go if the cause of the error is not obvious.
 
         if copy:
             array = array.copy()
@@ -1422,6 +1417,64 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._conform_after_dask_update()
 
         return out
+
+    def _del_cached_elements(self):
+        """Delete any cached element values.
+
+        Updates *data* in-place to remove the cached element values
+        ``'first_element'``, ``'second_element'`` and
+        ``'last_element'``.
+
+        .. note:: By default, `_del_cached_elements` is run whenever
+                  the `_set_dask` and `del_dask` methods are used. If
+                  the `dask` array is updated or changed without using
+                  the default behaviour of either of these two
+                  methods, and there is any chance that the cached
+                  values might be inconsistent with the new data, then
+                  `_del_cached_elements` must be called explicitly to
+                  ensure consistency.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `_del_dask`, `_set_cached_elements`, `_set_dask`
+
+        :Returns:
+
+            `None`
+
+        """
+        custom = self._custom
+        for element in ("first_element", "second_element", "last_element"):
+            custom.pop(element, None)
+
+    def _set_cached_elements(self, elements):
+        """Cache selected element values.
+
+        Updates *data* in-place to store the given element values
+        within its ``custom`` dictionary.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `_del_cached_elements`
+
+        :Parameters:
+
+            elements: `dict`
+               Zero or more element values to be cached, each keyed by
+               a unique identifier to allow unambiguous retrieval.
+               Existing cached elements not specified by *elements*
+               will not be removed.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d._set_cached_elements({'first_element': 273.15})
+
+        """
+        self._custom.update(elements)
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -7788,7 +7841,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def first_element(self, verbose=None):
+    def first_element(self):
         """Return the first element of the data as a scalar.
 
         If the value is deemed too expensive to compute then a
@@ -7820,16 +7873,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        if self.can_compute():
-            return super().first_element()
+        try:
+            return self._custom["first_element"]
+        except KeyError:
+            item = super().first_element()
+            self._set_cached_elements({"first_element": item})
+            return item
 
-        raise ValueError(
-            "First element of the data is considered too expensive "
-            "to compute. Consider setting the 'force_compute' attribute, or "
-            "setting the log level to 'DEBUG'."
-        )
-
-    def second_element(self, verbose=None):
+    def second_element(self):
         """Return the second element of the data as a scalar.
 
         If the value is deemed too expensive to compute then a
@@ -7861,14 +7912,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        if self.can_compute():
-            return super().second_element()
-
-        raise ValueError(
-            "Second element of the data is considered too expensive "
-            "to compute. Consider setting the 'force_compute' atribute, or "
-            "setting the log level to 'DEBUG'."
-        )
+        try:
+            return self._custom["second_element"]
+        except KeyError:
+            item = super().second_element()
+            self._set_cached_elements({"second_element": item})
+            return item
 
     def last_element(self):
         """Return the last element of the data as a scalar.
@@ -7902,14 +7951,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        if self.can_compute():
-            return super().last_element()
-
-        raise ValueError(
-            "First element of the data is considered too expensive "
-            "to compute. Consider setting the 'force_compute' attribute, or "
-            "setting the log level to 'DEBUG'."
-        )
+        try:
+            return self._custom["last_element"]
+        except KeyError:
+            item = super().last_element()
+            self._set_cached_elements({"last_element": item})
+            return item
 
     def flat(self, ignore_masked=True):
         """Return a flat iterator over elements of the data array.
