@@ -788,7 +788,10 @@ class Query:
             return
 
         value_units = getattr(value, "Units", None)
-        if value_units is not None:
+        if value_units is None:
+            # Value has no units
+            value = Data(value, units=units)
+        else:
             # Value already has units
             try:
                 value.Units = units
