@@ -6,8 +6,9 @@ version 3.14.0
 * New method: `cf.Field.get_original_filenames`
   (https://github.com/NCAS-CMS/cf-python/issues/448)
 * New method: `cf.Field.to_dask_array`
-* Fixed bug that raised an exception when using the ``equal`` keyword
-  of `cf.aggregate` (https://github.com/NCAS-CMS/cf-python/issues/499)
+* Fixed bug that raised an exception when using the ``equal`` or
+  ``exist`` keyword of `cf.aggregate`
+  (https://github.com/NCAS-CMS/cf-python/issues/499)
 * Changed dependency: ``1.10.0.1<=cfdm<1.10.1.0``
 * New dependency: ``dask>=2022.6.0``
 
