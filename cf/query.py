@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Iterable
 from copy import deepcopy
 from operator import __and__ as operator_and
 from operator import __or__ as operator_or
@@ -790,7 +791,11 @@ class Query:
         value_units = getattr(value, "Units", None)
         if value_units is None:
             # Value has no units
-            value = Data(value, units=units)
+            if isinstance(value, Iterable):  # may be a sequence of Data
+                value = Data.concatenate(value)
+                value.Units = units
+            else:
+                value = Data(value, units=units)
         else:
             # Value already has units
             try:
