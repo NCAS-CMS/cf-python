@@ -119,7 +119,7 @@ To install from source:
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.9.0``):
+   you want to install, e.g. ``3.13.1``):
 
    .. code-block:: console
 
@@ -180,8 +180,7 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.7 or newer, including
-  the latest version Python 3.9.
+* `Python <https://www.python.org/>`_, 3.7 or newer,
 
 * `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
 
@@ -190,12 +189,14 @@ Required
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.5.0 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.9.0.1 or up to,
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.9.0.4 or up to,
   but not including, 1.9.1.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.4 or newer.
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
+
+* `packaging <https://pypi.org/project/packaging/>`_, version 20.0 or newer.
 
 .. _UNIDATA-UDUNITS-2-library:
 

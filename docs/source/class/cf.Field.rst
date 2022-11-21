@@ -207,6 +207,7 @@ Data
    ~cf.Field.count
    ~cf.Field.count_masked
    ~cf.Field.fill_value
+   ~cf.Field.masked_invalid
 	    
 .. autosummary::
    :nosignatures:
@@ -216,7 +217,6 @@ Data
    ~cf.Field.binary_mask
    ~cf.Field.hardmask
    ~cf.Field.mask
-   ~cf.Field.mask_invalid
    
 .. rubric:: *Changing data values*
 
@@ -230,7 +230,7 @@ Data
    ~cf.Field.indices
    ~cf.Field.where
    ~cf.Field.apply_masking
-   ~cf.Field.mask_invalid
+   ~cf.Field.masked_invalid
 
 Miscellaneous data operations
 -----------------------------
@@ -244,7 +244,7 @@ Miscellaneous data operations
 	      
    ~cf.Field.cyclic
    ~cf.Field.period
-   ~cf.Field.get_filenames
+   ~cf.Field.get_original_filenames
    ~cf.Field.close
    ~cf.Field.chunk
  
@@ -945,6 +945,7 @@ Deprecated
    ~cf.Field.example_field
    ~cf.Field.expand_dims
    ~cf.Field.field
+   ~cf.Field.get_filenames
    ~cf.Field.getprop
    ~cf.Field.HDF_chunks
    ~cf.Field.hasprop

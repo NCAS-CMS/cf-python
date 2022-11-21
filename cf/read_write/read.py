@@ -435,47 +435,71 @@ def read(
             ``'fmt'``                     The file format (``'PP'`` or
                                           ``'FF'``)
 
-            ``'word_size'``               The word size in bytes (``4`` or
-                                          ``8``)
+            ``'word_size'``               The word size in bytes
+                                          (``4`` or ``8``).
 
             ``'endian'``                  The byte order (``'big'`` or
-                                          ``'little'``)
+                                          ``'little'``).
 
             ``'version'``                 The UM version to be used
                                           when decoding the
-                                          header. Valid versions
-                                          are, for example, ``4.2``,
+                                          header. Valid versions are,
+                                          for example, ``4.2``,
                                           ``'6.6.3'`` and
-                                          ``'8.2'``. The default
-                                          version is ``4.5``. In
-                                          general, a given version
-                                          is ignored if it can be
-                                          inferred from the header
-                                          (which is usually the case
-                                          for files created by the
-                                          UM at versions 5.3 and
+                                          ``'8.2'``. In general, a
+                                          given version is ignored if
+                                          it can be inferred from the
+                                          header (which is usually the
+                                          case for files created by
+                                          the UM at versions 5.3 and
                                           later). The exception to
                                           this is when the given
-                                          version has a third
-                                          element (such as the 3 in
-                                          6.6.3), in which case any
-                                          version in the header is
-                                          ignored.
+                                          version has a third element
+                                          (such as the 3 in 6.6.3), in
+                                          which case any version in
+                                          the header is ignored.
+
+                                          The default version is
+                                          ``4.5``.
 
             ``'height_at_top_of_model'``  The height (in metres) of
                                           the upper bound of the top
-                                          model level. By default
-                                          the height at top model is
-                                          taken from the top level's
-                                          upper bound defined by
-                                          BRSVD1 in the lookup
-                                          header. If the height at
-                                          top model can not be
-                                          determined from the header and is
-                                          not provided then no
-                                          "atmosphere_hybrid_height_coordinate"
-                                          dimension coordinate
-                                          construct will be created.
+                                          model level. By default the
+                                          height at top model is taken
+                                          from the top level's upper
+                                          bound defined by BRSVD1 in
+                                          the lookup header. If the
+                                          height can't be determined
+                                          from the header, or the
+                                          given height is less than or
+                                          equal to 0, then a
+                                          coordinate reference system
+                                          will still be created that
+                                          contains the 'a' and 'b'
+                                          formula term values, but
+                                          without an atmosphere hybrid
+                                          height dimension coordinate
+                                          construct.
+
+                                          .. note:: A current
+                                             limitation is that if
+                                             pseudolevels and
+                                             atmosphere hybrid height
+                                             coordinates are defined
+                                             by same the lookup
+                                             headers then the height
+                                             **can't be determined
+                                             automatically**. In this
+                                             case the height may be
+                                             found after reading as
+                                             the maximum value of the
+                                             bounds of the domain
+                                             ancillary construct
+                                             containing the 'a'
+                                             formula term. The file
+                                             can then be re-read with
+                                             this height as a *um*
+                                             parameter.
             ============================  =====================================
 
             If format is specified as ``'PP'`` then the word size and
@@ -497,7 +521,7 @@ def read(
 
         chunks: TODODASK
 
-            .. versionadded:: TODODASK
+            .. versionadded:: TODODASKVER
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -538,7 +562,7 @@ def read(
         select_options: deprecated at version 3.0.0
             Use methods on the returned `FieldList` instead.
 
-        chunk: deprecated at version TODODASK
+        chunk: deprecated at version TODODASKVER
             Use the *chunks* parameter instead.
 
     :Returns:
@@ -547,7 +571,7 @@ def read(
             The field or domain constructs found in the input
             dataset(s). The list may be empty.
 
-    **Examples:**
+    **Examples**
 
     >>> x = cf.read('file.nc')
 
@@ -616,7 +640,7 @@ def read(
             "cf.read",
             {"chunk": chunk},
             "Use keyword 'chunks' instead.",
-            version="TODODASK",
+            version="TODODASKVER",
         )  # pragma: no cover
 
     # Parse select
@@ -739,25 +763,9 @@ def read(
                     ftype = file_type(filename)
                 except Exception as error:
                     if not ignore_read_error:
-                        message = error
-
-                        #                        if not find_library("umfile"):
-                        #                            message += ("\n\n"
-                        #                                "Note: Unable to detect the UM read C library needed "
-                        #                                "to recognise and read PP and UM fields files. "
-                        #                                "This indicates a compilation problem during the "
-                        #                                "cf installation (though note it does not affect "
-                        #                                "any other cf functionality, notably netCDF file "
-                        #                                "processing). If processing of PP and FF files is "
-                        #                                "required, ensure 'GNU make' is available and "
-                        #                                "reinstall cf-python to try to build the library. "
-                        #                                "Note a warning will be given if the build fails."
-                        #                            )
-
-                        raise ValueError(message)
+                        raise ValueError(error)
 
                     logger.warning(f"WARNING: {error}")  # pragma: no cover
-
                     continue
 
             if domain and ftype == "UM":
@@ -947,34 +955,17 @@ def _read_a_file(
     umversion = 405
 
     if um:
-        # ftype = 'UM'
         fmt = um.get("fmt")
         word_size = um.get("word_size")
         endian = um.get("endian")
-        umversion = um.get("version")
+        umversion = um.get("version", umversion)
         height_at_top_of_model = um.get("height_at_top_of_model")
-        if fmt in ("PP", "pp", "pP", "Pp"):
-            fmt = fmt.upper()
-            # For PP format, there is a default word size and
-            # endian-ness
-            if word_size is None:
-                word_size = 4
 
-            if endian is None:
-                endian = "big"
+        if fmt is not None:
+            fmt = fmt.upper()
 
         if umversion is not None:
             umversion = float(str(umversion).replace(".", "0", 1))
-    #    else:
-    #        try:
-    #            ftype = file_type(filename)
-    #        except Exception as error:
-    #            if not ignore_read_error:
-    #                raise Exception(error)
-    #
-    #            logger.warning('WARNING: {}'.format(error))  # pragma: no cover
-    #
-    #            return FieldList()
 
     extra_read_vars = {
         "chunks": chunks,
@@ -1089,7 +1080,7 @@ def file_type(filename):
             The format type of the file. One of ``'netCDF'``, ``'UM'``
             or ``'CDL'``.
 
-    **Examples:**
+    **Examples**
 
     >>> file_type(filename)
     'netCDF'

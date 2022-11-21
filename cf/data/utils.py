@@ -72,7 +72,7 @@ def _is_numeric_dtype(array):
 def convert_to_datetime(a, units):
     """Convert a dask array of numbers to one of date-time objects.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso `convert_to_reftime`
 
@@ -110,7 +110,7 @@ def convert_to_reftime(a, units=None, first_value=None):
     """Convert a dask array of string or object date-times to floating
     point reference times.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso `convert_to_datetime`
 
@@ -183,7 +183,7 @@ def convert_to_reftime(a, units=None, first_value=None):
         d_units = getattr(units, "units", None)
 
         if x_calendar != "":
-            if units is None:
+            if not units:
                 d_calendar = x_calendar
             elif not units.equivalent(Units(x_since, x_calendar)):
                 raise ValueError(
@@ -213,7 +213,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 def first_non_missing_value(a, cached=None, method="index"):
     """Return the first non-missing value of a dask array.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -259,15 +259,15 @@ def first_non_missing_value(a, cached=None, method="index"):
     0
     >>> cf.data.utils.first_non_missing_value(d, cached=99)
     99
-    >>> d[0, 0] = np.ma.masked
+    >>> d[0, 0] = cf.masked
     >>> cf.data.utils.first_non_missing_value(d)
     1
-    >>> d[0, :] = np.ma.masked
+    >>> d[0, :] = cf.masked
     >>> cf.data.utils.first_non_missing_value(d)
     4
     >>> cf.data.utils.first_non_missing_value(d, cached=99)
     99
-    >>> d[...] = np.ma.masked
+    >>> d[...] = cf.masked
     >>> print(cf.data.utils.first_non_missing_value(d))
     None
     >>> print(cf.data.utils.first_non_missing_value(d, cached=99))
@@ -318,7 +318,7 @@ def first_non_missing_value(a, cached=None, method="index"):
 def unique_calendars(a):
     """Find the unique calendars from a dask array of date-time objects.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -363,7 +363,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 
     The name is arbitrary and has no semantic meaning.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -419,7 +419,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `chunk_shapes`
 
@@ -449,7 +449,7 @@ def chunk_positions(chunks):
 def chunk_shapes(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `chunk_positions`
 
@@ -477,31 +477,33 @@ def chunk_shapes(chunks):
 
 
 def is_small(array, threshold=None):
-    """TODODASK - need to define what 'small' is, and consider the API
-     in general
-
-    We adjust the size of the data here for the potiential of a mask
+    """We adjust the size of the data here for the potiential of a mask.
 
     Returns False if size is unknown
 
     .. versionadded:: 4.0.0
+
     """
+    # TODODASKAPI - need to define what 'small' is, and consider the API
+    # in general
+
     if threshold is None:
-        threshold = 2 ** 90  # TODODASK - True for now!
+        threshold = 2**90  # TODODASK - True for now!
 
     return array.size * (array.dtype.itemsize + 1) < threshold
 
 
 def is_very_small(array, threshold=None):
-    """
-    TODODASK - need to define what 'very small' is, and consider the API
-    in general
+    """TODODASKDOCS.
 
     .. versionadded:: 4.0.0
 
     """
+    # TODODASKAPI - need to define what 'very small' is, and consider the
+    # API in general
+
     if threshold is None:
-        threshold = 0.125 * 2 ** 90  # TODODASK - True for now!
+        threshold = 0.125 * 2**90  # TODODASK - True for now!
 
     return is_small(array, threshold)
 
@@ -509,7 +511,7 @@ def is_very_small(array, threshold=None):
 def scalar_masked_array(dtype=float):
     """Return a scalar masked array.
 
-     .. versionadded:: TODODASK
+     .. versionadded:: TODODASKVER
 
      :Parmaeters:
 
@@ -551,23 +553,23 @@ def scalar_masked_array(dtype=float):
     return a
 
 
-def conform_units(value, units):
+def conform_units(value, units, message=None):
     """Conform units.
 
     If *value* has units defined by its `Units` attribute then
 
-    * if the value units are equal to *units* then *value* is returned
+    * If the value units are equal to *units* then *value* is returned
       unchanged;
 
-    * if the value units are equivalent to *units* then a copy of
+    * If the value units are equivalent to *units* then a copy of
       *value* converted to *units* is returned;
 
-    * if the value units are not equivalent to *units* then an
+    * If the value units are not equivalent to *units* then an
       exception is raised.
 
     In all other cases *value* is returned unchanged.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     :Parameters:
 
@@ -576,6 +578,12 @@ def conform_units(value, units):
 
         units: `Units`
             The units to conform to.
+
+        message: `str`, optional
+            If the value units are not equivalent to *units* then use
+            this message when the exception is raised. By default a
+            message that is independent of the calling context is
+            used.
 
     **Examples**
 
@@ -598,6 +606,10 @@ def conform_units(value, units):
     Traceback (most recent call last):
         ...
     ValueError: Units <Units: km> are incompatible with units <Units: s>
+    >>> cf.data.utils.conform_units(d, cf.Units('s'), message='My message')
+    Traceback (most recent call last):
+        ...
+    ValueError: My message
 
     """
     value_units = getattr(value, "Units", None)
@@ -609,9 +621,12 @@ def conform_units(value, units):
             value = value.copy()
             value.Units = units
     elif value_units and units:
-        raise ValueError(
-            f"Units {value_units!r} are incompatible with units {units!r}"
-        )
+        if message is None:
+            message = (
+                f"Units {value_units!r} are incompatible with units {units!r}"
+            )
+
+        raise ValueError(message)
 
     return value
 
@@ -622,7 +637,7 @@ def YMDhms(d, attr):
     Only applicable for data with reference time units. The returned
     `Data` will have the same mask hardness as the original array.
 
-    .. versionadded:: TODODASK
+    .. versionadded:: TODODASKVER
 
     .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
                  `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
@@ -659,3 +674,72 @@ def YMDhms(d, attr):
     d._set_dask(dx)
     d.override_units(Units(None), inplace=True)
     return d
+
+
+def where_broadcastable(data, x, name):
+    """Check broadcastability for `cf.Data.where` assignments.
+
+    Raises an exception unless the *data* and *x* parameters are
+    broadcastable across each other, such that the size of the result
+    is identical to the size of *data*. Leading size 1 dimensions of
+    *x* are ignored, thereby also ensuring that the shape of the
+    result is identical to the shape of *data*.
+
+    .. versionadded:: TODODASKVER
+
+    .. seealso:: `cf.Data.where`
+
+    :Parameters:
+
+        data, x: `Data`
+            The arrays to compare.
+
+        name: `str`
+            A name for *x* that is used in exception error messages.
+
+    :Returns:
+
+        `Data`
+             The input parameter *x*, or a modified copy without
+             leading size 1 dimensions. If *x* can not be acceptably
+             broadcast to *data* then a `ValueError` is raised.
+
+    """
+    ndim_x = x.ndim
+    if not ndim_x:
+        return x
+
+    error = 0
+
+    shape_x = x.shape
+    shape_data = data.shape
+
+    shape_x0 = shape_x
+    ndim_difference = ndim_x - data.ndim
+
+    if ndim_difference > 0:
+        if shape_x[:ndim_difference] == (1,) * ndim_difference:
+            # Remove leading ize 1 dimensions
+            x = x.reshape(shape_x[ndim_difference:])
+            shape_x = x.shape
+        else:
+            error += 1
+
+    for n, m in zip(shape_x[::-1], shape_data[::-1]):
+        if n != m and m > 1 and n > 1:
+            raise ValueError(
+                f"where: {name!r} parameter with shape {shape_x0} can not "
+                f"be broadcast across data with shape {shape_data}"
+            )
+
+        if m == 1 and n > 1:
+            error += 1
+
+    if error:
+        raise ValueError(
+            f"where: {name!r} parameter with shape {shape_x0} can not "
+            f"be broadcast across data with shape {shape_data} when the "
+            "result will have a different shape to the data"
+        )
+
+    return x

@@ -15,9 +15,8 @@ from netCDF4 import date2num as netCDF4_date2num
 
 from ... import __Conventions__, __version__
 from ...constants import _stash2standard_name
-from ...data import UMArray
-from ...data.data import Data
-from ...data.functions import _close_um_file, _open_um_file
+from ...data import Data
+from ...data.array import UMArray
 from ...decorators import (
     _manage_log_level_via_verbose_attr,
     _manage_log_level_via_verbosity,
@@ -26,6 +25,7 @@ from ...functions import abspath
 from ...functions import atol as cf_atol
 from ...functions import load_stash2standard_name
 from ...functions import rtol as cf_rtol
+from ...umread_lib.umfile import File
 from ...units import Units
 
 # import numpy as np
@@ -1146,8 +1146,7 @@ class UMField:
           Zsea(k) = eta_value(k)*Height_at_top_of_model
 
           C(k)=[1-eta_value(k)/eta_value(first_constant_rho_level)]**2 for
-          levels less than or equal to first_constant_rho_level
-
+               levels less than or equal to first_constant_rho_level
           C(k)=0.0 for levels greater than first_constant_rho_level
 
         where eta_value(k) is the eta_value for theta or rho level k. The
@@ -1203,15 +1202,40 @@ class UMField:
             field, ac, axes=[_axis["z"]], copy=False
         )
 
-        # atmosphere_hybrid_height_coordinate dimension coordinate
-        TOA_height = bounds1.max()
-        if TOA_height <= 0:
-            TOA_height = self.height_at_top_of_model
+        # Height at top of atmosphere
+        toa_height = self.height_at_top_of_model
+        if toa_height is None:
+            pseudolevels = any(
+                [
+                    rec.int_hdr.item(
+                        lbuser5,
+                    )
+                    for rec in self.z_recs
+                ]
+            )
+            if pseudolevels:
+                # Pseudolevels and atmosphere hybrid height
+                # coordinates are both present => can't reliably infer
+                # height. This is due to a current limitation in the C
+                # library that means it can ony create Z-T
+                # aggregations, rather than the required Z-T-P
+                # aggregations.
+                toa_height = -1
 
-        if not TOA_height:
+        if toa_height is None:
+            toa_height = bounds1.max()
+            if toa_height <= 0:
+                toa_height = None
+        elif toa_height <= 0:
+            toa_height = None
+        else:
+            toa_height = float(toa_height)
+
+        # atmosphere_hybrid_height_coordinate dimension coordinate
+        if toa_height is None:
             dc = None
         else:
-            array = array / TOA_height
+            array = array / toa_height
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(dc, array, bounds, units=_Units[""])
             self.implementation.set_properties(
@@ -1221,7 +1245,7 @@ class UMField:
             )
             dc = self.coord_axis(dc, axiscode)
             dc = self.coord_positive(dc, axiscode, _axis["z"])
-            self.implementation.set_dimension_coordinate(
+            key_dc = self.implementation.set_dimension_coordinate(
                 field,
                 dc,
                 axes=[_axis["z"]],
@@ -1251,20 +1275,21 @@ class UMField:
             field, ac, axes=[_axis["z"]], copy=False
         )
 
-        if bool(dc):
-            # atmosphere_hybrid_height_coordinate coordinate reference
-            ref = self.implementation.initialise_CoordinateReference()
-            cc = self.implementation.initialise_CoordinateConversion(
-                parameters={
-                    "standard_name": "atmosphere_hybrid_height_coordinate"
-                },
-                domain_ancillaries={"a": key_a, "b": key_b, "orog": None},
+        # atmosphere_hybrid_height_coordinate coordinate reference
+        ref = self.implementation.initialise_CoordinateReference()
+        cc = self.implementation.initialise_CoordinateConversion(
+            parameters={
+                "standard_name": "atmosphere_hybrid_height_coordinate"
+            },
+            domain_ancillaries={"a": key_a, "b": key_b, "orog": None},
+        )
+        self.implementation.set_coordinate_conversion(ref, cc)
+        if dc is not None:
+            self.implementation.set_coordinate_reference_coordinates(
+                ref, (key_dc,)
             )
-            self.implementation.set_coordinate_conversion(ref, cc)
-            # TODO set coordinates?
-            self.implementation.set_coordinate_reference(
-                field, ref, copy=False
-            )
+
+        self.implementation.set_coordinate_reference(field, ref, copy=False)
 
         return dc
 
@@ -1705,7 +1730,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_vtime(rec)
         [1991, 1, 1, 0, 0]
@@ -1725,7 +1750,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_dtime(rec)
         [1991, 2, 1, 0, 0]
@@ -1745,7 +1770,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_bz(rec)
 
@@ -1769,7 +1794,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_lz(rec)
 
@@ -1792,7 +1817,7 @@ class UMField:
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> u.header_z(rec)
 
@@ -1819,7 +1844,9 @@ class UMField:
         nt = self.nt
         recs = self.recs
 
-        units = self.um_Units
+        um_Units = self.um_Units
+        units = um_Units.units
+        calendar = getattr(um_Units, "calendar", None)
 
         data_type_in_file = self.data_type_in_file
 
@@ -1859,6 +1886,8 @@ class UMField:
                 fmt=self.fmt,
                 word_size=self.word_size,
                 byte_ordering=self.byte_ordering,
+                units=units,
+                calendar=calendar,
             )
 
             dsk[name + (0, 0)] = (getter, subarray, full_slice, False, False)
@@ -1906,6 +1935,8 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
+                        units=units,
+                        calendar=calendar,
                     )
 
                     dsk[name + (i, 0, 0)] = (
@@ -1951,6 +1982,8 @@ class UMField:
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
+                        units=units,
+                        calendar=calendar,
                     )
 
                     dsk[name + (t, z, 0, 0)] = (
@@ -1977,7 +2010,7 @@ class UMField:
         array = da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
 
         # Create the Data object
-        data = Data(array, units=units, fill_value=fill_value)
+        data = Data(array, units=um_Units, fill_value=fill_value)
 
         self.data = data
         self.data_axes = data_axes
@@ -1998,7 +2031,7 @@ class UMField:
                A string derived from LBEXP. If LBEXP is a negative integer
                then that number is returned as a string.
 
-        **Examples:**
+        **Examples**
 
         >>> self.decode_lbexp()
         'aaa5u'
@@ -2050,7 +2083,7 @@ class UMField:
 
             `float`
 
-        **Examples:**
+        **Examples**
 
         >>> u.dtime(rec)
         31.5
@@ -2328,7 +2361,7 @@ class UMField:
 
         This is a bit like printfdr in the UKMO IDL PP library.
 
-        **Examples:**
+        **Examples**
 
         >>> u.printfdr()
 
@@ -2483,7 +2516,7 @@ class UMField:
                 `True` if a field satisfies the condition specified,
                 `False` otherwise.
 
-        **Examples:**
+        **Examples**
 
         >>> ok = u.test_um_condition('true_latitude_longitude', ...)
 
@@ -2543,7 +2576,7 @@ class UMField:
                 `True` if the UM version applicable to this field
                 construct is within the range, `False` otherwise.
 
-        **Examples:**
+        **Examples**
 
         >>> ok = u.test_um_version(401, 505, 1001)
         >>> ok = u.test_um_version(401, None, 606.3)
@@ -2719,7 +2752,7 @@ class UMField:
 
             `float`
 
-        **Examples:**
+        **Examples**
 
         >>> u.vtime(rec)
         31.5
@@ -3208,7 +3241,7 @@ class UMField:
 #
 #     `None`
 #
-# *Examples:*
+# *Examples*
 #
 # >>> load_stash2standard_name()
 # >>> load_stash2standard_name('my_table.txt')
@@ -3402,7 +3435,7 @@ class UMRead(cfdm.read_write.IORead):
             `list`
                 The fields in the file.
 
-        **Examples:**
+        **Examples**
 
         >>> f = read('file.pp')
         >>> f = read('*/file[0-9].pp', um_version=708)
@@ -3446,7 +3479,49 @@ class UMRead(cfdm.read_write.IORead):
             for var in f.vars
         ]
 
+        self.file_close()
+
         return [field for x in um for field in x.fields if field]
+
+    def _open_um_file(
+        self,
+        filename,
+        aggregate=True,
+        fmt=None,
+        word_size=None,
+        byte_ordering=None,
+    ):
+        """Open a UM fields file or PP file.
+
+        :Parameters:
+
+            filename: `str`
+                The file to be opened.
+
+        :Returns:
+
+            `umread.umfile.File`
+                The opened file with an open file descriptor.
+
+        """
+        self.file_close()
+        try:
+            f = File(
+                filename,
+                byte_ordering=byte_ordering,
+                word_size=word_size,
+                fmt=fmt,
+            )
+        except Exception as error:
+            try:
+                f.close_fd()
+            except Exception:
+                pass
+
+            raise Exception(error)
+
+        self._um_file = f
+        return f
 
     def is_um_file(self, filename):
         """Whether or not a file is a PP file or UM fields file.
@@ -3463,29 +3538,20 @@ class UMRead(cfdm.read_write.IORead):
 
             `bool`
 
-        **Examples:**
+        **Examples**
 
-        >>> r.is_um_file('myfile.pp')
+        >>> r.is_um_file('ppfile')
         True
-        >>> r.is_um_file('myfile.nc')
-        False
-        >>> r.is_um_file('myfile.pdf')
-        False
-        >>> r.is_um_file('myfile.txt')
-        False
 
         """
         try:
-            f = _open_um_file(filename)
+            self.file_open(filename)
         except Exception:
+            self.file_close()
             return False
-
-        try:
-            f.close_fd()
-        except Exception:
-            pass
-
-        return True
+        else:
+            self.file_close()
+            return True
 
     def file_close(self):
         """Close the file that has been read.
@@ -3495,7 +3561,11 @@ class UMRead(cfdm.read_write.IORead):
             `None`
 
         """
-        _close_um_file(self.read_vars["filename"])
+        f = getattr(self, "_um_file", None)
+        if f is not None:
+            f.close_fd()
+
+        self._um_file = None
 
     def file_open(self, filename):
         """Open the file for reading.
@@ -3508,13 +3578,13 @@ class UMRead(cfdm.read_write.IORead):
         :Returns:
 
         """
-        g = self.read_vars
+        g = getattr(self, "read_vars", {})
 
-        return _open_um_file(
+        return self._open_um_file(
             filename,
-            byte_ordering=g["byte_ordering"],
-            word_size=g["word_size"],
-            fmt=g["fmt"],
+            byte_ordering=g.get("byte_ordering"),
+            word_size=g.get("word_size"),
+            fmt=g.get("fmt"),
         )
 
 

@@ -5,6 +5,7 @@ if __name__ == "__main__":
 
     import os
     import sys
+    import traceback
     from getopt import GetoptError, getopt
     from re import sub as re_sub
 
@@ -1487,9 +1488,10 @@ Using cf-python library version {cf.__version__} at {library_path}"""
         # ------------------------------------------------------------
         try:
             f = cf.read(infile, **read_options)
-        except Exception as error:
+        except Exception:
+            traceback.print_exc()
             print(
-                f"{iam} ERROR reading {infile}: {error}",
+                f"\n{iam} ERROR reading {infile}",
                 file=sys.stderr,
             )
             sys.exit(1)
@@ -1515,9 +1517,10 @@ Using cf-python library version {cf.__version__} at {library_path}"""
 
             try:
                 cf.write(f, outfile, **write_options)
-            except Exception as error:
+            except Exception:
+                traceback.print_exc()
                 print(
-                    f"{iam} ERROR writing {outfile}: {error}",
+                    f"\n{iam} ERROR writing {outfile}",
                     file=sys.stderr,
                 )
                 sys.exit(1)

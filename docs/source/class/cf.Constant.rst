@@ -1,4 +1,4 @@
-.. currentmodule:: cf
+﻿.. currentmodule:: cf
 .. default-role:: obj
 
 cf.Constant

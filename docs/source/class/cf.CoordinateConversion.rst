@@ -1,4 +1,4 @@
-.. currentmodule:: cf
+﻿.. currentmodule:: cf
 .. default-role:: obj
 
 cf.CoordinateConversion
@@ -74,7 +74,3 @@ Special
    ~cf.CoordinateConversion.__nonzero__
    ~cf.CoordinateConversion.__repr__
    ~cf.CoordinateConversion.__str__
-
-   
-   
-   

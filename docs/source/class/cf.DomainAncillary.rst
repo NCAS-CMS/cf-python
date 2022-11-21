@@ -248,6 +248,7 @@ Data
    ~cf.DomainAncillary.count
    ~cf.DomainAncillary.count_masked
    ~cf.DomainAncillary.fill_value
+   ~cf.DomainAncillary.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -257,7 +258,6 @@ Data
    ~cf.DomainAncillary.binary_mask
    ~cf.DomainAncillary.hardmask
    ~cf.DomainAncillary.mask
-   ~cf.DomainAncillary.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -273,7 +273,7 @@ Data
 
    ~cf.DomainAncillary.__setitem__
    ~cf.DomainAncillary.halo
-   ~cf.DomainAncillary.mask_invalid
+   ~cf.DomainAncillary.masked_invalid
    ~cf.DomainAncillary.subspace
    ~cf.DomainAncillary.where
 
@@ -291,7 +291,7 @@ Data
    ~cf.DomainAncillary.period
    ~cf.DomainAncillary.iscyclic
    ~cf.DomainAncillary.isperiodic
-   ~cf.DomainAncillary.get_filenames
+   ~cf.DomainAncillary.get_original_filenames
 
 Miscellaneous
 -------------
@@ -651,6 +651,7 @@ Deprecated
    ~cf.DomainAncillary.delprop
    ~cf.DomainAncillary.dtvarray
    ~cf.DomainAncillary.expand_dims
+   ~cf.DomainAncillary.get_filenames
    ~cf.DomainAncillary.getprop
    ~cf.DomainAncillary.hasbounds
    ~cf.DomainAncillary.hasdata

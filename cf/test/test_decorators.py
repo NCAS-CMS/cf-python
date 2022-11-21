@@ -147,7 +147,7 @@ class DecoratorsTest(unittest.TestCase):
             # all messages should appear, regardless of global log_level:
             for attr in (-1, "DEBUG", "debug", "Debug", "DeBuG"):
                 test_class.verbose = attr
-                with self.assertLogs(level=cf.log_level().value) as catch:
+                with self.assertLogs(level=-1) as catch:
                     test_class.decorated_logging_func()
                     for msg in log_message:
                         self.assertIn(msg, catch.output)
@@ -157,7 +157,7 @@ class DecoratorsTest(unittest.TestCase):
             # regardless of global log_level value set:
             for attr in (1, "WARNING", "warning", "Warning", "WaRning"):
                 test_class.verbose = attr
-                with self.assertLogs(level=cf.log_level().value) as catch:
+                with self.assertLogs(level=1) as catch:
                     test_class.decorated_logging_func()
                     for msg in log_message:
                         if msg.split(":")[0] == "WARNING":
@@ -169,7 +169,7 @@ class DecoratorsTest(unittest.TestCase):
 
             # ... verbose=2 should be equivalent to verbose=3 now:
             test_class.verbose = True
-            with self.assertLogs(level=cf.log_level().value) as catch:
+            with self.assertLogs(level=3) as catch:
                 test_class.decorated_logging_func()
                 for msg in log_message:
                     if msg.split(":")[0] == "DEBUG":

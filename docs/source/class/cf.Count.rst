@@ -171,7 +171,11 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Count.apply_masking
+   ~cf.Count.count
+   ~cf.Count.count_masked
    ~cf.Count.fill_value
+   ~cf.Count.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -179,12 +183,8 @@ Data
    :template: attribute.rst
 
    ~cf.Count.binary_mask
-   ~cf.Count.count
-   ~cf.Count.count_masked
    ~cf.Count.hardmask
    ~cf.Count.mask
-   ~cf.Count.mask_invalid
-   ~cf.Count.apply_masking
 
 .. autosummary::
    :nosignatures:
@@ -199,7 +199,7 @@ Data
    :template: method.rst
 
    ~cf.Count.__setitem__
-   ~cf.Count.mask_invalid
+   ~cf.Count.masked_invalid
    ~cf.Count.subspace
    ~cf.Count.where
 
@@ -218,7 +218,7 @@ Data
    ~cf.Count.period
    ~cf.Count.iscyclic
    ~cf.Count.isperiodic
-   ~cf.Count.get_filenames
+   ~cf.Count.get_original_filenames
    ~cf.Count.has_bounds
 
 Miscellaneous
@@ -606,6 +606,7 @@ Deprecated
    ~cf.Count.delprop
    ~cf.Count.dtvarray
    ~cf.Count.expand_dims
+   ~cf.Count.get_filenames
    ~cf.Count.getprop
    ~cf.Count.halo
    ~cf.Count.hasbounds

@@ -11,6 +11,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
     bounds_combination_mode,
 )
@@ -80,21 +81,23 @@ class PropertiesDataBounds(PropertiesData):
 
         cname = self.__class__.__name__
         logger.debug(
-            f"{cname}.__getitem__: shape    = {self.shape}"
-        )  # pragma: no cover
-        logger.debug(
-            f"{cname}.__getitem__: indices2 = {indices2}"
-        )  # pragma: no cover
-        logger.debug(
-            f"{cname}.__getitem__: indices  = {indices}"
-        )  # pragma: no cover
-        logger.debug(
+            f"{cname}.__getitem__: shape    = {self.shape}\n"
+            f"{cname}.__getitem__: indices2 = {indices2}\n"
+            f"{cname}.__getitem__: indices  = {indices}\n"
             f"{cname}.__getitem__: findices = {findices}"
         )  # pragma: no cover
 
         data = self.get_data(None, _fill_value=False)
         if data is not None:
-            new.set_data(data[findices], copy=False)
+            new_data = data[findices]
+            new.set_data(new_data, copy=False)
+
+            if 0 in new_data.shape:
+                raise IndexError(
+                    f"Indices {findices!r} result in a subspaced shape of "
+                    f"{new_data.shape}, but can't create a subspace of "
+                    f"{self.__class__.__name__} that has a size 0 axis"
+                )
 
         # Subspace the interior ring array, if there is one.
         interior_ring = self.get_interior_ring(None)
@@ -129,7 +132,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 logger.debug(
                     f"{self.__class__.__name__}.__getitem__: findices for "
-                    f"bounds = {findices}"
+                    f"bounds = {tuple(findices)}"
                 )  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
@@ -439,6 +442,9 @@ class PropertiesDataBounds(PropertiesData):
                 was in-place.
 
         """
+        if getattr(other, "_NotImplemented_RHS_Data_op", False):
+            return NotImplemented
+
         inplace = method[2] == "i"
 
         bounds_AND = bounds and bounds_combination_mode() == "AND"
@@ -799,7 +805,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: 2.0
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.bounds.array)
         [[-90. -87.]
@@ -840,7 +846,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: 2.0
 
-        **Examples:**
+        **Examples**
 
         >>> c.dtype
         dtype('float64')
@@ -911,7 +917,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. seealso:: `upper_bounds`
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.array)
         [4  2  0]
@@ -949,7 +955,7 @@ class PropertiesDataBounds(PropertiesData):
         consistent manner. These are mirrored by the `units` and
         `calendar` CF properties respectively.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: K>
@@ -1020,7 +1026,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. seealso:: `lower_bounds`
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.array)
         [4  2  0]
@@ -1050,81 +1056,6 @@ class PropertiesDataBounds(PropertiesData):
             "data"
         )
 
-    @_deprecated_kwarg_check("i")
-    @_inplace_enabled(default=False)
-    def mask_invalid(self, inplace=False, i=False):
-        """Mask the array where invalid values occur.
-
-        Note that:
-
-        * Invalid values are Nan or inf
-
-        * Invalid values in the results of arithmetic operations only
-          occur if the raising of `FloatingPointError` exceptions has been
-          suppressed by `cf.Data.seterr`.
-
-        * If the raising of `FloatingPointError` exceptions has been
-          allowed then invalid values in the results of arithmetic
-          operations it is possible for them to be automatically converted
-          to masked values, depending on the setting of
-          `cf.Data.mask_fpe`. In this case, such automatic conversion
-          might be faster than calling `mask_invalid`.
-
-        .. seealso:: `cf.Data.mask_fpe`, `cf.Data.seterr`
-
-        :Parameters:
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The construct with masked elements.
-
-        **Examples:**
-
-        >>> print(f.array)
-        [ 0.  1.]
-        >>> print(g.array)
-        [ 1.  2.]
-
-        >>> old = cf.data.seterr('ignore')
-        >>> h = g/f
-        >>> print(h.array)
-        [ inf   2.]
-        >>> h.mask_invalid(inplace=True)
-        >>> print(h.array)
-        [--  2.]
-
-        >>> h = g**12345
-        >>> print(h.array)
-        [ 1.  inf]
-        >>> h.mask_invalid(inplace=True)
-        >>> print(h.array)
-        [1.  --]
-
-        >>> old = cf.data.seterr('raise')
-        >>> old = cf.data.mask_fpe(True)
-        >>> print((g/f).array)
-        [ --  2]
-        >>> print((g**12345).array)
-        [1.  -- ]
-
-        """
-        # Set bounds to True to bypass 'if bounds' check in call:
-        return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self),
-            "mask_invalid",
-            bounds=True,
-            inplace=inplace,
-            i=i,
-        )
-
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def dtype(self):
         """The `numpy` data type of the data array.
@@ -1151,7 +1082,7 @@ class PropertiesDataBounds(PropertiesData):
         reinstated default data type may be different to the data type
         prior to `dtype` being set.
 
-        **Examples:**
+        **Examples**
 
         >>> f.dtype
         dtype('float64')
@@ -1202,11 +1133,7 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             del data.dtype
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
-
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def ceil(self, bounds=True, inplace=False, i=False):
         """The ceiling of the data, element-wise.
@@ -1234,7 +1161,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the ceiling of the data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -1265,7 +1192,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c.chunksize()
 
@@ -1284,7 +1211,7 @@ class PropertiesDataBounds(PropertiesData):
         if interior_ring is not None:
             interior_ring.chunk(chunksize)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def clip(
         self, a_min, a_max, units=None, bounds=True, inplace=False, i=False
@@ -1326,7 +1253,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with clipped data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.clip(-90, 90)
         >>> g = f.clip(-90, 90, 'degrees_north')
@@ -1354,7 +1281,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >> c.close()
 
@@ -1454,7 +1381,7 @@ class PropertiesDataBounds(PropertiesData):
     #        of data values. If the operation was in-place then `None` is
     #        returned.
     #
-    #    **Examples:**
+    #    **Examples**
     #
     #    TODO
     #
@@ -1470,7 +1397,7 @@ class PropertiesDataBounds(PropertiesData):
     #
     #        return out
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cos(self, bounds=True, inplace=False, i=False):
         """Take the trigonometric cosine of the data element-wise.
@@ -1500,7 +1427,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the cosine of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_east>
@@ -1546,7 +1473,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `set`
 
-        **Examples:**
+        **Examples**
 
             TODO
 
@@ -1685,7 +1612,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 Whether or not the construct's cells are contiguous.
 
-        **Examples:**
+        **Examples**
 
         >>> c.has_bounds()
         False
@@ -1788,7 +1715,7 @@ class PropertiesDataBounds(PropertiesData):
             else:
                 return (lower >= upper).all()
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def convert_reference_time(
         self,
@@ -1871,7 +1798,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with converted reference time data
                 values.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [1  2  3  4]
@@ -1934,7 +1861,7 @@ class PropertiesDataBounds(PropertiesData):
                 The value of the named property or the default value, if
                 set.
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.{{class}}()
         >>> f.set_property('project', 'CMIP7')
@@ -2034,7 +1961,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def floor(self, bounds=True, inplace=False, i=False):
         """Floor the data array, element-wise.
@@ -2060,7 +1987,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with floored data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -2089,13 +2016,127 @@ class PropertiesDataBounds(PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c.direction()
         None
 
         """
         return
+
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
+    @_inplace_enabled(default=False)
+    def mask_invalid(self, inplace=False, i=False):
+        """Mask the array where invalid values occur.
+
+        Deprecated at version TODODASKVER. Use the method
+        `masked_invalid` instead.
+
+        Note that:
+
+        * Invalid values are Nan or inf
+
+        * Invalid values in the results of arithmetic operations only
+          occur if the raising of `FloatingPointError` exceptions has been
+          suppressed by `cf.Data.seterr`.
+
+        * If the raising of `FloatingPointError` exceptions has been
+          allowed then invalid values in the results of arithmetic
+          operations it is possible for them to be automatically converted
+          to masked values, depending on the setting of
+          `cf.Data.mask_fpe`. In this case, such automatic conversion
+          might be faster than calling `mask_invalid`.
+
+        .. seealso:: `cf.Data.mask_fpe`, `cf.Data.seterr`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with masked elements.
+
+        **Examples**
+
+        >>> print(f.array)
+        [ 0.  1.]
+        >>> print(g.array)
+        [ 1.  2.]
+
+        >>> old = cf.data.seterr('ignore')
+        >>> h = g/f
+        >>> print(h.array)
+        [ inf   2.]
+        >>> h.mask_invalid(inplace=True)
+        >>> print(h.array)
+        [--  2.]
+
+        >>> h = g**12345
+        >>> print(h.array)
+        [ 1.  inf]
+        >>> h.mask_invalid(inplace=True)
+        >>> print(h.array)
+        [1.  --]
+
+        >>> old = cf.data.seterr('raise')
+        >>> old = cf.data.mask_fpe(True)
+        >>> print((g/f).array)
+        [ --  2]
+        >>> print((g**12345).array)
+        [1.  -- ]
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "mask_invalid",
+            message="Use the method 'masked_invalid' instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    @_inplace_enabled(default=False)
+    def masked_invalid(self, inplace=False):
+        """Mask the array where invalid values occur (NaN or inf).
+
+        Invalid values in any bounds are also masked.
+
+        .. seealso:: `numpy.ma.masked_invalid`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with masked values, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> print(f.array)
+        [0 1 2]
+        >>> print(g.array)
+        [0 2 0]
+        >>> h = f / g
+        >>> print(h.array)
+        [nan 0.5 inf]
+        >>> i = h.masked_invalid()
+        >>> print(i.array)
+        [-- 0.5 --]
+
+        """
+        # Set bounds to True to bypass 'if bounds' check in call:
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "masked_invalid",
+            bounds=True,
+            inplace=inplace,
+        )
 
     def match_by_property(self, *mode, **properties):
         """Determine whether or not a variable satisfies conditions.
@@ -2110,7 +2151,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 Whether or not the variable matches the given criteria.
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -2159,7 +2200,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 Whether or not the variable matches the given criteria.
 
-        **Examples:**
+        **Examples**
 
             TODO
 
@@ -2182,7 +2223,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return ok
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
         """Override the calendar of date-time units.
@@ -2212,7 +2253,7 @@ class PropertiesDataBounds(PropertiesData):
 
         TODO
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -2229,7 +2270,7 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
         """Override the units.
@@ -2258,7 +2299,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 TODO
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: hPa>
@@ -2286,43 +2327,17 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    def get_filenames(self):
-        """Return the name of the file or files containing the data.
-
-        The names of the file or files containing the bounds data are also
-        returned.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If all of the
-                data are in memory then an empty `set` is returned.
-
-        """
-        out = super().get_filenames()
-
-        data = self.get_bounds_data(None, _fill_value=None)
-        if data is not None:
-            out.update(data.get_filenames())
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            data = interior_ring.get_data(None, _fill_value=False)
-            if data is not None:
-                out.update(interior_ring.get_filenames())
-
-        return out
-
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the data by adding a halo.
 
@@ -2349,10 +2364,10 @@ class PropertiesDataBounds(PropertiesData):
 
         :Parameters:
 
-            size: `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the halo
+                If *depth* is a non-negative `int` then this is the halo
                 size that is applied to all of the axes defined by the
                 *axes* parameter.
 
@@ -2365,22 +2380,22 @@ class PropertiesDataBounds(PropertiesData):
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``1``
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results in
+                  Specify a halo size of zero: ``0``. This results in
                   no change to the data shape.
 
                 *Parameter example:*
-                  For data with three dimensions, specify a halo size of 3
-                  for the first dimension and 1 for the second dimension:
-                  ``size={0: 3, 1: 1}``. This is equivalent to ``size={0:
-                  3, 1: 1, 2: 0}``
+                  For data with three dimensions, specify a halo size
+                  of 3 for the first dimension and 1 for the second
+                  dimension: ``{0: 3, 1: 1}``. This is equivalent to
+                  ``{0: 3, 1: 1, 2: 0}``
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
-                  dimensions `size=2, axes=[0, -1]`` or equivalently
-                  ``size={0: 2, -1: 2}``.
+                  dimensions ``depth=2, axes=[0, -1]`` or equivalently
+                  ``depth={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
                 Select the domain axes to be expanded, defined by their
@@ -2396,14 +2411,14 @@ class PropertiesDataBounds(PropertiesData):
                 whose values identify the corresponding domain axis
                 construct by their integer positions in the data.
 
-                The "X" and "Y" axes must be a subset of those identified
-                by the *size* or *axes* parameter.
+                The "X" and "Y" axes must be a subset of those
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y': 1}``
+                  respectively of the data: ``{'X': 2, 'Y': 1}``
 
             fold_index: `int`, optional
                 Identify which index of the "Y" axis corresponds to the
@@ -2416,30 +2431,44 @@ class PropertiesDataBounds(PropertiesData):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
+            size: deprecated at version TODODASKVER
+                Use the *depth* parameter instead.
+
         :Returns:
 
+            `{{class}}` or `None`
                 The expanded data, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
         TODO
 
         """
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self),
             "halo",
             bounds=True,
             interior_ring=True,
             inplace=inplace,
-            size=size,
+            depth=depth,
             axes=axes,
             tripolar=tripolar,
             fold_index=fold_index,
             verbose=verbose,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         """Flip (reverse the direction of) data dimensions.
@@ -2466,7 +2495,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with flipped axes, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f.flip()
         >>> f.flip(1)
@@ -2520,7 +2549,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def exp(self, bounds=True, inplace=False, i=False):
         """The exponential of the data, element-wise.
@@ -2543,7 +2572,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the exponential of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(1, 2): [[1, 2]]>
@@ -2589,7 +2618,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> import numpy
         >>> b = {{package}}.Bounds(data=numpy.arange(10).reshape(5, 2))
@@ -2625,11 +2654,13 @@ class PropertiesDataBounds(PropertiesData):
         units = bounds.Units
         self_units = self.Units
 
-        if data is not None and units and not units.equivalent(self_units):
-            raise ValueError(
-                f"Can't set bounds: {bounds!r} units of {bounds.Units!r} are "
-                f"not equivalent to {self.Units!r}, the units of {self!r}"
-            )
+        if data is not None and units:
+            if not units.equivalent(self_units):
+                raise ValueError(
+                    f"Can't set bounds: {bounds!r} units of {bounds.Units!r} "
+                    f"are not equivalent to {self.Units!r}, the units of "
+                    f"{self!r}"
+                )
 
             bounds.Units = self_units
 
@@ -2647,7 +2678,7 @@ class PropertiesDataBounds(PropertiesData):
 
         super().set_bounds(bounds, copy=False)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sin(self, bounds=True, inplace=False, i=False):
         """Take the trigonometric sine of the data element-wise.
@@ -2677,7 +2708,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the sine of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -2709,7 +2740,7 @@ class PropertiesDataBounds(PropertiesData):
         )
 
     # `arctan2`, AT2 seealso
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arctan(self, bounds=True, inplace=False):
         """Take the trigonometric inverse tangent of the data element-
@@ -2734,7 +2765,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the trigonometric inverse tangent of data
                 values. If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2783,7 +2814,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the inverse hyperbolic tangent of data
                 values. If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2835,7 +2866,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the trigonometric inverse sine of data
                 values. If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2887,7 +2918,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the inverse hyperbolic sine of data values.
                 If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2938,7 +2969,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the trigonometric inverse cosine of data
                 values. If the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -2992,7 +3023,7 @@ class PropertiesDataBounds(PropertiesData):
                 values. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [[0.5 0.7]
@@ -3051,7 +3082,7 @@ class PropertiesDataBounds(PropertiesData):
                 values. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -3110,7 +3141,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the hyperbolic sine of data values. If
                 the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -3169,7 +3200,7 @@ class PropertiesDataBounds(PropertiesData):
                 values. If the operation was in-place then `None` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -3200,7 +3231,7 @@ class PropertiesDataBounds(PropertiesData):
         )
 
     # `arctan2`, AT2 seealso
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tan(self, bounds=True, inplace=False, i=False):
         """Take the trigonometric tangent of the data element-wise.
@@ -3229,7 +3260,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the tangent of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.Units
         <Units: degrees_north>
@@ -3259,7 +3290,7 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def log(self, base=None, bounds=True, inplace=False, i=False):
         """The logarithm of the data array.
@@ -3289,7 +3320,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with the logarithm of data values. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data
         <CF Data(1, 2): [[1, 2]]>
@@ -3324,7 +3355,7 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def squeeze(self, axes=None, inplace=False, i=False):
         """Remove size one axes from the data array.
 
@@ -3361,7 +3392,7 @@ class PropertiesDataBounds(PropertiesData):
                 The new construct with removed data axes. If the operation
                 was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (1, 73, 1, 96)
@@ -3380,7 +3411,7 @@ class PropertiesDataBounds(PropertiesData):
         """
         return super().squeeze(axes=axes, inplace=inplace)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def trunc(self, bounds=True, inplace=False, i=False):
         """Truncate the data, element-wise.
@@ -3409,7 +3440,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with truncated data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -3455,7 +3486,7 @@ class PropertiesDataBounds(PropertiesData):
     #           `list`
     #               The identities.
     #
-    #       **Examples:**
+    #       **Examples**
     #
     #       >>> f.properties()
     #       {'foo': 'bar',
@@ -3490,7 +3521,9 @@ class PropertiesDataBounds(PropertiesData):
     #
     #       return identities
 
-    @_deprecated_kwarg_check("relaxed_identity")
+    @_deprecated_kwarg_check(
+        "relaxed_identity", version="3.0.0", removed_at="4.0.0"
+    )
     def identity(
         self,
         default="",
@@ -3542,7 +3575,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {'foo': 'bar',
@@ -3638,7 +3671,7 @@ class PropertiesDataBounds(PropertiesData):
                 no *value* was specified. `None` is always returned if the
                 period had not been set previously.
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.period())
         None
@@ -3674,7 +3707,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return bounds.period(*value, **config)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def rint(self, bounds=True, inplace=False, i=False):
         """Round the data to the nearest integer, element-wise.
@@ -3699,7 +3732,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with rounded data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
@@ -3718,7 +3751,7 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def round(self, decimals=0, bounds=True, inplace=False, i=False):
         """Round the data to the given number of decimals.
@@ -3757,7 +3790,7 @@ class PropertiesDataBounds(PropertiesData):
                 The construct with rounded data. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.array)
         [-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
@@ -3778,7 +3811,7 @@ class PropertiesDataBounds(PropertiesData):
             decimals=decimals,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, iaxis, shift, inplace=False, i=False):
         """Roll the data along an axis.
@@ -3799,7 +3832,7 @@ class PropertiesDataBounds(PropertiesData):
             `{{class}}` or `None`
                 TODO
 
-        **Examples:**
+        **Examples**
 
         TODO
 
@@ -3833,11 +3866,12 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     def files(self):
-        """Deprecated at version 3.4.0, use method `get_filenames`
-        instead."""
+        """Deprecated at version 3.4.0, consider using the
+        `get_original_filenames` method instead."""
         _DEPRECATION_ERROR_METHOD(
             self,
-            "expand_dims",
-            "Use method 'get_filenames' instead.",
+            "files",
+            "Consider using the 'get_original_filenames' method instead.",
             version="3.4.0",
+            removed_at="4.0.0",
         )  # pragma: no cover

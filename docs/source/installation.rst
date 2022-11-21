@@ -14,10 +14,6 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
-.. note:: The latest versions of cf available from the Python package index
-          (PyPI) and conda are confirmed at `the top of the README document
-          <https://github.com/NCAS-CMS/cf-python#cf-python>`_.
-
 .. _Operating-systems:
 
 **Operating systems**
@@ -25,10 +21,9 @@ Version |release| for version |version| of the CF conventions.
 
 The cf package works only for Linux and Mac operating systems.
 
-If you have a Windows operating system then you can either install the
-`Microsoft Windows Subsystem for Linux (WSL)
-<https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux>`_, or
-installing a Linux Virtual Machine also works.
+If you have a Windows operating system then you can use the `Microsoft
+Windows Subsystem for Linux (WSL)
+<https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux>`_.
 
 ----
 
@@ -37,7 +32,7 @@ installing a Linux Virtual Machine also works.
 **Python versions**
 -------------------
 
-The cf package is only for Python 3.7 or later.
+The cf package is only for Python 3.7 or newer.
 
 Versions 2.x of cf work only for Python 2.7.
 
@@ -50,9 +45,10 @@ Versions 2.x of cf work only for Python 2.7.
 
 cf is in the Python package index: https://pypi.org/project/cf-python
 
-To install cf and all of its :ref:`required dependencies <Required>`
-(there are also has some :ref:`optional dependencies <Optional>` which
-are **not** automatically installed via ``pip``) run, for example:
+To install cf and its :ref:`required dependencies <Required>` (apart
+from :ref:`Udunits <Udunits>`, and there are also has some
+:ref:`optional dependencies <Optional>` which are **not**
+automatically installed via ``pip``) run, for example :
 
 .. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
@@ -76,9 +72,28 @@ See the `documentation for pip install
 <https://pip.pypa.io/en/stable/cli/pip_install/>`_ for further
 options.
 
+.. _Udunits:
+
+Udunits
+^^^^^^^
+
+Udunits (a C library that provides support for units of physical
+quantities) is a required dependency that is not installed by ``pip``,
+but it is easily installed in a ``conda`` environment:
+
+.. code-block:: console
+
+   $ conda install -c conda-forge udunits2
+
+Alternatively, Udunits is often available in from operating system
+software download managers, or may be installed from source.
+    
 Note that :ref:`some environment variables might also need setting
-<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+<UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
 properly, although the defaults are usually sufficient.
+
+See the :ref:`required dependencies <Required>` section for more
+details.
 
 ----
 
@@ -87,15 +102,14 @@ properly, although the defaults are usually sufficient.
 **conda**
 ---------
 
-The cf package is in the ``ncas`` conda channel. To install cf with
-all of its :ref:`required <Required>` and :ref:`optional <Optional>`
-dependencies, and the `cf-plot visualisation package
-<http://ajheaps.github.io/cf-plot>`_, run
+To install cf with all of its :ref:`required <Required>` and
+:ref:`optional <Optional>` dependencies, and the `cf-plot
+visualisation package <http://ajheaps.github.io/cf-plot>`_, run
 
 .. code-block:: console
    :caption: *Install with conda.*
 
-   $ conda install -c ncas -c conda-forge cf-python cf-plot udunits2
+   $ conda install -c conda-forge cf-python cf-plot udunits2
    $ conda install -c conda-forge mpich esmpy
 
 The second of the two ``conda`` commands is required for
@@ -104,7 +118,7 @@ installation of ``esmpy`` does not work for Anaconda version
 ``2019.10``.)
 
 Note that :ref:`some environment variables might also need setting
-<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+<UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
 properly, although the defaults are usually sufficient.
 
 ----
@@ -114,12 +128,12 @@ properly, although the defaults are usually sufficient.
 **Source**
 ----------
 
-To install from source:
+To install from source (without any dependencies):
 
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.9.0``):
+   you want to install, e.g. ``3.13.1``):
 
    .. code-block:: console
 
@@ -149,7 +163,7 @@ To install from source:
        $ python setup.py install --home=<directory>
 
 Note that :ref:`some environment variables might also need setting
-<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+<UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
 properly, although the defaults are usually sufficient.
 
 ----
@@ -180,8 +194,7 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.7 or newer, including
-  the latest version Python 3.9.
+* `Python <https://www.python.org/>`_, 3.7 or newer.
 
 * `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
 
@@ -190,21 +203,23 @@ Required
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.0 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.9.0.1 or up to,
-  but not including, 1.9.1.0.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.0.0 or up to,
+  but not including, 1.10.1.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.4 or newer.
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
+* `packaging <https://pypi.org/project/packaging/>`_, version 20.0 or newer.
+
 .. _UNIDATA-UDUNITS-2-library:
 
-* `UNIDATA UDUNITS-2 library
+* `UNIDATA Udunits-2 library
   <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.25
   or newer. UDUNITS-2 is a C library that provides support for units of
   physical quantities.
 
-  If the UDUNITS-2 shared library file (``libudunits2.so.0`` on
+  If the Udunits-2 shared library file (``libudunits2.so.0`` on
   GNU/Linux or ``libudunits2.0.dylibfile`` on MacOS) is in a
   non-standard location then its directory path should be added to the
   ``LD_LIBRARY_PATH`` environment variable.

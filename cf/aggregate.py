@@ -214,7 +214,7 @@ class _Meta:
         self.has_data = f.has_data()
         self.identity = f.identity(
             strict=strict_identities,
-            relaxed=relaxed_identities,
+            relaxed=relaxed_identities and not ncvar_identities,
             nc_only=ncvar_identities,
             default=None,
         )
@@ -309,7 +309,7 @@ class _Meta:
         else:
             self.coordrefs = list(refs.values())
 
-        for axis in f.domain_axes(todict=True):
+        for axis, domain_axis in f.domain_axes(todict=True).items():
 
             # List some information about each 1-d coordinate which
             # spans this axis. The order of elements is arbitrary, as
@@ -400,27 +400,21 @@ class _Meta:
             # auxiliary coordinate information
             info_1d_coord = info_dim + info_aux
 
-            #            if not info_1d_coord:
-            #                self.message = ("axis has no one-dimensional nor "
-            #                                    "scalar coordinates")
-            #                return
-
             # Find the canonical identity for this axis
             identity = None
             if info_1d_coord:
                 identity = info_1d_coord[0]["identity"]
             elif not self.relaxed_identities:
                 self.message = (
-                    "axis has no one-dimensional nor " "scalar coordinates"
+                    "axis has no one-dimensional nor scalar coordinates"
                 )
                 return
 
-            ncdim = False
+            size = None
             if identity is None and self.relaxed_identities:
-                # There are no 1-d coordinates, so see if we can
-                # identify the domain axis by their netCDF dimension
-                # name.
-                domain_axis = f.axis(axis)  # TODO
+                # There are no 1-d coordinates and relaxed identities
+                # are on, so see if we can identify the domain axis by
+                # its netCDF dimension name.
                 identity = domain_axis.nc_get_dimension(None)
                 if identity is None:
                     self.message = (
@@ -428,8 +422,8 @@ class _Meta:
                         "has no netCDF dimension name"
                     )  # TODO
                     return
-                else:
-                    ncdim = True
+
+                size = domain_axis.get_size()
 
             axis_identities = {
                 "ids": "identity",
@@ -438,7 +432,6 @@ class _Meta:
                 "hasdata": "hasdata",
                 "hasbounds": "hasbounds",
                 "coordrefs": "coordrefs",
-                # 'size': None,
             }
             self.axis[identity] = {
                 name: tuple(i[idt] for i in info_1d_coord)
@@ -450,11 +443,10 @@ class _Meta:
             else:
                 self.axis[identity]["dim_coord_index"] = None
 
-            # Store the axis size if the axis has no 1-d coordinates
-            if ncdim:
-                self.axis[identity]["size"] = domain_axis.get_size()
-            else:
-                self.axis[identity]["size"] = None
+            # Store the axis size, which will be None unless we
+            # identified the dimension solely by its netCDF dimension
+            # name.
+            self.axis[identity]["size"] = size
 
             self.id_to_axis[identity] = axis
             self.axis_to_id[axis] = identity
@@ -692,8 +684,9 @@ class _Meta:
             self.properties = ()
         else:
             properties = f.properties()
-            for p in ignore:
-                properties.pop(p, None)
+            if ignore:
+                for p in ignore:
+                    properties.pop(p, None)
 
             if equal:
                 eq = dict(
@@ -933,7 +926,7 @@ class _Meta:
         """
         identity = coord.identity(
             strict=self.strict_identities,
-            relaxed=self.relaxed_identities,
+            relaxed=self.relaxed_identities and not self.ncvar_identities,
             nc_only=self.ncvar_identities,
             default=None,
         )
@@ -973,7 +966,7 @@ class _Meta:
         """
         identity = anc.identity(
             strict=self.strict_identities,
-            relaxed=self.relaxed_identities,
+            relaxed=self.relaxed_identities and not self.ncvar_identities,
             nc_only=self.ncvar_identities,
             default=None,
         )
@@ -1008,7 +1001,7 @@ class _Meta:
                 A structural signature of each coordinate reference
                 object.
 
-        **Examples:**
+        **Examples**
 
         >>> sig = coordinate_reference_signatures(refs)
 
@@ -1055,7 +1048,7 @@ class _Meta:
         else:
             anc_identity = anc.identity(
                 strict=self.strict_identities,
-                relaxed=self.relaxed_identities,
+                relaxed=self.relaxed_identities and not self.ncvar_identities,
                 nc_only=self.ncvar_identities,
                 default=None,
             )
@@ -1301,7 +1294,7 @@ class _Meta:
 
             `tuple` or `None`
 
-        **Examples:**
+        **Examples**
 
         >>> m.find_coordrefs('dim0')
         >>> m.find_coordrefs('aux1')
@@ -1459,7 +1452,9 @@ def aggregate(
         relaxed_identities: `bool`, optional
             If True and there is no standard name property nor "id"
             attribute, then allow field and metadata constructs to be
-            identifiable by long name properties or netCDF variable names.
+            identifiable by long name properties or netCDF variable
+            names. Also allows netCDF dimension names to be used when
+            there are no spanning 1-d coordinates.
 
         field_identity: `str`, optional
             Specify a property with which to identify field constructs
@@ -1592,7 +1587,7 @@ def aggregate(
         `FieldList`
             The aggregated field constructs.
 
-    **Examples:**
+    **Examples**
 
     The following six fields comprise eastward wind at two different times
     and for three different atmospheric heights for each time:
@@ -1877,7 +1872,7 @@ def aggregate(
 
                 coord_identity = coord.identity(
                     strict=strict_identities,
-                    relaxed=relaxed_identities,
+                    relaxed=relaxed_identities and not ncvar_identities,
                     nc_only=ncvar_identities,
                     default=None,
                 )
@@ -2787,7 +2782,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
 
         `bool`
 
-    **Examples:**
+    **Examples**
 
     >>> if not _ok_coordinate_arrays(meta, 'latitude', True, False):
     ...     print("Don't aggregate")

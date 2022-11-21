@@ -82,7 +82,7 @@ class CellMethod(cfdm.CellMethod):
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> c = CellMethod.create('lat: mean (interval: 1 hour)')
 
@@ -232,7 +232,7 @@ class CellMethod(cfdm.CellMethod):
 
         .. seealso:: `over`
 
-        **Examples:**
+        **Examples**
 
         >>> c
         >>> c
@@ -265,7 +265,7 @@ class CellMethod(cfdm.CellMethod):
 
         .. seealso:: `over`
 
-        **Examples:**
+        **Examples**
 
         >>> c
         >>> c
@@ -298,7 +298,7 @@ class CellMethod(cfdm.CellMethod):
 
         .. seealso:: `within`
 
-        **Examples:**
+        **Examples**
 
         >>> c
         >>> c
@@ -342,7 +342,7 @@ class CellMethod(cfdm.CellMethod):
 
         Describes how the cell values have been determined or derived.
 
-        **Examples:**
+        **Examples**
 
         >>> c
         <CF CellMethod: time: minimum>
@@ -370,7 +370,7 @@ class CellMethod(cfdm.CellMethod):
     def intervals(self):
         """The cell method's interval qualifier(s).
 
-        **Examples:**
+        **Examples**
 
         >>> c
         <CF CellMethod: time: minimum>
@@ -469,7 +469,7 @@ class CellMethod(cfdm.CellMethod):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def expand_intervals(self, inplace=False, i=False):
         """Expand the cell method interval to cover all of its axes."""
@@ -481,7 +481,7 @@ class CellMethod(cfdm.CellMethod):
 
         return c
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def change_axes(self, axis_map, inplace=False, i=False):
         """Change the axes of the cell method according to a given
@@ -503,7 +503,7 @@ class CellMethod(cfdm.CellMethod):
 
         return c
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equivalent(
         self, other, rtol=None, atol=None, verbose=None, traceback=False
@@ -532,7 +532,7 @@ class CellMethod(cfdm.CellMethod):
             `bool`
                 Whether or not the two instances are equivalent.
 
-        **Examples:**
+        **Examples**
 
         >>> a = cf.example_field(1)
         >>> a.cell_methods()

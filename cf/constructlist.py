@@ -111,7 +111,7 @@ class ConstructList(list, Container, cfdm.Container):
             `{{class}}`
                 The concatenation of the list and another sequence.
 
-        **Examples:**
+        **Examples**
 
         >>> h = f + g
         >>> f += g
@@ -146,7 +146,7 @@ class ConstructList(list, Container, cfdm.Container):
             `{{class}}`
                 The list added to itself *n* times.
 
-        **Examples:**
+        **Examples**
 
         >>> h = f * 2
         >>> f *= 2
@@ -180,7 +180,7 @@ class ConstructList(list, Container, cfdm.Container):
             `{{class}}`
                 Slice of the list from *i* to *j*.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f[0:1]
         >>> g = f[1:-4]
@@ -201,7 +201,7 @@ class ConstructList(list, Container, cfdm.Container):
                 construct element is returned. If *index* is a slice
                 then a new {{class}} is returned, which may be empty.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f[0]
         >>> g = f[-1:-4:-1]
@@ -254,7 +254,7 @@ class ConstructList(list, Container, cfdm.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.close()
 
@@ -272,7 +272,7 @@ class ConstructList(list, Container, cfdm.Container):
 
         .. seealso:: `list.count`
 
-        **Examples:**
+        **Examples**
 
         >>> f = cf.{{class}}([a, b, c, a])
         >>> f.count(a)
@@ -373,7 +373,7 @@ class ConstructList(list, Container, cfdm.Container):
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.copy()
         >>> g is f
@@ -390,7 +390,7 @@ class ConstructList(list, Container, cfdm.Container):
         """
         return type(self)([f.copy(data=data) for f in self])
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equals(
         self,
@@ -479,7 +479,7 @@ class ConstructList(list, Container, cfdm.Container):
             `bool`
                 Whether the two lists are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> fl.equals(fl)
         True
@@ -657,7 +657,7 @@ class ConstructList(list, Container, cfdm.Container):
             `{{class}}`
                 The matching constructs.
 
-        **Examples:**
+        **Examples**
 
         See `{{package}}.{{class}}.match_by_identity`
 

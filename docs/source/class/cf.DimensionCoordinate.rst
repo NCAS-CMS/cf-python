@@ -278,6 +278,7 @@ Data
    ~cf.DimensionCoordinate.count
    ~cf.DimensionCoordinate.count_masked
    ~cf.DimensionCoordinate.fill_value
+   ~cf.DimensionCoordinate.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -302,7 +303,7 @@ Data
 
    ~cf.DimensionCoordinate.__setitem__
    ~cf.DimensionCoordinate.halo
-   ~cf.DimensionCoordinate.mask_invalid
+   ~cf.DimensionCoordinate.masked_invalid
    ~cf.DimensionCoordinate.subspace
    ~cf.DimensionCoordinate.where
 
@@ -340,8 +341,8 @@ Cyclicity
    ~cf.DimensionCoordinate.close
    ~cf.DimensionCoordinate.convert_reference_time
    ~cf.DimensionCoordinate.cyclic
+   ~cf.DimensionCoordinate.get_original_filenames
    ~cf.DimensionCoordinate.period
-   ~cf.DimensionCoordinate.get_filenames
 
 Miscellaneous
 -------------
@@ -701,6 +702,7 @@ Deprecated
    ~cf.DimensionCoordinate.delprop
    ~cf.DimensionCoordinate.expand_dims
    ~cf.DimensionCoordinate.files
+   ~cf.DimensionCoordinate.get_filenames
    ~cf.DimensionCoordinate.getprop
    ~cf.DimensionCoordinate.hasprop
    ~cf.DimensionCoordinate.insert_data

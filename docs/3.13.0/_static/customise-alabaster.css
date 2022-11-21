@@ -1,0 +1,109 @@
+/*
+ * overrides for alabaster
+ *
+ */
+
+div.sphinxsidebar {
+    width: {{ theme_sidebar_width }};
+    font-size: '13pt';
+    line-height: 1.5;
+}
+
+/* -- body styles ----------------------------------------------------------- */
+
+code.xref {
+    color: #5682ad;
+    text-decoration: none;
+}
+
+
+div.admonition p.admonition-title {
+    font-size: 13pt;
+    font-weight: bold;
+}
+
+/* -- tables ---------------------------------------------------------------- */
+
+table.docutils {
+    border: 0;
+    border-collapse: collapse;
+}
+
+table.docutils td, table.docutils th {
+    padding: 1px 8px 1px 5px;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid #aaa;
+}
+
+table.field-list td, table.field-list th {
+    border: 0 !important;
+}
+
+table.footnote td, table.footnote th {
+    border: 0 !important;
+}
+
+th {
+    text-align: left;
+    vertical-align: top;
+    padding-right: 5px;
+    background-color: #5682ad;
+    color: white;
+}
+
+/*
+ * Force top alignment for table items so left reference item can align with
+ * the start of text to describe it in column to right, for better ease of
+ * comprehension in detailed rows where description text spans many lines.
+ */
+td {
+    vertical-align: top;
+}
+
+/* Some tables are otherwise not left-aligned so force them to be. */
+table.align-default {
+    margin-left: 0;
+}
+
+table.citation {
+    border-left: solid 1px gray;
+    margin-left: 1px;
+}
+
+table.citation td {
+    border-bottom: none;
+}
+
+/* -- Sphinx 2.3.1 build tweaks (hopefully needed only temporarily) --------- */
+
+/* Remove gap between a bullet and its sub-bullet list in contents listings */
+ul.simple > li > p {
+    margin-bottom: 0px;
+}
+
+/* Force one-line spacing between docstring paragraphs (missing for v 2.3.1) */
+.field-list p {
+    margin-bottom: 1.0em;
+}
+
+/*
+ * Alabaster theme is responsive and when screen width becomes small enough
+ * (e.g. with tablets/mobiles) it sets this to 0, making the bullet points sit
+ * outside of their boxes. Prevent that by overriding for all widths.
+ */
+ul {
+    margin-left: 30px;
+}
+
+/* Recolour ugly beige for API function/class/constant element signatures */
+dt[id] {
+    background-color: #ffed9f;
+}
+
+/* Subtle colours for parameters and returns info for API reference items */
+dl.field-list > dt {
+    background-color: #edf7e2;
+    word-break: keep-all;
+}

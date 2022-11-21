@@ -114,7 +114,7 @@ class SubspaceField(mixin.Subspace):
             An independent field construct containing the subspace of
             the original field.
 
-    **Examples:**
+    **Examples**
 
     There are further worked examples
     :ref:`in the tutorial <Subspacing-by-metadata>`.
@@ -244,7 +244,7 @@ class SubspaceField(mixin.Subspace):
                 whether or not it is possible to create specified
                 subspace.
 
-        **Examples:**
+        **Examples**
 
         There are further worked examples
         :ref:`in the tutorial <Subspacing-by-metadata>`.
@@ -281,13 +281,14 @@ class SubspaceField(mixin.Subspace):
 
         try:
             indices = field.indices(*args, **kwargs)
-        except ValueError as error:
+            out = field[indices]
+        except (ValueError, IndexError) as error:
             if test:
                 return False
 
-            raise ValueError(error)
+            raise error
         else:
             if test:
                 return True
 
-            return field[indices]
+            return out

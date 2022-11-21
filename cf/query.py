@@ -21,6 +21,9 @@ from .units import Units
 
 logger = logging.getLogger(__name__)
 
+# Alias for builtin set, since there is a 'set' function
+builtin_set = set
+
 
 class Query:
     '''Encapsulate a condition for subsequent evaluation.
@@ -64,7 +67,7 @@ class Query:
     ``'set'``  A "member of set" condition
     =========  ===================================
 
-    **Complex conditions**
+    **Compound queries**
 
     Multiple conditions may be combined with the Python bitwise "and"
     (`&`) and "or" (`|`) operators to form a new `Query` object.
@@ -184,7 +187,7 @@ class Query:
 
     isquery = True
 
-    @_deprecated_kwarg_check("exact")
+    @_deprecated_kwarg_check("exact", version="3.0.0", removed_at="4.0.0")
     def __init__(self, operator, value, units=None, attr=None, exact=True):
         """**Initialization**
 
@@ -237,6 +240,8 @@ class Query:
 
         self._bitwise_operator = None
 
+        self.query_type = operator
+
         self._NotImplemented_RHS_Data_op = True
 
     def __deepcopy__(self, memo):
@@ -267,6 +272,10 @@ class Query:
     def __and__(self, other):
         """The binary bitwise operation ``&``
 
+        Combine two queries with a logical And operation. If the
+        `!value` of both queries is the same then it will be retained on
+        the compound query.
+
         x.__and__(y) <==> x&y
 
         """
@@ -277,6 +286,15 @@ class Query:
         new._compound = (self.copy(), other.copy())
         new._bitwise_operator = operator_and
         new._attr = ()
+
+        # If the value of the two queries is the same then retain it
+        # on the compound query
+        value0 = self._value
+        value1 = other._value
+        if value0 is None or value1 is None or value0 != value1:
+            new._value = None
+        else:
+            new._value = deepcopy(value0)
 
         new._NotImplemented_RHS_Data_op = True
 
@@ -293,6 +311,10 @@ class Query:
     def __or__(self, other):
         """The binary bitwise operation ``|``
 
+        Combine two queries with a logical Or operation. If the
+        `!value` of both queries is the same then it will be retained on
+        the compound query.
+
         x.__or__(y) <==> x|y
 
         """
@@ -303,6 +325,15 @@ class Query:
         new._compound = (self, other)
         new._bitwise_operator = operator_or
         new._attr = ()
+
+        # If the value of the two queries is the same then retain it
+        # on the compound query
+        value0 = self._value
+        value1 = other._value
+        if value0 is None or value1 is None or value0 != value1:
+            new._value = None
+        else:
+            new._value = deepcopy(value0)
 
         new._NotImplemented_RHS_Data_op = True
 
@@ -352,7 +383,7 @@ class Query:
     def attr(self):
         """The object attribute on which to apply the query condition.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.Query('ge', 4)
         >>> print(q.attr)
@@ -370,7 +401,7 @@ class Query:
 
         Compound conditions return `None`.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.Query('ge', 4)
         >>> q.operator
@@ -388,7 +419,7 @@ class Query:
 
         An exception is raised for compound conditions.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.Query('ge', 4)
         >>> q.value
@@ -398,10 +429,13 @@ class Query:
         AttributeError: Compound query doesn't have attribute 'value'
 
         """
-        if not self._compound:
-            return self._value
+        value = self._value
+        if value is None:
+            raise AttributeError(
+                "Compound query doesn't have attribute 'value'"
+            )
 
-        raise AttributeError("Compound query doesn't have attribute 'value'")
+        return value
 
     def addattr(self, attr):
         """Return a `Query` object with a new left hand side operand
@@ -421,7 +455,7 @@ class Query:
             `Query`
                 The new query object.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.eq(2001)
         >>> q
@@ -459,7 +493,7 @@ class Query:
 
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> r = q.copy()
 
@@ -499,7 +533,7 @@ class Query:
         """
         return str(self)
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, traceback=False):
         """True if two `Query` objects are the same."""
@@ -576,7 +610,7 @@ class Query:
                 The result of the query. The nature of the result is
                 dependent on the object type of *x*.
 
-        **Examples:**
+        **Examples**
 
         >>> q = cf.Query('lt', 5.5)
         >>> q.evaluate(6)
@@ -727,6 +761,55 @@ class Query:
         """
         print(_inspect(self))  # pragma: no cover
 
+    def iscontains(self):
+        """Return True if the query is a "cell contains" condition.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `cf.contains`
+
+        :Returns:
+
+            `bool`
+                Whether or not the query is a "cell contains"
+                condition.
+
+        **Examples**
+
+        >>> q = cf.contains(15)
+        >>> q
+        <CF Query: [lower_bounds(le 15) & upper_bounds(ge 15)]>
+        >>> q.iscontains()
+        True
+        >>> q |= cf.lt(6)
+        >>> q.iscontains()
+        False
+
+        >>> r = cf.wi(6, 10)
+        >>> r.iscontains()
+        False
+
+        """
+        if not (
+            self._compound
+            and self._value is not None
+            and self._bitwise_operator is operator_and
+        ):
+            return False
+
+        sig = builtin_set()
+        for q in self._compound:
+            if q._compound:
+                # A compound query of compound queries is not a "cell
+                # contains" condition
+                break
+
+            sig.add((q.attr, q.operator))
+
+        return sig == builtin_set(
+            ((("lower_bounds",), "le"), (("upper_bounds",), "ge"))
+        )
+
     def set_condition_units(self, units):
         """Set units of condition values in-place.
 
@@ -860,7 +943,7 @@ def lt(value, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> c = cf.lt(5)
     >>> c == 2
@@ -921,7 +1004,7 @@ def le(value, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.le(5)
     >>> q
@@ -965,7 +1048,7 @@ def gt(value, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.gt(5)
     >>> q
@@ -1009,7 +1092,7 @@ def ge(value, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.ge(5)
     >>> q
@@ -1064,7 +1147,7 @@ def eq(value, units=None, attr=None, exact=True):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.eq(5)
     >>> q
@@ -1124,7 +1207,7 @@ def ne(value, units=None, attr=None, exact=True):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.ne(5)
     >>> q
@@ -1176,7 +1259,7 @@ def wi(value0, value1, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.wi(5, 7)
     >>> q
@@ -1223,7 +1306,7 @@ def wo(value0, value1, units=None, attr=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> q = cf.wo(5)
     >>> q
@@ -1270,7 +1353,7 @@ def set(values, units=None, attr=None, exact=True):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> c = cf.set([3, 5])
     >>> c == 4
@@ -1294,8 +1377,9 @@ def contains(value, units=None):
 
     .. versionadded:: 3.0.0
 
-    .. seealso:: `cf.cellsize`, `cf.cellge`, `cf.cellgt`, `cf.cellne`,
-                 `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
+    .. seealso:: `cf.Query.iscontains`, `cf.cellsize`, `cf.cellge`,
+                 `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
+                 `cf.cellwi`, `cf.cellwo`
 
     :Parameters:
 
@@ -1314,12 +1398,20 @@ def contains(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
-    >>> cf.contains(8)
+    >>> q = cf.contains(8)
+    >>> q
     <CF Query: [lower_bounds(le 8) & upper_bounds(ge 8)]>
-    >>> cf.contains(30, 'degrees_east')
+    >>> q.value
+    8
+
+    >>> q = cf.contains(30, 'degrees_east')
+    >>> q
     <CF Query: [lower_bounds(le 30 degrees_east) & upper_bounds(ge 30 degrees_east)]>
+    >>> q.value
+    <CF Data(): 30 degrees_east>
+
     >>> cf.contains(cf.Data(10, 'km'))
     <CF Query: [lower_bounds(le 10 km) & upper_bounds(ge 10 km)]>
 
@@ -1358,7 +1450,7 @@ def year(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16)
     >>> d == cf.year(2002)
@@ -1394,7 +1486,7 @@ def month(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16)
     >>> d == cf.month(6)
@@ -1430,7 +1522,7 @@ def day(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16)
     >>> d == cf.day(16)
@@ -1487,7 +1579,7 @@ def hour(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16, 18)
     >>> d == cf.hour(18)
@@ -1523,7 +1615,7 @@ def minute(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16, 18, 30, 0)
     >>> d == cf.minute(30)
@@ -1559,7 +1651,7 @@ def second(value):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> d = cf.dt(2002, 6, 16, 18, 30, 0)
     >>> d == cf.second(0)
@@ -1601,7 +1693,7 @@ def cellsize(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellsize(cf.lt(5, 'km'))
     <CF Query: cellsize(lt <CF Data: 5 km>)>
@@ -1643,7 +1735,7 @@ def cellwi(value0, value1, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellwi(cf.Data(5, 'km'), cf.Data(10, 'km'))
     <CF Query: [lower_bounds(ge 5 km) & upper_bounds(le 10 km)]>
@@ -1684,7 +1776,7 @@ def cellwo(value0, value1, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellwo(cf.Data(5, 'km'), cf.Data(10, 'km'))
     <CF Query: [lower_bounds(lt 5 km) & upper_bounds(gt 10 km)]>
@@ -1726,7 +1818,7 @@ def cellgt(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellgt(cf.Data(300, 'K'))
     <CF Query: lower_bounds(gt 300 K)>
@@ -1765,7 +1857,7 @@ def cellge(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellge(cf.Data(300, 'K'))
     <CF Query: lower_bounds(ge 300 K)>
@@ -1803,7 +1895,7 @@ def celllt(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.celllt(cf.Data(300, 'K'))
     <CF Query: upper_bounds(lt 300 K)>
@@ -1841,7 +1933,7 @@ def cellle(value, units=None):
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.cellle(cf.Data(300, 'K'))
     <CF Query: upper_bounds(le 300 K)>
@@ -1869,7 +1961,7 @@ def jja():
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
@@ -1895,7 +1987,7 @@ def son():
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
@@ -1921,7 +2013,7 @@ def djf():
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
@@ -1948,7 +2040,7 @@ def mam():
         `Query`
             The query object.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
@@ -1990,7 +2082,7 @@ def seasons(n=4, start=12):
         `list` of `Query`
             The query objects.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.seasons()
     [<CF Query: month[(ge 12) | (le 2)]>,

@@ -1,9 +1,12 @@
 import datetime
 import faulthandler
+import json
 import os
 import stat
 import subprocess
 import unittest
+
+import netCDF4
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -24,7 +27,8 @@ class cfaTest(unittest.TestCase):
             | stat.S_IRGRP
             | stat.S_IXUSR  # reading
             | stat.S_IXOTH
-            | stat.S_IXGRP,  # executing
+            | stat.S_IXGRP  # executing
+            | stat.S_IWUSR,  # writing
         )
 
     def test_cfa(self):
@@ -45,6 +49,23 @@ class cfaTest(unittest.TestCase):
                 f"{cfa_stderr_via_stdout_channel.decode('utf-8')}"
             )
         # else: (passes by default)
+
+    def test_cfa_base(self):
+        # Test the "base" cfa_option to cf.write. Valid for CFA-0.4.
+        filename = "test_file.nc"
+        f = cf.read(filename)
+        cfa_file = "test_file.nca"
+        cf.write(f, cfa_file, fmt="CFA4", cfa_options={"base": ""})
+
+        nc = netCDF4.Dataset(cfa_file, "r")
+        cfa_array = json.loads(nc.variables["eastward_wind"].cfa_array)
+
+        self.assertEqual(cfa_array["base"], "")
+        self.assertEqual(
+            cfa_array["Partitions"][0]["subarray"]["file"], filename
+        )
+
+        os.remove(cfa_file)
 
 
 if __name__ == "__main__":

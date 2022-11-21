@@ -36,18 +36,11 @@ class functionTest(unittest.TestCase):
     def test_aliases(self):
         self.assertEqual(cf.log_level(), cf.LOG_LEVEL())
         self.assertEqual(cf.free_memory(), cf.FREE_MEMORY())
-        self.assertEqual(cf.free_memory_factor(), cf.FREE_MEMORY_FACTOR())
-        self.assertEqual(cf.fm_threshold(), cf.FM_THRESHOLD())
         self.assertEqual(cf.total_memory(), cf.TOTAL_MEMORY())
         self.assertEqual(cf.regrid_logging(), cf.REGRID_LOGGING())
         self.assertEqual(cf.relaxed_identities(), cf.RELAXED_IDENTITIES())
         self.assertEqual(cf.tempdir(), cf.TEMPDIR())
         self.assertEqual(cf.chunksize(), cf.CHUNKSIZE())
-        self.assertEqual(cf.set_performance(), cf.SET_PERFORMANCE())
-        self.assertEqual(cf.of_fraction(), cf.OF_FRACTION())
-        self.assertEqual(
-            cf.collapse_parallel_mode(), cf.COLLAPSE_PARALLEL_MODE()
-        )
 
     def test_configuration(self):
         # This test assumes 'total_memory' remains constant throughout
@@ -60,30 +53,19 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org, dict)
 
         # Check all keys that should be there are, with correct value type:
-        self.assertEqual(len(org), 11)  # update expected len if add new key(s)
+        self.assertEqual(len(org), 8)  # update expected len if add new key(s)
 
-        # Floats expected as values for most keys. Store these for
-        # later as floats need assertAlmostEqual rather than
-        # assertEqual tests:
-        keys_with_float_values = [
-            "atol",
-            "rtol",
-            "of_fraction",
-            "free_memory_factor",
-            "chunksize",
-        ]
-        for key in keys_with_float_values:
-            self.assertIsInstance(org[key], float)
-
-        # Other types expected:
-        self.assertIsInstance(org["collapse_parallel_mode"], int)
+        # Types expected:
+        self.assertIsInstance(org["atol"], float)
+        self.assertIsInstance(org["rtol"], float)
+        self.assertIsInstance(org["chunksize"], int)
         self.assertIsInstance(org["relaxed_identities"], bool)
         self.assertIsInstance(org["bounds_combination_mode"], str)
         self.assertIsInstance(org["regrid_logging"], bool)
+        self.assertIsInstance(org["tempdir"], str)
         # Log level may be input as an int but always given as
         # equiv. string
         self.assertIsInstance(org["log_level"], str)
-        self.assertIsInstance(org["tempdir"], str)
 
         # Store some sensible values to reset items to for testing, ensuring:
         # 1) they are kept different to the defaults (i.e. org values); and
@@ -94,10 +76,8 @@ class functionTest(unittest.TestCase):
             "rtol": 5e-7,
             "atol": 2e-7,
             "tempdir": "/my-custom-tmpdir",
-            "of_fraction": 0.1,
-            "free_memory_factor": 0.25,
+            #            "free_memory_factor": 0.25,
             "regrid_logging": True,
-            "collapse_parallel_mode": 2,
             "relaxed_identities": True,
             "bounds_combination_mode": "XOR",
             "log_level": "INFO",
@@ -132,7 +112,6 @@ class functionTest(unittest.TestCase):
         new_values = {
             "regrid_logging": True,
             "tempdir": "/bin/bag",
-            "of_fraction": 0.33,
         }
         cf.configuration(**new_values)
         post_set = cf.configuration()
@@ -154,10 +133,8 @@ class functionTest(unittest.TestCase):
         # Test edge cases & invalid inputs...
         # ... 1. Falsy value inputs on some representative items:
         pre_set_config = cf.configuration()
-        with self.assertRaises(ValueError):
-            cf.configuration(of_fraction=0.0)
-        with self.assertRaises(ValueError):
-            cf.configuration(free_memory_factor=0.0)
+        #        with self.assertRaises(ValueError):
+        #            cf.configuration(free_memory_factor=0.0)
         new_values = {"tempdir": "", "atol": 0.0, "regrid_logging": False}
         cf.configuration(**new_values)
         post_set = cf.configuration()
@@ -169,11 +146,11 @@ class functionTest(unittest.TestCase):
 
         # 2. None as an input kwarg rather than as a default:
         pre_set_config = cf.configuration()
-        set_of = 0.45
-        cf.configuration(of_fraction=set_of, rtol=None, log_level=None)
+        set_atol = 0.45
+        cf.configuration(atol=set_atol, rtol=None, log_level=None)
         post_set = cf.configuration()
         # test values that should change
-        self.assertEqual(post_set["of_fraction"], set_of)
+        self.assertEqual(post_set["atol"], set_atol)
         # ...and values that should not:
         self.assertEqual(post_set["rtol"], pre_set_config["rtol"])
         self.assertAlmostEqual(
@@ -182,7 +159,7 @@ class functionTest(unittest.TestCase):
 
         # 3. Gracefully error with invalid inputs:
         with self.assertRaises(ValueError):
-            cf.configuration(of_fraction="bad")
+            cf.configuration(atol="bad")
 
         with self.assertRaises(ValueError):
             cf.configuration(log_level=7)
@@ -206,14 +183,8 @@ class functionTest(unittest.TestCase):
         cf.log_level("DISABLE")
 
     def test_context_managers(self):
-        # rtol, atol, chunksize
-        for func in (
-            cf.atol,
-            cf.rtol,
-            cf.chunksize,
-            cf.free_memory_factor,
-            cf.of_fraction,
-        ):
+        # rtol, atol
+        for func in (cf.atol, cf.rtol):
             old = func()
             new = old * 1.001
             with func(new):
@@ -223,19 +194,22 @@ class functionTest(unittest.TestCase):
 
             self.assertEqual(func(), old)
 
-        # collapse_parallel_mode
-        func = cf.collapse_parallel_mode
+        # chunksize
+        func = cf.chunksize
 
-        org = func(0)
+        org = func(1000)
         old = func()
-        new = old + 1
+        new = 2000.123
         with func(new):
-            self.assertEqual(func(), new)
-            self.assertEqual(func(new + 1), new)
-            self.assertEqual(func(), new + 1)
+            self.assertEqual(func(), int(new))
 
         self.assertEqual(func(), old)
         func(org)
+
+        del org._func
+        with self.assertRaises(AttributeError):
+            with org:
+                pass
 
         # log_level
         func = cf.log_level
@@ -330,6 +304,56 @@ class functionTest(unittest.TestCase):
 
         a.set_fill_value(a.fill_value + 1)
         self.assertEqual(cf.hash_array(a), h)
+
+    def test_indices_shape(self):
+        import dask.array as da
+
+        shape = (10, 20)
+
+        self.assertEqual(cf.indices_shape((slice(2, 5), 4), shape), [3, 1])
+        self.assertEqual(
+            cf.indices_shape(([2, 3, 4], np.arange(1, 6)), shape), [3, 5]
+        )
+
+        index0 = [False] * 5
+        index0[2:5] = [True] * 3
+        self.assertEqual(
+            cf.indices_shape((index0, da.arange(1, 6)), shape), [3, 5]
+        )
+
+        index0 = da.full((5,), False, dtype=bool)
+        index0[2:5] = True
+        index1 = np.full((6,), False, dtype=bool)
+        index1[1:6] = True
+        self.assertEqual(cf.indices_shape((index0, index1), shape), [3, 5])
+
+        index0 = da.arange(5)
+        index0 = index0[index0 < 3]
+        self.assertEqual(cf.indices_shape((index0, []), shape), [3, 0])
+
+        self.assertEqual(
+            cf.indices_shape((da.from_array(2), np.array(3)), shape), [1, 1]
+        )
+        self.assertEqual(
+            cf.indices_shape((da.from_array([]), np.array(())), shape), [0, 0]
+        )
+
+        self.assertEqual(cf.indices_shape((slice(1, 5, 3), 3), shape), [2, 1])
+        self.assertEqual(cf.indices_shape((slice(5, 1, -2), 3), shape), [2, 1])
+        self.assertEqual(cf.indices_shape((slice(5, 1, 3), 3), shape), [0, 1])
+        self.assertEqual(cf.indices_shape((slice(1, 5, -3), 3), shape), [0, 1])
+
+        # keepdims=False
+        self.assertEqual(
+            cf.indices_shape((slice(2, 5), 4), shape, keepdims=False), [3]
+        )
+        self.assertEqual(
+            cf.indices_shape(
+                (da.from_array(2), np.array(3)), shape, keepdims=False
+            ),
+            [],
+        )
+        self.assertEqual(cf.indices_shape((2, 3), shape, keepdims=False), [])
 
 
 if __name__ == "__main__":

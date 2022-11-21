@@ -1,0 +1,870 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Domain &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Domain.dump" href="../method/cf.Domain.dump.html" />
+    <link rel="prev" title="cf.Datum.__str__" href="../method/cf.Datum.__str__.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.13.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.Datum.__str__.html" title="previous chapter">cf.Datum.__str__</a></li>
+      <li>Next: <a href="../method/cf.Domain.dump.html" title="next chapter">cf.Domain.dump</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-domain">
+<span id="id1"></span><h1>cf.Domain<a class="headerlink" href="#cf-domain" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cfdm.Domain">
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Domain</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.3/cfdm/domain.py#L13-L940"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.properties.Properties</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domain.Domain</span></code></p>
+<p>A domain construct of the CF data model.</p>
+<p>The domain represents a set of discrete “locations” in what
+generally would be a multi-dimensional space, either in the real
+world or in a model’s simulated world. The data array elements of
+a field construct correspond to individual location of a domain.</p>
+<p>The domain construct is defined collectively by the following
+constructs of the CF data model: domain axis, dimension
+coordinate, auxiliary coordinate, cell measure, coordinate
+reference, and domain ancillary constructs; as well as properties
+to describe the domain.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name may be accessed with the
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_variable.html#cfdm.Domain.nc_set_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_get_variable.html#cfdm.Domain.nc_get_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_del_variable.html#cfdm.Domain.nc_del_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_has_variable.html#cfdm.Domain.nc_has_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The netCDF variable group structure may be accessed with the
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_variable.html#cfdm.Domain.nc_set_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_get_variable.html#cfdm.Domain.nc_get_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_variable_groups.html#cfdm.Domain.nc_variable_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_clear_variable_groups.html#cfdm.Domain.nc_clear_variable_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_variable_groups.html#cfdm.Domain.nc_set_variable_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
+methods.</p>
+<p>The selection of properties to be written as netCDF global
+attributes may be accessed with the <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_global_attributes.html#cfdm.Domain.nc_global_attributes" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_clear_global_attributes.html#cfdm.Domain.nc_clear_global_attributes" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code></a> and <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_global_attribute.html#cfdm.Domain.nc_set_global_attribute" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a>
+methods.</p>
+<p>The netCDF group attributes may be accessed with the
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_group_attributes.html#cfdm.Domain.nc_group_attributes" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code></a>, <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_clear_group_attributes.html#cfdm.Domain.nc_clear_group_attributes" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_group_attribute.html#cfdm.Domain.nc_set_group_attribute" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code></a> and <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_group_attributes.html#cfdm.Domain.nc_set_group_attributes" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a> methods.</p>
+<p>The netCDF geometry variable name and group structure may be
+accessed with the <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_geometry_variable.html#cfdm.Domain.nc_set_geometry_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_geometry_variable</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_get_geometry_variable.html#cfdm.Domain.nc_get_geometry_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_geometry_variable</span></code></a>, <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_geometry_variable_groups.html#cfdm.Domain.nc_geometry_variable_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_geometry_variable_groups</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_clear_variable_groups.html#cfdm.Domain.nc_clear_variable_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_geometry_variable_groups.html#cfdm.Domain.nc_set_geometry_variable_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_geometry_variable_groups</span></code></a>
+methods.</p>
+<p>Some components exist within multiple constructs, but when written
+to a netCDF dataset the netCDF names associated with such
+components will be arbitrarily taken from one of them. The netCDF
+variable, dimension and sample dimension names and group
+structures for such components may be set or removed consistently
+across all such components with the <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_del_component_variable.html#cfdm.Domain.nc_del_component_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_component_variable</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_component_variable.html#cfdm.Domain.nc_set_component_variable" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_variable</span></code></a>, <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_component_variable_groups.html#cfdm.Domain.nc_set_component_variable_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_variable_groups</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_clear_component_variable_groups.html#cfdm.Domain.nc_clear_component_variable_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_component_variable_groups</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_del_component_dimension.html#cfdm.Domain.nc_del_component_dimension" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_component_dimension</span></code></a>, <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_component_dimension.html#cfdm.Domain.nc_set_component_dimension" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_dimension</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_component_dimension_groups.html#cfdm.Domain.nc_set_component_dimension_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_dimension_groups</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_clear_component_dimension_groups.html#cfdm.Domain.nc_clear_component_dimension_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_component_dimension_groups</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_del_component_sample_dimension.html#cfdm.Domain.nc_del_component_sample_dimension" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_component_sample_dimension</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_component_sample_dimension.html#cfdm.Domain.nc_set_component_sample_dimension" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_sample_dimension</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_set_component_sample_dimension_groups.html#cfdm.Domain.nc_set_component_sample_dimension_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_sample_dimension_groups</span></code></a>,
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.nc_clear_component_sample_dimension_groups.html#cfdm.Domain.nc_clear_component_sample_dimension_groups" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_component_sample_dimension_groups</span></code></a> methods.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
+</div>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+property names, with corresponding values. Ignored if
+the <em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.set_properties.html#cfdm.Domain.set_properties" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.set_property.html#cfdm.Domain.set_property" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'Domain</span> <span class="pre">for</span> <span class="pre">model'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>source: optional</dt><dd><p>Initialise the metadata constructs from those of
+<em>source</em>.</p>
+<p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.Domain(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+<p>A new domain may also be instantiated with the
+<a class="reference external" href="https://ncas-cms.github.io/cfdm/method/cfdm.Domain.fromconstructs.html#cfdm.Domain.fromconstructs" title="(in Python cfdm package v1.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromconstructs</span></code></a> class method.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.dump.html#cf.Domain.dump" title="cf.Domain.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description of the domain construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.identity.html#cf.Domain.identity" title="cf.Domain.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
+<td><p>Return the canonical identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.identities.html#cf.Domain.identities" title="cf.Domain.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p></td>
+<td><p>Return all possible identities.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Domain.construct_type.html#cf.Domain.construct_type" title="cf.Domain.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<td><p>Return a description of the construct type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Domain.size.html#cf.Domain.size" title="cf.Domain.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>The number of locations in the domain.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Domain.rank.html#cf.Domain.rank" title="cf.Domain.rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rank</span></code></a></p></td>
+<td><p>The number of axes in the domain.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="selection">
+<h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.match_by_identity.html#cf.Domain.match_by_identity" title="cf.Domain.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></p></td>
+<td><p>Whether or not the construct identity satisfies conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.match_by_ncvar.html#cf.Domain.match_by_ncvar" title="cf.Domain.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a></p></td>
+<td><p>Whether or not the netCDF variable name satisfies conditions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.match_by_property.html#cf.Domain.match_by_property" title="cf.Domain.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></p></td>
+<td><p>Whether or not properties satisfy conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.match_by_rank.html#cf.Domain.match_by_rank" title="cf.Domain.match_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_rank</span></code></a></p></td>
+<td><p>Whether or not the number of domain axis constructs satisfies conditions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.match_by_construct.html#cf.Domain.match_by_construct" title="cf.Domain.match_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_construct</span></code></a></p></td>
+<td><p>Whether or not there are particular metadata constructs.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="rearranging">
+<h2>Rearranging<a class="headerlink" href="#rearranging" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.anchor.html#cf.Domain.anchor" title="cf.Domain.anchor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">anchor</span></code></a></p></td>
+<td><p>Roll a cyclic axis so that the given value lies in the first coordinate cell.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.roll.html#cf.Domain.roll" title="cf.Domain.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a></p></td>
+<td><p>Roll the field along a cyclic axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.flip.html#cf.Domain.flip" title="cf.Domain.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a></p></td>
+<td><p>Flip (reverse the direction of) domain axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.transpose.html#cf.Domain.transpose" title="cf.Domain.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<td><p>Permute the data axes of the metadata constructs.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="metadata-constructs">
+<h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Domain.auxiliary_coordinates.html#cf.Domain.auxiliary_coordinates" title="cf.Domain.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a></p></td>
+<td><p>Return auxiliary coordinate constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Domain.cell_measures.html#cf.Domain.cell_measures" title="cf.Domain.cell_measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measures</span></code></a></p></td>
+<td><p>Return cell measure constructs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Domain.coordinates.html#cf.Domain.coordinates" title="cf.Domain.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a></p></td>
+<td><p>Return dimension and auxiliary coordinate constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Domain.coordinate_references.html#cf.Domain.coordinate_references" title="cf.Domain.coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code></a></p></td>
+<td><p>Return coordinate reference constructs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Domain.dimension_coordinates.html#cf.Domain.dimension_coordinates" title="cf.Domain.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a></p></td>
+<td><p>Return dimension coordinate constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Domain.domain_ancillaries.html#cf.Domain.domain_ancillaries" title="cf.Domain.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></p></td>
+<td><p>Return domain ancillary constructs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Domain.domain_axes.html#cf.Domain.domain_axes" title="cf.Domain.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></p></td>
+<td><p>Return domain axis constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.construct.html#cf.Domain.construct" title="cf.Domain.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a></p></td>
+<td><p>Select a metadata construct by its identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.construct_item.html#cf.Domain.construct_item" title="cf.Domain.construct_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_item</span></code></a></p></td>
+<td><p>Return a metadata construct and its identifier.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.construct_key.html#cf.Domain.construct_key" title="cf.Domain.construct_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_key</span></code></a></p></td>
+<td><p>Return the identifier of a metadata construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.del_construct.html#cf.Domain.del_construct" title="cf.Domain.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a></p></td>
+<td><p>Remove a metadata construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.get_construct.html#cf.Domain.get_construct" title="cf.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a></p></td>
+<td><p>Return a metadata construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.has_construct.html#cf.Domain.has_construct" title="cf.Domain.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_construct</span></code></a></p></td>
+<td><p>Whether a metadata construct exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.set_construct.html#cf.Domain.set_construct" title="cf.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a></p></td>
+<td><p>Set a metadata construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.replace_construct.html#cf.Domain.replace_construct" title="cf.Domain.replace_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_construct</span></code></a></p></td>
+<td><p>Replace a metadata construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.del_data_axes.html#cf.Domain.del_data_axes" title="cf.Domain.del_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data_axes</span></code></a></p></td>
+<td><p>Removes the keys of the axes spanned by the construct data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.get_data_axes.html#cf.Domain.get_data_axes" title="cf.Domain.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></p></td>
+<td><p>Return the keys of the domain axis constructs spanned by the data of a metadata construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.has_data_axes.html#cf.Domain.has_data_axes" title="cf.Domain.has_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data_axes</span></code></a></p></td>
+<td><p>Whether the axes spanned by the construct data have been set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.set_data_axes.html#cf.Domain.set_data_axes" title="cf.Domain.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></p></td>
+<td><p>Sets domain axis constructs spanned by the construct data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.auxiliary_coordinate.html#cf.Domain.auxiliary_coordinate" title="cf.Domain.auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinate</span></code></a></p></td>
+<td><p>Select an auxiliary coordinate construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.cell_measure.html#cf.Domain.cell_measure" title="cf.Domain.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code></a></p></td>
+<td><p>Select a cell measure construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.coordinate.html#cf.Domain.coordinate" title="cf.Domain.coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate</span></code></a></p></td>
+<td><p>Select a dimension or auxiliary coordinate construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.coordinate_reference.html#cf.Domain.coordinate_reference" title="cf.Domain.coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference</span></code></a></p></td>
+<td><p>Return a coordinate reference construct, or its key.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.coordinate_reference_domain_axes.html#cf.Domain.coordinate_reference_domain_axes" title="cf.Domain.coordinate_reference_domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference_domain_axes</span></code></a></p></td>
+<td><p>Return the domain axes that apply to a coordinate reference construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.get_coordinate_reference.html#cf.Domain.get_coordinate_reference" title="cf.Domain.get_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_reference</span></code></a></p></td>
+<td><p>Return a coordinate reference construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.set_coordinate_reference.html#cf.Domain.set_coordinate_reference" title="cf.Domain.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a></p></td>
+<td><p>Set a coordinate reference construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.del_coordinate_reference.html#cf.Domain.del_coordinate_reference" title="cf.Domain.del_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate_reference</span></code></a></p></td>
+<td><p>Remove a coordinate reference construct and all of its domain ancillary constructs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.dimension_coordinate.html#cf.Domain.dimension_coordinate" title="cf.Domain.dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinate</span></code></a></p></td>
+<td><p>Select a dimension coordinate construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.domain_ancillary.html#cf.Domain.domain_ancillary" title="cf.Domain.domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillary</span></code></a></p></td>
+<td><p>Select a domain ancillary construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.domain_axis.html#cf.Domain.domain_axis" title="cf.Domain.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a></p></td>
+<td><p>Select a domain axis construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.domain_axis_key.html#cf.Domain.domain_axis_key" title="cf.Domain.domain_axis_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis_key</span></code></a></p></td>
+<td><p>Returns the domain axis key spanned by 1-d coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.del_domain_axis.html#cf.Domain.del_domain_axis" title="cf.Domain.del_domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_axis</span></code></a></p></td>
+<td><p>Remove a domain axis construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.climatological_time_axes.html#cf.Domain.climatological_time_axes" title="cf.Domain.climatological_time_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">climatological_time_axes</span></code></a></p></td>
+<td><p>Return all axes which are climatological time axes.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Domain.constructs.html#cf.Domain.constructs" title="cf.Domain.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a></p></td>
+<td><p>Return the metadata constructs.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.del_property.html#cf.Domain.del_property" title="cf.Domain.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.get_property.html#cf.Domain.get_property" title="cf.Domain.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Get a CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.has_property.html#cf.Domain.has_property" title="cf.Domain.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Whether a property has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.set_property.html#cf.Domain.set_property" title="cf.Domain.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<td><p>Set a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.properties.html#cf.Domain.properties" title="cf.Domain.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.clear_properties.html#cf.Domain.clear_properties" title="cf.Domain.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<td><p>Remove all properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.set_properties.html#cf.Domain.set_properties" title="cf.Domain.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set properties.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.apply_masking.html#cf.Domain.apply_masking" title="cf.Domain.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.climatological_time_axes.html#cf.Domain.climatological_time_axes" title="cf.Domain.climatological_time_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">climatological_time_axes</span></code></a></p></td>
+<td><p>Return all axes which are climatological time axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.copy.html#cf.Domain.copy" title="cf.Domain.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.creation_commands.html#cf.Domain.creation_commands" title="cf.Domain.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the domain construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.equals.html#cf.Domain.equals" title="cf.Domain.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two constructs are the same.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.fromconstructs.html#cf.Domain.fromconstructs" title="cf.Domain.fromconstructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromconstructs</span></code></a></p></td>
+<td><p>Return a new domain containing the given metadata constructs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.get_filenames.html#cf.Domain.get_filenames" title="cf.Domain.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the file names containing the metadata construct data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.has_bounds.html#cf.Domain.has_bounds" title="cf.Domain.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not there are cell bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.has_data.html#cf.Domain.has_data" title="cf.Domain.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Domain.has_geometry.html#cf.Domain.has_geometry" title="cf.Domain.has_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_geometry</span></code></a></p></td>
+<td><p>Return whether or not any coordinates have cell geometries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.apply_masking.html#cf.Domain.apply_masking" title="cf.Domain.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.get_filenames.html#cf.Domain.get_filenames" title="cf.Domain.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the file names containing the metadata construct data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.close.html#cf.Domain.close" title="cf.Domain.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<td><p>Close all files referenced by the domain construct.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="domain-axes">
+<h2>Domain axes<a class="headerlink" href="#domain-axes" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.autocyclic.html#cf.Domain.autocyclic" title="cf.Domain.autocyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autocyclic</span></code></a></p></td>
+<td><p>Set dimensions to be cyclic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.axes.html#cf.Domain.axes" title="cf.Domain.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axes</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.axis.html#cf.Domain.axis" title="cf.Domain.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axis</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.cyclic.html#cf.Domain.cyclic" title="cf.Domain.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
+<td><p>Set the cyclicity of an axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.direction.html#cf.Domain.direction" title="cf.Domain.direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">direction</span></code></a></p></td>
+<td><p>Whether or not a domain axis is increasing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.directions.html#cf.Domain.directions" title="cf.Domain.directions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">directions</span></code></a></p></td>
+<td><p>Return a dictionary mapping all domain axes to their directions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.iscyclic.html#cf.Domain.iscyclic" title="cf.Domain.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a></p></td>
+<td><p>Returns True if the given axis is cyclic.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="subspacing">
+<h2>Subspacing<a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Domain.subspace.html#cf.Domain.subspace" title="cf.Domain.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p></td>
+<td><p>Create indices that define a subspace of the domain construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Domain.indices.html#cf.Domain.indices" title="cf.Domain.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a></p></td>
+<td><p>Create indices that define a subspace of the domain construct.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_del_variable.html#cf.Domain.nc_del_variable" title="cf.Domain.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_get_variable.html#cf.Domain.nc_get_variable" title="cf.Domain.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_has_variable.html#cf.Domain.nc_has_variable" title="cf.Domain.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
+<td><p>Whether the netCDF variable name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_variable.html#cf.Domain.nc_set_variable" title="cf.Domain.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_global_attributes.html#cf.Domain.nc_global_attributes" title="cf.Domain.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a></p></td>
+<td><p>Returns properties to write as netCDF global attributes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_clear_global_attributes.html#cf.Domain.nc_clear_global_attributes" title="cf.Domain.nc_clear_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code></a></p></td>
+<td><p>Removes properties to write as netCDF global attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_global_attribute.html#cf.Domain.nc_set_global_attribute" title="cf.Domain.nc_set_global_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a></p></td>
+<td><p>Select a property to be written as a netCDF global attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_global_attributes.html#cf.Domain.nc_set_global_attributes" title="cf.Domain.nc_set_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attributes</span></code></a></p></td>
+<td><p>Set properties to be written as netCDF global attributes.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_variable_groups.html#cf.Domain.nc_variable_groups" title="cf.Domain.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_variable_groups.html#cf.Domain.nc_set_variable_groups" title="cf.Domain.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_clear_variable_groups.html#cf.Domain.nc_clear_variable_groups" title="cf.Domain.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_group_attributes.html#cf.Domain.nc_group_attributes" title="cf.Domain.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_group_attributes</span></code></a></p></td>
+<td><p>Returns properties to write as netCDF group attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_clear_group_attributes.html#cf.Domain.nc_clear_group_attributes" title="cf.Domain.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_group_attributes</span></code></a></p></td>
+<td><p>Removes properties to write as netCDF group attributes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_group_attribute.html#cf.Domain.nc_set_group_attribute" title="cf.Domain.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attribute</span></code></a></p></td>
+<td><p>Select a property to be written as a netCDF group attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_group_attributes.html#cf.Domain.nc_set_group_attributes" title="cf.Domain.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_group_attributes</span></code></a></p></td>
+<td><p>Set properties to be written as netCDF group attributes.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="geometries">
+<h3>Geometries<a class="headerlink" href="#geometries" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_del_geometry_variable.html#cf.Domain.nc_del_geometry_variable" title="cf.Domain.nc_del_geometry_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_geometry_variable</span></code></a></p></td>
+<td><p>Remove the netCDF geometry container variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_get_geometry_variable.html#cf.Domain.nc_get_geometry_variable" title="cf.Domain.nc_get_geometry_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_geometry_variable</span></code></a></p></td>
+<td><p>Return the netCDF geometry container variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_has_geometry_variable.html#cf.Domain.nc_has_geometry_variable" title="cf.Domain.nc_has_geometry_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_geometry_variable</span></code></a></p></td>
+<td><p>Whether a netCDF geometry container variable has a name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_geometry_variable.html#cf.Domain.nc_set_geometry_variable" title="cf.Domain.nc_set_geometry_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_geometry_variable</span></code></a></p></td>
+<td><p>Set the netCDF geometry container variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_geometry_variable_groups.html#cf.Domain.nc_geometry_variable_groups" title="cf.Domain.nc_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_geometry_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF geometry variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_geometry_variable_groups.html#cf.Domain.nc_set_geometry_variable_groups" title="cf.Domain.nc_set_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_geometry_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF geometry variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_clear_geometry_variable_groups.html#cf.Domain.nc_clear_geometry_variable_groups" title="cf.Domain.nc_clear_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_geometry_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF geometry variable group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="components">
+<h3>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_del_component_variable.html#cf.Domain.nc_del_component_variable" title="cf.Domain.nc_del_component_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_component_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name of components.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_component_variable.html#cf.Domain.nc_set_component_variable" title="cf.Domain.nc_set_component_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name for components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_component_variable_groups.html#cf.Domain.nc_set_component_variable_groups" title="cf.Domain.nc_set_component_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable groups of components.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_clear_component_variable_groups.html#cf.Domain.nc_clear_component_variable_groups" title="cf.Domain.nc_clear_component_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_component_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable groups of components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_del_component_dimension.html#cf.Domain.nc_del_component_dimension" title="cf.Domain.nc_del_component_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_component_dimension</span></code></a></p></td>
+<td><p>Remove the netCDF dimension name of components.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_component_dimension.html#cf.Domain.nc_set_component_dimension" title="cf.Domain.nc_set_component_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_dimension</span></code></a></p></td>
+<td><p>Set the netCDF dimension name of components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_component_dimension_groups.html#cf.Domain.nc_set_component_dimension_groups" title="cf.Domain.nc_set_component_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_dimension_groups</span></code></a></p></td>
+<td><p>Set the netCDF dimension groups of components.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_clear_component_dimension_groups.html#cf.Domain.nc_clear_component_dimension_groups" title="cf.Domain.nc_clear_component_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_component_dimension_groups</span></code></a></p></td>
+<td><p>Remove the netCDF dimension groups of components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_del_component_sample_dimension.html#cf.Domain.nc_del_component_sample_dimension" title="cf.Domain.nc_del_component_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_component_sample_dimension</span></code></a></p></td>
+<td><p>Remove the netCDF sample dimension name of components.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_component_sample_dimension.html#cf.Domain.nc_set_component_sample_dimension" title="cf.Domain.nc_set_component_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_sample_dimension</span></code></a></p></td>
+<td><p>Set the netCDF sample dimension name of components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.nc_set_component_sample_dimension_groups.html#cf.Domain.nc_set_component_sample_dimension_groups" title="cf.Domain.nc_set_component_sample_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_component_sample_dimension_groups</span></code></a></p></td>
+<td><p>Set the netCDF sample dimension groups of components.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.nc_clear_component_sample_dimension_groups.html#cf.Domain.nc_clear_component_sample_dimension_groups" title="cf.Domain.nc_clear_component_sample_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_component_sample_dimension_groups</span></code></a></p></td>
+<td><p>Remove the netCDF sample dimension groups of components.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="dataset-compliance">
+<h3>Dataset compliance<a class="headerlink" href="#dataset-compliance" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.dataset_compliance.html#cf.Domain.dataset_compliance" title="cf.Domain.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a></p></td>
+<td><p>Return the dataset compliance report.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="aliases">
+<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.aux.html#cf.Domain.aux" title="cf.Domain.aux"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aux</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinate</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.auxs.html#cf.Domain.auxs" title="cf.Domain.auxs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxs</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.axis.html#cf.Domain.axis" title="cf.Domain.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axis</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.coord.html#cf.Domain.coord" title="cf.Domain.coord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.coords.html#cf.Domain.coords" title="cf.Domain.coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coords</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.dim.html#cf.Domain.dim" title="cf.Domain.dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dim</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinate</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.dims.html#cf.Domain.dims" title="cf.Domain.dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.domain_anc.html#cf.Domain.domain_anc" title="cf.Domain.domain_anc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_anc</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillary</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.domain_ancs.html#cf.Domain.domain_ancs" title="cf.Domain.domain_ancs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancs</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.key.html#cf.Domain.key" title="cf.Domain.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_key</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.match.html#cf.Domain.match" title="cf.Domain.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.measure.html#cf.Domain.measure" title="cf.Domain.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measure</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.measures.html#cf.Domain.measures" title="cf.Domain.measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measures</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measures</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.ref.html#cf.Domain.ref" title="cf.Domain.ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ref</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.refs.html#cf.Domain.refs" title="cf.Domain.refs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refs</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.delprop.html#cf.Domain.delprop" title="cf.Domain.delprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.getprop.html#cf.Domain.getprop" title="cf.Domain.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.hasprop.html#cf.Domain.hasprop" title="cf.Domain.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.setprop.html#cf.Domain.setprop" title="cf.Domain.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.__deepcopy__.html#cf.Domain.__deepcopy__" title="cf.Domain.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.__repr__.html#cf.Domain.__repr__" title="cf.Domain.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.__str__.html#cf.Domain.__str__" title="cf.Domain.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="docstring-substitutions">
+<h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain._docstring_special_substitutions.html#cf.Domain._docstring_special_substitutions" title="cf.Domain._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring substitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain._docstring_substitutions.html#cf.Domain._docstring_substitutions" title="cf.Domain._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain._docstring_package_depth.html#cf.Domain._docstring_package_depth" title="cf.Domain._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain._docstring_method_exclusions.html#cf.Domain._docstring_method_exclusions" title="cf.Domain._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-06-23.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

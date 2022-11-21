@@ -462,6 +462,36 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(d.data.equals(-e.data, verbose=3))
         self.assertTrue(d.bounds.equals(self.dim.bounds, verbose=3))
 
+    def test_DimensionCoordinate_set_bounds(self):
+        c = cf.DimensionCoordinate()
+        data = cf.Data(
+            [1296000.0], units="seconds since 1900-01-01", calendar="360_day"
+        )
+        c.set_data(data)
+
+        bounds = cf.Bounds()
+        data = cf.Data(
+            [[0.0, 30]], units="days since 1900-01-01", calendar="360_day"
+        )
+        bounds.set_data(data)
+
+        c.set_bounds(bounds)
+
+        self.assertEqual(
+            c.bounds.Units,
+            cf.Units(units="seconds since 1900-01-01", calendar="360_day"),
+        )
+
+        self.assertTrue((c.bounds.data.array == [0, 2592000]).all())
+
+    def test_DimensiconCoordinate__getitem__(self):
+        dim = self.dim
+        self.assertTrue((dim[1:3].array == dim.array[1:3]).all())
+
+        # Indices result in a subspaced shape that has a size 0 axis
+        with self.assertRaises(IndexError):
+            dim[[False] * dim.size]
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

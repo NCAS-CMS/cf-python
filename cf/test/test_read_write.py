@@ -245,7 +245,7 @@ class read_writeTest(unittest.TestCase):
         cf.write(self.f1, tmpfile)
         f = cf.read(tmpfile)[0]
 
-        # TODO: reinstate "CFA" at v4.0.0
+        # TODO: reinstate "CFA" at version > 3.14
         for fmt in self.netcdf_fmts:  # + ["CFA"]:
             cf.write(f, tmpfile2, fmt=fmt)
             g = cf.read(tmpfile2, verbose=0)
@@ -257,9 +257,6 @@ class read_writeTest(unittest.TestCase):
                 f"Bad read/write of format {fmt!r}",
             )
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "'Data' object has no attribute '_pmsize'"
-    )
     def test_write_netcdf_mode(self):
         """Test the `mode` parameter to `write`, notably append mode."""
         g = cf.read(self.filename)  # note 'g' has one field
@@ -548,7 +545,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_netCDF4_compress_shuffle(self):
         f = cf.read(self.filename)[0]
-        # TODO: reinstate "CFA4" at v4.0.0
+        # TODO: reinstate "CFA4" at version > 3.14
         for fmt in ("NETCDF4", "NETCDF4_CLASSIC"):  # , "CFA4"):
             cf.write(f, tmpfile, fmt=fmt, compress=1, shuffle=True)
             g = cf.read(tmpfile)[0]
@@ -726,9 +723,6 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(Exception):
             cf.read("test_read_write.py")
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "'Data' object has no attribute '_pmsize'"
-    )
     def test_read_cdl_string(self):
         """Test the `cdl_string` keyword of the `read` function."""
         # Test CDL in full, header-only and coordinate-only type:
@@ -820,9 +814,6 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(g), 1)
         self.assertTrue(g[0].equals(f))
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "'Data' object has no attribute '_pmsize'"
-    )
     def test_read_write_domain(self):
         f = cf.read(self.filename)[0]
         d = f.domain

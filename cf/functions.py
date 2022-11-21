@@ -6,15 +6,15 @@ import importlib
 import os
 import platform
 import re
-import resource
 import sys
 import urllib.parse
 import warnings
 from collections.abc import Iterable
 from itertools import product
 from marshal import dumps
+from math import isnan
 from numbers import Integral
-from os import getpid, listdir, mkdir
+from os import mkdir
 from os.path import abspath as _os_path_abspath
 from os.path import dirname as _os_path_dirname
 from os.path import expanduser as _os_path_expanduser
@@ -26,25 +26,14 @@ import cfdm
 import netCDF4
 import numpy as np
 from dask import config
+from dask.base import is_dask_collection
 from dask.utils import parse_bytes
-from numpy import all as _numpy_all
-from numpy import allclose as _x_numpy_allclose
-from numpy import shape as _numpy_shape
-from numpy import take as _numpy_take
-from numpy import tile as _numpy_tile
-from numpy.ma import all as _numpy_ma_all
-from numpy.ma import allclose as _numpy_ma_allclose
-from numpy.ma import is_masked as _numpy_ma_is_masked
-from numpy.ma import isMA as _numpy_ma_isMA
-from numpy.ma import masked as _numpy_ma_masked
-from numpy.ma import take as _numpy_ma_take
-from psutil import Process, virtual_memory
+from psutil import virtual_memory
 
 from . import __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
-    _file_to_fh,
     _stash2standard_name,
 )
 from .docstring import _docstring_substitution_definitions
@@ -96,10 +85,8 @@ KWARGS_MESSAGE_MAP = {
     ),
 }
 
-# Are we running on GNU/Linux?
-_linux = platform.system() == "Linux"
 
-if _linux:
+if platform.system() == "Linux":
     # ----------------------------------------------------------------
     # GNU/LINUX
     # ----------------------------------------------------------------
@@ -122,7 +109,7 @@ if _linux:
             `float`
                 The amount of available physical memory in bytes.
 
-        **Examples:**
+        **Examples**
 
         >>> _free_memory()
         96496240.0
@@ -156,7 +143,6 @@ if _linux:
 
         return free_bytes
 
-
 else:
     # ----------------------------------------------------------------
     # NOT GNU/LINUX
@@ -169,7 +155,7 @@ else:
             `float`
                 The amount of available physical memory in bytes.
 
-        **Examples:**
+        **Examples**
 
         >>> _free_memory()
         96496240.0
@@ -178,22 +164,18 @@ else:
         return float(virtual_memory().available)
 
 
-# --- End: if
-
-
-# TODODASK - deprecate 'collapse_parallel_mode' when move to dask is complete
 def configuration(
     atol=None,
     rtol=None,
     tempdir=None,
-    of_fraction=None,
     chunksize=None,
-    collapse_parallel_mode=None,
-    free_memory_factor=None,
     log_level=None,
     regrid_logging=None,
     relaxed_identities=None,
     bounds_combination_mode=None,
+    of_fraction=None,
+    collapse_parallel_mode=None,
+    free_memory_factor=None,
 ):
     """View or set any number of constants in the project-wide
     configuration.
@@ -204,10 +186,7 @@ def configuration(
     * `atol`
     * `rtol`
     * `tempdir`
-    * `of_fraction`
     * `chunksize`
-    * `collapse_parallel_mode`
-    * `free_memory_factor`
     * `log_level`
     * `regrid_logging`
     * `relaxed_identities`
@@ -228,10 +207,8 @@ def configuration(
 
     .. versionadded:: 3.6.0
 
-    .. seealso:: `atol`, `rtol`, `tempdir`, `of_fraction`,
-                 `chunksize`, `collapse_parallel_mode`,
-                 `total_memory`, `free_memory_factor`, `fm_threshold`,
-                 `min_total_memory`, `log_level`, `regrid_logging`,
+    .. seealso:: `atol`, `rtol`, `tempdir`, `chunksize`,
+                 `total_memory`, `log_level`, `regrid_logging`,
                  `relaxed_identities`, `bounds_combination_mode`
 
     :Parameters:
@@ -254,25 +231,15 @@ def configuration(
 
             The default is to not change the directory.
 
-        of_fraction: `float` or `Constant`, optional
-            The new fraction (between 0.0 and 1.0). The default is to
-            not change the current behaviour.
 
         chunksize: `float` or `Constant`, optional
             The new chunksize in bytes. The default is to not change
             the current behaviour.
 
-        collapse_parallel_mode: `int` or `Constant`, optional
-            The new value (0, 1 or 2).
 
         bounds_combination_mode: `str` or `Constant`, optional
             Determine how to deal with cell bounds in binary
             operations. See `cf.bounds_combination_mode` for details.
-
-        free_memory_factor: `float` or `Constant`, optional
-            The new value of the fraction of memory kept free as a
-            temporary workspace. The default is to not change the
-            current behaviour.
 
         log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
@@ -296,6 +263,18 @@ def configuration(
             construct identity. The default is to not change the
             current value.
 
+        of_fraction: `float` or `Constant`, optional
+            Deprecated at version TODODASKVER and is no longer
+            available.
+
+        collapse_parallel_mode: `int` or `Constant`, optional
+            Deprecated at version TODODASKVER and is no longer
+            available.
+
+        free_memory_factor: `float` or `Constant`, optional
+            Deprecated at version TODODASKVER and is no longer
+            available.
+
     :Returns:
 
         `Configuration`
@@ -303,16 +282,13 @@ def configuration(
             of the project-wide constants prior to the change, or the
             current names and values if no new values are specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.configuration()  # view full global configuration of constants
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/tmp',
-     'of_fraction': 0.5,
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
-     'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
@@ -322,15 +298,11 @@ def configuration(
     >>> cf.configuration()['chunksize']  # ...is reflected in the configuration
     75000000.0
 
-    >>> cf.configuration(
-    ...     of_fraction=0.7, tempdir='/usr/tmp', log_level='INFO')  # set items
+    >>> cf.configuration(tempdir='/usr/tmp', log_level='INFO')  # set items
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/tmp',
-     'of_fraction': 0.5,
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
-     'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'WARNING',
      'bounds_combination_mode': 'AND',
@@ -339,10 +311,7 @@ def configuration(
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/usr/tmp',
-     'of_fraction': 0.7,
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
-     'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
@@ -354,10 +323,7 @@ def configuration(
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/usr/tmp',
-     'of_fraction': 0.7,
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
-     'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
@@ -368,10 +334,7 @@ def configuration(
     {'rtol': 9.0,
      'atol': 10.0,
      'tempdir': '/usr/tmp',
-     'of_fraction': 0.7,
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
-     'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
@@ -380,25 +343,37 @@ def configuration(
     {'rtol': 2.220446049250313e-16,
      'atol': 2.220446049250313e-16,
      'tempdir': '/usr/tmp',
-     'of_fraction': 0.7,
-     'free_memory_factor': 0.1,
      'regrid_logging': False,
-     'collapse_parallel_mode': 0,
      'relaxed_identities': False,
      'log_level': 'INFO',
      'bounds_combination_mode': 'AND',
      'chunksize': 75000000.0}
 
     """
+    if of_fraction is not None:
+        # TODODASKAPI
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            "configuration",
+            kwargs={"of_fraction": None},
+            version="TODODASVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    if collapse_parallel_mode is not None:
+        # TODODASKAPI
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            "configuration",
+            kwargs={"collapse_parallel_mode": None},
+            version="TODODASVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     return _configuration(
         Configuration,
         new_atol=atol,
         new_rtol=rtol,
         new_tempdir=tempdir,
-        new_of_fraction=of_fraction,
         new_chunksize=chunksize,
-        new_collapse_parallel_mode=collapse_parallel_mode,
-        new_free_memory_factor=free_memory_factor,
         new_log_level=log_level,
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
@@ -433,17 +408,9 @@ def _configuration(_Configuration, **kwargs):
             values are specified.
 
     """
-    # Filter out WORKSPACE_FACTOR_{1,2} constants which are only used
-    # externally and not exposed to the user:
-    old = {
-        name.lower(): val
-        for name, val in CONSTANTS.items()
-        if not name.startswith("WORKSPACE_FACTOR_")
-    }
+    old = {name.lower(): val for name, val in CONSTANTS.items()}
 
     old.pop("total_memory", None)
-    old.pop("min_total_memory", None)
-    old.pop("fm_threshold", None)
 
     # Filter out 'None' kwargs from configuration() defaults. Note that this
     # does not filter out '0' or 'True' values, which is important as the user
@@ -455,10 +422,7 @@ def _configuration(_Configuration, **kwargs):
         "new_atol": atol,
         "new_rtol": rtol,
         "new_tempdir": tempdir,
-        "new_of_fraction": of_fraction,
         "new_chunksize": chunksize,
-        "new_collapse_parallel_mode": collapse_parallel_mode,
-        "new_free_memory_factor": free_memory_factor,
         "new_log_level": log_level,
         "new_regrid_logging": regrid_logging,
         "new_relaxed_identities": relaxed_identities,
@@ -513,7 +477,7 @@ def free_memory():
         `float`
             The amount of free memory in bytes.
 
-    **Examples:**
+    **Examples**
 
     >>> import numpy
     >>> print('Free memory =', cf.free_memory()/2**30, 'GiB')
@@ -529,47 +493,9 @@ def free_memory():
     return _free_memory()
 
 
-def FREE_MEMORY(*new_free_memory):
+def FREE_MEMORY():
     """Alias for `cf.free_memory`."""
-    return free_memory(*new_free_memory)
-
-
-def _WORKSPACE_FACTOR_1():
-    """The value of workspace factor 1 used in calculating the upper
-    limit to the chunksize given the free memory factor.
-
-    :Returns:
-
-        `float`
-            workspace factor 1
-
-    """
-    return CONSTANTS["WORKSPACE_FACTOR_1"]
-
-
-def _WORKSPACE_FACTOR_2():
-    """The value of workspace factor 2 used in calculating the upper
-    limit to the chunksize given the free memory factor.
-
-    :Returns:
-
-        `float`
-            workspace factor 2
-
-    """
-    return CONSTANTS["WORKSPACE_FACTOR_2"]
-
-
-def _cf_free_memory_factor(*new_free_memory_factor):
-    """Internal alias for `cf.free_memory_factor`.
-
-    Used in this module to prevent a name clash with a function keyword
-    argument (corresponding to 'import X as cf_X' etc. in other
-    modules). Note we don't use FREE_MEMORY_FACTOR() as it will likely
-    be deprecated in future.
-
-    """
-    return free_memory_factor(*new_free_memory_factor)
+    return free_memory()
 
 
 _disable_logging = cfdm._disable_logging
@@ -628,7 +554,7 @@ class regrid_logging(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.regrid_logging()
     False
@@ -663,10 +589,11 @@ class regrid_logging(ConstantAccess):
         return bool(arg)
 
 
-# TODODASK - deprecate when move to dask is complete
 class collapse_parallel_mode(ConstantAccess):
     """Which mode to use when collapse is run in parallel. There are
     three possible modes:
+
+    Deprecated at version TODODASKVER and is no longer available.
 
     0.  This attempts to maximise parallelism, possibly at the expense
         of extra communication. This is the default mode.
@@ -694,7 +621,7 @@ class collapse_parallel_mode(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.collapse_parallel_mode()
     0
@@ -709,6 +636,8 @@ class collapse_parallel_mode(ConstantAccess):
 
     def _parse(cls, arg):
         """Parse a new constant value.
+
+        Deprecated at version TODODASKVER and is no longer available.
 
         .. versionaddedd:: 3.8.0
 
@@ -726,14 +655,10 @@ class collapse_parallel_mode(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        allowed_values = (0, 1, 2)
-        if arg not in allowed_values:
-            raise ValueError(
-                "Invalid collapse parallel mode. Valid values are "
-                f"{allowed_values}"
-            )
-
-        return arg
+        # TODODASKAPI
+        _DEPRECATION_ERROR_FUNCTION(
+            "collapse_parallel_mode", version="TODODASKVER", removed_at="5.0.0"
+        )  # pragma: no cover
 
 
 class relaxed_identities(ConstantAccess):
@@ -755,7 +680,7 @@ class relaxed_identities(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> org = cf.relaxed_identities()
     >>> org
@@ -803,18 +728,26 @@ class chunksize(ConstantAccess):
 
     .. note:: Setting the chunksize will change the `dask` global
               configuration value ``'array.chunk-size'``. If
-              `chunksize` is used a context manager then the `dask`
+              `chunksize` is used in a context manager then the `dask`
               configuration value is only altered within that context.
 
     :Parameters:
 
-        arg: `float` or `str` or `Constant`, optional
+        arg: number or `str` or `Constant`, optional
             The chunksize in bytes. Any size accepted by
             `dask.utils.parse_bytes` is accepted.
+
+            Note that if *arg* is a `float`, or a string that implies
+            a non-integral amount of bytes, then the integer part
+            (rounded down) will be used.
 
             *Parameter example:*
                A chunksize of 2 MiB may be specified as ``2097152`` or
                ``'2 MiB'``
+
+            *Parameter example:*
+               Chunksizes of ``2678.9`` and ``'2.6789 KB'``are both
+               equvalent to ``2678``.
 
     :Returns:
 
@@ -873,7 +806,7 @@ class tempdir(ConstantAccess):
             The directory prior to the change, or the current
             directory if no new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.tempdir()
     '/tmp'
@@ -921,6 +854,8 @@ class of_fraction(ConstantAccess):
     """The amount of concurrently open files above which files
     containing data arrays may be automatically closed.
 
+    Deprecated at version TODODASKVER and is no longer available.
+
     The amount is expressed as a fraction of the maximum possible
     number of concurrently open files.
 
@@ -942,7 +877,7 @@ class of_fraction(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.of_fraction()
     0.5
@@ -969,6 +904,8 @@ class of_fraction(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
+        Deprecated at version TODODASKVER and is no longer available.
+
         .. versionaddedd:: 3.8.0
 
         :Parameters:
@@ -985,22 +922,16 @@ class of_fraction(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        try:
-            arg = float(arg)
-        except (ValueError, TypeError):
-            raise ValueError(f"Fraction must be a float. Got {arg!r}")
-
-        if arg <= 0.0 or arg >= 1.0:
-            raise ValueError(
-                "Fraction must be between 0.0 and 1.0 not inclusive. "
-                f"Got {arg!r}"
-            )
-
-        return arg
+        # TODODASKAPI
+        _DEPRECATION_ERROR_FUNCTION(
+            "of_fraction", version="TODODASKVER", removed_at="5.0.0"
+        )  # pragma: no cover
 
 
 class free_memory_factor(ConstantAccess):
     """Set the fraction of memory kept free as a temporary workspace.
+
+    Deprecated at version TODODASKVER and is no longer available.
 
     Users should set the free memory factor through cf.set_performance
     so that the upper limit to the chunksize is recalculated
@@ -1021,12 +952,12 @@ class free_memory_factor(ConstantAccess):
 
     """
 
-    # TODODASK: Review how all this free memory stuff works with dask
-
     _name = "FREE_MEMORY_FACTOR"
 
     def _parse(cls, arg):
         """Parse a new constant value.
+
+        Deprecated at version TODODASKVER and is no longer available.
 
         .. versionaddedd:: 3.8.0
 
@@ -1044,22 +975,10 @@ class free_memory_factor(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        try:
-            arg = float(arg)
-        except (ValueError, TypeError):
-            raise ValueError(
-                f"Free memory factor must be a float. Got {arg!r}"
-            )
-
-        if not (0 < arg < 1):
-            raise ValueError(
-                "Free memory factor must be between 0.0 and 1.0 "
-                "not inclusive"
-            )
-
-        CONSTANTS["FM_THRESHOLD"] = arg * total_memory()
-
-        return arg
+        # TODODASKAPI
+        _DEPRECATION_ERROR_FUNCTION(
+            "free_memory_factor", version="TODODASKVER", removed_at="5.0.0"
+        )  # pragma: no cover
 
 
 class bounds_combination_mode(ConstantAccess):
@@ -1149,7 +1068,7 @@ class bounds_combination_mode(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> old = cf.bounds_combination_mode()
     >>> print(old)
@@ -1249,34 +1168,43 @@ def fm_threshold():
     """The amount of memory which is kept free as a temporary work
     space.
 
+    Deprecated at version TODODASKVER and is no longer available.
+
     :Returns:
 
         `float`
             The amount of memory in bytes.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.fm_threshold()
     10000000000.0
 
     """
-    return CONSTANTS["FM_THRESHOLD"]
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "fm_threshold", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def set_performance(chunksize=None, free_memory_factor=None):
-    """Tune performance of parallelisation by setting chunksize and free
-    memory factor. By just providing the chunksize it can be changed to
-    a smaller value than an upper limit, which is determined by the
-    existing free memory factor. If just the free memory factor is
-    provided then the chunksize is set to the corresponding upper limit.
-    Note that the free memory factor is the fraction of memory kept free
-    as a temporary workspace and must be a sensible value between zero
-    and one. If both arguments are provided then the free memory factor
-    is changed first and then the chunksize is set provided it is
-    consistent with the new free memory value. If any of the arguments
-    is invalid then an error is raised and no parameters are changed.
-    When called with no arguments the existing values of the parameters
-    are returned in a tuple.
+    """Tune performance of parallelisation.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    Sets the chunksize and free memory factor. By just providing the
+    chunksize it can be changed to a smaller value than an upper
+    limit, which is determined by the existing free memory factor. If
+    just the free memory factor is provided then the chunksize is set
+    to the corresponding upper limit.  Note that the free memory
+    factor is the fraction of memory kept free as a temporary
+    workspace and must be a sensible value between zero and one. If
+    both arguments are provided then the free memory factor is changed
+    first and then the chunksize is set provided it is consistent with
+    the new free memory value. If any of the arguments is invalid then
+    an error is raised and no parameters are changed.  When called
+    with no arguments the existing values of the parameters are
+    returned in a tuple.
 
     :Parameters:
 
@@ -1294,24 +1222,22 @@ def set_performance(chunksize=None, free_memory_factor=None):
             A tuple of the previous chunksize and free_memory_factor.
 
     """
-    old = _cf_chunksize(), _cf_free_memory_factor()
-    if free_memory_factor is None:
-        if chunksize is not None:
-            _cf_chunksize(chunksize)
-    else:
-        _cf_free_memory_factor(free_memory_factor)
-        try:
-            _cf_chunksize(chunksize)
-        except ValueError:
-            _cf_free_memory_factor(old[1])
-            raise
-
-    return old
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "set_performance", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def min_total_memory():
-    """The minimum total memory across nodes."""
-    return CONSTANTS["MIN_TOTAL_MEMORY"]
+    """The minimum total memory across nodes.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "min_total_memory", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def total_memory():
@@ -1333,8 +1259,15 @@ def RTOL(*new_rtol):
 
 
 def FREE_MEMORY_FACTOR(*new_free_memory_factor):
-    """Alias for `cf.free_memory_factor`."""
-    return free_memory_factor(*new_free_memory_factor)
+    """Alias for `cf.free_memory_factor`.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "FREE_MEMORY_FACTOR", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def LOG_LEVEL(*new_log_level):
@@ -1348,13 +1281,27 @@ def CHUNKSIZE(*new_chunksize):
 
 
 def SET_PERFORMANCE(*new_set_performance):
-    """Alias for `cf.set_performance`."""
-    return set_performance(*new_set_performance)
+    """Alias for `cf.set_performance`.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "SET_PERFORMANCE", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def OF_FRACTION(*new_of_fraction):
-    """Alias for `cf.of_fraction`."""
-    return of_fraction(*new_of_fraction)
+    """Alias for `cf.of_fraction`.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "OF_FRACTION", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def REGRID_LOGGING(*new_regrid_logging):
@@ -1362,10 +1309,16 @@ def REGRID_LOGGING(*new_regrid_logging):
     return regrid_logging(*new_regrid_logging)
 
 
-# TODODASK - deprecate when move to dask is complete
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
-    """Alias for `cf.collapse_parallel_mode`."""
-    return collapse_parallel_mode(*new_collapse_parallel_mode)
+    """Alias for `cf.collapse_parallel_mode`.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "COLLAPSE_PARALLEL_MODE", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def RELAXED_IDENTITIES(*new_relaxed_identities):
@@ -1374,8 +1327,15 @@ def RELAXED_IDENTITIES(*new_relaxed_identities):
 
 
 def MIN_TOTAL_MEMORY(*new_min_total_memory):
-    """Alias for `cf.min_total_memory`."""
-    return min_total_memory(*new_min_total_memory)
+    """Alias for `cf.min_total_memory`.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "MIN_TOTAL_MEMORY", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def TEMPDIR(*new_tempdir):
@@ -1389,8 +1349,15 @@ def TOTAL_MEMORY(*new_total_memory):
 
 
 def FM_THRESHOLD(*new_fm_threshold):
-    """Alias for `cf.fm_threshold`."""
-    return fm_threshold(*new_fm_threshold)
+    """Alias for `cf.fm_threshold`.
+
+    Deprecated at version TODODASKVER and is no longer available.
+
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "FM_THRESHOLD", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 # def IGNORE_IDENTITIES(*arg):
@@ -1406,7 +1373,7 @@ def FM_THRESHOLD(*new_fm_threshold):
 #             The value prior to the change, or the current value if no
 #             new value was specified.
 #
-#     **Examples:**
+#     **Examples**
 #
 #     >>> org = cf.IGNORE_IDENTITIES()
 #     >>> print(org)
@@ -1448,7 +1415,7 @@ def dump(x, **kwargs):
 
         None
 
-    **Examples:**
+    **Examples**
 
     >>> x = 3.14159
     >>> cf.dump(x)
@@ -1466,98 +1433,54 @@ def dump(x, **kwargs):
         print(x)
 
 
-_max_number_of_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
-
-if _linux:
-    # ----------------------------------------------------------------
-    # GNU/LINUX
-    # ----------------------------------------------------------------
-
-    # Directory containing a symbolic link for each file opened by the
-    # current python session
-    _fd_dir = "/proc/" + str(getpid()) + "/fd"
-
-    def open_files_threshold_exceeded():
-        """Return True if the total number of open files is greater than
-        the current threshold. GNU/LINUX.
-
-        The threshold is defined as a fraction of the maximum possible number
-        of concurrently open files (an operating system dependent amount). The
-        fraction is retrieved and set with the `of_fraction` function.
-
-        .. seealso:: `cf.close_files`, `cf.close_one_file`,
-                     `cf.open_files`
-
-        :Returns:
-
-            `bool`
-                Whether or not the number of open files exceeds the
-                threshold.
-
-        **Examples:**
-
-        In this example, the number of open files is 75% of the maximum
-        possible number of concurrently open files:
-
-        >>> cf.of_fraction()
-        0.5
-        >>> cf.open_files_threshold_exceeded()
-        True
-        >>> cf.of_fraction(0.9)
-        >>> cf.open_files_threshold_exceeded()
-        False
-
-        """
-        return (
-            len(listdir(_fd_dir)) > _max_number_of_open_files * of_fraction()
-        )
+# _max_number_of_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
 
 
-else:
-    # ----------------------------------------------------------------
-    # NOT GNU/LINUX
-    # ----------------------------------------------------------------
-    _process = Process(getpid())
+def open_files_threshold_exceeded():
+    """Return True if the total number of open files is greater than the
+    current threshold.
 
-    def open_files_threshold_exceeded():
-        """Return True if the total number of open files is greater than
-        the current threshold.
+    Deprecated at version TODODASKVER and is no longer available.
 
-        The threshold is defined as a fraction of the maximum possible number
-        of concurrently open files (an operating system dependent amount). The
-        fraction is retrieved and set with the `of_fraction` function.
+    The threshold is defined as a fraction of the maximum possible number
+    of concurrently open files (an operating system dependent amount). The
+    fraction is retrieved and set with the `of_fraction` function.
 
-        .. seealso:: `cf.close_files`, `cf.close_one_file`,
-                     `cf.open_files`
+    .. seealso:: `cf.close_files`, `cf.close_one_file`,
+                 `cf.open_files`
 
-        :Returns:
+    :Returns:
 
-            `bool`
-                Whether or not the number of open files exceeds the
-                threshold.
+        `bool`
+            Whether or not the number of open files exceeds the
+            threshold.
 
-        **Examples:**
+    **Examples**
 
-        In this example, the number of open files is 75% of the maximum
-        possible number of concurrently open files:
+    In this example, the number of open files is 75% of the maximum
+    possible number of concurrently open files:
 
-        >>> cf.of_fraction()
-        0.5
-        >>> cf.open_files_threshold_exceeded()
-        True
-        >>> cf.of_fraction(0.9)
-        >>> cf.open_files_threshold_exceeded()
-        False
+    >>> cf.of_fraction()
+    0.5
+    >>> cf.open_files_threshold_exceeded()
+    True
+    >>> cf.of_fraction(0.9)
+    >>> cf.open_files_threshold_exceeded()
+    False
 
-        """
-        return (
-            len(_process.open_files())
-            > _max_number_of_open_files * of_fraction()
-        )
+    """
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "open_files_threshold_exceeded",
+        version="TODODASKVER",
+        removed_at="5.0.0",
+    )  # pragma: no cover
 
 
 def close_files(file_format=None):
     """Close open files containing sub-arrays of data arrays.
+
+    Deprecated at version TODODASKVER and is no longer available.
 
     By default all such files are closed, but this may be restricted
     to files of a particular format.
@@ -1581,30 +1504,24 @@ def close_files(file_format=None):
 
         None
 
-    **Examples:**
+    **Examples**
 
     >>> cf.close_files()
     >>> cf.close_files('netCDF')
     >>> cf.close_files('PP')
 
     """
-    if file_format is not None:
-        if file_format in _file_to_fh:
-            for fh in _file_to_fh[file_format].values():
-                fh.close()
-
-            _file_to_fh[file_format].clear()
-    else:
-        for file_format, value in _file_to_fh.items():
-            for fh in value.values():
-                fh.close()
-
-            _file_to_fh[file_format].clear()
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "close_files", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def close_one_file(file_format=None):
     """Close an arbitrary open file containing a sub-array of a data
     array.
+
+    Deprecated at version TODODASKVER and is no longer available.
 
     By default a file of arbitrary format is closed, but the choice
     may be restricted to files of a particular format.
@@ -1628,7 +1545,7 @@ def close_one_file(file_format=None):
 
         `None`
 
-    **Examples:**
+    **Examples**
 
     >>> cf.close_one_file()
     >>> cf.close_one_file('netCDF')
@@ -1644,24 +1561,17 @@ def close_one_file(file_format=None):
                 'file3.nc': <netCDF4.Dataset at 0x1d185e9>}}
 
     """
-    if file_format is not None:
-        if file_format in _file_to_fh and _file_to_fh[file_format]:
-            filename, fh = next(iter(_file_to_fh[file_format].items()))
-            fh.close()
-            del _file_to_fh[file_format][filename]
-    else:
-        for values in _file_to_fh.values():
-            if not values:
-                continue
-
-            filename, fh = next(iter(values.items()))
-            fh.close()
-            del values[filename]
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "close_one_file", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def open_files(file_format=None):
     """Return the open files containing sub-arrays of master data
     arrays.
+
+    Deprecated at version TODODASKVER and is no longer available.
 
     By default all such files are returned, but the selection may be
     restricted to files of a particular format.
@@ -1686,7 +1596,7 @@ def open_files(file_format=None):
             is the dictionary that would have been returned if the
             *file_format* parameter was set.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.open_files()
     {'netCDF': {'file1.nc': <netCDF4.Dataset at 0x187b6d0>}}
@@ -1696,17 +1606,10 @@ def open_files(file_format=None):
     {}
 
     """
-    if file_format is not None:
-        if file_format in _file_to_fh:
-            return _file_to_fh[file_format].copy()
-        else:
-            return {}
-    else:
-        out = {}
-        for file_format, values in _file_to_fh.items():
-            out[file_format] = values.copy()
-
-        return out
+    # TODODASKAPI
+    _DEPRECATION_ERROR_FUNCTION(
+        "open_files", version="TODODASKVER", removed_at="5.0.0"
+    )  # pragma: no cover
 
 
 def ufunc(name, x, *args, **kwargs):
@@ -1762,7 +1665,7 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
         `bool`
             Returns True if the arrays are equal, otherwise False.
 
-    **Examples:**
+    **Examples**
 
     >>> cf._numpy_allclose([1, 2], [1, 2])
     True
@@ -1788,14 +1691,14 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
     # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
-    a_is_masked = _numpy_ma_isMA(a)
-    b_is_masked = _numpy_ma_isMA(b)
+    a_is_masked = np.ma.isMA(a)
+    b_is_masked = np.ma.isMA(b)
 
     if not (a_is_masked or b_is_masked):
         try:
-            return _x_numpy_allclose(a, b, rtol=rtol, atol=atol)
+            return np.allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
-            return _numpy_all(a == b)
+            return np.all(a == b)
     else:
         if a_is_masked and b_is_masked:
             if (a.mask != b.mask).any():
@@ -1804,28 +1707,152 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
 
                 return False
         else:
-            if _numpy_ma_is_masked(a) or _numpy_ma_is_masked(b):
+            if np.ma.is_masked(a) or np.ma.is_masked(b):
                 if verbose:
                     print("Different masks (B)")
 
                 return False
 
         try:
-            return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
+            return np.ma.allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
             # To prevent a bug causing some header/coord-only CDL reads or
             # aggregations to error. See also TODO comment below.
             if a.dtype == b.dtype:
-                out = _numpy_ma_all(a == b)
+                out = np.ma.all(a == b)
             else:
                 # TODO: is this most sensible? Or should we attempt dtype
                 # conversion and then compare? Probably we should avoid
                 # altogether by catching the different dtypes upstream?
                 out = False
-            if out is _numpy_ma_masked:
+            if out is np.ma.masked:
                 return True
             else:
                 return out
+
+
+def indices_shape(indices, full_shape, keepdims=True):
+    """Return the shape of the array subspace implied by indices.
+
+    **Performance**
+
+    Boolean `dask` arrays will be computed, and `dask` arrays with
+    unknown size will have their chunk sizes computed.
+
+    .. versionadded:: TODODASKVER
+
+    .. seealso:: `cf.parse_indices`
+
+    :Parameters:
+
+        indices: `tuple`
+            The indices to be applied to an array with shape
+            *full_shape*.
+
+        full_shape: sequence of `ints`
+            The shape of the array to be subspaced.
+
+        keepdims: `bool`, optional
+            If True then an integral index is converted to a
+            slice. For instance, ``3`` would become ``slice(3, 4)``.
+
+    :Returns:
+
+        `list`
+            The shape of the subspace defined by the *indices*.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> import dask.array as da
+
+    >>> cf.indices_shape((slice(2, 5), 4), (10, 20))
+    [3, 1]
+    >>> cf.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
+    [3, 5]
+
+    >>> index0 = [False] * 5
+    >>> index0[2:5] = [True] * 3
+    >>> cf.indices_shape((index0, da.arange(1, 6)), (10, 20))
+    [3, 5]
+
+    >>> index0 = da.full((5,), False, dtype=bool)
+    >>> index0[2:5] = True
+    >>> index1 = np.full((6,), False, dtype=bool)
+    >>> index1[1:6] = True
+    >>> cf.indices_shape((index0, index1), (10, 20))
+    [3, 5]
+
+    >>> index0 = da.arange(5)
+    >>> index0 = index0[index0 < 3]
+    >>> cf.indices_shape((index0, []), (10, 20))
+    [3, 0]
+
+    >>> cf.indices_shape((da.from_array(2), np.array(3)), (10, 20))
+    [1, 1]
+    >>> cf.indices_shape((da.from_array([]), np.array(())), (10, 20))
+    [0, 0]
+    >>> cf.indices_shape((slice(1, 5, 3), 3), (10, 20))
+    [2, 1]
+    >>> cf.indices_shape((slice(5, 1, -2), 3), (10, 20))
+    [2, 1]
+    >>> cf.indices_shape((slice(5, 1, 3), 3), (10, 20))
+    [0, 1]
+    >>> cf.indices_shape((slice(1, 5, -3), 3), (10, 20))
+    [0, 1]
+
+    >>> cf.indices_shape((slice(2, 5), 4), (10, 20), keepdims=False)
+    [3]
+    >>> cf.indices_shape((da.from_array(2), 3), (10, 20), keepdims=False)
+    []
+    >>> cf.indices_shape((2, np.array(3)), (10, 20), keepdims=False)
+    []
+
+    """
+    shape = []
+    for index, full_size in zip(indices, full_shape):
+        if isinstance(index, slice):
+            start, stop, step = index.indices(full_size)
+            if (stop - start) * step < 0:
+                # E.g. 5:1:3 or 1:5:-3
+                size = 0
+            else:
+                size = abs((stop - start) / step)
+                int_size = round(size)
+                if size > int_size:
+                    size = int_size + 1
+                else:
+                    size = int_size
+        elif is_dask_collection(index) or isinstance(index, np.ndarray):
+            if index.dtype == bool:
+                # Size is the number of True values in the array
+                size = int(index.sum())
+            else:
+                size = index.size
+                if isnan(size):
+                    index.compute_chunk_sizes()
+                    size = index.size
+
+            if not keepdims and not index.ndim:
+                # Scalar array
+                continue
+        elif isinstance(index, list):
+            size = len(index)
+            if size:
+                i = index[0]
+                if isinstance(i, bool):
+                    # Size is the number of True values in the list
+                    size = sum(index)
+        else:
+            # Index is Integral
+            if not keepdims:
+                continue
+
+            size = 1
+
+        shape.append(size)
+
+    return shape
 
 
 def parse_indices(shape, indices, cyclic=False, keepdims=True):
@@ -1846,7 +1873,7 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     :Returns:
 
         `list` [, `dict`]
-            The parsed indices. If *cyclic* is True the a dictionary
+            The parsed indices. If *cyclic* is True then a dictionary
             is also returned that contains the parameters needed to
             interpret any cyclic slices.
 
@@ -1943,29 +1970,29 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
                     stop -= size
 
             if step > 0 and -size <= start < 0 and 0 <= stop <= size + start:
-                # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # -1:0:1  => [9]
-                # -1:1:1  => [9, 0]
-                # -1:3:1  => [9, 0, 1, 2]
-                # -1:9:1  => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-                # -4:0:1  => [6, 7, 8, 9]
-                # -4:1:1  => [6, 7, 8, 9, 0]
-                # -4:3:1  => [6, 7, 8, 9, 0, 1, 2]
-                # -4:6:1  => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
-                # -9:0:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # -9:1:1  => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-                # -10:0:1 => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -1:0:1] => [9]
+                # x[ -1:1:1] => [9, 0]
+                # x[ -1:3:1] => [9, 0, 1, 2]
+                # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+                # x[ -4:0:1] => [6, 7, 8, 9]
+                # x[ -4:1:1] => [6, 7, 8, 9, 0]
+                # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
+                # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
+                # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+                # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                 index = slice(0, stop - start, step)
                 roll[i] = -start
 
             elif step < 0 and 0 <= start < size and start - size <= stop < 0:
-                # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # 0:-4:-1  => [0, 9, 8, 7]
-                # 6:-1:-1  => [6, 5, 4, 3, 2, 1, 0]
-                # 6:-2:-1  => [6, 5, 4, 3, 2, 1, 0, 9]
-                # 6:-4:-1  => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
-                # 0:-2:-1  => [0, 9]
-                # 0:-10:-1 => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+                # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                # x[0: -4:-1] => [0, 9, 8, 7]
+                # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
+                # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
+                # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
+                # x[0: -2:-1] => [0, 9]
+                # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
                 index = slice(start - stop - 1, None, step)
                 roll[i] = -1 - stop
 
@@ -2023,10 +2050,10 @@ def get_subspace(array, indices):
         # At least two axes have list-of-integers indices so we can't
         # do a normal numpy subspace
         # ------------------------------------------------------------
-        if _numpy_ma_isMA(array):
-            take = _numpy_ma_take
+        if np.ma.isMA(array):
+            take = np.ma.take
         else:
-            take = _numpy_take
+            take = np.take
 
         indices = indices[:]
         for axis in gg:
@@ -2084,7 +2111,7 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
         `bool`
             Whether or not the two objects are equivalent.
 
-    **Examples:**
+    **Examples**
 
     >>> f
     <CF Field: rainfall_rate(latitude(10), longitude(20)) kg m2 s-1>
@@ -2195,7 +2222,7 @@ def load_stash2standard_name(table=None, delimiter="!", merge=True):
         `dict`
             The new STASH to standard name conversion table.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.load_stash2standard_name()
     >>> cf.load_stash2standard_name('my_table.txt')
@@ -2343,7 +2370,7 @@ def flat(x):
         generator
             An iterator over flattened sequence.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.flat([1, [2, [3, 4]]])
     <generator object flat at 0x3649cd0>
@@ -2429,7 +2456,7 @@ def abspath(filename):
             The normalized absolutised version of *filename*, or
             `None`.
 
-    **Examples:**
+    **Examples**
 
     >>> import os
     >>> os.getcwd()
@@ -2476,7 +2503,7 @@ def relpath(filename, start=None):
         `str`
             The relative path.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.relpath('/data/archive/file.nc')
     '../file.nc'
@@ -2514,7 +2541,7 @@ def dirname(filename):
         `str`
             The directory name.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.dirname('/data/archive/file.nc')
     '/data/archive'
@@ -2551,7 +2578,7 @@ def pathjoin(path1, path2):
         `str`
             The joined paths.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.pathjoin('/data/archive', '../archive/file.nc')
     '/data/archive/../archive/file.nc'
@@ -2587,7 +2614,7 @@ def hash_array(array, algorithm=hashlib.sha1):
             Constructor function for the desired hash algorithm,
             e.g. `hashlib.md5`, `hashlib.sha256`, etc.
 
-            .. versionadded:: TODODASK
+            .. versionadded:: TODODASKVER
 
     :Returns:
 
@@ -2685,7 +2712,7 @@ def broadcast_array(array, shape):
 
         `numpy.ndarray`
 
-    **Examples:**
+    **Examples**
 
 
     >>> a = numpy.arange(8).reshape(2, 4)
@@ -2733,14 +2760,14 @@ def broadcast_array(array, shape):
       [4 5 6 --]]]
 
     """
-    a_shape = _numpy_shape(array)
+    a_shape = np.shape(array)
     if a_shape == shape:
         return array
 
     tile = [(m if n == 1 else 1) for n, m in zip(a_shape[::-1], shape[::-1])]
     tile = shape[0 : len(shape) - len(a_shape)] + tuple(tile[::-1])
 
-    return _numpy_tile(array, tile)
+    return np.tile(array, tile)
 
 
 def allclose(x, y, rtol=None, atol=None):
@@ -2770,7 +2797,7 @@ def allclose(x, y, rtol=None, atol=None):
         `bool`
             Returns True if the arrays are equal, otherwise False.
 
-    **Examples:**
+    **Examples**
 
     """
     if rtol is None:
@@ -2835,13 +2862,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
             passed. By default it is False.
 
         stop: `int`, optional
-            Deprecated at version TODODASK.
+            Deprecated at version TODODASKVER.
 
             Stop after taking this number of sections and return. If
             stop is None all sections are taken.
 
         chunks: `bool`, optional
-            Deprecated at version TODODASK. Consider using
+            Deprecated at version TODODASKVER. Consider using
             `cf.Data.rechunk` instead.
 
             If True return sections that are of the maximum possible
@@ -2876,13 +2903,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     if stop is not None:
         raise DeprecationError(
             "The 'stop' keyword of cf._section() was deprecated at "
-            "version TODODASK and is no longer available"
+            "version TODODASKVER and is no longer available"
         )
 
     if chunks:
         raise DeprecationError(
             "The 'chunks' keyword of cf._section() was deprecated at "
-            "version TODODASK and is no longer available. Consider using "
+            "version TODODASKVER and is no longer available. Consider using "
             "cf.Data.rechunk instead."
         )
 
@@ -2954,7 +2981,7 @@ def environment(display=True, paths=True):
             environment is printed and `None` is returned. Otherwise
             the description is returned as a string.
 
-    **Examples:**
+    **Examples**
 
     >>> cf.environment()
     Platform: Linux-5.4.0-58-generic-x86_64-with-debian-bullseye-sid
@@ -3035,7 +3062,7 @@ def default_netCDF_fillvals():
         `dict`
             The fill values, keyed by `numpy` data type strings
 
-    **Examples:**
+    **Examples**
 
     >>> cf.default_netCDF_fillvals()
     {'S1': '\x00',
@@ -3128,9 +3155,12 @@ def _DEPRECATION_ERROR_KWARGS(
     exact=False,
     relaxed_identity=False,
     info=False,
-    version="3.0.0",
-    removed_at="4.0.0",
+    version=None,
+    removed_at=None,
 ):
+    if version is None:
+        raise ValueError("Must provide deprecation version, e.g. '3.14.0'")
+
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
 
@@ -3266,6 +3296,7 @@ def default_fillvals():
         "default_fillvals",
         "Use function 'cf.default_netCDF_fillvals' instead.",
         version="3.0.2",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -3273,4 +3304,6 @@ def set_equals(
     x, y, rtol=None, atol=None, ignore_fill_value=False, traceback=False
 ):
     """Deprecated at version 3.0.0."""
-    _DEPRECATION_ERROR_FUNCTION("cf.set_equals")  # pragma: no cover
+    _DEPRECATION_ERROR_FUNCTION(
+        "cf.set_equals", version="3.0.0", removed_at="4.0.0"
+    )  # pragma: no cover

@@ -1,7 +1,7 @@
 import logging
 import math
 import operator
-from functools import partial, reduce, wraps
+from functools import partial, reduce
 from itertools import product
 from numbers import Integral
 from operator import mul
@@ -10,6 +10,7 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
+from dask import compute, delayed  # noqa: F401
 from dask.array import Array
 from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
@@ -38,7 +39,10 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import compressed_to_dask, generate_axis_identifiers, to_dask
+from .creation import (  # cfa_to_dask,; compressed_to_dask,
+    generate_axis_identifiers,
+    to_dask,
+)
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -62,55 +66,7 @@ from .utils import (  # is_small,; is_very_small,
     scalar_masked_array,
 )
 
-_DASKIFIED_VERBOSE = None  # see below for valid levels, adapt as useful
-
-
 logger = logging.getLogger(__name__)
-
-daskified_log_level = 0
-
-
-def daskified(apply_temp_log_level=None):
-    def decorator(method):
-        """Temporary decorator to mark and log methods migrated to Dask.
-
-        A log level argument will set the log level throughout the call of
-        the method to that level and then reset it back to the previous
-        global level. A message will also be emitted to indicate whenever
-        the method is called, unless no argument is given [daskified()]
-        in which case the decorator does nothing except mark methods
-        which are considered to be daskified, a main purpose for this
-        decorator.
-
-        Note: for properties the decorator must be placed underneath the
-        property decorator so it is called before and not after it.
-
-        """
-
-        @wraps(method)
-        def wrapper(*args, **kwargs):
-            if apply_temp_log_level is None:  # distingush from 0
-                return method(*args, **kwargs)
-
-            original_global_log_level = log_level()
-            # Switch log level for the duration of the method call, with an
-            # initial message to indicate a run first guaranteed to show
-            log_level(apply_temp_log_level)
-            # Not actually a warning, but setting as warning ensures it shows
-            # (unless logging is disabled, but ignore that complication for
-            # this temporary and informal decorator!)
-            logger.warning(f"%%%%% Running daskified {method.__name__} %%%%%")
-
-            out = method(*args, **kwargs)
-
-            # ... then return the log level to the global level afterwards
-            log_level(original_global_log_level)
-            return out
-
-        return wrapper
-
-    return decorator
-
 
 # --------------------------------------------------------------------
 # Constants
@@ -318,7 +274,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             to_memory: `bool`, optional
                 If True then ensure that the original data are in
@@ -340,7 +296,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If the input *array* is a `dask.array.Array` object
                 then *to_memory* is ignored.
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             init_options: `dict`, optional
                 Provide optional keyword arguments to methods and
@@ -367,7 +323,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                  *Parameter example:*
                    ``{'from_array': {'inline_array': True}}``
 
-            chunk: deprecated at version TODODASK
+            chunk: deprecated at version TODODASKVER
                 Use the *chunks* parameter instead.
 
         **Examples**
@@ -381,6 +337,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data(tuple('fly'))
 
         """
+        if array is None and source is None:  # don't create no/empty Data
+            raise ValueError(
+                "Can't create empty data: some input data or datum must be "
+                "provided via the 'source' or 'array' parameters."
+            )
+
         if source is None and isinstance(array, self.__class__):
             source = array
 
@@ -403,7 +365,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(array, copy=copy, delete_source=False)
+                    self._set_dask(array, copy=copy, conform=False)
             else:
                 self._del_dask(None)
 
@@ -412,7 +374,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             return
 
-        super().__init__(array=array, fill_value=fill_value, _use_array=False)
+        super().__init__(
+            array=array,
+            fill_value=fill_value,
+            _use_array=False,
+        )
 
         # Set the units
         units = Units(units, calendar=calendar)
@@ -447,16 +413,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Still here? Then create a dask array and store it.
 
-        # Find out if the data is compressed
+        # Find out if the input data is compressed by convention
         try:
             compressed = array.get_compression_type()
         except AttributeError:
             compressed = ""
 
         if compressed:
-            # The data is compressed, so create a uncompressed dask
-            # view of it.
+            # The input data is compressed
             if chunks != _DEFAULT_CHUNKS:
+                # TODODASK: Is this restriction necessary?
                 raise ValueError(
                     "Can't define chunks for compressed input arrays. "
                     "Consider rechunking after initialisation."
@@ -480,34 +446,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # extra information, such as a count or index variable.
             self._set_Array(array)
 
-            array = compressed_to_dask(array, chunks)
-
-        elif not is_dask_collection(array):
-            # Turn the data into a dask array
-            kwargs = init_options.get("from_array", {})
-            if "chunks" in kwargs:
-                raise TypeError(
-                    "Can't define 'chunks' in the 'from_array' "
-                    "initialisation options. "
-                    "Use the 'chunks' parameter instead."
-                )
-
-            # Bring the data into memory
-            if to_memory:
-                try:
-                    array = array.to_memory()
-                except AttributeError:
-                    pass
-
-            array = to_dask(array, chunks, **kwargs)
-
-        elif chunks != _DEFAULT_CHUNKS:
-            # The data is already a dask array
-            raise ValueError(
-                "Can't define chunks for dask input arrays. Consider "
-                "rechunking the dask array before initialisation, or "
-                "rechunking the Data after initialisation."
+        # Cast the input data as a dask array
+        kwargs = init_options.get("from_array", {})
+        if "chunks" in kwargs:
+            raise TypeError(
+                "Can't define 'chunks' in the 'from_array' initialisation "
+                "options. Use the 'chunks' parameter instead."
             )
+
+        array = to_dask(
+            array, chunks, default_chunks=_DEFAULT_CHUNKS, **kwargs
+        )
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
@@ -529,7 +478,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, delete_source=False)
+        self._set_dask(array, conform=False)
 
         # Override the data type
         if dtype is not None:
@@ -541,7 +490,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @property
     def dask_compressed_array(self):
-        """TODODASK.
+        """TODODASKDOCS.
 
         :Returns:
 
@@ -555,7 +504,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return ca.to_dask_array()
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __contains__(self, value):
         """Membership test operator ``in``
 
@@ -668,13 +616,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return bool(dx.any())
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def _atol(self):
         """Return the current value of the `cf.atol` function."""
         return atol().value
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def _rtol(self):
         """Return the current value of the `cf.rtol` function."""
         return rtol().value
@@ -693,12 +639,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return isinstance(array, cfdm.Array)
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __data__(self):
         """Returns a new reference to self."""
         return self
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __float__(self):
         """Called to implement the built-in function `float`
 
@@ -713,7 +657,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return float(self.to_dask_array())
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __int__(self):
         """Called to implement the built-in function `int`
 
@@ -768,8 +711,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except TypeError:
             raise TypeError(f"iteration over a 0-d {self.__class__.__name__}")
 
-        for i in range(n):
-            yield self[i]
+        if self.__keepdims_indexing__:
+            for i in range(n):
+                out = self[i]
+                out.reshape(out.shape[1:], inplace=True)
+                yield out
+        else:
+            for i in range(n):
+                yield self[i]
 
     def __len__(self):
         """Called to implement the built-in function `len`.
@@ -836,7 +785,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return super().__repr__().replace("<", "<CF ", 1)
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __getitem__(self, indices):
         """Return a subspace of the data defined by indices.
 
@@ -887,14 +835,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if indices is Ellipsis:
             return self.copy()
 
-        auxiliary_mask = ()
+        ancillary_mask = ()
         try:
             arg = indices[0]
         except (IndexError, TypeError):
             pass
         else:
             if isinstance(arg, str) and arg == "mask":
-                auxiliary_mask = indices[1]
+                ancillary_mask = indices[1]
                 indices = indices[2:]
 
         shape = self.shape
@@ -1010,9 +958,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 new._cyclic = cyclic_axes.difference(x)
 
         # ------------------------------------------------------------
-        # Apply auxiliary masks
+        # Apply ancillary masks
         # ------------------------------------------------------------
-        for mask in auxiliary_mask:
+        for mask in ancillary_mask:
             new.where(mask, cf_masked, None, inplace=True)
 
         if new.shape != self.shape:
@@ -1021,7 +969,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return new
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __setitem__(self, indices, value):
         """Implement indexed assignment.
 
@@ -1058,36 +1005,74 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         If the shape of the data is unknown then it is calculated
         immediately by executing all delayed operations.
 
-        .. seealso:: `__getitem__`, `__orthogonal_indexing__`,
-        `cf.masked`, `hardmask`, `where`
+        If indices for two or more dimensions are lists or 1-d arrays
+        of Booleans or integers, and any of these are dask
+        collections, then these dask collections will be
+        computed immediately.
 
-        **Examples**
+        .. seealso:: `__getitem__`, `__keedims_indexing__`,
+                     `__orthogonal_indexing__`, `cf.masked`,
+                     `hardmask`, `where`
 
         """
+        shape = self.shape
+
         indices, roll = parse_indices(
-            self.shape, indices, cyclic=True, keepdims=True
+            shape,
+            indices,
+            cyclic=True,
+            keepdims=self.__keepdims_indexing__,
         )
-        indices = tuple(indices)
 
         axes_with_list_indices = [
             i
             for i, x in enumerate(indices)
             if isinstance(x, list) or getattr(x, "shape", False)
         ]
+
+        # When there are two or more 1-d array indices of Booleans or
+        # integers, convert them to slices, if possible.
+        #
+        # Note: If any of these 1-d arrays is a dask collection, then
+        #       this will be computed.
         if len(axes_with_list_indices) > 1:
-            raise NotImplementedError(
-                "Currently limited to at most one dimension's assignment "
-                "index being a 1-d array of integers or booleans. "
-                f"Got: {indices}"
-            )
-            # TODODASK: The inherited algorithm that does assignment
-            #           for multiple list/1-d array indices
-            #           (cfdm.Data._set_subspace) won't work when the
-            #           1-d array is a dask array because it may need
-            #           to be computed at __setitem__ runtime, which
-            #           is not desirable. Until this can be fixed,
-            #           it's easiest to disallow this case, that was
-            #           allowed pre-dask.
+            for i, index in enumerate(indices):
+                if not (
+                    isinstance(index, list) or getattr(index, "shape", False)
+                ):
+                    # Not a 1-d array
+                    continue
+
+                index = np.array(index)
+
+                size = shape[i]
+                if index.dtype == bool:
+                    # Convert True values to integers
+                    index = np.arange(size)[index]
+                else:
+                    # Make sure all integer values are non-negative
+                    index = np.where(index < 0, index + size, index)
+
+                if size == 1:
+                    start = index[0]
+                    index = slice(start, start + 1)
+                else:
+                    steps = index[1:] - index[:-1]
+                    step = steps[0]
+                    if step and not (steps - step).any():
+                        # Array has a regular step, and so can be
+                        # converted to a slice.
+                        if step > 0:
+                            start, stop = index[0], index[-1] + 1
+                        elif step < 0:
+                            start, stop = index[0], index[-1] - 1
+
+                        if stop < 0:
+                            stop = None
+
+                        index = slice(start, stop, step)
+
+                indices[i] = index
 
         # Roll axes with cyclic slices
         if roll:
@@ -1109,12 +1094,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Make sure that the units of value are the same as self
         value = conform_units(value, self.Units)
 
-        # Do the assignment
-
         # Missing values could be affected, so make sure that the mask
         # hardness has been applied.
         dx = self.to_dask_array(apply_mask_hardness=True)
-        dx[indices] = value
+
+        # Do the assignment
+        self._set_subspace(dx, indices, value)
 
         # Unroll any axes that were rolled to enable a cyclic
         # assignment
@@ -1122,9 +1107,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             shifts = [-shift for shift in shifts]
             self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
-        # Remove a source array, on the grounds that we can't
-        # guarantee its consistency with the updated dask array.
-        self._del_Array(None)
+        # Remove elements made invalid by updating the `dask` array
+        self._conform_after_dask_update()
 
         return
 
@@ -1132,7 +1116,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     # Indexing behaviour attributes
     # ----------------------------------------------------------------
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def __orthogonal_indexing__(self):
         """Flag to indicate that orthogonal indexing is supported.
 
@@ -1141,7 +1124,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         then they subspace along each dimension independently. This
         behaviour is similar to Fortran, but different to `numpy`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `__keepdims_indexing__`, `__getitem__`,
                      `__setitem__`,
@@ -1167,7 +1150,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return True
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def __keepdims_indexing__(self):
         """Flag to indicate whether dimensions indexed with integers are
         kept.
@@ -1180,7 +1162,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         single-axis index reduces the number of array dimensions by
         1. This behaviour is the same as `numpy`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `__orthogonal_indexing__`, `__getitem__`,
                      `__setitem__`
@@ -1244,12 +1226,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    def _set_dask(self, array, copy=False, delete_source=True):
+    def _conform_after_dask_update(self):
+        """Remove elements made invalid by updating the `dask` array.
+
+        Removes or modifies components that can't be guaranteed to be
+        consistent with an updated `dask` array`:
+
+        * Deletes a source array.
+        * Deletes cached element values.
+
+        .. versionadded:: TODODASKVER
+
+        :Returns:
+
+            `None`
+
+        """
+        self._del_Array(None)
+        self._del_cached_elements()
+
+    def _set_dask(self, array, copy=False, conform=True):
         """Set the dask array.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
-        .. seealso:: `to_dask_array`, `_del_dask`
+        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+                     `_del_dask`
 
         :Parameters:
 
@@ -1260,10 +1262,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If True then copy *array* before setting it. By
                 default it is not copied.
 
-            delete_source: `bool`, optional
-                If False then do not delete a source array, if one
-                exists, after setting the new dask array. By default a
-                source array is deleted.
+            conform: `bool`, optional
+                If True, the default, then remove elements made
+                invalid by updating the `dask` array. See
+                `_conform_after_dask_update` for details.
 
         :Returns:
 
@@ -1272,35 +1274,40 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         if array is NotImplemented:
             logger.warning(
-                "NotImplemented has been set in the place of a dask array"
+                "NotImplemented has been set in the place of a dask array."
+                "\n\n"
+                "This could occur if any sort of exception is raised "
+                "by a function that is run on chunks (via, for "
+                "instance, da.map_blocks or "
+                "dask.array.core.elemwise). Such a function could get "
+                "run at definition time in order to ascertain "
+                "suitability (such as data type casting, "
+                "broadcasting, etc.). Note that the exception may be "
+                "difficult to diagnose, as dask will have silently "
+                "trapped it and returned NotImplemented (for "
+                "instance, see dask.array.core.elemwise). Print "
+                "statements in a local copy of dask are possibly the "
+                "way to go if the cause of the error is not obvious."
             )
-            # This could occur if any sort of exception is raised by
-            # function that is run on chunks (such as
-            # `cf_where`). Such a function could get run at definition
-            # time in order to ascertain suitability (such as data
-            # type casting, broadcasting, etc.). Note that the
-            # exception may be difficult to diagnose, as dask will
-            # have silently trapped it and returned NotImplemented
-            # (for instance, see `dask.array.core.elemwise`). Print
-            # statements in a local copy of dask are prossibly the way
-            # to go if the cause of the error is not obvious.
 
         if copy:
             array = array.copy()
 
         self._custom["dask"] = array
 
-        if delete_source:
-            # Remove a source array, on the grounds that we can't
-            # guarantee its consistency with the new dask array.
-            self._del_Array(None)
+        if conform:
+            # Remove elements made invalid by updating the `dask`
+            # array
+            self._conform_after_dask_update()
 
-    def _del_dask(self, default=ValueError(), delete_source=True):
+    def _del_dask(self, default=ValueError(), conform=True):
         """Remove the dask array.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
-        .. seealso:: `_set_dask`, `to_dask_array`
+        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+                     `_set_dask`
+
 
         :Parameters:
 
@@ -1310,9 +1317,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 {{default Exception}}
 
-            delete_source: `bool`, optional
-                If False then do not delete a compressed source array,
-                if one exists.
+            conform: `bool`, optional
+                If True, the default, then remove elements made
+                invalid by updating the `dask` array. See
+                `_conform_after_dask_update` for details.
 
         :Returns:
 
@@ -1342,15 +1350,71 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 default, f"{self.__class__.__name__!r} has no dask array"
             )
 
-        if delete_source:
-            # Remove a source array, on the grounds that we can't
-            # guarantee its consistency with any future new dask
-            # array.
-            self._del_Array(None)
+        if conform:
+            # Remove elements made invalid by deleting the `dask`
+            # array
+            self._conform_after_dask_update()
 
         return out
 
-    @daskified(_DASKIFIED_VERBOSE)
+    def _del_cached_elements(self):
+        """Delete any cached element values.
+
+        Updates *data* in-place to remove the cached element values
+        ``'first_element'``, ``'second_element'`` and
+        ``'last_element'``.
+
+        .. note:: By default, `_del_cached_elements` is run whenever
+                  the `_set_dask` and `del_dask` methods are used. If
+                  the `dask` array is updated or changed without using
+                  the default behaviour of either of these two
+                  methods, and there is any chance that the cached
+                  values might be inconsistent with the new data, then
+                  `_del_cached_elements` must be called explicitly to
+                  ensure consistency.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `_del_dask`, `_set_cached_elements`, `_set_dask`
+
+        :Returns:
+
+            `None`
+
+        """
+        custom = self._custom
+        for element in ("first_element", "second_element", "last_element"):
+            custom.pop(element, None)
+
+    def _set_cached_elements(self, elements):
+        """Cache selected element values.
+
+        Updates *data* in-place to store the given element values
+        within its ``custom`` dictionary.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `_del_cached_elements`
+
+        :Parameters:
+
+            elements: `dict`
+               Zero or more element values to be cached, each keyed by
+               a unique identifier to allow unambiguous retrieval.
+               Existing cached elements not specified by *elements*
+               will not be removed.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d._set_cached_elements({'first_element': 273.15})
+
+        """
+        self._custom.update(elements)
+
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
         """Calculate the n-th discrete difference along the given axis.
@@ -1438,7 +1502,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def digitize(
         self,
@@ -1747,8 +1810,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("_preserve_partitions")
+    @_deprecated_kwarg_check(
+        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
+    )
     def median(self, axes=None, squeeze=False, mtol=1, inplace=False):
         """Calculate median values.
 
@@ -1780,7 +1844,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2])
          [3 -- 5]
@@ -1794,7 +1858,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             50, axes=axes, squeeze=squeeze, mtol=mtol, inplace=inplace
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def mean_of_upper_decile(
         self,
@@ -1831,7 +1894,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{collapse squeeze: `bool`, optional}}
 
@@ -1847,7 +1910,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -1904,8 +1967,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("_preserve_partitions")
+    @_deprecated_kwarg_check(
+        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
+    )
     @_inplace_enabled(default=False)
     def percentile(
         self,
@@ -1917,6 +1981,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         inplace=False,
         _preserve_partitions=False,
         interpolation=None,
+        interpolation2=None,
     ):
         """Compute percentiles of the data along the specified axes.
 
@@ -1974,7 +2039,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             squeeze: `bool`, optional
                 If True then all axes over which percentiles are
@@ -1988,14 +2053,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
-            interpolation: deprecated at version 4.0.0
+            interpolation: deprecated at version TODODASKVER
                 Use the *method* parameter instead.
 
-            _preserve_partitions: deprecated at version 4.0.0
+            _preserve_partitions: deprecated at version TODODASKVER
 
         :Returns:
 
@@ -2064,13 +2129,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [2 2 3 3]]
 
         """
+        # TODODASKAPI: interpolation -> method
         if interpolation is not None:
             _DEPRECATION_ERROR_KWARGS(
                 self,
                 "percentile",
                 {"interpolation": None},
                 message="Use the 'method' parameter instead.",
-                version="TODODASK",
+                version="TODODASKVER",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -2161,9 +2227,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         d._set_dask(dx)
 
+        # Add a new axis identifier for a leading rank axis
+        if q.ndim:
+            axes = d._axes
+            d._axes = (new_axis_identifier(axes),) + axes
+
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):
         """Persist the underlying dask array into memory.
@@ -2181,7 +2251,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `persist` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `compute`, `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2198,22 +2268,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASK
+        TODODASKDOCS
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = self.to_dask_array()
         dx = dx.persist()
-        d._set_dask(dx, delete_source=False)
+        d._set_dask(dx, conform=False)
 
         return d
 
     def can_compute(self, functions=None, log_levels=None, override=False):
-        """TODODASK - this method is premature - needs thinking about as part
-        of the wider resource management issue
-
-        Whether or not it is acceptable to compute the data.
+        """Whether or not it is acceptable to compute the data.
 
         If the data is explicitly requested to be computed (as would
         be the case when writing to disk, or accessing the `array`
@@ -2236,7 +2303,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         3. Any computations stored after initialisation consist only
            subspace, concatenate, reshape, and copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `force_compute`, `cf.log_level`
 
@@ -2268,6 +2335,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 False.
 
         """
+        # TODODASKAPI - this method is premature - needs thinking about as part
+        # of the wider resource management issue
+
         # TODODASK: Always return True for now, to aid development.
         return True
 
@@ -2321,8 +2391,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             ]
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def ceil(self, inplace=False, i=False):
         """The ceiling of the data, element-wise.
@@ -2360,8 +2429,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(da.ceil(dx))
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    def compute(self):
+    def compute(self):  # noqa: F811
         """A numpy view the data.
 
         In-place changes to the returned numpy array *might* affect
@@ -2377,7 +2445,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `array` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `persist`, `array`, `datetime_array`
 
@@ -2405,7 +2473,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return a
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def convolution_filter(
         self,
@@ -2604,7 +2671,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def cumsum(
         self,
@@ -2630,13 +2696,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 Choose which method to use to perform the cumulative
                 sum. See `dask.array.cumsum` for details.
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
                 .. versionadded:: 3.3.0
 
-            masked_as_zero: deprecated at version TODODASK
+            masked_as_zero: deprecated at version TODODASKVER
                 See the examples for the new behaviour when there are
                 masked values.
 
@@ -2687,7 +2753,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "cumsum",
                 {"masked_as_zero": None},
                 message="",
-                version="TODODASK",
+                version="TODODASKVER",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -2699,7 +2765,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def rechunk(
         self,
@@ -2711,7 +2776,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     ):
         """Change the chunk structure of the data.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `chunks`, `dask.array.rechunk`
 
@@ -2780,11 +2845,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, delete_source=False)
+        d._set_dask(dx, conform=False)
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def _asdatetime(self, inplace=False):
         """Change the internal representation of data array elements
@@ -2838,12 +2902,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     def _isdatetime(self):
         """True if the internal representation is a datetime object."""
         return self.dtype.kind == "O" and self.Units.isreftime
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def _asreftime(self, inplace=False):
         """Change the internal representation of data array elements
@@ -3156,7 +3218,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         return data0, data1, _units_1
                 else:
                     # units1 is defined and is not dimensionless
-                    if data0._size > 1:
+                    if data0.size > 1:
                         raise ValueError(
                             "Can only raise units to the power of a single "
                             "value at a time. Asking to raise to the power of "
@@ -3232,7 +3294,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                         return data0, data1, _units_1
                 else:
                     # units0 is defined and is not dimensionless
-                    if data1._size > 1:
+                    if data1.size > 1:
                         raise ValueError(
                             "Can only raise units to the power of a single "
                             "value at a time. Asking to raise to the power of "
@@ -3282,7 +3344,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
     def _binary_operation(self, other, method):
         """Implement binary arithmetic and comparison operations with
         the numpy broadcasting rules.
@@ -3325,16 +3386,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [0 2 4 6]
 
         """
+        if getattr(other, "_NotImplemented_RHS_Data_op", False):
+            return NotImplemented
+
         inplace = method[2] == "i"
 
         # ------------------------------------------------------------
         # Ensure other is an independent Data object, for example
         # so that combination with cf.Query objects works.
         # ------------------------------------------------------------
-        if getattr(other, "_NotImplemented_RHS_Data_op", False):
-            return NotImplemented
-
-        elif not isinstance(other, self.__class__):
+        if not isinstance(other, self.__class__):
             if (
                 isinstance(other, cftime.datetime)
                 and other.calendar == ""
@@ -3384,17 +3445,42 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         elif inplace:
             # Find non-in-place equivalent operator (remove 'i')
             equiv_method = method[:2] + method[3:]
+            # Need to add check in here to ensure that the operation is not
+            # trying to cast in a way which is invalid. For example, doing
+            # [an int array] ** float value = [a float array] is fine, but
+            # doing this in-place would try to chance an int array into a
+            # float one, which isn't valid casting. Therefore we need to
+            # catch cases where __i<op>__ isn't possible even if __<op>__
+            # is due to datatype consistency rules.
             result = getattr(dx0, equiv_method)(dx1)
         else:
             result = getattr(dx0, method)(dx1)
 
+        # Set axes when other has more dimensions than self
+        axes = None
+        ndim0 = dx0.ndim
+        if not ndim0:
+            axes = other._axes
+        else:
+            diff = dx1.ndim - ndim0
+            if diff > 0:
+                axes = list(self._axes)
+                for _ in range(diff):
+                    axes.insert(0, new_axis_identifier(tuple(axes)))
+
         if inplace:  # in-place so concerns original self
             self._set_dask(result)
             self.override_units(new_Units, inplace=True)
+            if axes is not None:
+                self._axes = axes
+
             return self
         else:  # not, so concerns a new Data object copied from self, data0
             data0._set_dask(result)
             data0.override_units(new_Units, inplace=True)
+            if axes is not None:
+                data0._axes = axes
+
             return data0
 
     def _parse_indices(self, *args, **kwargs):
@@ -3407,10 +3493,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "'cf.Data._parse_indices' is not available. "
             "Use function 'cf.parse_indices' instead."
         )
-
-    def _set_subspace(self, *args, **kwargs):
-        """'cf.Data._set_subspace' is unavailable."""
-        raise NotImplementedError("'cf.Data._set_subspace' is unavailable.")
 
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
@@ -3430,14 +3512,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 default is 0. Note that scalar arrays are treated as if
                 they were one dimensional.
 
+                .. note:: If the axis specified is cyclic, it will become
+                          non-cyclic in the output.
+
             _preserve: `bool`, optional
-                If False then the time taken to do the concatenation is
-                reduced at the expense of changing the input data arrays
-                given by the *data* parameter in place and **these in
-                place changes will render the input data arrays
-                unusable**. Therefore, only set to False if it is 100%
-                certain that the input data arrays will not be accessed
-                again. By default the input data arrays are preserved.
+                Deprecated at version TODODASKVER.
 
         :Returns:
 
@@ -3480,263 +3559,50 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "Can't concatenate: Must provide at least two data arrays"
             )
 
-        data0 = data[0]
-        data = data[1:]
+        data0 = data[0].copy()
 
-        if _preserve:
-            data0 = data0.copy()
-        else:
-            # If data0 appears more than once in the input data arrays
-            # then we need to copy it
-            for d in data:
-                if d is data0:
-                    data0 = data0.copy()
-                    break
-        # --- End: if
-
-        # Turn a scalar array into a 1-d array
-        ndim = data0._ndim
-        if not ndim:
-            data0.insert_dimension(inplace=True)
-            ndim = 1
-
-        # ------------------------------------------------------------
-        # Check that the axis, shapes and units of all of the input
-        # data arrays are consistent
-        # ------------------------------------------------------------
-        if axis < 0:
-            axis += ndim
-        if not 0 <= axis < ndim:
-            raise ValueError(
-                "Can't concatenate: Invalid axis specification: Expected "
-                "-{0}<=axis<{0}, got axis={1}".format(ndim, axis)
-            )
-
-        shape0 = data0._shape
+        processed_data = []
         units0 = data0.Units
-        axis_p1 = axis + 1
-        for data1 in data:
-            shape1 = data1._shape
-            if (
-                shape0[axis_p1:] != shape1[axis_p1:]
-                or shape0[:axis] != shape1[:axis]
-            ):
-                raise ValueError(
-                    "Can't concatenate: All the input array axes except "
-                    "for the concatenation axis must have the same size"
-                )
+        for index, data1 in enumerate(data):
+            copied = False  # to avoid making two copies in a given case
 
+            # Turn any scalar array into a 1-d array
+            if not data1.ndim:
+                data1 = data1.copy()
+                copied = True
+                data1.insert_dimension(inplace=True)
+
+            # Check and conform, if necessary, the units of all inputs
             if not units0.equivalent(data1.Units):
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have "
                     "equivalent units"
                 )
-        # --- End: for
+            elif not units0.equals(data1.Units):  # conform for consistency
+                if not copied:
+                    data1 = data1.copy()
+                data1.Units = units0
 
-        for i, data1 in enumerate(data):
-            if _preserve:
-                data1 = data1.copy()
-            else:
-                # If data1 appears more than once in the input data
-                # arrays then we need to copy it
-                for d in data[i + 1 :]:
-                    if d is data1:
-                        data1 = data1.copy()
-                        break
-            # --- End: if
+            processed_data.append(data1)
 
-            # Turn a scalar array into a 1-d array
-            if not data1._ndim:
-                data1.insert_dimension(inplace=True)
+        # Get data as dask arrays and apply concatenation operation
+        dxs = []
+        for data1 in processed_data:
+            dxs.append(data1.to_dask_array())
 
-            shape1 = data1._shape
+        data0._set_dask(da.concatenate(dxs, axis=axis))
 
-            # ------------------------------------------------------------
-            # 1. Make sure that the internal names of the axes match
-            # ------------------------------------------------------------
-            axis_map = {}
-            if data1._pmsize < data0._pmsize:
-                for axis1, axis0 in zip(data1._axes, data0._axes):
-                    axis_map[axis1] = axis0
+        # Manage cyclicity of axes: if join axis was cyclic, it is no longer
+        axis = data0._parse_axes(axis)[0]
+        if axis in data0.cyclic():
+            logger.warning(
+                f"Concatenating along a cyclic axis ({axis}) therefore the "
+                f"axis has been set as non-cyclic in the output."
+            )
+            data0.cyclic(axes=axis, iscyclic=False)
 
-                data1._change_axis_names(axis_map)
-            else:
-                for axis1, axis0 in zip(data1._axes, data0._axes):
-                    axis_map[axis0] = axis1
-
-                data0._change_axis_names(axis_map)
-            # --- End: if
-
-            # ------------------------------------------------------------
-            # Find the internal name of the concatenation axis
-            # ------------------------------------------------------------
-            Paxis = data0._axes[axis]
-
-            # ------------------------------------------------------------
-            # 2. Make sure that the aggregating axis is an axis of the
-            #    partition matrix of both arrays and that the partition
-            #    matrix axes are the same in both arrays (although, for
-            #    now, they may have different orders)
-            #
-            # Note:
-            #
-            # a) This may involve adding new partition matrix axes to
-            #    either or both of data0 and data1.
-            #
-            # b) If the aggregating axis needs to be added it is inserted
-            #    as the outer (slowest varying) axis to reduce the
-            #    likelihood of having to (expensively) transpose the
-            #    partition matrix.
-            # ------------------------------------------------------------
-            for f, g in zip((data0, data1), (data1, data0)):
-
-                g_pmaxes = g.partitions.axes
-                if Paxis in g_pmaxes:
-                    g_pmaxes = g_pmaxes[:]
-                    g_pmaxes.remove(Paxis)
-
-                f_partitions = f.partitions
-                f_pmaxes = f_partitions.axes
-                for pmaxis in g_pmaxes[::-1] + [Paxis]:
-                    if pmaxis not in f_pmaxes:
-                        f_partitions.insert_dimension(pmaxis, inplace=True)
-
-            #                if Paxis not in f_partitions.axes:
-            #                    f_partitions.insert_dimension(Paxis, inplace=True)
-            # --- End: for
-
-            # ------------------------------------------------------------
-            # 3. Make sure that aggregating axis is the outermost (slowest
-            #    varying) axis of the partition matrix of data0
-            # ------------------------------------------------------------
-            ipmaxis = data0.partitions.axes.index(Paxis)
-            if ipmaxis:
-                data0.partitions.swapaxes(ipmaxis, 0, inplace=True)
-
-            # ------------------------------------------------------------
-            # 4. Make sure that the partition matrix axes of data1 are in
-            #    the same order as those in data0
-            # ------------------------------------------------------------
-            pmaxes1 = data1.partitions.axes
-            ipmaxes = [
-                pmaxes1.index(pmaxis) for pmaxis in data0.partitions.axes
-            ]
-            data1.partitions.transpose(ipmaxes, inplace=True)
-
-            # --------------------------------------------------------
-            # 5. Create new partition boundaries in the partition
-            #    matrices of data0 and data1 so that their partition
-            #    arrays may be considered as different slices of a
-            #    common, larger hyperrectangular partition array.
-            #
-            # Note:
-            #
-            # * There is no need to add any boundaries across the
-            #   concatenation axis.
-            # --------------------------------------------------------
-            boundaries0 = data0.partition_boundaries()
-            boundaries1 = data1.partition_boundaries()
-
-            for dim in data0.partitions.axes[1:]:
-
-                # Still here? Then see if there are any partition matrix
-                # boundaries to be created for this partition dimension
-                bounds0 = boundaries0[dim]
-                bounds1 = boundaries1[dim]
-
-                symmetric_diff = set(bounds0).symmetric_difference(bounds1)
-                if not symmetric_diff:
-                    # The partition boundaries for this partition
-                    # dimension are already the same in data0 and data1
-                    continue
-
-                # Still here? Then there are some partition boundaries to
-                # be created for this partition dimension in data0 and/or
-                # data1.
-                for f, g, bf, bg in (
-                    (data0, data1, bounds0, bounds1),
-                    (data1, data0, bounds1, bounds0),
-                ):
-                    extra_bounds = [i for i in bg if i in symmetric_diff]
-                    f.add_partitions(extra_bounds, dim)
-                # --- End: for
-            # --- End: for
-
-            # ------------------------------------------------------------
-            # 6. Concatenate data0 and data1 partition matrices
-            # ------------------------------------------------------------
-            #            if data0._flip != data1._flip:
-            if data0._flip() != data1._flip():
-                data0._move_flip_to_partitions()
-                data1._move_flip_to_partitions()
-
-            matrix0 = data0.partitions.matrix
-            matrix1 = data1.partitions.matrix
-
-            new_pmshape = list(matrix0.shape)
-            new_pmshape[0] += matrix1.shape[0]
-
-            # Initialise an empty partition matrix with the new shape
-            new_matrix = np.empty(new_pmshape, dtype=object)
-
-            # Insert the data0 partition matrix
-            new_matrix[: matrix0.shape[0]] = matrix0
-
-            # Insert the data1 partition matrix
-            new_matrix[matrix0.shape[0] :] = matrix1
-
-            data0.partitions.matrix = new_matrix
-
-            # Update the location map of the partition matrix of data0
-            data0.partitions.set_location_map((Paxis,), (axis,))
-
-            # ------------------------------------------------------------
-            # 7. Update the size, shape and dtype of data0
-            # ------------------------------------------------------------
-            #    original_shape0 = data0._shape
-
-            data0._size += data1._size
-
-            shape0 = list(shape0)
-            shape0[axis] += shape1[axis]
-            data0._shape = tuple(shape0)
-
-            dtype0 = data0.dtype
-            dtype1 = data1.dtype
-            if dtype0 != dtype1:
-                data0.dtype = np.result_type(dtype0, dtype1)
-
-        # ------------------------------------------------------------
-        # Done
-        # ------------------------------------------------------------
         return data0
 
-    def _move_flip_to_partitions(self):
-        """Reverses an axis in the sub-array of each partition.
-
-        .. note:: This does not change the master array.
-
-        """
-        #        flip = self._flip
-        flip = self._flip()
-        if not flip:
-            return
-
-        for partition in self.partitions.matrix.flat:
-            p_axes = partition.axes
-            p_flip = partition.flip[:]
-            for axis in flip:
-                if axis in p_flip:
-                    p_flip.remove(axis)
-                elif axis in p_axes:
-                    p_flip.append(axis)
-            # --- End: for
-            partition.flip = p_flip
-        # --- End: for
-
-        self._flip([])
-
-    @daskified(_DASKIFIED_VERBOSE)
     def _unary_operation(self, operation):
         """Implement unary arithmetic operations.
 
@@ -3781,7 +3647,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return out
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __add__(self, other):
         """The binary arithmetic operation ``+``
 
@@ -3790,7 +3655,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__add__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __iadd__(self, other):
         """The augmented arithmetic assignment ``+=``
 
@@ -3799,7 +3663,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__iadd__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __radd__(self, other):
         """The binary arithmetic operation ``+`` with reflected
         operands.
@@ -3809,7 +3672,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__radd__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __sub__(self, other):
         """The binary arithmetic operation ``-``
 
@@ -3818,7 +3680,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__sub__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __isub__(self, other):
         """The augmented arithmetic assignment ``-=``
 
@@ -3827,7 +3688,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__isub__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rsub__(self, other):
         """The binary arithmetic operation ``-`` with reflected
         operands.
@@ -3837,7 +3697,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rsub__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __mul__(self, other):
         """The binary arithmetic operation ``*``
 
@@ -3846,7 +3705,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__mul__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __imul__(self, other):
         """The augmented arithmetic assignment ``*=``
 
@@ -3855,7 +3713,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__imul__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rmul__(self, other):
         """The binary arithmetic operation ``*`` with reflected
         operands.
@@ -3865,7 +3722,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rmul__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __div__(self, other):
         """The binary arithmetic operation ``/``
 
@@ -3874,7 +3730,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__div__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __idiv__(self, other):
         """The augmented arithmetic assignment ``/=``
 
@@ -3883,7 +3738,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__idiv__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rdiv__(self, other):
         """The binary arithmetic operation ``/`` with reflected
         operands.
@@ -3893,7 +3747,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rdiv__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __floordiv__(self, other):
         """The binary arithmetic operation ``//``
 
@@ -3902,7 +3755,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__floordiv__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __ifloordiv__(self, other):
         """The augmented arithmetic assignment ``//=``
 
@@ -3911,7 +3763,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ifloordiv__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rfloordiv__(self, other):
         """The binary arithmetic operation ``//`` with reflected
         operands.
@@ -3921,7 +3772,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rfloordiv__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __truediv__(self, other):
         """The binary arithmetic operation ``/`` (true division)
 
@@ -3930,7 +3780,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__truediv__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __itruediv__(self, other):
         """The augmented arithmetic assignment ``/=`` (true division)
 
@@ -3939,7 +3788,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__itruediv__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rtruediv__(self, other):
         """The binary arithmetic operation ``/`` (true division) with
         reflected operands.
@@ -3949,7 +3797,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rtruediv__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __pow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow``
 
@@ -3965,7 +3812,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._binary_operation(other, "__pow__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __ipow__(self, other, modulo=None):
         """The augmented arithmetic assignment ``**=``
 
@@ -3981,7 +3827,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._binary_operation(other, "__ipow__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rpow__(self, other, modulo=None):
         """The binary arithmetic operations ``**`` and ``pow`` with
         reflected operands.
@@ -3998,7 +3843,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._binary_operation(other, "__rpow__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __mod__(self, other):
         """The binary arithmetic operation ``%``
 
@@ -4007,7 +3851,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__mod__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __imod__(self, other):
         """The binary arithmetic operation ``%=``
 
@@ -4016,7 +3859,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__imod__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rmod__(self, other):
         """The binary arithmetic operation ``%`` with reflected
         operands.
@@ -4026,7 +3868,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rmod__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __eq__(self, other):
         """The rich comparison operator ``==``
 
@@ -4035,7 +3876,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__eq__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __ne__(self, other):
         """The rich comparison operator ``!=``
 
@@ -4044,7 +3884,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ne__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __ge__(self, other):
         """The rich comparison operator ``>=``
 
@@ -4053,7 +3892,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ge__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __gt__(self, other):
         """The rich comparison operator ``>``
 
@@ -4062,7 +3900,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__gt__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __le__(self, other):
         """The rich comparison operator ``<=``
 
@@ -4071,7 +3908,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__le__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __lt__(self, other):
         """The rich comparison operator ``<``
 
@@ -4080,7 +3916,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__lt__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __and__(self, other):
         """The binary bitwise operation ``&``
 
@@ -4089,7 +3924,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__and__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __iand__(self, other):
         """The augmented bitwise assignment ``&=``
 
@@ -4098,7 +3932,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__iand__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rand__(self, other):
         """The binary bitwise operation ``&`` with reflected operands.
 
@@ -4107,7 +3940,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rand__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __or__(self, other):
         """The binary bitwise operation ``|``
 
@@ -4116,7 +3948,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__or__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __ior__(self, other):
         """The augmented bitwise assignment ``|=``
 
@@ -4125,7 +3956,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ior__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __ror__(self, other):
         """The binary bitwise operation ``|`` with reflected operands.
 
@@ -4134,7 +3964,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ror__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __xor__(self, other):
         """The binary bitwise operation ``^``
 
@@ -4143,7 +3972,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__xor__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __ixor__(self, other):
         """The augmented bitwise assignment ``^=``
 
@@ -4152,7 +3980,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__ixor__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rxor__(self, other):
         """The binary bitwise operation ``^`` with reflected operands.
 
@@ -4161,7 +3988,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(other, "__rxor__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __lshift__(self, y):
         """The binary bitwise operation ``<<``
 
@@ -4170,7 +3996,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__lshift__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __ilshift__(self, y):
         """The augmented bitwise assignment ``<<=``
 
@@ -4179,7 +4004,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__ilshift__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rlshift__(self, y):
         """The binary bitwise operation ``<<`` with reflected operands.
 
@@ -4188,7 +4012,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__rlshift__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rshift__(self, y):
         """The binary bitwise operation ``>>``
 
@@ -4197,7 +4020,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__rshift__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __irshift__(self, y):
         """The augmented bitwise assignment ``>>=``
 
@@ -4206,7 +4028,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__irshift__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __rrshift__(self, y):
         """The binary bitwise operation ``>>`` with reflected operands.
 
@@ -4215,7 +4036,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._binary_operation(y, "__rrshift__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __abs__(self):
         """The unary arithmetic operation ``abs``
 
@@ -4224,7 +4044,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__abs__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __neg__(self):
         """The unary arithmetic operation ``-``
 
@@ -4233,7 +4052,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__neg__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __invert__(self):
         """The unary bitwise operation ``~``
 
@@ -4242,7 +4060,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._unary_operation("__invert__")
 
-    @daskified(_DASKIFIED_VERBOSE)
     def __pos__(self):
         """The unary arithmetic operation ``+``
 
@@ -4312,7 +4129,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self._custom["_cyclic"] = _empty_set
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def _axes(self):
         """Storage for the axis identifiers.
 
@@ -4354,7 +4170,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @property
     def force_compute(self):
-        """TODODASK See also config settings."""
+        """TODODASKDOCS See also config settings."""
         return self._custom.get("force_compute", False)
 
     @force_compute.setter
@@ -4365,7 +4181,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     # Attributes
     # ----------------------------------------------------------------
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def Units(self):
         """The `cf.Units` object containing the units of the data array.
 
@@ -4395,7 +4210,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except KeyError:
             pass
         else:
-            if not old_units.equivalent(value):
+            if old_units and not old_units.equivalent(value):
                 raise ValueError(
                     f"Can't set Units to {value!r} that are not "
                     f"equivalent to the current units {old_units!r}. "
@@ -4430,7 +4245,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def data(self):
         """The data as an object identity.
 
@@ -4444,13 +4258,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return self
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def dtype(self):
         """The `numpy` data-type of the data.
 
         **Examples**
 
-        TODODASK
+        TODODASKDOCS
         >>> d = cf.Data([0.5, 1.5, 2.5])
         >>> d.dtype
         dtype(float64')
@@ -4491,7 +4304,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._set_dask(dx)
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def fill_value(self):
         """The data array missing data value.
 
@@ -4522,7 +4334,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self.del_fill_value(None)
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def hardmask(self):
         """Hardness of the mask.
 
@@ -4576,7 +4387,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self._custom["hardmask"] = value
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def is_masked(self):
         """True if the data array has any masked values.
 
@@ -4616,7 +4426,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return bool(dx.any())
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def nbytes(self):
         """Total number of bytes consumed by the elements of the array.
 
@@ -4651,7 +4460,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return dx.nbytes
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def ndim(self):
         """Number of dimensions in the data array.
 
@@ -4682,7 +4490,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return dx.ndim
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def shape(self):
         """Tuple of the data array's dimension sizes.
 
@@ -4718,7 +4525,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return dx.shape
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def size(self):
         """Number of elements in the data array.
 
@@ -4760,7 +4566,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return size
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def array(self):
         """A numpy array copy of the data.
 
@@ -4800,10 +4605,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         2000-12-01 00:00:00
 
         """
-        return self.compute().copy()
+        array = self.compute().copy()
+        if not isinstance(array, np.ndarray):
+            array = np.asanyarray(array)
+
+        return array
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def datetime_array(self):
         """An independent numpy array of date-time objects.
 
@@ -4877,7 +4685,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return a
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def mask(self):
         """The Boolean missing data mask of the data array.
 
@@ -4911,7 +4718,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return mask_data_obj
 
     # `arctan2`, AT2 seealso
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
         """Take the trigonometric inverse tangent of the data element-
@@ -5001,7 +4807,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     #        '''
     #        return cls(numpy_arctan2(y, x), units=_units_radians)
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):
         """Take the inverse hyperbolic tangent of the data element-wise.
@@ -5056,7 +4861,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arcsin(self, inplace=False):
         """Take the trigonometric inverse sine of the data element-wise.
@@ -5111,7 +4915,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arcsinh(self, inplace=False):
         """Take the inverse hyperbolic sine of the data element-wise.
@@ -5159,7 +4962,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
         """Take the trigonometric inverse cosine of the data element-
@@ -5215,7 +5017,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def arccosh(self, inplace=False):
         """Take the inverse hyperbolic cosine of the data element-wise.
@@ -5270,7 +5071,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     def all(self, axis=None, keepdims=True, split_every=None):
         """Test whether all data array elements evaluate to True.
 
@@ -5335,7 +5135,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.override_units(_units_None, inplace=True)
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     def allclose(self, y, rtol=None, atol=None):
         """Whether an array is element-wise equal within a tolerance.
 
@@ -5448,7 +5247,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.override_units(_units_None, inplace=True)
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def apply_masking(
         self,
@@ -5652,37 +5450,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @classmethod
-    def concatenate_data(cls, data_list, axis):
-        """Concatenates a list of Data objects into a single Data object
-        along the specified access (see cf.Data.concatenate for
-        details). In the case that the list contains only one element,
-        that element is simply returned.
-
-        :Parameters:
-
-            data_list: `list`
-                The list of data objects to concatenate.
-
-            axis: `int`
-                The axis along which to perform the concatenation.
-
-        :Returns:
-
-            `Data`
-                The resulting single `Data` object.
-
-        """
-        if len(data_list) > 1:
-            data = cls.concatenate(data_list, axis=axis)
-            if data.fits_in_one_chunk_in_memory(data.dtype.itemsize):
-                data.varray
-
-            return data
-        else:
-            assert len(data_list) == 1
-            return data_list[0]
-
     def argmax(self, axis=None, unravel=False):
         """Return the indices of the maximum values along an axis.
 
@@ -5763,7 +5530,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return type(self)(a)
 
-    @daskified(_DASKIFIED_VERBOSE)
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
@@ -5776,7 +5542,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self
 
-    @daskified(_DASKIFIED_VERBOSE)
     def get_units(self, default=ValueError()):
         """Return the units.
 
@@ -5810,7 +5575,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except AttributeError:
             return super().get_units(default=default)
 
-    @daskified(_DASKIFIED_VERBOSE)
     def get_calendar(self, default=ValueError()):
         """Return the calendar.
 
@@ -5844,7 +5608,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except (AttributeError, KeyError):
             return super().get_calendar(default=default)
 
-    @daskified(_DASKIFIED_VERBOSE)
     def set_calendar(self, calendar):
         """Set the calendar.
 
@@ -5874,7 +5637,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         self.Units = Units(self.get_units(default=None), calendar)
 
-    @daskified(_DASKIFIED_VERBOSE)
     def set_units(self, value):
         """Set the units.
 
@@ -5904,9 +5666,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         self.Units = Units(value, self.get_calendar(default=None))
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def max(
         self,
         axes=None,
@@ -5936,7 +5697,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -5952,7 +5713,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -5974,7 +5735,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def maximum_absolute_value(
         self, axes=None, squeeze=False, mtol=1, split_every=None, inplace=False
@@ -6000,7 +5760,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6016,7 +5776,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[-99 1 2]
          [3 -- 5]
@@ -6037,9 +5797,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def min(
         self,
         axes=None,
@@ -6070,7 +5829,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6086,7 +5845,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -6107,7 +5866,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def minimum_absolute_value(
         self, axes=None, squeeze=False, mtol=1, split_every=None, inplace=False
@@ -6133,7 +5891,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6150,7 +5908,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
         >>> d[0, 0] = -99
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[-99 1 2]
          [3 -- 5]
@@ -6171,9 +5929,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def mean(
         self,
         axes=None,
@@ -6206,7 +5963,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6222,7 +5979,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -6250,7 +6007,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def mean_absolute_value(
         self,
@@ -6284,7 +6040,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6299,7 +6055,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
         >>> d[0, 0] = -99
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[-99 1 2]
          [3 -- 5]
@@ -6327,7 +6083,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def integral(
         self,
@@ -6361,7 +6116,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6377,7 +6132,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -6422,9 +6177,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def sample_size(
         self,
         axes=None,
@@ -6453,7 +6207,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -6469,7 +6223,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -6493,7 +6247,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def binary_mask(self):
         """A binary (0 and 1) mask of the data array.
 
@@ -6526,8 +6279,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         m.override_units(_units_1, inplace=True)
         return m
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         """Clip (limit) the values in the data array in place.
@@ -6596,7 +6348,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @classmethod
-    @daskified(_DASKIFIED_VERBOSE)
     def asdata(cls, d, dtype=None, copy=False):
         """Convert the input to a `Data` object.
 
@@ -6723,8 +6474,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx)
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cos(self, inplace=False, i=False):
         """Take the trigonometric cosine of the data element-wise.
@@ -6783,7 +6533,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     def count(self, axis=None, keepdims=True, split_every=None):
         """Count the non-masked elements of the data.
 
@@ -6845,7 +6594,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.override_units(_units_None, inplace=True)
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     def count_masked(self, split_every=None):
         """Count the masked elements of the data.
 
@@ -6881,7 +6629,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self.size - self.count(split_every=split_every)
 
-    @daskified(_DASKIFIED_VERBOSE)
     def cyclic(self, axes=None, iscyclic=True):
         """Get or set the cyclic axes.
 
@@ -6963,7 +6710,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return old
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def year(self):
         """The year of each date-time value.
 
@@ -6986,7 +6732,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return YMDhms(self, "year")
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def month(self):
         """The month of each date-time value.
 
@@ -7009,7 +6754,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return YMDhms(self, "month")
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def day(self):
         """The day of each date-time value.
 
@@ -7032,7 +6776,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return YMDhms(self, "day")
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def hour(self):
         """The hour of each date-time value.
 
@@ -7055,7 +6798,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return YMDhms(self, "hour")
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def minute(self):
         """The minute of each date-time value.
 
@@ -7078,7 +6820,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return YMDhms(self, "minute")
 
     @property
-    @daskified(_DASKIFIED_VERBOSE)
     def second(self):
         """The second of each date-time value.
 
@@ -7100,7 +6841,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return YMDhms(self, "second")
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         """Uncompress the data.
@@ -7148,7 +6888,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     def unique(self, split_every=None):
         """The unique elements of the data.
 
@@ -7276,8 +7015,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return product(*[range(0, r) for r in self.shape])
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equals(
         self,
@@ -7409,8 +7147,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         else:
             return True
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def exp(self, inplace=False, i=False):
         """Take the exponential of the data array.
@@ -7445,12 +7182,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
         """Expand the shape of the data array in place.
-
-        # TODODASK bring back expand_dime alias (or rather alias this to that)
 
         .. seealso:: `flip`, `squeeze`, `swapaxes`, `transpose`
 
@@ -7470,6 +7204,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Examples**
 
         """
+        # TODODASKAPI bring back expand_dime alias (or rather alias this to
+        # that)
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Parse position
@@ -7499,8 +7236,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("size")
+    @_deprecated_kwarg_check("size", version="TODODASKVER", removed_at="5.0.0")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
@@ -7609,7 +7345,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASK
+            size: deprecated at version TODODASKVER
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -7687,6 +7423,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         from dask.array.core import concatenate
+
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -7843,7 +7589,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `harden_mask` sets
         `hardmask` to `True`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `hardmask`, `soften_mask`
 
@@ -7866,7 +7612,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
-        self._set_dask(dx, delete_source=False)
+        self._set_dask(dx, conform=False)
         self.hardmask = True
 
     def has_calendar(self):
@@ -7940,7 +7686,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `soften_mask` sets
         `hardmask` to `False`.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `hardmask`, `harden_mask`
 
@@ -7963,10 +7709,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
-        self._set_dask(dx, delete_source=False)
+        self._set_dask(dx, conform=False)
         self.hardmask = False
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
         """Replace masked elements with a fill value.
@@ -8022,7 +7767,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def first_element(self, verbose=None):
+    def first_element(self):
         """Return the first element of the data as a scalar.
 
         If the value is deemed too expensive to compute then a
@@ -8036,7 +7781,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * The stored computations consist only of initialisation,
           subspace or copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `last_element`, `second_element`
 
@@ -8054,16 +7799,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        if self.can_compute():
-            return super().first_element()
+        try:
+            return self._custom["first_element"]
+        except KeyError:
+            item = super().first_element()
+            self._set_cached_elements({"first_element": item})
+            return item
 
-        raise ValueError(
-            "First element of the data is considered too expensive "
-            "to compute. Consider setting the 'force_compute' attribute, or "
-            "setting the log level to 'DEBUG'."
-        )
-
-    def second_element(self, verbose=None):
+    def second_element(self):
         """Return the second element of the data as a scalar.
 
         If the value is deemed too expensive to compute then a
@@ -8077,7 +7820,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * The stored computations consist only of initialisation,
           subspace or copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `last_element`, `first_element`
 
@@ -8095,14 +7838,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        if self.can_compute():
-            return super().second_element()
-
-        raise ValueError(
-            "Second element of the data is considered too expensive "
-            "to compute. Consider setting the 'force_compute' atribute, or "
-            "setting the log level to 'DEBUG'."
-        )
+        try:
+            return self._custom["second_element"]
+        except KeyError:
+            item = super().second_element()
+            self._set_cached_elements({"second_element": item})
+            return item
 
     def last_element(self):
         """Return the last element of the data as a scalar.
@@ -8118,7 +7859,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * The stored computations consist only of initialisation,
           subspace or copy functions.
 
-        .. versionadded:: 4.0.0
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `first_element`, `second_element`
 
@@ -8136,16 +7877,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         masked
 
         """
-        if self.can_compute():
-            return super().last_element()
+        try:
+            return self._custom["last_element"]
+        except KeyError:
+            item = super().last_element()
+            self._set_cached_elements({"last_element": item})
+            return item
 
-        raise ValueError(
-            "First element of the data is considered too expensive "
-            "to compute. Consider setting the 'force_compute' attribute, or "
-            "setting the log level to 'DEBUG'."
-        )
-
-    @daskified(_DASKIFIED_VERBOSE)
     def flat(self, ignore_masked=True):
         """Return a flat iterator over elements of the data array.
 
@@ -8195,7 +7933,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 else:
                     yield cf_masked
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         """Flatten specified axes of the data.
@@ -8327,8 +8064,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def floor(self, inplace=False, i=False):
         """Return the floor of the data array.
@@ -8361,9 +8097,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(da.floor(dx))
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def outerproduct(self, a, inplace=False, i=False):
         """Compute the outer product with another data array.
 
@@ -8420,23 +8155,37 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Cast 'a' as a Data object so that it definitely has sensible
-        # Units
+        # Units. We don't mind if the units of 'a' are incompatible
+        # with those of 'self', but if they are then it's nice if the
+        # units are conformed.
         a = self.asdata(a)
         try:
-            a = conform_units(a, d.Units)
+            a = conform_units(a, d.Units, message="")
         except ValueError:
             pass
 
         dx = d.to_dask_array()
+        ndim = dx.ndim
+
         dx = da.ufunc.multiply.outer(dx, a)
         d._set_dask(dx)
 
         d.override_units(d.Units * a.Units, inplace=True)
 
+        # Include axis names for the new dimensions
+        axes = d._axes
+        for i, a_axis in enumerate(a._axes):
+            axes += (new_axis_identifier(axes),)
+
+        d._axes = axes
+
+        # Make sure that cyclic axes in 'a' are still cyclic in 'd'
+        for a_axis in a._cyclic:
+            d.cyclic(ndim + a._axes.index(a_axis))
+
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def change_calendar(self, calendar, inplace=False, i=False):
         """Change the calendar of date-time array elements.
@@ -8504,8 +8253,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
         """Override the data array units.
@@ -8549,8 +8297,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._Units = Units(units)
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
         """Override the calendar of the data array elements.
@@ -8608,6 +8355,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                      returned dassk array is correct, set the
                      *apply_mask_hardness* parameter to True.
 
+        .. versionadded:: TODODASKVER
+
         :Parameters:
 
             apply_mask_hardness: `bool`, optional
@@ -8644,13 +8393,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return self._custom["dask"]
 
-    @daskified(_DASKIFIED_VERBOSE)
     def datum(self, *index):
         """Return an element of the data array as a standard Python
         scalar.
-
-        TODODASK: consider renameing/aliasing to 'item'. Might depend
-                  on whether or not the APIs are the same.
 
         The first and last elements are always returned with
         ``d.datum(0)`` and ``d.datum(-1)`` respectively, even if the data
@@ -8741,6 +8486,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         6
 
         """
+        # TODODASKAPI: consider renaming/aliasing to 'item'. Might depend
+        # on whether or not the APIs are the same.
+
         if index:
             n_index = len(index)
             if n_index == 1:
@@ -8753,7 +8501,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     index = (slice(-1, None),) * self.ndim
                 elif isinstance(index, int):
                     if index < 0:
-                        index += self._size
+                        index += self.size
 
                     index = np.unravel_index(index, self.shape)
                 elif len(index) == self.ndim:
@@ -8789,12 +8537,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return cf_masked
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def masked_invalid(self, inplace=False):
         """Mask the array where invalid values occur (NaN or inf).
 
-        .. seealso:: `where`
+        .. seealso:: `where`, `numpy.ma.masked_invalid`
 
         :Parameters:
 
@@ -8953,7 +8700,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -8987,9 +8734,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx)
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def mid_range(
         self,
         axes=None,
@@ -9022,7 +8768,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -9037,7 +8783,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -9058,8 +8804,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         """Reverse the direction of axes of the data array.
@@ -9118,7 +8863,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     def inspect(self):
         """Inspect the object for debugging.
 
@@ -9146,7 +8890,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         inspect(self)
 
-    @daskified(_DASKIFIED_VERBOSE)
     def isclose(self, y, rtol=None, atol=None):
         """Return where data are element-wise equal within a tolerance.
 
@@ -9223,7 +8966,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             d.override_units(_units_None, inplace=True)
             return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):
         """Change the shape of the data without changing its values.
@@ -9288,11 +9030,27 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
+
+        # Set axes when the new array has more dimensions than self
+        axes = None
+        ndim0 = self.ndim
+        if not ndim0:
+            axes = generate_axis_identifiers(dx.ndim)
+        else:
+            diff = dx.ndim - ndim0
+            if diff > 0:
+                axes = list(self._axes)
+                for _ in range(diff):
+                    axes.insert(0, new_axis_identifier(tuple(axes)))
+
+        if axes is not None:
+            d._axes = axes
+
         d._set_dask(dx)
+
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def rint(self, inplace=False, i=False):
         """Round the data to the nearest integer, element-wise.
@@ -9327,7 +9085,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(da.rint(dx))
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def root_mean_square(
         self,
@@ -9360,7 +9117,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -9373,7 +9130,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -9401,8 +9158,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def round(self, decimals=0, inplace=False, i=False):
         """Evenly round elements of the data array to the given number
@@ -9455,6 +9211,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def stats(
         self,
         all=False,
+        compute=True,
         minimum=True,
         mean=True,
         median=True,
@@ -9492,6 +9249,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             all: `bool`, optional
                 Calculate all possible statistics, regardless of the value
                 of individual metric parameters.
+
+            compute: `bool`, optional
+                If True (the default), returned values for the statistical
+                calculations in the output dictionary are computed, else
+                each is given in the form of a delayed `Data` operation.
 
             minimum: `bool`, optional
                 Calculate the minimum of the values.
@@ -9553,7 +9315,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `dict`
-                The statistics.
+                The statistics, with keys giving the operation names and
+                values being the result of the corresponding statistical
+                calculation, which are either the computed numerical
+                values if `compute` is True, else the delayed `Data`
+                operations which encapsulate those.
 
         **Examples**
 
@@ -9562,42 +9328,55 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [[0  1  2]
          [3 --  5]]
         >>> d.stats()
-        {'minimum': <CF Data(): 0>,
-         'mean': <CF Data(): 2.2>,
-         'median': <CF Data(): 2.0>,
-         'maximum': <CF Data(): 5>,
-         'range': <CF Data(): 5>,
-         'mid_range': <CF Data(): 2.5>,
-         'standard_deviation': <CF Data(): 1.7204650534085253>,
-         'root_mean_square': <CF Data(): 2.792848008753788>,
+        {'minimum': 0,
+         'mean': 2.2,
+         'median': 2.0,
+         'maximum': 5,
+         'range': 5,
+         'mid_range': 2.5,
+         'standard_deviation': 1.7204650534085255,
+         'root_mean_square': 2.792848008753788,
          'sample_size': 5}
         >>> d.stats(all=True)
+        {'minimum': 0,
+         'mean': 2.2,
+         'median': 2.0,
+         'maximum': 5,
+         'range': 5,
+         'mid_range': 2.5,
+         'standard_deviation': 1.7204650534085255,
+         'root_mean_square': 2.792848008753788,
+         'minimum_absolute_value': 0,
+         'maximum_absolute_value': 5,
+         'mean_absolute_value': 2.2,
+         'mean_of_upper_decile': 5.0,
+         'sum': 11,
+         'sum_of_squares': 39,
+         'variance': 2.9600000000000004,
+         'sample_size': 5}
+        >>> d.stats(mean_of_upper_decile=True, range=False)
+        {'minimum': 0,
+         'mean': 2.2,
+         'median': 2.0,
+         'maximum': 5,
+         'mid_range': 2.5,
+         'standard_deviation': 1.7204650534085255,
+         'root_mean_square': 2.792848008753788,
+         'mean_of_upper_decile': 5.0,
+         'sample_size': 5}
+
+        To ask for delayed operations instead of computed values:
+
+        >>> d.stats(compute=False)
         {'minimum': <CF Data(): 0>,
          'mean': <CF Data(): 2.2>,
          'median': <CF Data(): 2.0>,
          'maximum': <CF Data(): 5>,
          'range': <CF Data(): 5>,
          'mid_range': <CF Data(): 2.5>,
-         'standard_deviation': <CF Data(): 1.7204650534085253>,
+         'standard_deviation': <CF Data(): 1.7204650534085255>,
          'root_mean_square': <CF Data(): 2.792848008753788>,
-         'minimum_absolute_value': <CF Data(): 0>,
-         'maximum_absolute_value': <CF Data(): 5>,
-         'mean_absolute_value': <CF Data(): 2.2>,
-         'mean_of_upper_decile': <CF Data(): 5.0>,
-         'sum': <CF Data(): 11>,
-         'sum_of_squares': <CF Data(): 39>,
-         'variance': <CF Data(): 2.96>,
-         'sample_size': 5}
-        >>> d.stats(mean_of_upper_decile=True, range=False)
-        {'minimum': <CF Data(): 0>,
-         'mean': <CF Data(): 2.2>,
-         'median': <CF Data(): 2.0>,
-         'maximum': <CF Data(): 5>,
-         'mid_range': <CF Data(): 2.5>,
-         'standard_deviation': <CF Data(): 1.7204650534085253>,
-         'root_mean_square': <CF Data(): 2.792848008753788>,
-         'mean_of_upper_decile': <CF Data(): 5.0>,
-         'sample_size': 5}
+         'sample_size': <CF Data(1, 1): [[5]]>}
 
         """
         no_weights = (
@@ -9633,19 +9412,24 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if all or locals()[stat]:
                 func = getattr(self, stat)
                 if stat in no_weights:
-                    value = func(squeeze=True)
+                    value = delayed(func)(squeeze=True)
                 else:
-                    value = func(squeeze=True, weights=weights)
+                    value = delayed(func)(squeeze=True, weights=weights)
 
                 out[stat] = value
 
         if all or sample_size:
-            out["sample_size"] = int(self.sample_size())
+            out["sample_size"] = delayed(lambda: self.sample_size())()
 
-        return out
+        data_values = globals()["compute"](out)[0]  # noqa: F811
+        if compute:
+            # Convert cf.Data objects holding the scalars (or scalar array
+            # for the case of sample_size only) to scalar values
+            return {op: val.array.item() for op, val in data_values.items()}
+        else:
+            return data_values
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         """Interchange two axes of an array.
@@ -9697,17 +9481,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         operations computed, always including space for a full boolean
         mask, is small enough to be retained in available memory.
 
-        .. note:: The delayed operations are actually not computed by
-                  `fits_in_memory`, so it is possible that an
-                  intermediate operation may require more than the
-                  available memory, even if the final array does not.
+        **Performance**
+
+        The delayed operations are actually not computed by
+        `fits_in_memory`, so it is possible that an intermediate
+        operation may require more than the available memory, even if
+        the final array does not.
 
         .. seealso:: `array`, `compute`, `nbytes`, `persist`,
                      `cf.free_memory`
 
         :Parameters:
 
-            itemsize: deprecated at version TODODASK
+            itemsize: deprecated at version TODODASKVER
                 The number of bytes per word of the master data array.
 
         :Returns:
@@ -9734,10 +9520,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self.size * (self.dtype.itemsize + 1) <= free_memory()
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
-    @daskified(_DASKIFIED_VERBOSE)
     def where(
         self, condition, x=None, y=None, inplace=False, i=False, verbose=None
     ):
@@ -9765,8 +9550,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Broadcasting**
 
         The array and the *condition*, *x* and *y* parameters must all
-        be broadcastable to each other, such that the shape of the
-        result is identical to the orginal shape of the array.
+        be broadcastable across the original array, such that the size
+        of the result is identical to the original size of the
+        array. Leading size 1 dimensions of these parameters are
+        ignored, thereby also ensuring that the shape of the result is
+        identical to the orginal shape of the array.
 
         If *condition* is a `Query` object then for the purposes of
         broadcasting, the condition is considered to be that which is
@@ -9784,7 +9572,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Parameters:
 
-            condition: array-like or `Query`
+            condition: array_like or `Query`
                 The condition which determines how to assign values to
                 the data.
 
@@ -9917,7 +9705,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data(x)
         >>> e = d.where(condition, d, 10 + y)
             ...
-        ValueError: where: Broadcasting the 'condition' parameter with shape (3, 4) would change the shape of the data with shape (3, 1)
+        ValueError: where: 'condition' parameter with shape (3, 4) can not be broadcast across data with shape (3, 1) when the result will have a different shape to the data
 
         >>> d = cf.Data(np.arange(9).reshape(3, 3))
         >>> e = d.copy()
@@ -9935,6 +9723,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [ 6.      7.      8.    ]]
 
         """
+        from .utils import where_broadcastable
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Missing values could be affected, so make sure that the mask
@@ -9947,13 +9737,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if getattr(condition, "isquery", False):
             # Condition is a cf.Query object: Make sure that the
             # condition units are OK, and convert the condition to a
-            # boolean dask array with the same shape as the data.
+            # boolean Data instance with the same shape as the data.
             condition = condition.copy()
             condition.set_condition_units(units)
             condition = condition.evaluate(d)
 
         condition = type(self).asdata(condition)
-        _where_broadcastable(d, condition, "condition")
+        condition = where_broadcastable(d, condition, "condition")
 
         # If x or y is self then change it to None. This prevents an
         # unnecessary copy; and, at compute time, an unncessary numpy
@@ -9981,18 +9771,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 continue
 
             arg = type(self).asdata(arg)
-            _where_broadcastable(d, arg, name)
+            arg = where_broadcastable(d, arg, name)
 
-            if arg.Units:
-                # Make sure that units are OK.
-                arg = arg.copy()
-                try:
-                    arg.Units = units
-                except ValueError:
-                    raise ValueError(
-                        f"where: {name!r} parameter units {arg.Units!r} "
-                        f"are not equivalent to data units {units!r}"
-                    )
+            arg_units = arg.Units
+            if arg_units:
+                arg = conform_units(
+                    arg,
+                    units,
+                    message=f"where: {name!r} parameter units {arg_units!r} "
+                    f"are not equivalent to data units {units!r}",
+                )
 
             xy.append(arg.to_dask_array())
 
@@ -10006,8 +9794,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sin(self, inplace=False, i=False):
         """Take the trigonometric sine of the data element-wise.
@@ -10066,8 +9853,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sinh(self, inplace=False):
         """Take the hyperbolic sine of the data element-wise.
@@ -10127,7 +9913,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def cosh(self, inplace=False):
         """Take the hyperbolic cosine of the data element-wise.
@@ -10186,8 +9971,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tanh(self, inplace=False):
         """Take the hyperbolic tangent of the data element-wise.
@@ -10248,8 +10032,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
         """Takes the logarithm of the data array.
@@ -10288,8 +10071,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False, i=False):
         """Remove size 1 axes from the data array.
@@ -10393,8 +10175,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     # `arctan2`, AT2 seealso
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tan(self, inplace=False, i=False):
         """Take the trigonometric tangent of the data element-wise.
@@ -10454,7 +10235,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     def tolist(self):
         """Return the data as a scalar or (nested) list.
 
@@ -10490,7 +10270,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self.array.tolist()
 
-    @daskified(_DASKIFIED_VERBOSE)
     def to_memory(self):
         """Bring data on disk into memory.
 
@@ -10502,8 +10281,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "Consider using 'Data.persist' instead."
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False, i=False):
         """Permute the axes of the data array.
@@ -10568,8 +10346,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def trunc(self, inplace=False, i=False):
         """Return the truncated values of the data array.
@@ -10638,9 +10415,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
-            fill_value: deprecated at version 4.0.0
+            fill_value: deprecated at version TODODASKVER
                 Use `set_fill_value` instead.
 
         :Returns:
@@ -10699,7 +10476,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -10763,7 +10540,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -10815,7 +10592,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: 4.0.0
+                .. versionadded:: TODODASKVER
 
         :Returns:
 
@@ -10837,9 +10614,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = da.zeros(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("out")
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("out", version="TODODASKVER", removed_at="5.0.0")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def func(
         self,
@@ -10860,7 +10636,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             units: `Units`, optional
 
-            out: deprecated at version 4.0.0
+            out: deprecated at version TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -10936,9 +10712,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def range(
         self,
         axes=None,
@@ -10970,7 +10745,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -10985,7 +10760,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11006,15 +10781,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def roll(self, axis, shift, inplace=False, i=False):
         """Roll array elements along a given axis.
 
         Equivalent in function to `numpy.roll`.
 
-        TODODASK  - note that it works for multiple axes
+        TODODASKDOCS  - note that it works for multiple axes
 
         :Parameters:
 
@@ -11047,7 +10821,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             `Data` or `None`
 
         """
-        # TODODASK - consider matching the numpy/dask api: "shift, axis="
+        # TODODASKAPI - consider matching the numpy/dask api: "shift, axis="
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -11057,9 +10831,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def sum(
         self,
         axes=None,
@@ -11093,7 +10866,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11109,7 +10882,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11137,7 +10910,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def sum_of_squares(
         self,
@@ -11172,7 +10944,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11186,7 +10958,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11214,8 +10986,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sum_of_weights(
         self,
@@ -11257,7 +11028,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {[inplace: `bool`, optional}}
 
@@ -11273,7 +11044,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11313,8 +11084,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sum_of_weights2(
         self,
@@ -11356,7 +11126,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {[inplace: `bool`, optional}}
 
@@ -11372,7 +11142,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11414,8 +11184,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def std(
         self,
@@ -11455,7 +11224,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11471,7 +11240,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11502,9 +11271,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.sqrt(inplace=True)
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def var(
         self,
         axes=None,
@@ -11543,7 +11311,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASK
+                .. versionadded:: TODODASKVER
 
             {{inplace: `bool`, optional}}
 
@@ -11559,7 +11327,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         >>> a = np.ma.arange(12).reshape(4, 3)
         >>> d = cf.Data(a, 'K')
-        >>> d[1, 1] = np.ma.masked
+        >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
          [3 -- 5]
@@ -11595,7 +11363,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"
     ):
@@ -11622,13 +11389,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 sectioned.
 
             stop: `int`, optional
-                Deprecated at version TODODASK.
+                Deprecated at version TODODASKVER.
 
                 Stop after this number of sections and return. If stop is
                 None all sections are taken.
 
             chunks: `bool`, optional
-                Depreated at version TODODASK. Consider using
+                Deprecated at version TODODASKVER. Consider using
                 `cf.Data.rechunk` instead.
 
                 If True return sections that are of the maximum possible
@@ -11670,7 +11437,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "section",
                 {"chunks": chunks},
                 message="Consider using Data.rechunk() instead.",
-                version="TODODASK",
+                version="TODODASKVER",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -11679,18 +11446,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 self,
                 "section",
                 {"stop": stop},
-                version="TODODASK",
+                version="TODODASKVER",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
         return _section(self, axes, min_step=min_step)
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def square(self, dtype=None, inplace=False):
         """Calculate the element-wise square.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `sqrt`, `sum_of_squares`
 
@@ -11733,12 +11499,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
     def sqrt(self, dtype=None, inplace=False):
         """Calculate the non-negative square root.
 
-        .. versionadded:: TODODASK
+        .. versionadded:: TODODASKVER
 
         .. seealso:: `square`
 
@@ -11816,9 +11581,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Alias for `datetime_array`"""
         return self.datetime_array
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def maximum(
         self,
         axes=None,
@@ -11838,9 +11602,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             i=i,
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def minimum(
         self,
         axes=None,
@@ -11860,9 +11623,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             i=i,
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def sd(
         self,
         axes=None,
@@ -11886,9 +11648,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             i=i,
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def standard_deviation(
         self,
         axes=None,
@@ -11912,9 +11673,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             i=i,
         )
 
-    @daskified(_DASKIFIED_VERBOSE)
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def variance(
         self,
         axes=None,
@@ -11977,90 +11737,6 @@ def _size_of_index(index, size=None):
         return len(index)
 
 
-def _broadcast(a, shape):
-    """Broadcast an array to a given shape.
-
-    It is assumed that ``len(array.shape) <= len(shape)`` and that the
-    array is broadcastable to the shape by the normal numpy
-    boradcasting rules, but neither of these things are checked.
-
-    For example, ``d[...] = d._broadcast(e, d.shape)`` gives the same
-    result as ``d[...] = e``
-
-    :Parameters:
-
-        a: numpy array-like
-
-        shape: `tuple`
-
-    :Returns:
-
-        `numpy.ndarray`
-
-    """
-    # Replace with numpy.broadcast_to v1.10 ??/ TODO
-
-    a_shape = np.shape(a)
-    if a_shape == shape:
-        return a
-
-    tile = [(m if n == 1 else 1) for n, m in zip(a_shape[::-1], shape[::-1])]
-    tile = shape[0 : len(shape) - len(a_shape)] + tuple(tile[::-1])
-
-    return np.tile(a, tile)
-
-
-def _where_broadcastable(data, x, name):
-    """Check broadcastability for `where` assignments.
-
-    Raises an exception if the result of broadcasting *data* and *x*
-    together does not have the same shape as *data*.
-
-    .. versionadded:: TODODASK
-
-    .. seealso:: `where`
-
-    :Parameters:
-
-        data, x: `Data`
-            The arrays to compare.
-
-        name: `str`
-            A name for *x* that is used in any exception error
-            message.
-
-    :Returns:
-
-        `bool`
-             If *x* is acceptably broadcastable to *data* then `True`
-             is returned, otherwise a `ValueError` is raised.
-
-    """
-    ndim_x = x.ndim
-    if not ndim_x:
-        return True
-
-    ndim_data = data.ndim
-    if ndim_x > ndim_data:
-        raise ValueError(
-            f"where: Broadcasting the {name!r} parameter with {ndim_x} "
-            f"dimensions would change the shape of the data with "
-            f"{ndim_data} dimensions"
-        )
-
-    shape_x = x.shape
-    shape_data = data.shape
-    for n, m in zip(shape_x[::-1], shape_data[::-1]):
-        if n != m and n != 1:
-            raise ValueError(
-                f"where: Broadcasting the {name!r} parameter with shape "
-                f"{shape_x} would change the shape of the data with shape "
-                f"{shape_data}"
-            )
-
-    return True
-
-
 def _collapse(
     func,
     d,
@@ -12073,7 +11749,7 @@ def _collapse(
 ):
     """Collapse data in-place using a given funcion.
 
-     .. versionadded:: TODODASK
+     .. versionadded:: TODODASKVER
 
      .. seealso:: `_parse_weights`
 
@@ -12185,7 +11861,7 @@ def _collapse(
 def _parse_weights(d, weights, axis=None):
     """Parse the weights input to `_collapse`.
 
-     .. versionadded:: TODODASK
+     .. versionadded:: TODODASKVER
 
      .. seealso:: `_collapse`
 

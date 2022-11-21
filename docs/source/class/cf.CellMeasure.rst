@@ -1,4 +1,4 @@
-.. currentmodule:: cf
+﻿.. currentmodule:: cf
 .. default-role:: obj
 
 .. _cf-CellMeasure:
@@ -202,6 +202,7 @@ Data
    ~cf.CellMeasure.count
    ~cf.CellMeasure.count_masked
    ~cf.CellMeasure.fill_value
+   ~cf.CellMeasure.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -211,7 +212,6 @@ Data
    ~cf.CellMeasure.binary_mask
    ~cf.CellMeasure.hardmask
    ~cf.CellMeasure.mask
-   ~cf.CellMeasure.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -227,7 +227,7 @@ Data
 
    ~cf.CellMeasure.__setitem__
    ~cf.CellMeasure.halo
-   ~cf.CellMeasure.mask_invalid
+   ~cf.CellMeasure.masked_invalid
    ~cf.CellMeasure.subspace
    ~cf.CellMeasure.where
 
@@ -246,7 +246,7 @@ Data
    ~cf.CellMeasure.period
    ~cf.CellMeasure.iscyclic
    ~cf.CellMeasure.isperiodic
-   ~cf.CellMeasure.get_filenames
+   ~cf.CellMeasure.get_original_filenames
    ~cf.CellMeasure.has_bounds
 
 Miscellaneous
@@ -623,6 +623,7 @@ Deprecated
    ~cf.CellMeasure.delprop
    ~cf.CellMeasure.dtvarray
    ~cf.CellMeasure.expand_dims
+   ~cf.CellMeasure.get_filenames
    ~cf.CellMeasure.getprop
    ~cf.CellMeasure.hasbounds
    ~cf.CellMeasure.hasdata

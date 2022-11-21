@@ -1,3 +1,60 @@
+version 3.14.0
+--------------
+
+**202?-??-??**
+
+* New method: `cf.Field.get_original_filenames`
+  (https://github.com/NCAS-CMS/cf-python/issues/448)
+* New method: `cf.Field.to_dask_array`
+* Fixed bug that raised an exception when using the ``equal`` or
+  ``exist`` keyword of `cf.aggregate`
+  (https://github.com/NCAS-CMS/cf-python/issues/499)
+* Changed dependency: ``1.10.0.1<=cfdm<1.10.1.0``
+* New dependency: ``dask>=2022.6.0``
+
+----
+
+version 3.13.1
+--------------
+
+**2022-10-17**
+
+* Upgrade to allow cf to work with Python 3.10
+  (https://github.com/NCAS-CMS/cf-python/issues/419)
+* Fixed bug when setting coordinate bounds with different units to
+  their parent coordinates
+  (https://github.com/NCAS-CMS/cf-python/issues/417)
+* Fixed bug that created incorrect hybrid height levels when reading
+  UM fields that also have pseudolevels
+  (https://github.com/NCAS-CMS/cf-python/issues/468)
+* Fixed bug when reading zero length netCDF or PP files caused
+  cf-python to hang (https://github.com/NCAS-CMS/cf-python/issues/422)
+* Changed dependency: ``1.9.0.4<=cfdm<1.9.1.0``
+
+----
+
+version 3.13.0
+--------------
+
+**2022-06-23**
+
+* Fixed bug in `cf.read` when reading PP or fields files for which the
+  ``um`` keyword has been set, but without the ``'version'`` key
+  (https://github.com/NCAS-CMS/cf-python/issues/306)
+* Fixed bug when setting the CFA "base" option to an empty string in
+  `cf.write` (https://github.com/NCAS-CMS/cf-python/issues/346)
+* Fixed failure from `cf.write` when writing identical (auxiliary)
+  coordinates to different data variables in different groups
+  (https://github.com/NCAS-CMS/cf-python/issues/336)
+* Removed ``-g`` from the ``umread_lib/c-lib`` compiler options
+  (https://github.com/NCAS-CMS/cf-python/pull/305)
+* Updated the deprecated `distutils.version` to `packaging.version`
+  (https://github.com/NCAS-CMS/cf-python/pull/324)
+* Changed dependency: ``1.9.0.3<=cfdm<1.9.1.0``
+* New dependency: ``packaging>=20.0``
+
+----
+
 version 3.12.0
 --------------
 
@@ -94,8 +151,8 @@ version 3.9.0
   https://github.com/NCAS-CMS/cf-python/issues/203,
   https://github.com/NCAS-CMS/cf-python/issues/204)
 * Performance enhancements
-  (https://github.com/NCAS-CMS/cfdm/issues/201,
-  https://github.com/NCAS-CMS/cfdm/issues/202)
+  (https://github.com/NCAS-CMS/cf-python/issues/201,
+  https://github.com/NCAS-CMS/cf-python/issues/202)
 * New write mode ``mode='a'`` for appending to, rather than over-writing,
   a netCDF file on disk (https://github.com/NCAS-CMS/cf-python/issues/30)
 * Temporarily removed the experimental ability to parallelize the

@@ -1,4 +1,4 @@
-.. currentmodule:: cf
+﻿.. currentmodule:: cf
 .. default-role:: obj
 
 cf.Bounds
@@ -179,6 +179,7 @@ Data
    ~cf.Bounds.count
    ~cf.Bounds.count_masked
    ~cf.Bounds.fill_value
+   ~cf.Bounds.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -188,7 +189,6 @@ Data
    ~cf.Bounds.binary_mask
    ~cf.Bounds.hardmask
    ~cf.Bounds.mask
-   ~cf.Bounds.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -204,7 +204,7 @@ Data
 
    ~cf.Bounds.__setitem__
    ~cf.Bounds.halo
-   ~cf.Bounds.mask_invalid
+   ~cf.Bounds.masked_invalid
    ~cf.Bounds.subspace
    ~cf.Bounds.where
 
@@ -223,7 +223,7 @@ Data
    ~cf.Bounds.period
    ~cf.Bounds.iscyclic
    ~cf.Bounds.isperiodic
-   ~cf.Bounds.get_filenames
+   ~cf.Bounds.get_original_filenames
    ~cf.Bounds.has_bounds
 
 Miscellaneous
@@ -607,6 +607,7 @@ Deprecated
    ~cf.Bounds.dtvarray
    ~cf.Bounds.expand_dims
    ~cf.Bounds.getprop
+   ~cf.Bounds.get_filenames
    ~cf.Bounds.hasbounds
    ~cf.Bounds.hasdata
    ~cf.Bounds.hasprop

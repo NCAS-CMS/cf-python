@@ -74,11 +74,20 @@ installation and source code.
 
 """
 
-__Conventions__ = "CF-1.9"
+__Conventions__ = "CF-1.10"
 __date__ = "2022-01-18"
-__version__ = "4.0.0b0"
+__version__ = "3.14.0b0"
 
-_requires = ("numpy", "netCDF4", "cftime", "cfunits", "cfdm", "psutil", "dask")
+_requires = (
+    "numpy",
+    "netCDF4",
+    "cftime",
+    "cfunits",
+    "cfdm",
+    "psutil",
+    "dask",
+    "packaging",
+)
 
 x = ", ".join(_requires)
 _error0 = f"cf v{ __version__} requires the modules {x}. "
@@ -90,17 +99,9 @@ except ImportError as error1:
 
 __cf_version__ = cfdm.core.__cf_version__
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 import importlib.util
 import platform
-
-# Check the version of Python
-_minimum_vn = "3.7.0"
-if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
-    raise ValueError(
-        f"Bad python version: cf requires python version {_minimum_vn} "
-        f"or later. Got {platform.python_version()}"
-    )
 
 _found_ESMF = bool(importlib.util.find_spec("ESMF"))
 
@@ -134,9 +135,22 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
+try:
+    import packaging
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
+# Check the version of packaging
+_minimum_vn = "20.0"
+if Version(packaging.__version__) < Version(_minimum_vn):
+    raise RuntimeError(
+        f"Bad packaging version: cf requires packaging>={_minimum_vn}. "
+        f"Got {packaging.__version__} at {packaging.__file__}"
+    )
+
 # Check the version of psutil
 _minimum_vn = "0.6.0"
-if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
+if Version(psutil.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad psutil version: cf requires psutil>={_minimum_vn}. "
         f"Got {psutil.__version__} at {psutil.__file__}"
@@ -144,7 +158,7 @@ if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of netCDF4
 _minimum_vn = "1.5.4"
-if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
+if Version(netCDF4.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad netCDF4 version: cf requires netCDF4>={_minimum_vn}. "
         f"Got {netCDF4.__version__} at {netCDF4.__file__}"
@@ -152,7 +166,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of cftime
 _minimum_vn = "1.6.0"
-if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
+if Version(cftime.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cftime version: cf requires cftime>={_minimum_vn}. "
         f"Got {cftime.__version__} at {cftime.__file__}"
@@ -160,7 +174,7 @@ if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of numpy
 _minimum_vn = "1.22"
-if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
+if Version(numpy.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad numpy version: cf requires numpy>={_minimum_vn}. "
         f"Got {numpy.__version__} at {numpy.__file__}"
@@ -168,17 +182,17 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of cfunits
 _minimum_vn = "3.3.4"
-if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
+if Version(cfunits.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
         f"Got {cfunits.__version__} at {cfunits.__file__}"
     )
 
 # Check the version of cfdm
-_minimum_vn = "1.9.0.1"
-_maximum_vn = "1.9.2.0"
-_cfdm_version = LooseVersion(cfdm.__version__)
-if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
+_minimum_vn = "1.10.0.0"
+_maximum_vn = "1.10.1.0"
+_cfdm_version = Version(cfdm.__version__)
+if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     raise RuntimeError(
         f"Bad cfdm version: cf requires {_minimum_vn}<=cfdm<{_maximum_vn}. "
         f"Got {_cfdm_version} at {cfdm.__file__}"
@@ -186,10 +200,18 @@ if not LooseVersion(_minimum_vn) <= _cfdm_version < LooseVersion(_maximum_vn):
 
 # Check the version of dask
 _minimum_vn = "2022.6.0"
-if LooseVersion(dask.__version__) < LooseVersion(_minimum_vn):
+if Version(dask.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad dask version: cf requires dask>={_minimum_vn}. "
         f"Got {dask.__version__} at {dask.__file__}"
+    )
+
+# Check the version of Python
+_minimum_vn = "3.7.0"
+if Version(platform.python_version()) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad python version: cf requires python version {_minimum_vn} "
+        f"or later. Got {platform.python_version()}"
     )
 
 from .constructs import Constructs
@@ -226,15 +248,23 @@ from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
 from .fieldancillary import FieldAncillary
 from .field import Field
-from .data import (
-    Data,
-    FilledArray,
+from .data import Data
+from .data.array import (
+    CachedArray,
+    CFANetCDFArray,
+    FullArray,
     GatheredArray,
     NetCDFArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+)
+
+from .data.fragment import (
+    MissingFragmentArray,
+    NetCDFFragmentArray,
+    UMFragmentArray,
 )
 
 from .aggregate import aggregate
@@ -313,22 +343,3 @@ def detail(self, message, *args, **kwargs):
 
 
 logging.Logger.detail = detail
-
-
-# Also create special, secret level below even 'DEBUG'. It will not be
-# advertised to users. The user-facing cf.log_level() can set all but this
-# one level; we deliberately have not set up:
-#     cf.log_level('PARTITIONING')
-# to work to change the level to logging.PARTITIONING. Instead, to set this
-# manipulate the cf root logger directly via a built-in method, i.e call:
-#     cf.logging.getLogger().setLevel('PARTITIONING')
-logging.PARTITIONING = 5
-logging.addLevelName(logging.PARTITIONING, "PARTITIONING")
-
-
-def partitioning(self, message, *args, **kwargs):
-    if self.isEnabledFor(logging.PARTITIONING):
-        self._log(logging.PARTITIONING, message, args, **kwargs)
-
-
-logging.Logger.partitioning = partitioning
