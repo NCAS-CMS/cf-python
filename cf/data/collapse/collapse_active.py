@@ -28,16 +28,10 @@ def actify(a, method, axis=None):
             TODOACTIVEDOCS
 
     """
-    chunk_function = None
-    #    if not active_storage:
-    #        # It has been determined externally that an active storage
-    #       # reduction is not possible, so return the input data and
-    #       # chunk function unchanged.
-    #       return a, chunk_function
-    #
-    #    # Still here? Then it is assumed that the dask array is of a form
-    #    # which might be able to exploit active storage. In particular, it
-    #    # is assumed that all data definitions point to files.
+    if method not in Active.methods:
+        # The given method is not recognised by `Active`, so return
+        # the input data unchanged.
+        return a, None
 
     # Parse axis
     if axis is None:
@@ -48,12 +42,12 @@ def actify(a, method, axis=None):
 
         if len(axis) != a.ndim:
             # Can't (yet) use active storage to collapse a subset of
-            # the axes, so return the input data and chunk function
-            # unchanged.
-            return a, chunk_function
+            # the axes, so return the input data unchanged.
+            return a, None
 
         axis = validate_axis(axis, a.ndim)
 
+    filenames = set()
     active_chunk_functions = set()
 
     # Loop round elements of the dask graph, looking for data
@@ -62,14 +56,13 @@ def actify(a, method, axis=None):
     # so that the data defintions come out first, allowing for a
     # faster short circuit when using active storage is not possible.
     #
-    # It is assumed that teh graph doesn't have many laters - i.e. it
-    # is assumed that this function is called only if has been
-    # deterimined extermanlly that it is sensible to do so.
+    # It is assumed that this `actify` has only been called if has
+    # been deterimined externally that it is sensible to do so.
 
     dsk = collections_to_dsk((a,), optimize_graph=True)
     for key, value in reversed(dsk.items()):
         try:
-            value.get_filename()
+            filenames.add(value.get_filename())
         except AttributeError:
             # This value is not a data definition (it is assumed that
             # all data definitions point to files).
@@ -98,20 +91,33 @@ def actify(a, method, axis=None):
         # actified data definition value.
         dsk[key] = value
 
+    for filename in filenames:
+        # TODOACTIVE: Check that Active(filename) supports active
+        #             storage. I don't really know how this will work
+        #             ...
+        if not OK:
+            # This file location does not support active storage, so
+            # return the input data unchanged.
+            return a, None
+
+    # Still here?
     if len(active_chunk_functions) == 1:
         # All data definitions in the dask graph support active
         # storage reductions with the same chunk function => redefine
         # the array from the actified dask graph, and define the
-        # actified reduction chunk function.
+        # active storage reduction chunk function.
         a = da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
         chunk_function = active_chunk_functions.pop()
+    else:
+        chunk_function = None
 
-    # Return the dask array and chunk function. The array will either
-    # be identical to the input or, if it has been determined that
-    # active storage operation is possible, then it will have been
-    # replaced by its actified version. The chunk function will either
-    # be None, or the active storage chunk function provided by the
-    # data definitions in each chunk.
+    # Return the dask array and chunk function.
+    #
+    # The array will either be identical to the input or, if it has
+    # been determined that active storage operations are possible,
+    # then it will have been replaced by its actified version. The
+    # chunk function will either be None, or the active storage chunk
+    # function provided by each chunks's data definition.
     return a, chunk_function
 
 
@@ -120,6 +126,11 @@ def active_storage(method):
     operations, when the conditions are right.
 
     .. versionadded:: TODOACTIVEVER
+
+    :Parameters:
+
+        method: `str`
+            TODOACTIVEDOCS
 
     """
 

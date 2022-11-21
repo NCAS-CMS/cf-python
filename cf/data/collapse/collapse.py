@@ -13,6 +13,20 @@ from .collapse_utils import check_input_dtype, double_precision_dtype
 class Collapse(metaclass=DocstringRewriteMeta):
     """Container for functions that collapse dask arrays.
 
+    **Active storage**
+
+    Any collapse method (such as `max`, `max_abs`, etc.) will attempt
+    to make use use of active storage if:
+
+    * The collapse method's `active_storage` parameter is True.
+    * The method name is recognised by the `Active` class.
+    * The `Active` class recognioses the storage location as one that
+      supports active storage operations.
+
+    If all of these conditions are passed but the dask array being
+    collapsed is, on inspection, not deemed suitable, then the
+    collapse operation will be executed without active storage.
+
     .. versionadded:: TODODASKVER
 
     """
@@ -86,7 +100,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -115,6 +129,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
+    @active_storage("max_abs")
     def max_abs(
         self,
         a,
@@ -151,7 +166,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}} ppp
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -208,7 +223,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -238,6 +253,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
+    @active_storage("mean_abs")
     def mean_abs(
         self,
         a,
@@ -277,7 +293,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}} ppp
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -295,6 +311,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             active_storage=False,
         )
 
+    @active_storage("mid_range")
     def mid_range(
         self,
         a,
@@ -332,7 +349,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -401,7 +418,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -430,6 +447,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
+    @active_storage("min_abs")
     def min_abs(
         self,
         a,
@@ -466,7 +484,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}} ppp
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -483,6 +501,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             active_storage=False,
         )
 
+    @active_storage("range")
     def range(
         self,
         a,
@@ -519,7 +538,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -551,6 +570,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             meta=np.array((), dtype=dtype),
         )
 
+    @active_storage("rms")
     def rms(
         self,
         a,
@@ -590,7 +610,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -619,6 +639,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
+    @active_storage("sample_size")
     def sample_size(
         self,
         a,
@@ -655,7 +676,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -727,7 +748,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -759,6 +780,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
+    @active_storage("sum_of_weights")
     def sum_of_weights(
         self,
         a,
@@ -798,7 +820,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -831,6 +853,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
+    @active_storage("sum_of_weights2")
     def sum_of_weights2(
         self,
         a,
@@ -870,7 +893,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -903,6 +926,59 @@ class Collapse(metaclass=DocstringRewriteMeta):
             weights=weights,
         )
 
+    @active_storage("unique")
+    def unique(
+        self, a, split_every=None, active_storage=False, chunk_function=None
+    ):
+        """Return unique elements of the data.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            a: `dask.array.Array`
+                The array to be collapsed.
+
+            {{split_every: `int` or `dict`, optional}}
+
+            {{active_storage: `bool`, optional}}
+
+            {{chunk_function: callable, optional}}
+
+        :Returns:
+
+            `dask.array.Array`
+                The unique values in a 1-d array.
+
+        """
+        from .dask_collapse import cf_unique_agg, cf_unique_chunk
+
+        if chunk_function is None:
+            chunk_function = cf_unique_chunk
+
+        check_input_dtype(a, "fibUS")
+
+        # Flatten the array so that it has the same number of
+        # dimensions as the result (i.e. 1). This ensures that the
+        # combination of `keepdims=True, output_size=np.nan` will
+        # result in a correct output chunk size `np.nan`. See
+        # `dask.array.reduction` for details.
+        a = a.flatten()
+
+        dtype = a.dtype
+        return reduction(
+            a,
+            chunk_function,
+            cf_unique_agg,
+            keepdims=True,
+            output_size=np.nan,
+            dtype=dtype,
+            split_every=split_every,
+            concatenate=False,
+            meta=np.array((), dtype=dtype),
+        )
+
+    @active_storage("var")
     def var(
         self,
         a,
@@ -945,7 +1021,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: function, optional}}
+            {{chunk_function: callable, optional}}
 
         :Returns:
 
@@ -972,55 +1048,4 @@ class Collapse(metaclass=DocstringRewriteMeta):
             concatenate=False,
             meta=np.array((), dtype=dtype),
             weights=weights,
-        )
-
-    def unique(
-        self, a, split_every=None, active_storage=False, chunk_function=None
-    ):
-        """Return unique elements of the data.
-
-        .. versionadded:: TODODASKVER
-
-        :Parameters:
-
-            a: `dask.array.Array`
-                The array to be collapsed.
-
-            {{split_every: `int` or `dict`, optional}}
-
-            {{active_storage: `bool`, optional}}
-
-            {{chunk_function: function, optional}}
-
-        :Returns:
-
-            `dask.array.Array`
-                The unique values in a 1-d array.
-
-        """
-        from .dask_collapse import cf_unique_agg, cf_unique_chunk
-
-        if chunk_function is None:
-            chunk_function = cf_unique_chunk
-
-        check_input_dtype(a, "fibUS")
-
-        # Flatten the array so that it has the same number of
-        # dimensions as the result (i.e. 1). This ensures that the
-        # combination of `keepdims=True, output_size=np.nan` will
-        # result in a correct output chunk size `np.nan`. See
-        # `dask.array.reduction` for details.
-        a = a.flatten()
-
-        dtype = a.dtype
-        return reduction(
-            a,
-            chunk_function,
-            cf_unique_agg,
-            keepdims=True,
-            output_size=np.nan,
-            dtype=dtype,
-            split_every=split_every,
-            concatenate=False,
-            meta=np.array((), dtype=dtype),
         )
