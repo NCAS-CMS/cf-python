@@ -43,6 +43,7 @@ def write(
     warn_valid=True,
     group=True,
     coordinates=False,
+    omit_data=None,
     HDF_chunksizes=None,
     no_shuffle=None,
     unlimited=None,
@@ -580,6 +581,42 @@ def write(
 
             .. versionadded:: (cfdm) 3.7.0
 
+        omit_data: (sequence of) `str`, optional
+            Do not write the data of the named construct types.
+
+            This does not affect the amount of netCDF variables and
+            dimensions that are written to the file, nor the netCDF
+            variables' attributes, but does not create data on disk
+            for the requested variables. The resulting file will be
+            smaller than it otherwise would have been, and when the
+            new file is read then the data of these variables will be
+            represented by an array of all missing data.
+
+            The *omit_data* parameter may be one, or a sequence, of:
+
+            ==========================  ===============================
+            *omit_data*                 Construct types
+            ==========================  ===============================
+            ``'field'``                 Field constructs
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ``'all'``                   All of the above constructs
+            ==========================  ===============================
+
+            *Parameter example:*
+              To omit the data from only field constructs:
+              ``omit_data='field'`` or ``omit_data=['field']``.
+
+            *Parameter example:*
+              To omit the data from domain ancillary and cell measure
+              constructs: ``omit_data=['domain_ancillary',
+              'cell_measure']``.
+
+            .. versionadded:: TODODASKVER
+
         HDF_chunksizes: deprecated at version 3.0.0
             HDF chunk sizes may be set for individual constructs prior
             to writing, instead. See `cf.Data.nc_set_hdf5_chunksizes`.
@@ -652,7 +689,6 @@ def write(
         if write_only_on_pe0 and not mpi_rank == 0:
             mpi_comm.Barrier()
             return
-    # --- End: if
 
     if fields:
         # double and single
@@ -661,7 +697,6 @@ def write(
                 raise ValueError("Can't set datatype and single")
             if double is not None:
                 raise ValueError("Can't set datatype and double")
-        # --- End: if
 
         if single is not None and double is not None:
             raise ValueError(
@@ -703,7 +738,6 @@ def write(
             fmt = "NETCDF3_CLASSIC"
             if cfa_options:
                 extra_write_vars["cfa_options"] = cfa_options
-        # --- End: if
 
         if extra_write_vars["cfa"]:
             if Conventions:
@@ -713,7 +747,6 @@ def write(
                 Conventions = tuple(Conventions) + ("CFA",)
             else:
                 Conventions = "CFA"
-        # --- End: if
 
         netcdf.write(
             fields,
@@ -738,8 +771,5 @@ def write(
             group=group,
             coordinates=coordinates,
             extra_write_vars=extra_write_vars,
+            omit_data=omit_data,
         )
-    # --- End: if
-
-    if mpi_on and write_only_on_pe0:
-        mpi_comm.Barrier()
