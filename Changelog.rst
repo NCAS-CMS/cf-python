@@ -8,6 +8,9 @@ version 3.14.0
 * New method: `cf.Field.to_dask_array`
 * New keyword parameter to `cf.write`: ``omit_data``
   (https://github.com/NCAS-CMS/cf-python/issues/477)
+* Fixed bug that raised an exception when using the ``equal`` or
+  ``exist`` keyword of `cf.aggregate`
+  (https://github.com/NCAS-CMS/cf-python/issues/499)
 * Changed dependency: ``1.10.0.1<=cfdm<1.10.1.0``
 * New dependency: ``dask>=2022.6.0``
 
@@ -20,8 +23,8 @@ version 3.13.1
 
 * Upgrade to allow cf to work with Python 3.10
   (https://github.com/NCAS-CMS/cf-python/issues/419)
-* Fix bug when setting coordinate bounds with different units to their
-  parent coordinates
+* Fixed bug when setting coordinate bounds with different units to
+  their parent coordinates
   (https://github.com/NCAS-CMS/cf-python/issues/417)
 * Fixed bug that created incorrect hybrid height levels when reading
   UM fields that also have pseudolevels
@@ -37,10 +40,10 @@ version 3.13.0
 
 **2022-06-23**
 
-* Fix bug in `cf.read` when reading PP or fields files for which the
+* Fixed bug in `cf.read` when reading PP or fields files for which the
   ``um`` keyword has been set, but without the ``'version'`` key
   (https://github.com/NCAS-CMS/cf-python/issues/306)
-* Fix bug when setting the CFA "base" option to an empty string in
+* Fixed bug when setting the CFA "base" option to an empty string in
   `cf.write` (https://github.com/NCAS-CMS/cf-python/issues/346)
 * Fixed failure from `cf.write` when writing identical (auxiliary)
   coordinates to different data variables in different groups

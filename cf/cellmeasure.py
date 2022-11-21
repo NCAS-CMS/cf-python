@@ -58,7 +58,9 @@ class CellMeasure(mixin.PropertiesData, cfdm.CellMeasure):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_deprecated_kwarg_check("relaxed_identity")
+    @_deprecated_kwarg_check(
+        "relaxed_identity", version="3.0.0", removed_at="4.0.0"
+    )
     def identity(
         self,
         default="",
