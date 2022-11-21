@@ -640,21 +640,6 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
         self.assertTrue(domain_axes["domainaxis2"].nc_is_unlimited())
 
-    def test_read_pp(self):
-        p = cf.read("wgdos_packed.pp")[0]
-        p0 = cf.read(
-            "wgdos_packed.pp",
-            um={
-                "fmt": "PP",
-                "endian": "big",
-                "word_size": 4,
-                "version": 4.5,
-                "height_at_top_of_model": 23423.65,
-            },
-        )[0]
-
-        self.assertTrue(p.equals(p0, verbose=2))
-
     def test_read_CDL(self):
         subprocess.run(
             " ".join(["ncdump", self.filename, ">", tmpfile]),
