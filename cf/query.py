@@ -858,13 +858,29 @@ class Query:
         <CF Query: (ge 3000 m)>
 
         """
+        def get_and_set_value_units(v, u):
+            """Helper method to simplify logic to set specified units."""
+            v_units = getattr(v, "Units", None)
+            if v_units is None:  # Value 'v' has no units
+                v = Data(v, units=u)
+            else:  # Value 'v' already has units
+                try:
+                    v = v.copy()
+                    v.Units = u
+                except ValueError:
+                    raise ValueError(
+                        f"Units {u!r} are not equivalent to "
+                        f"query condition units {v_units!r}"
+                    )
+
+            return v
+
         units = Units(units)
 
         compound = self._compound
         if compound:
             for r in compound:
                 r.set_condition_units(units)
-
             return
 
         value = self._value
@@ -872,43 +888,17 @@ class Query:
             return
 
         value_units = getattr(value, "Units", None)
-        if value_units is None:
-            # Value has no units
-            if self.operator in ("wi", "wo", "set"):
-                # value is a sequence of things that may or may not
-                # already have units
-                new = []
-                for v in value:
-                    v_units = getattr(v, "Units", None)
-                    if v_units is None:
-                        v = Data(v, units=units)
-                    else:
-                        try:
-                            v = v.copy()
-                            v.Units = units
-                        except ValueError:
-                            raise ValueError(
-                                f"Units {units!r} are not equivalent to "
-                                f"query condition units {v_units!r}"
-                            )
+        if self.operator in ("wi", "wo", "set"):
+            # Value is a sequence of things that may or may not
+            # already have units
+            new_values = []
+            for v in value:
+                v = get_and_set_value_units(v, units)
+                new_values.append(v)
 
-                    new.append(v)
-
-                value = new
-            else:
-                value = Data(value, units=units)
+            value = new_values
         else:
-            # Value already has units
-            try:
-                value = value.copy()
-                value.Units = units
-            except ValueError:
-                raise ValueError(
-                    f"Units {units!r} are not equivalent to "
-                    f"query condition units {value_units!r}"
-                )
-
-        self._value = value
+            value = get_and_set_value_units(value, units)
 
         self._value = value
 
