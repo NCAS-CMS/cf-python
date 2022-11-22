@@ -1,5 +1,4 @@
 import logging
-from collections.abc import Iterable
 from copy import deepcopy
 from operator import __and__ as operator_and
 from operator import __or__ as operator_or
