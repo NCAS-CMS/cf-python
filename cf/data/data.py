@@ -5523,15 +5523,15 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         from dask.base import collections_to_dsk
 
-        out = []
+        out = set()
         dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
         for a in dsk.values():
             try:
-                out.append(a.get_filename())
+                out.add(a.get_filename())
             except AttributeError:
                 pass
 
-        return set(out)
+        return out
 
     def get_units(self, default=ValueError()):
         """Return the units.
