@@ -305,6 +305,56 @@ class functionTest(unittest.TestCase):
         a.set_fill_value(a.fill_value + 1)
         self.assertEqual(cf.hash_array(a), h)
 
+    def test_indices_shape(self):
+        import dask.array as da
+
+        shape = (10, 20)
+
+        self.assertEqual(cf.indices_shape((slice(2, 5), 4), shape), [3, 1])
+        self.assertEqual(
+            cf.indices_shape(([2, 3, 4], np.arange(1, 6)), shape), [3, 5]
+        )
+
+        index0 = [False] * 5
+        index0[2:5] = [True] * 3
+        self.assertEqual(
+            cf.indices_shape((index0, da.arange(1, 6)), shape), [3, 5]
+        )
+
+        index0 = da.full((5,), False, dtype=bool)
+        index0[2:5] = True
+        index1 = np.full((6,), False, dtype=bool)
+        index1[1:6] = True
+        self.assertEqual(cf.indices_shape((index0, index1), shape), [3, 5])
+
+        index0 = da.arange(5)
+        index0 = index0[index0 < 3]
+        self.assertEqual(cf.indices_shape((index0, []), shape), [3, 0])
+
+        self.assertEqual(
+            cf.indices_shape((da.from_array(2), np.array(3)), shape), [1, 1]
+        )
+        self.assertEqual(
+            cf.indices_shape((da.from_array([]), np.array(())), shape), [0, 0]
+        )
+
+        self.assertEqual(cf.indices_shape((slice(1, 5, 3), 3), shape), [2, 1])
+        self.assertEqual(cf.indices_shape((slice(5, 1, -2), 3), shape), [2, 1])
+        self.assertEqual(cf.indices_shape((slice(5, 1, 3), 3), shape), [0, 1])
+        self.assertEqual(cf.indices_shape((slice(1, 5, -3), 3), shape), [0, 1])
+
+        # keepdims=False
+        self.assertEqual(
+            cf.indices_shape((slice(2, 5), 4), shape, keepdims=False), [3]
+        )
+        self.assertEqual(
+            cf.indices_shape(
+                (da.from_array(2), np.array(3)), shape, keepdims=False
+            ),
+            [],
+        )
+        self.assertEqual(cf.indices_shape((2, 3), shape, keepdims=False), [])
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

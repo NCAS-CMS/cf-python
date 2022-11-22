@@ -186,7 +186,7 @@ class Query:
 
     isquery = True
 
-    @_deprecated_kwarg_check("exact")
+    @_deprecated_kwarg_check("exact", version="3.0.0", removed_at="4.0.0")
     def __init__(self, operator, value, units=None, attr=None, exact=True):
         """**Initialization**
 
@@ -532,7 +532,7 @@ class Query:
         """
         return str(self)
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equals(self, other, verbose=None, traceback=False):
         """True if two `Query` objects are the same."""

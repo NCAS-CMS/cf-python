@@ -684,8 +684,9 @@ class _Meta:
             self.properties = ()
         else:
             properties = f.properties()
-            for p in ignore:
-                properties.pop(p, None)
+            if ignore:
+                for p in ignore:
+                    properties.pop(p, None)
 
             if equal:
                 eq = dict(

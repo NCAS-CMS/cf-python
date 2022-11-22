@@ -21,8 +21,9 @@ from . import (
     NodeCountProperties,
     PartNodeCountProperties,
 )
-from .data import (
-    Data,
+from .data import Data
+from .data.array import (
+    CFANetCDFArray,
     GatheredArray,
     NetCDFArray,
     RaggedContiguousArray,
@@ -76,12 +77,62 @@ class CFImplementation(cfdm.CFDMImplementation):
             parent, construct, axes=axes, copy=copy, **kwargs
         )
 
+    def initialise_CFANetCDFArray(
+        self,
+        filename=None,
+        ncvar=None,
+        group=None,
+        dtype=None,
+        mask=True,
+        units=False,
+        calendar=False,
+        instructions=None,
+    ):
+        """Return a `CFANetCDFArray` instance.
 
+        :Parameters:
+
+            filename: `str`
+
+            ncvar: `str`
+
+            group: `None` or sequence of str`
+
+            dytpe: `numpy.dtype`
+
+            mask: `bool`, optional
+
+            units: `str` or `None`, optional
+
+            calendar: `str` or `None`, optional
+
+            instructions: `str`, optional
+
+        :Returns:
+
+            `CFANetCDFArray`
+
+        """
+        cls = self.get_class("CFANetCDFArray")
+        return cls(
+            filename=filename,
+            ncvar=ncvar,
+            group=group,
+            dtype=dtype,
+            mask=mask,
+            units=units,
+            calendar=calendar,
+            instructions=instructions,
+        )
+
+
+# TODODASK: add missing classes, such as TiePointIndex
 _implementation = CFImplementation(
     cf_version=CF(),
     AuxiliaryCoordinate=AuxiliaryCoordinate,
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
+    CFANetCDFArray=CFANetCDFArray,
     CoordinateReference=CoordinateReference,
     DimensionCoordinate=DimensionCoordinate,
     Domain=Domain,
