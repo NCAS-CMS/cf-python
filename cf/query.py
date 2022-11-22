@@ -874,20 +874,41 @@ class Query:
         value_units = getattr(value, "Units", None)
         if value_units is None:
             # Value has no units
-            if isinstance(value, Iterable):  # may be a sequence of Data
-                value = Data.concatenate(value)
-                value.Units = units
+            if self.operator in ("wi", "wo", "set"):
+                # value is a sequence of things that may or may not
+                # already have units
+                new = []
+                for v in value:
+                    v_units = getattr(v, "Units", None)
+                    if v_units is None:
+                        v = Data(v, units=units)
+                    else:
+                        try:
+                            v = v.copy()
+                            v.Units = units
+                        except ValueError:
+                            raise ValueError(
+                                f"Units {units!r} are not equivalent to "
+                                f"query condition units {v_units!r}"
+                            )
+
+                    new.append(v)
+
+                value = new
             else:
                 value = Data(value, units=units)
         else:
             # Value already has units
             try:
+                value = value.copy()
                 value.Units = units
             except ValueError:
                 raise ValueError(
                     f"Units {units!r} are not equivalent to "
                     f"query condition units {value_units!r}"
                 )
+
+        self._value = value
 
         self._value = value
 
