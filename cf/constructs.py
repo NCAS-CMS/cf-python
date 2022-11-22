@@ -2,6 +2,7 @@ import logging
 
 import cfdm
 
+from .functions import _DEPRECATION_ERROR_METHOD
 from .query import Query
 
 logger = logging.getLogger(__name__)
@@ -119,6 +120,9 @@ class Constructs(cfdm.Constructs):
     def close(self):
         """Close all files referenced by the metadata constructs.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -131,10 +135,13 @@ class Constructs(cfdm.Constructs):
         >>> c.close()
 
         """
-        # TODODASKAPI - is this method still needed?
-
-        for construct in self.filter_by_data().values():
-            construct.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            remove_at="5.0.0",
+        )  # pragma: no cover
 
     def _filter_by_identity(self, arg, identities, todict, _config):
         """Worker function for `filter_by_identity` and `filter`.

@@ -1272,6 +1272,9 @@ class PropertiesDataBounds(PropertiesData):
     def close(self):
         """Close all files referenced by the construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically re-opened if its
         contents are subsequently required.
 
@@ -1286,15 +1289,13 @@ class PropertiesDataBounds(PropertiesData):
         >> c.close()
 
         """
-        super().close()
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.close()
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            remove_at="5.0.0",
+        )  # pragma: no cover
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
