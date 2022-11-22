@@ -339,8 +339,8 @@ _docstring_substitution_definitions = {
                 will be executed without active storage.""",
     "{{chunk_function: callable, optional}}": """{{chunk_function: callable, optional}}
                 Provides the ``chunk`` parameter to
-                `dask.array.reduction`. If unset then a default
-                function will be used.""",
+                `dask.array.reduction`. If unset then an approriate
+                default function will be used.""",
     # Collapse weights
     "{{Collapse weights: data_like or `None`, optional}}": """weights: data_like or `None`, optional
                 Weights associated with values of the array. By

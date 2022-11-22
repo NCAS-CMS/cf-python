@@ -15,16 +15,16 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     **Active storage**
 
-    Any collapse method (such as `max`, `max_abs`, etc.) will attempt
-    to make use use of active storage if:
+    A collapse method (such as `max`, `max_abs`, etc.) will attempt to
+    make use use of active storage if:
 
     * The collapse method's `active_storage` parameter is True.
-    * The method name is recognised by the `Active` class.
+    * The method's identity is recognised by the `Active` class.
     * The `Active` class recognioses the storage location as one that
       supports active storage operations.
 
-    If all of these conditions are passed but the dask array being
-    collapsed is, on inspection, not deemed suitable, then the
+    However, if all of these conditions are passed but the dask array
+    being collapsed is, on inspection, not deemed suitable, then the
     collapse operation will be executed without active storage.
 
     .. versionadded:: TODODASKVER

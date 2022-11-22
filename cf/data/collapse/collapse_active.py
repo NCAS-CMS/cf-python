@@ -28,7 +28,7 @@ def actify(a, method, axis=None):
             TODOACTIVEDOCS
 
     """
-    if method not in Active.methods:
+    if method not in Active.methods():
         # The given method is not recognised by `Active`, so return
         # the input data unchanged.
         return a, None
@@ -64,17 +64,20 @@ def actify(a, method, axis=None):
         try:
             filenames.add(value.get_filename())
         except AttributeError:
-            # This value is not a data definition (it is assumed that
-            # all data definitions point to files).
+            # This value is not a data definition.
+            #
+            # Note: It is assumed that all data definitions point to
+            #       files
             continue
 
         try:
-            # Create a new actified data definition value
+            # Create a new actified data definition
             value = value.actify(method, axis)
         except (AttributeError, ValueError):
-            # This data definition value does not support active
-            # storage reductions, or does not support the requested
-            # active storage reduction defined by 'method'.
+            # Either this data definition does not support active
+            # storage reductions (AttributeError), or it does not
+            # support the requested active storage reduction defined
+            # by 'method' (ValueError).
             active_chunk_functions = ()
             break
 
@@ -111,13 +114,6 @@ def actify(a, method, axis=None):
     else:
         chunk_function = None
 
-    # Return the dask array and chunk function.
-    #
-    # The array will either be identical to the input or, if it has
-    # been determined that active storage operations are possible,
-    # then it will have been replaced by its actified version. The
-    # chunk function will either be None, or the active storage chunk
-    # function provided by each chunks's data definition.
     return a, chunk_function
 
 
