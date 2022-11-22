@@ -279,6 +279,62 @@ class aggregateTest(unittest.TestCase):
         )
         self.assertEqual(len(a), 1)
 
+    def test_aggregate_equal_equal_all(self):
+        f = cf.example_field(0)
+        f.set_property("foo", "bar")
+        a, b, c, d = f[0], f[1], f[2:4], f[4]
+
+        c.set_property("foo", "baz")
+        d.set_property("foo", "baz")
+
+        g = cf.aggregate([a, b, c, d])
+        self.assertEqual(len(g), 1)
+
+        g = cf.aggregate([a, b, c, d], equal=["foo"])
+        self.assertEqual(len(g), 2)
+
+        g = cf.aggregate([a, b, c, d], equal_all=True)
+        self.assertEqual(len(g), 2)
+
+        d.del_property("foo")
+
+        g = cf.aggregate([a, b, c, d])
+        self.assertEqual(len(g), 1)
+
+        g = cf.aggregate([a, b, c, d], equal=["foo"])
+        self.assertEqual(len(g), 3)
+
+        g = cf.aggregate([a, b, c, d], equal_all=True)
+        self.assertEqual(len(g), 3)
+
+    def test_aggregate_exist_exist_all(self):
+        f = cf.example_field(0)
+        f.set_property("foo", "bar")
+        a, b, c, d = f[0], f[1], f[2:4], f[4]
+
+        c.set_property("foo", "baz")
+        d.set_property("foo", "baz")
+
+        g = cf.aggregate([a, b, c, d])
+        self.assertEqual(len(g), 1)
+
+        g = cf.aggregate([a, b, c, d], exist=["foo"])
+        self.assertEqual(len(g), 1)
+
+        g = cf.aggregate([a, b, c, d], exist_all=True)
+        self.assertEqual(len(g), 1)
+
+        d.del_property("foo")
+
+        g = cf.aggregate([a, b, c, d])
+        self.assertEqual(len(g), 1)
+
+        g = cf.aggregate([a, b, c, d], exist=["foo"])
+        self.assertEqual(len(g), 2)
+
+        g = cf.aggregate([a, b, c, d], exist_all=True)
+        self.assertEqual(len(g), 2)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

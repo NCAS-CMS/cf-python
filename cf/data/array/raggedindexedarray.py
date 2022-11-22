@@ -1,9 +1,11 @@
 import cfdm
 
-from .mixin import ArrayMixin
+from .mixin import ArrayMixin, RaggedArrayMixin
 
 
-class RaggedIndexedArray(ArrayMixin, cfdm.RaggedIndexedArray):
+class RaggedIndexedArray(
+    RaggedArrayMixin, ArrayMixin, cfdm.RaggedIndexedArray
+):
     """An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array

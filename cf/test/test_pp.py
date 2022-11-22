@@ -51,6 +51,21 @@ class ppTest(unittest.TestCase):
 
     chunk_sizes = (800000, 80000)
 
+    def test_PP_read_um(self):
+        p = cf.read("wgdos_packed.pp")[0]
+        p0 = cf.read(
+            "wgdos_packed.pp",
+            um={
+                "fmt": "PP",
+                "endian": "little",
+                "word_size": 4,
+                "version": 4.5,
+                "height_at_top_of_model": 23423.65,
+            },
+        )[0]
+
+        self.assertTrue(p.equals(p0, verbose=2))
+
     def test_load_stash2standard_name(self):
         f = cf.read(self.ppfile)[0]
         self.assertEqual(f.identity(), "eastward_wind")
