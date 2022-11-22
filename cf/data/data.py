@@ -1795,7 +1795,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             for n, db in enumerate(delete_bins):
                 db -= n
                 d.where(d == db, np.ma.masked, None, inplace=True)
-                # x = d - 1 rather than = d here since there is one less bin
+                # x = d - 1 rather than = d here since there is one fewer bin
                 # therefore we need to adjust to the new corresponding indices
                 d.where(d > db, d - 1, None, inplace=True)
 
