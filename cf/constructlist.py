@@ -390,7 +390,7 @@ class ConstructList(list, Container, cfdm.Container):
         """
         return type(self)([f.copy(data=data) for f in self])
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equals(
         self,

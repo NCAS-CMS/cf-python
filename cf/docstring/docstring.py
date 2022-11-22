@@ -443,6 +443,14 @@ _docstring_substitution_definitions = {
                 is masked in destination grid definition; or b) The
                 sum of ``w_ji`` for all non-masked source grid cells i
                 is strictly less than *min_weight*.""",
+    # aggregated_units
+    "{{aggregated_units: `str` or `None`, optional}}": """aggregated_units: `str` or `None`, optional
+                The units of the aggregated array. Set to `None` to
+                indicate that there are no units.""",
+    # aggregated_calendar
+    "{{aggregated_calendar: `str` or `None`, optional}}": """aggregated_calendar: `str` or `None`, optional
+                The calendar of the aggregated array. Set to `None` to
+                indicate the CF default calendar, if applicable.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------

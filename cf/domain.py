@@ -1,9 +1,6 @@
-import logging
-from functools import reduce
-from operator import mul as operator_mul
+from math import prod
 
 import cfdm
-import numpy as np
 
 from . import mixin
 from .constructs import Constructs
@@ -13,10 +10,9 @@ from .domainaxis import DomainAxis
 from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_METHOD,
+    indices_shape,
     parse_indices,
 )
-
-logger = logging.getLogger(__name__)
 
 _empty_set = set()
 
@@ -126,10 +122,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         if not domain_axes:
             return 0
 
-        return reduce(
-            operator_mul,
-            [domain_axis.get_size(0) for domain_axis in domain_axes.values()],
-            1,
+        return prod(
+            [domain_axis.get_size(0) for domain_axis in domain_axes.values()]
         )
 
     def close(self):
@@ -578,7 +572,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         # Get the indices for every domain axis in the domain, without
         # any auxiliary masks.
-        domain_indices = self._indices(mode, None, False, **kwargs)
+        domain_indices = self._indices(mode, None, False, kwargs)
 
         return domain_indices["indices"]
 
@@ -935,11 +929,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                        : time(1) = [2019-01-01 00:00:00]
 
         """
-        logger.debug(
-            f"{self.__class__.__name__}.subspace\n"
-            f"  input kwargs = {kwargs}"
-        )  # pragma: no cover
-
         test = False
         if "test" in mode:
             mode = list(mode)
@@ -977,12 +966,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             tuple(shape), tuple(indices2), cyclic=True
         )
 
-        logger.debug(
-            f"  axes           = {axes!r}\n"
-            f"  parsed indices = {indices!r}\n"
-            f"  roll           = {roll!r}"
-        )  # pragma: no cover
-
         if roll:
             new = self
             cyclic_axes = self.cyclic()
@@ -1003,19 +986,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         # Set sizes of domain axes
         # ------------------------------------------------------------
         domain_axes = new.domain_axes(todict=True)
-        for axis, index in zip(axes, indices):
-            if isinstance(index, slice):
-                old_size = domain_axes[axis].get_size()
-                start, stop, step = index.indices(old_size)
-                size = abs((stop - start) / step)
-                int_size = round(size)
-                if size > int_size:
-                    size = int_size + 1
-                else:
-                    size = int_size
-            else:
-                size = np.size(index)
-
+        for axis, size in zip(axes, indices_shape(indices, shape)):
             domain_axes[axis].set_size(size)
 
         # ------------------------------------------------------------
