@@ -252,11 +252,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         cfa = "aggregated_dimensions" in attributes
         if cfa:
             # TODOCFA: Modify this message for v4.0.0
-            raise ValueError(
-                "The reading of CFA files has been temporarily disabled, "
-                "but will return for CFA-0.6 files at version 4.0.0. "
-                "CFA-0.4 functionality is still available at version 3.13.1."
-            )
+#            raise ValueError(
+#                "The reading of CFA files has been temporarily disabled, "
+#                "but will return for CFA-0.6 files at version 4.0.0. "
+#                "CFA-0.4 functionality is still available at version 3.13.1."
+#            )
 
             # TODOCFA: The 'return' remains when the exception is
             #          removed at v4.0.0.
@@ -495,7 +495,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if np.ma.is_masked(value):
                 value = np.ma.masked
             else:
-                value = value.item()
+                try:
+                    value = value.item()
+                except:
+                    pass
 
             elements[element] = value
 

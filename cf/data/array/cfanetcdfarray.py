@@ -681,9 +681,12 @@ class CFANetCDFArray(NetCDFArray):
                 aggregated_calendar=calendar,
             )
 
+            t = tokenize(fragment_array)
+            dsk[t] = fragment_array   
+
             dsk[name + chunk_location] = (
                 getter,
-                fragment_array,
+                t,
                 f_indices,
                 False,
                 False,

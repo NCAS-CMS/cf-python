@@ -151,5 +151,5 @@ class NetCDFFragmentArray(FragmentArray):
 
             array = array[indices]
 
-        array = self._conform_units(array)
+#        array = self._conform_units(array)
         return array
