@@ -48,24 +48,28 @@ _docstring_substitution_definitions = {
     # regrid Masked cells
     "{{regrid Masked cells}}": """**Masked cells**
 
-        By default, the data mask of the field is taken into account
-        during the regridding process, but the destination grid mask
-        is not. This behaviour may be changed with the *use_src_mask*
-        and *use_dst_mask* parameters.
+        By default, the data mask of the source data is taken into
+        account during the regridding process, but the destination
+        grid mask is not. This behaviour may be changed with the
+        *use_src_mask* and *use_dst_mask* parameters.
 
-        The source data may be arbitrarily masked, apart from for
-        second-order conservative and patch recovery regridding
-        methods, for which the mask of the regridding axes must be the
-        same across all non-regridding axes.""",
+        In general the source data may be arbitrarily masked, meaning
+        that the mask for the regridding axes may vary along the
+        non-regridding axes. The exceptions to this are for
+        second-order conservative, patch recovery regridding, and
+        nearest source to destination methods, for which the mask of
+        the regridding axes must be the same across all non-regridding
+        axes. In these special cases an exception will be raised if
+        the source data mask does not meet this requirement.""",
     # regrid Masked cells
     "{{regrid Implementation}}": """**Implementation**
 
         The interpolation is carried out using regridding weights
-        calculated byt the `ESMF` package, a Python interface to the
+        calculated by the `ESMF` package, a Python interface to the
         Earth System Modeling Framework (ESMF) regridding utility:
         `https://earthsystemmodeling.org/regrid`_. Outside of `ESMF`,
         these weights are then modified for masked cells (if required)
-        and the regridded data is created as the dot product of the
+        and the regridded data are created as the dot product of the
         weights with the source data. (Note that whilst the `ESMF`
         package is able to also create the regridded data from its
         weights, this feature can't be integrated with the `dask`
