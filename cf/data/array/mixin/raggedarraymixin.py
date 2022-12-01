@@ -60,7 +60,6 @@ class RaggedArrayMixin:
         for u_indices, u_shape, c_indices, chunk_location in zip(
             *self.subarrays(chunks)
         ):
-            print (repr(compressed_data), compressed_data.get_filenames())
             subarray = Subarray(
                 data=compressed_data,
                 indices=c_indices,
