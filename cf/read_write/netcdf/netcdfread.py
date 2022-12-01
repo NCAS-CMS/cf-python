@@ -497,7 +497,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             else:
                 try:
                     value = value.item()
-                except:
+                except AttributeError:
+                    # A netCDF string type scalar variable comes out
+                    # as Python str object, which has no 'item'
+                    # method.
                     pass
 
             elements[element] = value
