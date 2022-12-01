@@ -15,6 +15,8 @@ Version |release| for version |version| of the CF conventions.
    :backlinks: entry
 
 
+TODODOCS
+	       
 **Lazy operations**
 -------------------
 
@@ -43,6 +45,8 @@ of Massive Arrays) <LAMA>` functionality.
 
 **Regridding**
 --------------
+
+TODODOCS
 
 When regridding multiple field constructs with their
 `cf.Field.regrids` or `cf.Field.regridc` methods, the regridding
@@ -73,6 +77,9 @@ improvements.
 
 **Large Amounts of Massive Arrays (LAMA)**
 ------------------------------------------
+
+
+TODODOCS
 
 Data are stored and manipulated in a very memory efficient manner such
 that large numbers of constructs may co-exist and be manipulated
@@ -124,7 +131,10 @@ The basic functionality is:
 
 
 Reading from files
-^^^^^^^^^^^^^^^^^^
+^^^^^^
+
+TODODOCS
+^^^^^^^^^^^^
 
 When a field construct is read from a file, the data array is not
 realized in memory, however large or small it may be. Instead each
@@ -136,6 +146,9 @@ uses up only a very small amount of memory.
 
 Copying
 ^^^^^^^
+
+
+TODODOCS
 
 When a field construct is deep copied with its `~Field.copy` method or
 the Python `copy.deepcopy` function, the partitions of its data array
@@ -152,6 +165,9 @@ in the original (or any other) field construct.
 
 Aggregation
 ^^^^^^^^^^^
+
+TODODOCS
+
 
 When two field constructs are aggregated to form one, larger field
 construct there is no need for either field construct's data array
@@ -171,6 +187,9 @@ the original (or any other) field construct.
 
 Subspacing
 ^^^^^^^^^^
+
+TODODOCS
+
 
 When a new field construct is created by :ref:`subspacing
 <Subspacing>` a field construct, the new field construct is actually a
@@ -205,6 +224,9 @@ construct ``h`` and no data has been read from disk.
 Speed and memory management
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+
+TODODOCS
+
 The creation of temporary files for array partitions of large arrays
 and the reading of data from files on disk can create significant
 speed overheads (for example, recent tests show that writing a 100
@@ -228,6 +250,9 @@ The data array memory management is configurable as follows:
 
 Temporary files
 ^^^^^^^^^^^^^^^
+
+
+TODODOCS
 
 The directory in which temporary files is found and set with the
 `cf.tempdir` function:
@@ -253,6 +278,9 @@ in the original directory from being garbage collected.
 Partitioning
 ^^^^^^^^^^^^
 
+
+TODODOCS
+
 Data partitioning preserves as much as is possible the faster varying
 (inner) dimensions' sizes in each of the sub-arrays.
 
@@ -276,6 +304,9 @@ Data partitioning preserves as much as is possible the faster varying
 
 **Parallelization**
 -------------------
+
+
+TODODOCS
 
 .. note:: The experimental ability to run cf scripts in parallel using
           mpirun was removed at version 3.9.0. This functionality will
