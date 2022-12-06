@@ -262,7 +262,7 @@ class ConstructList(list, Container, cfdm.Container):
             "close",
             "All files are now automatically closed when not being accessed.",
             version="TODODASKVER",
-            remove_at="5.0.0",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     def count(self, value):
