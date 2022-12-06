@@ -2501,6 +2501,9 @@ class PropertiesData(Properties):
     def close(self):
         """Close all files referenced by the construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -2515,9 +2518,13 @@ class PropertiesData(Properties):
         >>> f.close()
 
         """
-        data = self.get_data(None, _fill_value=False)
-        if data is not None:
-            data.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):

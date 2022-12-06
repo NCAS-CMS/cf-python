@@ -56,12 +56,6 @@ class FieldTest(unittest.TestCase):
         self.assertIn(g, f)
         self.assertNotIn(34.6, f)
 
-    def test_FieldList_close(self):
-        f = cf.FieldList(self.x)
-        self.assertIsNone(f.close())
-
-        repr(f[0])
-
     def test_FieldList__len__(self):
         f = cf.FieldList(self.x)
 

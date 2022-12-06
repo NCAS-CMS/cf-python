@@ -122,6 +122,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def close(self):
         """Close all files referenced by the domain construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -134,9 +137,13 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         >>> d.close()
 
         """
-        # TODODASK - is this still needed?
-
-        self.constructs.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):

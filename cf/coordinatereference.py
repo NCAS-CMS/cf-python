@@ -278,6 +278,9 @@ class CoordinateReference(cfdm.CoordinateReference):
         """Close all files referenced by coordinate conversion term
         values.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         :Returns:
 
             `None`
@@ -287,7 +290,13 @@ class CoordinateReference(cfdm.CoordinateReference):
         >>> c.close()
 
         """
-        pass
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @classmethod
     def default_value(cls, term):
