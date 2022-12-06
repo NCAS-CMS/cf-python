@@ -372,6 +372,14 @@ _docstring_substitution_definitions = {
                 ``'nearest'``
                 ``'midpoint'``
                 ===============================""",
+    # aggregated_units
+    "{{aggregated_units: `str` or `None`, optional}}": """aggregated_units: `str` or `None`, optional
+                The units of the aggregated array. Set to `None` to
+                indicate that there are no units.""",
+    # aggregated_calendar
+    "{{aggregated_calendar: `str` or `None`, optional}}": """aggregated_calendar: `str` or `None`, optional
+                The calendar of the aggregated array. Set to `None` to
+                indicate the CF default calendar, if applicable.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

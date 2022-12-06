@@ -31,11 +31,14 @@ class dummyClass:
         error."""
         if traceback:
             cf.functions._DEPRECATION_ERROR_KWARGS(
-                self, "another_func", traceback=True
+                self,
+                "another_func",
+                traceback=True,
+                version="some version",
             )
         return good_kwarg
 
-    @cf.decorators._deprecated_kwarg_check("traceback")
+    @cf.decorators._deprecated_kwarg_check("traceback", version="some version")
     def decorated_func_2(self, good_kwarg=True, traceback=False):
         """Dummy function equivalent to 'func_2', but a decorator
         manages the logic to raise the error on use of a deprecated
@@ -44,7 +47,9 @@ class dummyClass:
 
     # Not testing 'bad_kwarg' here other than to the extent that it does not
     # stop 'traceback from causing the expected deprecation-related error.
-    @cf.decorators._deprecated_kwarg_check("traceback", "bad_kwarg")
+    @cf.decorators._deprecated_kwarg_check(
+        "traceback", "bad_kwarg", version="some version"
+    )
     def multikwarg_decorated_func_2(
         self, good_kwarg=True, traceback=False, bad_kwarg=False
     ):
