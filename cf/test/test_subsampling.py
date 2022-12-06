@@ -30,7 +30,7 @@ atexit.register(_remove_tmpfiles)
 
 
 class SubsampledTest(unittest.TestCase):
-    """Test management of constructs with underlying subsampled arrays."""
+    """Test management of underlying subsampled arrays."""
 
     biquadratic = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "subsampled_2.nc"
