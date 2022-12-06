@@ -339,150 +339,179 @@ class DimensionCoordinate(
     ):
         """Create cell bounds.
 
+        The returned `Bounds` instance can always be added to the
+        dimension coordinate construct with its `set_bounds` method,
+        for instance:
+
+        >>> b = d.create_bounds()
+        >>> d.set_bounds(b)
+
+        By default, Voronoi cells are created by defining cell bounds
+        that are half way between adjacent coordinate values. For
+        non-cyclic coordinates, extrapolation is used to ensure that
+        the first and last cells have their coordinates in their
+        centre.
+
+        For instance, the Voronoi cells created for non-cyclic
+        coordinates ``0, 40, 90, 180`` have bounds ``(-20, 20), (20,
+        65), (65, 135), (135, 225)``
+
+        If those coordinates were instead cyclic with a period of
+        ``360``, then the bounds would be ``(-90, 20), (20, 65), (65,
+        135), (135, 270)``
+
         :Parameters:
 
             bound: optional
                 If set to a value larger (smaller) than the largest
-                (smallest) coordinate value then bounds are created which
-                include this value and for which each coordinate is in the
-                centre of its bounds.
+                (smallest) coordinate value then bounds are created
+                which include this value and for which each coordinate
+                is in the centre of its bounds.
 
             cellsize: optional
                 Define the exact size of each cell that is
-                created. Created cells are allowed to overlap do not have
-                to be contigious. The *cellsize* parameter may be one of:
+                created. Created cells are allowed to overlap and do
+                not have to be contigious. The *cellsize* parameter
+                may be one of:
 
-                  * A data-like scalar (see below) that defines the cell size,
-                    either in the same units as the coordinates or in the
-                    units provided. Note that in this case, the position of
-                    each coordinate within the its cell is controlled by the
-                    *flt* parameter.
+                * A scalar data-like
 
-                    *Parameter example:*
-                        To specify cellsizes of 10, in the same units as the
-                        coordinates: ``cellsize=10``.
+                  Defines the cell size, either in the same units as
+                  the coordinates or in the units provided. Note that
+                  in this case, the position of each coordinate within
+                  the its cell is controlled by the *flt* parameter.
 
-                    *Parameter example:*
-                        To specify cellsizes of 1 day: ``cellsize=cf.Data(1,
-                        'day')`` (see `cf.Data` for details).
+                  *Parameter example:*                
+                    To specify cellsizes of 10, in the same units as
+                    the coordinates: ``cellsize=10``.
 
-                    *Parameter example:*
-                        For coordinates ``1, 2, 10``, setting ``cellsize=1``
-                        will result in bounds of ``(0.5, 1.5), (1.5, 2.5),
-                        (9.5, 10.5)``.
+                  *Parameter example:*
+                    To specify cellsizes of 1 day:
+                    ``cellsize=cf.Data(1, 'day')`` (see `cf.Data` for
+                    details).
 
-                    *Parameter example:*
-                        For coordinates ``1, 2, 10`` kilometres, setting
-                        ``cellsize=cf.Data(5000, 'm')`` will result in bounds
-                        of ``(-1.5, 3.5), (-0.5, 4.5), (7.5, 12.5)`` (see
-                        `cf.Data` for details).
+                  *Parameter example:* 
+                    For coordinates ``1, 2, 10``, setting
+                    ``cellsize=1`` will result in bounds of ``(0.5,
+                    1.5), (1.5, 2.5), (9.5, 10.5)``.
 
-                    *Parameter example:*
-                        For decreasing coordinates ``2, 0, -12`` setting,
-                        ``cellsize=2`` will result in bounds of ``(3, 1),
-                        (1, -1), (-11, -13)``.
+                  *Parameter example:*
+                    For coordinates ``1, 2, 10`` kilometres, setting
+                    ``cellsize=cf.Data(5000, 'm')`` will result in
+                    bounds of ``(-1.5, 3.5), (-0.5, 4.5), (7.5,
+                    12.5)`` (see `cf.Data` for details).
 
-                  * A `cf.TimeDuration` defining the cell size. Only
-                    applicable to reference time coordinates. It is possible
-                    to "anchor" the cell bounds via the `cf.TimeDuration`
-                    parameters. For example, to specify cell size of one
-                    calendar month, starting and ending on the 15th day:
-                    ``cellsize=cf.M(day=15)`` (see `cf.M` for details). Note
-                    that the *flt* parameter is ignored in this case.
+                  *Parameter example:*
+                    For decreasing coordinates ``2, 0, -12`` setting,
+                    ``cellsize=2`` will result in bounds of ``(3, 1),
+                    (1, -1), (-11, -13)``.
 
-                    *Parameter example:*
-                        For coordinates ``1984-12-01 12:00, 1984-12-02
-                        12:00, 2000-04-15 12:00`` setting,
-                        ``cellsize=cf.D()`` will result in bounds of
-                        ``(1984-12-01, 1984-12-02), (1984-12-02,
-                        1984-12-03), (2000-05-15, 2000-04-16)`` (see `cf.D`
-                        for details).
+                * `cf.TimeDuration`
 
-                    *Parameter example:*
-                        For coordinates ``1984-12-01, 1984-12-02,
-                        2000-04-15`` setting, ``cellsize=cf.D()`` will
-                        result in bounds of ``(1984-12-01, 1984-12-02),
-                        (1984-12-02, 1984-12-03), (2000-05-15, 2000-04-16)``
-                        (see `cf.D` for details).
+                  A time duration defining the cell size. Only
+                  applicable to reference time coordinates. It is
+                  possible to "anchor" the cell bounds via the
+                  `cf.TimeDuration` parameters. For example, to
+                  specify cell size of one calendar month, starting
+                  and ending on the 15th day:
+                  ``cellsize=cf.M(day=15)`` (see `cf.M` for
+                  details). Note that the *flt* parameter is ignored
+                  in this case.
 
-                    *Parameter example:*
-                        For coordinates ``1984-12-01, 1984-12-02,
-                        2000-04-15`` setting, ``cellsize=cf.D(hour=12)``
-                        will result in bounds of ``(1984-11:30 12:00,
-                        1984-12-01 12:00), (1984-12-01 12:00, 1984-12-02
-                        12:00), (2000-05-14 12:00, 2000-04-15 12:00)`` (see
-                        `cf.D` for details).
+                  *Parameter example:*
+                    For coordinates ``1984-12-01 12:00, 1984-12-02
+                    12:00, 2000-04-15 12:00`` setting,
+                    ``cellsize=cf.D()`` will result in bounds of
+                    ``(1984-12-01, 1984-12-02), (1984-12-02,
+                    1984-12-03), (2000-05-15, 2000-04-16)`` (see
+                    `cf.D` for details).
 
-                    *Parameter example:*
-                        For coordinates ``1984-12-16 12:00, 1985-01-16
-                        12:00`` setting, ``cellsize=cf.M()`` will result in
-                        bounds of ``(1984-12-01, 1985-01-01), (1985-01-01,
-                        1985-02-01)`` (see `cf.M` for details).
+                  *Parameter example:*
+                    For coordinates ``1984-12-01, 1984-12-02,
+                    2000-04-15`` setting, ``cellsize=cf.D()`` will
+                    result in bounds of ``(1984-12-01, 1984-12-02),
+                    (1984-12-02, 1984-12-03), (2000-05-15,
+                    2000-04-16)`` (see `cf.D` for details).
 
-                    *Parameter example:*
-                        For coordinates ``1984-12-01 12:00, 1985-01-01
-                        12:00`` setting, ``cellsize=cf.M()`` will result in
-                        bounds of ``(1984-12-01, 1985-01-01), (1985-01-01,
-                        1985-02-01)`` (see `cf.M` for details).
+                  *Parameter example:*
+                    For coordinates ``1984-12-01, 1984-12-02,
+                    2000-04-15`` setting, ``cellsize=cf.D(hour=12)``
+                    will result in bounds of ``(1984-11:30 12:00,
+                    1984-12-01 12:00), (1984-12-01 12:00, 1984-12-02
+                    12:00), (2000-05-14 12:00, 2000-04-15 12:00)``
+                    (see `cf.D` for details).
 
-                    *Parameter example:*
-                        For coordinates ``1984-12-01 12:00, 1985-01-01
-                        12:00`` setting, ``cellsize=cf.M(day=20)`` will
-                        result in bounds of ``(1984-11-20, 1984-12-20),
-                        (1984-12-20, 1985-01-20)`` (see `cf.M` for details).
+                  *Parameter example:*
+                    For coordinates ``1984-12-16 12:00, 1985-01-16
+                    12:00`` setting, ``cellsize=cf.M()`` will result
+                    in bounds of ``(1984-12-01, 1985-01-01),
+                    (1985-01-01, 1985-02-01)`` (see `cf.M` for
+                    details).
 
-                    *Parameter example:*
-                        For coordinates ``1984-03-01, 1984-06-01`` setting,
-                        ``cellsize=cf.Y()`` will result in bounds of
-                        ``(1984-01-01, 1985-01-01), (1984-01-01,
-                        1985-01-01)`` (see `cf.Y` for details). Note that in
-                        this case each cell has the same bounds. This
-                        because ``cf.Y()`` is equivalent to ``cf.Y(month=1,
-                        day=1)`` and the closest 1st January to both
-                        coordinates is 1st January 1984.
+                  *Parameter example:*
+                    For coordinates ``1984-12-01 12:00, 1985-01-01
+                    12:00`` setting, ``cellsize=cf.M()`` will result
+                    in bounds of ``(1984-12-01, 1985-01-01),
+                    (1985-01-01, 1985-02-01)`` (see `cf.M` for
+                    details).
 
-                {+data-like-scalar} TODO
+                  *Parameter example:*
+                    For coordinates ``1984-12-01 12:00, 1985-01-01
+                    12:00`` setting, ``cellsize=cf.M(day=20)`` will
+                    result in bounds of ``(1984-11-20, 1984-12-20),
+                    (1984-12-20, 1985-01-20)`` (see `cf.M` for
+                    details).
+
+                  *Parameter example:*
+                    For coordinates ``1984-03-01, 1984-06-01``
+                    setting, ``cellsize=cf.Y()`` will result in bounds
+                    of ``(1984-01-01, 1985-01-01), (1984-01-01,
+                    1985-01-01)`` (see `cf.Y` for details). Note that
+                    in this case each cell has the same bounds. This
+                    because ``cf.Y()`` is equivalent to
+                    ``cf.Y(month=1, day=1)`` and the closest 1st
+                    January to both coordinates is 1st January 1984.
 
             flt: `float`, optional
-                When creating cells with sizes specified by the *cellsize*
-                parameter, define the fraction of the each cell which is
-                less its coordinate value. By default *flt* is 0.5, so that
-                each cell has its coordinate at it's centre. Ignored if
-                *cellsize* is not set.
+                When creating cells with sizes specified by the
+                *cellsize* parameter, define the fraction of the each
+                cell which is less its coordinate value. By default
+                *flt* is 0.5, so that each cell has its coordinate at
+                it's centre. Ignored if *cellsize* is not set.
 
                 *Parameter example:*
-                    For coordinates ``1, 2, 10``, setting ``cellsize=1,
-                    flt=0.5`` will result in bounds of ``(0.5, 1.5), (1.5,
-                    2.5), (9.5, 10.5)``.
+                  For coordinates ``1, 2, 10``, setting ``cellsize=1,
+                  flt=0.5`` will result in bounds of ``(0.5, 1.5),
+                  (1.5, 2.5), (9.5, 10.5)``.
 
                 *Parameter example:*
-                    For coordinates ``1, 2, 10``, setting ``cellsize=1,
-                    flt=0.25`` will result in bounds of ``(0.75, 1.75),
-                    (1.75, 2.75), (9.75, 10.75)``.
+                  For coordinates ``1, 2, 10``, setting ``cellsize=1,
+                  flt=0.25`` will result in bounds of ``(0.75, 1.75),
+                  (1.75, 2.75), (9.75, 10.75)``.
 
                 *Parameter example:*
-                    For decreasing coordinates ``2, 0, -12``, setting
-                    ``cellsize=6, flt=0.9`` will result in bounds of
-                    ``(2.6, -3.4), (0.6, -5.4), (-11.4, -17.4)``.
+                  For decreasing coordinates ``2, 0, -12``, setting
+                  ``cellsize=6, flt=0.9`` will result in bounds of
+                  ``(2.6, -3.4), (0.6, -5.4), (-11.4, -17.4)``.
 
             max: optional
                 Limit the created bounds to be no more than this number.
 
-                *Parameter example:*
-                    To ensure that all latitude bounds are at most 90:
-                    ``max=90``.
+                *Parameter example:*  
+                  To ensure that all latitude bounds are at most 90:
+                  ``max=90``.
 
             min: optional
                 Limit the created bounds to be no less than this number.
 
                 *Parameter example:*
-                    To ensure that all latitude bounds are at least -90:
-                    ``min=-90``.
+                  To ensure that all latitude bounds are at least -90:
+                  ``min=-90``.
 
         :Returns:
 
             `Bounds`
-                The newly-created coordinate cell bounds object.
+                The newly-created coordinate cell bounds.
 
         **Examples**
 
@@ -569,7 +598,8 @@ class DimensionCoordinate(
                 # ----------------------------------------------------
                 if size < 2:
                     raise ValueError(
-                        "Can't create bounds for Voronoi cells from one value"
+                        "Can't create Voronoi bounds when there is "
+                        "only one cell"
                     )
 
                 bounds_1d = [array.item(0) * 1.5 - array.item(1) * 0.5]
@@ -578,17 +608,34 @@ class DimensionCoordinate(
 
                 dtype = type(bounds_1d[0])
 
-                if max is not None:
-                    if self.direction():
-                        bounds_1d[-1] = max
-                    else:
-                        bounds_1d[0] = max
-                if min is not None:
-                    if self.direction():
-                        bounds_1d[0] = min
-                    else:
-                        bounds_1d[-1] = min
+                if self.cyclic():
+                    period = self.period()
+                    if period is None:
+                        raise ValueError(
+                            "Can't create Voronoi bounds for cyclic "
+                            "corodinates with no period"
+                        )
 
+                    if self.direction():
+                        # Increasing
+                        b = 0.5 * (array[0] + period - array[-1])
+                    else:
+                        # Decreasing
+                        b = 0.5 * (array[-1] - period + array[0])
+
+                    bounds_1d[0] = array.item(0) - b
+                    bounds_1d[-1] = array.item(-1) + b
+                else: 
+                    if max is not None:
+                        if self.direction():
+                            bounds_1d[-1] = max
+                        else:
+                            bounds_1d[0] = max
+                    if min is not None:
+                        if self.direction():
+                            bounds_1d[0] = min
+                        else:
+                            bounds_1d[-1] = min        
             else:
                 # ----------------------------------------------------
                 # Create
