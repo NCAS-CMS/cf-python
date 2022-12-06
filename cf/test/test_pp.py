@@ -51,6 +51,30 @@ class ppTest(unittest.TestCase):
 
     chunk_sizes = (800000, 80000)
 
+    def test_PP_read_um(self):
+        f = cf.read(self.ppextradata)[0]
+
+        g = cf.read(self.ppextradata, um={"fmt": "pp"})[0]
+        self.assertTrue(f.equals(g))
+
+        for vn in (4.5, 405, "4.5", None):
+            g = cf.read(self.ppextradata, um={"fmt": "pp", "version": vn})[0]
+            self.assertTrue(f.equals(g))
+
+        p = cf.read("wgdos_packed.pp")[0]
+        p0 = cf.read(
+            "wgdos_packed.pp",
+            um={
+                "fmt": "PP",
+                "endian": "little",
+                "word_size": 4,
+                "version": 4.5,
+                "height_at_top_of_model": 23423.65,
+            },
+        )[0]
+
+        self.assertTrue(p.equals(p0, verbose=2))
+
     def test_load_stash2standard_name(self):
         f = cf.read(self.ppfile)[0]
         self.assertEqual(f.identity(), "eastward_wind")
@@ -114,16 +138,6 @@ class ppTest(unittest.TestCase):
         self.assertTrue(f.dimension_coordinate("height", default=False))
         self.assertTrue(f.dimension_coordinate("time", default=False))
         self.assertTrue(f.auxiliary_coordinate("longitude", default=False))
-
-    def test_PP_read_um(self):
-        f = cf.read(self.ppextradata)[0]
-
-        g = cf.read(self.ppextradata, um={"fmt": "pp"})[0]
-        self.assertTrue(f.equals(g))
-
-        for vn in (4.5, 405, "4.5", None):
-            g = cf.read(self.ppextradata, um={"fmt": "pp", "version": vn})[0]
-            self.assertTrue(f.equals(g))
 
 
 if __name__ == "__main__":

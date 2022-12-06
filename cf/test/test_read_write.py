@@ -640,21 +640,6 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
         self.assertTrue(domain_axes["domainaxis2"].nc_is_unlimited())
 
-    def test_read_pp(self):
-        p = cf.read("wgdos_packed.pp")[0]
-        p0 = cf.read(
-            "wgdos_packed.pp",
-            um={
-                "fmt": "PP",
-                "endian": "big",
-                "word_size": 4,
-                "version": 4.5,
-                "height_at_top_of_model": 23423.65,
-            },
-        )[0]
-
-        self.assertTrue(p.equals(p0, verbose=2))
-
     def test_read_CDL(self):
         subprocess.run(
             " ".join(["ncdump", self.filename, ">", tmpfile]),
@@ -859,6 +844,39 @@ class read_writeTest(unittest.TestCase):
         self.assertIsInstance(e[0], cf.Domain)
         self.assertIsInstance(e[1], cf.Domain)
         self.assertTrue(e[0].equals(e[1]))
+
+    def test_write_omit_data(self):
+        """Test the `omit_data` parameter to `write`."""
+        f = cf.example_field(1)
+        cf.write(f, tmpfile)
+
+        cf.write(f, tmpfile, omit_data="all")
+        g = cf.read(tmpfile)
+        self.assertEqual(len(g), 1)
+        g = g[0]
+
+        # Check that the data are missing
+        self.assertFalse(g.array.count())
+        self.assertFalse(g.construct("grid_latitude").array.count())
+
+        # Check that a dump works
+        g.dump(display=False)
+
+        cf.write(f, tmpfile, omit_data=("field", "dimension_coordinate"))
+        g = cf.read(tmpfile)[0]
+
+        # Check that only the field and dimension coordinate data are
+        # missing
+        self.assertFalse(g.array.count())
+        self.assertFalse(g.construct("grid_latitude").array.count())
+        self.assertTrue(g.construct("latitude").array.count())
+
+        cf.write(f, tmpfile, omit_data="field")
+        g = cf.read(tmpfile)[0]
+
+        # Check that only the field data are missing
+        self.assertFalse(g.array.count())
+        self.assertTrue(g.construct("grid_latitude").array.count())
 
 
 if __name__ == "__main__":
