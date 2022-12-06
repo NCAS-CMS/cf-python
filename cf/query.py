@@ -857,8 +857,9 @@ class Query:
         <CF Query: (ge 3000 m)>
 
         """
+
         def get_and_set_value_units(v, u):
-            """Helper method to simplify logic to set specified units."""
+            """Helper method to simplify setting of specified units."""
             v_units = getattr(v, "Units", None)
             if v_units is None:  # Value 'v' has no units
                 v = Data(v, units=u)
@@ -886,7 +887,6 @@ class Query:
         if value is None:
             return
 
-        value_units = getattr(value, "Units", None)
         if self.operator in ("wi", "wo", "set"):
             # Value is a sequence of things that may or may not
             # already have units
