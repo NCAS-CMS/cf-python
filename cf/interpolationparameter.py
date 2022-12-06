@@ -22,7 +22,7 @@ class InterpolationParameter(
     {{netCDF variable}}
 
     The netCDF subsampled dimension name and the netCDF interpolation
-    subarea dimension name, if required, are set on the on the
+    subarea dimension name, if required, are set on the
     corresponding tie point index variable.
 
     .. versionadded:: TODODASKVER
