@@ -964,18 +964,14 @@ class DataTest(unittest.TestCase):
                         (np.ma.getmask(e.array) == np.ma.getmask(b)).all()
                     )
 
-                    # TODODASK: Reinstate the following test when
-                    #           __sub__, minimum, and maximum have
-                    #           been daskified
-
-        #                    e.where(
-        #                        cf.set([e.minimum(), e.maximum()]),
-        #                        cf.masked,
-        #                        e - 1,
-        #                        inplace=True,
-        #                    )
-        #                    f = d.digitize(bins, upper=upper)
-        #                    self.assertTrue(e.equals(f, verbose=2))
+                    e.where(
+                        cf.set([e.minimum(), e.maximum()]),
+                        cf.masked,
+                        e - 1,
+                        inplace=True,
+                    )
+                    f = d.digitize(bins, upper=upper)
+                    self.assertTrue(e.equals(f, verbose=2))
 
         # Check returned bins
         bins = [2, 6, 10, 50, 100]
