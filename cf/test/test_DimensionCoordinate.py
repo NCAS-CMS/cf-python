@@ -2,7 +2,7 @@ import datetime
 import faulthandler
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -14,7 +14,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     dim = cf.DimensionCoordinate()
     dim.standard_name = "latitude"
-    a = numpy.array(
+    a = np.array(
         [
             -30,
             -23.5,
@@ -33,7 +33,7 @@ class DimensionCoordinateTest(unittest.TestCase):
     )
     dim.set_data(cf.Data(a, "degrees_north"))
     bounds = cf.Bounds()
-    b = numpy.empty(a.shape + (2,))
+    b = np.empty(a.shape + (2,))
     b[:, 0] = a - 0.1
     b[:, 1] = a + 0.1
     bounds.set_data(cf.Data(b))
@@ -173,7 +173,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         d = self.dim.copy()
 
         c = d.cellsize
-        self.assertTrue(numpy.allclose(c.array, 0.2))
+        self.assertTrue(np.allclose(c.array, 0.2))
 
         self.assertTrue(d.Units.equals(cf.Units("degrees_north")))
         self.assertTrue(d.bounds.Units.equals(cf.Units("degrees_north")))
@@ -187,7 +187,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         d.del_bounds()
         c = d.cellsize
-        self.assertTrue(numpy.allclose(c.array, 0))
+        self.assertTrue(np.allclose(c.array, 0))
 
     def test_DimensionCoordinate_override_units(self):
         d = self.dim.copy()
@@ -313,7 +313,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         c = dim.array
         b = dim.bounds.array
-        c2 = numpy.expand_dims(c, -1)
+        c2 = np.expand_dims(c, -1)
 
         x = dim.copy()
         y = dim.copy()
@@ -484,13 +484,117 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         self.assertTrue((c.bounds.data.array == [0, 2592000]).all())
 
-    def test_DimensiconCoordinate__getitem__(self):
+    def test_DimensionCoordinate__getitem__(self):
         dim = self.dim
         self.assertTrue((dim[1:3].array == dim.array[1:3]).all())
 
         # Indices result in a subspaced shape that has a size 0 axis
         with self.assertRaises(IndexError):
             dim[[False] * dim.size]
+
+    def test_DimensionCoordinate_create_bounds(self):
+        # Create bounds for Voronoi cells
+        d = cf.DimensionCoordinate(data=[0.0, 40, 90, 180])
+        b = d.create_bounds()
+        self.assertTrue(
+            (
+                b.array
+                == np.array(
+                    [
+                        [-20.0, 20.0],
+                        [20.0, 65.0],
+                        [65.0, 135.0],
+                        [135.0, 225.0],
+                    ]
+                )
+            ).all()
+        )
+
+        d = d[::-1]
+        b = d.create_bounds()
+        self.assertTrue(
+            (
+                b.array
+                == np.array(
+                    [
+                        [225.0, 135.0],
+                        [135.0, 65.0],
+                        [65.0, 20.0],
+                        [20.0, -20.0],
+                    ]
+                )
+            ).all()
+        )
+
+        # Cyclic coordinates have a co-located first and last bound:
+        d.period(360)
+        d.cyclic(0)
+        b = d.create_bounds()
+        self.assertTrue(
+            (
+                b.array
+                == np.array(
+                    [
+                        [270.0, 135.0],
+                        [135.0, 65.0],
+                        [65.0, 20.0],
+                        [20.0, -90.0],
+                    ]
+                )
+            ).all()
+        )
+
+        # Cellsize units must be equivalent to the coordinate units,
+        # or if the cellhas has no units then they are assumed to be
+        # the same the coordinates:
+        d = cf.DimensionCoordinate(data=cf.Data([0, 2, 4], "km"))
+        b = d.create_bounds(cellsize=cf.Data(2000, "m"))
+        self.assertTrue((b.array == np.array([[-1, 1], [1, 3], [3, 5]])).all())
+        b = d.create_bounds(cellsize=2)
+        self.assertTrue((b.array == np.array([[-1, 1], [1, 3], [3, 5]])).all())
+
+        # Cells may be non-contiguous and may overlap:
+        d = cf.DimensionCoordinate(data=[1.0, 2, 10])
+        b = d.create_bounds(cellsize=1)
+        self.assertTrue(
+            (b.array == np.array([[0.5, 1.5], [1.5, 2.5], [9.5, 10.5]])).all()
+        )
+
+        b = d.create_bounds(cellsize=5)
+        self.assertTrue(
+            (
+                b.array == np.array([[-1.5, 3.5], [-0.5, 4.5], [7.5, 12.5]])
+            ).all()
+        )
+
+        # Reference date-time coordinates can use `cf.TimeDuration`
+        # cell sizes:
+        d = cf.DimensionCoordinate(
+            data=cf.Data(["1984-12-01", "1984-12-02"], dt=True)
+        )
+        b = d.create_bounds(cellsize=cf.D())
+        self.assertTrue((b.array == np.array([[0, 1], [1, 2]])).all())
+
+        b = d.create_bounds(cellsize=cf.D(hour=12))
+        self.assertTrue((b.array == np.array([[-0.5, 0.5], [0.5, 1.5]])).all())
+
+        # Cell bounds defined by calendar months:
+        d = cf.DimensionCoordinate(
+            data=cf.Data(["1985-01-16: 12:00", "1985-02-15"], dt=True)
+        )
+        b = d.create_bounds(cellsize=cf.M())
+        self.assertTrue((b.array == np.array([[-15, 16], [16, 44]])).all())
+
+        b = d.create_bounds(cellsize=cf.M(day=20))
+        self.assertTrue((b.array == np.array([[-27, 4], [4, 35]])).all())
+
+        # Cell bounds defined by calendar years:
+
+        d = cf.DimensionCoordinate(
+            data=cf.Data(["1984-06-01", "1985-06-01"], dt=True)
+        )
+        b = d.create_bounds(cellsize=cf.Y(month=12))
+        self.assertTrue((b.array == np.array([[-183, 183], [183, 548]])).all())
 
 
 if __name__ == "__main__":
