@@ -1188,9 +1188,9 @@ class PropertiesData(Properties):
         **Examples**
 
         >>> print(f.datetime_array)
-        [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
+        [1950-11-15 00:00:00  1950-12-16 12:30:00  1951-01-16 12:00:45]
         >>> print(f.year.array)
-        [450  450  451]
+        [1950  1950  1951]
 
         """
         return self._YMDhms("year")
