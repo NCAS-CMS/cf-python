@@ -332,6 +332,15 @@ _docstring_substitution_definitions = {
                 value. A default can also be set globally with the
                 ``split_every`` key in `dask.config`. See
                 `dask.array.reduction` for details.""",
+    "{{active_storage: `bool`, optional}}": """{{active_storage: `bool`, optional}}
+                If True then attempt to perform the collapse using
+                active storage. If other necessary conditions are not
+                met (see `Collapse` for details) then the operation
+                will be executed without active storage.""",
+    "{{chunk_function: callable, optional}}": """{{chunk_function: callable, optional}}
+                Provides the ``chunk`` parameter to
+                `dask.array.reduction`. If unset then an approriate
+                default function will be used.""",
     # Collapse weights
     "{{Collapse weights: data_like or `None`, optional}}": """weights: data_like or `None`, optional
                 Weights associated with values of the array. By
