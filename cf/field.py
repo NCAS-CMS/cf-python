@@ -4971,6 +4971,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def close(self):
         """Close all files referenced by the field construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -4983,10 +4986,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f.close()
 
         """
-        super().close()
-
-        for construct in self.constructs.filter_by_data(todict=True).values():
-            construct.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the specified axis is cyclic.

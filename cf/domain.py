@@ -6,12 +6,7 @@ from . import mixin
 from .constructs import Constructs
 from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
-from .functions import (
-    _DEPRECATION_ERROR_ARG,
-    _DEPRECATION_ERROR_METHOD,
-    indices_shape,
-    parse_indices,
-)
+from .functions import _DEPRECATION_ERROR_ARG, indices_shape, parse_indices
 
 _empty_set = set()
 
@@ -127,6 +122,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def close(self):
         """Close all files referenced by the domain construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -139,9 +137,13 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         >>> d.close()
 
         """
-        # TODODASK - is this still needed?
-
-        self.constructs.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):
@@ -256,29 +258,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         return self._default(
             default, message=f"{self.__class__.__name__} has no data"
         )
-
-    def get_filenames(self):
-        """Return the file names containing the metadata construct data.
-
-        Deprecated at version TODODASKVER and and is no longer
-        available. Consider using the `get_original_filenames` method
-        instead.
-
-        .. note:: Might get re-instated in a later version.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If all of the
-                data are in memory then an empty `set` is returned.
-
-        """
-        _DEPRECATION_ERROR_METHOD(
-            self,
-            "get_filenames",
-            "Consider using the 'get_original_filenames' method instead.",
-            version="TODODASKVER",
-        )  # pragma: no cover
 
     def identity(self, default="", strict=False, relaxed=False, nc_only=False):
         """Return the canonical identity.

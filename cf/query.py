@@ -857,32 +857,47 @@ class Query:
         <CF Query: (ge 3000 m)>
 
         """
+
+        def get_and_set_value_units(v, u):
+            """Helper method to simplify setting of specified units."""
+            v_units = getattr(v, "Units", None)
+            if v_units is None:  # Value 'v' has no units
+                v = Data(v, units=u)
+            else:  # Value 'v' already has units
+                try:
+                    v = v.copy()
+                    v.Units = u
+                except ValueError:
+                    raise ValueError(
+                        f"Units {u!r} are not equivalent to "
+                        f"query condition units {v_units!r}"
+                    )
+
+            return v
+
         units = Units(units)
 
         compound = self._compound
         if compound:
             for r in compound:
                 r.set_condition_units(units)
-
             return
 
         value = self._value
         if value is None:
             return
 
-        value_units = getattr(value, "Units", None)
-        if value_units is None:
-            # Value has no units
-            value = Data(value, units=units)
+        if self.operator in ("wi", "wo", "set"):
+            # Value is a sequence of things that may or may not
+            # already have units
+            new_values = []
+            for v in value:
+                v = get_and_set_value_units(v, units)
+                new_values.append(v)
+
+            value = new_values
         else:
-            # Value already has units
-            try:
-                value.Units = units
-            except ValueError:
-                raise ValueError(
-                    f"Units {units!r} are not equivalent to "
-                    f"query condition units {value_units!r}"
-                )
+            value = get_and_set_value_units(value, units)
 
         self._value = value
 
