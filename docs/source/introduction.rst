@@ -32,12 +32,13 @@ is built on a complete implementation of the :ref:`CF-data-model`.
 **Functionality**
 -----------------
 
-The cf package implements the :ref:`CF-data-model` [#cfdm]_ for its
-internal data structures and so is able to process any CF-compliant
-dataset. It is not strict about CF-compliance, however, so that
-partially conformant datasets may be ingested from existing datasets
-and written to new datasets.This is so that datasets that are
-partially conformant may nonetheless be modified in memory.
+The cf package uses for its internal data structures the
+:ref:`CF-data-model` [#cfdm]_ inherited from the `cfdm` package, and
+so is able to process any CF-compliant dataset. It is not strict about
+CF-compliance, however, so that partially conformant datasets may be
+ingested from existing datasets and written to new datasets.This is so
+that datasets that are partially conformant may nonetheless be
+modified in memory.
 
 .. code-block:: python
    :caption: *A simple example of reading a field construct from a
@@ -56,6 +57,7 @@ partially conformant may nonetheless be modified in memory.
                    : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
+
 
 The cf package can:
 
@@ -112,6 +114,13 @@ The cf package can:
 All of the above use LAMA functionality, which allows multiple
 fields larger than the available memory to exist and be manipulated.
 
+**Performance**
+---------------
+
+As of version 3.14.0, cf uses :ref:`Dask <Performance>` for all of its
+data manipulations, that provides lazy, parallelised, and out-of-core
+computations of array operations
+
 ----
 
 **Visualization**
@@ -155,3 +164,7 @@ page.
            metadata conventions (CF-1.6) with a software
            implementation (cf-python v2.1), Geosci. Model Dev., 10,
            4619-4646, https://doi.org/10.5194/gmd-10-4619-2017, 2017.
+
+	   Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference
+
+    implementation of the CF data model. Journal of Open Source Software, 5(54), 2717, https://doi.org/10.21105/joss.02717

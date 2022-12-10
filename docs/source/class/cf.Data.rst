@@ -579,7 +579,8 @@ Performance
    ~cf.Data.nc_hdf5_chunksizes
    ~cf.Data.nc_set_hdf5_chunksizes
    ~cf.Data.close
-   ~cf.Data.chunk
+   ~cf.Data.chunks
+   ~cf.Data.rechunk
    ~cf.Data.add_partitions
    ~cf.Data.partition_boundaries
    ~cf.Data.partition_configuration
@@ -764,8 +765,11 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Data.chunk
    ~cf.Data.Data
    ~cf.Data.dtvarray
+   ~cf.Data.dumpd
+   ~cf.Data.dumps
    ~cf.Data.expand_dims
    ~cf.Data.files
    ~cf.Data.get_filenames

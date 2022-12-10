@@ -735,7 +735,10 @@ class chunksize(ConstantAccess):
 
         arg: number or `str` or `Constant`, optional
             The chunksize in bytes. Any size accepted by
-            `dask.utils.parse_bytes` is accepted.
+            `dask.utils.parse_bytes` is accepted, for instance
+            ``100``, ``'100'``, ``'1e6'``, ``'100 MB'``, ``'100M'``,
+            ``'5kB'``, ``'5.4 kB'``, ``'1kiB'``, ``'1e6 kB'``, and
+            ``'MB'`` are all valid sizes.
 
             Note that if *arg* is a `float`, or a string that implies
             a non-integral amount of bytes, then the integer part
@@ -746,7 +749,7 @@ class chunksize(ConstantAccess):
                ``'2 MiB'``
 
             *Parameter example:*
-               Chunksizes of ``2678.9`` and ``'2.6789 KB'``are both
+               Chunksizes of ``2678.9`` and ``'2.6789 KB'`` are both
                equvalent to ``2678``.
 
     :Returns:

@@ -2764,6 +2764,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     ):
         """Change the chunk structure of the data.
 
+        **Performance**
+        
+        Rechunking can sometimes be expensive and incur a lot of
+        communication overheads.
+
         .. versionadded:: TODODASKVER
 
         .. seealso:: `chunks`, `dask.array.rechunk`

@@ -3,6 +3,12 @@
 
 .. TODODASK - review this entire section
 
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. _Performance:
+
+
 **Performance**
 ===============
 
@@ -14,303 +20,151 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
+.. _Dask:
 
-TODODOCS
-	       
+**Dask**
+--------
+
+A data array in `cf` is stored internally by a `Dask array
+<https://docs.dask.org/en/latest/array.html>`_, that provides lazy,
+parallelised, and out-of-core array computations of array
+operations. Computations are automatically optimised to maximise the
+re-use of data in memory, and to avoid calculations that do not
+contribute for the final result.
+
+The performance of `cf` is largely a function of the performance of
+Dask, and most of the techniques that Dask supports for `improving
+performance <https://docs.dask.org/en/stable/best-practices.html>`_
+can be applied through the `cf` API.
+
+----
+
+.. _Lazy-operations:
+
+
 **Lazy operations**
 -------------------
 
-Many data operations of field and metadata constructs are lazy
-i.e. the operation is actually performed until the result is needed,
-or the underlying data are shared with a `copy-on-write
-<https://en.wikipedia.org/wiki/Copy-on-write>`_ technique, or `lazy
-loading <https://en.wikipedia.org/wiki/Lazy_loading>`_ delays reading
-data from disk until it is needed. These are:
+In general, all `cf` operations (such as reading from disk,
+regridding, collapsing, subspacing, arithmetic, etc.) are lazy,
+meaning that an operation is not actually performed until the result
+is actually inspected, for instance by creating a plot of the data or
+writing the data to disk. When multiple operations are applied one
+after another, none of the operations are computed until the result of
+final one is requested.
 
-* Reading datasets from disk
-* Subspacing (in index and metadata space)
-* Axis manipulations (such as rearranging the axis order  of the data)
-* Copying
-* Field construct aggregation (and data concatenation in general)
-* Changing the units
+There are, however, a small number of `cf` operations that require the
+automatic computation of some data operations. The results of these
+computations are not saved in memory, so if the operation is repeated
+then the computed is re-calculated in its entirety unless the
+construct's `~.cf.Field.persist` method was called beforehand.
+
+Some notable cases where non-lazy computation occurs are:
+
+* **Aggregation**
+
+  When two or more field or domain constructs are aggregated to form a
+  single construct, either by `cf.read` or `cf.aggregate`, the data
+  arrays of some metadata constructs (coordinates, cell measures,
+  etc.)  must be inspected to ascertain if the aggregation is
+  possible.
+
+..
+
+* **Regridding**
+
+  When regridding a field construct with its `cf.Field.regrids` or
+  `cf.Field.regridc` method, the regridding weights are computed
+  non-lazily, which requires inspection of some or all of the
+  coordinate data. These calculations can be much more costly than the
+  regridding itself. When multiple regrid operations have the same
+  weights, performance can be improved be calculating the weights once
+  and re-using them:
   
-Operations that involve changing the data values (apart from changing
-the units) are not lazy; such arithmetic, trigonometrical, rounding,
-collapse, etc. functions.
-
-All of these lazy techniques make use of :ref:`LAMA (Large Amounts
-of Massive Arrays) <LAMA>` functionality.
-
-----
-
-**Regridding**
---------------
-
-TODODOCS
-
-When regridding multiple field constructs with their
-`cf.Field.regrids` or `cf.Field.regridc` methods, the regridding
-weights are calculated for each field's operation, and these
-calculations are often the main expense of the operation, sometimes
-close to 100% of the cost.
-
-This can be avoided for cases when all of the fields are being
-regridded to the same destination grid, and all share a common source
-grid. In such cases, the regridding operator that defines the grids
-and the weights can be calculated once and then used to regrid each
-field construct, giving potentially very large performance
-improvements.
-
-.. code-block:: python
-   :caption: *Regrid every field construct in the field list 'fl' to a
-             common destination grid defined by the field construct
-             'dst'.*
-		
-   >>> operator = fl[0].regrids(dst, method='conservative',
-   ...                          return_operator=True)
-   >>> fl_regridded = cf.FieldList(f.regrids(operator) for f in fl)
+  .. code-block:: python
+     :caption: *For a list of fields 'fl' with the same horizontal
+               domain, regrid then all using pre-computed regridding
+               weights to the domain defined by field 'dst'.*
+  		
+     >>> weights = fl[0].regrids(dst, method='conservative', return_operator=True)
+     >>> regridded = [f.regrids(weights) for f in fl]
    
-
 ----
 
-.. _LAMA:
+.. _Workflow-chunks:
 
-**Large Amounts of Massive Arrays (LAMA)**
-------------------------------------------
 
-
-TODODOCS
-
-Data are stored and manipulated in a very memory efficient manner such
-that large numbers of constructs may co-exist and be manipulated
-regardless of the size of their data arrays. The limiting factor on
-array size is not the amount of available physical memory, but the
-amount of disk space available, which is generally far greater.
-
-The basic functionality is:
-
-* **Arrays larger than the available physical memory may be created.**
-
-  Arrays larger than a preset number of bytes are partitioned into
-  smaller sub-arrays which are not kept in memory but stored on disk,
-  either as part of the original file they were read in from or as
-  newly created temporary files, whichever is appropriate.  Therefore
-  data arrays larger than a preset size need never wholly exist in
-  memory.
-
-* **Large numbers of arrays which are in total larger than the
-  available physical memory may co-exist.**
-
-  Large numbers of data arrays which are collectively larger than the
-  available physical memory may co-exist, regardless of whether any
-  individual array is in memory or stored on disk.
-
-* **Arrays larger than the available physical memory may be operated
-  on.**
-  
-  Array operations (such as subspacing, assignment, arithmetic,
-  comparison, collapses, etc.) are carried out on a
-  partition-by-partition basis. When an operation traverses the
-  partitions, if a partition is stored on disk then it is returned to
-  disk before processing the next partition.
-
-* **The memory management does not need to be known at the API
-  level.**
-
-  As the array's metadata (such as size, shape, data-type, number of
-  dimensions, etc.) always reflect the data array in its entirety,
-  regardless of how the array is partitioned and whether or not its
-  partitions are in memory, constructs containing data arrays may be
-  used in the API as if they were normal, in-memory objects (like
-  `numpy` arrays). Partitioning does carry a performance overhead, but
-  this may be minimised for particular applications or hardware
-  configurations.
-
-
-.. _LAMA_reading:
-
-
-Reading from files
-^^^^^^
-
-TODODOCS
-^^^^^^^^^^^^
-
-When a field construct is read from a file, the data array is not
-realized in memory, however large or small it may be. Instead each
-partition refers to part of the original file on disk. Therefore
-reading even very large field constructs is initially very fast and
-uses up only a very small amount of memory.
-
-.. _LAMA_copying:
-
-Copying
-^^^^^^^
-
-
-TODODOCS
-
-When a field construct is deep copied with its `~Field.copy` method or
-the Python `copy.deepcopy` function, the partitions of its data array
-are transferred to the new field construct as object identities and
-are *not* deep copied. Therefore copying even very large field
-constructs is initially very fast and uses up only a very small amount
-of memory.
-
-The independence of the copied field construct is preserved, however,
-since each partition that is stored in memory (as opposed to on disk)
-is deep copied if and when the data in the new field construct is
-actually accessed, and then only if the partition's data still exists
-in the original (or any other) field construct.
-
-Aggregation
-^^^^^^^^^^^
-
-TODODOCS
-
-
-When two field constructs are aggregated to form one, larger field
-construct there is no need for either field construct's data array
-partitions to be accessed, and therefore brought into memory if they
-were stored on disk. The resulting field construct recombines the two
-field constructs' array partitions as object identities into the new
-larger array. Thereby creating an aggregated field construct that uses
-up only a very small amount of extra memory.
-
-The independence of the new field construct is preserved, however,
-since each partition that is stored in memory (as opposed to on disk)
-is deep copied when the data in the new field construct is actually
-accessed, and then only if the partition's data still exists in its
-the original (or any other) field construct.
-
-.. _LAMA_subspacing:
-
-Subspacing
-^^^^^^^^^^
-
-TODODOCS
-
-
-When a new field construct is created by :ref:`subspacing
-<Subspacing>` a field construct, the new field construct is actually a
-:ref:`LAMA deep copy <LAMA_copying>` of the original but with
-additional instructions on each of its data partitions to only use the
-part specified by the subspace indices.
-
-As with copying, creating subspaced field constructs is initially very
-fast and uses up only a very small amount of memory, with the added
-advantage that a deep copy of only the requested parts of the data
-array needs to be carried out at the time of data access, and then
-only if the partition's data still exists in the original field
-construct.
-
-When subspacing a field construct that has previously been subspacing
-but has not yet had its data accessed, the new subspace merely updates
-the instructions on which parts of the array partitions to use. For
-example:
-
->>> f.shape = (12, 73, 96)
->>> g = f[::-2, ...]
->>> h = g[2:5, ...]
-
-is equivalent to 
-
->>> h = f[7:2:-2, ...]
-
-and if all of the partitions of field construct ``f`` are stored on
-disk then in both cases so are all of the partitions of field
-construct ``h`` and no data has been read from disk.
-
-Speed and memory management
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-TODODOCS
-
-The creation of temporary files for array partitions of large arrays
-and the reading of data from files on disk can create significant
-speed overheads (for example, recent tests show that writing a 100
-megabyte array to disk can take O(1) seconds), so it may be desirable
-to configure the maximum size of array which is kept in memory, and
-therefore has fast access.
-
-The data array memory management is configurable as follows:
-
-* Data arrays larger than a given size are partitioned into
-  sub-arrays, each of which is smaller than the chunk size. By default
-  this size is set to 1% of the total physical memory and is found and
-  set with the `cf.chunksize` function.
-
-* In-memory sub-arrays may be written to temporary files on disk when
-  the amount of available physical memory falls below a specified
-  amount. By default this amount is 10% of the total physical memory
-  and is found and set with the `cf.MINNCFCM` function.
-
-.. _LAMA_temporary_files:
-
-Temporary files
-^^^^^^^^^^^^^^^
-
-
-TODODOCS
-
-The directory in which temporary files is found and set with the
-`cf.tempdir` function:
-
->>> cf.tempdir()
-'/tmp'
->>> cf.tempdir('/home/me/tmp')
->>> cf.tempdir()
-'/home/me/tmp'
-
-The removal of temporary files which are no longer required works in
-the same way as python's automatic garbage collector. When a
-partition's data is stored in a temporary file, that file will only
-exist for as long as there are partitions referring to it. When no
-partitions require the file it will be deleted automatically.
-
-When python exits normally, all temporary files are always deleted.
-
-Changing the temporary file directory does not prevent temporary files
-in the original directory from being garbage collected.
-
-
-Partitioning
-^^^^^^^^^^^^
-
-
-TODODOCS
-
-Data partitioning preserves as much as is possible the faster varying
-(inner) dimensions' sizes in each of the sub-arrays.
-
-**Examples**
-
-* If an array with shape (2, 4, 6) is partitioned into 2 partitions
-  then both sub-arrays will have shape (1, 4, 6).
- 
-* If the same array is partitioned into 4 partitions then all four
-  sub-arrays will have shape (1, 2, 6).
-
-* If the same array is partitioned into 8 partitions then all eight
-  sub-arrays will have shape (1, 2, 3).
-
-* If the same array is partitioned into 48 partitions then all forty
-  eight sub-arrays will have shape (1, 1, 1).
-
-----
-
-.. _Parallelization:
-
-**Parallelization**
+**Workflow chunks**
 -------------------
 
+A workflow chunk - part of the data which is associated with one
+processing task - is identical to a `Dask chunk
+<https://docs.dask.org/en/stable/array-chunks.html>`_.
 
-TODODOCS
+In general, good performance results from following these `rules
+<https://docs.dask.org/en/stable/array-chunks.html#specifying-chunk-shapes>`_:
 
-.. note:: The experimental ability to run cf scripts in parallel using
-          mpirun was removed at version 3.9.0. This functionality will
-          be restored in version 3.14.0 in a robust fashion when the
-          move to using `dask`
-          (https://github.com/NCAS-CMS/cf-python/issues/182) is
-          completed.
+* A chunk should be small enough to fit comfortably in memory. There
+  will have many chunks in memory at once. Dask will often have as
+  many chunks in memory as twice the number of active threads.
+
+* A chunk must be large enough so that computations on that chunk take
+  significantly longer than the ``1 ms`` overhead per task that Dask
+  scheduling incurs. A task should take longer than ``100 ms``.
+
+* Chunk sizes between ``10 MiB`` and ``1 GiB`` are common, depending
+  on the availability of RAM and the duration of computations.
+
+* Chunks should align with the computation that you want to do. For
+  example, if you plan to frequently slice along a particular
+  dimension, then it's more efficient if your chunks are aligned so
+  that you have to touch fewer chunks. If you want to add two arrays,
+  then its convenient if those arrays have matching chunks patterns.
+
+* Chunks should align with your storage, if applicable.
+
+By default, chunks have a size of at most ``128 MiB`` and prefer
+square-like shapes. A new default chunk size may be set with the
+`cf.chunksize` function. The default chunk size may be overridden loc by
+`cf.read` and when creating `cf.Data` instances. Any data may be
+re-chunked after its creation with the `cf.Data.rechunk` method.
+
+For more information, see `Choosing good chunk sizes in Dask
+<https://blog.dask.org/2021/11/02/choosing-dask-chunk-sizes>`_.
+
+----
+
+.. _Parallel-computation:
+
+**Parallel computation**
+------------------------
+
+All operations are executed in parallel using `Dask dynamic task
+scheduling <https://docs.dask.org/en/stable/scheduling.html>`_.
+
+Operations are stored by Dask in `task graphs
+<https://docs.dask.org/en/stable/graphs.html>`_ where each node in the
+graph is a task defined by an operation on a workflow chunk, and data
+created by one node are used as inputs to the next node in the
+graph. The tasks in the graph are passed by a `scheduler
+<https://docs.dask.org/en/stable/scheduling.html>`_ to the available
+pool of processing elements (PEs) which execute the tasks in parallel
+until the final result has been computed. The default scheduler uses
+threads on the local machine, but it is easy to use local processes,
+or cluster of many machines, or a single-threaded synchronous
+scheduler that executes all computations in the local thread with no
+parallelism at all.
+
+Implementing a different scheduler is done via any of the methods
+supported by Dask, and all `cf` operations executed after a new
+scheduler has been defined will use that scheduler.
+
+.. code-block:: python
+   :caption: *One technique for executing operations on a remote
+             server.*
+
+   >>> from dask.distributed import Client
+   >>> client = Client('127.0.0.1:8786')
+   >>> import cf
+
+----
