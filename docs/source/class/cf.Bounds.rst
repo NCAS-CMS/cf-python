@@ -225,6 +225,7 @@ Data
    ~cf.Bounds.isperiodic
    ~cf.Bounds.get_original_filenames
    ~cf.Bounds.has_bounds
+   ~cf.Bounds.persist
 
 Miscellaneous
 -------------

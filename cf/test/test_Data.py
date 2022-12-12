@@ -3130,10 +3130,15 @@ class DataTest(unittest.TestCase):
         d = cf.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
-        # Scalar numeric array
         d = cf.Data([1, 2, 3.0, 4], "km", mask=[0, 1, 0, 0], chunks=2)
+        self.assertGreater(len(d.to_dask_array().dask.layers), 1)
+
         e = d.persist()
         self.assertIsInstance(e, cf.Data)
+        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
+        self.assertEqual(
+            e.to_dask_array().npartitions, d.to_dask_array().npartitions
+        )
         self.assertTrue(e.equals(d))
 
     def test_Data_cyclic(self):

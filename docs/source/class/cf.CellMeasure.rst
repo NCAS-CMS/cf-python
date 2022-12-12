@@ -248,6 +248,7 @@ Data
    ~cf.CellMeasure.isperiodic
    ~cf.CellMeasure.get_original_filenames
    ~cf.CellMeasure.has_bounds
+   ~cf.CellMeasure.persist
 
 Miscellaneous
 -------------
