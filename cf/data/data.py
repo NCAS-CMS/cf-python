@@ -2268,7 +2268,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASKDOCS
+        >>> e = d.persist()
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
