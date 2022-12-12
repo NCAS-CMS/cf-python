@@ -1787,6 +1787,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx)
         d.override_units(_units_None, inplace=True)
 
+        # More elegant to handle 'delete_bins' in cf- rather than Dask- space
+        # i.e. using cf.where with d in-place rather than da.where with dx
+        # just after the digitize operation above (cf.where already applies
+        # equivalent logic element-wise).
+        if delete_bins:
+            for n, db in enumerate(delete_bins):
+                db -= n
+                d.where(d == db, np.ma.masked, None, inplace=True)
+                # x = d - 1 rather than = d here since there is one fewer bin
+                # therefore we need to adjust to the new corresponding indices
+                d.where(d > db, d - 1, None, inplace=True)
+
         if return_bins:
             if two_d_bins is None:
                 two_d_bins = np.empty((bins.size - 1, 2), dtype=bins.dtype)
@@ -5534,6 +5546,77 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         return self
+
+    def get_filenames(self):
+        """The names of files containing parts of the data array.
+
+        Returns the names of any files that are required to deliver
+        the computed data array. This list may contain fewer names
+        than the collection of file names that defined the data when
+        it was first instantiated, as could be the case after the data
+        has been subspaced.
+
+        **Implementation**
+
+        A `dask` chunk that contributes to the computed array is
+        assumed to reference data within a file if that chunk's array
+        object has a callable `get_filename` method, the output of
+        which is added to the returned `set`.
+
+        :Returns:
+
+            `set`
+                The file names. If no files are required to compute
+                the data then an empty `set` is returned.
+
+        **Examples**
+
+        >>> d = cf.Data.full((5, 8), 1, chunks=4)
+        >>> d.get_filenames()
+        set()
+
+        >>> f = cf.example_field(0)
+        >>> cf.write(f, "file_A.nc")
+        >>> cf.write(f, "file_B.nc")
+
+        >>> a = cf.read("file_A.nc", chunks=4)[0].data
+        >>> a += 999
+        >>> b = cf.read("file_B.nc", chunks=4)[0].data
+        >>> c = cf.Data(b.array, units=b.Units, chunks=4)
+        >>> print(a.shape, b.shape, c.shape)
+        (5, 8) (5, 8) (5, 8)
+        >>> d = cf.Data.concatenate([a, a.copy(), b, c], axis=1)
+        >>> print(d.shape)
+        (5, 32)
+
+        >>> d.get_filenames()
+        {'file_A.nc', 'file_B.nc'}
+        >>> d[:, 2:7].get_filenames()
+        {'file_A.nc'}
+        >>> d[:, 2:14].get_filenames()
+        {'file_A.nc', 'file_B.nc'}
+        >>> d[:, 2:20].get_filenames()
+        {'file_A.nc', 'file_B.nc'}
+        >>> d[:, 2:30].get_filenames()
+        {'file_A.nc', 'file_B.nc'}
+        >>> d[:, 29:30].get_filenames()
+        set()
+        >>> d[2, 3] = -99
+        >>> d[2, 3].get_filenames()
+        {'file_A.nc'}
+
+        """
+        from dask.base import collections_to_dsk
+
+        out = set()
+        dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
+        for a in dsk.values():
+            try:
+                out.add(a.get_filename())
+            except AttributeError:
+                pass
+
+        return out
 
     def get_units(self, default=ValueError()):
         """Return the units.

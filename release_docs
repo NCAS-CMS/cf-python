@@ -2,30 +2,30 @@
 
 set -x
 
-if [[ ! $1 ]] ; then 
-  echo "No version \$1 (e.g. 3.3.0)"
+if [[ $2 ]] ; then 
+  echo "You no longer need to set the version. Hooray!"
   exit 1
 fi
 
-version=$1
+ersion=`python -c "import cf; print(cf.__version__)"`
 
-if [[ $2 = "latest" ]] ; then 
+if [[ $1 = "latest" ]] ; then 
   dir=$PWD/docs
-elif [[ $2 = "archive" ]] ; then
+elif [[ $1 = "archive" ]] ; then
   dir=$PWD/docs/$version
-elif [[ $2 = "dev" ]] ; then
+elif [[ $1 = "dev" ]] ; then
   # For testing: creates separate dir and does not (git) commit. DOES
   # NOT deletes an existing .doctrees subdirectory, meaning that
   # untouched source files (.py or .rst) might not get rebuilt, even
   # if conf.py or other styling files have been modified.
   dir=$PWD/docs/dev
-elif [[ $2 = "dev-clean" ]] ; then
+elif [[ $1 = "dev-clean" ]] ; then
   # For testing: creates separate dir and does not (git) commit and
   # also deletes an existing .doctrees subdirectory
   dir=$PWD/docs/dev
 else
   set +x
-  echo "\$2 must be one of 'latest', 'archive', 'dev' or 'dev-clean'"
+  echo "\$1 must be one of 'latest', 'archive', 'dev' or 'dev-clean'"
   exit 2
 fi
 
@@ -37,7 +37,7 @@ zip cf_tutorial_files.zip *.nc *.pp
 cd -
 
 # Regerenate tutorial.py field_analysis.py
-if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
   ./test_tutorial_code
   rc=$?
   if [[ $rc != 0 ]]; then
@@ -50,7 +50,7 @@ fi
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] || [[ $2 = "dev-clean" ]] ; then
+if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] || [[ $1 = "dev-clean" ]] ; then
   rm -fr $dir/.doctrees
 fi
 mkdir -p $dir/_downloads
@@ -77,12 +77,12 @@ done
 # 'dev' & 'archive' builds to sub-dirs).  Seemingly relates to the
 # build warning:
 #   WARNING: html_static_path entry '_static' is placed inside outdir
-if [[ $2 = "latest" ]] ; then
+if [[ $1 = "latest" ]] ; then
   cp source/_static/customise-alabaster.css _static/customise-alabaster.css
 fi
 
 # Copy the templates to the target directory
-if [[ $2 != "latest" ]] ; then
+if [[ $1 != "latest" ]] ; then
   rm -fr $dir/_templates
   cp -pr _templates $dir
 fi
@@ -90,11 +90,14 @@ fi
 # --------------------------------------------------------------------
 # Add and commit the latest or archive
 # --------------------------------------------------------------------
-if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
   cd $dir
   git add \
           *.html \
-          */*.html \
+	        class/*.html \
+	        function/*.html \
+	        method/*.html \
+	        attribute/*.html \
           *.inv \
           *.js \
           _static \
@@ -105,7 +108,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
           _images/*.png \
           _images/*.svg
 
-  git commit -a -m "v$version $2 documentation"
+  git commit -a -m "v$version $1 documentation"
 fi
 
 set +x

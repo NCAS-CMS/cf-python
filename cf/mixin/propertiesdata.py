@@ -1188,9 +1188,9 @@ class PropertiesData(Properties):
         **Examples**
 
         >>> print(f.datetime_array)
-        [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
+        [1950-11-15 00:00:00  1950-12-16 12:30:00  1951-01-16 12:00:45]
         >>> print(f.year.array)
-        [450  450  451]
+        [1950  1950  1951]
 
         """
         return self._YMDhms("year")
@@ -2501,6 +2501,9 @@ class PropertiesData(Properties):
     def close(self):
         """Close all files referenced by the construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -2515,9 +2518,13 @@ class PropertiesData(Properties):
         >>> f.close()
 
         """
-        data = self.get_data(None, _fill_value=False)
-        if data is not None:
-            data.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
@@ -4874,28 +4881,6 @@ class PropertiesData(Properties):
         return super().get_data(
             default=default, _units=False, _fill_value=_fill_value
         )
-
-    def get_filenames(self):
-        """Return the name of the file or files containing the data.
-
-        Deprecated at version TODODASKVER and and is no longer
-        available. Consider using the `get_original_filenames` method
-        instead.
-
-        .. note:: Might get re-instated in a later version.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If all of the
-                data are in memory then an empty `set` is returned.
-
-        """
-        _DEPRECATION_ERROR_METHOD(
-            self,
-            "get_filenames",
-            "Consider using the 'get_original_filenames' method instead.",
-        )  # pragma: no cover
 
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
