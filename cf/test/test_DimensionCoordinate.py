@@ -492,6 +492,26 @@ class DimensionCoordinateTest(unittest.TestCase):
         with self.assertRaises(IndexError):
             dim[[False] * dim.size]
 
+    def test_DimensiconCoordinate_persist(self):
+        """Test the `persist` DimensionCoordinate method."""
+        d = cf.DimensionCoordinate()
+        data = cf.Data([15]) * 2
+        d.set_data(data)
+
+        bounds = cf.Bounds()
+        data = cf.Data([[0, 30]]) * 2
+        bounds.set_data(data)
+        d.set_bounds(bounds)
+
+        self.assertGreater(len(d.to_dask_array().dask.layers), 1)
+
+        e = d.persist()
+        self.assertIsInstance(e, cf.DimensionCoordinate)
+        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
+        self.assertTrue(e.equals(d))
+
+        self.assertIsNone(d.persist(inplace=True))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
