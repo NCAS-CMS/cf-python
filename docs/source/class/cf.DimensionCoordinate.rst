@@ -343,6 +343,7 @@ Cyclicity
    ~cf.DimensionCoordinate.cyclic
    ~cf.DimensionCoordinate.get_original_filenames
    ~cf.DimensionCoordinate.period
+   ~cf.DimensionCoordinate.persist
 
 Miscellaneous
 -------------

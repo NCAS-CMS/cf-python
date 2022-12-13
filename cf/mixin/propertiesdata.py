@@ -16,6 +16,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
+    _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
     default_netCDF_fillvals,
 )
@@ -1187,9 +1188,9 @@ class PropertiesData(Properties):
         **Examples**
 
         >>> print(f.datetime_array)
-        [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
+        [1950-11-15 00:00:00  1950-12-16 12:30:00  1951-01-16 12:00:45]
         >>> print(f.year.array)
-        [450  450  451]
+        [1950  1950  1951]
 
         """
         return self._YMDhms("year")
@@ -1595,7 +1596,7 @@ class PropertiesData(Properties):
 
         self.Units = Units(None, getattr(self, "calendar", None))
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
@@ -1669,9 +1670,8 @@ class PropertiesData(Properties):
             removed_at="5.0.0",
         )  # pragma: no cover
 
-    @_deprecated_kwarg_check("i")
     @_inplace_enabled(default=False)
-    def masked_invalid(self, inplace=False, i=False):
+    def masked_invalid(self, inplace=False):
         """Mask the array where invalid values occur (NaN or inf).
 
         .. seealso:: `numpy.ma.masked_invalid`
@@ -1911,6 +1911,48 @@ class PropertiesData(Properties):
 
         return old
 
+    @_inplace_enabled(default=False)
+    def persist(self, inplace=False):
+        """Persist the underlying dask array into memory.
+
+        This turns an underlying lazy dask array into a equivalent
+        chunked dask array, but now with the results fully computed.
+
+        `persist` is particularly useful when using distributed
+        systems, because the results will be kept in distributed
+        memory, rather than returned to the local process.
+
+        **Performance**
+
+        `persist` causes all delayed operations to be computed.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        **Examples**
+
+        >>> g = f.persist()
+
+        """
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "persist",
+            inplace=inplace,
+            delete_props=False,
+        )
+
     def range(self):
         """The absolute difference between the maximum and minimum of
         the data array.
@@ -2027,7 +2069,7 @@ class PropertiesData(Properties):
             "ERROR: Can't get the sum when there is no data array"
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False):
         """Interchange two axes of an array.
@@ -2068,6 +2110,7 @@ class PropertiesData(Properties):
             "swapaxes",
             (axis0, axis1),
             inplace=inplace,
+            # TODODASKAPI - why not delete_props=False ??
             delete_props=True,
         )
 
@@ -2388,7 +2431,7 @@ class PropertiesData(Properties):
 
         return not data.ndim
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def ceil(self, inplace=False, i=False):
         """The ceiling of the data, element-wise.
@@ -2447,7 +2490,7 @@ class PropertiesData(Properties):
     #        if data is not None:
     #            data.chunk(chunksize)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         """Limit the values in the data.
@@ -2501,6 +2544,9 @@ class PropertiesData(Properties):
     def close(self):
         """Close all files referenced by the construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -2515,9 +2561,13 @@ class PropertiesData(Properties):
         >>> f.close()
 
         """
-        data = self.get_data(None, _fill_value=False)
-        if data is not None:
-            data.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
@@ -2607,7 +2657,7 @@ class PropertiesData(Properties):
     #
     #        return out
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cos(self, inplace=False, i=False):
         """Take the trigonometric cosine of the data element-wise.
@@ -3055,7 +3105,7 @@ class PropertiesData(Properties):
 
         return True
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def convert_reference_time(
         self,
@@ -3242,7 +3292,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         """Flatten axes of the data.
@@ -3300,7 +3350,7 @@ class PropertiesData(Properties):
             inplace=inplace,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def floor(self, inplace=False, i=False):
         """Floor the data array, element-wise.
@@ -3689,7 +3739,7 @@ class PropertiesData(Properties):
 
         return fillval
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False):
         """Flip (reverse the direction of) data dimensions.
@@ -3735,7 +3785,7 @@ class PropertiesData(Properties):
             i=i,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def exp(self, inplace=False, i=False):
         """The exponential of the data, element-wise.
@@ -3783,7 +3833,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sin(self, inplace=False, i=False):
         """Take the trigonometric sine of the data element-wise.
@@ -3844,7 +3894,7 @@ class PropertiesData(Properties):
         )
 
     # `arctan2`, AT2 seealso
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arctan(self, inplace=False):
         """Take the trigonometric inverse tangent of the data element-
@@ -3898,7 +3948,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):
         """Take the inverse hyperbolic tangent of the data element-wise.
@@ -3953,7 +4003,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arcsin(self, inplace=False):
         """Take the trigonometric inverse sine of the data element-wise.
@@ -4008,7 +4058,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arcsinh(self, inplace=False):
         """Take the inverse hyperbolic sine of the data element-wise.
@@ -4061,7 +4111,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arccos(self, inplace=False):
         """Take the trigonometric inverse cosine of the data element-
@@ -4117,7 +4167,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def arccosh(self, inplace=False):
         """Take the inverse hyperbolic cosine of the data element-wise.
@@ -4173,7 +4223,7 @@ class PropertiesData(Properties):
         )
 
     # `arctan2`, AT2 seealso
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tan(self, inplace=False, i=False):
         """Take the trigonometric tangent of the data element-wise.
@@ -4234,7 +4284,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tanh(self, inplace=False):
         """Take the hyperbolic tangent of the data array.
@@ -4296,7 +4346,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def sinh(self, inplace=False):
         """Take the hyperbolic sine of the data element-wise.
@@ -4357,7 +4407,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def cosh(self, inplace=False):
         """Take the hyperbolic cosine of the data element-wise.
@@ -4418,7 +4468,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def log(self, base=None, inplace=False, i=False):
         """The logarithm of the data array.
@@ -4507,7 +4557,7 @@ class PropertiesData(Properties):
 
         return data.to_dask_array()
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def trunc(self, inplace=False, i=False):
         """Truncate the data, element-wise.
@@ -4582,7 +4632,9 @@ class PropertiesData(Properties):
             "ERROR: Can't get unique values when there is no data array"
         )
 
-    @_deprecated_kwarg_check("relaxed_identity")
+    @_deprecated_kwarg_check(
+        "relaxed_identity", version="3.0.0", removed_at="4.0.0"
+    )
     def identity(
         self,
         default="",
@@ -4873,38 +4925,17 @@ class PropertiesData(Properties):
             default=default, _units=False, _fill_value=_fill_value
         )
 
-    def get_filenames(self):
-        """Return the name of the file or files containing the data.
-
-        Deprecated at version TODODASKVER and and is no longer
-        available. Consider using the `get_original_filenames` method
-        instead.
-
-        .. note:: Might get re-instated in a later version.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If all of the
-                data are in memory then an empty `set` is returned.
-
-        """
-        _DEPRECATION_ERROR_METHOD(
-            self,
-            "get_filenames",
-            "Consider using the 'get_original_filenames' method instead.",
-        )  # pragma: no cover
-
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
         self,
-        size,
+        depth,
         axes=None,
         tripolar=None,
         fold_index=-1,
         inplace=False,
         verbose=None,
+        size=None,
     ):
         """Expand the data by adding a halo.
 
@@ -4929,10 +4960,10 @@ class PropertiesData(Properties):
 
         :Parameters:
 
-            size: `int` or `dict`
+            depth: `int` or `dict`
                 Specify the size of the halo for each axis.
 
-                If *size* is a non-negative `int` then this is the
+                If *depth* is a non-negative `int` then this is the
                 halo size that is applied to all of the axes defined
                 by the *axes* parameter.
 
@@ -4946,22 +4977,22 @@ class PropertiesData(Properties):
 
                 *Parameter example:*
                   Specify a halo size of 1 for all otherwise selected
-                  axes: ``size=1``
+                  axes: ``1``
 
                 *Parameter example:*
-                  Specify a halo size of zero ``size=0``. This results
-                  in no change to the data shape.
+                  Specify a halo size of zero: ``0``. This results in
+                  no change to the data shape.
 
                 *Parameter example:*
                   For data with three dimensions, specify a halo size
                   of 3 for the first dimension and 1 for the second
-                  dimension: ``size={0: 3, 1: 1}``. This is equivalent
-                  to ``size={0: 3, 1: 1, 2: 0}``
+                  dimension: ``{0: 3, 1: 1}``. This is equivalent to
+                  ``{0: 3, 1: 1, 2: 0}``
 
                 *Parameter example:*
                   Specify a halo size of 2 for the first and last
-                  dimensions `size=2, axes=[0, -1]`` or equivalently
-                  ``size={0: 2, -1: 2}``.
+                  dimensions `depth=2, axes=[0, -1]`` or equivalently
+                  ``depth={0: 2, -1: 2}``.
 
             axes: (sequence of) `int`
                 Select the domain axes to be expanded, defined by
@@ -4979,14 +5010,13 @@ class PropertiesData(Properties):
                 positions in the data.
 
                 The "X" and "Y" axes must be a subset of those
-                identified by the *size* or *axes* parameter.
+                identified by the *depth* or *axes* parameter.
 
                 See the *fold_index* parameter.
 
                 *Parameter example:*
                   Define the "X" and Y" axes by positions 2 and 1
-                  respectively of the data: ``tripolar={'X': 2, 'Y':
-                  1}``
+                  respectively of the data: ``{'X': 2, 'Y': 1}``
 
             fold_index: `int`, optional
                 Identify which index of the "Y" axis corresponds to
@@ -4999,6 +5029,9 @@ class PropertiesData(Properties):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
+            size: deprecated at version TODODASKVER
+                Use the *depth* parameter instead.
+
         :Returns:
 
             `{{class}}` or `None`
@@ -5007,19 +5040,25 @@ class PropertiesData(Properties):
 
         **Examples**
 
-            TODO
+        TODO
 
         """
-        _kwargs = [f"{k}={v!r}" for k, v in locals().items()]
-        _ = f"{self.__class__.__name__}.halo("
-        logger.info("{}{}".format(_, (",\n" + " " * len(_)).join(_kwargs)))
+        if size is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "halo",
+                {"size": None},
+                message="Use the 'depth' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
 
         v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None)
         if data is not None:
             data.halo(
-                size=size,
+                depth,
                 axes=axes,
                 tripolar=tripolar,
                 fold_index=fold_index,
@@ -5029,7 +5068,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
         """Override the calendar of date-time units.
@@ -5086,7 +5125,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
         """Override the units.
@@ -5153,7 +5192,7 @@ class PropertiesData(Properties):
 
         return v
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def rint(self, inplace=False, i=False):
         """Round the data to the nearest integer, element-wise.
@@ -5192,7 +5231,7 @@ class PropertiesData(Properties):
             i=i,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def round(self, decimals=0, inplace=False, i=False):
         """Round the data to the given number of decimals.
@@ -5245,7 +5284,7 @@ class PropertiesData(Properties):
             decimals=decimals,
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, iaxis, shift, inplace=False, i=False):
         """Roll the data along an axis.
@@ -5350,7 +5389,7 @@ class PropertiesData(Properties):
 
         return super().set_data(data, copy=copy, inplace=inplace)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def where(
         self, condition, x=None, y=None, inplace=False, i=False, verbose=None

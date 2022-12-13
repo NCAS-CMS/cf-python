@@ -736,43 +736,47 @@ class FieldTest(unittest.TestCase):
         f.domain_mask(grid_longitude=cf.wi(25, 31))
 
     def test_Field_cumsum(self):
-        f = self.f.copy()
+        f = cf.example_field(0)
 
         g = f.copy()
-        h = g.cumsum(2)
-        self.assertIsNone(g.cumsum(2, inplace=True))
+        h = g.cumsum(1)
+        self.assertIsNone(g.cumsum(1, inplace=True))
         self.assertTrue(g.equals(h, verbose=2))
 
-        for axis in range(f.ndim):
-            a = numpy.cumsum(f.array, axis=axis)
-            self.assertTrue((f.cumsum(axis=axis).array == a).all())
+        # Check that a new cell method that has been added
+        cell_methods = h.cell_methods(todict=True)
+        self.assertEqual(len(cell_methods), len(f.cell_methods()) + 1)
+        _, cm = cell_methods.popitem()
+        self.assertEqual(cm.method, "sum")
+        self.assertEqual(cm.axes, (h.get_data_axes()[1],))
 
-        f[0, 0, 3] = cf.masked
-        f[0, 2, 7] = cf.masked
+        # Check increasing dimension coordinate bounds
+        fx = f.dimension_coordinate("X")
+        hx = h.dimension_coordinate("X")
+        self.assertTrue((hx.lower_bounds == fx.lower_bounds[0]).all())
+        self.assertTrue((hx.upper_bounds == fx.upper_bounds).all())
 
+        # Check decreasing dimension coordinate bounds
+        g = f.flip("X")
+        h = g.cumsum("X")
+        gx = g.dimension_coordinate("X")
+        hx = h.dimension_coordinate("X")
+        self.assertTrue((hx.upper_bounds == gx.upper_bounds[0]).all())
+        self.assertTrue((hx.lower_bounds == gx.lower_bounds).all())
+
+        a = f.array
         for axis in range(f.ndim):
-            a = f.array
-            a = numpy.cumsum(a, axis=axis)
+            b = np.cumsum(a, axis=axis)
+            self.assertTrue((f.cumsum(axis=axis).array == b).all())
+
+        f[0, 3] = cf.masked
+        f[2, 7] = cf.masked
+
+        a = f.array
+        for axis in range(f.ndim):
+            b = np.cumsum(a, axis=axis)
             g = f.cumsum(axis=axis)
-            self.assertTrue(cf.functions._numpy_allclose(g.array, a))
-
-        for axis in range(f.ndim):
-            g = f.cumsum(axis=axis, masked_as_zero=True)
-
-            a = f.array
-            mask = a.mask
-            a = a.filled(0)
-            a = numpy.cumsum(a, axis=axis)
-            size = a.shape[axis]
-            shape = [1] * a.ndim
-            shape[axis] = size
-            new_mask = numpy.cumsum(mask, axis=axis) == numpy.arange(
-                1, size + 1
-            ).reshape(shape)
-            a = numpy.ma.array(a, mask=new_mask, copy=False)
-            self.assertTrue(
-                cf.functions._numpy_allclose(g.array, a, verbose=2)
-            )
+            self.assertTrue(cf.functions._numpy_allclose(g.array, b))
 
     def test_Field_flip(self):
         f = self.f.copy()
@@ -2205,20 +2209,19 @@ class FieldTest(unittest.TestCase):
 
         for condition in (True, 1, [[[True]]], [[[[[456]]]]]):
             g = f.where(condition, -9)
-            self.assertTrue(g[0].minimum() == -9, str(condition))
-            self.assertTrue(g[0].maximum() == -9, str(condition))
+            self.assertTrue((g.array == -9).all())
 
         g = f.where(cf.le(34), 34)
-        self.assertTrue(g[0].minimum() == 34)
-        self.assertTrue(g[0].maximum() == 89)
+        self.assertTrue(g.min() == 34)
+        self.assertTrue(g.max() == 89)
 
         g = f.where(cf.le(34), cf.masked)
-        self.assertTrue(g[0].minimum() == 35)
-        self.assertTrue(g[0].maximum() == 89)
+        self.assertTrue(g.min() == 35)
+        self.assertTrue(g.max() == 89)
 
         self.assertIsNone(f.where(cf.le(34), cf.masked, 45, inplace=True))
-        self.assertTrue(f[0].minimum() == 45)
-        self.assertTrue(f[0].maximum() == 45)
+        self.assertTrue(f.min() == 45)
+        self.assertTrue(f.max() == 45)
 
     def test_Field_masked_invalid(self):
         f = self.f.copy()
@@ -2256,23 +2259,23 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_percentile(self):
         f = cf.example_field(1)
-        for chunksize in self.chunk_sizes:
-            cf.chunksize(chunksize)
-            # Percentiles taken across *all axes*
-            ranks = [[30, 60, 90], [20], 80]  # include valid singular form
 
-            for rank in ranks:
-                # Note: in cf the default is squeeze=False, but numpy has an
-                # inverse parameter called keepdims which is by default False
-                # also, one must be set to the non-default for equivalents.
-                # So first cases (n1, n1) are both squeezed, (n2, n2) are not:
-                a1 = numpy.percentile(f, rank)  # has keepdims=False default
-                b1 = f.percentile(rank, squeeze=True)
-                self.assertTrue(b1.allclose(a1, rtol=1e-05, atol=1e-08))
-                a2 = numpy.percentile(f, rank, keepdims=True)
-                b2 = f.percentile(rank)  # has squeeze=False default
-                self.assertTrue(b2.shape, a2.shape)
-                self.assertTrue(b2.allclose(a2, rtol=1e-05, atol=1e-08))
+        # Percentiles taken across *all axes*
+        ranks = ([30, 60, 90], [20], 80)  # include valid singular form
+
+        for rank in ranks:
+            # Note: Currently in cf the default is squeeze=False, but
+            #       numpy has an inverse parameter called keepdims
+            #       which is by default False also, one must be set to
+            #       the non-default for equivalents.  So first cases
+            #       (n1, n1) are both squeezed, (n2, n2) are not:
+            a1 = numpy.percentile(f, rank)  # has keepdims=False default
+            b1 = f.percentile(rank, squeeze=True)
+            self.assertTrue(b1.allclose(a1, rtol=1e-05, atol=1e-08))
+            a2 = numpy.percentile(f, rank, keepdims=True)
+            b2 = f.percentile(rank)  # has squeeze=False default
+            self.assertTrue(b2.shape, a2.shape)
+            self.assertTrue(b2.allclose(a2, rtol=1e-05, atol=1e-08))
 
         # TODO: add loop to check get same shape and close enough data
         # for every possible axis combo (see also test_Data_percentile).
@@ -2460,6 +2463,20 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(
             f.get_original_filenames(), f.copy().get_original_filenames()
         )
+
+    def test_Field_persist(self):
+        """Test the `persist` Field method."""
+        f = cf.example_field(0)
+        f *= 2
+
+        self.assertGreater(len(f.to_dask_array().dask.layers), 1)
+
+        g = f.persist()
+        self.assertIsInstance(g, cf.Field)
+        self.assertEqual(len(g.to_dask_array().dask.layers), 1)
+        self.assertTrue(g.equals(f))
+
+        self.assertIsNone(g.persist(inplace=True))
 
 
 if __name__ == "__main__":

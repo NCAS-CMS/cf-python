@@ -1,9 +1,11 @@
+import atexit
 import contextlib
 import datetime
 import faulthandler
 import io
 import itertools
 import os
+import tempfile
 import unittest
 import warnings
 from functools import reduce
@@ -24,6 +26,26 @@ except Exception:
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
+
+n_tmpfiles = 2
+tmpfiles = [
+    tempfile.mkstemp("_test_Data.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+file_A, file_B = tmpfiles
+
+
+def _remove_tmpfiles():
+    """Try to remove defined temporary files by deleting their paths."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
+
 
 # To facilitate the testing of logging outputs (see comment tag 'Logging note')
 logger = cf.logging.getLogger(__name__)
@@ -103,16 +125,41 @@ class DataTest(unittest.TestCase):
         # Suppress the warning output for some specific warnings which are
         # expected due to the nature of the tests being performed.
         expexted_warning_msgs = [
-            "divide by zero encountered in arctanh",
-            "invalid value encountered in arctanh",
-            "divide by zero encountered in log",
-            "invalid value encountered in log",
-            "invalid value encountered in arcsin",
+            "divide by zero encountered in " + np_method
+            for np_method in (
+                "arctanh",
+                "log",
+                "double_scalars",
+            )
+        ] + [
+            "invalid value encountered in " + np_method
+            for np_method in (
+                "arcsin",
+                "arccos",
+                "arctanh",
+                "arccosh",
+                "log",
+                "sqrt",
+                "double_scalars",
+                "true_divide",
+            )
         ]
         for expected_warning in expexted_warning_msgs:
             warnings.filterwarnings(
                 "ignore", category=RuntimeWarning, message=expected_warning
             )
+
+    def test_Data__init__basic(self):
+        """Test basic `__init__` cases for Data."""
+        # Most __init__ parameters are covered by the various other tests,
+        # so this is mainly to check trivial cases and especially the edge
+        # case of 'default' Data i.e. if no parameters are specified.
+        cf.Data(0, "s")
+        cf.Data(array=np.arange(5))
+        cf.Data(source=self.filename)
+
+        with self.assertRaises(ValueError):
+            cf.Data()
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""
@@ -697,26 +744,125 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.shape, (0,))
         self.assertTrue((e.array == a.compressed()).all())
 
-    @unittest.skipIf(TEST_DASKIFIED_ONLY, "Needs __eq__")
     def test_Data_stats(self):
         """Test the `stats` Data method."""
         d = cf.Data([1, 1])
 
+        # Test outputs covering a representative selection of parameters
+        s1 = d.stats()
+        s1_lazy = d.stats(compute=False)
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "range": 0,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "sample_size": 2,
+        }
+        self.assertEqual(len(s1), 9)
+        self.assertEqual(s1, exp_result)
+        self.assertEqual(len(s1_lazy), len(s1))
         self.assertEqual(
-            d.stats(sum=True, weights=1),
+            s1_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
+        )
+
+        s2 = d.stats(all=True)
+        s2_lazy = d.stats(compute=False, all=True)
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "range": 0,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "minimum_absolute_value": 1,
+            "maximum_absolute_value": 1,
+            "mean_absolute_value": 1.0,
+            "mean_of_upper_decile": 1.0,
+            "sum": 2,
+            "sum_of_squares": 2,
+            "variance": 0.0,
+            "sample_size": 2,
+        }
+        self.assertEqual(len(s2), 16)
+        self.assertEqual(s2, exp_result)
+        self.assertEqual(len(s2_lazy), len(s2))
+        self.assertEqual(
+            s2_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
+        )
+
+        s3 = d.stats(sum=True, weights=1)
+        s3_lazy = d.stats(compute=False, sum=True, weights=1)
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "range": 0,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "sum": 2,
+            "sample_size": 2,
+        }
+        self.assertEqual(len(s3), 10)  # 9 + 1 because the 'sum' op. is added
+        self.assertEqual(s3, exp_result)
+        self.assertEqual(len(s3_lazy), len(s3))
+        self.assertEqual(
+            s3_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
+        )
+
+        s4 = d.stats(mean_of_upper_decile=True, range=False, weights=2.0)
+        s4_lazy = d.stats(
+            compute=False, mean_of_upper_decile=True, range=False, weights=2.0
+        )
+        exp_result = {
+            "minimum": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "maximum": 1,
+            "mid_range": 1.0,
+            "standard_deviation": 0.0,
+            "root_mean_square": 1.0,
+            "mean_of_upper_decile": 1.0,
+            "sample_size": 2,
+        }
+        self.assertEqual(len(s4), 9)  # 9 + 1 - 1 for adding MOUD, losing range
+        self.assertEqual(s4, exp_result)
+        self.assertEqual(len(s4_lazy), len(s4))
+        self.assertEqual(
+            s4_lazy, {op: cf.Data(val) for op, val in exp_result.items()}
+        )
+
+        # Check some weird/edge cases to ensure they are handled elegantly...
+        self.assertEqual(
+            cf.Data(10).stats(),
             {
-                "minimum": 1,
-                "mean": 1.0,
-                "median": 1.0,
-                "maximum": 1,
+                "minimum": 10,
+                "mean": 10.0,
+                "median": 10.0,
+                "maximum": 10,
                 "range": 0,
-                "mid_range": 1.0,
+                "mid_range": 10.0,
                 "standard_deviation": 0.0,
-                "root_mean_square": 1.0,
-                "sum": 2,
-                "sample_size": 2,
+                "root_mean_square": 10.0,
+                "sample_size": 1,
             },
         )
+        # NaN values aren't 'equal' to e/o, so check call works and that some
+        # representative values are as expected, in this case
+        s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
+        self.assertEqual(len(s5), 16)
+        self.assertEqual(s5["minimum"], -2)
+        self.assertEqual(s5["sum"], 3)
+        self.assertEqual(s5["sample_size"], 6)
+        self.assertTrue(np.isnan(s5["mean"]))
+        self.assertTrue(np.isnan(s5["variance"]))  # needs all=True to show up
 
     def test_Data__init__dtype_mask(self):
         """Test `__init__` for Data with `dtype` and `mask` keywords."""
@@ -818,18 +964,14 @@ class DataTest(unittest.TestCase):
                         (np.ma.getmask(e.array) == np.ma.getmask(b)).all()
                     )
 
-                    # TODODASK: Reinstate the following test when
-                    #           __sub__, minimum, and maximum have
-                    #           been daskified
-
-        #                    e.where(
-        #                        cf.set([e.minimum(), e.maximum()]),
-        #                        cf.masked,
-        #                        e - 1,
-        #                        inplace=True,
-        #                    )
-        #                    f = d.digitize(bins, upper=upper)
-        #                    self.assertTrue(e.equals(f, verbose=2))
+                    e.where(
+                        cf.set([e.minimum(), e.maximum()]),
+                        cf.masked,
+                        e - 1,
+                        inplace=True,
+                    )
+                    f = d.digitize(bins, upper=upper)
+                    self.assertTrue(e.equals(f, verbose=2))
 
         # Check returned bins
         bins = [2, 6, 10, 50, 100]
@@ -912,25 +1054,6 @@ class DataTest(unittest.TestCase):
 
         f = d - e
         self.assertEqual(f.Units, cf.Units("days"))
-
-        # Repeat with caching partitions to disk
-        fmt = cf.constants.CONSTANTS["FM_THRESHOLD"]
-        cf.constants.CONSTANTS["FM_THRESHOLD"] = cf.total_memory()
-
-        d = cf.Data(self.a, "m")
-        e = cf.Data(self.a, "s")
-
-        f = d / e
-        self.assertEqual(f.Units, cf.Units("m s-1"))
-
-        d = cf.Data(self.a, "days since 2000-01-02")
-        e = cf.Data(self.a, "days since 1999-01-02")
-
-        f = d - e
-        self.assertEqual(f.Units, cf.Units("days"))
-
-        # Reset
-        cf.constants.CONSTANTS["FM_THRESHOLD"] = fmt
 
     def test_Data_concatenate(self):
         """Test the `concatenate` Data method."""
@@ -2251,6 +2374,17 @@ class DataTest(unittest.TestCase):
                 self.assertEqual(de.shape, ab.shape)
                 self.assertTrue((de.array == ab).all())
 
+        # Test setting of _axes during broadcasting
+        d = cf.Data([8, 9])
+        e = d.reshape(1, 2)
+        self.assertEqual(len((d * e)._axes), 2)
+        self.assertEqual(len((e * d)._axes), 2)
+
+        d = cf.Data(8)
+        e = d.reshape(1, 1)
+        self.assertEqual(len((d * e)._axes), 2)
+        self.assertEqual(len((e * d)._axes), 2)
+
     def test_Data__len__(self):
         """Test the `__len__` Data method."""
         self.assertEqual(3, len(cf.Data([1, 2, 3])))
@@ -2321,6 +2455,14 @@ class DataTest(unittest.TestCase):
                     b1 = d.percentile(q, axes=axis, squeeze=not keepdims)
                     self.assertEqual(b1.shape, a1.shape)
                     self.assertTrue((b1.array == a1).all())
+
+                    # Check that the _axes attribute has been updated
+                    # for the new rank dimension, where appropriate.
+                    if keepdims:
+                        if isinstance(q, list):
+                            self.assertEqual(len(b1._axes), len(d._axes) + 1)
+                        else:
+                            self.assertEqual(len(b1._axes), len(d._axes))
 
         # Masked data
         a = self.ma
@@ -2831,6 +2973,12 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array.mask == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]).all())
         self.assertTrue((e.array == a).all())
 
+        d = cf.Data(np.arange(12).reshape(3, 4))
+        for condition in (True, 3, [True], [[1]], [[[1]]], [[[1, 1, 1, 1]]]):
+            e = d.where(condition, -9)
+            self.assertEqual(e.shape, d.shape)
+            self.assertTrue((e.array == -9).all())
+
     def test_Data__init__compression(self):
         """Test Data initialised from compressed data sources."""
         import cfdm
@@ -2982,10 +3130,15 @@ class DataTest(unittest.TestCase):
         d = cf.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
-        # Scalar numeric array
         d = cf.Data([1, 2, 3.0, 4], "km", mask=[0, 1, 0, 0], chunks=2)
+        self.assertGreater(len(d.to_dask_array().dask.layers), 1)
+
         e = d.persist()
         self.assertIsInstance(e, cf.Data)
+        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
+        self.assertEqual(
+            e.to_dask_array().npartitions, d.to_dask_array().npartitions
+        )
         self.assertTrue(e.equals(d))
 
     def test_Data_cyclic(self):
@@ -3103,6 +3256,13 @@ class DataTest(unittest.TestCase):
 
             self.assertEqual(d.shape, a.shape)
             self.assertTrue((d.array == a).all())
+
+        # Test setting of _axes
+        d = cf.Data(8)
+        self.assertEqual(len(d.reshape(1, 1)._axes), 2)
+
+        d = cf.Data([8, 9])
+        self.assertEqual(len(d.reshape(1, 2)._axes), 2)
 
     def test_Data_square(self):
         """Test the `square` Data method."""
@@ -4178,6 +4338,77 @@ class DataTest(unittest.TestCase):
 
         self.assertTrue((q == d).array.all())
         self.assertTrue((d == q).array.all())
+
+    def test_Data_get_filenames(self):
+        """Test `Data.get_filenames`."""
+        d = cf.Data.full((5, 8), 1, chunks=4)
+        self.assertEqual(d.get_filenames(), set())
+
+        f = cf.example_field(0)
+        cf.write(f, file_A)
+        cf.write(f, file_B)
+
+        a = cf.read(file_A, chunks=4)[0].data
+        b = cf.read(file_B, chunks=4)[0].data
+        b += 999
+        c = cf.Data(b.array, units=b.Units, chunks=4)
+
+        d = cf.Data.concatenate([a, a + 999, b, c], axis=1)
+        self.assertEqual(d.shape, (5, 32))
+
+        self.assertEqual(d.get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d[:, 2:7].get_filenames(), set([file_A]))
+        self.assertEqual(d[:, 2:14].get_filenames(), set([file_A]))
+        self.assertEqual(d[:, 2:20].get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d[:, 2:30].get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d[:, 29:30].get_filenames(), set())
+
+        d[2, 3] = -99
+        self.assertEqual(d[2, 3].get_filenames(), set([file_A]))
+
+    def test_Data__str__(self):
+        """Test `Data.__str__`"""
+        elements0 = ("first_element", "last_element", "second_element")
+        for array in ([1], [1, 2], [1, 2, 3]):
+            elements = elements0[: len(array)]
+
+            d = cf.Data(array)
+            for element in elements:
+                self.assertNotIn(element, d._custom)
+
+            self.assertEqual(str(d), str(array))
+            for element in elements:
+                self.assertIn(element, d._custom)
+
+            d[0] = 1
+            for element in elements:
+                self.assertNotIn(element, d._custom)
+
+            self.assertEqual(str(d), str(array))
+            for element in elements:
+                self.assertIn(element, d._custom)
+
+            d += 0
+            for element in elements:
+                self.assertNotIn(element, d._custom)
+
+            self.assertEqual(str(d), str(array))
+            for element in elements:
+                self.assertIn(element, d._custom)
+
+        # Test when size > 3, i.e. second element is not there.
+        d = cf.Data([1, 2, 3, 4])
+        for element in elements0:
+            self.assertNotIn(element, d._custom)
+
+        self.assertEqual(str(d), "[1, ..., 4]")
+        self.assertNotIn("second_element", d._custom)
+        for element in elements0[:2]:
+            self.assertIn(element, d._custom)
+
+        d[0] = 1
+        for element in elements0:
+            self.assertNotIn(element, d._custom)
 
 
 if __name__ == "__main__":

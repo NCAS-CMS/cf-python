@@ -245,7 +245,7 @@ class read_writeTest(unittest.TestCase):
         cf.write(self.f1, tmpfile)
         f = cf.read(tmpfile)[0]
 
-        # TODO: reinstate "CFA" at v4.0.0
+        # TODO: reinstate "CFA" at version > 3.14
         for fmt in self.netcdf_fmts:  # + ["CFA"]:
             cf.write(f, tmpfile2, fmt=fmt)
             g = cf.read(tmpfile2, verbose=0)
@@ -257,9 +257,6 @@ class read_writeTest(unittest.TestCase):
                 f"Bad read/write of format {fmt!r}",
             )
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "'Data' object has no attribute '_pmsize'"
-    )
     def test_write_netcdf_mode(self):
         """Test the `mode` parameter to `write`, notably append mode."""
         g = cf.read(self.filename)  # note 'g' has one field
@@ -548,7 +545,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_netCDF4_compress_shuffle(self):
         f = cf.read(self.filename)[0]
-        # TODO: reinstate "CFA4" at v4.0.0
+        # TODO: reinstate "CFA4" at version > 3.14
         for fmt in ("NETCDF4", "NETCDF4_CLASSIC"):  # , "CFA4"):
             cf.write(f, tmpfile, fmt=fmt, compress=1, shuffle=True)
             g = cf.read(tmpfile)[0]
@@ -643,21 +640,6 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
         self.assertTrue(domain_axes["domainaxis2"].nc_is_unlimited())
 
-    def test_read_pp(self):
-        p = cf.read("wgdos_packed.pp")[0]
-        p0 = cf.read(
-            "wgdos_packed.pp",
-            um={
-                "fmt": "PP",
-                "endian": "big",
-                "word_size": 4,
-                "version": 4.5,
-                "height_at_top_of_model": 23423.65,
-            },
-        )[0]
-
-        self.assertTrue(p.equals(p0, verbose=2))
-
     def test_read_CDL(self):
         subprocess.run(
             " ".join(["ncdump", self.filename, ">", tmpfile]),
@@ -726,9 +708,6 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(Exception):
             cf.read("test_read_write.py")
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "'Data' object has no attribute '_pmsize'"
-    )
     def test_read_cdl_string(self):
         """Test the `cdl_string` keyword of the `read` function."""
         # Test CDL in full, header-only and coordinate-only type:
@@ -820,9 +799,6 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(g), 1)
         self.assertTrue(g[0].equals(f))
 
-    @unittest.skipIf(
-        TEST_DASKIFIED_ONLY, "'Data' object has no attribute '_pmsize'"
-    )
     def test_read_write_domain(self):
         f = cf.read(self.filename)[0]
         d = f.domain
@@ -899,6 +875,39 @@ class read_writeTest(unittest.TestCase):
 
         f = cf.read(tmpfile, chunks={"foo": 2, "bar": 3})[0]
         self.assertEqual(f.data.chunks, ((5,), (8,)))
+
+    def test_write_omit_data(self):
+        """Test the `omit_data` parameter to `write`."""
+        f = cf.example_field(1)
+        cf.write(f, tmpfile)
+
+        cf.write(f, tmpfile, omit_data="all")
+        g = cf.read(tmpfile)
+        self.assertEqual(len(g), 1)
+        g = g[0]
+
+        # Check that the data are missing
+        self.assertFalse(g.array.count())
+        self.assertFalse(g.construct("grid_latitude").array.count())
+
+        # Check that a dump works
+        g.dump(display=False)
+
+        cf.write(f, tmpfile, omit_data=("field", "dimension_coordinate"))
+        g = cf.read(tmpfile)[0]
+
+        # Check that only the field and dimension coordinate data are
+        # missing
+        self.assertFalse(g.array.count())
+        self.assertFalse(g.construct("grid_latitude").array.count())
+        self.assertTrue(g.construct("latitude").array.count())
+
+        cf.write(f, tmpfile, omit_data="field")
+        g = cf.read(tmpfile)[0]
+
+        # Check that only the field data are missing
+        self.assertFalse(g.array.count())
+        self.assertTrue(g.construct("grid_latitude").array.count())
 
 
 if __name__ == "__main__":

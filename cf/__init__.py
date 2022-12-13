@@ -220,10 +220,12 @@ from .mixin import Coordinate
 
 from .count import Count
 from .index import Index
+from .interpolationparameter import InterpolationParameter
 from .list import List
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
 from .interiorring import InteriorRing
+from .tiepointindex import TiePointIndex
 
 from .bounds import Bounds
 from .domain import Domain
@@ -248,15 +250,23 @@ from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
 from .fieldancillary import FieldAncillary
 from .field import Field
-from .data import (
-    Data,
-    FilledArray,
+from .data import Data
+from .data.array import (
+    CachedArray,
+    CFANetCDFArray,
+    FullArray,
     GatheredArray,
     NetCDFArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+)
+
+from .data.fragment import (
+    MissingFragmentArray,
+    NetCDFFragmentArray,
+    UMFragmentArray,
 )
 
 from .aggregate import aggregate

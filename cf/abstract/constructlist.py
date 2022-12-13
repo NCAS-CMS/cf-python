@@ -10,6 +10,7 @@ from ..functions import (
     _DEPRECATION_ERROR,
     _DEPRECATION_ERROR_DICT,
     _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
 )
 from ..mixin_container import Container
 
@@ -244,8 +245,8 @@ class ConstructList(list, Container, cfdm.Container):
     def close(self):
         """Close all files referenced by each construct in the list.
 
-        Note that a closed file will be automatically reopened if its
-        contents are subsequently required.
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
 
         :Returns:
 
@@ -256,8 +257,13 @@ class ConstructList(list, Container, cfdm.Container):
         >>> f.close()
 
         """
-        for f in self:
-            f.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def count(self, value):
         """Return the number of occurrences of value.
@@ -385,7 +391,7 @@ class ConstructList(list, Container, cfdm.Container):
         """
         return type(self)([f.copy(data=data) for f in self])
 
-    @_deprecated_kwarg_check("traceback")
+    @_deprecated_kwarg_check("traceback", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def equals(
         self,
