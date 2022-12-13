@@ -850,6 +850,18 @@ class read_writeTest(unittest.TestCase):
         f.construct("latitude").axis = "Y"
         cf.write(f, tmpfile)
 
+        f = cf.read(tmpfile, chunks={})[0]
+        self.assertEqual(f.data.chunks, ((5,), (8,)))
+
+        f = cf.read(tmpfile, chunks=-1)[0]
+        self.assertEqual(f.data.chunks, ((5,), (8,)))
+
+        f = cf.read(tmpfile, chunks=None)[0]
+        self.assertEqual(f.data.chunks, ((5,), (8,)))
+
+        f = cf.read(tmpfile, chunks={"foo": 2, "bar": 3})[0]
+        self.assertEqual(f.data.chunks, ((5,), (8,)))
+
         with cf.chunksize("200GB"):
             f = cf.read(tmpfile)[0]
             self.assertEqual(f.data.chunks, ((5,), (8,)))
@@ -857,6 +869,9 @@ class read_writeTest(unittest.TestCase):
         with cf.chunksize("150B"):
             f = cf.read(tmpfile)[0]
             self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
+
+        f = cf.read(tmpfile, chunks="150B")[0]
+        self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
 
         f = cf.read(tmpfile, chunks=3)[0]
         self.assertEqual(f.data.chunks, ((3, 2), (3, 3, 2)))
@@ -872,9 +887,6 @@ class read_writeTest(unittest.TestCase):
 
         y = f.construct("Y")
         self.assertEqual(y.data.chunks, ((5,),))
-
-        f = cf.read(tmpfile, chunks={"foo": 2, "bar": 3})[0]
-        self.assertEqual(f.data.chunks, ((5,), (8,)))
 
     def test_write_omit_data(self):
         """Test the `omit_data` parameter to `write`."""

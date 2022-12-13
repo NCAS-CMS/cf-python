@@ -309,41 +309,47 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             array = self._array_from_variable(ncvar)
 
         # Parse dask chunks
-        _DEFAULT_CHUNKS = "auto"
-        chunks = g.get("chunks", _DEFAULT_CHUNKS)
-        if isinstance(chunks, dict):
-            # For ncdimensions = ('time', 'lat'):
-            #
-            # {} -> ["auto", "auto"]
-            # {'ncdim%time': 12} -> [12, "auto"]
-            # {'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
-            # {'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
-            # {'ncdim%time': 12, 'latitude': -1} -> [12, -1]
-            # {'ncdim%time': 12, 'Y': None} -> [12, None]
-            # {'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
-            # {'ncdim%time': 12, 'ncdim%lat': None, 'X': 4500} -> [12, None]
-            attributes = g["variable_attributes"]
-            chunks2 = []
-            for ncdim in ncdimensions:
-                key = f"ncdim%{ncdim}"
-                if key in chunks:
-                    chunks2.append(chunks[key])
-                    continue
+        default_chunks = "auto"
+        chunks = g.get("chunks", default_chunks)
+        if chunks is None:
+            chunks = -1
+        elif isinstance(chunks, dict):
+            if not chunks:
+                chunks = default_chunks
+            else:
+                # For ncdimensions = ('time', 'lat'):
+                #
+                # {} -> ["auto", "auto"]
+                # {'ncdim%time': 12} -> [12, "auto"]
+                # {'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
+                # {'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
+                # {'ncdim%time': 12, 'latitude': -1} -> [12, -1]
+                # {'ncdim%time': 12, 'Y': None} -> [12, None]
+                # {'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
+                # {'ncdim%time': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
+                attributes = g["variable_attributes"]
+                chunks2 = []
+                for ncdim in g["variable_dimensions"][ncvar]:
+                    key = f"ncdim%{ncdim}"
+                    if key in chunks:
+                        chunks2.append(chunks[key])
+                        continue
 
-                c = False
-                dc = attributes.get(ncdim)
-                if dc is not None:
-                    for attr in ("standard_name", "axis"):
-                        value = dc.get(attr)
-                        if value in chunks:
-                            c = True
-                            chunks2.append(chunks[value])
-                            break
+                    found_coord_attr = False
+                    dim_coord_attrs = attributes.get(ncdim)
+                    if dim_coord_attrs is not None:
+                        for attr in ("standard_name", "axis"):
+                            key = dim_coord_attrs.get(attr)
+                            if key in chunks:
+                                found_coord_attr = True
+                                chunks2.append(chunks[key])
+                                break
 
-                if not c:
-                    chunks2.append(_DEFAULT_CHUNKS)
+                    if not found_coord_attr:
+                        # Use default chunks for this dimension
+                        chunks2.append(default_chunks)
 
-            chunks = chunks2
+                chunks = chunks2
 
         data = super()._create_Data(
             array=array,

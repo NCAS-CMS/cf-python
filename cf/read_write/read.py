@@ -521,20 +521,31 @@ def read(
 
             .. versionadded:: 1.5
 
-        chunks: `str` or `int` or `None` or `dict`
+        chunks: `str`, `int`, `None`, or `dict`, optional
                 Specify the `dask` chunking of dimensions for data in
                 the input files.
-
-                If *chunks* is a `str`, `int`, or `None` then it
-                defines for each data array the blocksize applied over
-                all of its dimensions, and must be a value accepted by
-                the *chunks* parameter of the `dask.array.from_array`
-                function.
 
                 By default, ``'auto'`` is used to specify the array
                 chunking, which uses a chunk size in bytes defined by
                 the `cf.chunksize` function, preferring square-like
                 chunk shapes across all data dimensions.
+
+                If *chunks* is a `str` then each data array uses this
+                chunk size in bytes, preferring square-like chunk
+                shapes across all data dimensions. Any string value
+                accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is permitted.
+
+                *Parameter example:*
+                  A chunksize of 2 MiB may be specified as
+                  ``'2097152'`` or ``'2 MiB'``.
+
+                If *chunks* is `-1` or `None` then each there is no
+                chunking, i.e. every data array has one chunk
+                regardless of its size
+
+                If *chunks* is a positive `int` then each data array
+                dimension has chunks with this number of elements.x
 
                 If *chunks* is a `dict`, then each of its keys
                 identifies dimension in the file, with a value that
@@ -543,51 +554,45 @@ def read(
 
                 Each dictionary key identifies a file dimension in one
                 of three ways: 1. the netCDF dimension name, preceeded
-                by ``ncdim%`` (e.g. ``'ncdim%lat'``); 2. the standard
-                name attribute of a CF-netCDF coordinate variable that
-                spans the dimension (e.g. ``'latitude'``); or 3. the
-                axis attribute of a CF-netCDF coordinate variable that
-                spans the dimension (e.g. ``'Y'``).
+                by ``ncdim%`` (e.g. ``'ncdim%lat'``); 2. the "standard
+                name" attribute of a CF-netCDF coordinate variable
+                that spans the dimension (e.g. ``'latitude'``); or
+                3. the "axis" attribute of a CF-netCDF coordinate
+                variable that spans the dimension (e.g. ``'Y'``).
 
-                The dictionary values may be any non-`dict` value
-                accepted by the *chunks* parameter of the
-                `dask.array.from_array` function. Not specifying a
-                file dimension in the dictionary is equivalent to it
-                being defined with a value of ``'auto'``.
+                The dictionary values may be `str`, `int` or `None`,
+                with the same meanings as those types for the *chunks*
+                parameter but applying only to the specified
+                dimension. A `tuple` or `list` of integers that sum to
+                the dimension size may also be given.
 
-                .. note:: Specifying *chunks* as a string (such as
-                          ``'10MiB'`` or ``'auto'``), or giving such a
-                          string as a dictionary value, can allow
-                          variables in the same file with different
-                          data shapes to have different chunking
-                          patterns. For example, for *chunks* of
-                          ``'2KiB'``, an array of double precision
-                          floats with shape ``(10, 10, 10)`` will have
-                          chunks of ``((6, 4), (6, 4), (6, 4))``, but
-                          an array with shape ``(10,)`` will have
-                          chunks of ``((10,),)``.
+                Not specifying a file dimension in the dictionary is
+                equivalent to it being defined with a value of
+                ``'auto'``.
 
-                .. note:: The *chunks* parameter is ignored for PP and
-                          UM fields files, for which the chunking is
-                          predetermined by the file format.
+                *Parameter example:*
+                  ``{'T': '0.5 MiB', 'Y': [36, 37], 'X': None}``
 
                 *Parameter example:*
                   If a netCDF file contains dimensions ``time``,
-                  ``z``, ``lat`` and ``lon``, then
-                  ``chunks={'ncdim%time': 12, 'ncdim%lat', None,
-                  'ndim%lon': None}`` will ensure that all ``time``
-                  axes have a chunksize of 12; and all ``lat`` and
-                  ``lon`` axes are not chunked; and all ``z`` axes are
-                  chunked to comply as closely as possible with the
-                  default blocksize.
+                  ``z``, ``lat`` and ``lon``, then ``{'ncdim%time':
+                  12, 'ncdim%lat', None, 'ndim%lon': None}`` will
+                  ensure that all ``time`` axes have a chunksize of
+                  12; and all ``lat`` and ``lon`` axes are not
+                  chunked; and all ``z`` axes are chunked to comply as
+                  closely as possible with the default blocksize.
 
                   If the netCDF also contains a ``time`` coordinate
                   variable with a ``standard_name`` attribute of
                   ``'time'`` and an ``axis`` attribute of ``'T'``,
-                  then exactly the same chunking could be specified
-                  with either ``chunks={'time': 12, 'ncdim%lat', None,
-                  'ndim%lon': None}`` or ``chunks={'T': 12,
-                  'ncdim%lat', None, 'ndim%lon': None}``.
+                  then the same chunking could be specified with
+                  either ``{'time': 12, 'ncdim%lat', None, 'ndim%lon':
+                  None}`` or ``{'T': 12, 'ncdim%lat', None,
+                  'ndim%lon': None}``.
+
+                .. note:: The *chunks* parameter is ignored for PP and
+                          UM fields files, for which the chunking is
+                          pre-determined by the file format.
 
                 .. versionadded:: TODODASKVER
 
