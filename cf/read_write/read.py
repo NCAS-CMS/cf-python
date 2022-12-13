@@ -90,7 +90,6 @@ def read(
     compliance to earlier versions of the CF conventions, the groups
     will be interpreted as per the latest release of CF.
 
-
     **CF-compliance**
 
     If the dataset is partially CF-compliant to the extent that it is
@@ -110,7 +109,6 @@ def read(
     `~cf.Field.dataset_compliance` method of the field construct, as
     well as optionally displayed when the dataset is read by setting
     the warnings parameter.
-
 
     **CDL files**
 
@@ -156,9 +154,10 @@ def read(
     constructs that may be read within a session, and makes the read
     operation fast.
 
-    .. seealso:: `cf.aggregate`, `cf.chunksize`, `cf.write`,
-                 `cf.Field`, `cf.Domain`,
-                 `cf.load_stash2standard_name`, `cf.unique_constructs`
+    .. seealso:: `cf.write`, `cf.aggregate`, `cf.chunksize`,
+                 `cf.unique_constructs`,
+                 `cf.load_stash2standard_name`, `cf.Field`,
+                 `cf.Domain`,
 
     :Parameters:
 
@@ -408,7 +407,7 @@ def read(
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field contructs and metadata constructs that have
+            on field constructs and metadata constructs that have
             data. By default no such warning is issued.
 
             "Out-of-range" data values in the file, as defined by any
@@ -425,7 +424,7 @@ def read(
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
             files only, provide extra decoding instructions. This
-            option is ignored for input files which are notPP or
+            option is ignored for input files which are not PP or
             fields files. In most cases, how to decode a file is
             inferable from the file's contents, but if not then each
             key/value pair in the dictionary sets a decoding option as
@@ -545,7 +544,7 @@ def read(
                 regardless of its size
 
                 If *chunks* is a positive `int` then each data array
-                dimension has chunks with this number of elements.x
+                dimension has chunks with this number of elements.
 
                 If *chunks* is a `dict`, then each of its keys
                 identifies dimension in the file, with a value that
@@ -580,7 +579,7 @@ def read(
                   ensure that all ``time`` axes have a chunksize of
                   12; and all ``lat`` and ``lon`` axes are not
                   chunked; and all ``z`` axes are chunked to comply as
-                  closely as possible with the default blocksize.
+                  closely as possible with the default chunks size.
 
                   If the netCDF also contains a ``time`` coordinate
                   variable with a ``standard_name`` attribute of
@@ -686,12 +685,15 @@ def read(
     """
     if field:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            "cf.read", {"field": field}, "Use keyword 'extra' instead"
+            "cf.read",
+            {"field": field},
+            "Use keyword 'extra' instead",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     if select_options:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            "cf.read", {"select_options": select_options}
+            "cf.read", {"select_options": select_options}, removed_at="4.0.0"
         )  # pragma: no cover
 
     if follow_symlinks:
@@ -699,6 +701,7 @@ def read(
             "cf.read",
             {"follow_symlinks": follow_symlinks},
             "Use keyword 'followlink' instead.",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     if height_at_top_of_model is not None:
@@ -706,6 +709,7 @@ def read(
             "cf.read",
             {"height_at_top_of_model": height_at_top_of_model},
             "Use keyword 'um' instead.",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     if chunk is not True:
@@ -714,13 +718,14 @@ def read(
             {"chunk": chunk},
             "Use keyword 'chunks' instead.",
             version="TODODASKVER",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     # Parse select
     if isinstance(select, (str, Query, Pattern)):
         select = (select,)
 
-    # Parse chunks
+    # Check chunks
     if chunks is not None and not isinstance(chunks, (str, Integral, dict)):
         raise ValueError(
             "'chunks' parameter must be of type str, int, None or dict. "

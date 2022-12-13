@@ -651,7 +651,6 @@ class read_writeTest(unittest.TestCase):
         # notably no data, take two cases each: one where there is sufficient
         # info from the metadata to map to fields, and one where there isn't:
         #     1. Sufficient metadata, so should be read-in successfully
-        tmpfileh = "tmpfileh"
         subprocess.run(
             " ".join(["ncdump", "-h", self.filename, ">", tmpfileh]),
             shell=True,

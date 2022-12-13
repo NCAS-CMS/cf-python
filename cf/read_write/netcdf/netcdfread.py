@@ -299,8 +299,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 .. versionadded:: TODODASKVER
 
         """
-        g = self.read_vars
-
         if array.dtype is None:
             # The array is based on a netCDF VLEN variable, and
             # therefore has unknown data type. To find the correct
@@ -309,47 +307,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             array = self._array_from_variable(ncvar)
 
         # Parse dask chunks
-        default_chunks = "auto"
-        chunks = g.get("chunks", default_chunks)
-        if chunks is None:
-            chunks = -1
-        elif isinstance(chunks, dict):
-            if not chunks:
-                chunks = default_chunks
-            else:
-                # For ncdimensions = ('time', 'lat'):
-                #
-                # {} -> ["auto", "auto"]
-                # {'ncdim%time': 12} -> [12, "auto"]
-                # {'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
-                # {'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
-                # {'ncdim%time': 12, 'latitude': -1} -> [12, -1]
-                # {'ncdim%time': 12, 'Y': None} -> [12, None]
-                # {'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
-                # {'ncdim%time': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
-                attributes = g["variable_attributes"]
-                chunks2 = []
-                for ncdim in g["variable_dimensions"][ncvar]:
-                    key = f"ncdim%{ncdim}"
-                    if key in chunks:
-                        chunks2.append(chunks[key])
-                        continue
-
-                    found_coord_attr = False
-                    dim_coord_attrs = attributes.get(ncdim)
-                    if dim_coord_attrs is not None:
-                        for attr in ("standard_name", "axis"):
-                            key = dim_coord_attrs.get(attr)
-                            if key in chunks:
-                                found_coord_attr = True
-                                chunks2.append(chunks[key])
-                                break
-
-                    if not found_coord_attr:
-                        # Use default chunks for this dimension
-                        chunks2.append(default_chunks)
-
-                chunks = chunks2
+        chunks = self._parse_chunks(ncvar)
 
         data = super()._create_Data(
             array=array,
@@ -605,3 +563,69 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         array = self.implementation.initialise_CFANetCDFArray(**kwargs)
 
         return array, kwargs
+
+    def _parse_chunks(self, ncvar):
+        # Parse dask chunks
+        """Parse the dask chunks.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            ncvar: `str`
+                The name of the netCDF variable containing the array.
+
+        :Returns:
+
+            `str`, `int` or `dict`
+                The parsed chunks that are suitable for passing to a
+                `Data` object containing the variable's array.
+
+        """
+        g = self.read_vars
+
+        default_chunks = "auto"
+        chunks = g.get("chunks", default_chunks)
+
+        if chunks is None:
+            return -1
+
+        if isinstance(chunks, dict):
+            if not chunks:
+                return default_chunks
+
+            # For ncdimensions = ('time', 'lat'):
+            #
+            # {} -> ["auto", "auto"]
+            # {'ncdim%time': 12} -> [12, "auto"]
+            # {'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
+            # {'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
+            # {'ncdim%time': 12, 'latitude': -1} -> [12, -1]
+            # {'ncdim%time': 12, 'Y': None} -> [12, None]
+            # {'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
+            # {'ncdim%time': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
+            attributes = g["variable_attributes"]
+            chunks2 = []
+            for ncdim in g["variable_dimensions"][ncvar]:
+                key = f"ncdim%{ncdim}"
+                if key in chunks:
+                    chunks2.append(chunks[key])
+                    continue
+
+                found_coord_attr = False
+                dim_coord_attrs = attributes.get(ncdim)
+                if dim_coord_attrs is not None:
+                    for attr in ("standard_name", "axis"):
+                        key = dim_coord_attrs.get(attr)
+                        if key in chunks:
+                            found_coord_attr = True
+                            chunks2.append(chunks[key])
+                            break
+
+                if not found_coord_attr:
+                    # Use default chunks for this dimension
+                    chunks2.append(default_chunks)
+
+            chunks = chunks2
+
+        return chunks
