@@ -336,6 +336,7 @@ Cyclicity
    ~cf.AuxiliaryCoordinate.cyclic
    ~cf.AuxiliaryCoordinate.period
    ~cf.AuxiliaryCoordinate.get_original_filenames
+   ~cf.AuxiliaryCoordinate.persist
 
 Miscellaneous
 -------------

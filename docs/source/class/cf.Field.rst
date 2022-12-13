@@ -247,6 +247,7 @@ Miscellaneous data operations
    ~cf.Field.get_original_filenames
    ~cf.Field.close
    ~cf.Field.chunk
+   ~cf.Field.persist
  
 Metadata constructs
 -------------------

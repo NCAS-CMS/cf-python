@@ -469,7 +469,7 @@ _rotated_latitude_longitude_lbcodes = set((101, 102, 111))
 #          'area': None,
 #      }
 
-_axis = {"area": None}
+_axis = {"area": "area"}
 
 _autocyclic_false = {"no-op": True, "X": False, "cyclic": False}
 

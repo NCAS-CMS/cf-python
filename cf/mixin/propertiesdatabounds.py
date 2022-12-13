@@ -3708,6 +3708,52 @@ class PropertiesDataBounds(PropertiesData):
 
         return bounds.period(*value, **config)
 
+    @_inplace_enabled(default=False)
+    def persist(self, bounds=True, inplace=False):
+        """Persist the underlying dask array into memory.
+
+        This turns an underlying lazy dask array into a equivalent
+        chunked dask array, but now with the results fully computed.
+
+        `persist` is particularly useful when using distributed
+        systems, because the results will be kept in distributed
+        memory, rather than returned to the local process.
+
+        **Performance**
+
+        `persist` causes all delayed operations to be computed.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            bounds: `bool`, optional
+                If False then do not persist any bounds data. By
+                default any bound data are also persisted.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        **Examples**
+
+        >>> g = f.persist()
+
+        """
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "persist",
+            bounds=bounds,
+            inplace=inplace,
+        )
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def rint(self, bounds=True, inplace=False, i=False):

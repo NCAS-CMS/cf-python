@@ -6,6 +6,8 @@ version 3.14.0
 * New method: `cf.Field.get_original_filenames`
   (https://github.com/NCAS-CMS/cf-python/issues/448)
 * New method: `cf.Field.to_dask_array`
+* Fixed bug when reading UM stash codes that imply an area mean cell
+  method (https://github.com/NCAS-CMS/cf-python/issues/487)
 * New keyword parameter to `cf.write`: ``omit_data``
   (https://github.com/NCAS-CMS/cf-python/issues/477)
 * Fixed bug that raised an exception when using the ``equal`` or
