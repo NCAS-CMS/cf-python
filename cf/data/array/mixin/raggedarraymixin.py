@@ -46,6 +46,7 @@ class RaggedArrayMixin:
 
         # Get the (cfdm) subarray class
         Subarray = self.get_Subarray()
+        subarray_name = Subarray().__class__.__name__
 
         # Set the chunk sizes for the dask array
         chunks = self.subarray_shapes(chunks)
@@ -67,9 +68,12 @@ class RaggedArrayMixin:
                 context_manager=context,
             )
 
+            key = f"{subarray_name}-{tokenize(subarray)}"
+            dsk[key] = subarray
+
             dsk[name + chunk_location] = (
                 getter,
-                subarray,
+                key,
                 Ellipsis,
                 False,
                 False,

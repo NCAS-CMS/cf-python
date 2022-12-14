@@ -221,6 +221,7 @@ Data
    ~cf.Index.isperiodic
    ~cf.Index.get_original_filenames
    ~cf.Index.has_bounds
+   ~cf.Index.persist
 
 Miscellaneous
 -------------

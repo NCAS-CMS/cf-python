@@ -2464,9 +2464,23 @@ class FieldTest(unittest.TestCase):
             f.get_original_filenames(), f.copy().get_original_filenames()
         )
 
+    def test_Field_persist(self):
+        """Test the `persist` Field method."""
+        f = cf.example_field(0)
+        f *= 2
+
+        self.assertGreater(len(f.to_dask_array().dask.layers), 1)
+
+        g = f.persist()
+        self.assertIsInstance(g, cf.Field)
+        self.assertEqual(len(g.to_dask_array().dask.layers), 1)
+        self.assertTrue(g.equals(f))
+
+        self.assertIsNone(g.persist(inplace=True))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
     print("")
-    unittest.main(verbosity=2)
+    unittest.main(module=__file__.split(".")[0], verbosity=2)

@@ -595,6 +595,7 @@ Performance
    ~cf.Data.section
    ~cf.Data.reconstruct_sectioned_data
    ~cf.Data.HDF_chunks
+   ~cf.Data.persist
 
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------
