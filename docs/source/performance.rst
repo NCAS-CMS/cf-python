@@ -32,8 +32,8 @@ Dask. All of the techniques that Dask supports for `improving
 performance <https://docs.dask.org/en/stable/best-practices.html>`_
 apply, and performance parameters can be set via Dask's `configuration
 settings <https://docs.dask.org/en/stable/configuration.html>`_. The
-important :ref:`chunk size <Chunks>` can be be set through the `cf`
-API.
+default value of the important :ref:`chunk size <Chunks>` can also be
+set through the `cf` API.
 
 ----
 
@@ -95,18 +95,18 @@ Some notable cases where non-lazy computation occurs are:
 ----------
 
 A Dask array is divided into pieces called "chunks" that are the
-elements over which Dask computations can be parallelised. Performance
-is strongly dependent on the nature of these chunks and
+elements over which Dask computations can be parallelised, and
+performance is strongly dependent on the nature of these chunks.
 
 By default, chunks have a size of at most ``128 MiB`` and prefer
 square-like shapes. A new default chunk size may be set with the
 `cf.chunksize` function. The default chunk size and shape may be
-overridden by `cf.read` and when creating `cf.Data` instances. Any
-data may be re-chunked after its creation with the `cf.Data.rechunk`
-method.
+overridden by `cf.read`, as well when creating `cf.Data` instances ab
+initio. Any data may be re-chunked after its creation with the
+`cf.Data.rechunk` method.
 
-In general, good performance results from following these for chunk
-sizes and shapes (copied from the `Dask documentation
+In general, good performance results from following these rules for
+chunk sizes and shapes (copied from the `Dask documentation
 <https://docs.dask.org/en/stable/array-chunks.html>`_):
 
 * A chunk should be small enough to fit comfortably in memory. There
@@ -139,31 +139,79 @@ For more information, see `Choosing good chunk sizes in Dask
 **Parallel computation**
 ------------------------
 
-All operations on Dask arrays are executed in parallel using `Dask
-dynamic task scheduling
-<https://docs.dask.org/en/stable/scheduling.html>`_. By default,
-scheduler uses threads on the local machine, but it is easy to
-instead use local processes, a cluster of many machines, or even a
-single-thread with no parallelism at all.
+All operations on Dask arrays are executed in parallel using Dask's
+`dynamic task scheduling
+<https://docs.dask.org/en/stable/scheduling.html>`_. By default, the
+scheduler uses threads on the local machine, but it is easy to use
+instead local processes, a cluster of many machines, or a single
+thread with no parallelism at all.
 
 Implementing a different scheduler is done via any of the methods
 supported by Dask, and all `cf` operations executed after a new
 scheduler has been defined will use that scheduler.
 
 .. code-block:: python
-   :caption: *One technique for executing operations on a remote
-             server.*
+   :caption: *Various techniques for choosing different task
+             schedulers for parallel computations.*
 
+   >>> import cf
+   >>> import dask
+   >>> dask.config.set(scheduler='processes')
+   >>> # cf computations will now use local processes
+   >>> dask.config.set(scheduler='synchronous')
+   >>> # cf computations will now be single-threaded
    >>> from dask.distributed import Client
    >>> client = Client('127.0.0.1:8786')
-   >>> import cf
-
+   >>> # cf computations will now use the defined distributed cluster
+   >>> dask.config.set(scheduler='threads')
+   >>> # cf computations will now use local threads (the default)
+ 
 Operations are stored by Dask in `task graphs
-<https://docs.dask.org/en/stable/graphs.html>`_ where each node in the
-graph is a task defined by an operation on a workflow chunk, and data
-created by one node are used as inputs to the next node in the
+<https://docs.dask.org/en/stable/graphs.html>`_ where each task
+(i.e. node) in the graph either defines a chunk of the data, or else
+an operation to be performed on one or more chunks. The data created
+by an operation are used as an input to the next operation node in the
 graph. The tasks in the graph are passed by the scheduler to the
 available pool of processing elements (PEs) which execute the tasks in
 parallel until the final result has been computed.
+
+The following example shows the task graph for a simple data
+computation:
+
+.. code-block:: python
+   :caption: *Visualising the task graph for a lazy computation.*
+
+   >>> import cf
+   >>> import numpy as np
+   >>> d = cf.Data(np.arange(30).reshape(5, 6), chunks=3)
+   >>> d.chunks
+   ((3, 2), (3, 3))
+   >>> print(d.array)
+   [[ 6  7  8  9 10 11]
+    [12 13 14 15 16 17]
+    [18 19 20 21 22 23]
+    [24 25 26 27 28 29]]
+   >>> e = d ** 2 + d
+   >>> e.to_dask_array().visualize('dask_task_graph.svg')
+   >>> print(e.array)
+   [[  0   2   6  12  20  30]
+    [ 42  56  72  90 110 132]
+    [156 182 210 240 272 306]
+    [342 380 420 462 506 552]
+    [600 650 702 756 812 870]]
+
+The image file ``dask_task_graph.svg`` contains the following
+visualisation of the dask task graph that was only executed when the
+result ``e.array`` was requested. The boxes represent the data chunks
+and the circles represent the operations to be performed on the
+chunks:
+
+.. figure:: images/dask_task_graph.svg
+   :scale: 35 %
+
+The boxes in the bottom row are the starting data (the four chunks of
+``d`` and the scalar ``2``), and the boxes in the top row are the
+result of the computation. The four chunks of the result are
+aggregated to create ``e.array``.
 
 ----
