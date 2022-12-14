@@ -152,6 +152,16 @@ class DataUtilsTest(unittest.TestCase):
         self.assertTrue((e.compute() == [-99, -1, 0]).all())
         self.assertEqual(u, units)
 
+        d = cf.Data(
+            ["2004-02-29", "2004-02-30", "2004-03-01"], calendar="360_day"
+        )
+        self.assertEqual(d.Units, cf.Units("days since 2004-02-29", "360_day"))
+        self.assertTrue((d.array == [0, 1, 2]).all())
+
+        d = cf.Data(["2004-02-29", "2004-03-01"], dt=True)
+        self.assertEqual(d.Units, cf.Units("days since 2004-02-29"))
+        self.assertTrue((d.array == [0, 1]).all())
+
     def test_Data_Utils_unique_calendars(self):
         """TODO."""
         a = [
