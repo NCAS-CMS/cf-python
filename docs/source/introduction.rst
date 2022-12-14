@@ -118,8 +118,8 @@ fields larger than the available memory to exist and be manipulated.
 ---------------
 
 As of version 3.14.0, cf uses :ref:`Dask <Performance>` for all of its
-data manipulations, that provides lazy, parallelised, and out-of-core
-computations of array operations
+data manipulations, which provides lazy, parallelised, and out-of-core
+computations of array operations.
 
 ----
 
