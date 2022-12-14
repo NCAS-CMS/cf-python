@@ -71,20 +71,22 @@ jobs:
         python -m pip install --upgrade pip
         pip --version
         pip list
-    # Install cf-python dependencies, excluding cfdm, pre-testing
-    # We do so with conda which was setup in a previous step.
-    - name: Install dependencies
+    # Install cf-python dependencies, excluding cfunits and cfdm, pre-testing
+    # We do so with conda (and pip) which was setup in a previous step.
+    - name: Install dependencies excluding the NCAS CF Data Tools libraries
       shell: bash -l {0}
       run: |
         conda install -c ncas -c conda-forge udunits2=2.2.25
         conda install -c conda-forge mpich esmpy
         conda install scipy matplotlib dask
         pip install pycodestyle
-    # Install cfdm from main branch, then the cf-python development version
-    # We do so with conda which was setup in a previous step.
-    - name: Install development cfdm and cf-python
+    # Install cfunits and cfdm (from development main branch) separately,
+    # since it is most robust to test a no-dependency installation of cf,
+    # then finally install the cf-python development version.
+    - name: Install NCAS CF Data Tools libs including dev. cfdm and cf-python
       shell: bash -l {0}
       run: |
+        pip install cfunits
         cd ${{ github.workspace }}/cfdm
         pip install -e .
         cd ${{ github.workspace }}/main
