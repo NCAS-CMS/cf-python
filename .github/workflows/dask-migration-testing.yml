@@ -86,6 +86,7 @@ jobs:
     - name: Install NCAS CF Data Tools libs including dev. cfdm and cf-python
       shell: bash -l {0}
       run: |
+        conda install -c ncas -c conda-forge cf-plot
         pip install cfunits
         cd ${{ github.workspace }}/cfdm
         pip install -e .
