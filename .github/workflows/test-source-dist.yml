@@ -26,7 +26,7 @@ jobs:
     # Need to checkout the repo in order to build the source dist from it,
     # but don't install codebase directly in this case, only test the sdist.
     - name: Checkout cf-python
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: main
 
@@ -35,14 +35,14 @@ jobs:
       run: echo Now setting up the environment for cf-python...
 
     - name: Checkout the current cfdm master to use as the dependency
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: NCAS-CMS/cfdm
         path: cfdm
 
     # Prepare to test the source dist using the given Python version
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 

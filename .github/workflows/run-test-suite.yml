@@ -33,7 +33,7 @@ jobs:
     steps:
 
     - name: Checkout cf-python
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: main
 
@@ -42,14 +42,14 @@ jobs:
       run: echo Now setting up the environment for the cf-python test suite...
 
     - name: Checkout the current cfdm master to use as the dependency
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: NCAS-CMS/cfdm
         path: cfdm
 
     # Prepare to run the test-suite on different versions of Python 3:
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -138,7 +138,7 @@ jobs:
       # would have to run anyway, it is simplest to add it in this flow.
       # Also, it means code coverage is only generated if the test suite is
       # passing at least for that job, avoiding useless coverage reports.
-      uses: codecov/codecov-action@v1.0.13
+      uses: codecov/codecov-action@v3
       if: |
         matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
       with:
