@@ -297,4 +297,4 @@ if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
-    unittest.main(module=__file__.split(".")[0], verbosity=2)
+    unittest.main(verbosity=2)
