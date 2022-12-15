@@ -306,6 +306,7 @@ setup(
         "cf",
         "cf.mixin",
         "cf.data",
+        "cf.data.array.abstract",
         "cf.docstring",
         "cf.read_write",
         "cf.read_write.um",
