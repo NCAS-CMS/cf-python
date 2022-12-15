@@ -97,7 +97,7 @@ class GroupsTest(unittest.TestCase):
         nc.close()
 
         h = cf.read(grouped_file, verbose=1)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0], verbose=2))
 
         # ------------------------------------------------------------
