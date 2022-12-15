@@ -82,7 +82,7 @@ jobs:
     - name: Install dependencies excluding the NCAS CF Data Tools libraries
       shell: bash -l {0}
       run: |
-        conda install -c ncas -c conda-forge udunits2=2.2.25
+        conda install -c ncas -c conda-forge cf-plot udunits2=2.2.25
         conda install -c conda-forge mpich esmpy
         conda install scipy matplotlib
         pip install pycodestyle
@@ -90,10 +90,10 @@ jobs:
     # Install cfunits and cfdm (from development main branch) separately,
     # since it is most robust to test a no-dependency installation of cf,
     # then finally install the cf-python development version.
-    - name: Install NCAS CF Data Tools libs including dev. cfdm and cf-python
+    - name: Install cfunits then development versions of cfdm and cf-python
       shell: bash -l {0}
       run: |
-        pip install cf-plot cfunits
+        pip install cfunits
         cd ${{ github.workspace }}/cfdm
         pip install -e .
         cd ${{ github.workspace }}/main
