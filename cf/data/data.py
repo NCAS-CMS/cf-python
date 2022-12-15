@@ -16,6 +16,7 @@ from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
 from dask.core import flatten
 from dask.highlevelgraph import HighLevelGraph
+from dask.optimization import cull
 
 from ..cfdatetime import dt as cf_dt
 from ..constants import masked as cf_masked
@@ -3588,6 +3589,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Get data as dask arrays and apply concatenation operation
         dxs = []
         for data1 in processed_data:
+            # Remove unnecessary components from the graph, because
+            # complicated task graphs can confuse da.concatenate.
+            data1.cull()            
             dxs.append(data1.to_dask_array())
 
         data0._set_dask(da.concatenate(dxs, axis=axis))
@@ -3601,6 +3605,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
             data0.cyclic(axes=axis, iscyclic=False)
 
+#        print (data0.to_dask_array().dask)
+            
         return data0
 
     def _unary_operation(self, operation):
@@ -10041,6 +10047,24 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.override_units(_units_1, inplace=True)
 
         return d
+
+    def cull(self):
+        """Remove unnecessary components from the dask graph in-place.
+
+        .. versionadded:: TODODASKVER
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+
+        """
+        dx = self.to_dask_array()
+        dsk, _ = cull(dx.dask, dx.__dask_keys__())
+        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
+        self._set_dask(dx)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)

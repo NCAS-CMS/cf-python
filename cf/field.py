@@ -5076,7 +5076,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new_data = Data.concatenate(
             [f.get_data(_fill_value=False) for f in fields],
             axis=axis,
-            _preserve=_preserve,
         )
 
         # Change the domain axis size
@@ -10187,7 +10186,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 index = numpy_where(classification == u)[0].tolist()
 
                 pc = self.subspace(**{axis: index})
-
+#                pc.data.cull()
+                
                 # ----------------------------------------------------
                 # Ignore groups that don't meet the specified criteria
                 # ----------------------------------------------------
@@ -10330,7 +10330,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Concatenate the partial collapses
             # --------------------------------------------------------
             try:
-                f = self.concatenate(fl, axis=iaxis, _preserve=False)
+                f = self.concatenate(fl, axis=iaxis)
             except ValueError as error:
                 raise ValueError(f"Can't collapse: {error}")
 
