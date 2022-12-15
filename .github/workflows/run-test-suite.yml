@@ -41,7 +41,7 @@ jobs:
     - name: Notify about setup
       run: echo Now setting up the environment for the cf-python test suite...
 
-    - name: Checkout the current cfdm master to use as the dependency
+    - name: Checkout the current cfdm main to use as the dependency
       uses: actions/checkout@v3
       with:
         repository: NCAS-CMS/cfdm
@@ -64,18 +64,22 @@ jobs:
         python-version: ${{ matrix.python-version }}
         channels: ncas, conda-forge
 
-    # Ensure shell is configured with conda activated:
-    - name: Check conda config
+    # Ensure shell is configured with conda and pip correctly activated.
+    - name: Check conda and pip config
       shell: bash -l {0}
       run: |
+        echo "*Conda report:*"
         conda info
         conda list
         conda config --show-sources
         conda config --show
+        echo "*Pip report:*"
+        pip --version
+        pip list
 
-    # Install cf-python dependencies, excluding cfdm, pre-testing
-    # We do so with conda which was setup in a previous step.
-    - name: Install dependencies
+    # Install cf-python dependencies, excluding cfunits and cfdm, pre-testing
+    # We do so with conda (and pip) which was setup in a previous step.
+    - name: Install dependencies excluding the NCAS CF Data Tools libraries
       shell: bash -l {0}
       run: |
         conda install -c ncas -c conda-forge udunits2=2.2.25
@@ -83,15 +87,17 @@ jobs:
         conda install scipy matplotlib
         pip install pycodestyle
 
-    # Install cfdm from master branch, then the cf-python development version
-    # We do so with conda which was setup in a previous step.
-    - name: Install development cfdm and cf-python
+    # Install cfunits and cfdm (from development main branch) separately,
+    # since it is most robust to test a no-dependency installation of cf,
+    # then finally install the cf-python development version.
+    - name: Install NCAS CF Data Tools libs including dev. cfdm and cf-python
       shell: bash -l {0}
       run: |
+        pip install cf-plot cfunits
         cd ${{ github.workspace }}/cfdm
         pip install -e .
         cd ${{ github.workspace }}/main
-        pip install -e .
+        pip install --no-deps -e .
 
     # Make UMRead library
     - name: Make UMRead
