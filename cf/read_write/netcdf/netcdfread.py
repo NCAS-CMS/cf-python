@@ -295,7 +295,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 The name of netCDF variable.
 
             units: `str`, optional
-                The units of *array*. By default, or `None`, it is
+                The units of *array*. By default, or if `None`, it is
                 assumed that there are no units.
 
             calendar: `str`, optional
