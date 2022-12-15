@@ -299,7 +299,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 assumed that there are no units.
 
             calendar: `str`, optional
-                The calendar of *array*. By default, or `None`, it is
+                The calendar of *array*. By default, or if `None`, it is
                 assumed that there is no calendar.
 
             kwargs: optional
