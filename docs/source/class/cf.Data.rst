@@ -581,6 +581,7 @@ Performance
    ~cf.Data.nc_set_hdf5_chunksizes
    ~cf.Data.close
    ~cf.Data.chunk
+   ~cf.Data.cull
    ~cf.Data.add_partitions
    ~cf.Data.partition_boundaries
    ~cf.Data.partition_configuration

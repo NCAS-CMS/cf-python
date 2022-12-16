@@ -2570,7 +2570,7 @@ class PropertiesData(Properties):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull=False, _preserve=True):
         """Join a sequence of variables together.
 
         :Parameters:
@@ -2579,22 +2579,42 @@ class PropertiesData(Properties):
 
             axis: `int`, optional
 
+            cull: `bool`, optional
+                If True then remove unnecessary components from the
+                dask graph of each array to be concatenated. This may
+                improve performance, and could fix some concatenation
+                failures.
+
+                .. versionadded:: TODODASKVER
+
+            _preserve: `bool`, optional
+                Deprecated at version TODODASKVER.
+
         :Returns:
 
         TODO
 
         """
+        if not _preserve:
+            _DEPRECATION_ERROR_KWARGS(
+                cls(),
+                "concatenate",
+                {"_preserve": None},
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         variable0 = variables[0]
 
         if len(variables) == 1:
             return variable0.copy()
 
-        out = variable0.copy()  # data=False)
+        out = variable0.copy()
 
         data = Data.concatenate(
             [v.get_data(_fill_value=False) for v in variables],
             axis=axis,
-            _preserve=_preserve,
+            cull=cull,
         )
         out.set_data(data, copy=False)
 

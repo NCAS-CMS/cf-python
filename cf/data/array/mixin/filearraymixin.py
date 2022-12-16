@@ -8,6 +8,8 @@ class FileArrayMixin:
 
     """
 
+    _dask_lock = True
+
     @property
     def _dask_meta(self):
         """The metadata for the containing dask array.

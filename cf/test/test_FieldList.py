@@ -443,7 +443,7 @@ class FieldTest(unittest.TestCase):
         h = g.concatenate(axis=0)
         self.assertTrue(f.equals(h, verbose=2))
 
-        h = g.concatenate(axis=0, _preserve=False)
+        h = g.concatenate(axis=0, cull=True)
         self.assertTrue(f.equals(h, verbose=2))
 
     def test_FieldList_index(self):
@@ -477,4 +477,4 @@ if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
-    unittest.main(module=__file__.split(".")[0], verbosity=2)
+    unittest.main(verbosity=2)

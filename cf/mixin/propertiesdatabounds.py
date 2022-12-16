@@ -1298,7 +1298,7 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull=False, _preserve=True):
         """Join a sequence of variables together.
 
         :Parameters:
@@ -1307,24 +1307,42 @@ class PropertiesDataBounds(PropertiesData):
 
             axis: `int`, optional
 
+            cull: `bool`, optional
+                If True then remove unnecessary components from the
+                dask graph of each array to be concatenated. This may
+                improve performance, and could fix some concatenation
+                failures.
+
+                .. versionadded:: TODODASKVER
+
+            _preserve: `bool`, optional
+                Deprecated at version TODODASKVER.
+
         :Returns:
 
             TODO
 
         """
+        if not _preserve:
+            _DEPRECATION_ERROR_KWARGS(
+                cls(),
+                "concatenate",
+                {"_preserve": None},
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         variable0 = variables[0]
 
         if len(variables) == 1:
             return variable0.copy()
 
-        out = super().concatenate(variables, axis=axis, _preserve=_preserve)
+        out = super().concatenate(variables, axis=axis, cull=cull)
 
         bounds = variable0.get_bounds(None)
         if bounds is not None:
             bounds = bounds.concatenate(
-                [v.get_bounds() for v in variables],
-                axis=axis,
-                _preserve=_preserve,
+                [v.get_bounds() for v in variables], axis=axis, cull=cull
             )
             out.set_bounds(bounds, copy=False)
 
@@ -1333,7 +1351,7 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring = interior_ring.concatenate(
                 [v.get_interior_ring() for v in variables],
                 axis=axis,
-                _preserve=_preserve,
+                cull=cull,
             )
             out.set_interior_ring(interior_ring, copy=False)
 

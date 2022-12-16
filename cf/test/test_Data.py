@@ -4410,9 +4410,19 @@ class DataTest(unittest.TestCase):
         for element in elements0:
             self.assertNotIn(element, d._custom)
 
+    def test_Data_cull(self):
+        """Test `Data.cull`"""
+        d = cf.Data([1, 2, 3, 4, 5], chunks=3)
+        d = d[:2]
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 3)
+
+        # Check that there are fewer keys after culling
+        d.cull()
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 2)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
-    print()
-    unittest.main(module=__file__.split(".")[0], verbosity=2)
+    print(__file__.split(".")[0])
+    unittest.main(verbosity=2)

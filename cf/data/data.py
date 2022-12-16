@@ -1814,7 +1814,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @_deprecated_kwarg_check(
         "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
     )
-    def median(self, axes=None, squeeze=False, mtol=1, inplace=False):
+    def median(
+        self,
+        axes=None,
+        squeeze=False,
+        mtol=1,
+        inplace=False,
+        _preserve_partitions=False,
+    ):
         """Calculate median values.
 
         Calculates the median value or the median values along axes.
@@ -1834,6 +1841,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             {{mtol: number, optional}}
 
             {{inplace: `bool`, optional}}
+
+            _preserve_partitions: deprecated at version TODODASKVER
 
         :Returns:
 
@@ -3496,8 +3505,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @classmethod
-    def concatenate(cls, data, axis=0, _preserve=True):
+    def concatenate(cls, data, axis=0, cull=False, _preserve=True):
         """Join a sequence of data arrays together.
+
+        .. seealso:: `cull`
 
         :Parameters:
 
@@ -3515,6 +3526,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 .. note:: If the axis specified is cyclic, it will become
                           non-cyclic in the output.
+
+            cull: `bool`, optional
+                If True then remove unnecessary components from the
+                dask graph of each array to be concatenated. This may
+                improve performance, and could fix some concatenation
+                failures.
+
+                .. versionadded:: TODODASKVER
 
             _preserve: `bool`, optional
                 Deprecated at version TODODASKVER.
@@ -3554,11 +3573,27 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [ 1.     0.05   0.075]
 
         """
+        if not _preserve:
+            _DEPRECATION_ERROR_KWARGS(
+                cls(),
+                "concatenate",
+                {"_preserve": None},
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         data = tuple(data)
         if len(data) < 2:
             raise ValueError(
                 "Can't concatenate: Must provide at least two data arrays"
             )
+
+        if cull:
+            # Remove unnecessary components from the graph, which may
+            # improve performance, and because complicated task graphs
+            # can sometimes confuse da.concatenate.
+            for d in data:
+                d.cull()
 
         data0 = data[0].copy()
 
@@ -3582,18 +3617,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             elif not units0.equals(data1.Units):  # conform for consistency
                 if not copied:
                     data1 = data1.copy()
+
                 data1.Units = units0
 
             processed_data.append(data1)
 
         # Get data as dask arrays and apply concatenation operation
-        dxs = []
-        for data1 in processed_data:
-            # Remove unnecessary components from the graph, because
-            # complicated task graphs can confuse da.concatenate.
-            data1.cull()            
-            dxs.append(data1.to_dask_array())
-
+        dxs = [d.to_dask_array() for d in processed_data]
         data0._set_dask(da.concatenate(dxs, axis=axis))
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
@@ -3605,8 +3635,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
             data0.cyclic(axes=axis, iscyclic=False)
 
-#        print (data0.to_dask_array().dask)
-            
         return data0
 
     def _unary_operation(self, operation):
@@ -5876,6 +5904,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
+    @_deprecated_kwarg_check(
+        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
+    )
     def min(
         self,
         axes=None,
@@ -6161,6 +6192,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
+    @_deprecated_kwarg_check(
+        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
+    )
     def integral(
         self,
         axes=None,
@@ -10059,12 +10093,26 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
+        >>> d = cf.Data([1, 2, 3, 4, 5], chunks=3)
+        >>> d = d[:2]
+        >>> dict(d.to_dask_array().dask)
+        {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
+         ('array-21ea057f160746a3d3f0943bba945460', 1): array([4, 5]),
+         ('getitem-3e4edac0a632402f6b45923a6b9d215f',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
+           0), (slice(0, 2, 1),))}
+        >>> d.cull()
+        dict(d.to_dask_array().dask)
+        {('getitem-3e4edac0a632402f6b45923a6b9d215f',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
+           0), (slice(0, 2, 1),)),
+         ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
 
         """
         dx = self.to_dask_array()
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx)
+        self._set_dask(dx, conform=False)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -12054,24 +12102,15 @@ def _parse_weights(d, weights, axis=None):
     # For each component, add missing dimensions as size 1.
     w = []
     shape = d.shape
+    axes = d._axes
     for key, value in weights.items():
         value = Data.asdata(value)
 
         # Make sure axes are in ascending order
-        skey = tuple(sorted(key))
-        if key != skey:
-            value = value.transpose(skey)
-            key = skey
-
-        if not all(
-            True if i in (j, 1) else False
-            for i, j in zip(value.shape, [shape[i] for i in key])
-        ):
-            raise ValueError(
-                f"Weights component for axes {tuple(key)} with shape "
-                f"{value.shape} is not broadcastable to data with "
-                f"shape {shape}"
-            )
+        if key != tuple(sorted(key)):
+            key1 = [axes[i] for i in key]
+            new_order = [key1.index(axis) for axis in axes if axis in key1]
+            value = value.transpose(new_order)
 
         new_shape = [n if i in key else 1 for i, n in enumerate(shape)]
         w.append(value.reshape(new_shape))
