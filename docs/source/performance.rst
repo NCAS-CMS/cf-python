@@ -86,6 +86,15 @@ Some notable cases where non-lazy computation occurs are:
      >>> weights = fl[0].regrids(dst, method='conservative', return_operator=True)
      >>> regridded = [f.regrids(weights) for f in fl]
    
+
+* **Reading compressed-by-convention datasets from disk**
+
+  When reading from files datasets that have been compressed by
+  convention (such as compression by gathering, or some discrete
+  sampling geometries), the compression metadata (such as the "list"
+  array for compression by gathering) is read into memory during the
+  `cf.read` operation.
+
 ----
 
 .. _Chunks:
@@ -160,11 +169,11 @@ scheduler has been defined will use that scheduler.
    >>> # cf computations will now use local processes
    >>> dask.config.set(scheduler='synchronous')
    >>> # cf computations will now be single-threaded
+   >>> dask.config.set(scheduler='threads')
+   >>> # cf computations will now use local threads (the default)
    >>> from dask.distributed import Client
    >>> client = Client('127.0.0.1:8786')
    >>> # cf computations will now use the defined distributed cluster
-   >>> dask.config.set(scheduler='threads')
-   >>> # cf computations will now use local threads (the default)
  
 Operations are stored by Dask in `task graphs
 <https://docs.dask.org/en/stable/graphs.html>`_ where each task
