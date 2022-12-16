@@ -5059,7 +5059,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if they were one dimensional.
 
             cull: `bool`, optional
-                If True then remove unnecessary components from the
+                DEFAULT TRUE If True then remove unnecessary components from the
                 dask graph of each array to be concatenated. This may
                 improve performance, and could fix some concatenation
                 failures.
@@ -5081,7 +5081,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 cls(),
                 "concatenate",
                 {"_preserve": None},
-                versin="TODODASKVER",
+                version="TODODASKVER",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -10206,7 +10206,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 index = numpy_where(classification == u)[0].tolist()
 
                 pc = self.subspace(**{axis: index})
-                #                pc.data.cull()
 
                 # ----------------------------------------------------
                 # Ignore groups that don't meet the specified criteria
@@ -10350,11 +10349,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Concatenate the partial collapses
             # --------------------------------------------------------
             try:
-                # It has been found that the dask graphs of partial
-                # collapses can be sufficiently complicated so as to
-                # confuse the concatenation process. Setting cull=True
-                # overcomes this.
-                f = self.concatenate(fl, axis=iaxis, cull=True)
+#                # It has been found that the dask graphs of partial
+#                # collapses can be sufficiently complicated so as to
+#                # confuse the concatenation process. Setting cull=True
+#                # overcomes this.
+                f = self.concatenate(fl, axis=iaxis)
             except ValueError as error:
                 raise ValueError(f"Can't collapse: {error}")
 

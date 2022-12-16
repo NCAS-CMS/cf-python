@@ -3505,7 +3505,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @classmethod
-    def concatenate(cls, data, axis=0, cull=False, _preserve=True):
+    def concatenate(cls, data, axis=0, cull=True, _preserve=True):
         """Join a sequence of data arrays together.
 
         .. seealso:: `cull`
@@ -3528,7 +3528,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                           non-cyclic in the output.
 
             cull: `bool`, optional
-                If True then remove unnecessary components from the
+                TODO for default True .If True then remove unnecessary components from the
                 dask graph of each array to be concatenated. This may
                 improve performance, and could fix some concatenation
                 failures.
