@@ -1298,10 +1298,10 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, cull=True, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull_graph=True):
         """Join a sequence of variables together.
 
-        .. seealso:: `Data.cull`
+        .. seealso:: `Data.cull_graph`
 
         :Parameters:
 
@@ -1309,36 +1309,24 @@ class PropertiesDataBounds(PropertiesData):
 
             axis: `int`, optional
 
-            {{cull: `bool`, optional}}
-
-            _preserve: `bool`, optional
-                Deprecated at version TODODASKVER.
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
             TODO
 
         """
-        if not _preserve:
-            _DEPRECATION_ERROR_KWARGS(
-                cls(),
-                "concatenate",
-                {"_preserve": None},
-                version="TODODASKVER",
-                removed_at="5.0.0",
-            )  # pragma: no cover
-
         variable0 = variables[0]
 
         if len(variables) == 1:
             return variable0.copy()
 
-        out = super().concatenate(variables, axis=axis, cull=cull)
+        out = super().concatenate(variables, axis=axis, cull_graph=cull_graph)
 
         bounds = variable0.get_bounds(None)
         if bounds is not None:
             bounds = bounds.concatenate(
-                [v.get_bounds() for v in variables], axis=axis, cull=cull
+                [v.get_bounds() for v in variables], axis=axis, cull_graph=cull_graph
             )
             out.set_bounds(bounds, copy=False)
 
@@ -1347,7 +1335,7 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring = interior_ring.concatenate(
                 [v.get_interior_ring() for v in variables],
                 axis=axis,
-                cull=cull,
+                cull_graph=cull_graph,
             )
             out.set_interior_ring(interior_ring, copy=False)
 

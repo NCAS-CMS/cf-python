@@ -1813,16 +1813,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check(
-        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
-    )
     def median(
         self,
         axes=None,
         squeeze=False,
         mtol=1,
         inplace=False,
-        _preserve_partitions=False,
     ):
         """Calculate median values.
 
@@ -1843,8 +1839,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             {{mtol: number, optional}}
 
             {{inplace: `bool`, optional}}
-
-            _preserve_partitions: deprecated at version TODODASKVER
 
         :Returns:
 
@@ -1979,9 +1973,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check(
-        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
-    )
     @_inplace_enabled(default=False)
     def percentile(
         self,
@@ -1991,7 +1982,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         squeeze=False,
         mtol=1,
         inplace=False,
-        _preserve_partitions=False,
         interpolation=None,
         interpolation2=None,
     ):
@@ -2071,8 +2061,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             interpolation: deprecated at version TODODASKVER
                 Use the *method* parameter instead.
-
-            _preserve_partitions: deprecated at version TODODASKVER
 
         :Returns:
 
@@ -3507,10 +3495,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
     @classmethod
-    def concatenate(cls, data, axis=0, cull=True, _preserve=True):
+    def concatenate(cls, data, axis=0, cull_graph=True):
         """Join a sequence of data arrays together.
 
-        .. seealso:: `cull`
+        .. seealso:: `cull_graph`
 
         :Parameters:
 
@@ -3529,10 +3517,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 .. note:: If the axis specified is cyclic, it will become
                           non-cyclic in the output.
 
-            {{cull: `bool`, optional}}
-
-            _preserve: `bool`, optional
-                Deprecated at version TODODASKVER.
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
@@ -3569,27 +3554,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         [ 1.     0.05   0.075]
 
         """
-        if not _preserve:
-            _DEPRECATION_ERROR_KWARGS(
-                cls(),
-                "concatenate",
-                {"_preserve": None},
-                version="TODODASKVER",
-                removed_at="5.0.0",
-            )  # pragma: no cover
-
         data = tuple(data)
         if len(data) < 2:
             raise ValueError(
                 "Can't concatenate: Must provide at least two data arrays"
             )
 
-        if cull:
+        if cull_graph:
             # Remove unnecessary components from the graph, which may
             # improve performance, and because complicated task graphs
             # can sometimes confuse da.concatenate.
             for d in data:
-                d.cull()
+                d.cull_graph()
 
         data0 = data[0].copy()
 
@@ -5900,9 +5876,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
-    @_deprecated_kwarg_check(
-        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
-    )
     def min(
         self,
         axes=None,
@@ -5911,7 +5884,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         split_every=None,
         inplace=False,
         i=False,
-        _preserve_partitions=False,
     ):
         """Calculate minimum values.
 
@@ -6188,9 +6160,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @_inplace_enabled(default=False)
-    @_deprecated_kwarg_check(
-        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
-    )
     def integral(
         self,
         axes=None,
@@ -6199,7 +6168,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         weights=None,
         split_every=None,
         inplace=False,
-        _preserve_partitions=False,
     ):
         """Calculate summed values.
 
@@ -10078,7 +10046,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def cull(self):
+    def cull_graph(self):
         """Remove unnecessary tasks from the dask graph in-place.
 
         **Performance**
@@ -10107,7 +10075,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          ('getitem-3e4edac0a632402f6b45923a6b9d215f',
           0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
            0), (slice(0, 2, 1),))}
-        >>> d.cull()
+        >>> d.cull_graph()
         dict(d.to_dask_array().dask)
         {('getitem-3e4edac0a632402f6b45923a6b9d215f',
           0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',

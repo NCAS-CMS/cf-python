@@ -25,7 +25,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """
         super().__init__(constructs=fields)
 
-    def concatenate(self, axis=0, cull=False, _preserve=True):
+    def concatenate(self, axis=0, cull_graph=True):
         """Join the sequence of fields within the field list together.
 
         This is different to `cf.aggregate` because it does not
@@ -44,16 +44,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
                 default is 0. Note that scalar arrays are treated as
                 if they were one dimensional.
 
-            cull: `bool`, optional
-                If True then remove unnecessary components from the
-                dask graph of each array to be concatenated. This may
-                improve performance, and could fix some concatenation
-                failures.
-
-                .. versionadded:: TODODASKVER
-
-            _preserve: `bool`, optional
-                Deprecated at version TODODASKVER.
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
@@ -62,16 +53,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
                 the fields contained in the input field list.
 
         """
-        if not _preserve:
-            _DEPRECATION_ERROR_KWARGS(
-                self,
-                "concatenate",
-                {"_preserve": None},
-                version="TODODASKVER",
-                removed_at="5.0.0",
-            )  # pragma: no cover
-
-        return self[0].concatenate(self, axis=axis, cull=cull)
+        return self[0].concatenate(self, axis=axis, cull_graph=cull_graph)
 
     def select_by_naxes(self, *naxes):
         """Select field constructs by property.

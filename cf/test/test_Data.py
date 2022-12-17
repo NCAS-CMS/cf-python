@@ -4410,14 +4410,14 @@ class DataTest(unittest.TestCase):
         for element in elements0:
             self.assertNotIn(element, d._custom)
 
-    def test_Data_cull(self):
+    def test_Data_cull_graph(self):
         """Test `Data.cull`"""
         d = cf.Data([1, 2, 3, 4, 5], chunks=3)
         d = d[:2]
         self.assertEqual(len(dict(d.to_dask_array().dask)), 3)
 
         # Check that there are fewer keys after culling
-        d.cull()
+        d.cull_graph()
         self.assertEqual(len(dict(d.to_dask_array().dask)), 2)
 
 

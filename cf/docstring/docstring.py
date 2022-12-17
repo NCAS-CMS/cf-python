@@ -381,13 +381,13 @@ _docstring_substitution_definitions = {
                 The calendar of the aggregated array. Set to `None` to
                 indicate the CF default calendar, if applicable.""",
     # cull 
-    "{{cull: `bool`, optional}}": """cull: `bool`, optional
-                By default *cull* is True, meaning that unnecessary
-                tasks are removed (culled) from each array's dask
-                graph before concatenation. This process has a small
-                overhead but can improve performance overall. If set
-                to False then dask graphs are not culled. See
-                `dask.optimization.cull` for details.
+    "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
+                By default *cull_graph* is True, meaning that
+                unnecessary tasks are removed (culled) from each
+                array's dask graph before concatenation. This process
+                has a small overhead but can improve performance
+                overall. If set to False then dask graphs are not
+                culled. See `dask.optimization.cull` for details.
 
                 .. versionadded:: TODODASKVER""",
     # ----------------------------------------------------------------

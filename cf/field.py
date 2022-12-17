@@ -5037,7 +5037,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return axis in self.cyclic()
 
     @classmethod
-    def concatenate(cls, fields, axis=0, cull=True, _preserve=True):
+    def concatenate(cls, fields, axis=0, cull_graph=True):
         """Join a sequence of fields together.
 
         This is different to `cf.aggregate` because it does not account
@@ -5046,7 +5046,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 1.0
 
-        .. seealso:: `cf.aggregate`, `Data.concatenate`, `Data.cull`
+        .. seealso:: `cf.aggregate`, `Data.concatenate`,
+                     `Data.cull_graph`
 
         :Parameters:
 
@@ -5058,10 +5059,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 default is 0. Note that scalar arrays are treated as
                 if they were one dimensional.
 
-            {{cull: `bool`, optional}}
-
-            _preserve: `bool`, optional
-                Deprecated at version TODODASKVER.
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
@@ -5070,15 +5068,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 fields.
 
         """
-        if not _preserve:
-            _DEPRECATION_ERROR_KWARGS(
-                cls(),
-                "concatenate",
-                {"_preserve": None},
-                version="TODODASKVER",
-                removed_at="5.0.0",
-            )  # pragma: no cover
-
         if isinstance(fields, cls):
             return fields.copy()
 
@@ -5091,7 +5080,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new_data = Data.concatenate(
             [f.get_data(_fill_value=False) for f in fields],
             axis=axis,
-            cull=cull,
+            cull_graph=cull_graph,
         )
 
         # Change the domain axis size
@@ -5134,7 +5123,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # each field.
             try:
                 construct = construct.concatenate(
-                    constructs, axis=construct_axes.index(dim), cull=cull
+                    constructs, axis=construct_axes.index(dim), cull_graph=cull_graph
                 )
             except ValueError:
                 # Couldn't concatenate this construct, so remove it from

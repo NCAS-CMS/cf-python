@@ -2570,10 +2570,10 @@ class PropertiesData(Properties):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, cull=True, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull_graph=True):
         """Join a sequence of variables together.
 
-        .. seealso:: `Data.cull`
+        .. seealso:: `Data.cull_graph`
 
         :Parameters:
 
@@ -2581,25 +2581,13 @@ class PropertiesData(Properties):
 
             axis: `int`, optional
 
-            {{cull: `bool`, optional}}
-
-            _preserve: `bool`, optional
-                Deprecated at version TODODASKVER.
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
         TODO
 
         """
-        if not _preserve:
-            _DEPRECATION_ERROR_KWARGS(
-                cls(),
-                "concatenate",
-                {"_preserve": None},
-                version="TODODASKVER",
-                removed_at="5.0.0",
-            )  # pragma: no cover
-
         variable0 = variables[0]
 
         if len(variables) == 1:
@@ -2610,7 +2598,7 @@ class PropertiesData(Properties):
         data = Data.concatenate(
             [v.get_data(_fill_value=False) for v in variables],
             axis=axis,
-            cull=cull,
+            cull_graph=cull_graph,
         )
         out.set_data(data, copy=False)
 

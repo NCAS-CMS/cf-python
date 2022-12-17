@@ -458,6 +458,11 @@ class FieldTest(unittest.TestCase):
                 for weights in (None, "area"):
                     a = f.collapse(method, axes=axes, weights=weights).data
                     b = getattr(f.data, method)(axes=axes)
+#                    print (method, axes, weights)
+#                    a.to_dask_array().visualize()
+#                    _ = a.array
+#                    b.to_dask_array().visualize()
+#                    _ = b.array
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                     )
@@ -474,6 +479,11 @@ class FieldTest(unittest.TestCase):
                         d_weights = weights
                     a = f.collapse(method, axes=axes, weights=weights).data
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
+#                    print (method, axes, weights)
+#                    a.to_dask_array().visualize()
+#                    _ = a.array
+#                    b.to_dask_array().visualize()
+#                    _ = b.array
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                     )
@@ -485,6 +495,11 @@ class FieldTest(unittest.TestCase):
                     method, axes=axes, weights=weights, measure=True
                 ).data
                 b = getattr(f.data, method)(axes=axes, weights=d_weights)
+#                print (method, axes, weights)
+#                a.to_dask_array().visualize()
+#                _ = a.array
+#                b.to_dask_array().visualize()
+#                _ = b.array
                 self.assertTrue(
                     a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                 )
@@ -504,6 +519,11 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(
                         axes=axes, ddof=1, weights=d_weights
                     )
+#                    print (method, axes, weights)
+#                    a.to_dask_array().visualize()
+#                    _ = a.array
+#                    b.to_dask_array().visualize()
+#                    _ = b.array
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                     )
@@ -517,6 +537,11 @@ class FieldTest(unittest.TestCase):
 
                     a = f.collapse(method, axes=axes, weights=weights).data
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
+#                    print (method, axes, weights)
+#                    a.to_dask_array().visualize()
+#                    _ = a.array
+#                    b.to_dask_array().visualize()
+#                    _ = b.array
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                     )

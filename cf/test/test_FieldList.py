@@ -443,7 +443,7 @@ class FieldTest(unittest.TestCase):
         h = g.concatenate(axis=0)
         self.assertTrue(f.equals(h, verbose=2))
 
-        h = g.concatenate(axis=0, cull=True)
+        h = g.concatenate(axis=0, cull_graph=False)
         self.assertTrue(f.equals(h, verbose=2))
 
     def test_FieldList_index(self):
