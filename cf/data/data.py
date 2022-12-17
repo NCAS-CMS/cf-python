@@ -3527,13 +3527,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 .. note:: If the axis specified is cyclic, it will become
                           non-cyclic in the output.
 
-            cull: `bool`, optional
-                TODO for default True .If True then remove unnecessary components from the
-                dask graph of each array to be concatenated. This may
-                improve performance, and could fix some concatenation
-                failures.
-
-                .. versionadded:: TODODASKVER
+            {{cull: `bool`, optional}}
 
             _preserve: `bool`, optional
                 Deprecated at version TODODASKVER.
@@ -10083,9 +10077,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     def cull(self):
-        """Remove unnecessary components from the dask graph in-place.
+        """Remove unnecessary tasks from the dask graph in-place.
 
+        **Performance**
+
+        An unnecessary task is one which does not contribute to the
+        computed result. Such tasks will be automatically removed
+        (culled) at compute time, but removing them beforehand might
+        improve performance by reducing the amount of work done in
+        later steps.
+        
         .. versionadded:: TODODASKVER
+
+        .. seealso:: `dask.optimization.cull`
 
         :Returns:
 

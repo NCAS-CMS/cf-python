@@ -5037,7 +5037,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return axis in self.cyclic()
 
     @classmethod
-    def concatenate(cls, fields, axis=0, cull=False, _preserve=True):
+    def concatenate(cls, fields, axis=0, cull=True, _preserve=True):
         """Join a sequence of fields together.
 
         This is different to `cf.aggregate` because it does not account
@@ -5046,7 +5046,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 1.0
 
-        .. seealso:: `cf.aggregate`, `Data.concatenate`
+        .. seealso:: `cf.aggregate`, `Data.concatenate`, `Data.cull`
 
         :Parameters:
 
@@ -5058,13 +5058,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 default is 0. Note that scalar arrays are treated as
                 if they were one dimensional.
 
-            cull: `bool`, optional
-                DEFAULT TRUE If True then remove unnecessary components from the
-                dask graph of each array to be concatenated. This may
-                improve performance, and could fix some concatenation
-                failures.
-
-                .. versionadded:: TODODASKVER
+            {{cull: `bool`, optional}}
 
             _preserve: `bool`, optional
                 Deprecated at version TODODASKVER.
@@ -10349,10 +10343,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Concatenate the partial collapses
             # --------------------------------------------------------
             try:
-#                # It has been found that the dask graphs of partial
-#                # collapses can be sufficiently complicated so as to
-#                # confuse the concatenation process. Setting cull=True
-#                # overcomes this.
                 f = self.concatenate(fl, axis=iaxis)
             except ValueError as error:
                 raise ValueError(f"Can't collapse: {error}")

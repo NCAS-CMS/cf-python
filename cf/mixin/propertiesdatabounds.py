@@ -1298,8 +1298,10 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, cull=False, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull=True, _preserve=True):
         """Join a sequence of variables together.
+
+        .. seealso:: `Data.cull`
 
         :Parameters:
 
@@ -1307,13 +1309,7 @@ class PropertiesDataBounds(PropertiesData):
 
             axis: `int`, optional
 
-            cull: `bool`, optional
-                If True then remove unnecessary components from the
-                dask graph of each array to be concatenated. This may
-                improve performance, and could fix some concatenation
-                failures.
-
-                .. versionadded:: TODODASKVER
+            {{cull: `bool`, optional}}
 
             _preserve: `bool`, optional
                 Deprecated at version TODODASKVER.
