@@ -103,12 +103,11 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
 
         return array
 
-    try:
-        return array.to_dask_array(chunks=chunks)
-    except TypeError:
-        return array.to_dask_array()
-    except AttributeError:
-        pass
+    if hasattr(array, "to_dask_array"):
+        try:
+            return array.to_dask_array(chunks=chunks)
+        except TypeError:
+            return array.to_dask_array()
 
     if not isinstance(
         array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
@@ -118,11 +117,7 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
         array = np.asanyarray(array)
 
     kwargs = from_array_options
-    lock = getattr(array, "_dask_lock", False)
-    if lock:
-        lock = get_lock()
-
-    kwargs.setdefault("lock", lock)
+    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
     kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
 
     try:
