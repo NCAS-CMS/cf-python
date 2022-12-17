@@ -17,7 +17,7 @@ class CompressedArrayMixin:
         :Parameters:
 
             array: array_like
-                The array to
+                The array to process.
 
         :Returns"
 
