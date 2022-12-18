@@ -1326,7 +1326,9 @@ class PropertiesDataBounds(PropertiesData):
         bounds = variable0.get_bounds(None)
         if bounds is not None:
             bounds = bounds.concatenate(
-                [v.get_bounds() for v in variables], axis=axis, cull_graph=cull_graph
+                [v.get_bounds() for v in variables],
+                axis=axis,
+                cull_graph=cull_graph,
             )
             out.set_bounds(bounds, copy=False)
 

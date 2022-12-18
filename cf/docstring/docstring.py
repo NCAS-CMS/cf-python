@@ -380,7 +380,7 @@ _docstring_substitution_definitions = {
     "{{aggregated_calendar: `str` or `None`, optional}}": """aggregated_calendar: `str` or `None`, optional
                 The calendar of the aggregated array. Set to `None` to
                 indicate the CF default calendar, if applicable.""",
-    # cull 
+    # cull
     "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
                 By default *cull_graph* is True, meaning that
                 unnecessary tasks are removed (culled) from each

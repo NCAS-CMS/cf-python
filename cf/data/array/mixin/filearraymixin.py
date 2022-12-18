@@ -7,6 +7,7 @@ class FileArrayMixin:
     .. versionadded:: TODODASKVER
 
     """
+
     @property
     def _dask_meta(self):
         """The metadata for the containing dask array.

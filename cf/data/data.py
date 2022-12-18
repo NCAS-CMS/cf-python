@@ -10056,7 +10056,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         (culled) at compute time, but removing them beforehand might
         improve performance by reducing the amount of work done in
         later steps.
-        
+
         .. versionadded:: TODODASKVER
 
         .. seealso:: `dask.optimization.cull`
