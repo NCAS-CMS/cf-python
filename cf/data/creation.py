@@ -4,7 +4,6 @@ from functools import lru_cache
 import dask.array as da
 import numpy as np
 from dask.base import is_dask_collection
-from dask.utils import SerializableLock
 
 
 def convert_to_builtin_type(x):
@@ -115,22 +114,8 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
         # so convert it to a numpy array.
         array = np.asanyarray(array)
 
-    # Set a lock if required
-    lock = getattr(array, "_dask_lock", False)
-    if lock is True:
-        # The input array has requested a lock, but not provide a lock
-        # object => set a lock that coordinates all access to its
-        # file, even across multiple dask arrays.
-        try:
-            filename = array.get_filename(None)
-        except AttributeError:
-            pass
-        else:
-            if filename is not None:
-                lock = SerializableLock(filename)
-
     kwargs = from_array_options
-    kwargs.setdefault("lock", lock)
+    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
     kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
 
     try:
