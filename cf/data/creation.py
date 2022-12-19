@@ -114,9 +114,8 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
         # so convert it to a numpy array.
         array = np.asanyarray(array)
 
-        
     kwargs = from_array_options
-    kwargs.setdefault("lock", getattr(array, "_dask_lock", False)
+    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
     kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
 
     try:
@@ -125,6 +124,7 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
         # Try again with 'chunks=-1', in case the failure was due to
         # not being able to use auto rechunking with object dtype.
         return da.from_array(array, chunks=-1, **kwargs)
+
 
 @lru_cache(maxsize=32)
 def generate_axis_identifiers(n):
