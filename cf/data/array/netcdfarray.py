@@ -4,8 +4,8 @@ from .mixin import FileArrayMixin
 
 
 class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
-    """An array stored in a netCDF file."""
-
+    """An array stored in a netCDF file."""    
+    
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -13,3 +13,7 @@ class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
+
+    @property
+    def _dask_lock(self):
+        return True
