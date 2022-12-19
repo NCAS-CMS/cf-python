@@ -7,7 +7,6 @@ import cfdm
 import numpy as np
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
-from numpy import can_cast as numpy_can_cast
 from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
@@ -3899,23 +3898,33 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            w: `Data
+            w: `Data`
+                The weights to be scaled.
 
-            scale: number
+            scale: number or `None`
+                The maximum value of the scaled, If `None` then no
+                scaling is applied.
 
         :Returns:
 
             `Data`
+                The scaled weights.
 
         """
+        if scale is None:
+            return w
+
         if scale <= 0:
             raise ValueError(
                 "Can't set 'scale' parameter to a negative number. "
                 f"Got {scale!r}"
             )
 
-        factor = w.max() / float(scale)
-        return w / factor
+        w = w / w.max()
+        if scale != 1:
+            w = w * scale
+
+        return w
 
     def _weights_yyy(
         self, domain_axis, geometry_type, methods=False, auto=False
@@ -4009,17 +4018,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 f"Got {aux_X.bounds.shape} and {aux_Y.bounds.shape}"
             )
 
-#        # TODODASK: This if block is probably deletable with the
-#        #           demise of LAMA, but check!
-#        if not methods:
-#            if aux_X.bounds.data.fits_in_one_chunk_in_memory(
-#                aux_X.bounds.dtype.itemsize
-#            ):
-#                aux_X.bounds.varray
-#            if aux_X.bounds.data.fits_in_one_chunk_in_memory(
-#                aux_Y.bounds.dtype.itemsize
-#            ):
-#                aux_X.bounds.varray
+        #        # TODODASK: This if block is probably deletable with the
+        #        #           demise of LAMA, but check!
+        #        if not methods:
+        #            if aux_X.bounds.data.fits_in_one_chunk_in_memory(
+        #                aux_X.bounds.dtype.itemsize
+        #            ):
+        #                aux_X.bounds.varray
+        #            if aux_X.bounds.data.fits_in_one_chunk_in_memory(
+        #                aux_Y.bounds.dtype.itemsize
+        #            ):
+        #                aux_X.bounds.varray
 
         if aux_Z is None:
             for key, aux in auxiliary_coordinates_1d.items():
@@ -6946,7 +6955,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         group_span=None,
         group_contiguous=1,
         measure=False,
-        scale=1.0,
+        scale=1,
         radius="earth",
         great_circle=False,
         verbose=None,
@@ -7463,9 +7472,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 scale=scale, radius=radius, great_circle=great_circle,
                 components=True)``. See the *axes*, *measure*,
                 *scale*, *radius* and *great_circle* parameters and
-                `cf.Field.weights` for details (note that the value of
-                *scale* may be modified depending on the value of
-                *measure*).
+                `cf.Field.weights` for details, and note that the
+                value of *scale* may be modified depending on the
+                value of *measure*.
 
                 .. note:: By default *weights* is `None`, resulting in
                           **unweighted calculations**.
@@ -7556,11 +7565,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 the default is for weights to be scaled to lie between
                 0 and 1; however if *measure* is True then the weights
                 are never scaled and the value of *scale* is taken as
-                `None`; regardless of its setting.
+                `None`, regardless of its setting.
 
                 *Parameter example:*
                   To scale all weights so that they lie between 0 and
-                  0.5: ``scale=0.5``.
+                  10 ``scale=10``.
 
                 .. versionadded:: 3.0.2
 
@@ -8650,7 +8659,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         raise ValueError(
                             f"Must set measure=True for {method!r} collapses"
                         )
-                    
+
                     g_weights = f.weights(
                         weights,
                         components=True,
@@ -12459,7 +12468,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return
 
     # TODODASK
-    # Keep these commented lines for using with the future dask version 
+    # Keep these commented lines for using with the future dask version
     #
     #        standard_name = None
     #

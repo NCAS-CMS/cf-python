@@ -1,5 +1,5 @@
 from . import ConstructList, mixin
-from .functions import _DEPRECATION_ERROR_KWARGS, _DEPRECATION_ERROR_METHOD
+from .functions import _DEPRECATION_ERROR_METHOD
 
 
 class FieldList(mixin.FieldDomainList, ConstructList):

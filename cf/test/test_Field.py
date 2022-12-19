@@ -454,12 +454,12 @@ class FieldTest(unittest.TestCase):
                 "sum_of_weights2",
             ):
                 for weights in (None, "area"):
-                    weights=None
+                    weights = None
                     a = f.collapse(method, axes=axes, weights=weights).data
                     b = getattr(f.data, method)(axes=axes)
-                    #print (method, axes, weights)
-                    #a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png')
-                    #b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
+                    # print (method, axes, weights)
+                    # a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png')
+                    # b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                     )
@@ -472,13 +472,14 @@ class FieldTest(unittest.TestCase):
                 for weights in (None, "area"):
                     if weights is not None:
                         d_weights = f.weights(weights, components=True)
+                    #                        print (repr(d_weights))
                     else:
                         d_weights = weights
                     a = f.collapse(method, axes=axes, weights=weights).data
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
-                    #print (method, axes, weights)
-                    #a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png')
-                    #b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
+                    # print (method, axes, weights)
+                    # a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png'#)
+                    #               b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                     )
@@ -490,9 +491,9 @@ class FieldTest(unittest.TestCase):
                     method, axes=axes, weights=weights, measure=True
                 ).data
                 b = getattr(f.data, method)(axes=axes, weights=d_weights)
-                #print (method, axes, weights)
-                #a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png')
-                #b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
+                # print (method, axes, weights)
+                # a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png')
+                # b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
                 self.assertTrue(
                     a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                 )
@@ -512,9 +513,9 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(
                         axes=axes, ddof=1, weights=d_weights
                     )
-                    #print (method, axes, weights)
-                    #a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png')
-                    #b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
+                    # print (method, axes, weights)
+                    # a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png')
+                    # b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                     )
@@ -528,9 +529,9 @@ class FieldTest(unittest.TestCase):
 
                     a = f.collapse(method, axes=axes, weights=weights).data
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
-                    #print (method, axes, weights)
-                    #a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png')
-                    #b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
+                    # print (method, axes, weights)
+                    # a.to_dask_array().visualize(f'{method}{axes}{weights}_a.png')
+                    # b.to_dask_array().visualize(f'{method}{axes}{weights}_b.png')
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                     )
