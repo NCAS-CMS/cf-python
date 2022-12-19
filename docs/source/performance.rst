@@ -21,7 +21,7 @@ Version |release| for version |version| of the CF conventions.
 --------
 
 A data array in `cf` is stored internally by a `Dask array
-<https://docs.dask.org/en/latest/array.html>`_, that provides lazy,
+<https://docs.dask.org/en/latest/array.html>`_ that provides lazy,
 parallelised, and out-of-core computations of array
 operations. Computations are automatically optimised to maximise the
 re-use of data in memory, and to avoid calculations that do not
@@ -43,30 +43,21 @@ set through the `cf` API.
 **Lazy operations**
 -------------------
 
-In general, all `cf` operations (such as reading from disk,
-regridding, collapsing, subspacing, arithmetic, etc.) are lazy,
-meaning that an operation is not actually performed until the result
-is actually inspected, for instance by creating a plot of the data or
-writing the data to disk. When multiple operations are applied one
-after another, none of the operations are computed until the result of
-final one is requested.
+In general, all `cf` operations are lazy (such as reading from disk,
+regridding, collapsing, subspacing, arithmetic, etc.), meaning that an
+operation is not actually performed until the result is actually
+inspected, for instance by creating a plot of the data, writing the
+data to disk, or printing the array values. When multiple operations
+are applied one after another, none of the operations are computed
+until the result of final one is requested.
 
-When the result of stack of lazy operations is computed, it is not
-saved in memory, so if the operations subsequently re-computed then
-the calculations are repeated. However, a construct's
-`~cf.Field.persist` method can be used force the result to be retained
-in memory for fast access.
+When the result of a stack of lazy operations is computed it is not
+cached, so if the operations are subsequently re-computed then the
+calculations are repeated. However, a construct's `~cf.Field.persist`
+method can be used force the result to be retained in memory for fast
+future access.
 
 Some notable cases where non-lazy computation occurs are:
-
-* **Aggregation**
-
-  When two or more field or domain constructs are aggregated to form a
-  single construct, either by `cf.read` or `cf.aggregate`, the data
-  arrays of some metadata constructs (coordinates, cell measures,
-  etc.) must be compared to ascertain if the aggregation is possible.
-
-..
 
 * **Regridding**
 
@@ -79,21 +70,29 @@ Some notable cases where non-lazy computation occurs are:
   calculating the weights once and re-using them:
   
   .. code-block:: python
-     :caption: *For a list of fields 'fl' with the same horizontal
-               domain, regrid them all to the domain defined by field
-               'dst' using pre-computed regridding weights.*
-  		
+     :caption: *Regrid a list of fields with the same horizontal
+               domain using pre-computed regridding weights.*
+		       
      >>> weights = fl[0].regrids(dst, method='conservative', return_operator=True)
      >>> regridded = [f.regrids(weights) for f in fl]
    
+* **Aggregation**
+
+  When two or more field or domain constructs are aggregated to form a
+  single construct, either by `cf.aggregate` or `cf.read` (the latter
+  calls the former by default), the data arrays of some metadata
+  constructs (coordinates, cell measures, etc.) must be compared
+  non-lazily to ascertain if the aggregation is possible.
+
+..
 
 * **Reading compressed-by-convention datasets from disk**
 
   When reading from files datasets that have been compressed by
   convention (such as compression by gathering, or some discrete
-  sampling geometries), the compression metadata (such as the "list"
-  array for compression by gathering) is read into memory during the
-  `cf.read` operation.
+  sampling geometries), the compression metadata, such as the "list"
+  array for compression by gathering, are read from disk non-lazily
+  during the `cf.read` operation.
 
 ----
 
@@ -179,13 +178,13 @@ Operations are stored by Dask in `task graphs
 <https://docs.dask.org/en/stable/graphs.html>`_ where each task
 (i.e. node) in the graph either defines a chunk of the data, or else
 an operation to be performed on one or more chunks. The data created
-by an operation are used as an input to the next operation node in the
+by an operation are used as inputs to the next operation node in the
 graph. The tasks in the graph are passed by the scheduler to the
 available pool of processing elements (PEs) which execute the tasks in
 parallel until the final result has been computed.
 
 The following example shows the task graph for a simple data
-computation:
+computation over four chunks:
 
 .. code-block:: python
    :caption: *Visualising the task graph for a lazy computation.*
@@ -193,6 +192,8 @@ computation:
    >>> import cf
    >>> import numpy as np
    >>> d = cf.Data(np.arange(30).reshape(5, 6), chunks=3)
+   >>> d.npartitions
+   4
    >>> d.chunks
    ((3, 2), (3, 3))
    >>> print(d.array)
@@ -201,7 +202,7 @@ computation:
     [18 19 20 21 22 23]
     [24 25 26 27 28 29]]
    >>> e = d ** 2 + d
-   >>> e.to_dask_array().visualize('dask_task_graph.svg')
+   >>> e.to_dask_array().visualize('dask_task_graph.png')
    >>> print(e.array)
    [[  0   2   6  12  20  30]
     [ 42  56  72  90 110 132]
@@ -209,18 +210,19 @@ computation:
     [342 380 420 462 506 552]
     [600 650 702 756 812 870]]
 
-The image file ``dask_task_graph.svg`` contains the following
-visualisation of the dask task graph that was only executed when the
-result ``e.array`` was requested. The boxes represent the data chunks
-and the circles represent the operations to be performed on the
-chunks:
+The image file ``dask_task_graph.png`` contains a visualisation of the
+dask task graph, showing the operations on each chunk. The operations
+were only executed when their result was requested with the
+``e.array`` command. The boxes represent the data chunks and the
+circles represent the operations to be performed on the chunks. The
+boxes in the bottom row are the starting data (the four chunks of
+``d`` and the scalar ``2``), and the boxes in the top row are the
+result of the computation which combine to produce the values in
+``e.array``.
 
 .. figure:: images/dask_task_graph.svg
    :scale: 35 %
 
-The boxes in the bottom row are the starting data (the four chunks of
-``d`` and the scalar ``2``), and the boxes in the top row are the
-result of the computation. The four chunks of the result are
-aggregated to create ``e.array``.
+   *The dask task graph from dask_task_graph.png*
 
 ----
