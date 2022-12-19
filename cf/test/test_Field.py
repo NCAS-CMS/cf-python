@@ -439,7 +439,7 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         f[0, 3] *= -1
         f[0, 5, ::2] = cf.masked
-        
+
         for axes in axes_combinations(f):
             for method in (
                 "sum",

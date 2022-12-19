@@ -4018,18 +4018,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 f"Got {aux_X.bounds.shape} and {aux_Y.bounds.shape}"
             )
 
-        #        # TODODASK: This if block is probably deletable with the
-        #        #           demise of LAMA, but check!
-        #        if not methods:
-        #            if aux_X.bounds.data.fits_in_one_chunk_in_memory(
-        #                aux_X.bounds.dtype.itemsize
-        #            ):
-        #                aux_X.bounds.varray
-        #            if aux_X.bounds.data.fits_in_one_chunk_in_memory(
-        #                aux_Y.bounds.dtype.itemsize
-        #            ):
-        #                aux_X.bounds.varray
-
         if aux_Z is None:
             for key, aux in auxiliary_coordinates_1d.items():
                 if aux.Z:
