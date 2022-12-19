@@ -18,7 +18,7 @@ class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
     def _dask_lock(self):
         """Set the lock for use in `dask.array.from_array`.
 
-        Returns `true` because concurrent reads are not currently
+        Returns `True` because concurrent reads are not currently
         supported by the netCDF-C library.
 
         .. versionadded:: TODODASKVER
