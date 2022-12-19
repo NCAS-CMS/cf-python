@@ -3,7 +3,6 @@ from functools import lru_cache
 
 import dask.array as da
 import numpy as np
-from dask import config
 from dask.base import is_dask_collection
 from dask.utils import SerializableLock
 
@@ -116,8 +115,23 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
         # so convert it to a numpy array.
         array = np.asanyarray(array)
 
+        
+    # Set a lock if required
+    lock = getattr(array, "_dask_lock", False)
+    if lock is True:
+        # The input array has requested a lock, but not specified what
+        # it should be => so set a lock that coordinates all access to
+        # this file, even across multiple dask arrays.
+        try:
+            filename = array.get_filename(None)
+        except AttributeError:
+            pass
+        else:
+            if filename is not None:
+                lock = SerializableLock(filename)
+        
     kwargs = from_array_options
-    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
+    kwargs.setdefault("lock", lock)
     kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
 
     try:
@@ -126,7 +140,6 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
         # Try again with 'chunks=-1', in case the failure was due to
         # not being able to use auto rechunking with object dtype.
         return da.from_array(array, chunks=-1, **kwargs)
-
 
 @lru_cache(maxsize=32)
 def generate_axis_identifiers(n):
@@ -157,61 +170,3 @@ def generate_axis_identifiers(n):
 
     """
     return [f"dim{i}" for i in range(n)]
-
-
-def threads():
-    """Return True if the threaded scheduler executes computations.
-
-    See https://docs.dask.org/en/latest/scheduling.html for details.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return config.get("scheduler", default=None) in (None, "threads")
-
-
-def processes():
-    """Return True if the multiprocessing scheduler executes
-    computations.
-
-    See https://docs.dask.org/en/latest/scheduling.html for details.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return config.get("scheduler", default=None) == "processes"
-
-
-def synchronous():
-    """Return True if the single-threaded synchronous scheduler executes
-    computations computations in the local thread with no parallelism at
-    all.
-
-    See https://docs.dask.org/en/latest/scheduling.html for details.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return config.get("scheduler", default=None) == "synchronous"
-
-
-def get_lock():
-    """TODODASKDOCS.
-
-    See https://docs.dask.org/en/latest/scheduling.html for details.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    if threads():
-        return SerializableLock()
-
-    if synchronous():
-        return False
-
-    if processes():
-        raise ValueError("TODODASKMSG - not yet sorted out processes lock")
-        # Do we even need one? Can't we have lock=False, here?
-
-    # TODODASK: what now? raise exception? cluster?
-    raise ValueError("TODODASKMSG")
