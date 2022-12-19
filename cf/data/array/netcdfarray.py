@@ -23,7 +23,7 @@ class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
         which case `False` is returned) because concurrent reads are
         not currently supported by the netCDF-C library. The lock
         object will be the same for all `NetCDFArray` instances with
-        this file name, which means that all file access coordinates
+        this file name, which means that all files access coordinates
         around the same lock.
 
         .. versionadded:: TODODASKVER
