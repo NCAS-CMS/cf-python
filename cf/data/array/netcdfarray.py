@@ -13,3 +13,15 @@ class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
 
         """
         return super().__repr__().replace("<", "<CF ", 1)
+
+    @property
+    def _dask_lock(self):
+        """Set the lock for use in `dask.array.from_array`.
+
+        Returns `true` because concurrent reads are not currently
+        supported by the netCDF-C library.
+
+        .. versionadded:: TODODASKVER
+
+        """
+        return True
