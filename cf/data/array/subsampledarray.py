@@ -1,9 +1,9 @@
 import cfdm
 
-from .mixin import ArrayMixin
+from .mixin import ArrayMixin, CompressedArrayMixin
 
 
-class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
+class SubsampledArray(CompressedArrayMixin, ArrayMixin, cfdm.SubsampledArray):
     """An underlying subsampled array.
 
     For some structured coordinate data (e.g. coordinates describing
@@ -119,6 +119,22 @@ class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
         compressed_data = conformed_data["data"]
         parameters = conformed_data["parameters"]
         dependent_tie_points = conformed_data["dependent_tie_points"]
+
+        # If possible, convert the compressed data, parameters and
+        # dependent tie points to dask arrays that don't support
+        # concurrent reads. This prevents "compute called by compute"
+        # failures problems at compute time.
+        #
+        # TODO: This won't be necessary if this is refactored so that
+        #       arrays are part of the same dask graph as the
+        #       compressed subarrays.
+        compressed_data = self._lock_file_read(compressed_data)
+        parameters = {
+            k: self._lock_file_read(v) for k, v in parameters.items()
+        }
+        dependent_tie_points = {
+            k: self._lock_file_read(v) for k, v in dependent_tie_points.items()
+        }
 
         # Get the (cfdm) subarray class
         Subarray = self.get_Subarray()

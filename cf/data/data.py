@@ -442,8 +442,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except AttributeError:
                     pass
 
-            # Save the input compressed array, as this will contain
-            # extra information, such as a count or index variable.
+        if self._is_abstract_Array_subclass(array):
+            # Save the input array in case it's useful later. For
+            # compressed input arrays this will contain extra information,
+            # such as a count or index variable.
             self._set_Array(array)
 
         # Cast the input data as a dask array
