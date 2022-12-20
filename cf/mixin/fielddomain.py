@@ -2117,7 +2117,7 @@ class FieldDomain:
                 If True (the default), then attempt to replace
                 placeholder identities in *construct* with existing
                 construct identifiers. Specifically, cell method
-                construct axis specifiers (such as ``'T'`)` are mapped
+                construct axis specifiers (such as ``'T'``) are mapped
                 to domain axis construct identifiers, and coordinate
                 reference construct coordinate specifiers (such as
                 ``'latitude'``) are mapped to their corresponding
