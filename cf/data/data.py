@@ -55,7 +55,7 @@ from .dask_utils import (
     cf_where,
 )
 from .mixin import DataClassDeprecationsMixin
-from .utils import (  # is_small,; is_very_small,
+from .utils import (
     YMDhms,
     _is_numeric_dtype,
     conform_units,
