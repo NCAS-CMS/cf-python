@@ -312,6 +312,9 @@ class DataClassDeprecationsMixin:
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
 
+        Deprecated at version TODODASKVER. Use the `rechunk` method
+        instead.
+
         :Parameters:
 
             chunksize: `int`, optional
@@ -337,7 +340,11 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            "TODODASKMSG. Use 'rechunk' instead"
+            self,
+            "chunk",
+            message="Use the 'rechunk' method instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     def dumpd(self):
@@ -582,6 +589,9 @@ class DataClassDeprecationsMixin:
     def add_partitions(self, extra_boundaries, pdim):
         """Add partition boundaries.
 
+        Deprecated at version TODODASKVER. Use the `rechunk` method
+        instead.
+
         :Parameters:
 
             extra_boundaries: `list` of `int`
@@ -600,7 +610,11 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            "TODODASKMSG Consider using rechunk instead"
+            self,
+            "add_partitions",
+            message="Use the 'rechunk' method instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     @staticmethod
@@ -723,6 +737,9 @@ class DataClassDeprecationsMixin:
         """Return the partition boundaries for each partition matrix
         dimension.
 
+        Deprecated at version TODODASKVER. Consider using the `chunks`
+        attribute instead.
+
         :Returns:
 
             `dict`
@@ -731,7 +748,11 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            "TODODASKMSG - consider using 'chunks' instead"
+            self,
+            "partition_boundaries",
+            message="Consider using the 'chunks' attribute instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     def save_to_disk(self, itemsize=None):
