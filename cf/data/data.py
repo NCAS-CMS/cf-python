@@ -420,14 +420,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             compressed = ""
 
         if compressed:
-            # The input data is compressed
-            if chunks != _DEFAULT_CHUNKS:
-                # TODODASK: Is this restriction necessary?
-                raise ValueError(
-                    "Can't define chunks for compressed input arrays. "
-                    "Consider rechunking after initialisation."
-                )
-
             if init_options.get("from_array"):
                 raise ValueError(
                     "Can't define 'from_array' initialisation options "
@@ -456,9 +448,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
-        array = to_dask(
-            array, chunks, default_chunks=_DEFAULT_CHUNKS, **kwargs
-        )
+        array = to_dask(array, chunks, **kwargs)
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
