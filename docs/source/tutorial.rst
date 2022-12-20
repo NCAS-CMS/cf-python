@@ -3569,7 +3569,7 @@ or the Python equality (`==`) operator, the condition is evaluated in
 the context of that object.
 
 .. code-block:: python
-   :caption: *An example evaluating a strictly less than 3 query operation.*
+   :caption: *An example evaluating a strictly less than 3 query condition.*
 
    >>> c = cf.Query('lt', 3)
    >>> c
