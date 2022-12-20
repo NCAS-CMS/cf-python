@@ -479,8 +479,8 @@ class DimensionCoordinate(
          [ 20. -90.]]
 
         Cellsize units must be equivalent to the coordinate units, or
-        if the cellhas has no units then they are assumed to be the
-        same the coordinates:
+        if the cell has no units then they are assumed to be the
+        same as the coordinates:
 
         >>> d = cf.DimensionCoordinate(data=cf.Data([0, 2, 4], 'km'))
         >>> b = d.create_bounds(cellsize=cf.Data(2000, 'm'))
