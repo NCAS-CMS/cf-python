@@ -414,7 +414,7 @@ class DimensionCoordinate(
                 *cellsize* parameter, define the fraction of each
                 cell which is less than its coordinate value. By default
                 *flt* is 0.5, so that each cell has its coordinate at
-                it's centre. Ignored if *cellsize* is not set.
+                its centre. Ignored if *cellsize* is not set.
 
                 *Parameter example:*
                   For coordinates ``1, 2, 10`` setting ``flt=0.25``
