@@ -545,8 +545,8 @@ class DimensionCoordinateTest(unittest.TestCase):
         )
 
         # Cellsize units must be equivalent to the coordinate units,
-        # or if the cellhas has no units then they are assumed to be
-        # the same the coordinates:
+        # or if the cell has no units then they are assumed to be
+        # the same as the coordinates:
         d = cf.DimensionCoordinate(data=cf.Data([0, 2, 4], "km"))
         b = d.create_bounds(cellsize=cf.Data(2000, "m"))
         self.assertTrue((b.array == np.array([[-1, 1], [1, 3], [3, 5]])).all())
