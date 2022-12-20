@@ -3612,7 +3612,7 @@ Multiple conditions may be combined with the Python bitwise "and"
 object.
 
 .. code-block:: python
-   :caption: *An example evaluating compound query operation involving a greater than or equal to 3 and a strictly less than 5 condition.*
+   :caption: *An example evaluating a compound query operation involving a greater than or equal to 3 condition and a strictly less than 5 condition.*
 
    >>> ge3 = cf.Query('ge', 3)
    >>> lt5 = cf.Query('lt', 5)
