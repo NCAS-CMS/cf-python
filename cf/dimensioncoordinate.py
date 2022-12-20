@@ -652,7 +652,7 @@ class DimensionCoordinate(
                     if period is None:
                         raise ValueError(
                             "Can't create Voronoi bounds for cyclic "
-                            "corodinates with no period"
+                            "coordinates with no period"
                         )
 
                     if self.direction():
