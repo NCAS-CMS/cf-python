@@ -3238,7 +3238,7 @@ type of subspace:
   locations.
 
   .. code-block:: python
-     :caption: *Create subspace by selecting the 1st, 2nd, 4th and 6th elements of the 'X' axis with domain encompassing that of the original field contruct and mising data within the domain wherever needed.*
+     :caption: *Create a subspace by selecting the 2nd, 3rd, 5th and 7th elements of the 'X' axis with domain encompassing that of the original field construct with missing data within the domain wherever needed.*
 
      >>> q2 = q.subspace('full', X=[1, 2, 4, 6])
      >>> print(q2)
