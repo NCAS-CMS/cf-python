@@ -4971,6 +4971,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def close(self):
         """Close all files referenced by the field construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -4983,10 +4986,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f.close()
 
         """
-        super().close()
-
-        for construct in self.constructs.filter_by_data(todict=True).values():
-            construct.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the specified axis is cyclic.
@@ -9635,26 +9641,31 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     filter_by_axis=(axis,), default=None
                 )
                 if coord is None:
+                    axis_id = self.constructs.domain_axis_identity(axis)
                     raise ValueError(
-                        "Dimension coordinates are required for a "
-                        "grouped collapse with Data groups."
+                        f"Dimension coordinates for the {axis_id!r} axis are "
+                        f"required for a collapse with group={group!r}"
                     )
 
                 if coord.Units.isreftime:
+                    axis_id = self.constructs.domain_axis_identity(axis)
                     raise ValueError(
-                        f"Can't group a reference-time axis with {group!r}. "
-                        "Use a TimeDuration instance instead."
+                        f"Can't collapse reference-time axis {axis_id!r} "
+                        f"with group={group!r}. In this case groups should "
+                        "be defined with a TimeDuration instance."
                     )
 
                 if group.size != 1:
                     raise ValueError(
-                        f"Group must have only one element: {group!r}"
+                        "A Data instance 'group' parameter must have exactly "
+                        f"one element: Got group={group!r}"
                     )
 
                 if group.Units and not group.Units.equivalent(coord.Units):
+                    axis_id = self.constructs.domain_axis_identity(axis)
                     raise ValueError(
-                        f"Can't group by {group!r} when coordinates have "
-                        f"non-equivalent units {coord.Units!r}"
+                        f"Group units {group.Units!r} are not eqivalent to "
+                        f"{axis_id!r} axis units {coord.Units!r}"
                     )
 
                 classification = numpy_empty((axis_size,), int)
@@ -10194,17 +10205,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                 continue
                         else:
                             if coord is None:
+                                axis_id = pc.constructs.domain_axis_identity(
+                                    axis_in
+                                )
                                 raise ValueError(
-                                    "Can't collapse: Need an unambiguous 1-d "
-                                    "coordinate construct when "
-                                    f"group_span={group_span!r}"
+                                    f"Can't collapse: No coordinates for "
+                                    f"{axis_id!r} axis with group={group!r} "
+                                    f"and group_span={group_span!r}"
                                 )
 
                             bounds = coord.get_bounds(None)
                             if bounds is None:
                                 raise ValueError(
-                                    "Can't collapse: Need unambiguous 1-d "
-                                    "coordinate cell bounds when "
+                                    f"Can't collapse: No bounds on {coord!r} "
+                                    f"with group={group!r} and "
                                     f"group_span={group_span!r}"
                                 )
 
@@ -10216,6 +10230,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                             if not coord.increasing:
                                 lb, ub = ub, lb
+
                             if group_span + lb != ub:
                                 # The span of this group is not the
                                 # same as group_span, so don't

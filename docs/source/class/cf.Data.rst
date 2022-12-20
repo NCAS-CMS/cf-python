@@ -555,6 +555,7 @@ Miscellaneous
 
    ~cf.Data.creation_commands
    ~cf.Data.get_data
+   ~cf.Data.get_filenames
    ~cf.Data.get_original_filenames
    ~cf.Data.source
 
@@ -593,6 +594,7 @@ Performance
    ~cf.Data.section
    ~cf.Data.reconstruct_sectioned_data
    ~cf.Data.HDF_chunks
+   ~cf.Data.persist
 
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------

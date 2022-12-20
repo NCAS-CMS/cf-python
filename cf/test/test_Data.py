@@ -1,9 +1,11 @@
+import atexit
 import contextlib
 import datetime
 import faulthandler
 import io
 import itertools
 import os
+import tempfile
 import unittest
 import warnings
 from functools import reduce
@@ -24,6 +26,26 @@ except Exception:
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
+
+n_tmpfiles = 2
+tmpfiles = [
+    tempfile.mkstemp("_test_Data.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+file_A, file_B = tmpfiles
+
+
+def _remove_tmpfiles():
+    """Try to remove defined temporary files by deleting their paths."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
+
 
 # To facilitate the testing of logging outputs (see comment tag 'Logging note')
 logger = cf.logging.getLogger(__name__)
@@ -942,18 +964,14 @@ class DataTest(unittest.TestCase):
                         (np.ma.getmask(e.array) == np.ma.getmask(b)).all()
                     )
 
-                    # TODODASK: Reinstate the following test when
-                    #           __sub__, minimum, and maximum have
-                    #           been daskified
-
-        #                    e.where(
-        #                        cf.set([e.minimum(), e.maximum()]),
-        #                        cf.masked,
-        #                        e - 1,
-        #                        inplace=True,
-        #                    )
-        #                    f = d.digitize(bins, upper=upper)
-        #                    self.assertTrue(e.equals(f, verbose=2))
+                    e.where(
+                        cf.set([e.minimum(), e.maximum()]),
+                        cf.masked,
+                        e - 1,
+                        inplace=True,
+                    )
+                    f = d.digitize(bins, upper=upper)
+                    self.assertTrue(e.equals(f, verbose=2))
 
         # Check returned bins
         bins = [2, 6, 10, 50, 100]
@@ -3112,10 +3130,15 @@ class DataTest(unittest.TestCase):
         d = cf.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
-        # Scalar numeric array
         d = cf.Data([1, 2, 3.0, 4], "km", mask=[0, 1, 0, 0], chunks=2)
+        self.assertGreater(len(d.to_dask_array().dask.layers), 1)
+
         e = d.persist()
         self.assertIsInstance(e, cf.Data)
+        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
+        self.assertEqual(
+            e.to_dask_array().npartitions, d.to_dask_array().npartitions
+        )
         self.assertTrue(e.equals(d))
 
     def test_Data_cyclic(self):
@@ -4315,6 +4338,33 @@ class DataTest(unittest.TestCase):
 
         self.assertTrue((q == d).array.all())
         self.assertTrue((d == q).array.all())
+
+    def test_Data_get_filenames(self):
+        """Test `Data.get_filenames`."""
+        d = cf.Data.full((5, 8), 1, chunks=4)
+        self.assertEqual(d.get_filenames(), set())
+
+        f = cf.example_field(0)
+        cf.write(f, file_A)
+        cf.write(f, file_B)
+
+        a = cf.read(file_A, chunks=4)[0].data
+        b = cf.read(file_B, chunks=4)[0].data
+        b += 999
+        c = cf.Data(b.array, units=b.Units, chunks=4)
+
+        d = cf.Data.concatenate([a, a + 999, b, c], axis=1)
+        self.assertEqual(d.shape, (5, 32))
+
+        self.assertEqual(d.get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d[:, 2:7].get_filenames(), set([file_A]))
+        self.assertEqual(d[:, 2:14].get_filenames(), set([file_A]))
+        self.assertEqual(d[:, 2:20].get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d[:, 2:30].get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d[:, 29:30].get_filenames(), set())
+
+        d[2, 3] = -99
+        self.assertEqual(d[2, 3].get_filenames(), set([file_A]))
 
     def test_Data__str__(self):
         """Test `Data.__str__`"""

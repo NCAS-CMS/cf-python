@@ -52,6 +52,15 @@ class ppTest(unittest.TestCase):
     chunk_sizes = (800000, 80000)
 
     def test_PP_read_um(self):
+        f = cf.read(self.ppextradata)[0]
+
+        g = cf.read(self.ppextradata, um={"fmt": "pp"})[0]
+        self.assertTrue(f.equals(g))
+
+        for vn in (4.5, 405, "4.5", None):
+            g = cf.read(self.ppextradata, um={"fmt": "pp", "version": vn})[0]
+            self.assertTrue(f.equals(g))
+
         p = cf.read("wgdos_packed.pp")[0]
         p0 = cf.read(
             "wgdos_packed.pp",
@@ -130,19 +139,9 @@ class ppTest(unittest.TestCase):
         self.assertTrue(f.dimension_coordinate("time", default=False))
         self.assertTrue(f.auxiliary_coordinate("longitude", default=False))
 
-    def test_PP_read_um(self):
-        f = cf.read(self.ppextradata)[0]
-
-        g = cf.read(self.ppextradata, um={"fmt": "pp"})[0]
-        self.assertTrue(f.equals(g))
-
-        for vn in (4.5, 405, "4.5", None):
-            g = cf.read(self.ppextradata, um={"fmt": "pp", "version": vn})[0]
-            self.assertTrue(f.equals(g))
-
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
-    unittest.main(verbosity=2)
+    unittest.main(module=__file__.split(".")[0], verbosity=2)

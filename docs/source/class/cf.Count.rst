@@ -220,6 +220,7 @@ Data
    ~cf.Count.isperiodic
    ~cf.Count.get_original_filenames
    ~cf.Count.has_bounds
+   ~cf.Count.persist
 
 Miscellaneous
 -------------

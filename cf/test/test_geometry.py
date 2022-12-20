@@ -305,11 +305,6 @@ class DSGTest(unittest.TestCase):
         for i in (0, 1):
             self.assertTrue(f.equals(f.flatten(i), verbose=1))
 
-    def test_geometry_interior_ring_close(self):
-        f = cf.read(self.geometry_interior_ring_file, verbose=0)[0]
-
-        self.assertIsNone(f.close())
-
     def test_geometry_interior_ring_files(self):
         f = cf.read(self.geometry_interior_ring_file, verbose=0)[0]
 
@@ -320,4 +315,4 @@ if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
-    unittest.main(verbosity=2)
+    unittest.main(module=__file__.split(".")[0], verbosity=2)

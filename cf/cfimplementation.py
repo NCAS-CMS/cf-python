@@ -17,9 +17,11 @@ from . import (
     FieldAncillary,
     Index,
     InteriorRing,
+    InterpolationParameter,
     List,
     NodeCountProperties,
     PartNodeCountProperties,
+    TiePointIndex,
 )
 from .data import Data
 from .data.array import (
@@ -29,6 +31,7 @@ from .data.array import (
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SubsampledArray,
 )
 from .functions import CF
 
@@ -126,7 +129,6 @@ class CFImplementation(cfdm.CFDMImplementation):
         )
 
 
-# TODODASK: add missing classes, such as TiePointIndex
 _implementation = CFImplementation(
     cf_version=CF(),
     AuxiliaryCoordinate=AuxiliaryCoordinate,
@@ -142,6 +144,7 @@ _implementation = CFImplementation(
     FieldAncillary=FieldAncillary,
     Bounds=Bounds,
     InteriorRing=InteriorRing,
+    InterpolationParameter=InterpolationParameter,
     CoordinateConversion=CoordinateConversion,
     Datum=Datum,
     List=List,
@@ -155,6 +158,8 @@ _implementation = CFImplementation(
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+    SubsampledArray=SubsampledArray,
+    TiePointIndex=TiePointIndex,
 )
 
 
@@ -174,11 +179,12 @@ def implementation():
 
     >>> i = cf.implementation()
     >>> i
-    <CFDMImplementation: >
+    <CFImplementation: >
     >>> i.classes()
     {'AuxiliaryCoordinate': cf.auxiliarycoordinate.AuxiliaryCoordinate,
      'CellMeasure': cf.cellmeasure.CellMeasure,
      'CellMethod': cf.cellmethod.CellMethod,
+     'CFANetCDFArray': cf.data.array.cfanetcdfarray.CFANetCDFArray,
      'CoordinateReference': cf.coordinatereference.CoordinateReference,
      'DimensionCoordinate': cf.dimensioncoordinate.DimensionCoordinate,
      'Domain': cf.domain.Domain,
@@ -188,19 +194,22 @@ def implementation():
      'FieldAncillary': cf.fieldancillary.FieldAncillary,
      'Bounds': cf.bounds.Bounds,
      'InteriorRing': cf.interiorring.InteriorRing,
+     'InterpolationParameter': cf.interpolationparameter.InterpolationParameter,
      'CoordinateConversion': cf.coordinateconversion.CoordinateConversion,
      'Datum': cf.datum.Datum,
-     'Data': cf.data.data.Data,
-     'GatheredArray': cf.data.gatheredarray.GatheredArray,
-     'NetCDFArray': cf.data.netcdfarray.NetCDFArray,
-     'RaggedContiguousArray': cf.data.raggedcontiguousarray.RaggedContiguousArray,
-     'RaggedIndexedArray': cf.data.raggedindexedarray.RaggedIndexedArray,
-     'RaggedIndexedContiguousArray': cf.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray,
      'List': cf.list.List,
-     'Count': cf.count.Count,
      'Index': cf.index.Index,
+     'Count': cf.count.Count,
      'NodeCountProperties': cf.nodecountproperties.NodeCountProperties,
-     'PartNodeCountProperties': cf.partnodecountproperties.PartNodeCountProperties}
+     'PartNodeCountProperties': cf.partnodecountproperties.PartNodeCountProperties,
+     'Data': cf.data.data.Data,
+     'GatheredArray': cf.data.array.gatheredarray.GatheredArray,
+     'NetCDFArray': cf.data.array.netcdfarray.NetCDFArray,
+     'RaggedContiguousArray': cf.data.array.raggedcontiguousarray.RaggedContiguousArray,
+     'RaggedIndexedArray': cf.data.array.raggedindexedarray.RaggedIndexedArray,
+     'RaggedIndexedContiguousArray': cf.data.array.raggedindexedcontiguousarray.RaggedIndexedContiguousArray,
+     'SubsampledArray': cf.data.array.subsampledarray.SubsampledArray,
+     'TiePointIndex': cf.tiepointindex.TiePointIndex}
 
     """
     return _implementation.copy()

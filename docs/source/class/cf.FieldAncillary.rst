@@ -224,6 +224,7 @@ Data
    ~cf.FieldAncillary.isperiodic
    ~cf.FieldAncillary.get_original_filenames
    ~cf.FieldAncillary.has_bounds
+   ~cf.FieldAncillary.persist
 
 Miscellaneous
 -------------
