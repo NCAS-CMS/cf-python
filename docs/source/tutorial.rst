@@ -3272,7 +3272,7 @@ Conditions may also be applied to multi-dimensional metadata
 constructs
 
 .. code-block:: python
-   :caption: *Create subspace whose domain spans latitudes within the range of 51 to 53 degrees north, with the other domain axes remaining unchanged.*
+   :caption: *Create a subspace whose domain spans latitudes within the range of 51 to 53 degrees north, with the other domain axes remaining unchanged.*
 
    >>> print(t)
    Field: air_temperature (ncvar%ta)
