@@ -3177,7 +3177,7 @@ type of subspace:
   are removed to create the returned subspace:
 
   .. code-block:: python
-     :caption: *Create subspace by compressing the domain spanning the 1st, 2nd, 4th and 6th elements of the 'X' axis, with the other domain axes remaining unchanged.*
+     :caption: *Create a subspace by compressing the domain spanning the 2nd, 3rd, 5th and 7th elements of the 'X' axis, with the other domain axes remaining unchanged.*
 
      >>> print(q.array)
      [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
