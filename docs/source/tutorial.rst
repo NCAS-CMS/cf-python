@@ -3111,7 +3111,7 @@ Subspaces based on time dimensions may be defined with as
 date-time objects.
 
 .. code-block:: python
-   :caption: *Create subspaces in different ways based on the time dimension by selecting a particular date and using date-time and its queries.*
+   :caption: *Create subspaces in different ways based on the time dimension by selecting a particular date and using date-time and date-time queries.*
 
    >>> a = cf.read('timeseries.nc')[0]
    >>> print (a)     
