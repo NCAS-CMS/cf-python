@@ -377,7 +377,7 @@ class DimensionCoordinate(
                   (2.5, 17.5)``.
 
                 *Parameter example:*
-                  Beware that if *bound* is too large (small), then
+                  Beware that if *bound* is too large or small, then
                   some returned bounds values will by physically
                   incorrect. For coordinates ``1, 2, 10``, the setting
                   of ``bound=-2`` will result in bounds of ``(-2, 4),
