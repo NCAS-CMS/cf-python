@@ -3,6 +3,9 @@ from dask.utils import SerializableLock
 
 from .mixin import FileArrayMixin
 
+# Global lock for netCDF file access
+_lock = SerializableLock()
+
 
 class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
     """An array stored in a netCDF file."""
@@ -22,9 +25,9 @@ class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
         Returns a lock object (unless no file name has been set, in
         which case `False` is returned) because concurrent reads are
         not currently supported by the netCDF-C library. The lock
-        object will be the same for all `NetCDFArray` instances with
-        this file name, which means that all file access coordinates
-        around the same lock.
+        object will be the same for all `NetCDFArray` instances,
+        regardless of the dataset they access, which means that all
+        file access coordinates around the same lock.
 
         .. versionadded:: TODODASKVER
 
@@ -33,4 +36,4 @@ class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
         if filename is None:
             return False
 
-        return SerializableLock(filename)
+        return _lock 
