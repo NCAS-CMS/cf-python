@@ -13,7 +13,7 @@ version 3.14.0
 * Fixed bug that raised an exception when using the ``equal`` or
   ``exist`` keyword of `cf.aggregate`
   (https://github.com/NCAS-CMS/cf-python/issues/499)
-* Fixed bug the created incorrect cyclic Voronoi bounds from
+* Fixed bug that created incorrect cyclic Voronoi bounds from
   `DimensionCoordinate.create_bounds`
   (https://github.com/NCAS-CMS/cf-python/issues/514)
 * Changed dependency: ``1.10.0.1<=cfdm<1.10.1.0``
