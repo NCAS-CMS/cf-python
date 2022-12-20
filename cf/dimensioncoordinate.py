@@ -411,8 +411,8 @@ class DimensionCoordinate(
 
             flt: array_like scalar, optional
                 When creating cells with sizes specified by the
-                *cellsize* parameter, define the fraction of the each
-                cell which is less its coordinate value. By default
+                *cellsize* parameter, define the fraction of each
+                cell which is less than its coordinate value. By default
                 *flt* is 0.5, so that each cell has its coordinate at
                 it's centre. Ignored if *cellsize* is not set.
 
