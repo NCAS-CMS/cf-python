@@ -3213,7 +3213,7 @@ type of subspace:
   unselected locations within the envelope.
 
   .. code-block:: python
-     :caption: *Create subspace by selecting the 1st, 2nd, 4th and 6th elements of the 'X' axis by creating an envelope of these elements and mising data within the envelope wherever needed.*
+     :caption: *Create a subspace by selecting the 2nd, 3rd, 5th and 7th elements of the 'X' axis by creating an envelope of these elements with missing data within the envelope wherever needed.*
 
      >>> q2 = q.subspace('envelope', X=[1, 2, 4, 6])
      >>> print(q2)
