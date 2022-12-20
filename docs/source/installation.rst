@@ -34,8 +34,6 @@ Windows Subsystem for Linux (WSL)
 
 The cf package is only for Python 3.7 or newer.
 
-Versions 2.x of cf work only for Python 2.7.
-
 ----
 
 .. _pip:
@@ -263,10 +261,6 @@ environments for which these features are not required.
 
 * `matplotlib <https://pypi.org/project/matplotlib>`_, version 3.0.0
   or newer.
-
-.. rubric:: Parallel processing
-
-* `mpi4py <https://pypi.org/project/mpi4py>`_
 
 ----
 

@@ -33,8 +33,8 @@ is built on a complete implementation of the :ref:`CF-data-model`.
 -----------------
 
 The cf package uses for its internal data structures the
-:ref:`CF-data-model` [#cfdm]_ inherited from the `cfdm` package, and
-so is able to process any CF-compliant dataset. It is not strict about
+:ref:`CF-data-model` inherited from the `cfdm` package, and so is able
+to process any CF-compliant dataset. It is not strict about
 CF-compliance, however, so that partially conformant datasets may be
 ingested from existing datasets and written to new datasets.This is so
 that datasets that are partially conformant may nonetheless be
@@ -114,13 +114,6 @@ The cf package can:
 All of the above use LAMA functionality, which allows multiple
 fields larger than the available memory to exist and be manipulated.
 
-**Performance**
----------------
-
-As of version 3.14.0, cf uses :ref:`Dask <Performance>` for all of its
-data manipulations, which provides lazy, parallelised, and out-of-core
-computations of array operations.
-
 ----
 
 **Visualization**
@@ -141,30 +134,40 @@ range plotting possibilities with example code.
 
 ----
 
-**Old versions**
-----------------
+**Performance**
+---------------
 
-Since version 3.0.0 (released 2019-10-01), cf is for Python 3 only and
-there are :ref:`incompatible differences between versions 2.x and 3.x
-<two-to-three-changes>` of cf.
-
-Scripts written for version 2.x but running under version 3.x should
-either work as expected, or provide informative error messages on the
-new API usage. However, it is advised that the outputs of older
-scripts are checked when running with Python 3 versions of the cf
-library.
-
-For version 2.x documentation, see the :ref:`releases <Releases>`
-page.
+As of version 3.14.0 (released 2023-01-31), cf uses :ref:`Dask
+<Performance>` for all of its data manipulations, which provides lazy,
+parallelised, and out-of-core computations of array operations.
 
 ----
-   
-.. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
-           Taylor, K. E.: A data model of the Climate and Forecast
-           metadata conventions (CF-1.6) with a software
-           implementation (cf-python v2.1), Geosci. Model Dev., 10,
-           4619-4646, https://doi.org/10.5194/gmd-10-4619-2017, 2017.
 
-	   Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference
+**References**
+--------------
 
-    implementation of the CF data model. Journal of Open Source Software, 5(54), 2717, https://doi.org/10.21105/joss.02717
+Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S., Caron, J.,
+  Signell, R., et al. NetCDF Climate and Forecast (CF) Metadata
+  Conventions. CF Conventions Committee.
+  https://cfconventions.org/cf-conventions/cf-conventions.html
+
+Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference
+  implementation of the CF data model. Journal of Open Source
+  Software, 5(54), 2717, https://doi.org/10.21105/joss.02717
+
+Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
+  Taylor, K. E. (2017). A data model of the Climate and Forecast
+  metadata conventions (CF-1.6) with a software implementation
+  (cf-python v2.1), Geosci. Model Dev., 10, 4619-4646,
+  https://doi.org/10.5194/gmd-10-4619-2017
+
+Rew, R., and Davis, G. (1990). NetCDF: An Interface for Scientific
+  Data Access. IEEE Computer Graphics and Applications, 10(4),
+  76–82. https://doi.org/10.1109/38.56302
+
+Rew, R., Hartnett, E., and Caron, J. (2006). NetCDF-4: Software
+  Implementing an Enhanced Data Model for the Geosciences. In 22nd
+  International Conference on Interactive Information Processing
+  Systems for Meteorology, Oceanography, and Hydrology. AMS. Retrieved
+  from
+  https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf
