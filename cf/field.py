@@ -10532,7 +10532,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         The subspace is defined by identifying indices based on the
         metadata constructs.
 
-        Metadata constructs are selected conditions are specified on
+        Metadata constructs are selected by conditions specified on
         their data. Indices for subspacing are then automatically
         inferred from where the conditions are met.
 
