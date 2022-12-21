@@ -3028,9 +3028,12 @@ def environment(display=True, paths=True):
         "ESMF": _get_module_info("ESMF", try_except=True),
         # Now Python itself
         "Python": (platform.python_version(), sys.executable),
+        # Then Dask (cover first from below as it's important under-the-hood)
+        "dask": _get_module_info("dask"),
         # Then Python libraries not related to CF
         "netCDF4": _get_module_info("netCDF4"),
         "psutil": _get_module_info("psutil"),
+        "packaging": _get_module_info("packaging"),
         "numpy": _get_module_info("numpy"),
         "scipy": _get_module_info("scipy", try_except=True),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
