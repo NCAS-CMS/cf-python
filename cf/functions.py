@@ -3000,8 +3000,8 @@ def environment(display=True, paths=True):
     cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py
     cfunits: 3.3.5 /home/username/cfunits/cfunits/__init__.py
     cfplot: 3.1.18 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfplot/__init__.py
-    cfdm: 1.10.0.1 /home/username/cfdm/cfdm/__init__.py
-    cf: 3.14.0b0 /home/username/cf-python/cf/__init__.py
+    cfdm: 1.10.0.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
+    cf: 3.14.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cf/__init__.py
 
     >>> cf.environment(paths=False)
     Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10
@@ -3021,7 +3021,7 @@ def environment(display=True, paths=True):
     cfunits: 3.3.5
     cfplot: 3.1.18
     cfdm: 1.10.0.1
-    cf: 3.14.0b0
+    cf: 3.14.0
 
     """
     dependency_version_paths_mapping = {
