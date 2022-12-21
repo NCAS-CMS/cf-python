@@ -3019,21 +3019,27 @@ def environment(display=True, paths=True):
 
     """
     dependency_version_paths_mapping = {
+        # Platform first, then use an ordering to group libraries as follows...
         "Platform": (platform.platform(), ""),
+        # Underlying C and Fortran based libraries first
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
         "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
+        "ESMF": _get_module_info("ESMF", try_except=True),
+        # Now Python itself
         "Python": (platform.python_version(), sys.executable),
+        # Then Python libraries not related to CF
         "netCDF4": _get_module_info("netCDF4"),
-        "cftime": _get_module_info("cftime"),
-        "numpy": _get_module_info("numpy"),
         "psutil": _get_module_info("psutil"),
+        "numpy": _get_module_info("numpy"),
         "scipy": _get_module_info("scipy", try_except=True),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
-        "ESMF": _get_module_info("ESMF", try_except=True),
-        "cfdm": _get_module_info("cfdm"),
+        # Finally the CF related Python libraries, with the cf version last
+        # as it is the most relevant (cfdm penultimate for similar reason)
+        "cftime": _get_module_info("cftime"),
         "cfunits": _get_module_info("cfunits"),
         "cfplot": _get_module_info("cfplot", try_except=True),
+        "cfdm": _get_module_info("cfdm"),
         "cf": (__version__, _os_path_abspath(__file__)),
     }
     string = "{0}: {1!s}"
