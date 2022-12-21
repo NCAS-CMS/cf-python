@@ -2,14 +2,14 @@ from . import CompressedArrayMixin
 
 
 class RaggedArrayMixin(CompressedArrayMixin):
-    """Mixin TODODASKDOCS class for a container of an array.
+    """Mixin class for compressed ragged arrays.
 
     .. versionadded:: TODODASKVER
 
     """
 
     def to_dask_array(self, chunks="auto"):
-        """Create a dask array TODODASKDOCS.
+        """Convert the data to a `dask` array.
 
         .. versionadded:: TODODASKVER
 
@@ -28,6 +28,7 @@ class RaggedArrayMixin(CompressedArrayMixin):
         :Returns:
 
             `dask.array.Array`
+                The `dask` array representation. 
 
         """
         from functools import partial

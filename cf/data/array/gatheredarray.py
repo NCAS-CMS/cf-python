@@ -30,7 +30,7 @@ class GatheredArray(CompressedArrayMixin, ArrayMixin, cfdm.GatheredArray):
         return super().__repr__().replace("<", "<CF ", 1)
 
     def to_dask_array(self, chunks="auto"):
-        """Create a dask array TODODASKDOCS.
+        """Convert the data to a `dask` array.
 
         .. versionadded:: TODODASKVER
 
@@ -49,6 +49,7 @@ class GatheredArray(CompressedArrayMixin, ArrayMixin, cfdm.GatheredArray):
         :Returns:
 
             `dask.array.Array`
+                The `dask` array representation. 
 
         """
         from functools import partial

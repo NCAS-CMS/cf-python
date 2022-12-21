@@ -80,7 +80,7 @@ class SubsampledArray(CompressedArrayMixin, ArrayMixin, cfdm.SubsampledArray):
         return super().__repr__().replace("<", "<CF ", 1)
 
     def to_dask_array(self, chunks="auto"):
-        """Create a dask array TODODASKDOCS.
+        """"Convert the data to a `dask` array.
 
         .. versionadded:: TODODASKVER
 
@@ -99,6 +99,7 @@ class SubsampledArray(CompressedArrayMixin, ArrayMixin, cfdm.SubsampledArray):
         :Returns:
 
             `dask.array.Array`
+                The `dask` array representation. 
 
         """
         from functools import partial
