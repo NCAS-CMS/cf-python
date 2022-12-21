@@ -2984,38 +2984,44 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> cf.environment()
-    Platform: Linux-5.4.0-58-generic-x86_64-with-debian-bullseye-sid
-    HDF5 library: 1.10.5
-    netcdf library: 4.6.3
-    udunits2 library: libudunits2.so.0
-    python: 3.7.0 /home/space/anaconda3/bin/python
-    netCDF4: 1.5.4 /home/space/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.3.0 /home/space/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
-    numpy: 1.18.4 /home/space/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    psutil: 5.4.7 /home/space/anaconda3/lib/python3.7/site-packages/psutil/__init__.py
-    scipy: 1.1.1 /home/space/anaconda3/lib/python3.7/site-packages/scipy/__init__.py
-    matplotlib: 3.1.1 /home/space/anaconda3/lib/python3.7/site-packages/matplotlib/__init__.py
-    ESMF: 8.0.0 /home/space/anaconda3/lib/python3.7/site-packages/ESMF/__init__.py
-    cfdm: 1.8.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cfdm/__init__.py
-    cfunits: 3.3.1 /home/space/anaconda3/lib/python3.7/site-packages/cfunits/__init__.py
-    cfplot: 3.0.0 /home/space/anaconda3/lib/python3.7/site-packages/cfplot/__init__.py
-    cf: 3.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py
+    Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10
+    HDF5 library: 1.10.6
+    netcdf library: 4.8.0
+    udunits2 library: /home/username/anaconda3/envs/cf-env/lib/libudunits2.so.0
+    ESMF: 8.1.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/ESMF/__init__.py
+    Python: 3.8.10 /home/username/anaconda3/envs/cf-env/bin/python
+    dask: 2022.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/dask/__init__.py
+    netCDF4: 1.5.6 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/netCDF4/__init__.py
+    psutil: 5.9.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/psutil/__init__.py
+    packaging: 21.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/packaging/__init__.py
+    numpy: 1.22.2 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/numpy/__init__.py
+    scipy: 1.8.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py
+    matplotlib: 3.4.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/matplotlib/__init__.py
+    cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py
+    cfunits: 3.3.5 /home/username/cfunits/cfunits/__init__.py
+    cfplot: 3.1.18 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfplot/__init__.py
+    cfdm: 1.10.0.1 /home/username/cfdm/cfdm/__init__.py
+    cf: 3.14.0b0 /home/username/cf-python/cf/__init__.py
+
     >>> cf.environment(paths=False)
-    HDF5 library: 1.10.5
-    netcdf library: 4.6.3
+    Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10
+    HDF5 library: 1.10.6
+    netcdf library: 4.8.0
     udunits2 library: libudunits2.so.0
-    Python: 3.7.0
-    netCDF4: 1.5.4
-    cftime: 1.3.0
-    numpy: 1.18.4
-    psutil: 5.4.7
-    scipy: 1.1.0
-    matplotlib: 2.2.3
-    ESMF: 8.0.0
-    cfdm: 1.8.8.0
-    cfunits: 3.3.1
-    cfplot: 3.0.38
-    cf: 3.8.0
+    ESMF: 8.1.1
+    Python: 3.8.10
+    dask: 2022.6.0
+    netCDF4: 1.5.6
+    psutil: 5.9.0
+    packaging: 21.3
+    numpy: 1.22.2
+    scipy: 1.8.0
+    matplotlib: 3.4.3
+    cftime: 1.6.0
+    cfunits: 3.3.5
+    cfplot: 3.1.18
+    cfdm: 1.10.0.1
+    cf: 3.14.0b0
 
     """
     dependency_version_paths_mapping = {
