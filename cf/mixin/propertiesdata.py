@@ -5289,13 +5289,15 @@ class PropertiesData(Properties):
     def roll(self, iaxis, shift, inplace=False, i=False):
         """Roll the data along an axis.
 
+        TODODASKDOCS
+
         .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
                      `transpose`
 
         :Parameters:
 
             iaxis: `int`
-                TODO
+                TODODASKDOCS
 
             {{inplace: `bool`, optional}}
 
@@ -5304,11 +5306,11 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                TODO
+                TODODASKDOCS
 
         **Examples**
 
-        TODO
+        TODODASKDOCS
 
         """
         return self._apply_data_oper(

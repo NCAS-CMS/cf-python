@@ -482,11 +482,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @property
     def dask_compressed_array(self):
-        """TODODASKDOCS.
+        """Returns a dask array of the compressed data.
+
+        .. versionadded:: TODODASKVER
 
         :Returns:
 
             `dask.array.Array`
+                The compressed data.
+
+        **Examples**
+
+        >>> a = d.dask_compressed_array
 
         """
         ca = self.source(None)
@@ -4253,33 +4260,28 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def dtype(self):
         """The `numpy` data-type of the data.
 
+        Always returned as `numpy` data-type instance, but may be set
+        as any object that converts to a `numpy` data-type.
+
         **Examples**
 
-        TODODASKDOCS
-        >>> d = cf.Data([0.5, 1.5, 2.5])
+        >>> d = cf.Data([1, 2.5, 3.9])
         >>> d.dtype
-        dtype(float64')
-        >>> type(d.dtype)
-        <type 'numpy.dtype'>
-
-        >>> d = cf.Data([0.5, 1.5, 2.5])
-        >>> import numpy
-        >>> d.dtype = numpy.dtype(int)
+        dtype('float64')
         >>> print(d.array)
-        [0 1 2]
-        >>> d.dtype = bool
-        >>> print(d.array)
-        [False  True  True]
-        >>> d.dtype = 'float64'
-        >>> print(d.array)
-        [ 0.  1.  1.]
-
-        >>> d = cf.Data([0.5, 1.5, 2.5])
+        [1.  2.5 3.9]
         >>> d.dtype = int
-        >>> d.dtype = bool
-        >>> d.dtype = float
+        >>> d.dtype
+        dtype('int64')
         >>> print(d.array)
-        [ 0.5  1.5  2.5]
+        [1 2 3]
+        >>> d.dtype = 'float32'
+        >>> print(d.array)
+        [1. 2. 3.]
+        >>> import numpy as np
+        >>> d.dtype = np.dtype('int32')
+        >>> d.dtype
+        dtype('int32')
 
         """
         dx = self.to_dask_array()
@@ -10849,30 +10851,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def roll(self, axis, shift, inplace=False, i=False):
         """Roll array elements along a given axis.
 
-        Equivalent in function to `numpy.roll`.
+        Elements that roll beyond the last position are re-introduced
+        at the first.
 
-        TODODASKDOCS  - note that it works for multiple axes
+        .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
+                     `transpose`
 
         :Parameters:
 
-            axis: `int`
-                Select the axis over which the elements are to be rolled.
-                removed. The *axis* parameter is an integer that selects
-                the axis corresponding to the given position in the list
-                of axes of the data.
+            axis:  `int`, or `tuple` of `int`
+                Axis or axes along which elements are shifted.
 
                 *Parameter example:*
-                  Convolve the second axis: ``axis=1``.
+                  Roll the second axis: ``axis=1``.
 
                 *Parameter example:*
-                  Convolve the last axis: ``axis=-1``.
+                  Roll the last axis: ``axis=-1``.
+
+                *Parameter example:*
+                  Roll the first and last axes: ``axis=(0, -1)``.
 
             shift: `int`, or `tuple` of `int`
                 The number of places by which elements are shifted.
                 If a `tuple`, then *axis* must be a tuple of the same
                 size, and each of the given axes is shifted by the
-                corresponding number. If an `int` while *axis* is a
-                tuple of `int`, then the same value is used for all
+                corresponding number.  If an `int` while `*axis* is a
+                `tuple` of `int`, then the same value is used for all
                 given axes.
 
             {{inplace: `bool`, optional}}
@@ -10883,8 +10887,49 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             `Data` or `None`
 
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+        >>> print(d.roll(0, 2).array)
+        [10 11  0  1  2  3  4  5  6  7  8  9]
+        >>> print(d.roll(0, -2).array)
+        [ 2  3  4  5  6  7  8  9 10 11  0  1]
+
+        >>> d2 = d.reshape(3, 4)
+        >>> print(d2.array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> print(d2.roll(0, 1).array)
+        [[ 8  9 10 11]
+         [ 0  1  2  3]
+         [ 4  5  6  7]]
+        >>> print(d2.roll(0, -1).array)
+        [[ 4  5  6  7]
+         [ 8  9 10 11]
+         [ 0  1  2  3]]
+        >>> print(d2.roll(1, 1).array)
+        [[ 3  0  1  2]
+         [ 7  4  5  6]
+         [11  8  9 10]]
+        >>> print(d2.roll(1, -1).array)
+        [[ 1  2  3  0]
+         [ 5  6  7  4]
+         [ 9 10 11  8]]
+        >>> print(d2.roll((1, 0), (1, 1)).array)
+        [[11  8  9 10]
+         [ 3  0  1  2]
+         [ 7  4  5  6]]
+        >>> print(d2.roll((1, 0), (2, 1)).array)
+        [[10 11  8  9]
+         [ 2  3  0  1]
+         [ 6  7  4  5]]
+
         """
-        # TODODASKAPI - consider matching the numpy/dask api: "shift, axis="
+        # TODODASKAPI - consider matching the numpy/dask api:
+        #               "shift,axis=", and the default axis behaviour
+        #               of a a flattened roll followed by shape
+        #               restore
 
         d = _inplace_enabled_define_and_cleanup(self)
 

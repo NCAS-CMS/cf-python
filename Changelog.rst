@@ -1,13 +1,17 @@
 version 3.14.0
 --------------
 
-**202?-??-??**
+**2023-01-??**
 
 * New method: `cf.Field.get_original_filenames`
   (https://github.com/NCAS-CMS/cf-python/issues/448)
 * New method: `cf.Field.to_dask_array`
 * New keyword parameter to `cf.write`: ``omit_data``
   (https://github.com/NCAS-CMS/cf-python/issues/477)
+* New keyword parameter to `cf.write`: ``omit_data``
+  (https://github.com/NCAS-CMS/cf-python/issues/477)
+* Extended functionality to `cf.Data.roll` and `cf.Field.roll` that
+  allows multiple axes to be rolled simultaneously.
 * Fixed bug that raised an exception when using the ``equal`` or
   ``exist`` keyword of `cf.aggregate`
   (https://github.com/NCAS-CMS/cf-python/issues/499)
