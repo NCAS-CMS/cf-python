@@ -476,38 +476,6 @@ def chunk_shapes(chunks):
     return product(*chunks)
 
 
-def is_small(array, threshold=None):
-    """We adjust the size of the data here for the potiential of a mask.
-
-    Returns False if size is unknown
-
-    .. versionadded:: 4.0.0
-
-    """
-    # TODODASKAPI - need to define what 'small' is, and consider the API
-    # in general
-
-    if threshold is None:
-        threshold = 2**90  # TODODASK - True for now!
-
-    return array.size * (array.dtype.itemsize + 1) < threshold
-
-
-def is_very_small(array, threshold=None):
-    """TODODASKDOCS.
-
-    .. versionadded:: 4.0.0
-
-    """
-    # TODODASKAPI - need to define what 'very small' is, and consider the
-    # API in general
-
-    if threshold is None:
-        threshold = 0.125 * 2**90  # TODODASK - True for now!
-
-    return is_small(array, threshold)
-
-
 def scalar_masked_array(dtype=float):
     """Return a scalar masked array.
 
