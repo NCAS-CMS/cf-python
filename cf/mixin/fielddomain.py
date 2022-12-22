@@ -369,7 +369,7 @@ class FieldDomain:
 
                     if envelope or full:
                         size = domain_axes[axis].get_size()
-                        # TODODASK - consider using dask.arange here
+                        # TODODASK: consider using dask.arange here
                         d = np.arange(size)  # self._Data(range(size))
                         ind = (d[value],)  # .array,)
                         index = slice(None)
@@ -735,8 +735,8 @@ class FieldDomain:
                 # This construct does not span the roll axes
                 continue
 
-            # TODODASK - remove these two lines when multiaxis rolls
-            #            are allowed at v4.0.0
+            # TODODASK: Consider removing these two lines, now that
+            #           multiaxis rolls are allowed on Data objects.
             c_axes = c_axes[0]
             c_shifts = c_shifts[0]
 

@@ -31,9 +31,7 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     the corresponding NumPy method (see the `numpy.ma.allclose` API
     reference).
 
-    TODODASK: put in a PR to Dask to request to add as genuine method.
-
-    .. versionadded:: 4.0.0
+    .. versionadded:: TODODASKVER
 
         :Parameters:
 
@@ -58,6 +56,8 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
                 the given *rtol* and *atol* tolerance.
 
     """
+    # TODODASK: put in a PR to Dask to request to add as genuine method.
+
     if rtol is None:
         rtol = cf_rtol()
     if atol is None:

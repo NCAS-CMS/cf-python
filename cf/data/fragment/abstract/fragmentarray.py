@@ -184,7 +184,7 @@ class FragmentArray(FileArray):
                 continue
 
             if isinstance(i, Integral) or not getattr(i, "ndim", True):
-                # TODODASK: what about [] or np.array([])?
+                # TODOCFA: what about [] or np.array([])?
 
                 # 'i' is an integer or a scalar numpy/dask array
                 raise ValueError(

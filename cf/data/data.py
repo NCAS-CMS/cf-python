@@ -32,7 +32,6 @@ from ..functions import (
     atol,
     default_netCDF_fillvals,
     free_memory,
-    log_level,
     parse_indices,
     rtol,
 )
@@ -57,11 +56,11 @@ from .dask_utils import (
 from .mixin import DataClassDeprecationsMixin
 from .utils import (
     YMDhms,
-    _is_numeric_dtype,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
     first_non_missing_value,
+    is_numeric_dtype,
     new_axis_identifier,
     scalar_masked_array,
 )
@@ -7053,8 +7052,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # We assume that all inputs are masked arrays. Note we compare the
         # data first as this may return False due to different dtype without
         # having to wait until the compute call.
-        self_is_numeric = _is_numeric_dtype(self_dx)
-        other_is_numeric = _is_numeric_dtype(other_dx)
+        self_is_numeric = is_numeric_dtype(self_dx)
+        other_is_numeric = is_numeric_dtype(other_dx)
         if self_is_numeric and other_is_numeric:
             data_comparison = _da_ma_allclose(
                 self_dx,
@@ -10065,8 +10064,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # TODODASK - check if axis parsing is done in dask
-
         if not d.ndim:
             if axes or axes == 0:
                 raise ValueError(
@@ -10621,10 +10618,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
 
-        # TODODASK: Steps to preserve invalid values shown, taking same
-        # approach as pre-daskification, but maybe we can now change approach
-        # to avoid finding mask and data, which requires early compute...
-        # Step 1. extract the non-masked data and the mask separately
         if preserve_invalid:
             # Assume all inputs are masked, as checking for a mask to confirm
             # is expensive. If unmasked, effective mask will be all False.
