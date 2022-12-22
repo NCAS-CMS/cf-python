@@ -355,8 +355,8 @@ class UMArray(FileArray):
         return units, calendar
 
     def _test_condition(self, condition, int_hdr):
-        """Return `True` if a field satisfies a condition for a STASH code to
-        standard name conversion.
+        """Return `True` if a field satisfies a condition for a STASH
+        code to standard name conversion.
 
         .. versionadded:: TODODASKVER
 
@@ -420,7 +420,7 @@ class UMArray(FileArray):
                 The upper bound of the version range, e.g. ``4.5``,
                 ``606.1``, etc.
 
-            version: number 
+            version: number
                 The version of field, e.g. ``4.5``, ``606.1``, etc.
 
         :Returns:
