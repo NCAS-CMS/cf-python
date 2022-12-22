@@ -23,7 +23,7 @@ class FullArray(Array):
         """**Initialization**
 
         :Parameters:
-        
+
             fill_value : scalar, optional
                 The fill value for the array. May be set to
                 `cf.masked` or `np.ma.masked`.

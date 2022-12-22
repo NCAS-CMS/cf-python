@@ -5287,17 +5287,35 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, iaxis, shift, inplace=False, i=False):
-        """Roll the data along an axis.
+        """Rollthe data along one or more axes.
 
-        TODODASKDOCS
+        Elements that roll beyond the last position are re-introduced
+        at the first.
 
         .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
                      `transpose`
 
         :Parameters:
 
-            iaxis: `int`
-                TODODASKDOCS
+            axis: `int`, or `tuple` of `int`
+                Axis or axes along which elements are shifted.
+
+                *Parameter example:*
+                  Roll the second axis: ``axis=1``.
+
+                *Parameter example:*
+                  Roll the last axis: ``axis=-1``.
+
+                *Parameter example:*
+                  Roll the first and last axes: ``axis=(0, -1)``.
+
+            shift: `int`, or `tuple` of `int`
+                The number of places by which elements are shifted.
+                If a `tuple`, then *axis* must be a tuple of the same
+                size, and each of the given axes is shifted by the
+                corresponding number.  If an `int` while `*axis* is a
+                `tuple` of `int`, then the same value is used for all
+                given axes.
 
             {{inplace: `bool`, optional}}
 
@@ -5306,11 +5324,17 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                TODODASKDOCS
+                The construct with rolled data. If the operation was
+                in-place then `None` is returned.
 
         **Examples**
 
-        TODODASKDOCS
+        >>> print(f.array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11]
+        >>> print(f.roll(0, 2).array)
+        [10 11  0  1  2  3  4  5  6  7  8  9]
+        >>> print(f.roll(0, -2).array)
+        [ 2  3  4  5  6  7  8  9 10 11  0  1]
 
         """
         return self._apply_data_oper(

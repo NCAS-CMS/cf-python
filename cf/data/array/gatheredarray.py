@@ -49,7 +49,7 @@ class GatheredArray(CompressedArrayMixin, ArrayMixin, cfdm.GatheredArray):
         :Returns:
 
             `dask.array.Array`
-                The `dask` array representation. 
+                The `dask` array representation.
 
         """
         from functools import partial

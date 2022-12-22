@@ -14174,11 +14174,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             axis:
-                The cyclic axis to be rolled, defined by that which would
-                be selected by passing the given axis description to a
-                call of the field construct's `domain_axis` method. For
-                example, for a value of ``'X'``, the domain axis construct
-                returned by ``f.domain_axis('X')`` is selected.
+                The cyclic axis to be rolled, defined by that which
+                would be selected by passing the given axis
+                description to a call of the field construct's
+                `domain_axis` method. For example, for a value of
+                ``'X'``, the domain axis construct returned by
+                ``f.domain_axis('X')`` is selected.
 
             shift: `int`
                 The number of places by which the selected cyclic axis is

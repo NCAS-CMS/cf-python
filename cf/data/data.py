@@ -32,7 +32,6 @@ from ..functions import (
     atol,
     default_netCDF_fillvals,
     free_memory,
-    log_level,
     parse_indices,
     rtol,
 )
@@ -4161,6 +4160,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d.dtype = np.dtype('int32')
         >>> d.dtype
         dtype('int32')
+        >>> print(d.array)
+        [1 2 3]
 
         """
         dx = self.to_dask_array()
@@ -10720,7 +10721,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def roll(self, axis, shift, inplace=False, i=False):
-        """Roll array elements along a given axis.
+        """Roll array elements along one or more axes.
 
         Elements that roll beyond the last position are re-introduced
         at the first.
@@ -10730,7 +10731,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Parameters:
 
-            axis:  `int`, or `tuple` of `int`
+            axis: `int`, or `tuple` of `int`
                 Axis or axes along which elements are shifted.
 
                 *Parameter example:*
@@ -10757,6 +10758,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `Data` or `None`
+                The rolled data.
 
         **Examples**
 

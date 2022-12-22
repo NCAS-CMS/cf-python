@@ -10,7 +10,7 @@ class ArrayMixin:
 
     def __array_function__(self, func, types, args, kwargs):
         """Implement the `numpy` ``__array_function__`` protocol.
-        
+
         .. versionadded:: TODODASKVER
 
         """
