@@ -3,81 +3,47 @@ from functools import lru_cache
 
 import dask.array as da
 import numpy as np
-from dask import config
 from dask.base import is_dask_collection
-from dask.utils import SerializableLock
 
 
-def convert_to_builtin_type(x):
-    """Convert a non-JSON-encodable object to a JSON-encodable built-in
-    type.
-
-    Possible conversions are:
-
-    ================  =======  ================================
-    Input             Output   `numpy` data-types covered
-    ================  =======  ================================
-    `numpy.bool_`     `bool`   bool
-    `numpy.integer`   `int`    int, int8, int16, int32, int64,
-                               uint8, uint16, uint32, uint64
-    `numpy.floating`  `float`  float, float16, float32, float64
-    ================  =======  ================================
-
-    .. versionadded:: 4.0.0
-
-    :Parameters:
-
-        x:
-            TODO
-
-    :Returns:
-
-            TODO
-
-    **Examples**
-
-    >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
-    bool
-    >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
-    double
-    >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
-    int
-
-    """
-    if isinstance(x, np.bool_):
-        return bool(x)
-
-    if isinstance(x, np.integer):
-        return int(x)
-
-    if isinstance(x, np.floating):
-        return float(x)
-
-    raise TypeError(f"{type(x)!r} object is not JSON serializable: {x!r}")
-
-
-def to_dask(array, chunks, default_chunks=False, **from_array_options):
-    """TODODASKDOCS.
+def to_dask(array, chunks, **from_array_options):
+    """Create a `dask` array.
 
     .. versionadded:: TODODASKVER
 
     :Parameters:
 
         array: array_like
-            TODODASKDOCS.
+            The array to be converted to a `dask` array. Examples of
+            valid types include `numpy` arrays, `dask` arrays, `Array`
+            subclasses, `list`, `tuple`, scalars.
 
         chunks: `int`, `tuple`, `dict` or `str`, optional
-            Specify the chunking of the returned dask array.
-
-            Any value accepted by the *chunks* parameter of the
+            Specify the chunking of the returned dask array.  Any
+            value accepted by the *chunks* parameter of the
             `dask.array.from_array` function is allowed.
 
-        dask_from_array_options: `dict`
+            Ignored if *array* is a `dask` array, which already
+            defines its own chunks.
+
+            Might get automatically modified if *array* is a
+            compressed `Array` subclass.
+
+        from_array_options: `dict`, optional
             Keyword arguments to be passed to `dask.array.from_array`.
+
+            If *from_array_options* has no ``'lock'`` key then the
+            `lock` keyword is set to the `_dask_lock` attribute of
+            *array* or, if there is no such attribute, `False`.
+
+            If *from_array_options* has no ``'meta'`` key then the
+            `meta` keyword is set to the `_dask_meta` attribute of
+            *array* or, if there is no such attribute, `None`.
 
     :Returns:
 
         `dask.array.Array`
+            The `dask` array representation of the array.
 
     **Examples**
 
@@ -94,21 +60,13 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
 
     """
     if is_dask_collection(array):
-        if default_chunks is not False and chunks != default_chunks:
-            raise ValueError(
-                "Can't define chunks for dask input arrays. Consider "
-                "rechunking the dask array before initialisation, "
-                "or rechunking the `Data` after initialisation."
-            )
-
         return array
 
-    try:
-        return array.to_dask_array(chunks=chunks)
-    except TypeError:
-        return array.to_dask_array()
-    except AttributeError:
-        pass
+    if hasattr(array, "to_dask_array"):
+        try:
+            return array.to_dask_array(chunks=chunks)
+        except TypeError:
+            return array.to_dask_array()
 
     if not isinstance(
         array, (np.ndarray, list, tuple, memoryview) + np.ScalarType
@@ -118,11 +76,7 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
         array = np.asanyarray(array)
 
     kwargs = from_array_options
-    lock = getattr(array, "_dask_lock", False)
-    if lock:
-        lock = get_lock()
-
-    kwargs.setdefault("lock", lock)
+    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
     kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
 
     try:
@@ -135,7 +89,7 @@ def to_dask(array, chunks, default_chunks=False, **from_array_options):
 
 @lru_cache(maxsize=32)
 def generate_axis_identifiers(n):
-    """Return new, unique axis identifiers for a given number of axes.
+    """Return new axis identifiers for a given number of axes.
 
     The names are arbitrary and have no semantic meaning.
 
@@ -149,74 +103,16 @@ def generate_axis_identifiers(n):
     :Returns:
 
         `list`
-            The new axis idenfifiers.
+            The new axis identifiers.
 
     **Examples**
 
-    >>> generate_axis_identifiers(0)
+    >>> cf.data.creation.generate_axis_identifiers(0)
     []
-    >>> generate_axis_identifiers(1)
+    >>> cf.data.creation.generate_axis_identifiers(1)
     ['dim0']
-    >>> generate_axis_identifiers(3)
+    >>> cf.data.creation.generate_axis_identifiers(3)
     ['dim0', 'dim1', 'dim2']
 
     """
     return [f"dim{i}" for i in range(n)]
-
-
-def threads():
-    """Return True if the threaded scheduler executes computations.
-
-    See https://docs.dask.org/en/latest/scheduling.html for details.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return config.get("scheduler", default=None) in (None, "threads")
-
-
-def processes():
-    """Return True if the multiprocessing scheduler executes
-    computations.
-
-    See https://docs.dask.org/en/latest/scheduling.html for details.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return config.get("scheduler", default=None) == "processes"
-
-
-def synchronous():
-    """Return True if the single-threaded synchronous scheduler executes
-    computations computations in the local thread with no parallelism at
-    all.
-
-    See https://docs.dask.org/en/latest/scheduling.html for details.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    return config.get("scheduler", default=None) == "synchronous"
-
-
-def get_lock():
-    """TODODASKDOCS.
-
-    See https://docs.dask.org/en/latest/scheduling.html for details.
-
-    .. versionadded:: TODODASKVER
-
-    """
-    if threads():
-        return SerializableLock()
-
-    if synchronous():
-        return False
-
-    if processes():
-        raise ValueError("TODODASKMSG - not yet sorted out processes lock")
-        # Do we even need one? Can't we have lock=False, here?
-
-    # TODODASK: what now? raise exception? cluster?
-    raise ValueError("TODODASKMSG")
