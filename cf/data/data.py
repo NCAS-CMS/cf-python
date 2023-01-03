@@ -1787,6 +1787,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx)
         d.override_units(_units_None, inplace=True)
 
+        # More elegant to handle 'delete_bins' in cf- rather than Dask- space
+        # i.e. using cf.where with d in-place rather than da.where with dx
+        # just after the digitize operation above (cf.where already applies
+        # equivalent logic element-wise).
+        if delete_bins:
+            for n, db in enumerate(delete_bins):
+                db -= n
+                d.where(d == db, np.ma.masked, None, inplace=True)
+                # x = d - 1 rather than = d here since there is one fewer bin
+                # therefore we need to adjust to the new corresponding indices
+                d.where(d > db, d - 1, None, inplace=True)
+
         if return_bins:
             if two_d_bins is None:
                 two_d_bins = np.empty((bins.size - 1, 2), dtype=bins.dtype)
@@ -2256,7 +2268,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASKDOCS
+        >>> e = d.persist()
 
         """
         d = _inplace_enabled_define_and_cleanup(self)

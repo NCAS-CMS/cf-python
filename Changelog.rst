@@ -13,6 +13,9 @@ version 3.14.0
 * Fixed bug that raised an exception when using the ``equal`` or
   ``exist`` keyword of `cf.aggregate`
   (https://github.com/NCAS-CMS/cf-python/issues/499)
+* Fixed bug that created incorrect cyclic Voronoi bounds from
+  `DimensionCoordinate.create_bounds`
+  (https://github.com/NCAS-CMS/cf-python/issues/514)
 * Changed dependency: ``1.10.0.1<=cfdm<1.10.1.0``
 * New dependency: ``dask>=2022.6.0``
 
@@ -331,7 +334,7 @@ version 3.5.0
   (https://github.com/NCAS-CMS/cf-python/issues/76).
 * Fixed bug that stopped 'integral' collapses working for grouped
   collapses (https://github.com/NCAS-CMS/cf-python/issues/81).
-* Fixed bug the wouldn't allow the reading of a netCDF file which
+* Fixed bug that wouldn't allow the reading of a netCDF file which
   specifies Conventions other than CF
   (https://github.com/NCAS-CMS/cf-python/issues/78).
 

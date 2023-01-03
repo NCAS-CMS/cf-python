@@ -964,18 +964,14 @@ class DataTest(unittest.TestCase):
                         (np.ma.getmask(e.array) == np.ma.getmask(b)).all()
                     )
 
-                    # TODODASK: Reinstate the following test when
-                    #           __sub__, minimum, and maximum have
-                    #           been daskified
-
-        #                    e.where(
-        #                        cf.set([e.minimum(), e.maximum()]),
-        #                        cf.masked,
-        #                        e - 1,
-        #                        inplace=True,
-        #                    )
-        #                    f = d.digitize(bins, upper=upper)
-        #                    self.assertTrue(e.equals(f, verbose=2))
+                    e.where(
+                        cf.set([e.minimum(), e.maximum()]),
+                        cf.masked,
+                        e - 1,
+                        inplace=True,
+                    )
+                    f = d.digitize(bins, upper=upper)
+                    self.assertTrue(e.equals(f, verbose=2))
 
         # Check returned bins
         bins = [2, 6, 10, 50, 100]
@@ -3134,10 +3130,15 @@ class DataTest(unittest.TestCase):
         d = cf.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
-        # Scalar numeric array
         d = cf.Data([1, 2, 3.0, 4], "km", mask=[0, 1, 0, 0], chunks=2)
+        self.assertGreater(len(d.to_dask_array().dask.layers), 1)
+
         e = d.persist()
         self.assertIsInstance(e, cf.Data)
+        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
+        self.assertEqual(
+            e.to_dask_array().npartitions, d.to_dask_array().npartitions
+        )
         self.assertTrue(e.equals(d))
 
     def test_Data_cyclic(self):

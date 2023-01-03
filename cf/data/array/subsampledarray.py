@@ -122,6 +122,7 @@ class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
 
         # Get the (cfdm) subarray class
         Subarray = self.get_Subarray()
+        subarray_name = Subarray().__class__.__name__
 
         # Set the chunk sizes for the dask array
         #
@@ -169,9 +170,12 @@ class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
                 context_manager=context,
             )
 
+            key = f"{subarray_name}-{tokenize(subarray)}"
+            dsk[key] = subarray
+
             dsk[name + chunk_location] = (
                 getter,
-                subarray,
+                key,
                 Ellipsis,
                 False,
                 False,

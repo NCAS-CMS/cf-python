@@ -52,7 +52,7 @@
   the dev build.)
 
   ```bash
-  ./release_docs <vn> dev-clean # E.g. ./release_docs 3.3.0 dev-clean
+  ./release_docs dev-clean
   ```
 
 * Check that no typos or spelling mistakes have been introduced to the
@@ -110,13 +110,13 @@
 * Create an archived copy of the documentation:
 
   ```bash
-  ./release_docs <vn> archive # E.g. ./release_docs 3.3.0 archive
+  ./release_docs archive
   ```
 
 * Update the latest documentation:
 
   ```bash
-  ./release_docs <vn> latest # E.g. ./release_docs 3.3.0 latest
+  ./release_docs latest
   ```
   
 * Create a source tarball:
