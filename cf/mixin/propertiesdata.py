@@ -8,6 +8,7 @@ from numpy import vectorize as numpy_vectorize
 
 from ..cfdatetime import dt
 from ..data import Data
+from ..data.data import _DEFAULT_CHUNKS
 from ..decorators import (
     _deprecated_kwarg_check,
     _inplace_enabled,
@@ -2474,21 +2475,28 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    #    def chunk(self, chunksize=None):
-    #        '''Partition the data array.
-    #
-    #    :Parameters:
-    #
-    #        chunksize: `int`
-    #
-    #    :Returns:
-    #
-    #        `None`
-    #
-    #        '''
-    #        data = self.get_data(None)
-    #        if data is not None:
-    #            data.chunk(chunksize)
+    def chunk(self, chunksize=None):
+        """Partition the data array.
+
+        Deprecated at version TODODASKVER. Use the `rechunk` method
+        instead.
+
+        :Parameters:
+
+            chunksize: `int`
+
+        :Returns:
+
+            `None`
+
+        """
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "chunk",
+            "Use the 'rechunk' method instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -5191,6 +5199,54 @@ class PropertiesData(Properties):
             v.period(period=period.override_units(units))
 
         return v
+
+    @_inplace_enabled(default=False)
+    def rechunk(
+        self,
+        chunks=_DEFAULT_CHUNKS,
+        threshold=None,
+        block_size_limit=None,
+        balance=False,
+        bounds=True,
+        interior_ring=True,
+        inplace=False,
+    ):
+        """Change the chunk structure of the data.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `cf.Data.rechunk`
+
+        :Parameters:
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+            {{threshold: `int`, optional}}
+
+            {{block_size_limit: `int`, optional}}
+
+            {{balance: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with rechunked data, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        See `cf.Data.rechunk` for examples.
+
+        """
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "rechunk",
+            inplace=inplace,
+            chunks=chunks,
+            threshold=threshold,
+            block_size_limit=block_size_limit,
+            balance=balance,
+        )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)

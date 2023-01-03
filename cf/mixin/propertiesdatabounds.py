@@ -2,7 +2,8 @@ import logging
 
 import numpy as np
 
-from ..data.data import Data
+from ..data import Data
+from ..data.data import _DEFAULT_CHUNKS
 from ..decorators import (
     _deprecated_kwarg_check,
     _inplace_enabled,
@@ -1183,6 +1184,9 @@ class PropertiesDataBounds(PropertiesData):
     def chunk(self, chunksize=None):
         """Partition the data array.
 
+        Deprecated at version TODODASKVER. Use the `rechunk` method
+        instead.
+
         :Parameters:
 
             chunksize: `int`, optional
@@ -1199,17 +1203,13 @@ class PropertiesDataBounds(PropertiesData):
         >>> c.chunksize(1e8)
 
         """
-        super().chunk(chunksize)
-
-        # Chunk the bounds, if they exist.
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.chunk(chunksize)
-
-        # Chunk the interior ring, if it exists.
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.chunk(chunksize)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "chunk",
+            "Use the 'rechunk' method instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -3752,6 +3752,71 @@ class PropertiesDataBounds(PropertiesData):
             "persist",
             bounds=bounds,
             inplace=inplace,
+        )
+
+    @_inplace_enabled(default=False)
+    def rechunk(
+        self,
+        chunks=_DEFAULT_CHUNKS,
+        threshold=None,
+        block_size_limit=None,
+        balance=False,
+        bounds=True,
+        interior_ring=True,
+        inplace=False,
+    ):
+        """Change the chunk structure of the data.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `cf.Data.rechunk`
+
+        :Parameters:
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+            {{threshold: `int`, optional}}
+
+            {{block_size_limit: `int`, optional}}
+
+            {{balance: `bool`, optional}}
+
+            bounds: `bool`, optional
+                If False then do not rechunk any bounds. By default
+                any bounds are also rechunked.
+
+            interior_ring: `bool`, optional
+                If False then do not rechunk an interior ring array,
+                if one exists. By default an interior ring array is
+                rechunked.
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with rechunked data, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        See `cf.Data.rechunk` for examples.
+
+        """
+        if (bounds or interior_ring) and isinstance(chunks, dict):
+            from dask.array.utils import validate_axis
+
+            ndim = self.ndim
+            chunks = {validate_axis(c, ndim): v for c, v in chunks.items()}
+
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "rechunk",
+            bounds=bounds,
+            interior_ring=interior_ring,
+            inplace=inplace,
+            chunks=chunks,
+            threshold=threshold,
+            block_size_limit=block_size_limit,
+            balance=balance,
         )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
