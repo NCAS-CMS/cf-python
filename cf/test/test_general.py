@@ -36,11 +36,6 @@ class generalTest(unittest.TestCase):
         self.f = cf.read(filename)[0]
 
     def test_GENERAL(self):
-        # Save original chunksize
-        original_chunksize = cf.chunksize()
-
-        cf.chunksize(60)
-
         g = self.f.squeeze()
         f = self.f.copy()
 
@@ -147,18 +142,12 @@ class generalTest(unittest.TestCase):
 
         # Setting of (un)masked elements with where()
         g[::2, 1::2] = numpy.ma.masked
-        g.data.to_memory(1)
         g.where(True, 99)
-        g.data.to_memory(1)
         g.where(g.mask, 2)
-        g.data.to_memory(1)
 
         g[slice(None, None, 2), slice(1, None, 2)] = cf.masked
-        g.data.to_memory(1)
         g.where(g.mask, [[-1]])
-        g.data.to_memory(1)
         g.where(True, cf.Data(0, None))
-        g.data.to_memory(1)
 
         h = g[:3, :4]
         h.where(True, -1)
@@ -174,41 +163,19 @@ class generalTest(unittest.TestCase):
         h[0, 2] = 2
         g[slice(None, 3), slice(None, 4)] = h
 
-        # Make sure all partitions' data are in temporary files
-        g.data.to_disk()
-
-        # Push partitions' data from temporary files into memory
-        g.data.to_memory(regardless=True)
-        g.data.to_disk()
-
         # Iterate through array values
         for x in f.data.flat():
             pass
-
-        # Reset chunk size
-        cf.chunksize(original_chunksize)
-
-        # Move Data partitions to disk
-        f.data.to_disk()
-
-        cf.chunksize(original_chunksize)
 
         f.transpose(inplace=True)
         f.flip(inplace=True)
 
         cf.write(f, "delme.nc")
         f = cf.read("delme.nc")[0]
-        cf.write(f, "delme.nca", fmt="CFA4")
-        g = cf.read("delme.nca")[0]
 
         b = f[:, 0:6, :]
         c = f[:, 6:, :]
         cf.aggregate([b, c], verbose=2)[0]
-
-        # Remove temporary files
-        cf.data.partition._remove_temporary_files()
-
-        cf.chunksize(original_chunksize)
 
 
 if __name__ == "__main__":

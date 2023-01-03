@@ -17,17 +17,21 @@ from . import (
     FieldAncillary,
     Index,
     InteriorRing,
+    InterpolationParameter,
     List,
     NodeCountProperties,
     PartNodeCountProperties,
+    TiePointIndex,
 )
-from .data import (
-    Data,
+from .data import Data
+from .data.array import (
+    CFANetCDFArray,
     GatheredArray,
     NetCDFArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SubsampledArray,
 )
 from .functions import CF
 
@@ -39,37 +43,90 @@ class CFImplementation(cfdm.CFDMImplementation):
 
     """
 
+    def set_construct(self, parent, construct, axes=None, copy=True, **kwargs):
+        """Insert a construct into a field or domain.
 
-#    def set_bounds(self, construct, bounds, copy=True):
-#        '''Set the bounds component of a construct.
-#
-#    If a ValueError is raised by the called set_bounds method then
-#    this is trapped and no action is carried out.
-#
-#    .. versionadded:: 3.7.0
-#
-#    :Parameters:
-#
-#        construct: construct
-#
-#        bounds: bounds component
-#
-#        copy: `bool`, optional
-#
-#    :Returns:
-#
-#        `bool`
-#            Return `True` if the bounds were set successfully,
-#            otherwise return False.
-#
-#
-#        '''
-#        try:
-#            construct.set_bounds(bounds, copy=copy)
-#        except ValueError as error:
-#            return error
-#
-#        return ''
+        Does not attempt to conform cell method nor coordinate
+        reference constructs, as that has been handled by `cfdm`.
+
+        .. versionadded:: TODODASKVER
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+               On what to set the construct
+
+            construct:
+                The construct to set.
+
+            axes: `tuple` or `None`, optional
+                The construct domain axes, if applicable.
+
+            copy: `bool`, optional
+                Whether or not to set a copy of *construct*.
+
+            kwargs: optional
+                Additional parameters to the `set_construct` method of
+                *parent*.
+
+        :Returns:
+
+            `str`
+                The construct identifier.
+
+        """
+        kwargs.setdefault("conform", False)
+        return super().set_construct(
+            parent, construct, axes=axes, copy=copy, **kwargs
+        )
+
+    def initialise_CFANetCDFArray(
+        self,
+        filename=None,
+        ncvar=None,
+        group=None,
+        dtype=None,
+        mask=True,
+        units=False,
+        calendar=False,
+        instructions=None,
+    ):
+        """Return a `CFANetCDFArray` instance.
+
+        :Parameters:
+
+            filename: `str`
+
+            ncvar: `str`
+
+            group: `None` or sequence of str`
+
+            dytpe: `numpy.dtype`
+
+            mask: `bool`, optional
+
+            units: `str` or `None`, optional
+
+            calendar: `str` or `None`, optional
+
+            instructions: `str`, optional
+
+        :Returns:
+
+            `CFANetCDFArray`
+
+        """
+        cls = self.get_class("CFANetCDFArray")
+        return cls(
+            filename=filename,
+            ncvar=ncvar,
+            group=group,
+            dtype=dtype,
+            mask=mask,
+            units=units,
+            calendar=calendar,
+            instructions=instructions,
+        )
 
 
 _implementation = CFImplementation(
@@ -77,6 +134,7 @@ _implementation = CFImplementation(
     AuxiliaryCoordinate=AuxiliaryCoordinate,
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
+    CFANetCDFArray=CFANetCDFArray,
     CoordinateReference=CoordinateReference,
     DimensionCoordinate=DimensionCoordinate,
     Domain=Domain,
@@ -86,6 +144,7 @@ _implementation = CFImplementation(
     FieldAncillary=FieldAncillary,
     Bounds=Bounds,
     InteriorRing=InteriorRing,
+    InterpolationParameter=InterpolationParameter,
     CoordinateConversion=CoordinateConversion,
     Datum=Datum,
     List=List,
@@ -99,6 +158,8 @@ _implementation = CFImplementation(
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+    SubsampledArray=SubsampledArray,
+    TiePointIndex=TiePointIndex,
 )
 
 
@@ -118,11 +179,12 @@ def implementation():
 
     >>> i = cf.implementation()
     >>> i
-    <CFDMImplementation: >
+    <CFImplementation: >
     >>> i.classes()
     {'AuxiliaryCoordinate': cf.auxiliarycoordinate.AuxiliaryCoordinate,
      'CellMeasure': cf.cellmeasure.CellMeasure,
      'CellMethod': cf.cellmethod.CellMethod,
+     'CFANetCDFArray': cf.data.array.cfanetcdfarray.CFANetCDFArray,
      'CoordinateReference': cf.coordinatereference.CoordinateReference,
      'DimensionCoordinate': cf.dimensioncoordinate.DimensionCoordinate,
      'Domain': cf.domain.Domain,
@@ -132,19 +194,22 @@ def implementation():
      'FieldAncillary': cf.fieldancillary.FieldAncillary,
      'Bounds': cf.bounds.Bounds,
      'InteriorRing': cf.interiorring.InteriorRing,
+     'InterpolationParameter': cf.interpolationparameter.InterpolationParameter,
      'CoordinateConversion': cf.coordinateconversion.CoordinateConversion,
      'Datum': cf.datum.Datum,
-     'Data': cf.data.data.Data,
-     'GatheredArray': cf.data.gatheredarray.GatheredArray,
-     'NetCDFArray': cf.data.netcdfarray.NetCDFArray,
-     'RaggedContiguousArray': cf.data.raggedcontiguousarray.RaggedContiguousArray,
-     'RaggedIndexedArray': cf.data.raggedindexedarray.RaggedIndexedArray,
-     'RaggedIndexedContiguousArray': cf.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray,
      'List': cf.list.List,
-     'Count': cf.count.Count,
      'Index': cf.index.Index,
+     'Count': cf.count.Count,
      'NodeCountProperties': cf.nodecountproperties.NodeCountProperties,
-     'PartNodeCountProperties': cf.partnodecountproperties.PartNodeCountProperties}
+     'PartNodeCountProperties': cf.partnodecountproperties.PartNodeCountProperties,
+     'Data': cf.data.data.Data,
+     'GatheredArray': cf.data.array.gatheredarray.GatheredArray,
+     'NetCDFArray': cf.data.array.netcdfarray.NetCDFArray,
+     'RaggedContiguousArray': cf.data.array.raggedcontiguousarray.RaggedContiguousArray,
+     'RaggedIndexedArray': cf.data.array.raggedindexedarray.RaggedIndexedArray,
+     'RaggedIndexedContiguousArray': cf.data.array.raggedindexedcontiguousarray.RaggedIndexedContiguousArray,
+     'SubsampledArray': cf.data.array.subsampledarray.SubsampledArray,
+     'TiePointIndex': cf.tiepointindex.TiePointIndex}
 
     """
     return _implementation.copy()

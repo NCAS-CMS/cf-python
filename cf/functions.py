@@ -12,6 +12,7 @@ import warnings
 from collections.abc import Iterable
 from itertools import product
 from marshal import dumps
+from math import isnan
 from numbers import Integral
 from os import mkdir
 from os.path import abspath as _os_path_abspath
@@ -25,6 +26,7 @@ import cfdm
 import netCDF4
 import numpy as np
 from dask import config
+from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from psutil import virtual_memory
 
@@ -1729,6 +1731,130 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
                 return out
 
 
+def indices_shape(indices, full_shape, keepdims=True):
+    """Return the shape of the array subspace implied by indices.
+
+    **Performance**
+
+    Boolean `dask` arrays will be computed, and `dask` arrays with
+    unknown size will have their chunk sizes computed.
+
+    .. versionadded:: TODODASKVER
+
+    .. seealso:: `cf.parse_indices`
+
+    :Parameters:
+
+        indices: `tuple`
+            The indices to be applied to an array with shape
+            *full_shape*.
+
+        full_shape: sequence of `ints`
+            The shape of the array to be subspaced.
+
+        keepdims: `bool`, optional
+            If True then an integral index is converted to a
+            slice. For instance, ``3`` would become ``slice(3, 4)``.
+
+    :Returns:
+
+        `list`
+            The shape of the subspace defined by the *indices*.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> import dask.array as da
+
+    >>> cf.indices_shape((slice(2, 5), 4), (10, 20))
+    [3, 1]
+    >>> cf.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
+    [3, 5]
+
+    >>> index0 = [False] * 5
+    >>> index0[2:5] = [True] * 3
+    >>> cf.indices_shape((index0, da.arange(1, 6)), (10, 20))
+    [3, 5]
+
+    >>> index0 = da.full((5,), False, dtype=bool)
+    >>> index0[2:5] = True
+    >>> index1 = np.full((6,), False, dtype=bool)
+    >>> index1[1:6] = True
+    >>> cf.indices_shape((index0, index1), (10, 20))
+    [3, 5]
+
+    >>> index0 = da.arange(5)
+    >>> index0 = index0[index0 < 3]
+    >>> cf.indices_shape((index0, []), (10, 20))
+    [3, 0]
+
+    >>> cf.indices_shape((da.from_array(2), np.array(3)), (10, 20))
+    [1, 1]
+    >>> cf.indices_shape((da.from_array([]), np.array(())), (10, 20))
+    [0, 0]
+    >>> cf.indices_shape((slice(1, 5, 3), 3), (10, 20))
+    [2, 1]
+    >>> cf.indices_shape((slice(5, 1, -2), 3), (10, 20))
+    [2, 1]
+    >>> cf.indices_shape((slice(5, 1, 3), 3), (10, 20))
+    [0, 1]
+    >>> cf.indices_shape((slice(1, 5, -3), 3), (10, 20))
+    [0, 1]
+
+    >>> cf.indices_shape((slice(2, 5), 4), (10, 20), keepdims=False)
+    [3]
+    >>> cf.indices_shape((da.from_array(2), 3), (10, 20), keepdims=False)
+    []
+    >>> cf.indices_shape((2, np.array(3)), (10, 20), keepdims=False)
+    []
+
+    """
+    shape = []
+    for index, full_size in zip(indices, full_shape):
+        if isinstance(index, slice):
+            start, stop, step = index.indices(full_size)
+            if (stop - start) * step < 0:
+                # E.g. 5:1:3 or 1:5:-3
+                size = 0
+            else:
+                size = abs((stop - start) / step)
+                int_size = round(size)
+                if size > int_size:
+                    size = int_size + 1
+                else:
+                    size = int_size
+        elif is_dask_collection(index) or isinstance(index, np.ndarray):
+            if index.dtype == bool:
+                # Size is the number of True values in the array
+                size = int(index.sum())
+            else:
+                size = index.size
+                if isnan(size):
+                    index.compute_chunk_sizes()
+                    size = index.size
+
+            if not keepdims and not index.ndim:
+                # Scalar array
+                continue
+        elif isinstance(index, list):
+            size = len(index)
+            if size:
+                i = index[0]
+                if isinstance(i, bool):
+                    # Size is the number of True values in the list
+                    size = sum(index)
+        else:
+            # Index is Integral
+            if not keepdims:
+                continue
+
+            size = 1
+
+        shape.append(size)
+
+    return shape
+
+
 def parse_indices(shape, indices, cyclic=False, keepdims=True):
     """Parse indices for array access and assignment.
 
@@ -2858,56 +2984,71 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> cf.environment()
-    Platform: Linux-5.4.0-58-generic-x86_64-with-debian-bullseye-sid
-    HDF5 library: 1.10.5
-    netcdf library: 4.6.3
-    udunits2 library: libudunits2.so.0
-    python: 3.7.0 /home/space/anaconda3/bin/python
-    netCDF4: 1.5.4 /home/space/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.3.0 /home/space/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
-    numpy: 1.18.4 /home/space/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    psutil: 5.4.7 /home/space/anaconda3/lib/python3.7/site-packages/psutil/__init__.py
-    scipy: 1.1.1 /home/space/anaconda3/lib/python3.7/site-packages/scipy/__init__.py
-    matplotlib: 3.1.1 /home/space/anaconda3/lib/python3.7/site-packages/matplotlib/__init__.py
-    ESMF: 8.0.0 /home/space/anaconda3/lib/python3.7/site-packages/ESMF/__init__.py
-    cfdm: 1.8.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cfdm/__init__.py
-    cfunits: 3.3.1 /home/space/anaconda3/lib/python3.7/site-packages/cfunits/__init__.py
-    cfplot: 3.0.0 /home/space/anaconda3/lib/python3.7/site-packages/cfplot/__init__.py
-    cf: 3.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py
+    Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10
+    HDF5 library: 1.10.6
+    netcdf library: 4.8.0
+    udunits2 library: /home/username/anaconda3/envs/cf-env/lib/libudunits2.so.0
+    ESMF: 8.1.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/ESMF/__init__.py
+    Python: 3.8.10 /home/username/anaconda3/envs/cf-env/bin/python
+    dask: 2022.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/dask/__init__.py
+    netCDF4: 1.5.6 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/netCDF4/__init__.py
+    psutil: 5.9.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/psutil/__init__.py
+    packaging: 21.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/packaging/__init__.py
+    numpy: 1.22.2 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/numpy/__init__.py
+    scipy: 1.8.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py
+    matplotlib: 3.4.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/matplotlib/__init__.py
+    cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py
+    cfunits: 3.3.5 /home/username/cfunits/cfunits/__init__.py
+    cfplot: 3.1.18 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfplot/__init__.py
+    cfdm: 1.10.0.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
+    cf: 3.14.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cf/__init__.py
+
     >>> cf.environment(paths=False)
-    HDF5 library: 1.10.5
-    netcdf library: 4.6.3
+    Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10
+    HDF5 library: 1.10.6
+    netcdf library: 4.8.0
     udunits2 library: libudunits2.so.0
-    Python: 3.7.0
-    netCDF4: 1.5.4
-    cftime: 1.3.0
-    numpy: 1.18.4
-    psutil: 5.4.7
-    scipy: 1.1.0
-    matplotlib: 2.2.3
-    ESMF: 8.0.0
-    cfdm: 1.8.8.0
-    cfunits: 3.3.1
-    cfplot: 3.0.38
-    cf: 3.8.0
+    ESMF: 8.1.1
+    Python: 3.8.10
+    dask: 2022.6.0
+    netCDF4: 1.5.6
+    psutil: 5.9.0
+    packaging: 21.3
+    numpy: 1.22.2
+    scipy: 1.8.0
+    matplotlib: 3.4.3
+    cftime: 1.6.0
+    cfunits: 3.3.5
+    cfplot: 3.1.18
+    cfdm: 1.10.0.1
+    cf: 3.14.0
 
     """
     dependency_version_paths_mapping = {
+        # Platform first, then use an ordering to group libraries as follows...
         "Platform": (platform.platform(), ""),
+        # Underlying C and Fortran based libraries first
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
         "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
+        "ESMF": _get_module_info("ESMF", try_except=True),
+        # Now Python itself
         "Python": (platform.python_version(), sys.executable),
+        # Then Dask (cover first from below as it's important under-the-hood)
+        "dask": _get_module_info("dask"),
+        # Then Python libraries not related to CF
         "netCDF4": _get_module_info("netCDF4"),
-        "cftime": _get_module_info("cftime"),
-        "numpy": _get_module_info("numpy"),
         "psutil": _get_module_info("psutil"),
+        "packaging": _get_module_info("packaging"),
+        "numpy": _get_module_info("numpy"),
         "scipy": _get_module_info("scipy", try_except=True),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
-        "ESMF": _get_module_info("ESMF", try_except=True),
-        "cfdm": _get_module_info("cfdm"),
+        # Finally the CF related Python libraries, with the cf version last
+        # as it is the most relevant (cfdm penultimate for similar reason)
+        "cftime": _get_module_info("cftime"),
         "cfunits": _get_module_info("cfunits"),
         "cfplot": _get_module_info("cfplot", try_except=True),
+        "cfdm": _get_module_info("cfdm"),
         "cf": (__version__, _os_path_abspath(__file__)),
     }
     string = "{0}: {1!s}"
@@ -3029,9 +3170,12 @@ def _DEPRECATION_ERROR_KWARGS(
     exact=False,
     relaxed_identity=False,
     info=False,
-    version="3.0.0",
-    removed_at="4.0.0",
+    version=None,
+    removed_at=None,
 ):
+    if version is None:
+        raise ValueError("Must provide deprecation version, e.g. '3.14.0'")
+
     if removed_at:
         removed_at = f" and will be removed at version {removed_at}"
 

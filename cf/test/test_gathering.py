@@ -239,10 +239,8 @@ class DSGTest(unittest.TestCase):
         # Initialise the gathered array object
         array = cf.GatheredArray(
             compressed_array=cf.Data(gathered_array),
-            compressed_dimension=1,
+            compressed_dimensions={1: (1, 2)},
             shape=(2, 3, 2),
-            size=12,
-            ndim=3,
             list_variable=list_variable,
         )
 
@@ -257,51 +255,42 @@ class DSGTest(unittest.TestCase):
         Y = tas.set_construct(cf.DomainAxis(3))
         X = tas.set_construct(cf.DomainAxis(2))
 
-        uncompressed_array = numpy.ma.masked_array(
-            data=[
-                [[1, 280.0], [1, 1], [282.5, 281.0]],
-                [[1, 279.0], [1, 1], [278.0, 277.5]],
-            ],
-            mask=[
-                [[True, False], [True, True], [False, False]],
-                [[True, False], [True, True], [False, False]],
-            ],
-            fill_value=1e20,
-            dtype="float32",
+        # Set the data for the field
+        tas.set_data(cf.Data(array), axes=[T, Y, X])
+
+        self.assertTrue(
+            (
+                tas.data.array
+                == numpy.ma.masked_array(
+                    data=[
+                        [[1, 280.0], [1, 1], [282.5, 281.0]],
+                        [[1, 279.0], [1, 1], [278.0, 277.5]],
+                    ],
+                    mask=[
+                        [[True, False], [True, True], [False, False]],
+                        [[True, False], [True, True], [False, False]],
+                    ],
+                    fill_value=1e20,
+                    dtype="float32",
+                )
+            ).all()
         )
 
-        for chunksize in (1000000,):
-            cf.chunksize(chunksize)
-            message = "chunksize=" + str(chunksize)
+        self.assertEqual(tas.data.get_compression_type(), "gathered")
 
-            # Set the data for the field
-            tas.set_data(cf.Data(array), axes=[T, Y, X])
+        self.assertTrue(
+            (
+                tas.data.compressed_array
+                == numpy.array(
+                    [[280.0, 282.5, 281.0], [279.0, 278.0, 277.5]],
+                    dtype="float32",
+                )
+            ).all()
+        )
 
-            self.assertTrue(
-                (tas.data.array == uncompressed_array).all(), message
-            )
-
-            self.assertEqual(
-                tas.data.get_compression_type(), "gathered", message
-            )
-
-            self.assertTrue(
-                (
-                    tas.data.compressed_array
-                    == numpy.array(
-                        [[280.0, 282.5, 281.0], [279.0, 278.0, 277.5]],
-                        dtype="float32",
-                    )
-                ).all(),
-                message,
-            )
-
-            self.assertTrue(
-                (
-                    tas.data.get_list().data.array == numpy.array([1, 4, 5])
-                ).all(),
-                message,
-            )
+        self.assertTrue(
+            (tas.data.get_list().data.array == numpy.array([1, 4, 5])).all(),
+        )
 
 
 if __name__ == "__main__":

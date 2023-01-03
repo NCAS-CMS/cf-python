@@ -26,7 +26,7 @@ jobs:
     # Need to checkout the repo in order to build the source dist from it,
     # but don't install codebase directly in this case, only test the sdist.
     - name: Checkout cf-python
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: main
 
@@ -34,15 +34,15 @@ jobs:
     - name: Notify about setup
       run: echo Now setting up the environment for cf-python...
 
-    - name: Checkout the current cfdm master to use as the dependency
-      uses: actions/checkout@v2
+    - name: Checkout the current cfdm main to use as the dependency
+      uses: actions/checkout@v3
       with:
         repository: NCAS-CMS/cfdm
         path: cfdm
 
     # Prepare to test the source dist using the given Python version
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -57,32 +57,37 @@ jobs:
         python-version: ${{ matrix.python-version }}
         channels: ncas, conda-forge
 
-    # Ensure shell is configured with conda activated:
-    - name: Check conda config
+    # Ensure shell is configured with conda and pip correctly activated.
+    - name: Check conda and pip config
       shell: bash -l {0}
       run: |
+        echo "*Conda report:*"
         conda info
         conda list
         conda config --show-sources
         conda config --show
+        echo "*Pip report:*"
+        pip --version
+        pip list
 
-    # Install cf-python dependencies, excluding cfdm, pre-testing
-    # We do so with conda which was setup in a previous step.
-    - name: Install dependencies
+    # Install cf-python dependencies, excluding cfunits and cfdm, pre-testing
+    # We do so with conda (and pip) which was setup in a previous step.
+    - name: Install dependencies excluding the NCAS CF Data Tools libraries
       shell: bash -l {0}
       run: |
-        conda install -c ncas -c conda-forge udunits2=2.2.25
+        conda install -c ncas -c conda-forge cf-plot udunits2=2.2.25
         conda install -c conda-forge mpich esmpy
         conda install scipy matplotlib
         pip install pycodestyle
 
-    # Install cfdm from the cfdm development master branch, then all other
-    # dependencies, where we also install cf-python itself but only in order
+    # Install cfunits and cfdm (from development main branch) separately,
+    # since it is most robust to test a no-dependency installation of cf, then
+    # finally install the cf-python development version, but only in order
     # to generate the test_file.nc file for testing, not as the cf to test.
-    # We do so with conda which was setup in a previous step.
-    - name: Install development cfdm.
+    - name: Install cfunits then development versions of cfdm and cf-python
       shell: bash -l {0}
       run: |
+        pip install cfunits
         cd ${{ github.workspace }}/cfdm
         pip install -e .
         cd ${{ github.workspace }}/main
@@ -92,16 +97,16 @@ jobs:
         pip install -r requirements.txt
         # Installing cf now but only to be able to run setup_create_field.py
         # next, in order to generate the test_file.nc required to test on
-        pip install -e .
+        pip install --no-deps -e .
 
     # Provide another notification message
     - name: Notify about starting the sdist test
       run: echo Setup complete. Now creating and testing the source dist...
 
-    # Create a file needed for testing. A separate step is required for this
-    # so the file can be registered and recognised first. Locally, the file
-    # is created and used on-the-fly by the 'run_tests_and_coverage' script.
-    - name: Create test_file.nc
+    # Create netCDF files needed for testing. A separate step is required
+    # for this so the files can be registered and recognised first; locally
+    # they are created and used on-the-fly by 'run_tests_and_coverage'.
+    - name: Create netCDF test files, e.g. test_file.nc
       shell: bash -l {0}
       run: |
         cd ${{ github.workspace }}/main/cf/test

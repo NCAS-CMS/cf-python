@@ -40,8 +40,8 @@ from . import (
     mixin,
 )
 from .constants import masked as cf_masked
-from .data import (
-    Data,
+from .data import Data
+from .data.array import (
     GatheredArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
@@ -4554,9 +4554,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def title(self):
         self.del_property("title")
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def cell_area(
         self,
         radius="earth",
@@ -4974,6 +4971,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def close(self):
         """Close all files referenced by the field construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -4986,10 +4986,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f.close()
 
         """
-        super().close()
-
-        for construct in self.constructs.filter_by_data(todict=True).values():
-            construct.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def iscyclic(self, *identity, **filter_kwargs):
         """Returns True if the specified axis is cyclic.
@@ -6923,7 +6926,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         raise RuntimeError("Use cf.histogram instead.")
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def collapse(
         self,
@@ -9638,26 +9641,31 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     filter_by_axis=(axis,), default=None
                 )
                 if coord is None:
+                    axis_id = self.constructs.domain_axis_identity(axis)
                     raise ValueError(
-                        "Dimension coordinates are required for a "
-                        "grouped collapse with Data groups."
+                        f"Dimension coordinates for the {axis_id!r} axis are "
+                        f"required for a collapse with group={group!r}"
                     )
 
                 if coord.Units.isreftime:
+                    axis_id = self.constructs.domain_axis_identity(axis)
                     raise ValueError(
-                        f"Can't group a reference-time axis with {group!r}. "
-                        "Use a TimeDuration instance instead."
+                        f"Can't collapse reference-time axis {axis_id!r} "
+                        f"with group={group!r}. In this case groups should "
+                        "be defined with a TimeDuration instance."
                     )
 
                 if group.size != 1:
                     raise ValueError(
-                        f"Group must have only one element: {group!r}"
+                        "A Data instance 'group' parameter must have exactly "
+                        f"one element: Got group={group!r}"
                     )
 
                 if group.Units and not group.Units.equivalent(coord.Units):
+                    axis_id = self.constructs.domain_axis_identity(axis)
                     raise ValueError(
-                        f"Can't group by {group!r} when coordinates have "
-                        f"non-equivalent units {coord.Units!r}"
+                        f"Group units {group.Units!r} are not eqivalent to "
+                        f"{axis_id!r} axis units {coord.Units!r}"
                     )
 
                 classification = numpy_empty((axis_size,), int)
@@ -10197,17 +10205,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                                 continue
                         else:
                             if coord is None:
+                                axis_id = pc.constructs.domain_axis_identity(
+                                    axis_in
+                                )
                                 raise ValueError(
-                                    "Can't collapse: Need an unambiguous 1-d "
-                                    "coordinate construct when "
-                                    f"group_span={group_span!r}"
+                                    f"Can't collapse: No coordinates for "
+                                    f"{axis_id!r} axis with group={group!r} "
+                                    f"and group_span={group_span!r}"
                                 )
 
                             bounds = coord.get_bounds(None)
                             if bounds is None:
                                 raise ValueError(
-                                    "Can't collapse: Need unambiguous 1-d "
-                                    "coordinate cell bounds when "
+                                    f"Can't collapse: No bounds on {coord!r} "
+                                    f"with group={group!r} and "
                                     f"group_span={group_span!r}"
                                 )
 
@@ -10219,6 +10230,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                             if not coord.increasing:
                                 lb, ub = ub, lb
+
                             if group_span + lb != ub:
                                 # The span of this group is not the
                                 # same as group_span, so don't
@@ -11818,7 +11830,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def convolution_filter(
         self,
@@ -12564,7 +12576,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     #
     #        return out
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
         """Remove size 1 axes from the data.
 
@@ -12703,7 +12715,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def transpose(
         self,
         axes=None,
@@ -12802,7 +12814,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Transpose the field's data array
         return super().transpose(iaxes, constructs=constructs, inplace=inplace)
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         """Insert size 1 axes into the data array.
@@ -13522,7 +13534,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return f
 
     def percentile(
-        self, ranks, axes=None, interpolation="linear", squeeze=False, mtol=1
+        self,
+        ranks,
+        axes=None,
+        method="linear",
+        squeeze=False,
+        mtol=1,
+        interpolation=None,
     ):
         """Compute percentiles of the data along the specified axes.
 
@@ -13562,23 +13580,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 By default, or if *axes* is `None`, all axes are selected.
 
-            interpolation: `str`, optional
-                Specify the interpolation method to use when the desired
-                percentile lies between two data values ``i < j``:
+            {{percentile method: `str`, optional}}
 
-                ===============  =========================================
-                *interpolation*  Description
-                ===============  =========================================
-                ``'linear'``     ``i+(j-i)*fraction``, where ``fraction``
-                                 is the fractional part of the index
-                                 surrounded by ``i`` and ``j``
-                ``'lower'``      ``i``
-                ``'higher'``     ``j``
-                ``'nearest'``    ``i`` or ``j``, whichever is nearest.
-                ``'midpoint'``   ``(i+j)/2``
-                ===============  =========================================
-
-                By default ``'linear'`` interpolation is used.
+                .. versionadded:: TODODASKVER
 
             squeeze: `bool`, optional
                 If True then all size 1 axes are removed from the returned
@@ -13603,6 +13607,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   To ensure that an output array element is a missing
                   datum if more than 25% of its input array elements are
                   missing data: ``mtol=0.25``.
+
+            interpolation: deprecated at version TODODASKVER
+                Use the *method* parameter instead.
 
         :Returns:
 
@@ -13702,6 +13709,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [0 2 1 1 1 2 1 1]]
 
         """
+        # TODODASKAPI: interpolation -> method
+        if interpolation is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self,
+                "percentile",
+                {"interpolation": None},
+                message="Use the 'method' parameter instead.",
+                version="TODODASKVER",
+                removed_at="5.0.0",
+            )  # pragma: no cover
+
         data_axes = self.get_data_axes(default=())
 
         if axes is None:
@@ -13720,7 +13738,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         data = self.data.percentile(
             ranks,
             axes=iaxes,
-            interpolation=interpolation,
+            method=method,
             squeeze=False,
             mtol=mtol,
         )
@@ -14142,7 +14160,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, axis, shift, inplace=False, i=False, **kwargs):
         """Roll the field along a cyclic axis.
@@ -14216,7 +14234,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_manage_log_level_via_verbosity
     def where(
         self,
@@ -14819,7 +14837,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             tuple(_section(self, axes, min_step=min_step).values())
         )
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def regrids(
         self,
@@ -15666,7 +15684,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def regridc(
         self,
@@ -16399,7 +16417,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def derivative(
         self,

@@ -864,7 +864,7 @@ class FieldDomain:
         """
         return len(self.domain_axes(todict=True))
 
-    @_deprecated_kwarg_check("i")
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def anchor(
         self, axis, value, inplace=False, dry_run=False, i=False, **kwargs
@@ -1627,7 +1627,7 @@ class FieldDomain:
 
         return old
 
-    @_deprecated_kwarg_check("axes")
+    @_deprecated_kwarg_check("axes", version="3.0.0", removed_at="4.0.0")
     def direction(self, identity, axes=None, **kwargs):
         """Whether or not a domain axis is increasing.
 
@@ -2037,6 +2037,7 @@ class FieldDomain:
         set_axes=True,
         copy=True,
         autocyclic={},
+        conform=True,
     ):
         """Set a metadata construct.
 
@@ -2112,6 +2113,19 @@ class FieldDomain:
 
                 .. versionadded:: 3.9.0
 
+            conform: `bool`, optional
+                If True (the default), then attempt to replace
+                placeholder identities in *construct* with existing
+                construct identifiers. Specifically, cell method
+                construct axis specifiers (such as ``'T'``) are mapped
+                to domain axis construct identifiers, and coordinate
+                reference construct coordinate specifiers (such as
+                ``'latitude'``) are mapped to their corresponding
+                dimension or auxiliary coordinate construct
+                identifiers.
+
+                .. versionadded:: TODODASKVER
+
         :Returns:
 
             `str`
@@ -2167,27 +2181,35 @@ class FieldDomain:
 
         if construct_type == "dimension_coordinate":
             construct.autoperiod(inplace=True, config=autocyclic)
-            self._conform_coordinate_references(out)
+            if conform:
+                self._conform_coordinate_references(out)
+
             self.autocyclic(key=out, coord=construct, config=autocyclic)
-            try:
-                self._conform_cell_methods()
-            except AttributeError:
-                pass
+            if conform:
+                try:
+                    self._conform_cell_methods()
+                except AttributeError:
+                    pass
 
         elif construct_type == "auxiliary_coordinate":
             construct.autoperiod(inplace=True, config=autocyclic)
-            self._conform_coordinate_references(out)
-            try:
-                self._conform_cell_methods()
-            except AttributeError:
-                pass
+            if conform:
+                self._conform_coordinate_references(out)
+                try:
+                    self._conform_cell_methods()
+                except AttributeError:
+                    pass
 
         elif construct_type == "cell_method":
-            self._conform_cell_methods()
+            if conform:
+                self._conform_cell_methods()
 
         elif construct_type == "coordinate_reference":
-            for ckey in self.coordinates(todict=True):
-                self._conform_coordinate_references(ckey, coordref=construct)
+            if conform:
+                for ckey in self.coordinates(todict=True):
+                    self._conform_coordinate_references(
+                        ckey, coordref=construct
+                    )
 
         # Return the construct key
         return out
