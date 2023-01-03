@@ -56,7 +56,7 @@ from .dask_utils import (
     cf_where,
 )
 from .mixin import DataClassDeprecationsMixin
-from .utils import (  # is_small,; is_very_small,
+from .utils import (
     YMDhms,
     _is_numeric_dtype,
     conform_units,
@@ -421,14 +421,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             compressed = ""
 
         if compressed:
-            # The input data is compressed
-            if chunks != _DEFAULT_CHUNKS:
-                # TODODASK: Is this restriction necessary?
-                raise ValueError(
-                    "Can't define chunks for compressed input arrays. "
-                    "Consider rechunking after initialisation."
-                )
-
             if init_options.get("from_array"):
                 raise ValueError(
                     "Can't define 'from_array' initialisation options "
@@ -457,9 +449,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
-        array = to_dask(
-            array, chunks, default_chunks=_DEFAULT_CHUNKS, **kwargs
-        )
+        array = to_dask(array, chunks, **kwargs)
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
@@ -2279,118 +2269,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def can_compute(self, functions=None, log_levels=None, override=False):
-        """Whether or not it is acceptable to compute the data.
-
-        If the data is explicitly requested to be computed (as would
-        be the case when writing to disk, or accessing the `array`
-        attribute) then computation will always occur.
-
-        This method is meant for cases when compution is desirable but
-        not essential, by providing an assessment of whether
-        computation would require too excessive resources (time,
-        memory, and CPU), if carried out.
-
-        By default it is considered acceptable to compute the data if
-        the computed array fits in available memory and any of the
-        following are true, assessed in the order given up to the
-        first criterion satisfied:
-
-        1. The `force_compute` attribute is True.
-
-        2. The current log level is ``'DEBUG'``.
-
-        3. Any computations stored after initialisation consist only
-           subspace, concatenate, reshape, and copy functions.
-
-        .. versionadded:: TODODASKVER
-
-        .. seealso:: `force_compute`, `cf.log_level`
-
-        :Parameters:
-
-            functions: (sequence of) `str`, optional
-                Include the specified functions, in addition to the
-                defaults, as those that will allow
-                computation. Functions are identified by matching the
-                beginnings of the key names in the dask graph layers,
-                found with `dask.layers` attribute of the dask
-                array. See the *override* parameter.
-
-            log_level: (sequence of) `str`, optional
-                Include the specified log levels, in addition to the
-                default, as those that will allow compuitation. See
-                the *override* parameter.
-
-            override : `bool`, optional
-                If True then only compute the data for the given
-                *log_levels* (if any) and the given *functions* (if
-                any), ignoring the defaults. If the `force_compute`
-                attribute is True then computation occurs in any case.
-
-        :Returns:
-
-            `bool`
-                True if acceptable to compute the data, otherwise
-                False.
-
-        """
-        # TODODASKAPI - this method is premature - needs thinking about as part
-        # of the wider resource management issue
-
-        # TODODASK: Always return True for now, to aid development.
-        return True
-
-        dx = self.to_dask_array()
-
-        # TODODASK fits in memory.
-
-        # 1 Force compute
-        if self.force_compute:
-            return True
-
-        # 2 Log levels
-        if override:
-            allowed_log_levels = ()
-            allowed_functions = ()
-        else:
-            allowed_log_levels = ("DEBUG",)
-            allowed_functions = (
-                "array-",
-                "getitem-",
-                "copy-",
-                "concatenate-",
-                "reshape-",
-            )
-
-        if log_levels:
-            if isinstance(log_levels, str):
-                log_levels = (log_levels,)
-
-            allowed_log_levels += tuple(log_levels)
-
-        if log_level().value in allowed_log_levels:
-            return True
-
-        # 3 Stored computations
-        layers = dx.dask.layers
-        if len(layers) == 1:
-            # No stored computations after initialisation
-            return True
-
-        if functions:
-            if isinstance(functions, str):
-                functions = (functions,)
-
-            allowed_functions += tuple(allowed_functions)
-
-        return all(
-            [
-                any([key.startswith(x) for x in allowed_functions])
-                for key in tuple(layers)[1:]
-            ]
-        )
-
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def ceil(self, inplace=False, i=False):
@@ -4173,15 +4051,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         return self.to_dask_array().chunks
-
-    @property
-    def force_compute(self):
-        """TODODASKDOCS See also config settings."""
-        return self._custom.get("force_compute", False)
-
-    @force_compute.setter
-    def force_compute(self, value):
-        self._custom["force_compute"] = bool(value)
 
     # ----------------------------------------------------------------
     # Attributes
@@ -7845,33 +7714,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def first_element(self):
         """Return the first element of the data as a scalar.
 
-        If the value is deemed too expensive to compute then a
-        `ValueError` is raised instead. It is considered acceptable to
-        compute the value in the following circumstances:
-
-        * The `force_compute` attribute is True.
-
-        * The current log level is ``'DEBUG'``.
-
-        * The stored computations consist only of initialisation,
-          subspace or copy functions.
-
-        .. versionadded:: TODODASKVER
-
         .. seealso:: `last_element`, `second_element`
 
         :Returns:
 
-                The first element of the data
+                The first element of the data.
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2], [3, 4]])
-        >>> d.first_element()
-        1
-        >>> d[0, 0] = cf.masked
-        >>> d.first_element()
-        masked
+        >>> d = {{package}}.{{class}}(9.0)
+        >>> x = d.first_element()
+        >>> print(x, type(x))
+        9.0 <class 'float'>
+
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> x = d.first_element()
+        >>> print(x, type(x))
+        1 <class 'int'>
+        >>> d[0, 0] = {{package}}.masked
+        >>> y = d.first_element()
+        >>> print(y, type(y))
+        -- <class 'numpy.ma.core.MaskedConstant'>
+
+        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> x = d.first_element()
+        >>> print(x, type(x))
+        foo <class 'str'>
 
         """
         try:
@@ -7884,33 +7752,27 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def second_element(self):
         """Return the second element of the data as a scalar.
 
-        If the value is deemed too expensive to compute then a
-        `ValueError` is raised instead. It is considered acceptable to
-        compute the value in the following circumstances:
-
-        * The `force_compute` attribute is True.
-
-        * The current log level is ``'DEBUG'``.
-
-        * The stored computations consist only of initialisation,
-          subspace or copy functions.
-
-        .. versionadded:: TODODASKVER
-
-        .. seealso:: `last_element`, `first_element`
+        .. seealso:: `first_element`, `last_element`
 
         :Returns:
 
-                The second element of the data
+                The second element of the data.
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2], [3, 4]])
-        >>> d.second_element()
-        2
-        >>> d[0, 1] = cf.masked
-        >>> d.second_element()
-        masked
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> x = d.second_element()
+        >>> print(x, type(x))
+        2 <class 'int'>
+        >>> d[0, 1] = {{package}}.masked
+        >>> y = d.second_element()
+        >>> print(y, type(y))
+        -- <class 'numpy.ma.core.MaskedConstant'>
+
+        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> x = d.second_element()
+        >>> print(x, type(x))
+        bar <class 'str'>
 
         """
         try:
@@ -7923,33 +7785,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def last_element(self):
         """Return the last element of the data as a scalar.
 
-        If the value is deemed too expensive to compute then a
-        `ValueError` is raised instead. It is considered acceptable to
-        compute the value in the following circumstances:
-
-        * The `force_compute` attribute is True.
-
-        * The current log level is ``'DEBUG'``.
-
-        * The stored computations consist only of initialisation,
-          subspace or copy functions.
-
-        .. versionadded:: TODODASKVER
-
         .. seealso:: `first_element`, `second_element`
 
         :Returns:
 
-                The last element of the data
+                The last element of the data.
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2], [3, 4]])
-        >>> d.last_element()
-        4
-        >>> d[1, 1] = cf.masked
-        >>> d.last_element()
-        masked
+        >>> d = {{package}}.{{class}}(9.0)
+        >>> x = d.last_element()
+        >>> print(x, type(x))
+        9.0 <class 'float'>
+
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> x = d.last_element()
+        >>> print(x, type(x))
+        4 <class 'int'>
+        >>> d[-1, -1] = {{package}}.masked
+        >>> y = d.last_element()
+        >>> print(y, type(y))
+        -- <class 'numpy.ma.core.MaskedConstant'>
+
+        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> x = d.last_element()
+        >>> print(x, type(x))
+        bar <class 'str'>
 
         """
         try:

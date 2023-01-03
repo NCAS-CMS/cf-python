@@ -2453,6 +2453,22 @@ class FieldTest(unittest.TestCase):
             f.get_original_filenames(), f.copy().get_original_filenames()
         )
 
+    def test_Field_set_construct_conform(self):
+        """Test the 'conform' parameter of Field.set_construct."""
+        f = cf.example_field(0)
+        cm = cf.CellMethod('T', 'maximum')
+        self.assertEqual(cm.get_axes(), ('T',))
+
+        key = f.set_construct(cm)
+        cm2 = f.cell_method('method:maximum')
+        taxis = f.domain_axis('T', key=True)
+        self.assertEqual(cm2.get_axes(), (taxis,))
+
+        f.del_construct(key)
+        f.set_construct(cm, conform=False)
+        cm2 = f.cell_method('method:maximum')
+        self.assertEqual(cm2.get_axes(), ('T',))
+
     def test_Field_persist(self):
         """Test the `persist` Field method."""
         f = cf.example_field(0)
