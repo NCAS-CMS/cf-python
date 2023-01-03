@@ -32,7 +32,6 @@ from ..functions import (
     atol,
     default_netCDF_fillvals,
     free_memory,
-    log_level,
     parse_indices,
     rtol,
 )
