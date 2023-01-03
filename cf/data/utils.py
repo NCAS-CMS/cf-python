@@ -162,7 +162,10 @@ def convert_to_reftime(a, units=None, first_value=None):
             else:
                 YMD = "1970-01-01"
 
-            units = Units("days since " + YMD, default_calendar)
+            units = Units(
+                "days since " + YMD,
+                getattr(units, "calendar", default_calendar),
+            )
 
         a = a.map_blocks(
             partial(st2rt, units_in=units, units_out=units), dtype=float
