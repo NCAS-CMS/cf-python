@@ -2,12 +2,13 @@
 
 set -x
 
-if [[ $2 ]] ; then 
-  echo "You no longer need to set the version. Hooray!"
+if [[ $2 ]] ; then
+  set +x
+  echo -e "You no longer need to set the version. Just do: ./release_docs $2"
   exit 1
 fi
 
-ersion=`python -c "import cf; print(cf.__version__)"`
+version=`python -c "import cf; print(cf.__version__)"`
 
 if [[ $1 = "latest" ]] ; then 
   dir=$PWD/docs
