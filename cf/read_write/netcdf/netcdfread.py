@@ -280,7 +280,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         ncvar,
         units=None,
         calendar=None,
-        ncvar=None,
         ncdimensions=(),
         **kwargs,
     ):
