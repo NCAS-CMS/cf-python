@@ -15,8 +15,6 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
-----
-
 .. _Dask:
 
 **Dask**
@@ -84,15 +82,15 @@ Some notable cases where non-lazy computation occurs are:
   single construct, either by `cf.aggregate` or `cf.read` (the latter
   calls the former by default), the data arrays of some metadata
   constructs (coordinates, cell measures, etc.) must be compared
-  non-lazily to ascertain if the aggregation is possible.
+  non-lazily to ascertain if aggregation is possible.
 
 ..
 
 * **Reading compressed-by-convention datasets from disk**
 
   When reading from files datasets that have been compressed by
-  convention (such as compression by gathering, or some discrete
-  sampling geometries), the compression metadata, such as the "list"
+  convention (such as compression by gathering, some discrete sampling
+  geometries, etc.), the compression metadata, such as the "list"
   array for compression by gathering, are read from disk non-lazily
   during the `cf.read` operation.
 
@@ -178,11 +176,11 @@ scheduler has been defined will use that scheduler.
  
 Operations are stored by Dask in `task graphs
 <https://docs.dask.org/en/stable/graphs.html>`_ where each task
-(i.e. node) in the graph either defines a chunk of the data, or else
-an operation to be performed on one or more chunks. The data created
-by an operation are used as inputs to the next operation node in the
+(i.e. node) in the graph either defines a chunk of data, or else an
+operation to be performed on one or more chunks. The data created by
+an operation are used as inputs to the next operation node in the
 graph. The tasks in the graph are passed by the scheduler to the
-available pool of processing elements (PEs) which execute the tasks in
+available pool of processing elements, which execute the tasks in
 parallel until the final result has been computed.
 
 The following example shows the task graph for a simple data
@@ -217,10 +215,10 @@ dask task graph, showing the operations on each chunk. The operations
 were only executed when their result was requested with the
 ``e.array`` command. The boxes represent the data chunks and the
 circles represent the operations to be performed on the chunks. The
-boxes in the bottom row are the starting data (the four chunks of
-``d`` and the scalar ``2``), and the boxes in the top row are the
-result of the computation which combine to produce the values in
-``e.array``.
+five boxes in the bottom row are the starting data (i.e. the four
+chunks of ``d`` and the scalar ``2``), and the four boxes in the top
+row are the result of the computation which combine to produce the
+values in ``e.array``.
 
 .. figure:: images/dask_task_graph.svg
    :scale: 35 %
