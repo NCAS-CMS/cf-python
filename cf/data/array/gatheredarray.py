@@ -1,9 +1,9 @@
 import cfdm
 
-from .mixin import ArrayMixin
+from .mixin import ArrayMixin, CompressedArrayMixin
 
 
-class GatheredArray(ArrayMixin, cfdm.GatheredArray):
+class GatheredArray(CompressedArrayMixin, ArrayMixin, cfdm.GatheredArray):
     """An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array
@@ -68,6 +68,16 @@ class GatheredArray(ArrayMixin, cfdm.GatheredArray):
         conformed_data = self.conformed_data()
         compressed_data = conformed_data["data"]
         uncompressed_indices = conformed_data["uncompressed_indices"]
+
+        # If possible, convert the compressed data to a dask array
+        # that doesn't support concurrent reads. This prevents
+        # "compute called by compute" failures problems at compute
+        # time.
+        #
+        # TODO: This won't be necessary if this is refactored so that
+        #       the compressed data is part of the same dask graph as
+        #       the compressed subarrays.
+        compressed_data = self._lock_file_read(compressed_data)
 
         # Get the (cfdm) subarray class
         Subarray = self.get_Subarray()

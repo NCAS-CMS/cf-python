@@ -97,7 +97,7 @@ class GroupsTest(unittest.TestCase):
         nc.close()
 
         h = cf.read(grouped_file, verbose=1)
-        self.assertEqual(len(h), 1, repr(h))
+        self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0], verbose=2))
 
         # ------------------------------------------------------------
@@ -284,7 +284,6 @@ class GroupsTest(unittest.TestCase):
         f.compress("indexed_contiguous", inplace=True)
         f.data.get_count().nc_set_variable("count")
         f.data.get_index().nc_set_variable("index")
-
         cf.write(f, ungrouped_file, verbose=1)
         g = cf.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
