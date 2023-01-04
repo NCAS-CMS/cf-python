@@ -6534,7 +6534,7 @@ The new field construct can now be inspected and written a netCDF file:
    [[[ -- 2.0]
      [ --  --]
      [1.0 3.0]]
-   
+
     [[ -- 4.0]
      [ --  --]
      [0.0 5.0]]]
