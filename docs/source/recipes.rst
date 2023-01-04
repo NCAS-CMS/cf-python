@@ -284,7 +284,7 @@ In this recipe, we will calculate the spatial temperature trends and plot them.
 
 * Calculating a trend over seasons:
 
-* Use mapset to select only high latitudes subspace??
+* Use mapset to select only high latitudes subspace?
 
 
 
