@@ -7714,6 +7714,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. seealso:: `last_element`, `second_element`
 
+        **Performance**
+
+        If possible, a cached value is returned. Otherwise the delayed
+        operations needed to compute the element are executed, and
+        cached for subsequent calls.
+
         :Returns:
 
                 The first element of the data.
@@ -7752,6 +7758,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. seealso:: `first_element`, `last_element`
 
+        **Performance**
+
+        If possible, a cached value is returned. Otherwise the delayed
+        operations needed to compute the element are executed, and
+        cached for subsequent calls.
+
         :Returns:
 
                 The second element of the data.
@@ -7784,6 +7796,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Return the last element of the data as a scalar.
 
         .. seealso:: `first_element`, `second_element`
+
+        **Performance**
+
+        If possible, a cached value is returned. Otherwise the delayed
+        operations needed to compute the element are executed, and
+        cached for subsequent calls.
 
         :Returns:
 
