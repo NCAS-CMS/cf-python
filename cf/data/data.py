@@ -1009,6 +1009,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         shape = self.shape
 
+        ancillary_mask = ()
+        try:
+            arg = indices[0]
+        except (IndexError, TypeError):
+            pass
+        else:
+            if isinstance(arg, str) and arg == "mask":
+                original_self = self.copy()
+                ancillary_mask = indices[1]
+                indices = indices[2:]
+
         indices, roll = parse_indices(
             shape,
             indices,
@@ -1098,6 +1109,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if roll:
             shifts = [-shift for shift in shifts]
             self.roll(shift=shifts, axis=roll_axes, inplace=True)
+
+        if ancillary_mask:
+            # Reset the original array values at locations that are
+            # excluded from the assignment by True values in the
+            # auxiliary masks
+            indices = tuple(indices)
+            original_self = original_self[indices]
+            reset = self[indices]
+            for mask in ancillary_mask:
+                reset.where(mask, original_self, inplace=True)
+
+            self[indices] = reset
 
         # Remove elements made invalid by updating the `dask` array
         self._conform_after_dask_update()

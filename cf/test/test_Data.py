@@ -1518,6 +1518,17 @@ class DataTest(unittest.TestCase):
         d[[2, 4, 6, 8], 0, [1, 2, 3, 4]] = value
         self.assertEqual(np.count_nonzero(d.where(d < 0, 1, 0)), value.size)
 
+        # Test ancillary masked assignment
+        a = np.ma.arange(90).reshape(9, 10)
+        d = cf.Data(a.copy())
+
+        mask = cf.Data.full((3, 4), False)
+        mask[-1, [0, 1]] = True
+        n_set = int(mask.size - mask.sum())
+
+        d[("mask", (mask,), slice(1, 4), slice(2, 6))] = -99
+        self.assertEqual(np.count_nonzero(d.where(d < 0, 1, 0)), n_set)
+
     def test_Data_outerproduct(self):
         """Test the `outerproduct` Data method."""
         a = np.arange(12).reshape(4, 3)
