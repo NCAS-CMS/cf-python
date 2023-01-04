@@ -30,10 +30,11 @@ contribute for the final result.
 The performance of `cf` is largely a function of the performance of
 Dask. All of the techniques that Dask supports for `improving
 performance <https://docs.dask.org/en/stable/best-practices.html>`_
-apply, and performance parameters can be set via Dask's `configuration
-settings <https://docs.dask.org/en/stable/configuration.html>`_. The
-default value of the important :ref:`chunk size <Chunks>` can also be
-set through the `cf` API.
+apply, and performance parameters can generally be set via Dask's
+`configuration settings
+<https://docs.dask.org/en/stable/configuration.html>`_, but the
+default value of the important :ref:`chunk size <Chunks>` is set
+through the `cf` API.
 
 ----
 
@@ -43,11 +44,13 @@ set through the `cf` API.
 **Lazy operations**
 -------------------
 
-In general, all `cf` operations are lazy (such as reading from disk,
-regridding, collapsing, subspacing, arithmetic, etc.), meaning that an
-operation is not actually performed until the result is actually
-inspected, for instance by creating a plot of the data, writing the
-data to disk, or printing the array values. When multiple operations
+In general, all `cf` data operations (such as reading from disk,
+regridding, collapsing, subspacing, arithmetic, etc.) are managed by
+Dask and so are `evaluated lazily
+<https://en.wikipedia.org/wiki/Lazy_evaluation>`_, meaning that
+operations are not actually performed until the result is actually
+inspected by, for instance, creating a plot of the data, writing the
+data to disk, printing the array values, etc. When multiple operations
 are applied one after another, none of the operations are computed
 until the result of final one is requested.
 
@@ -107,7 +110,7 @@ elements over which Dask computations can be parallelised, and
 performance is strongly dependent on the nature of these chunks.
 
 By default, chunks have a size of at most ``128 MiB`` and prefer
-square-like shapes. A new default chunk size may be set with the
+square-like shapes. A new default chunk size is set with the
 `cf.chunksize` function. The default chunk size and shape may be
 overridden by `cf.read`, as well when creating `cf.Data` instances ab
 initio. Any data may be re-chunked after its creation with the
