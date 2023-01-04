@@ -6484,7 +6484,7 @@ creates a simple field construct with an underlying gathered array:
    import cf
 
    # Define the gathered values
-   gathered_array = cf.Data([[2, 1, 3], [4, 0, 5]])
+   gathered_array = cf.Data([[2.0, 1, 3], [4, 0, 5]])
 
    # Define the list array values
    list_array = [1, 4, 5]
@@ -6492,13 +6492,15 @@ creates a simple field construct with an underlying gathered array:
    # Create the list variable
    list_variable = cf.List(data=cf.Data(list_array))
 
-   # Create the gathered array object, specifying the uncompressed
-   # shape
+   # Create the gathered array object, specifying the mapping between
+   # compressed and uncompressed dimensions, and the uncompressed
+   # shape.
    array = cf.GatheredArray(
                     compressed_array=gathered_array,
-		    compressed_dimension=1,
+		    compressed_dimensions={1: [1, 2]},
                     shape=(2, 3, 2), size=12, ndim=3,
-                    list_variable=list_variable)
+                    list_variable=list_variable
+	   )
 
    # Create the field construct with the domain axes and the gathered
    # array
@@ -6532,7 +6534,7 @@ The new field construct can now be inspected and written a netCDF file:
    [[[ -- 2.0]
      [ --  --]
      [1.0 3.0]]
-
+   
     [[ -- 4.0]
      [ --  --]
      [0.0 5.0]]]
