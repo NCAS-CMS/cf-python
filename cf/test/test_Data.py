@@ -4410,6 +4410,16 @@ class DataTest(unittest.TestCase):
         for element in elements0:
             self.assertNotIn(element, d._custom)
 
+    def test_Data_npartitions(self):
+        """Test the `npartitions` Data property."""
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        self.assertEqual(d.npartitions, 4)
+
+    def test_Data_numblocks(self):
+        """Test the `numblocks` Data property."""
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        self.assertEqual(d.numblocks, (2, 2))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
