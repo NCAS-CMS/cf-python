@@ -33,7 +33,7 @@ jobs:
     steps:
 
     - name: Checkout cf-python
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: main
 
@@ -41,15 +41,15 @@ jobs:
     - name: Notify about setup
       run: echo Now setting up the environment for the cf-python test suite...
 
-    - name: Checkout the current cfdm master to use as the dependency
-      uses: actions/checkout@v2
+    - name: Checkout the current cfdm main to use as the dependency
+      uses: actions/checkout@v3
       with:
         repository: NCAS-CMS/cfdm
         path: cfdm
 
     # Prepare to run the test-suite on different versions of Python 3:
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -64,34 +64,40 @@ jobs:
         python-version: ${{ matrix.python-version }}
         channels: ncas, conda-forge
 
-    # Ensure shell is configured with conda activated:
-    - name: Check conda config
+    # Ensure shell is configured with conda and pip correctly activated.
+    - name: Check conda and pip config
       shell: bash -l {0}
       run: |
+        echo "*Conda report:*"
         conda info
         conda list
         conda config --show-sources
         conda config --show
+        echo "*Pip report:*"
+        pip --version
+        pip list
 
-    # Install cf-python dependencies, excluding cfdm, pre-testing
-    # We do so with conda which was setup in a previous step.
-    - name: Install dependencies
+    # Install cf-python dependencies, excluding cfunits and cfdm, pre-testing
+    # We do so with conda (and pip) which was setup in a previous step.
+    - name: Install dependencies excluding the NCAS CF Data Tools libraries
       shell: bash -l {0}
       run: |
-        conda install -c ncas -c conda-forge udunits2=2.2.25
+        conda install -c ncas -c conda-forge cf-plot udunits2=2.2.25
         conda install -c conda-forge mpich esmpy
         conda install scipy matplotlib
         pip install pycodestyle
 
-    # Install cfdm from master branch, then the cf-python development version
-    # We do so with conda which was setup in a previous step.
-    - name: Install development cfdm and cf-python
+    # Install cfunits and cfdm (from development main branch) separately,
+    # since it is most robust to test a no-dependency installation of cf,
+    # then finally install the cf-python development version.
+    - name: Install cfunits then development versions of cfdm and cf-python
       shell: bash -l {0}
       run: |
+        pip install cfunits
         cd ${{ github.workspace }}/cfdm
         pip install -e .
         cd ${{ github.workspace }}/main
-        pip install -e .
+        pip install --no-deps -e .
 
     # Make UMRead library
     - name: Make UMRead
@@ -111,10 +117,10 @@ jobs:
     - name: Notify about starting testing
       run: echo Setup complete. Now starting to run the cf-python test suite...
 
-    # Create a file needed for testing. A separate step is required for this
-    # so the file can be registered and recognised first. Locally, the file
-    # is created and used on-the-fly by the 'run_tests_and_coverage' script.
-    - name: Create test_file.nc
+    # Create netCDF files needed for testing. A separate step is required
+    # for this so the files can be registered and recognised first; locally
+    # they are created and used on-the-fly by 'run_tests_and_coverage'.
+    - name: Create netCDF test files, e.g. test_file.nc
       shell: bash -l {0}
       run: |
         cd ${{ github.workspace }}/main/cf/test
@@ -138,7 +144,7 @@ jobs:
       # would have to run anyway, it is simplest to add it in this flow.
       # Also, it means code coverage is only generated if the test suite is
       # passing at least for that job, avoiding useless coverage reports.
-      uses: codecov/codecov-action@v1.0.13
+      uses: codecov/codecov-action@v3
       if: |
         matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
       with:
