@@ -330,7 +330,7 @@ Cyclicity
    :template: method.rst
 	      
 
-   ~cf.AuxiliaryCoordinate.chunk
+   ~cf.AuxiliaryCoordinate.rechunk
    ~cf.AuxiliaryCoordinate.close
    ~cf.AuxiliaryCoordinate.convert_reference_time
    ~cf.AuxiliaryCoordinate.cyclic
@@ -692,6 +692,7 @@ Deprecated
 
    ~cf.AuxiliaryCoordinate.asdatetime
    ~cf.AuxiliaryCoordinate.asreftime
+   ~cf.AuxiliaryCoordinate.chunk
    ~cf.AuxiliaryCoordinate.delprop
    ~cf.AuxiliaryCoordinate.expand_dims
    ~cf.AuxiliaryCoordinate.files

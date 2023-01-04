@@ -211,7 +211,7 @@ Data
    :template: method.rst
 	      
 
-   ~cf.Count.chunk
+   ~cf.Count.rechunk
    ~cf.Count.close
    ~cf.Count.convert_reference_time
    ~cf.Count.cyclic
@@ -604,6 +604,7 @@ Deprecated
    ~cf.Count.asdatetime
    ~cf.Count.asreftime
    ~cf.Count.attributes
+   ~cf.Count.chunk
    ~cf.Count.delprop
    ~cf.Count.dtvarray
    ~cf.Count.expand_dims

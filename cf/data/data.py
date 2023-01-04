@@ -9398,9 +9398,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Return True if the array is small enough to be retained in
         memory.
 
-        Returns True if the size of the array with all delayed
-        operations computed, always including space for a full boolean
-        mask, is small enough to be retained in available memory.
+        Returns True if the size of the computed array, always
+        including space for a full boolean mask, is small enough to be
+        retained in available memory.
 
         **Performance**
 

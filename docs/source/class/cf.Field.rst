@@ -246,7 +246,7 @@ Miscellaneous data operations
    ~cf.Field.period
    ~cf.Field.get_original_filenames
    ~cf.Field.close
-   ~cf.Field.chunk
+   ~cf.Field.rechunk
    ~cf.Field.persist
  
 Metadata constructs
@@ -940,6 +940,7 @@ Deprecated
    ~cf.Field.asdatetime
    ~cf.Field.asreftime
    ~cf.Field.axis_name
+   ~cf.Field.chunk
    ~cf.Field.data_axes
    ~cf.Field.delprop
    ~cf.Field.equivalent

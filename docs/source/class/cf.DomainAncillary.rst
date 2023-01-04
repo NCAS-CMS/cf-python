@@ -284,7 +284,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.DomainAncillary.chunk
+   ~cf.DomainAncillary.rechunk
    ~cf.DomainAncillary.close
    ~cf.DomainAncillary.convert_reference_time
    ~cf.DomainAncillary.cyclic
@@ -649,6 +649,7 @@ Deprecated
    ~cf.DomainAncillary.asdatetime
    ~cf.DomainAncillary.asreftime
    ~cf.DomainAncillary.attributes
+   ~cf.DomainAncillary.chunk
    ~cf.DomainAncillary.delprop
    ~cf.DomainAncillary.dtvarray
    ~cf.DomainAncillary.expand_dims

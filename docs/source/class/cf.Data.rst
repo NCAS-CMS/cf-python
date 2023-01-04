@@ -579,22 +579,19 @@ Performance
    ~cf.Data.nc_clear_hdf5_chunksizes
    ~cf.Data.nc_hdf5_chunksizes
    ~cf.Data.nc_set_hdf5_chunksizes
-   ~cf.Data.close
-   ~cf.Data.chunk
-   ~cf.Data.add_partitions
-   ~cf.Data.partition_boundaries
-   ~cf.Data.partition_configuration
-   ~cf.Data.partitions
-   ~cf.Data.ispartitioned
-   ~cf.Data.to_disk
-   ~cf.Data.to_memory
-   ~cf.Data.in_memory
+   ~cf.Data.rechunk
    ~cf.Data.fits_in_memory
-   ~cf.Data.fits_in_one_chunk_in_memory
    ~cf.Data.section
-   ~cf.Data.reconstruct_sectioned_data
-   ~cf.Data.HDF_chunks
    ~cf.Data.persist
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.chunks
 
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------
@@ -766,13 +763,34 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+
+   ~cf.Data.add_partitions
+   ~cf.Data.chunk
+   ~cf.Data.close
    ~cf.Data.Data
    ~cf.Data.dtvarray
    ~cf.Data.expand_dims
    ~cf.Data.files
-   ~cf.Data.get_filenames
+   ~cf.Data.fits_in_one_chunk_in_memory
+   ~cf.Data.HDF_chunks
+   ~cf.Data.in_memory
    ~cf.Data.mask_fpe
    ~cf.Data.mask_invalid
+   ~cf.Data.partition_boundaries
+   ~cf.Data.partition_configuration
+   ~cf.Data.partitions
+   ~cf.Data.reconstruct_sectioned_data
    ~cf.Data.save_to_disk
    ~cf.Data.seterr
+   ~cf.Data.to_disk
+   ~cf.Data.to_memory
    ~cf.Data.unsafe_array
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.ispartitioned
