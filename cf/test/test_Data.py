@@ -151,15 +151,12 @@ class DataTest(unittest.TestCase):
 
     def test_Data__init__basic(self):
         """Test basic `__init__` cases for Data."""
-        # Most __init__ parameters are covered by the various other tests,
-        # so this is mainly to check trivial cases and especially the edge
-        # case of 'default' Data i.e. if no parameters are specified.
+        # Most __init__ parameters are covered by the various other
+        # tests, so this is mainly to check trivial cases.
+        cf.Data()
         cf.Data(0, "s")
         cf.Data(array=np.arange(5))
         cf.Data(source=self.filename)
-
-        with self.assertRaises(ValueError):
-            cf.Data()
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""

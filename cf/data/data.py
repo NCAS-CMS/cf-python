@@ -336,12 +336,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data(tuple('fly'))
 
         """
-        if array is None and source is None:  # don't create no/empty Data
-            raise ValueError(
-                "Can't create empty data: some input data or datum must be "
-                "provided via the 'source' or 'array' parameters."
-            )
-
         if source is None and isinstance(array, self.__class__):
             source = array
 
@@ -387,6 +381,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self.hardmask = hardmask
 
         if array is None:
+            # Initialise the dask array as `None` to allow basic
+            # inspection without failing
+            self._set_dask(array)
             return
 
         try:
