@@ -36,4 +36,4 @@ class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
         if filename is None:
             return False
 
-        return _lock 
+        return _lock

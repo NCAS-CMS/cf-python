@@ -13560,6 +13560,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         construct that records the percentile ranks represented by its
         data.
 
+        **Accuracy**
+
+        The `percentile` method returns results that are consistent
+        with `numpy.percentile`, which may be different to those
+        created by `dask.percentile`. The dask method uses an
+        algorithm that calculates approximate percentiles which are
+        likely to be different from the correct values when there are
+        two or more dask chunks.
+
+        >>> import numpy as np
+        >>> import dask.array as da
+        >>> import cf
+        >>> a = np.arange(101)
+        >>> dx = da.from_array(a, chunks=10)
+        >>> da.percentile(dx, 40).compute()
+        array([40.36])
+        >>> np.percentile(a, 40)
+        40.0
+        >>> d = cf.Data(a, chunks=10)
+        >>> d.percentile(40).array
+        array([40.])
+
         .. versionadded:: 3.0.4
 
         .. seealso:: `bin`, `collapse`, `digitize`, `where`

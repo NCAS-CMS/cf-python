@@ -32,7 +32,6 @@ from ..functions import (
     atol,
     default_netCDF_fillvals,
     free_memory,
-    log_level,
     parse_indices,
     rtol,
 )
@@ -2003,10 +2002,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> import cf
         >>> a = np.arange(101)
         >>> dx = da.from_array(a, chunks=10)
-        >>> da.percentile(dx, [40, 60]).compute()
+        >>> da.percentile(dx, 40).compute()
         array([40.36])
         >>> np.percentile(a, 40)
-        array([40.])
+        40.0
         >>> d = cf.Data(a, chunks=10)
         >>> d.percentile(40).array
         array([40.])
