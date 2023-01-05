@@ -170,6 +170,67 @@ In this recipe, we will calculate the global mean temperature timeseries and plo
 
    .. figure:: images/annual_mean_temp.png
 
+**Plotting global mean temperatures spatially:**
+----------
+
+In this recipe, we will plot the global mean temperature spatially.
+
+1. Import cf-python and cf-plot:
+
+   .. code-block:: python
+
+      >>> import cf
+      >>> import cfplot as cfp
+
+2. Read the field constructs using `~cf.read` function:
+
+   .. code-block:: python
+
+      >>> f = cf.read('file.nc')
+      >>> print(f)
+      [<CF Field: ncvar%stn(long_name=time(1452), long_name=latitude(360), long_name=longitude(720))>,
+      <CF Field: long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
+
+
+3. Select near surface temperature by index and look at its contents:
+
+   .. code-block:: python
+
+      >>> temp = f[1]
+      >>> print(temp)
+      Field: long_name=near-surface temperature (ncvar%tmp)
+      -----------------------------------------------------
+      Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius
+      Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian
+                      : long_name=latitude(360) = [-89.75, ..., 89.75] degrees_north
+                      : long_name=longitude(720) = [-179.75, ..., 179.75] degrees_east
+
+4. Average the monthly mean surface temperature values by the time axis using the `~cf.Field.collapse` method and check the array's dimension size using `~cf.Data.shape`:
+
+   .. code-block:: python
+
+      >>> global_avg = temp.collapse('mean',  axes='long_name=time')
+      >>> global_avg.shape
+      (1, 360, 720)
+
+5.  As the global_avg data array is 3-dimensional, the time axis is removed using `~cf.Data.squeeze` method so that it could be plottled on a map:
+
+   .. code-block:: python
+
+      >>> global_avg_2d = global_avg.squeeze((0,))
+      >>> global_avg_2d.shape
+      (360, 720)
+
+6. Plot the global mean surface temperatures using using `con
+<http://ajheaps.github.io/cf-plot/con.html>`:
+
+   .. code-block:: python
+
+      >>> cfp.con(global_avg_2d, lines=False, title='Global mean surface temperature')
+   .. figure:: images/global_mean_map.png
+
+
+
 **Calculating global average temperature anomalies:**
 ----------
 
@@ -238,53 +299,7 @@ In this recipe, we will regrid two different datasets with different resolutions
       Coord references: grid_mapping_name:latitude_longitude
 
 
-**Plotting ensembles maybe?**
-----------
-
 **Plotting an overlay of wind over precipitation data:**
 ----------
-
-**Calculating spatial temperature trends (LATER):**
-----------
-
-In this recipe, we will calculate the spatial temperature trends and plot them.
-
-1. Import cf-python and cf-plot:
-
-   .. code-block:: python
-
-      >>> import cf
-      >>> import cfplot as cfp
-
-2. Read the file:
-
-   .. code-block:: python
-
-      >>> f = cf.read('file.nc')
-      >>> print(f)
-      [<CF Field: ncvar%stn(long_name=time(120), long_name=latitude(360), long_name=longitude(720))>,
-      <CF Field: long_name=near-surface temperature(long_name=time(120), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
-
-3. Select near surface temperature by index and look at its contents:
-
-   .. code-block:: python
-
-      >>> temp = f[1]
-      >>> print(temp)
-      Field: long_name=near-surface temperature (ncvar%tmp)
-      -----------------------------------------------------
-      Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius
-      Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian
-                      : long_name=latitude(360) = [-89.75, ..., 89.75] degrees_north
-                      : long_name=longitude(720) = [-179.75, ..., 179.75] degrees_east
-
-* Calculating annual trend over the full period:
-
-* Calculating a trend over a subset of years:
-
-* Calculating a trend over seasons:
-
-* Use mapset to select only high latitudes subspace?
-
 
 
