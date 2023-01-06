@@ -1113,7 +1113,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
         # Reset the original array values at locations that are
-        # excluded from the assignment by True values in auxiliary
+        # excluded from the assignment by True values in any ancillary
         # masks
         if ancillary_mask:
             indices = tuple(indices)
