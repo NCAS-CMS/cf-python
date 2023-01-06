@@ -1016,7 +1016,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             pass
         else:
             if isinstance(arg, str) and arg == "mask":
-                # The indicies include an ancillary mask that defines
+                # The indices include an ancillary mask that defines
                 # elements which are protected from assignment
                 original_self = self.copy()
                 ancillary_mask = indices[1]
