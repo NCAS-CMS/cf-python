@@ -3096,6 +3096,26 @@ def default_netCDF_fillvals():
     return netCDF4.default_fillvals
 
 
+def size(a):
+    """Return the number of elements.
+
+    :Parameters:
+
+        a: array_like
+            Input data.
+
+    :Returns:
+
+        `int`
+            The number of elements.
+
+    """
+    try:
+        return a.size
+    except AttributeError:
+        return np.asanyarray(a).size
+
+
 def unique_constructs(constructs, copy=True):
     return cfdm.unique_constructs(constructs, copy=copy)
 

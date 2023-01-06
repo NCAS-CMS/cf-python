@@ -18,6 +18,7 @@ from ..functions import (
 from ..functions import equivalent as cf_equivalent
 from ..functions import inspect as cf_inspect
 from ..functions import parse_indices
+from ..functions import size as cf_size
 from ..query import Query
 from ..units import Units
 from . import PropertiesData
@@ -547,7 +548,7 @@ class PropertiesDataBounds(PropertiesData):
             # Only self has bounds, so combine the self bounds with
             # the other values.
             # --------------------------------------------------------
-            if np.size(other) > 1:
+            if cf_size(other) > 1:
                 for i in range(self.bounds.ndim - self.ndim):
                     try:
                         other = other.insert_dimension(-1)
