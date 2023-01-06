@@ -3109,6 +3109,23 @@ def size(a):
         `int`
             The number of elements.
 
+    **Examples**
+
+    >>> cf.size(9)
+    1
+    >>> cf.size("foo")
+    1
+    >>> cf.size([9])
+    1
+    >>> cf.size((8, 9)
+    2
+    >>> import numpy as np
+    >>> cf.size(np.arange(9))
+    9
+    >>> import dask.array as da
+    >>> cf.size(da.arange(9))
+    9
+
     """
     try:
         return a.size
