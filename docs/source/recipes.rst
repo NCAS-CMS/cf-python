@@ -170,6 +170,25 @@ In this recipe, we will calculate the global mean temperature timeseries and plo
 
    .. figure:: images/annual_mean_temp.png
 
+* Calculating and plotting the global average temperature anomalies:
+
+1. The temperature values are averaged for the climatological period of 1961-1990 by slicing these years over the `~cf.Field.collapse` method:
+
+   .. code-block:: python
+
+      >>> temp_clim = annual_global_avg[60:90].collapse('T: mean')
+
+2. The temperature anomaly is then calculated by subtracting these climatological temperature values from the annual global average temperatures and plotting them using `lineplot
+<http://ajheaps.github.io/cf-plot/lineplot.html>`:
+
+   .. code-block:: python
+
+      >>> temp_anomaly = annual_global_avg - temp_clim
+      >>> cfp.lineplot(temp_anomaly, color='red', title='Global Average Temperature Anomaly (1901-2021)', ylabel='1961-1990 climatology difference ', yunits='degree Celcius')
+
+   .. figure:: images/anomaly.png
+
+
 **Plotting global mean temperatures spatially:**
 ----------
 
@@ -205,35 +224,19 @@ In this recipe, we will plot the global mean temperature spatially.
                       : long_name=latitude(360) = [-89.75, ..., 89.75] degrees_north
                       : long_name=longitude(720) = [-179.75, ..., 179.75] degrees_east
 
-4. Average the monthly mean surface temperature values by the time axis using the `~cf.Field.collapse` method and check the array's dimension size using `~cf.Data.shape`:
+4. Average the monthly mean surface temperature values by the time axis using the `~cf.Field.collapse` method:
 
    .. code-block:: python
 
       >>> global_avg = temp.collapse('mean',  axes='long_name=time')
-      >>> global_avg.shape
-      (1, 360, 720)
 
-5.  As the global_avg data array is 3-dimensional, the time axis is removed using `~cf.Data.squeeze` method so that it could be plottled on a map:
 
-   .. code-block:: python
-
-      >>> global_avg_2d = global_avg.squeeze((0,))
-      >>> global_avg_2d.shape
-      (360, 720)
-
-6. Plot the global mean surface temperatures using using `con
-<http://ajheaps.github.io/cf-plot/con.html>`:
+5. Plot the global mean surface temperatures using using `con <http://ajheaps.github.io/cf-plot/con.html>`:
 
    .. code-block:: python
 
-      >>> cfp.con(global_avg_2d, lines=False, title='Global mean surface temperature')
+      >>> cfp.con(global_avg, lines=False, title='Global mean surface temperature')
    .. figure:: images/global_mean_map.png
-
-
-
-**Calculating global average temperature anomalies:**
-----------
-
 
 **Comparing two datasets with different resolutions using regridding:**
 ----------
