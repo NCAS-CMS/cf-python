@@ -596,6 +596,16 @@ Performance
    ~cf.Data.HDF_chunks
    ~cf.Data.persist
 
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.npartitions
+   ~cf.Data.numblocks
+
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------
 

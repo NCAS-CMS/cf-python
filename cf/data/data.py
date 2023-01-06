@@ -4038,11 +4038,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def chunks(self):
         """The chunk sizes for each dimension.
 
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `npartitions`, `numblocks`, `rechunk`
+
         **Examples**
 
-        >>> d = cf.Data.ones((4, 5), chunks=(2, 4))
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
         >>> d.chunks
-        ((2, 2), (4, 1))
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
 
         """
         return self.to_dask_array().chunks
@@ -4358,6 +4366,48 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         return dx.ndim
+
+    @property
+    def npartitions(self):
+        """The total number of chunks.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `chunks`, `numblocks`, `rechunk`
+
+        **Examples**
+
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        return self.to_dask_array().npartitions
+
+    @property
+    def numblocks(self):
+        """The number of chunks along each dimension.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `chunks`, `npartitions`, `rechunk`
+
+        **Examples**
+
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        return self.to_dask_array().numblocks
 
     @property
     def shape(self):
