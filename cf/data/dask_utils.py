@@ -4,11 +4,13 @@ These will typically be functions that operate on dask chunks. For
 instance, as would be passed to `dask.array.map_blocks`.
 
 """
+from functools import partial
+
 import dask.array as da
 import numpy as np
 from dask.core import flatten
 
-from ..cfdatetime import dt2rt, rt2dt
+from ..cfdatetime import dt, dt2rt, rt2dt
 from ..functions import atol as cf_atol
 from ..functions import rtol as cf_rtol
 from ..units import Units
@@ -545,7 +547,27 @@ def cf_rt2dt(a, units):
      cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)]
 
     """
-    return rt2dt(a, units_in=units)
+    if not units.iscalendartime:
+        return rt2dt(a, units_in=units)
+
+    # Calendar month/year units
+    from ..timeduration import TimeDuration
+
+    def _convert(x, units, reftime):
+        t = TimeDuration(x, units=units)
+        if x > 0:
+            return t.interval(reftime, end=False)[1]
+        else:
+            return t.interval(reftime, end=True)[0]
+
+    return np.vectorize(
+        partial(
+            _convert,
+            units=units._units_since_reftime,
+            reftime=dt(units.reftime, calendar=units._calendar),
+        ),
+        otypes=[object],
+    )(a)
 
 
 def cf_dt2rt(a, units):

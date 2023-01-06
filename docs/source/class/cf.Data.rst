@@ -181,6 +181,8 @@ Date-time support
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.Data.change_calendar
+   ~cf.Data.convert_reference_time
    ~cf.Data.datetime_array
    ~cf.Data.datetime_as_string
    ~cf.Data.day

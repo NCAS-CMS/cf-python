@@ -38,10 +38,7 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import (  # cfa_to_dask,; compressed_to_dask,
-    generate_axis_identifiers,
-    to_dask,
-)
+from .creation import generate_axis_identifiers, to_dask
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -78,6 +75,9 @@ _empty_set = set()
 _units_None = Units()
 _units_1 = Units("1")
 _units_radians = Units("radians")
+
+_month_units = ("month", "months")
+_year_units = ("year", "years", "yr")
 
 _dtype_float32 = np.dtype("float32")
 _dtype_float = np.dtype(float)
@@ -5474,6 +5474,177 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             return tuple(np.array(da.unravel_index(a, self.shape)))
 
         return type(self)(a)
+
+    @_inplace_enabled(default=False)
+    def convert_reference_time(
+        self,
+        units=None,
+        calendar_months=False,
+        calendar_years=False,
+        inplace=False,
+    ):
+        """Convert reference time data values to have new units.
+
+        Conversion is done by decoding the reference times to
+        date-time objects and then re-encoding them for the new units.
+
+        Any conversions are possible, but this method is primarily for
+        conversions which require a change in the date-times
+        originally encoded. For example, use this method to
+        reinterpret data values in units of "months" since a reference
+        time to data values in "calendar months" since a reference
+        time. This is often necessary when units of "calendar months"
+        were intended but encoded as "months", which have special
+        definition. See the note and examples below for more details.
+
+        .. note:: It is recommended that the units "year" and "month"
+                  be used with caution, as explained in the following
+                  excerpt from the CF conventions: "The Udunits
+                  package defines a year to be exactly 365.242198781
+                  days (the interval between 2 successive passages of
+                  the sun through vernal equinox). It is not a
+                  calendar year. Udunits includes the following
+                  definitions for years: a common_year is 365 days, a
+                  leap_year is 366 days, a Julian_year is 365.25 days,
+                  and a Gregorian_year is 365.2425 days. For similar
+                  reasons the unit ``month``, which is defined to be
+                  exactly year/12, should also be used with caution.
+
+        **Performance**
+
+        For conversions which do not require a change in the
+        date-times implied by the data orginal values, this method
+        will be considerably slower than a simple reassignment of the
+        units. For example, if the original units are ``'days since
+        2000-12-1'`` then ``d.Units = cf.Units('days since
+        1901-1-1')`` will give the same result and be considerably
+        faster than ``d.convert_reference_time(cf.Units('days since
+        1901-1-1'))``.
+
+        .. versionadded:: TODODASKVER
+
+        .. seeealso:: `change_calendar`, `datetime_array`, `Units`
+
+        :Parameters:
+
+            units: `Units`, optional
+                The reference time units to convert to. By default the
+                units are days since the original reference time in
+                the original calendar.
+
+                *Parameter example:*
+                  If the original units are ``'months since
+                  2000-1-1'`` in the Gregorian calendar then the
+                  default units to convert to are ``'days since
+                  2000-1-1'`` in the Gregorian calendar.
+
+            calendar_months: `bool`, optional
+                If True then treat units of ``'months'`` as if they
+                were calendar months (in whichever calendar is
+                originally specified), rather than a 12th of the
+                interval between two successive passages of the sun
+                through vernal equinox (i.e. 365.242198781/12 days).
+
+            calendar_years: `bool`, optional
+                If True then treat units of ``'years'`` as if they
+                were calendar years (in whichever calendar is
+                originally specified), rather than the interval
+                between two successive passages of the sun through
+                vernal equinox (i.e. 365.242198781 days).
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The data with converted reference time values, or
+                `None` if the operation was in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3, 4], units="months since 2004-1-1")
+        >>> d.Units
+        <Units: months since 2004-1-1>
+        >>> print(d.datetime_array)
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2003, 12, 31, 10, 29, 3, 831223, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 30, 20, 58, 7, 662446, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 7, 27, 11, 493670, has_year_zero=False)]
+        >>> print(d.array)
+        [0 1 2 3]
+        >>> e = d.convert_reference_time(calendar_months=True)
+        >>> e.Units
+        <Units: days since 2004-1-1>
+        >>> print(e.datetime_array)
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 2, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 0, 0, 0, 0, has_year_zero=False)]
+        >>> print(e.array)
+        [ 0 31 62 91]
+
+        """
+        units0 = self.Units
+
+        if not units0.isreftime:
+            raise ValueError(
+                f"{self.__class__.__name__} must have reference time units. "
+                f"Got {units0!r}"
+            )
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if units is None:
+            # By default, set the target units to "days since
+            # <reference time of units0>, calendar=<calendar of
+            # units0>"
+            units = Units(
+                "days since " + units0.units.split(" since ")[1],
+                calendar=units0._calendar,
+            )
+        elif not getattr(units, "isreftime", False):
+            raise ValueError(
+                f"New units must be reference time units, not {units!r}"
+            )
+
+        units0_since_reftime = units0._units_since_reftime
+        if units0_since_reftime in _month_units:
+            if calendar_months:
+                units0 = Units(
+                    "calendar_" + units0.units, calendar=units0._calendar
+                )
+            else:
+                units0 = Units(
+                    "days since " + units0.units.split(" since ")[1],
+                    calendar=units0._calendar,
+                )
+                d.Units = units0
+        elif units0_since_reftime in _year_units:
+            if calendar_years:
+                units0 = Units(
+                    "calendar_" + units0.units, calendar=units0._calendar
+                )
+            else:
+                units0 = Units(
+                    "days since " + units0.units.split(" since ")[1],
+                    calendar=units0._calendar,
+                )
+                d.Units = units0
+
+        dx = d.to_dask_array()
+
+        # Convert to the correct date-time objects
+        dx = dx.map_blocks(cf_rt2dt, units=units0, dtype=object)
+
+        # Convert the date-time objects to reference times
+        dx = dx.map_blocks(cf_dt2rt, units=units, dtype=float)
+
+        d._set_dask(dx)
+        d.override_units(units, inplace=True)
+
+        return d
 
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
