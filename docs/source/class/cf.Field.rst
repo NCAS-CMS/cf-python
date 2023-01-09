@@ -232,6 +232,16 @@ Data
    ~cf.Field.apply_masking
    ~cf.Field.masked_invalid
 
+.. rubric:: *Searching and counting*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.argmax
+   ~cf.Field.where
+
 Miscellaneous data operations
 -----------------------------
 
@@ -637,8 +647,6 @@ Data array operations
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cf.Field.argmax
-   ~cf.Field.chunk
    ~cf.Field.isscalar
 
 Regridding operations
@@ -942,6 +950,7 @@ Deprecated
    ~cf.Field.asdatetime
    ~cf.Field.asreftime
    ~cf.Field.axis_name
+   ~cf.Field.chunk
    ~cf.Field.data_axes
    ~cf.Field.delprop
    ~cf.Field.equivalent
