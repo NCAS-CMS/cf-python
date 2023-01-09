@@ -587,9 +587,6 @@ Special
    ~cf.Bounds.__str__
    ~cf.Bounds.__array__
    ~cf.Bounds.__data__
-   ~cf.Bounds.__query_set__
-   ~cf.Bounds.__query_wi__
-   ~cf.Bounds.__query_wo__
 
 Deprecated
 ----------

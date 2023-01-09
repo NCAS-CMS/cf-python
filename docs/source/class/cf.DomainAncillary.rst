@@ -632,9 +632,6 @@ Special
    ~cf.DomainAncillary.__str__
    ~cf.DomainAncillary.__array__
    ~cf.DomainAncillary.__data__
-   ~cf.DomainAncillary.__query_set__
-   ~cf.DomainAncillary.__query_wi__
-   ~cf.DomainAncillary.__query_wo__
 
 Deprecated
 ----------
