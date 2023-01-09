@@ -30,11 +30,11 @@ contribute for the final result.
 The performance of `cf` is largely a function of the performance of
 Dask. All of the techniques that Dask supports for `improving
 performance <https://docs.dask.org/en/stable/best-practices.html>`_
-apply, and performance parameters can generally be set via Dask's
+apply, and performance parameters are generally be set via Dask's
 `configuration settings
-<https://docs.dask.org/en/stable/configuration.html>`_, but the
-default value of the important :ref:`chunk size <Chunks>` is set
-through the `cf` API.
+<https://docs.dask.org/en/stable/configuration.html>`_, but the value
+of the important :ref:`chunk size <Chunks>` is set through the `cf`
+API.
 
 ----
 
@@ -55,12 +55,11 @@ are applied one after another, none of the operations are computed
 until the result of final one is requested.
 
 When the result of a stack of lazy operations is computed it is not
-cached, so if the operations are subsequently re-computed then the
-calculations are repeated. However, a construct's `~cf.Field.persist`
-method can be used force the result to be retained in memory for fast
-future access.
+cached, so if the result is requested again then the calculations are
+re-computed. However, a construct's `~cf.Field.persist` method can be
+used force the result to be retained in memory for fast future access.
 
-Some notable cases where non-lazy computation occurs are:
+Some notable cases where non-lazy computations occur are:
 
 * **Regridding**
 
@@ -69,8 +68,8 @@ Some notable cases where non-lazy computation occurs are:
   weights are computed non-lazily, which requires calculations based
   in some or all of the coordinate data. These computations can be
   much more costly than the regridding itself. When multiple regrid
-  operations have the same weights, performance can be improved be
-  calculating the weights once and re-using them:
+  operations have the same weights, performance can be greatly
+  improved by calculating the weights once and re-using them:
   
   .. code-block:: python
      :caption: *Regrid a list of fields with the same horizontal
@@ -107,7 +106,8 @@ Some notable cases where non-lazy computation occurs are:
 
 A Dask array is divided into pieces called "chunks" that are the
 elements over which Dask computations can be parallelised, and
-performance is strongly dependent on the nature of these chunks.
+performance is strongly dependent on the size and shape of these
+chunks.
 
 By default, chunks have a size of at most ``128 MiB`` and prefer
 square-like shapes. A new default chunk size is set with the
@@ -117,7 +117,7 @@ initio. Any data may be re-chunked after its creation with the
 `cf.Data.rechunk` method.
 
 In general, good performance results from following these rules for
-chunk sizes and shapes (copied from the `Dask documentation
+chunk sizes and shapes (copied from the `Dask chunks documentation
 <https://docs.dask.org/en/stable/array-chunks.html>`_):
 
 * A chunk should be small enough to fit comfortably in memory. There
@@ -150,8 +150,8 @@ For more information, see `Choosing good chunk sizes in Dask
 **Parallel computation**
 ------------------------
 
-All operations on Dask arrays are executed in parallel using Dask's
-`dynamic task scheduling
+All operations on Dask arrays are executed in parallel using `Dask's
+dynamic task scheduling
 <https://docs.dask.org/en/stable/scheduling.html>`_. By default, the
 scheduler uses threads on the local machine, but it is easy to use
 instead local processes, a cluster of many machines, or a single
@@ -179,15 +179,15 @@ scheduler has been defined will use that scheduler.
  
 Operations are stored by Dask in `task graphs
 <https://docs.dask.org/en/stable/graphs.html>`_ where each task
-(i.e. node) in the graph either defines a chunk of data, or else an
-operation to be performed on one or more chunks. The data created by
-an operation are used as inputs to the next operation node in the
+(i.e. node) in the graph either defines either a chunk of data, or an
+operation to be performed on one or more data chunks. The data created
+by an operation are used as inputs to the next operation task in the
 graph. The tasks in the graph are passed by the scheduler to the
 available pool of processing elements, which execute the tasks in
 parallel until the final result has been computed.
 
-The following example shows the task graph for a simple data
-computation over four chunks:
+The following example creates a visualisation of the task graph for a
+simple data computation over four chunks:
 
 .. code-block:: python
    :caption: *Visualising the task graph for a lazy computation.*
@@ -213,10 +213,10 @@ computation over four chunks:
     [342 380 420 462 506 552]
     [600 650 702 756 812 870]]
 
-The image file ``dask_task_graph.png`` contains a visualisation of the
-dask task graph, showing the operations on each chunk. The operations
-were only executed when their result was requested with the
-``e.array`` command. The boxes represent the data chunks and the
+The image file ``dask_task_graph.png`` contains the visualisation of
+the dask task graph, showing the operations on each chunk. The
+operations were only executed when their result was requested with the
+final ``e.array`` command. The boxes represent the data chunks and the
 circles represent the operations to be performed on the chunks. The
 five boxes in the bottom row are the starting data (i.e. the four
 chunks of ``d`` and the scalar ``2``), and the four boxes in the top
@@ -224,7 +224,7 @@ row are the result of the computation which combine to produce the
 values in ``e.array``.
 
 .. figure:: images/dask_task_graph.svg
-   :scale: 35 %
+   :scale: 10 %
 
    *The dask task graph from dask_task_graph.png*
 
