@@ -497,6 +497,8 @@ class ConstructList(list, Container, cfdm.Container):
                 "equals",
                 {"ignore": ignore},
                 "Use keyword 'ignore_properties' instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         # Check for object identity
@@ -702,6 +704,8 @@ class ConstructList(list, Container, cfdm.Container):
                 "Use methods 'select_by_units', 'select_by_construct', "
                 "'select_by_properties', 'select_by_naxes', 'select_by_rank' "
                 "instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if identities and isinstance(identities[0], (list, tuple, set)):
@@ -717,7 +721,9 @@ class ConstructList(list, Container, cfdm.Container):
                 _DEPRECATION_ERROR_DICT(
                     "Use methods 'select_by_units', 'select_by_construct', "
                     "'select_by_properties', 'select_by_naxes', "
-                    "'select_by_rank' instead."
+                    "'select_by_rank' instead.",
+                    version="3.0.0",
+                    removed_at="4.0.0",
                 )  # pragma: no cover
 
             if isinstance(i, str) and ":" in i:
