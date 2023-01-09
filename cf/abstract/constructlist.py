@@ -713,7 +713,9 @@ class ConstructList(list, Container, cfdm.Container):
                 "Use of a {!r} for identities has been deprecated. Use the "
                 "* operator to unpack the arguments instead.".format(
                     identities[0].__class__.__name__
-                )
+                ),
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         for i in identities:
@@ -738,7 +740,9 @@ class ConstructList(list, Container, cfdm.Container):
                         "The identity format {!r} has been deprecated at "
                         "version 3.0.0. Try {!r} instead.".format(
                             i, i.replace(":", "=", 1)
-                        )
+                        ),
+                        version="3.0.0",
+                        removed_at="4.0.0",
                     )  # pragma: no cover
 
         return self.select_by_identity(*identities)

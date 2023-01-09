@@ -12423,6 +12423,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         """Flip (reverse the direction of) axes of the field.
@@ -12670,6 +12671,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Squeeze the field's data array
         return super().squeeze(iaxes, inplace=inplace)
 
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         """Interchange two axes of the data.
@@ -16790,6 +16792,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             removed_at="4.0.0",
         )  # pragma: no cover
 
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def expand_dims(self, position=0, axes=None, i=False, **kwargs):
         """Insert a size 1 axis into the data array.
 

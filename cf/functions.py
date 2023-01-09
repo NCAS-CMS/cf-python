@@ -3113,9 +3113,11 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 
 def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):
     if removed_at:
-        removed_at = f". Will be removed at version {removed_at}."
+        removed_at = f" and will be removed at version {removed_at}"
 
-    raise DeprecationError(f"{message}{removed_at}")
+    raise DeprecationError(
+        f"{message}. Deprecated at version {version}{removed_at}."
+    )
 
 
 def _DEPRECATION_ERROR_ARG(
@@ -3283,7 +3285,7 @@ def _DEPRECATION_WARNING_METHOD(
 
 def _DEPRECATION_ERROR_DICT(message="", version="3.0.0", removed_at="4.0.0"):
     if removed_at:
-        removed_at = f" and will be removed at version {removed_at}"
+        removed_at = f"and will be removed at version {removed_at}"
 
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
@@ -3293,6 +3295,9 @@ def _DEPRECATION_ERROR_DICT(message="", version="3.0.0", removed_at="4.0.0"):
 
 
 def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0", removed_at="4.0.0"):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     raise DeprecationError(
         f"Use of a {instance.__class__.__name__!r} to identify constructs "
         f"has been deprecated at version {version} and is no longer available"
