@@ -247,7 +247,11 @@ class DataClassDeprecationsMixin:
 
     def expand_dims(self, position=0, i=False):
         """Deprecated at version 3.0.0, use method `insert_dimension`
-        instead."""
+        instead.
+
+        May get re-instated ata  later version.
+
+        """
         _DEPRECATION_ERROR_METHOD(
             self,
             "expand_dims",

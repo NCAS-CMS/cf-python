@@ -3111,8 +3111,11 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 )
 
 
-def _DEPRECATION_ERROR(message="", version="3.0.0"):
-    raise DeprecationError(f"{message}")
+def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):
+    if removed_at:
+        removed_at = f". Will be removed at version {removed_at}."
+
+    raise DeprecationError(f"{message}{removed_at}")
 
 
 def _DEPRECATION_ERROR_ARG(
