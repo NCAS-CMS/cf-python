@@ -684,9 +684,6 @@ Special
    ~cf.DimensionCoordinate.__str__
    ~cf.DimensionCoordinate.__array__
    ~cf.DimensionCoordinate.__data__
-   ~cf.DimensionCoordinate.__query_set__
-   ~cf.DimensionCoordinate.__query_wi__
-   ~cf.DimensionCoordinate.__query_wo__
 
 Deprecated
 ----------
