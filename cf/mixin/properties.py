@@ -1126,7 +1126,9 @@ class Properties(Container):
             _DEPRECATION_ERROR(
                 f"Use of a {identities[0].__class__.__name__!r} for "
                 "identities has been deprecated. Use the "
-                "* operator to unpack the arguments instead."
+                "* operator to unpack the arguments instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         for i in identities:

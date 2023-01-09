@@ -726,7 +726,9 @@ class ConstructList(list, Container, cfdm.Container):
                     _DEPRECATION_ERROR(
                         f"The identity format {i!r} has been deprecated at "
                         f"version 3.0.0. Try {i.replace(':', '=', 1)!r} "
-                        "instead."
+                        "instead.",
+                        version="3.0.0",
+                        removed_at="4.0.0",
                     )  # pragma: no cover
 
         return self.select_by_identity(*identities)
