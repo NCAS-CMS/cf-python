@@ -12100,7 +12100,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "sequence of numerical window weights instead. "
                 "scipy.signal.windows may be used to generate particular "
                 "window functions.",
-                version="3.0.0",
+                version="3.3.0",
                 removed_at="4.0.0",
             )  # pragma: no cover
 
@@ -12111,7 +12111,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "Provide a sequence of numerical window weights instead. "
                 "scipy.signal.windows may be used to generate particular "
                 "window functions.",
-                version="3.0.0",
+                version="3.3.0",
                 removed_at="4.0.0",
             )  # pragma: no cover
 
