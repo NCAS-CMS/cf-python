@@ -10,19 +10,6 @@ cf.Query
    :no-members:
    :no-inherited-members:
 
-Attributes
-----------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-   
-   ~cf.Query.attr
-   ~cf.Query.operator
-   ~cf.Query.value
-   ~cf.Query.isquery
-   
 Methods
 -------
 
@@ -39,3 +26,19 @@ Methods
    ~cf.Query.evaluate
    ~cf.Query.exact
    ~cf.Query.inspect
+   ~cf.Query.set_condition_units
+
+Attributes
+----------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+   
+   ~cf.Query.attr
+   ~cf.Query.operator
+   ~cf.Query.value
+   ~cf.Query.iscontains
+   ~cf.Query.isquery
+   
