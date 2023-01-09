@@ -43,6 +43,7 @@ Mathematical operations
 
    cf.atol
    cf.rtol
+   cf.bounds_combination_mode
    cf.default_netCDF_fillvals
    cf.curl_xy
    cf.div_xy
@@ -50,8 +51,7 @@ Mathematical operations
    cf.relative_vorticity
    cf.ATOL
    cf.RTOL
-   cf.bounds_combination_mode
-    
+   
 Condition constructors
 ----------------------
 
@@ -167,12 +167,11 @@ Miscellaneous
    cf.inspect
    cf.log_level
    cf.pathjoin
-   cf.pickle
    cf.relaxed_identities
    cf.relpath
-   cf.unpickle
    cf.load_stash2standard_name
    cf.stash2standard_name 
+   cf.unique_constructs
    cf.LOG_LEVEL
    cf.RELAXED_IDENTITIES
 
@@ -198,7 +197,6 @@ Deprecated
    cf.FM_THRESHOLD
    cf.FREE_MEMORY_FACTOR
    cf.MIN_TOTAL_MEMORY
-   cf.MINNCFM
    cf.OF_FRACTION
    cf.SET_PERFORMANCE
    
