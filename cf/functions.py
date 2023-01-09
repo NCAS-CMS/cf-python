@@ -25,7 +25,7 @@ from os.path import relpath as _os_path_relpath
 import cfdm
 import netCDF4
 import numpy as np
-from dask import config
+from dask import config as _config
 from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from psutil import virtual_memory
@@ -778,7 +778,7 @@ class chunksize(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        config.set({"array.chunk-size": arg})
+        _config.set({"array.chunk-size": arg})
         return parse_bytes(arg)
 
 
