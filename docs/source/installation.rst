@@ -96,7 +96,7 @@ dependencies, and the `cf-plot visualisation package
    :caption: *Install with conda.*
 
    $ conda install -c ncas -c conda-forge cf-python cf-plot udunits2
-   $ conda install -c conda-forge mpich esmpy
+   $ conda install -c conda-forge mpich esmf=8.2.0
 
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work. (Note, however, that the
@@ -232,11 +232,11 @@ environments for which these features are not required.
 .. rubric:: Regridding
 
 * `ESMF <https://earthsystemmodeling.org/esmpy/>`_, version
-  8.0.0 or newer. This is easily installed via conda with
+  8.0.0 or up to 8.2.0. This is easily installed via conda with
 
   .. code-block:: console
 
-     $ conda install -c conda-forge mpich esmpy
+     $ conda install -c conda-forge mpich esmf=8.2.0
 
   or may be installed from source.
 
