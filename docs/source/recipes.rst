@@ -176,6 +176,14 @@ In this recipe, we will calculate the global mean temperature timeseries and plo
 
    .. code-block:: python
 
+      >>> print(annual_global_avg[60:90])
+      Field: long_name=near-surface temperature (ncvar%tmp)
+      -----------------------------------------------------
+      Data            : long_name=near-surface temperature(long_name=time(30), long_name=latitude(1), long_name=longitude(1)) degrees Celsius
+      Cell methods    : area: mean long_name=time(30): mean
+      Dimension coords: long_name=time(30) = [1961-07-02 12:00:00, ..., 1990-07-02 12:00:00] gregorian
+                      : long_name=latitude(1) = [0.0] degrees_north
+                      : long_name=longitude(1) = [0.0] degrees_east
       >>> temp_clim = annual_global_avg[60:90].collapse('T: mean')
 
 2. The temperature anomaly is then calculated by subtracting these climatological temperature values from the annual global average temperatures and plotting them using `lineplot
