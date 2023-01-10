@@ -64,6 +64,8 @@ class Datetime(cftime.datetime):
         _DEPRECATION_ERROR_CLASS(
             "Datetime",
             "Use function 'cf.dt' to create date-time objects instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
 
