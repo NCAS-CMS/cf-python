@@ -32,7 +32,7 @@ def regrid(
 
             The weights matrix only describes cells defined by the
             regridding dimensions. If the array *a* includes
-            non-regridding dimensions then, in essence, the the regrid
+            non-regridding dimensions then, in essence, the regrid
             operation is carried out separately for each slice of the
             regridding dimensions. For instance, if *a* represents T,
             Z, Y, X dimensions with shape ``(12, 20, 73, 96)`` and is
@@ -413,10 +413,10 @@ def _regrid(
 
         elif method in ("linear", "bilinear", "nearest_dtos"):
             # 2) Linear and nearest neighbour methods:
-            #            
+            #
             # Mask out any row j that contains at least one positive
             # (i.e. greater than or equal to 'min_weight') w_ji that
-            # corresponds to a masked source grid cell i. Such a row 
+            # corresponds to a masked source grid cell i. Such a row
             # corresponds to a destination grid cell that intersects
             # at least one masked source grid cell.
             if np.ma.isMA(weights):

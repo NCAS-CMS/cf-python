@@ -351,7 +351,7 @@ class RegridOperator(mixin_Container, Container):
             start_index=self.start_index,
             src_axes=self.src_axes,
             dst_axes=self.dst_axes,
-            dst=self.dst.copy()
+            dst=self.dst.copy(),
         )
 
     @_display_or_return
