@@ -155,7 +155,12 @@ def read(
     constructs that may be read within a session, and makes the read
     operation fast.
 
-    .. seealso:: `cf.aggregate`,`cf.write`, `cf.Field`, `cf.Domain`,
+    However, when two or more field or domain constructs are
+    aggregated to form a single construct then the data arrays of some
+    metadata constructs (coordinates, cell measures, etc.)  must be
+    compared non-lazily to ascertain if aggregation is possible.
+
+    .. seealso:: `cf.aggregate`, `cf.write`, `cf.Field`, `cf.Domain`,
                  `cf.load_stash2standard_name`, `cf.unique_constructs`
 
     :Parameters:

@@ -1008,6 +1008,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         shape = self.shape
 
+        ancillary_mask = ()
+        try:
+            arg = indices[0]
+        except (IndexError, TypeError):
+            pass
+        else:
+            if isinstance(arg, str) and arg == "mask":
+                # The indices include an ancillary mask that defines
+                # elements which are protected from assignment
+                original_self = self.copy()
+                ancillary_mask = indices[1]
+                indices = indices[2:]
+
         indices, roll = parse_indices(
             shape,
             indices,
@@ -1097,6 +1110,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if roll:
             shifts = [-shift for shift in shifts]
             self.roll(shift=shifts, axis=roll_axes, inplace=True)
+
+        # Reset the original array values at locations that are
+        # excluded from the assignment by True values in any ancillary
+        # masks
+        if ancillary_mask:
+            indices = tuple(indices)
+            original_self = original_self[indices]
+            reset = self[indices]
+            for mask in ancillary_mask:
+                reset.where(mask, original_self, inplace=True)
+
+            self[indices] = reset
 
         # Remove elements made invalid by updating the `dask` array
         self._conform_after_dask_update()
@@ -2002,10 +2027,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> import cf
         >>> a = np.arange(101)
         >>> dx = da.from_array(a, chunks=10)
-        >>> da.percentile(dx, [40, 60]).compute()
+        >>> da.percentile(dx, 40).compute()
         array([40.36])
         >>> np.percentile(a, 40)
-        array([40.])
+        40.0
         >>> d = cf.Data(a, chunks=10)
         >>> d.percentile(40).array
         array([40.])
@@ -4026,11 +4051,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def chunks(self):
         """The chunk sizes for each dimension.
 
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `npartitions`, `numblocks`, `rechunk`
+
         **Examples**
 
-        >>> d = cf.Data.ones((4, 5), chunks=(2, 4))
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
         >>> d.chunks
-        ((2, 2), (4, 1))
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
 
         """
         return self.to_dask_array().chunks
@@ -4346,6 +4379,48 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         return dx.ndim
+
+    @property
+    def npartitions(self):
+        """The total number of chunks.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `chunks`, `numblocks`, `rechunk`
+
+        **Examples**
+
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        return self.to_dask_array().npartitions
+
+    @property
+    def numblocks(self):
+        """The number of chunks along each dimension.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `chunks`, `npartitions`, `rechunk`
+
+        **Examples**
+
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        return self.to_dask_array().numblocks
 
     @property
     def shape(self):

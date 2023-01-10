@@ -8,7 +8,7 @@ are checked for having an entry in docs/source/class/cf.Field.rst
 
 Call as:
 
-   $ python check_api_coverage.py <docs/source/ directory path>
+   $ python check_api_coverage.py <relative path to docs/source/>
 
 """
 import os
@@ -26,9 +26,7 @@ else:
 
 
 if not source.endswith("source"):
-    raise ValueError(
-        "Given directory {} does not end with 'source'".format(source)
-    )
+    raise ValueError(f"Given directory {source} does not end with 'source'")
 
 n_undocumented_methods = 0
 n_missing_files = 0
@@ -58,7 +56,6 @@ for core in ("", "_core"):
         methods = [
             method for method in dir(klass) if not method.startswith("_")
         ]
-
         class_name = ".".join([package.__name__, class_name])
 
         rst_file = os.path.join(source, "class", class_name + ".rst")
@@ -71,28 +68,15 @@ for core in ("", "_core"):
                 method = ".".join([class_name, method])
                 if method not in rst_contents:
                     n_undocumented_methods += 1
-                    print(
-                        "Method {} not in {}".format(
-                            method, os.path.join(source, "class", rst_file)
-                        )
-                    )
+                    print(f"Method {method} not in {rst_file}")
         except FileNotFoundError:
             n_missing_files += 1
-            print("File {} does not exist".format(rst_file))
-# --- End: for
-
-# Raise an exception to ensure a non-zero shell return code
-if n_undocumented_methods:
-    print("Found undocumented method(s)")
-
-if n_missing_files:
-    print("Found missing .rst file(s)")
+            print("File {rst_file} does not exist")
 
 if n_undocumented_methods or n_missing_files:
     raise ValueError(
-        "Found undocumented methods ({}) or missing .rst files ({})".format(
-            n_undocumented_methods, n_missing_files
-        )
+        f"Found {n_undocumented_methods} undocumented methods and "
+        f"{n_missing_files} missing .rst files"
     )
 
 print("All methods are documented")

@@ -27,8 +27,6 @@ is built on a complete implementation of the :ref:`CF-data-model`.
    :local:
    :backlinks: entry
 
-----
-
 **Functionality**
 -----------------
 

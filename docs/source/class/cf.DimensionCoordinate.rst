@@ -237,6 +237,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.to_dask_array
    ~cf.DimensionCoordinate.__getitem__
    ~cf.DimensionCoordinate.del_data
    ~cf.DimensionCoordinate.get_data
@@ -360,6 +361,7 @@ Miscellaneous
    ~cf.DimensionCoordinate.creation_commands
    ~cf.DimensionCoordinate.equals
    ~cf.DimensionCoordinate.inspect
+   ~cf.DimensionCoordinate.to_memory
    ~cf.DimensionCoordinate.uncompress
    
 Mathematical operations
@@ -708,6 +710,7 @@ Deprecated
    ~cf.DimensionCoordinate.getprop
    ~cf.DimensionCoordinate.hasprop
    ~cf.DimensionCoordinate.insert_data
+   ~cf.DimensionCoordinate.mask_invalid
    ~cf.DimensionCoordinate.name
    ~cf.DimensionCoordinate.remove_data
    ~cf.DimensionCoordinate.select

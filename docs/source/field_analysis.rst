@@ -2164,7 +2164,7 @@ and therefore may return
 `"invalid" values <https://docs.scipy.org/doc/numpy/reference/constants.html>`_
 (`nan` or `inf`). When applying these methods to constructs with masked
 data, you may prefer to output masked values instead of invalid ones. In
-this case, you can use `mask_invalid` to do the conversion afterwards:
+this case, you can use `masked_invalid` to do the conversion afterwards:
 
 .. code-block:: python
    :caption: *Take the `arctanh` of some masked data and then transform
@@ -2174,7 +2174,7 @@ this case, you can use `mask_invalid` to do the conversion afterwards:
    >>> e = d.arctanh()
    >>> print(e.array)
    [-- nan inf 0.5493061443340548 --]
-   >>> e.mask_invalid(inplace=True)
+   >>> e.masked_invalid(inplace=True)
    >>> print(e.array)
    [-- -- -- 0.5493061443340548 --]
 

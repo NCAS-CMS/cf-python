@@ -12,10 +12,13 @@
 
 * Make sure that `Changelog.rst` is up to date.
 
-* Check the code for deprecated keyword arguments that can be
-  completely removed, i.e. those with a "removed_at" version that is
-  at or before the version being released. Remove any reference to them
-  in the method/class along with the @_deprecated_kwarg_check decorator.
+* Deprecated methods and keyword arguments: Check the code for
+  deprecated methods and keyword arguments that can be completely
+  removed, i.e. those with a ``removed_at`` version that is at or
+  before the version being released. Remove any reference to them in
+  the method, class, or fucntion (including, if appropriate, the
+  ``@_deprecated_kwarg_check`` decorator), and remove them from the
+  relevant documentation ``.rst`` files.
 
 * Check that the documentation API coverage is complete:
 

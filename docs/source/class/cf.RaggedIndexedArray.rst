@@ -10,10 +10,6 @@ cf.RaggedIndexedArray
    :no-members:
    :no-inherited-members:
 
-
-Inspection
-----------
-
 .. rubric:: Methods
 
 .. autosummary::
@@ -21,13 +17,26 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
+   ~cf.RaggedIndexedArray.compressed_dimensions
+   ~cf.RaggedIndexedArray.conformed_data
+   ~cf.RaggedIndexedArray.copy
+   ~cf.RaggedIndexedArray.get_calendar
    ~cf.RaggedIndexedArray.get_compressed_axes
    ~cf.RaggedIndexedArray.get_compressed_dimension
    ~cf.RaggedIndexedArray.get_compression_type
+   ~cf.RaggedIndexedArray.get_count
+   ~cf.RaggedIndexedArray.get_filename'
+   ~cf.RaggedIndexedArray.get_filenames
    ~cf.RaggedIndexedArray.get_index
+   ~cf.RaggedIndexedArray.get_Subarray
    ~cf.RaggedIndexedArray.get_subspace
+   ~cf.RaggedIndexedArray.get_units
    ~cf.RaggedIndexedArray.source
-   
+   ~cf.RaggedIndexedArray.subarray_shapes
+   ~cf.RaggedIndexedArray.subarrays
+   ~cf.RaggedIndexedArray.to_dask_array
+   ~cf.RaggedIndexedArray.to_memory
+
 .. rubric:: Attributes
 
 .. autosummary::
@@ -41,19 +50,4 @@ Inspection
    ~cf.RaggedIndexedArray.ndim
    ~cf.RaggedIndexedArray.shape
    ~cf.RaggedIndexedArray.size
-
-   
-Miscellaneous
--------------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-   
-   ~cf.RaggedIndexedArray.copy
-   ~cf.RaggedIndexedArray.get_subspace
-   ~cf.RaggedIndexedArray.to_memory
-   
+   ~cf.RaggedIndexedArray.Units
