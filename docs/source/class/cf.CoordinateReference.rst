@@ -140,6 +140,7 @@ Miscellaneous
    ~cf.CoordinateReference.default_value
    ~cf.CoordinateReference.equals
    ~cf.CoordinateReference.equivalent
+   ~cf.CoordinateReference.get_original_filenames
    ~cf.CoordinateReference.has_bounds
    ~cf.CoordinateReference.hasbounds
    ~cf.CoordinateReference.inspect

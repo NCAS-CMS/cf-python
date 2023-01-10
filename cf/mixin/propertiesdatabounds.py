@@ -3906,14 +3906,22 @@ class PropertiesDataBounds(PropertiesData):
         """Deprecated at version 3.0.0, use method `has_bounds`
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "hasbounds", "Use method 'has_bounds' instead."
+            self,
+            "hasbounds",
+            "Use method 'has_bounds' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         """Deprecated at version 3.0.0, use method `insert_dimension`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "expand_dims", "Use method 'insert_dimension' instead."
+            self,
+            "expand_dims",
+            "Use method 'insert_dimension' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def files(self):

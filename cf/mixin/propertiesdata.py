@@ -5486,14 +5486,20 @@ class PropertiesData(Properties):
     @property
     def attributes(self):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_ATTRIBUTE(self, "attributes")
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "attributes", version="3.0.0", removed_at="4.0.0"
+        )
 
     @property
     def Data(self):
         """Deprecated at version 3.0.0, use `data` attribute or
         `get_data` method instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "Data", "Use 'data' attribute or 'get_data' method instead."
+            self,
+            "Data",
+            "Use 'data' attribute or 'get_data' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @Data.setter
@@ -5501,7 +5507,11 @@ class PropertiesData(Properties):
         """Deprecated at version 3.0.0, use `set_data` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "Data", "Use 'data' attribute or 'set_data' method instead."
+            self,
+            "Data",
+            "Use 'data' attribute or 'set_data' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @Data.deleter
@@ -5509,20 +5519,30 @@ class PropertiesData(Properties):
         """Deprecated at version 3.0.0, use `del_data` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "Data", "Use 'data' attribute or 'del_data' method instead."
+            self,
+            "Data",
+            "Use 'data' attribute or 'del_data' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
     def dtvarray(self):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_ATTRIBUTE(self, "dtvarray")  # pragma: no cover
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "dtvarray", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
     @property
     def hasbounds(self):
         """Deprecated at version 3.0.0, use `has_bounds` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "hasbounds", "Use 'has_bounds' method instead"
+            self,
+            "hasbounds",
+            "Use 'has_bounds' method instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )
 
     @property
@@ -5530,7 +5550,11 @@ class PropertiesData(Properties):
         """Deprecated at version 3.0.0, use `has_data` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "hasdata", "Use 'has_data' method instead"
+            self,
+            "hasdata",
+            "Use 'has_data' method instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )
 
     @property
@@ -5542,6 +5566,7 @@ class PropertiesData(Properties):
             "isauxiliary",
             "Use 'construct_type'' attribute instead.",
             version="3.7.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5553,6 +5578,7 @@ class PropertiesData(Properties):
             "isdimension",
             "Use 'construct_type'' attribute instead.",
             version="3.7.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5564,6 +5590,7 @@ class PropertiesData(Properties):
             "isdomainancillary",
             "Use 'construct_type'' attribute instead.",
             version="3.7.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5574,6 +5601,8 @@ class PropertiesData(Properties):
             self,
             "isfieldancillary",
             "Use 'construct_type'' attribute instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5585,6 +5614,7 @@ class PropertiesData(Properties):
             "ismeasure",
             "Use 'construct_type'' attribute instead.",
             version="3.7.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5596,28 +5626,41 @@ class PropertiesData(Properties):
             "unsafe_array",
             "Use 'array' attribute instead.",
             version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def asdatetime(self, i=False):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_METHOD(self, "asdatetime")  # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, "asdatetime", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
     def asreftime(self, i=False):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_METHOD(self, "asreftime")  # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, "asreftime", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         """Deprecated at version 3.0.0, use `insert_dimension` method
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "expand_dims", "Use method 'insert_dimension' instead."
+            self,
+            "expand_dims",
+            "Use method 'insert_dimension' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_data(self, data, copy=True):
         """Deprecated at version 3.0.0, use `set_data` method
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_data", "Use method 'set_data' instead."
+            self,
+            "insert_data",
+            "Use method 'set_data' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def name(
@@ -5626,19 +5669,29 @@ class PropertiesData(Properties):
         """Deprecated at version 3.0.0, use method 'identity'
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "name", "Use method 'identity' instead"
+            self,
+            "name",
+            "Use method 'identity' instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def remove_data(self):
         """Deprecated at version 3.0.0, use method `del_data`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "remove_data", "Use method 'del_data' instead."
+            self,
+            "remove_data",
+            "Use method 'del_data' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def select(self, *args, **kwargs):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_METHOD(self, "select")  # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, "select", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
 
 class Subspace:

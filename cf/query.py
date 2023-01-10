@@ -912,12 +912,18 @@ class Query:
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "exact", "Use 're.compile' objects instead."
+            self,
+            "exact",
+            "Use 're.compile' objects instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def equivalent(self, other, traceback=False):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_FUNCTION(self, "equivalent")
+        _DEPRECATION_ERROR_FUNCTION(
+            self, "equivalent", version="3.0.0", removed_at="4.0.0"
+        )
 
 
 # --------------------------------------------------------------------
@@ -2189,7 +2195,10 @@ def dtge(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtge", "Use 'cf.ge' with a datetime object value instead."
+        "dtge",
+        "Use 'cf.ge' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2200,7 +2209,10 @@ def dtgt(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtgt", "Use 'cf.gt' with a datetime object value instead."
+        "dtgt",
+        "Use 'cf.gt' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2211,7 +2223,10 @@ def dtle(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtle", "Use 'cf.le' with a datetime object value instead."
+        "dtle",
+        "Use 'cf.le' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2222,7 +2237,10 @@ def dtlt(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtlt", "Use 'cf.lt' with a datetime object value instead."
+        "dtlt",
+        "Use 'cf.lt' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2233,7 +2251,10 @@ def dteq(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dteq", "Use 'cf.eq' with a datetime object value instead."
+        "dteq",
+        "Use 'cf.eq' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2244,7 +2265,10 @@ def dtne(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtne", "Use 'cf.ne' with a datetime object value instead."
+        "dtne",
+        "Use 'cf.ne' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2255,5 +2279,8 @@ def contain(value, units=None, attr=None):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "cf.contain", "Use function 'cf.contains' instead"
+        "cf.contain",
+        "Use function 'cf.contains' instead",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
