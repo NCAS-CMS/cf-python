@@ -25,7 +25,7 @@ from os.path import relpath as _os_path_relpath
 import cfdm
 import netCDF4
 import numpy as np
-from dask import config
+from dask import config as _config
 from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from psutil import virtual_memory
@@ -778,7 +778,7 @@ class chunksize(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        config.set({"array.chunk-size": arg})
+        _config.set({"array.chunk-size": arg})
         return parse_bytes(arg)
 
 
@@ -3111,8 +3111,13 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 )
 
 
-def _DEPRECATION_ERROR(message="", version="3.0.0"):
-    raise DeprecationError(f"{message}")
+def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"{message}. Deprecated at version {version}{removed_at}."
+    )
 
 
 def _DEPRECATION_ERROR_ARG(
@@ -3280,7 +3285,7 @@ def _DEPRECATION_WARNING_METHOD(
 
 def _DEPRECATION_ERROR_DICT(message="", version="3.0.0", removed_at="4.0.0"):
     if removed_at:
-        removed_at = f" and will be removed at version {removed_at}"
+        removed_at = f"and will be removed at version {removed_at}"
 
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
@@ -3290,6 +3295,9 @@ def _DEPRECATION_ERROR_DICT(message="", version="3.0.0", removed_at="4.0.0"):
 
 
 def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0", removed_at="4.0.0"):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     raise DeprecationError(
         f"Use of a {instance.__class__.__name__!r} to identify constructs "
         f"has been deprecated at version {version} and is no longer available"

@@ -252,7 +252,6 @@ from .fieldancillary import FieldAncillary
 from .field import Field
 from .data import Data
 from .data.array import (
-    CachedArray,
     CFANetCDFArray,
     FullArray,
     GatheredArray,

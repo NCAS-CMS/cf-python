@@ -1,4 +1,3 @@
-from .cachedarray import CachedArray
 from .cfanetcdfarray import CFANetCDFArray
 from .fullarray import FullArray
 from .gatheredarray import GatheredArray
