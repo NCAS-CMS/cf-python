@@ -310,7 +310,3 @@ In this recipe, we will regrid two different datasets with different resolutions
       Coord references: grid_mapping_name:latitude_longitude
 
 
-**Plotting an overlay of wind over precipitation data:**
-----------
-
-
