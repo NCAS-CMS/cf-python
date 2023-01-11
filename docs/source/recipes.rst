@@ -193,7 +193,11 @@ Calculating and plotting the global average temperature anomalies
    .. code-block:: python
 
       >>> temp_anomaly = annual_global_avg - temp_clim
-      >>> cfp.lineplot(temp_anomaly, color='red', title='Global Average Temperature Anomaly (1901-2021)', ylabel='1961-1990 climatology difference ', yunits='degree Celcius')
+      >>> cfp.lineplot(temp_anomaly, 
+      ...     color='red',
+      ...     title='Global Average Temperature Anomaly (1901-2021)',
+      ...     ylabel='1961-1990 climatology difference ',
+      ...     yunits='degree Celcius')
 
    .. figure:: images/anomaly.png
 
