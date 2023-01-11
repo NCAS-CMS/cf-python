@@ -17,7 +17,7 @@ Version |release| for version |version| of the CF conventions.
 **Calculating global mean temperature timeseries**
 ----------
 
-In this recipe, we will calculate the global mean temperature timeseries and plot it.
+In this recipe we will calculate and plot monthly and annual global mean temperature timeseries.
 
 1. Import cf-python and cf-plot:
 
