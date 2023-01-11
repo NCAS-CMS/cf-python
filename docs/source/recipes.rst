@@ -14,7 +14,7 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
-**Calculating global mean temperature timeseries:**
+**Calculating global mean temperature timeseries**
 ----------
 
 In this recipe, we will calculate the global mean temperature timeseries and plot it.
