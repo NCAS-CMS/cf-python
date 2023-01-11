@@ -265,7 +265,7 @@ In this recipe, we will regrid two different datasets with different resolutions
       >>> obs = cf.read('observation.nc')
       >>> print(obs)
       [<CF Field: ncvar%stn(long_name=time(120), long_name=latitude(360), long_name=longitude(720))>,
-      <CF Field: long_name=near-surface temperature(long_name=time(120), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
+       <CF Field: long_name=near-surface temperature(long_name=time(120), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
 
       >>> model = cf.read('model.nc')
       >>> print(model)
