@@ -33,7 +33,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
       >>> f = cf.read('file.nc')
       >>> print(f)
       [<CF Field: ncvar%stn(long_name=time(120), long_name=latitude(360), long_name=longitude(720))>,
-      <CF Field: long_name=near-surface temperature(long_name=time(120), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
+       <CF Field: long_name=near-surface temperature(long_name=time(120), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
 
 3. Select near surface temperature by index and look at its contents:
 
