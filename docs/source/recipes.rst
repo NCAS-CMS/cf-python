@@ -189,7 +189,7 @@ Calculating and plotting the global average temperature anomalies
       >>> temp_clim = annual_global_avg[60:90].collapse('T: mean')
 
 2. The temperature anomaly is then calculated by subtracting these climatological temperature values from the annual global average temperatures and plotting them using `lineplot
-<http://ajheaps.github.io/cf-plot/lineplot.html>`:
+<http://ajheaps.github.io/cf-plot/lineplot.html>`_:
 
    .. code-block:: python
 
