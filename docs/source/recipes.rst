@@ -151,7 +151,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
           Bounds:units = 'days since 1900-1-1'
           Bounds:Data(1452, 2) = [[1901-01-01 00:00:00, ..., 2022-01-01 00:00:00]] gregorian
 
-8. Calculate and plot the area weighted mean surface temperature using the `~cf.Field.collapse` method:
+8. Calculate and plot the area weighted mean surface temperature for each time using the `~cf.Field.collapse` method:
 
    .. code-block:: python
 
