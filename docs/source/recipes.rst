@@ -134,7 +134,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
        [ 179.   179.5]
        [ 179.5  180. ]]
 
-7. Cell bounds are similarly created and set for the dimension coordinate time with cell size of one calendar month using using `~cf.DimensionCoordinate.create_bounds` and `~cf.DimensionCoordinate.set_bounds` respectively:
+7. Time dimension coordinate cell bounds are similarly created and set for cell sizes of one calendar month:
 
    .. code-block:: python
 
