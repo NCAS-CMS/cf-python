@@ -166,7 +166,8 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
    .. code-block:: python
 
       >>> annual_global_avg = global_avg.collapse('T: mean', group=cf.Y())
-      >>> cfp.lineplot(annual_global_avg, color='red', title='Annual global mean surface temperature')
+      >>> cfp.lineplot(annual_global_avg,
+      ...     color='red', title='Annual global mean surface temperature')
 
    .. figure:: images/annual_mean_temp.png
 
