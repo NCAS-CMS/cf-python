@@ -161,7 +161,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
    .. figure:: images/global_mean_temp.png
 
 9. Calculate and plot the annual global mean surface temperature using `lineplot
-<http://ajheaps.github.io/cf-plot/lineplot.html>`:
+<http://ajheaps.github.io/cf-plot/lineplot.html>`_:
 
    .. code-block:: python
 
