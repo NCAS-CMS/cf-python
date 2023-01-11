@@ -217,7 +217,7 @@ In this recipe, we will plot the global mean temperature spatially.
       >>> f = cf.read('file.nc')
       >>> print(f)
       [<CF Field: ncvar%stn(long_name=time(1452), long_name=latitude(360), long_name=longitude(720))>,
-      <CF Field: long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
+       <CF Field: long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
 
 
 3. Select near surface temperature by index and look at its contents:
