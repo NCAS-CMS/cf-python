@@ -240,7 +240,7 @@ In this recipe, we will plot the global mean temperature spatially.
       >>> global_avg = temp.collapse('mean',  axes='long_name=time')
 
 
-5. Plot the global mean surface temperatures using using `con <http://ajheaps.github.io/cf-plot/con.html>`:
+5. Plot the global mean surface temperatures using using `con <http://ajheaps.github.io/cf-plot/con.html>`_:
 
    .. code-block:: python
 
