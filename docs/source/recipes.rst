@@ -170,7 +170,8 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
    .. figure:: images/annual_mean_temp.png
 
-* Calculating and plotting the global average temperature anomalies:
+Calculating and plotting the global average temperature anomalies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. The temperature values are averaged for the climatological period of 1961-1990 by slicing these years over the `~cf.Field.collapse` method:
 
