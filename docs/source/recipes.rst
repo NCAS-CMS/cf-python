@@ -174,11 +174,12 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 Calculating and plotting the global average temperature anomalies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. The temperature values are averaged for the climatological period of 1961-1990 by slicing these years over the `~cf.Field.collapse` method:
+1. The temperature values are averaged for the climatological period of 1961-1990 by defining a subspace within these years using `~cf.wi` query instance over `~cf.Field.subspace` and doing a statistical collapse with the `~cf.Field.collapse` method:
 
    .. code-block:: python
 
-      >>> print(annual_global_avg[60:90])
+      >>> annual_global_avg_61_90 = annual_global_avg.subspace(T=cf.year(cf.wi(1961, 1990)))
+      >>> print(annual_global_avg_61_90)
       Field: long_name=near-surface temperature (ncvar%tmp)
       -----------------------------------------------------
       Data            : long_name=near-surface temperature(long_name=time(30), long_name=latitude(1), long_name=longitude(1)) degrees Celsius
@@ -186,7 +187,7 @@ Calculating and plotting the global average temperature anomalies
       Dimension coords: long_name=time(30) = [1961-07-02 12:00:00, ..., 1990-07-02 12:00:00] gregorian
                       : long_name=latitude(1) = [0.0] degrees_north
                       : long_name=longitude(1) = [0.0] degrees_east
-      >>> temp_clim = annual_global_avg[60:90].collapse('T: mean')
+      >>> temp_clim = annual_global_avg_61_90.collapse('T: mean')
 
 2. The temperature anomaly is then calculated by subtracting these climatological temperature values from the annual global average temperatures and plotting them using `lineplot
 <http://ajheaps.github.io/cf-plot/lineplot.html>`_:
@@ -269,8 +270,8 @@ In this recipe, we will regrid two different datasets with different resolutions
 
       >>> obs = cf.read('observation.nc')
       >>> print(obs)
-      [<CF Field: ncvar%stn(long_name=time(120), long_name=latitude(360), long_name=longitude(720))>,
-       <CF Field: long_name=near-surface temperature(long_name=time(120), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
+      [<CF Field: ncvar%stn(long_name=time(1452), long_name=latitude(360), long_name=longitude(720))>,
+      <CF Field: long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius>]
 
       >>> model = cf.read('model.nc')
       >>> print(model)
@@ -280,7 +281,7 @@ In this recipe, we will regrid two different datasets with different resolutions
 
    .. code-block:: python
 
-      >>> obs_temp = obs.select('long_name=near-surface temperature')
+      >>> obs_temp = obs.select_field('long_name=near-surface temperature')
       >>> print(obs_temp)
       Field: long_name=near-surface temperature (ncvar%tmp)
       -----------------------------------------------------
@@ -314,5 +315,3 @@ In this recipe, we will regrid two different datasets with different resolutions
                       : latitude(144) = [-89.375, ..., 89.375] degrees_north
                       : longitude(192) = [0.9375, ..., 359.0625] degrees_east
       Coord references: grid_mapping_name:latitude_longitude
-
-
