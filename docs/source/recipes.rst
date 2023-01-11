@@ -48,7 +48,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
                       : long_name=latitude(360) = [-89.75, ..., 89.75] degrees_north
                       : long_name=longitude(720) = [-179.75, ..., 179.75] degrees_east
 
-4. Select latitude and longitude dimensions by identities using the `~cf.Field.coordinate` method:
+4. Select latitude and longitude dimensions by identities, with two different techniques, using the `~cf.Field.coordinate` method:
 
    .. code-block:: python
 
