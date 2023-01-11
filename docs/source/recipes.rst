@@ -280,7 +280,7 @@ In this recipe, we will regrid two different datasets with different resolutions
 
    .. code-block:: python
 
-      >>> obs_temp = obs[1]
+      >>> obs_temp = obs.select('long_name=near-surface temperature')
       >>> print(obs_temp)
       Field: long_name=near-surface temperature (ncvar%tmp)
       -----------------------------------------------------
