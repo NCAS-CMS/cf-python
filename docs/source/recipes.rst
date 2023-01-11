@@ -276,7 +276,7 @@ In this recipe, we will regrid two different datasets with different resolutions
       >>> print(model)
       [<CF Field: air_temperature(time(1980), latitude(144), longitude(192)) K>]
 
-3. Select observation and model temperature by index and look at the contents:
+3. Select observation and model temperature fields by identity and index respectively, and look at their contents:
 
    .. code-block:: python
 
