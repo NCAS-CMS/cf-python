@@ -101,7 +101,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
           units = 'degrees_east'
           Data(long_name=longitude(720)) = [-179.75, ..., 179.75] degrees_east
 
-6. Cell bounds are absent in the dimension coordinates which are created using `~cf.DimensionCoordinate.create_bounds` and set using `~cf.DimensionCoordinate.set_bounds` for latitude and longitude:
+6. Latitude and longitude dimension coordinate cell bounds are absent, but they can be created using `~cf.DimensionCoordinate.create_bounds` and set using `~cf.DimensionCoordinate.set_bounds`:
 
    .. code-block:: python
 
