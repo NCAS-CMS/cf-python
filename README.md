@@ -12,9 +12,8 @@ is built on a complete implementation of the CF data model.
 [![Website](https://img.shields.io/website?color=2d8659&down_message=online&label=documentation&up_message=online&url=https%3A%2F%2Fncas-cms.github.io%2Fcf-python%2F)](https://ncas-cms.github.io/cf-python/index.html)
 [![GitHub](https://img.shields.io/github/license/NCAS-CMS/cf-python?color=2d8659)](https://github.com/NCAS-CMS/cf-python/blob/main/LICENSE)
 
-[![Codecov](https://img.shields.io/codecov/c/github/NCAS-CMS/cf-python?color=006666)](https://codecov.io/gh/NCAS-CMS/cf-python)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/NCAS-CMS/cf-python/Run%20test%20suite?color=006666&label=test%20suite%20workflow)](https://github.com/NCAS-CMS/cf-python/actions)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/NCAS-CMS/cf-python/test.yml?branch=main?color=006666&label=test%20suite%20workflow)](https://github.com/NCAS-CMS/cf-python/actions)
+[![Codecov](https://img.shields.io/codecov/c/github/NCAS-CMS/cfdm?color=006666)](https://codecov.io/gh/NCAS-CMS/cfdm)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/NCAS-CMS/cfdm/run-test-suite.yml?branch=main?color=006666&label=test%20suite%20workflow)](https://github.com/NCAS-CMS/cfdm/actions)
 
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu)
 
