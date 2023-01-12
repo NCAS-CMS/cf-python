@@ -3,7 +3,7 @@
 
 .. TODODASK - review this entire section
 
-**Recipes using cf-python**
+**Recipes using cf**
 ===============
 
 ----
