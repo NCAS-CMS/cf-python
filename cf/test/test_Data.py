@@ -153,6 +153,21 @@ class DataTest(unittest.TestCase):
         """Test basic `__init__` cases for Data."""
         # Most __init__ parameters are covered by the various other
         # tests, so this is mainly to check trivial cases.
+        cf.Data(0, "s")
+        cf.Data(array=np.arange(5))
+        cf.Data(source=self.filename)
+
+        d = cf.Data()
+        with self.assertRaises(ValueError):
+            d.ndim
+
+        with self.assertRaises(ValueError):
+            d.get_filenames()
+
+    def test_Data__init__no_args(self):
+        """Test `__init__` with no arg."""
+        # Most __init__ parameters are covered by the various other
+        # tests, so this is mainly to check trivial cases.
         cf.Data()
         cf.Data(0, "s")
         cf.Data(array=np.arange(5))
