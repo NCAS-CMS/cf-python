@@ -854,12 +854,16 @@ class DataTest(unittest.TestCase):
                 "sample_size": 1,
             },
         )
+
         # NaN values aren't 'equal' to e/o, so check call works and that some
         # representative values are as expected, in this case
-        s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
+
         self.assertEqual(len(s5), 16)
         self.assertEqual(s5["minimum"], -2)
-        self.assertEqual(s5["sum"], 3)
+        self.assertEqual(s5["sum"], 0)
         self.assertEqual(s5["sample_size"], 6)
         self.assertTrue(np.isnan(s5["mean"]))
         self.assertTrue(np.isnan(s5["variance"]))  # needs all=True to show up

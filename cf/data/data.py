@@ -9395,8 +9395,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "mid_range",
             "minimum_absolute_value",
             "maximum_absolute_value",
-            "sum",
-            "sum_of_squares",
         )
 
         out = {}
