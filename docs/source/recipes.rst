@@ -253,6 +253,8 @@ In this recipe, we will plot the global mean temperature spatially.
       >>> cfp.con(global_avg, lines=False, title='Global mean surface temperature')
    .. figure:: images/global_mean_map.png
 
+----
+
 **Comparing two datasets with different resolutions using regridding**
 ----------
 
