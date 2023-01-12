@@ -381,9 +381,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self.hardmask = hardmask
 
         if array is None:
-            # Initialise the dask array as `None` to allow basic
-            # inspection without failing
-            self._set_dask(array)
+            # No data has been set
             return
 
         try:
@@ -8315,13 +8313,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dask.array<cf_soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
 
         """
-        if apply_mask_hardness:
+        if apply_mask_hardness and "dask" in self._custom:
             if self.hardmask:
                 self.harden_mask()
             else:
                 self.soften_mask()
 
-        return self._custom["dask"]
+        try:
+            return self._custom["dask"]
+        except KeyError:
+            raise ValueError(f"{self.__class__.__name__} object has no data")
 
     def datum(self, *index):
         """Return an element of the data array as a standard Python
