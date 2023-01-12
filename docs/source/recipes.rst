@@ -317,3 +317,78 @@ In this recipe, we will regrid two different datasets with different resolutions
                       : latitude(144) = [-89.375, ..., 89.375] degrees_north
                       : longitude(192) = [0.9375, ..., 359.0625] degrees_east
       Coord references: grid_mapping_name:latitude_longitude
+
+**Plotting wind vectors overlaid on precipitation data**
+----------
+
+In this recipe, we will plot northward and eastward wind components over precipitation data.
+
+1. Import cf-python and cf-plot:
+
+   .. code-block:: python
+
+      >>> import cf
+      >>> import cfplot as cfp
+
+2. Read the field constructs using `~cf.read` function:
+
+   .. code-block:: python
+
+      >>> f1 = cf.read('northward.nc')
+      >>> print(f1)
+      [<CF Field: northward_wind(time(1980), latitude(144), longitude(192)) m s-1>]
+      
+      >>> f2 = cf.read('eastward.nc')
+      >>> print(f2)
+      [<CF Field: eastward_wind(time(1980), latitude(144), longitude(192)) m s-1>]
+
+      >>> f3 = cf.read('monthly_precipitation.nc')
+      >>> print(f3)
+      [<CF Field: long_name=precipitation(long_name=time(1452), latitude(144), longitude(192)) mm/month>]
+
+3. Select near surface temperature by index and look at its contents:
+
+   .. code-block:: python
+
+      >>> v = f1[0]
+      >>> print(v)
+      Field: northward_wind (ncvar%vas)
+      ---------------------------------
+      Data            : northward_wind(time(1980), latitude(144), longitude(192)) m s-1
+      Cell methods    : area: time(1980): mean
+      Dimension coords: time(1980) = [1850-01-16 00:00:00, ..., 2014-12-16 00:00:00] 360_day
+                      : latitude(144) = [-89.375, ..., 89.375] degrees_north
+                      : longitude(192) = [0.0, ..., 358.125] degrees_east
+                      : height(1) = [10.0] m
+
+      >>> u = f2[0]
+      >>> print(u)
+      Field: eastward_wind (ncvar%uas)
+      --------------------------------
+      Data            : eastward_wind(time(1980), latitude(144), longitude(192)) m s-1
+      Cell methods    : area: time(1980): mean
+      Dimension coords: time(1980) = [1850-01-16 00:00:00, ..., 2014-12-16 00:00:00] 360_day
+                      : latitude(144) = [-89.375, ..., 89.375] degrees_north
+                      : longitude(192) = [0.0, ..., 358.125] degrees_east
+                      : height(1) = [10.0] m
+
+      >>> pre = f3[0]
+      >>> print(pre)
+      Field: long_name=precipitation (ncvar%pre)
+      ------------------------------------------
+      Data            : long_name=precipitation(long_name=time(1452), latitude(144), longitude(192)) mm/month
+      Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian
+                      : latitude(144) = [-89.375, ..., 89.375] degrees_north
+                      : longitude(192) = [0.0, ..., 358.125] degrees_east
+
+4. Plot the northward and eastward wind components over precipitation data for June 1995 by creating a subspace (`~cf.Field.subspace`) over a date-time object (`~cf.dt`) using `con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to define the parts of the plot area, which is closed by `gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_, `cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to choose one of the colour maps amongst many available,`levs <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to set the contour levels for precipitation data and `vect <http://ajheaps.github.io/cf-plot/vect.html>`_ is used to plot the wind vectors for June 1995:
+
+   .. code-block:: python
+
+      >>> cfp.gopen()
+      >>> cfp.cscale('precip4_11lev')
+      >>> cfp.levs(step=100)
+      >>> cfp.con(pre.subspace(T=cf.dt('1995-06-16')), lines=False, title = 'June 1995 monthly global precipitation')
+      >>> cfp.vect(u=u.subspace(T=cf.dt('1995-06-16')), v=v.subspace(T=cf.dt('1995-06-16')), key_length=10, scale=35, stride=5)
+      >>> cfp.gclose()
+   .. figure:: images/june1995_preci.png
