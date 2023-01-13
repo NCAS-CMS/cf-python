@@ -395,4 +395,5 @@ In this recipe, we will plot northward and eastward wind components over precipi
       >>> cfp.vect(u=u.subspace(T=cf.dt('1995-06-16')), v=v.subspace(T=cf.dt('1995-06-16')), key_length=10, scale=35, stride=5)
       >>> cfp.gclose()
    .. figure:: images/june1995_preci.png
-
+   
+----
