@@ -187,7 +187,16 @@ Calculating and plotting the global average temperature anomalies
       Dimension coords: long_name=time(30) = [1961-07-02 12:00:00, ..., 1990-07-02 12:00:00] gregorian
                       : long_name=latitude(1) = [0.0] degrees_north
                       : long_name=longitude(1) = [0.0] degrees_east
+
       >>> temp_clim = annual_global_avg_61_90.collapse('T: mean')
+      >>> print(temp_clim)
+      Field: long_name=near-surface temperature (ncvar%tmp)
+      -----------------------------------------------------
+      Data            : long_name=near-surface temperature(long_name=time(1), long_name=latitude(1), long_name=longitude(1)) degrees Celsius
+      Cell methods    : area: mean long_name=time(1): mean
+      Dimension coords: long_name=time(1) = [1976-01-01 12:00:00] gregorian
+                      : long_name=latitude(1) = [0.0] degrees_north
+                      : long_name=longitude(1) = [0.0] degrees_east
 
 2. The temperature anomaly is then calculated by subtracting these climatological temperature values from the annual global average temperatures and plotting them using `lineplot
 <http://ajheaps.github.io/cf-plot/lineplot.html>`_:
@@ -350,7 +359,7 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
       >>> print(f3)
       [<CF Field: long_name=precipitation(long_name=time(1452), latitude(144), longitude(192)) mm/month>]
 
-3. Select near surface temperature by index and look at its contents:
+3. Select wind vectors and precipitation data by index and look at their contents:
 
    .. code-block:: python
 
@@ -389,11 +398,12 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
    .. code-block:: python
 
+      >>> june_95 = cf.year(1995) & cf.month(6)
       >>> cfp.gopen()
       >>> cfp.cscale('precip4_11lev')
       >>> cfp.levs(step=100)
-      >>> cfp.con(pre.subspace(T=cf.dt('1995-06-16')), lines=False, title = 'June 1995 monthly global precipitation')
-      >>> cfp.vect(u=u.subspace(T=cf.dt('1995-06-16')), v=v.subspace(T=cf.dt('1995-06-16')), key_length=10, scale=35, stride=5)
+      >>> cfp.con(pre.subspace(T=june_95), lines=False, title = 'June 1995 monthly global precipitation')
+      >>> cfp.vect(u=u.subspace(T=june_95), v=v.subspace(june_95), key_length=10, scale=35, stride=5)
       >>> cfp.gclose()
    .. figure:: images/june1995_preci.png
    
