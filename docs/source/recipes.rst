@@ -160,7 +160,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
    .. figure:: images/global_mean_temp.png
 
-9. Calculate and plot the annual global mean surface temperature using `lineplot
+9. Calculate and plot the annual global mean surface temperature using `cfplot.lineplot
 <http://ajheaps.github.io/cf-plot/lineplot.html>`_:
 
    .. code-block:: python
@@ -174,7 +174,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 Calculating and plotting the global average temperature anomalies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. The temperature values are averaged for the climatological period of 1961-1990 by defining a subspace within these years using `~cf.wi` query instance over `~cf.Field.subspace` and doing a statistical collapse with the `~cf.Field.collapse` method:
+1. The temperature values are averaged for the climatological period of 1961-1990 by defining a subspace within these years using `cf.wi` query instance over `~cf.Field.subspace` and doing a statistical collapse with the `~cf.Field.collapse` method:
 
    .. code-block:: python
 
@@ -203,6 +203,7 @@ Calculating and plotting the global average temperature anomalies
 
    .. figure:: images/anomaly.png
 
+----
 
 **Plotting global mean temperatures spatially**
 ----------
@@ -246,7 +247,7 @@ In this recipe, we will plot the global mean temperature spatially.
       >>> global_avg = temp.collapse('mean',  axes='long_name=time')
 
 
-5. Plot the global mean surface temperatures using using `con <http://ajheaps.github.io/cf-plot/con.html>`_:
+5. Plot the global mean surface temperatures using using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_:
 
    .. code-block:: python
 
@@ -318,6 +319,8 @@ In this recipe, we will regrid two different datasets with different resolutions
                       : longitude(192) = [0.9375, ..., 359.0625] degrees_east
       Coord references: grid_mapping_name:latitude_longitude
 
+----
+
 **Plotting wind vectors overlaid on precipitation data**
 ----------
 
@@ -381,7 +384,7 @@ In this recipe, we will plot northward and eastward wind components over precipi
                       : latitude(144) = [-89.375, ..., 89.375] degrees_north
                       : longitude(192) = [0.0, ..., 358.125] degrees_east
 
-4. Plot the northward and eastward wind components over precipitation data for June 1995 by creating a subspace (`~cf.Field.subspace`) over a date-time object (`~cf.dt`) using `con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to define the parts of the plot area, which is closed by `gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_, `cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to choose one of the colour maps amongst many available,`levs <http://ajheaps.github.io/cf-plot/levs.html>`_ is used to set the contour levels for precipitation data and `vect <http://ajheaps.github.io/cf-plot/vect.html>`_ is used to plot the wind vectors for June 1995:
+4. Plot the northward and eastward wind components over precipitation data for June 1995 by creating a subspace (`~cf.Field.subspace`) over a date-time object (`cf.dt`) using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to define the parts of the plot area, which is closed by `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_, `cfplot.cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to choose one of the colour maps amongst many available,`cfplot.levs <http://ajheaps.github.io/cf-plot/levs.html>`_ is used to set the contour levels for precipitation data and `cfplot.vect <http://ajheaps.github.io/cf-plot/vect.html>`_ is used to plot the wind vectors for June 1995:
 
    .. code-block:: python
 
@@ -392,3 +395,4 @@ In this recipe, we will plot northward and eastward wind components over precipi
       >>> cfp.vect(u=u.subspace(T=cf.dt('1995-06-16')), v=v.subspace(T=cf.dt('1995-06-16')), key_length=10, scale=35, stride=5)
       >>> cfp.gclose()
    .. figure:: images/june1995_preci.png
+
