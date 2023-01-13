@@ -381,7 +381,7 @@ In this recipe, we will plot northward and eastward wind components over precipi
                       : latitude(144) = [-89.375, ..., 89.375] degrees_north
                       : longitude(192) = [0.0, ..., 358.125] degrees_east
 
-4. Plot the northward and eastward wind components over precipitation data for June 1995 by creating a subspace (`~cf.Field.subspace`) over a date-time object (`~cf.dt`) using `con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to define the parts of the plot area, which is closed by `gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_, `cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to choose one of the colour maps amongst many available,`levs <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to set the contour levels for precipitation data and `vect <http://ajheaps.github.io/cf-plot/vect.html>`_ is used to plot the wind vectors for June 1995:
+4. Plot the northward and eastward wind components over precipitation data for June 1995 by creating a subspace (`~cf.Field.subspace`) over a date-time object (`~cf.dt`) using `con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to define the parts of the plot area, which is closed by `gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_, `cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to choose one of the colour maps amongst many available,`levs <http://ajheaps.github.io/cf-plot/levs.html>`_ is used to set the contour levels for precipitation data and `vect <http://ajheaps.github.io/cf-plot/vect.html>`_ is used to plot the wind vectors for June 1995:
 
    .. code-block:: python
 
