@@ -403,7 +403,8 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
       >>> cfp.cscale('precip4_11lev')
       >>> cfp.levs(step=100)
       >>> cfp.con(pre.subspace(T=june_95), lines=False, title = 'June 1995 monthly global precipitation')
-      >>> cfp.vect(u=u.subspace(T=june_95), v=v.subspace(june_95), key_length=10, scale=35, stride=5)
+      >>> cfp.vect(u=u.subspace(T=june_95), v=v.subspace(T=june_95),
+      ...          key_length=10, scale=35, stride=5)
       >>> cfp.gclose()
    .. figure:: images/june1995_preci.png
    
