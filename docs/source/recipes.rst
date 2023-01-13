@@ -325,7 +325,7 @@ In this recipe, we will regrid two different datasets with different resolutions
 **Plotting wind vectors overlaid on precipitation data**
 ----------
 
-In this recipe, we will plot northward and eastward wind components over precipitation data.
+In this recipe we will plot wind vectors, derived from northward and eastward wind components, over precipitation data.
 
 1. Import cf-python and cf-plot:
 
