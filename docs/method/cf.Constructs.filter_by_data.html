@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Constructs.filter_by_type" href="cf.Constructs.filter_by_type.html" />
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -138,20 +139,20 @@ have a <code class="xref py py-obj docutils literal notranslate"><span class="pr
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>, <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a>,
+<p><a class="reference external" href="https://docs.python.org/3/library/functions.html#filter" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>, <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a>,
 <a class="reference internal" href="cf.Constructs.clear_filters_applied.html#cf.Constructs.clear_filters_applied" title="cf.Constructs.clear_filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.unfilter.html#cf.Constructs.unfilter" title="cf.Constructs.unfilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unfilter</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>todict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
+<dt>todict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return a dictionary of constructs keyed
 by their construct identifiers, instead of a
 <a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> object. This is a faster option.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
 </div>
 </dd>
-<dt>cached: optional</dt><dd><p>If any value other than <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then return <em>cached</em>
+<dt>cached: optional</dt><dd><p>If any value other than <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then return <em>cached</em>
 without selecting any constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
@@ -161,7 +162,7 @@ without selecting any constructs.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
+<dt><a class="reference internal" href="../class/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <em>cached</em></dt><dd><p>The selected constructs, or a cached valued.</p>
 </dd>
 </dl>
 </dd>
@@ -183,10 +184,10 @@ without selecting any constructs.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-13.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -64,12 +64,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -1902,6 +1903,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.CellMeasure.apply_masking.html#cf.CellMeasure.apply_masking">(cf.CellMeasure method)</a>
 </li>
+        <li><a href="method/cf.Count.apply_masking.html#cf.Count.apply_masking">(cf.Count method)</a>
+</li>
         <li><a href="method/cf.Data.apply_masking.html#cf.Data.apply_masking">(cf.Data method)</a>
 </li>
         <li><a href="method/cf.DimensionCoordinate.apply_masking.html#cf.DimensionCoordinate.apply_masking">(cf.DimensionCoordinate method)</a>
@@ -1913,6 +1916,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.apply_masking.html#cf.Field.apply_masking">(cf.Field method)</a>
 </li>
         <li><a href="method/cf.FieldAncillary.apply_masking.html#cf.FieldAncillary.apply_masking">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.apply_masking.html#cf.Index.apply_masking">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.apply_masking.html#cf.List.apply_masking">(cf.List method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.AuxiliaryCoordinate.arccos.html#cf.AuxiliaryCoordinate.arccos">arccos() (cf.AuxiliaryCoordinate method)</a>
@@ -2918,6 +2925,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.CellMeasure.count.html#cf.CellMeasure.count">(cf.CellMeasure method)</a>
 </li>
+        <li><a href="method/cf.Count.count.html#cf.Count.count">(cf.Count method)</a>
+</li>
         <li><a href="method/cf.Data.count.html#cf.Data.count">(cf.Data method)</a>
 </li>
         <li><a href="method/cf.DimensionCoordinate.count.html#cf.DimensionCoordinate.count">(cf.DimensionCoordinate method)</a>
@@ -2929,6 +2938,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.FieldAncillary.count.html#cf.FieldAncillary.count">(cf.FieldAncillary method)</a>
 </li>
         <li><a href="method/cf.FieldList.count.html#cf.FieldList.count">(cf.FieldList method)</a>
+</li>
+        <li><a href="method/cf.Index.count.html#cf.Index.count">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.count.html#cf.List.count">(cf.List method)</a>
 </li>
       </ul></li>
       <li><a href="attribute/cf.Count.count_masked.html#cf.Count.count_masked">count_masked (cf.Count attribute)</a>
@@ -2946,6 +2959,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cf.CellMeasure.count_masked.html#cf.CellMeasure.count_masked">(cf.CellMeasure method)</a>
 </li>
+        <li><a href="method/cf.Count.count_masked.html#cf.Count.count_masked">(cf.Count method)</a>
+</li>
         <li><a href="method/cf.Data.count_masked.html#cf.Data.count_masked">(cf.Data method)</a>
 </li>
         <li><a href="method/cf.DimensionCoordinate.count_masked.html#cf.DimensionCoordinate.count_masked">(cf.DimensionCoordinate method)</a>
@@ -2955,6 +2970,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.Field.count_masked.html#cf.Field.count_masked">(cf.Field method)</a>
 </li>
         <li><a href="method/cf.FieldAncillary.count_masked.html#cf.FieldAncillary.count_masked">(cf.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cf.Index.count_masked.html#cf.Index.count_masked">(cf.Index method)</a>
+</li>
+        <li><a href="method/cf.List.count_masked.html#cf.List.count_masked">(cf.List method)</a>
 </li>
       </ul></li>
       <li><a href="method/cf.CellMethod.create.html#cf.CellMethod.create">create() (cf.CellMethod class method)</a>
@@ -5687,6 +5706,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cf.List.min.html#cf.List.min">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="function/cf.MIN_TOTAL_MEMORY.html#cf.MIN_TOTAL_MEMORY">MIN_TOTAL_MEMORY() (in module cf)</a>
+</li>
+      <li><a href="function/cf.min_total_memory.html#cf.min_total_memory">min_total_memory() (in module cf)</a>
+</li>
       <li><a href="method/cf.AuxiliaryCoordinate.minimum.html#cf.AuxiliaryCoordinate.minimum">minimum() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -8121,10 +8144,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-13.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

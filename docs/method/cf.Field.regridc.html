@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.regrids" href="cf.Field.regrids.html" />
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -188,11 +189,11 @@ call. By default logging is disabled.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>dst: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a></dt><dd><p>The destination grid. Must be one of:</p>
+<dt>dst: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a></dt><dd><p>The destination grid. Must be one of:</p>
 <ul>
 <li><p><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>. The grid is defined by the field
 construct’s domain.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. The grid is defined by a dictionary with
+<li><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. The grid is defined by a dictionary with
 keys <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code> and <code class="docutils literal notranslate"><span class="pre">'longitude'</span></code> whose values
 are with either both 1-d dimension coordinates
 constructs, or both 2-d auxiliary coordinate
@@ -224,7 +225,7 @@ associated loss in performance.</p>
 </li>
 </ul>
 </dd>
-<dt>dst: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a></dt><dd><p>The field containing the new grid or a dictionary with
+<dt>dst: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a></dt><dd><p>The field containing the new grid or a dictionary with
 the axes specifiers as keys referencing dimension
 coordinates.</p>
 </dd>
@@ -241,7 +242,7 @@ is ignored, and its value is set by the
 regrid operator’s parameters.</p>
 </div>
 </dd>
-<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the regridding method. This parameter must be
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the regridding method. This parameter must be
 set unless the new grid is specified by a regridding
 operator, which stores its own method. See the <em>dst</em>
 parameter.</p>
@@ -348,7 +349,7 @@ point will map to more than
 one destination point.</p>
 </td>
 </tr>
-<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p></td>
 <td><p>This is the default and can
 only be used the new grid is
 specified by a regridding
@@ -361,11 +362,11 @@ method.</p></td>
 <p class="admonition-title">Note</p>
 <p>When <em>dst</em> is a regrid operator then the
 <em>method</em> may still be set, but must have the
-value <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or else agree with the
+value <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or else agree with the
 regridding operator’s method.</p>
 </div>
 </dd>
-<dt>use_src_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>For all methods other than ‘nearest_stod’, this must
+<dt>use_src_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>For all methods other than ‘nearest_stod’, this must
 be True as it does not make sense to set it to
 False. For the ‘nearest_stod’ method if it is True
 then points in the result that are nearest to a masked
@@ -379,7 +380,7 @@ unmasked source points.</p>
 set by the regrid operator’s parameters.</p>
 </div>
 </dd>
-<dt>use_dst_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default the mask of the data on the destination
+<dt>use_dst_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default the mask of the data on the destination
 grid is not taken into account when performing
 regridding. If this option is set to True then it is.</p>
 <div class="admonition note">
@@ -389,7 +390,7 @@ regridding. If this option is set to True then it is.</p>
 set by the regrid operator’s parameters.</p>
 </div>
 </dd>
-<dt>fracfield: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If the method of regridding is conservative the
+<dt>fracfield: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If the method of regridding is conservative the
 fraction of each destination grid cell involved in the
 regridding is returned instead of the regridded data
 if this is True. Otherwise this is ignored.</p>
@@ -404,7 +405,7 @@ mask of a slice changes with respect to the previous
 one, so this option allows the user to minimise how
 frequently the mask changes. TODO.</p>
 </dd>
-<dt>ignore_degenerate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>True by default. Instructs ESMF to ignore degenerate
+<dt>ignore_degenerate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>True by default. Instructs ESMF to ignore degenerate
 cells when checking the grids for errors. Regridding
 will proceed and degenerate cells will be skipped, not
 producing a result, when set to True. Otherwise an
@@ -421,10 +422,10 @@ value is set by the regrid operator’s
 parameters.</p>
 </div>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
-<dt>_compute_field_mass: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If this is a dictionary then the field masses of the
+<dt>_compute_field_mass: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>If this is a dictionary then the field masses of the
 source and destination fields are computed and
 returned within the dictionary. The keys of the
 dictionary indicates the lat/long slice of the field
@@ -434,7 +435,7 @@ field construct’s mass. The calculation is only done
 if conservative regridding is being performed. This is
 for debugging purposes.</p>
 </dd>
-<dt>return_operator: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do not perform the regridding, rather
+<dt>return_operator: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do not perform the regridding, rather
 return a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a> instance that defines the
 regridding operation, including the destination grid,
 and which can be used in subsequent calls to
@@ -449,7 +450,7 @@ and which can be used in subsequent calls to
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a></dt><dd><p>The regridded field construct, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a></dt><dd><p>The regridded field construct, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
 operation was in-place, or the regridding operator if
 <em>return_operator</em> is True.</p>
 </dd>
@@ -502,10 +503,10 @@ contained in field <code class="docutils literal notranslate"><span class="pre">
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-13.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

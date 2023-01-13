@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -64,12 +64,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -121,7 +122,7 @@ result is a new field construct with consistent metadata for the
 collapsed values. Collapses are carried with the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>
 method of the field construct.</p>
 <p>By default all axes with size greater than 1 are collapsed completely
-(i.e. to size 1) with a given <a class="reference internal" href="#collapse-methods"><span class="std std-ref">collapse method</span></a>.</p>
+(i.e. to size 1) with a given <a class="reference internal" href="tutorial.html#collapse-methods"><span class="std std-ref">collapse method</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id25">
 <div class="code-block-caption"><span class="caption-text"><em>Find the minimum of the entire data.</em></span><a class="headerlink" href="#id25" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
@@ -332,7 +333,7 @@ result.</p>
 <div class="math notranslate nohighlight">
 \[\mu=\frac{1}{N}\sum_{i=1}^{N}
 x_i\]</div>
-<p>The <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
 with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span>
 is</p>
@@ -349,7 +350,7 @@ values <span class="math notranslate nohighlight">\(x_i\)</span> absoluted is</p
 <div class="math notranslate nohighlight">
 \[\mu_{abs}=\frac{1}{N}
 \sum_{i=1}^{N}|x_i|\]</div>
-<p>The <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
 absoluted with corresponding weights
 <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -382,7 +383,7 @@ unbiased estimate of the variance using
 Bessel’s correction
 (<span class="math notranslate nohighlight">\(s^{2}=s_{N-1}^{2}\)</span>) is given by
 <span class="math notranslate nohighlight">\(ddof=1\)</span>.</p>
-<p>The <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 biased estimate of the variance of
 <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> with
 corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -392,7 +393,7 @@ corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> 
 \sum_{i=1}^{N}
 w_i(x_i -
 \hat{\mu})^{2}\]</div>
-<p>The corresponding <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a> unbiased estimate of
+<p>The corresponding <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a> unbiased estimate of
 the variance is</p>
 <div class="math notranslate nohighlight">
 \[\hat{s}^{2}=\frac{1}{V_{1} -
@@ -409,7 +410,7 @@ opposed to frequency weights.</p>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></p></td>
 <td><p>The standard deviation is the square
 root of the unweighted or
-<a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
+<a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 variance, as defined in this table.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></p></td>
 </tr>
@@ -420,7 +421,7 @@ variance, as defined in this table.</p></td>
 \[RMS=\sqrt{\frac{1}{N}
 \sum_{i=1}^{N}
 x_{i}^2}\]</div>
-<p>The <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
 root mean square of <span class="math notranslate nohighlight">\(N\)</span> values
 <span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights
 <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -1175,8 +1176,8 @@ field construct already in use.</em></span><a class="headerlink" href="#id48" ti
 <span id="id10"></span><h2>Binning operations<a class="headerlink" href="#binning-operations" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a> method of the field construct groups its data into
 bins, where each group is defined by the elements that correspond to
-an <a class="reference internal" href="#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
-representative value. The same <a class="reference internal" href="#collapse-methods"><span class="std std-ref">collapse methods</span></a> and <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighting options</span></a> as
+an <a class="reference internal" href="tutorial.html#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
+representative value. The same <a class="reference internal" href="tutorial.html#collapse-methods"><span class="std std-ref">collapse methods</span></a> and <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighting options</span></a> as
 the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> method are available.</p>
 <p>The result of the binning operation is a field construct whose domain
 axis and dimension coordinate constructs describe the sizes of the
@@ -1379,7 +1380,7 @@ coordinate systems. The interpolation is carried by out using the
 <a class="reference external" href="https://earthsystemmodeling.org/esmpy/">ESMF</a> package, a
 Python interface to the Earth System Modeling Framework regridding
 utility.</p>
-<p>As with <a class="reference internal" href="#statistical-collapses"><span class="std std-ref">statistical collapses</span></a>,
+<p>As with <a class="reference internal" href="tutorial.html#statistical-collapses"><span class="std std-ref">statistical collapses</span></a>,
 regridding may be applied over a subset of the domain axes, and the
 domain axis constructs and coordinate constructs for the non-regridded
 dimensions remain the same.</p>
@@ -1483,7 +1484,7 @@ input at most one source point.</p>
 <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is only available for the ‘X’ and ‘Y’ axes
 simultaneously. All other axes are unchanged. The calculation of the
 regridding weights is based on areas and distances on the surface of
-the sphere, rather in <a class="reference internal" href="#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
+the sphere, rather in <a class="reference internal" href="tutorial.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
 <p>The following combinations of spherical source and destination domain
 coordinate systems are available to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
 <table class="docutils align-default">
@@ -1638,7 +1639,7 @@ construct.</p>
 <section id="cartesian-regridding">
 <span id="id15"></span><h2>Cartesian regridding<a class="headerlink" href="#cartesian-regridding" title="Permalink to this headline">¶</a></h2>
 <p>Cartesian regridding with the <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> method is very
-similar to <a class="reference internal" href="#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
+similar to <a class="reference internal" href="tutorial.html#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
 regridding dimensions are not restricted to the horizontal plane, the
 source and destination domains are assumed to be <a class="reference external" href="https://en.wikipedia.org/wiki/Euclidean_space">Euclidian spaces</a> for the purpose of
 calculating regridding weights, and all dimensions are assumed to be
@@ -1873,7 +1874,7 @@ with corresponding coordinate constructs of size greater than 1 <em>and
 with different coordinate values</em>. In such circumstances, the field
 constructs’ data instances may be operated on directly, bypassing any
 checks on the metadata. See
-<a class="reference internal" href="#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details. <em>(This
+<a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details. <em>(This
 will be made easier in a future release with a new function for
 combining such field constructs.)</em></p>
 <p class="rubric" id="bounds">Bounds</p>
@@ -1947,16 +1948,16 @@ context manager:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care must be taken when combining a construct with a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
 which both of these objects allow themselves to be
 combined with other types:</p>
 <ul class="simple">
 <li><p>If the construct is on the left hand side (LHS) of the
 operation then, as expected, a construct is returned
 whose data is the combination of the original
-construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</p></li>
-<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on the
 LHS) is returned, containing the same data as in the
 first case.</p></li>
@@ -2105,13 +2106,13 @@ example, this will be the case if both operands are field constructs
 with corresponding coordinate constructs of size greater than 1 <em>and
 with different coordinate values</em>. In such circumstances, the field
 constructs’ data instances may be operated on directly, bypassing any
-checks on the metadata. See <a class="reference internal" href="#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a>
+checks on the metadata. See <a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a>
 for more details. <em>(This will be made easier in a future release with
 a new function for combining such field constructs.)</em></p>
 </section>
 <section id="arithmetical-and-relational-operations-with-insufficient-metadata">
 <span id="id22"></span><h2>Arithmetical and relational operations with insufficient metadata<a class="headerlink" href="#arithmetical-and-relational-operations-with-insufficient-metadata" title="Permalink to this headline">¶</a></h2>
-<p>When both operands of a <a class="reference internal" href="#binary-arithmetical-operations"><span class="std std-ref">binary arithmetical</span></a> or <a class="reference internal" href="#relational-operations"><span class="std std-ref">relational</span></a> operation are field constructs then the
+<p>When both operands of a <a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">binary arithmetical</span></a> or <a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operation are field constructs then the
 creation of the mapping of physically compatible dimensions relies on
 there being sufficient metadata. By default, the mapping relies on
 their being “strict” identities for the metadata constructs with
@@ -2135,12 +2136,12 @@ the operation to proceed:</p>
 <ul class="simple">
 <li><p><strong>Option 1:</strong> The operation may applied to the field constructs’
 data instances instead. See
-<a class="reference internal" href="#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details.</p></li>
+<a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details.</p></li>
 <li><p><strong>Option 2:</strong> If the mapping is not possible due to the absence of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code> properties (or <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code> attributes) on metadata
 constructs that are known to correspond, then setting “relaxed
 identities” with the <a class="reference internal" href="function/cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relaxed_identities</span></code></a> function may
-help. Setting relaxed identities to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> allows the <code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code>
+help. Setting relaxed identities to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> allows the <code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code>
 property and netCDF variable name (see the <a class="reference internal" href="tutorial.html#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>), to also be considered when identifying
 constructs.</p></li>
 <li><p><strong>Option 3:</strong> Add more metadata to the field and metadata constructs.</p></li>
@@ -2148,14 +2149,14 @@ constructs.</p></li>
 </section>
 <section id="operating-on-the-field-constructs-data">
 <span id="id23"></span><h2>Operating on the field constructs’ data<a class="headerlink" href="#operating-on-the-field-constructs-data" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="#binary-arithmetical-operations"><span class="std std-ref">Binary arithmetical</span></a> and
-<a class="reference internal" href="#relational-operations"><span class="std std-ref">relational</span></a> operations between may also
+<p><a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">Binary arithmetical</span></a> and
+<a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operations between may also
 be carried out on their data instances, thereby bypassing any
 reference to, or checks on, the metadata constructs. This can be
-useful if there <a class="reference internal" href="#arithmetical-and-relational-operations-with-insufficient-metadata"><span class="std std-ref">insufficient metadata</span></a>
+useful if there <a class="reference internal" href="tutorial.html#arithmetical-and-relational-operations-with-insufficient-metadata"><span class="std std-ref">insufficient metadata</span></a>
 for determining if the two field constructs are compatible; or if the
 domain metadata constructs of the result can not be
-<a class="reference internal" href="#ambiguous-result"><span class="std std-ref">unambiguously defined</span></a>.</p>
+<a class="reference internal" href="tutorial.html#ambiguous-result"><span class="std std-ref">unambiguously defined</span></a>.</p>
 <p>In such cases the data instances may be operated on instead and the
 result then inserted into one of the field constructs, either with the
 <a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method of the field construct, or with
@@ -2509,7 +2510,7 @@ options to</p>
 border, and</p></li>
 <li><p>Control the placement position of the filter window.</p></li>
 </ul>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.9.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating window weights for filtering:</p>
 <div class="literal-block-wrapper docutils container" id="id78">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
@@ -2536,7 +2537,7 @@ convolved values. For example, window weights of <code class="docutils literal n
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and window
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the window weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.9.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method can not, in general, be
@@ -2748,10 +2749,10 @@ derivative wraps around by default.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-13.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
