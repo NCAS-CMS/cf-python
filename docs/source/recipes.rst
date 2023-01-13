@@ -204,6 +204,7 @@ Calculating and plotting the global average temperature anomalies
    .. figure:: images/anomaly.png
 
 ----
+----
 
 **Plotting global mean temperatures spatially**
 ----------
