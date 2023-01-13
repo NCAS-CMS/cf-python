@@ -334,7 +334,7 @@ In this recipe, we will plot northward and eastward wind components over precipi
       >>> import cf
       >>> import cfplot as cfp
 
-2. Read the field constructs using `~cf.read` function:
+2. Read the field constructs using `cf.read` function:
 
    .. code-block:: python
 
