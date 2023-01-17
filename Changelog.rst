@@ -1081,14 +1081,14 @@ version 1.3.2
 
 * Added --build-id to LDFLAGS in umread Makefile, for sake of RPM
   builds (otherwise fails when building debuginfo RPM). Pull request
-  #16, thanks to Klaus Zimmerman.
+  #16, thanks to Klaus Zimmermann.
 * Improved test handling. Pull request #21, thanks to Klaus
-  Zimmerman.
+  Zimmermann.
 * Removed udunits2 database. This removes the modified version of the
   udunits2 database in order to avoid redundancies, possible version
   incompatibilities, and license questions. The modifications are
   instead carried out programmatically in units.py. Pull request #20,
-  thanks to Klaus Zimmerman.
+  thanks to Klaus Zimmermann.
 
 ----
 
