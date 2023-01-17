@@ -575,9 +575,6 @@ Special
    ~cf.List.__str__
    ~cf.List.__array__
    ~cf.List.__data__
-   ~cf.List.__query_set__
-   ~cf.List.__query_wi__
-   ~cf.List.__query_wo__
 
 Deprecated
 ----------

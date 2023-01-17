@@ -752,9 +752,6 @@ Special
    ~cf.Data.__repr__
    ~cf.Data.__setitem__ 
    ~cf.Data.__str__
-   ~cf.Data.__query_set__
-   ~cf.Data.__query_wi__
-   ~cf.Data.__query_wo__
 
 Deprecated
 ----------

@@ -589,9 +589,6 @@ Special
    ~cf.Index.__str__
    ~cf.Index.__array__
    ~cf.Index.__data__
-   ~cf.Index.__query_set__
-   ~cf.Index.__query_wi__
-   ~cf.Index.__query_wo__
 
 Deprecated
 ----------
