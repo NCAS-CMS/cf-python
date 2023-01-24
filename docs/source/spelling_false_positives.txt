@@ -31,11 +31,15 @@ aux
 AuxiliaryCoordinate
 auxiliarycoordinate
 auxs
+azimuthal
 basenames
 bilinear
 Bilinear
 bipole
 bitwise
+blockshape
+blocksize
+Blocksizes
 Bluestein
 bool
 boolean
@@ -89,9 +93,11 @@ cosh
 ctype
 cumsum
 curvilinear
+customisable
 cval
 cyclicity
 Cyclicity
+dask
 dataset
 datasets
 datatype
@@ -110,6 +116,8 @@ delprop
 dev
 Dev
 differenced
+digitize
+digitized
 Dimensionalities
 dimensionality
 dimensioncoordinate
@@ -117,6 +125,7 @@ DimensionCoordinate
 dirname
 div
 djf
+docstring
 docstrings
 domainancillary
 DomainAncillary
@@ -192,6 +201,8 @@ imod
 imul
 indexable
 inf
+inferrable
+init
 initio
 inplace
 instantiation
@@ -203,6 +214,7 @@ ipow
 irshift
 isauxiliary
 isclose
+iscontains
 iscyclic
 isdimension
 isdomainancillary
@@ -226,6 +238,7 @@ Januarys
 Javier
 jja
 kB
+keepdims
 Kinoshita
 Kristian
 kwargs
@@ -245,6 +258,7 @@ Makefile
 mam
 mercator
 metacharacters
+MiB
 Midlatitudes
 Modeling
 mpi
@@ -276,10 +290,17 @@ Nino
 nondimensional
 nonzero
 notPP
+npartitions
+numblocks
+numpy
 onwards
 openmpi
+optimize_graph
 orography
 outerproduct
+parallelisation
+parallelise
+parallelised
 pathjoin
 Pathname
 pdim
@@ -290,7 +311,9 @@ popitem
 pos
 pow
 pre
+priori
 programmatically
+pseudolevels
 py
 radd
 RaggedContiguousArray
@@ -299,6 +322,8 @@ RaggedIndexedContiguousArray
 rd
 rdiv
 readonly
+rechunk
+rechunked
 refs
 regrid
 Regrid
@@ -313,6 +338,7 @@ regrids
 relpath
 repr
 representable
+reshapings
 rfloordiv
 rint
 rlshift
@@ -341,6 +367,7 @@ setmask
 setprop
 sinh
 spatiotemporal
+sqrt
 src
 st
 stderr
@@ -348,8 +375,12 @@ stdout
 stereographic
 stod
 str
+subarray
+subarrays
 subclasses
 submodel
+subsampled
+subsampling
 subspaced
 subspaces
 Subspaces
@@ -384,6 +415,7 @@ udunits
 Udunits
 umread
 umversion
+un
 unadjusted
 unaggregatable
 unary

@@ -15,7 +15,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
     """
 
     def __init__(self, fields=None):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 

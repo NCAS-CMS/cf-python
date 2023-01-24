@@ -168,7 +168,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         init_options=None,
         _use_array=True,
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -253,7 +253,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 .. versionadded:: 3.0.5
 
             source: optional
-                Initialize the data values and metadata (such as
+                Initialise the data values and metadata (such as
                 units, mask hardness, etc.) from the data of
                 *source*. All other arguments, with the exception of
                 *copy*, are ignored.
@@ -269,7 +269,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             copy: `bool`, optional
                 If False then do not deep copy input parameters prior to
-                initialization. By default arguments are deep copied.
+                initialisation. By default arguments are deep copied.
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
@@ -790,7 +790,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Performance**
 
         If the shape of the data is unknown then it is calculated
-        immediately by exectuting all delayed operations.
+        immediately by executing all delayed operations.
 
         . seealso:: `__setitem__`, `__keepdims_indexing__`,
                     `__orthogonal_indexing__`
@@ -3304,7 +3304,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     other, calendar=getattr(self.Units, "calendar", "standard")
                 )
             elif other is None:
-                # Can't sensibly initialize a Data object from a bare
+                # Can't sensibly initialise a Data object from a bare
                 # `None` (issue #281)
                 other = np.array(None, dtype=object)
 
@@ -6664,7 +6664,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             `set`
                 The cyclic axes prior to the change, or the current
-                cylcic axes if no axes are specified.
+                cyclic axes if no axes are specified.
 
         **Examples**
 
@@ -8355,7 +8355,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                      assignment).
 
                      To guarantee that the mask hardness of the
-                     returned dassk array is correct, set the
+                     returned dask array is correct, set the
                      *apply_mask_hardness* parameter to True.
 
         .. versionadded:: TODODASKVER
@@ -9560,7 +9560,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         of the result is identical to the original size of the
         array. Leading size 1 dimensions of these parameters are
         ignored, thereby also ensuring that the shape of the result is
-        identical to the orginal shape of the array.
+        identical to the original shape of the array.
 
         If *condition* is a `Query` object then for the purposes of
         broadcasting, the condition is considered to be that which is
@@ -10400,7 +10400,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         chunks=_DEFAULT_CHUNKS,
     ):
         """Return a new array of given shape and type, without
-        initializing entries.
+        initialising entries.
 
         .. seealso:: `full`, `ones`, `zeros`
 
@@ -10429,7 +10429,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `Data`
-                Array of uninitialized (arbitrary) data of the given
+                Array of uninitialised (arbitrary) data of the given
                 shape and dtype.
 
         **Examples**
@@ -10437,11 +10437,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data.empty((2, 2))
         >>> print(d.array)
         [[ -9.74499359e+001  6.69583040e-309],
-         [  2.13182611e-314  3.06959433e-309]]         #uninitialized
+         [  2.13182611e-314  3.06959433e-309]]         #uninitialised
 
         >>> d = cf.Data.empty((2,), dtype=bool)
         >>> print(d.array)
-        [ False  True]                                 #uninitialized
+        [ False  True]                                 #uninitialised
 
         """
         dx = da.empty(shape, dtype=dtype, chunks=chunks)
