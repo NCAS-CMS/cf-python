@@ -62,9 +62,9 @@ work is underway to replace this functionality with a dask
 implementation.)
 
 
-**Visualization**
+**Visualisation**
 
-Powerful, flexible, and very simple to produce visualizations of field
+Powerful, flexible, and very simple to produce visualisations of field
 constructs uses the `cfplot` package
 (http://ajheaps.github.io/cf-plot), that is automatically installed
 along with with `cf`.

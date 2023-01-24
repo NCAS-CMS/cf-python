@@ -75,7 +75,7 @@ class PropertiesData(Properties):
     def __data__(self):
         """Returns a new reference to the data.
 
-        Allows the construct to initialize a `Data` object.
+        Allows the construct to initialise a `Data` object.
 
         :Returns:
 
@@ -1549,7 +1549,7 @@ class PropertiesData(Properties):
         """The units CF property.
 
         The units of the data. The value of the `units` property is a
-        string that can be recognized by UNIDATA's Udunits package
+        string that can be recognised by UNIDATA's Udunits package
         (http://www.unidata.ucar.edu/software/udunits). See
         http://cfconventions.org/latest.html for details.
 
