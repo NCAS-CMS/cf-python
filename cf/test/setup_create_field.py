@@ -88,7 +88,12 @@ class create_fieldTest(unittest.TestCase):
             )
         )
         aux4.standard_name = "greek_letters"
-        aux4[0] = cf.masked
+
+        # ------------------------------------------------------------
+        # TODO: Re-instate this line when
+        #       https://github.com/dask/dask/pull/9627 is resolved
+        # ------------------------------------------------------------
+        # aux4[0] = cf.masked
 
         # Cell measures
         msr0 = cf.CellMeasure(
