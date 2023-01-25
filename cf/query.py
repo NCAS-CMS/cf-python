@@ -188,7 +188,7 @@ class Query:
 
     @_deprecated_kwarg_check("exact", version="3.0.0", removed_at="4.0.0")
     def __init__(self, operator, value, units=None, attr=None, exact=True):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -857,32 +857,47 @@ class Query:
         <CF Query: (ge 3000 m)>
 
         """
+
+        def get_and_set_value_units(v, u):
+            """Helper method to simplify setting of specified units."""
+            v_units = getattr(v, "Units", None)
+            if v_units is None:  # Value 'v' has no units
+                v = Data(v, units=u)
+            else:  # Value 'v' already has units
+                try:
+                    v = v.copy()
+                    v.Units = u
+                except ValueError:
+                    raise ValueError(
+                        f"Units {u!r} are not equivalent to "
+                        f"query condition units {v_units!r}"
+                    )
+
+            return v
+
         units = Units(units)
 
         compound = self._compound
         if compound:
             for r in compound:
                 r.set_condition_units(units)
-
             return
 
         value = self._value
         if value is None:
             return
 
-        value_units = getattr(value, "Units", None)
-        if value_units is None:
-            # Value has no units
-            value = Data(value, units=units)
+        if self.operator in ("wi", "wo", "set"):
+            # Value is a sequence of things that may or may not
+            # already have units
+            new_values = []
+            for v in value:
+                v = get_and_set_value_units(v, units)
+                new_values.append(v)
+
+            value = new_values
         else:
-            # Value already has units
-            try:
-                value.Units = units
-            except ValueError:
-                raise ValueError(
-                    f"Units {units!r} are not equivalent to "
-                    f"query condition units {value_units!r}"
-                )
+            value = get_and_set_value_units(value, units)
 
         self._value = value
 
@@ -897,12 +912,18 @@ class Query:
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "exact", "Use 're.compile' objects instead."
+            self,
+            "exact",
+            "Use 're.compile' objects instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def equivalent(self, other, traceback=False):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_FUNCTION(self, "equivalent")
+        _DEPRECATION_ERROR_FUNCTION(
+            self, "equivalent", version="3.0.0", removed_at="4.0.0"
+        )
 
 
 # --------------------------------------------------------------------
@@ -2174,7 +2195,10 @@ def dtge(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtge", "Use 'cf.ge' with a datetime object value instead."
+        "dtge",
+        "Use 'cf.ge' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2185,7 +2209,10 @@ def dtgt(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtgt", "Use 'cf.gt' with a datetime object value instead."
+        "dtgt",
+        "Use 'cf.gt' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2196,7 +2223,10 @@ def dtle(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtle", "Use 'cf.le' with a datetime object value instead."
+        "dtle",
+        "Use 'cf.le' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2207,7 +2237,10 @@ def dtlt(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtlt", "Use 'cf.lt' with a datetime object value instead."
+        "dtlt",
+        "Use 'cf.lt' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2218,7 +2251,10 @@ def dteq(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dteq", "Use 'cf.eq' with a datetime object value instead."
+        "dteq",
+        "Use 'cf.eq' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2229,7 +2265,10 @@ def dtne(*args, **kwargs):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "dtne", "Use 'cf.ne' with a datetime object value instead."
+        "dtne",
+        "Use 'cf.ne' with a datetime object value instead.",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover
 
 
@@ -2240,5 +2279,8 @@ def contain(value, units=None, attr=None):
 
     """
     _DEPRECATION_ERROR_FUNCTION(
-        "cf.contain", "Use function 'cf.contains' instead"
+        "cf.contain",
+        "Use function 'cf.contains' instead",
+        version="3.0.0",
+        removed_at="4.0.0",
     )  # pragma: no cover

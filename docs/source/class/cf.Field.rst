@@ -247,6 +247,7 @@ Miscellaneous data operations
    ~cf.Field.get_original_filenames
    ~cf.Field.close
    ~cf.Field.chunk
+   ~cf.Field.persist
  
 Metadata constructs
 -------------------
@@ -352,6 +353,7 @@ Miscellaneous
    ~cf.Field.convert
    ~cf.Field.creation_commands
    ~cf.Field.radius
+   ~cf.Field.to_memory
    ~cf.Field.uncompress
    ~cf.Field.concatenate
    ~cf.Field.section
@@ -488,6 +490,7 @@ Subspacing
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.Field.to_dask_array
    ~cf.Field.__getitem__
    ~cf.Field.subspace
    ~cf.Field.indices
@@ -965,6 +968,7 @@ Deprecated
    ~cf.Field.ismeasure
    ~cf.Field.item_axes
    ~cf.Field.key_item
+   ~cf.Field.mask_invalid
    ~cf.Field.name
    ~cf.Field.new_identifier
    ~cf.Field.remove_axes

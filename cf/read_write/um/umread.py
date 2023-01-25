@@ -491,7 +491,7 @@ class UMField:
         select=None,
         **kwargs,
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 

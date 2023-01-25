@@ -1272,6 +1272,9 @@ class PropertiesDataBounds(PropertiesData):
     def close(self):
         """Close all files referenced by the construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically re-opened if its
         contents are subsequently required.
 
@@ -1286,15 +1289,13 @@ class PropertiesDataBounds(PropertiesData):
         >> c.close()
 
         """
-        super().close()
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.close()
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
@@ -3707,6 +3708,52 @@ class PropertiesDataBounds(PropertiesData):
 
         return bounds.period(*value, **config)
 
+    @_inplace_enabled(default=False)
+    def persist(self, bounds=True, inplace=False):
+        """Persist the underlying dask array into memory.
+
+        This turns an underlying lazy dask array into a equivalent
+        chunked dask array, but now with the results fully computed.
+
+        `persist` is particularly useful when using distributed
+        systems, because the results will be kept in distributed
+        memory, rather than returned to the local process.
+
+        **Performance**
+
+        `persist` causes all delayed operations to be computed.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            bounds: `bool`, optional
+                If False then do not persist any bounds data. By
+                default any bound data are also persisted.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        **Examples**
+
+        >>> g = f.persist()
+
+        """
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "persist",
+            bounds=bounds,
+            inplace=inplace,
+        )
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def rint(self, bounds=True, inplace=False, i=False):
@@ -3855,14 +3902,22 @@ class PropertiesDataBounds(PropertiesData):
         """Deprecated at version 3.0.0, use method `has_bounds`
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "hasbounds", "Use method 'has_bounds' instead."
+            self,
+            "hasbounds",
+            "Use method 'has_bounds' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         """Deprecated at version 3.0.0, use method `insert_dimension`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "expand_dims", "Use method 'insert_dimension' instead."
+            self,
+            "expand_dims",
+            "Use method 'insert_dimension' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def files(self):

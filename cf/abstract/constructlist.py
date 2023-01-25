@@ -10,6 +10,7 @@ from ..functions import (
     _DEPRECATION_ERROR,
     _DEPRECATION_ERROR_DICT,
     _DEPRECATION_ERROR_KWARGS,
+    _DEPRECATION_ERROR_METHOD,
 )
 from ..mixin_container import Container
 
@@ -47,7 +48,7 @@ class ConstructList(list, Container, cfdm.Container):
     """
 
     def __init__(self, constructs=None):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -244,8 +245,8 @@ class ConstructList(list, Container, cfdm.Container):
     def close(self):
         """Close all files referenced by each construct in the list.
 
-        Note that a closed file will be automatically reopened if its
-        contents are subsequently required.
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
 
         :Returns:
 
@@ -256,8 +257,13 @@ class ConstructList(list, Container, cfdm.Container):
         >>> f.close()
 
         """
-        for f in self:
-            f.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     def count(self, value):
         """Return the number of occurrences of value.
@@ -491,6 +497,8 @@ class ConstructList(list, Container, cfdm.Container):
                 "equals",
                 {"ignore": ignore},
                 "Use keyword 'ignore_properties' instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         # Check for object identity
@@ -696,6 +704,8 @@ class ConstructList(list, Container, cfdm.Container):
                 "Use methods 'select_by_units', 'select_by_construct', "
                 "'select_by_properties', 'select_by_naxes', 'select_by_rank' "
                 "instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if identities and isinstance(identities[0], (list, tuple, set)):
@@ -703,7 +713,9 @@ class ConstructList(list, Container, cfdm.Container):
                 "Use of a {!r} for identities has been deprecated. Use the "
                 "* operator to unpack the arguments instead.".format(
                     identities[0].__class__.__name__
-                )
+                ),
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         for i in identities:
@@ -711,7 +723,9 @@ class ConstructList(list, Container, cfdm.Container):
                 _DEPRECATION_ERROR_DICT(
                     "Use methods 'select_by_units', 'select_by_construct', "
                     "'select_by_properties', 'select_by_naxes', "
-                    "'select_by_rank' instead."
+                    "'select_by_rank' instead.",
+                    version="3.0.0",
+                    removed_at="4.0.0",
                 )  # pragma: no cover
 
             if isinstance(i, str) and ":" in i:
@@ -726,7 +740,9 @@ class ConstructList(list, Container, cfdm.Container):
                         "The identity format {!r} has been deprecated at "
                         "version 3.0.0. Try {!r} instead.".format(
                             i, i.replace(":", "=", 1)
-                        )
+                        ),
+                        version="3.0.0",
+                        removed_at="4.0.0",
                     )  # pragma: no cover
 
         return self.select_by_identity(*identities)

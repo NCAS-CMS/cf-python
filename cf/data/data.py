@@ -31,7 +31,6 @@ from ..functions import (
     atol,
     default_netCDF_fillvals,
     free_memory,
-    log_level,
     parse_indices,
     rtol,
 )
@@ -54,7 +53,7 @@ from .dask_utils import (
     cf_where,
 )
 from .mixin import DataClassDeprecationsMixin
-from .utils import (  # is_small,; is_very_small,
+from .utils import (
     YMDhms,
     _is_numeric_dtype,
     conform_units,
@@ -168,7 +167,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         init_options=None,
         _use_array=True,
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -253,7 +252,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 .. versionadded:: 3.0.5
 
             source: optional
-                Initialize the data values and metadata (such as
+                Initialise the data values and metadata (such as
                 units, mask hardness, etc.) from the data of
                 *source*. All other arguments, with the exception of
                 *copy*, are ignored.
@@ -269,7 +268,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             copy: `bool`, optional
                 If False then do not deep copy input parameters prior to
-                initialization. By default arguments are deep copied.
+                initialisation. By default arguments are deep copied.
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
@@ -336,12 +335,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data(tuple('fly'))
 
         """
-        if array is None and source is None:  # don't create no/empty Data
-            raise ValueError(
-                "Can't create empty data: some input data or datum must be "
-                "provided via the 'source' or 'array' parameters."
-            )
-
         if source is None and isinstance(array, self.__class__):
             source = array
 
@@ -387,6 +380,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self.hardmask = hardmask
 
         if array is None:
+            # No data has been set
             return
 
         try:
@@ -419,14 +413,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             compressed = ""
 
         if compressed:
-            # The input data is compressed
-            if chunks != _DEFAULT_CHUNKS:
-                # TODODASK: Is this restriction necessary?
-                raise ValueError(
-                    "Can't define chunks for compressed input arrays. "
-                    "Consider rechunking after initialisation."
-                )
-
             if init_options.get("from_array"):
                 raise ValueError(
                     "Can't define 'from_array' initialisation options "
@@ -441,8 +427,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except AttributeError:
                     pass
 
-            # Save the input compressed array, as this will contain
-            # extra information, such as a count or index variable.
+        if self._is_abstract_Array_subclass(array):
+            # Save the input array in case it's useful later. For
+            # compressed input arrays this will contain extra information,
+            # such as a count or index variable.
             self._set_Array(array)
 
         # Cast the input data as a dask array
@@ -453,9 +441,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
-        array = to_dask(
-            array, chunks, default_chunks=_DEFAULT_CHUNKS, **kwargs
-        )
+        array = to_dask(array, chunks, **kwargs)
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
@@ -803,7 +789,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Performance**
 
         If the shape of the data is unknown then it is calculated
-        immediately by exectuting all delayed operations.
+        immediately by executing all delayed operations.
 
         . seealso:: `__setitem__`, `__keepdims_indexing__`,
                     `__orthogonal_indexing__`
@@ -1016,6 +1002,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         shape = self.shape
 
+        ancillary_mask = ()
+        try:
+            arg = indices[0]
+        except (IndexError, TypeError):
+            pass
+        else:
+            if isinstance(arg, str) and arg == "mask":
+                # The indices include an ancillary mask that defines
+                # elements which are protected from assignment
+                original_self = self.copy()
+                ancillary_mask = indices[1]
+                indices = indices[2:]
+
         indices, roll = parse_indices(
             shape,
             indices,
@@ -1105,6 +1104,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if roll:
             shifts = [-shift for shift in shifts]
             self.roll(shift=shifts, axis=roll_axes, inplace=True)
+
+        # Reset the original array values at locations that are
+        # excluded from the assignment by True values in any ancillary
+        # masks
+        if ancillary_mask:
+            indices = tuple(indices)
+            original_self = original_self[indices]
+            reset = self[indices]
+            for mask in ancillary_mask:
+                reset.where(mask, original_self, inplace=True)
+
+            self[indices] = reset
 
         # Remove elements made invalid by updating the `dask` array
         self._conform_after_dask_update()
@@ -1786,6 +1797,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx)
         d.override_units(_units_None, inplace=True)
 
+        # More elegant to handle 'delete_bins' in cf- rather than Dask- space
+        # i.e. using cf.where with d in-place rather than da.where with dx
+        # just after the digitize operation above (cf.where already applies
+        # equivalent logic element-wise).
+        if delete_bins:
+            for n, db in enumerate(delete_bins):
+                db -= n
+                d.where(d == db, np.ma.masked, None, inplace=True)
+                # x = d - 1 rather than = d here since there is one fewer bin
+                # therefore we need to adjust to the new corresponding indices
+                d.where(d > db, d - 1, None, inplace=True)
+
         if return_bins:
             if two_d_bins is None:
                 two_d_bins = np.empty((bins.size - 1, 2), dtype=bins.dtype)
@@ -1998,10 +2021,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> import cf
         >>> a = np.arange(101)
         >>> dx = da.from_array(a, chunks=10)
-        >>> da.percentile(dx, [40, 60]).compute()
+        >>> da.percentile(dx, 40).compute()
         array([40.36])
         >>> np.percentile(a, 40)
-        array([40.])
+        40.0
         >>> d = cf.Data(a, chunks=10)
         >>> d.percentile(40).array
         array([40.])
@@ -2255,7 +2278,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        TODODASKDOCS
+        >>> e = d.persist()
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
@@ -2265,118 +2288,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx, conform=False)
 
         return d
-
-    def can_compute(self, functions=None, log_levels=None, override=False):
-        """Whether or not it is acceptable to compute the data.
-
-        If the data is explicitly requested to be computed (as would
-        be the case when writing to disk, or accessing the `array`
-        attribute) then computation will always occur.
-
-        This method is meant for cases when compution is desirable but
-        not essential, by providing an assessment of whether
-        computation would require too excessive resources (time,
-        memory, and CPU), if carried out.
-
-        By default it is considered acceptable to compute the data if
-        the computed array fits in available memory and any of the
-        following are true, assessed in the order given up to the
-        first criterion satisfied:
-
-        1. The `force_compute` attribute is True.
-
-        2. The current log level is ``'DEBUG'``.
-
-        3. Any computations stored after initialisation consist only
-           subspace, concatenate, reshape, and copy functions.
-
-        .. versionadded:: TODODASKVER
-
-        .. seealso:: `force_compute`, `cf.log_level`
-
-        :Parameters:
-
-            functions: (sequence of) `str`, optional
-                Include the specified functions, in addition to the
-                defaults, as those that will allow
-                computation. Functions are identified by matching the
-                beginnings of the key names in the dask graph layers,
-                found with `dask.layers` attribute of the dask
-                array. See the *override* parameter.
-
-            log_level: (sequence of) `str`, optional
-                Include the specified log levels, in addition to the
-                default, as those that will allow compuitation. See
-                the *override* parameter.
-
-            override : `bool`, optional
-                If True then only compute the data for the given
-                *log_levels* (if any) and the given *functions* (if
-                any), ignoring the defaults. If the `force_compute`
-                attribute is True then computation occurs in any case.
-
-        :Returns:
-
-            `bool`
-                True if acceptable to compute the data, otherwise
-                False.
-
-        """
-        # TODODASKAPI - this method is premature - needs thinking about as part
-        # of the wider resource management issue
-
-        # TODODASK: Always return True for now, to aid development.
-        return True
-
-        dx = self.to_dask_array()
-
-        # TODODASK fits in memory.
-
-        # 1 Force compute
-        if self.force_compute:
-            return True
-
-        # 2 Log levels
-        if override:
-            allowed_log_levels = ()
-            allowed_functions = ()
-        else:
-            allowed_log_levels = ("DEBUG",)
-            allowed_functions = (
-                "array-",
-                "getitem-",
-                "copy-",
-                "concatenate-",
-                "reshape-",
-            )
-
-        if log_levels:
-            if isinstance(log_levels, str):
-                log_levels = (log_levels,)
-
-            allowed_log_levels += tuple(log_levels)
-
-        if log_level().value in allowed_log_levels:
-            return True
-
-        # 3 Stored computations
-        layers = dx.dask.layers
-        if len(layers) == 1:
-            # No stored computations after initialisation
-            return True
-
-        if functions:
-            if isinstance(functions, str):
-                functions = (functions,)
-
-            allowed_functions += tuple(allowed_functions)
-
-        return all(
-            [
-                any([key.startswith(x) for x in allowed_functions])
-                for key in tuple(layers)[1:]
-            ]
-        )
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -3392,7 +3303,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     other, calendar=getattr(self.Units, "calendar", "standard")
                 )
             elif other is None:
-                # Can't sensibly initialize a Data object from a bare
+                # Can't sensibly initialise a Data object from a bare
                 # `None` (issue #281)
                 other = np.array(None, dtype=object)
 
@@ -4284,23 +4195,22 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def chunks(self):
         """The chunk sizes for each dimension.
 
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `npartitions`, `numblocks`, `rechunk`
+
         **Examples**
 
-        >>> d = cf.Data.ones((4, 5), chunks=(2, 4))
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
         >>> d.chunks
-        ((2, 2), (4, 1))
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
 
         """
         return self.to_dask_array().chunks
-
-    @property
-    def force_compute(self):
-        """TODODASKDOCS See also config settings."""
-        return self._custom.get("force_compute", False)
-
-    @force_compute.setter
-    def force_compute(self, value):
-        self._custom["force_compute"] = bool(value)
 
     # ----------------------------------------------------------------
     # Attributes
@@ -4613,6 +4523,48 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         return dx.ndim
+
+    @property
+    def npartitions(self):
+        """The total number of chunks.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `chunks`, `numblocks`, `rechunk`
+
+        **Examples**
+
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        return self.to_dask_array().npartitions
+
+    @property
+    def numblocks(self):
+        """The number of chunks along each dimension.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `chunks`, `npartitions`, `rechunk`
+
+        **Examples**
+
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        return self.to_dask_array().numblocks
 
     @property
     def shape(self):
@@ -5666,6 +5618,77 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         return self
+
+    def get_filenames(self):
+        """The names of files containing parts of the data array.
+
+        Returns the names of any files that are required to deliver
+        the computed data array. This list may contain fewer names
+        than the collection of file names that defined the data when
+        it was first instantiated, as could be the case after the data
+        has been subspaced.
+
+        **Implementation**
+
+        A `dask` chunk that contributes to the computed array is
+        assumed to reference data within a file if that chunk's array
+        object has a callable `get_filename` method, the output of
+        which is added to the returned `set`.
+
+        :Returns:
+
+            `set`
+                The file names. If no files are required to compute
+                the data then an empty `set` is returned.
+
+        **Examples**
+
+        >>> d = cf.Data.full((5, 8), 1, chunks=4)
+        >>> d.get_filenames()
+        set()
+
+        >>> f = cf.example_field(0)
+        >>> cf.write(f, "file_A.nc")
+        >>> cf.write(f, "file_B.nc")
+
+        >>> a = cf.read("file_A.nc", chunks=4)[0].data
+        >>> a += 999
+        >>> b = cf.read("file_B.nc", chunks=4)[0].data
+        >>> c = cf.Data(b.array, units=b.Units, chunks=4)
+        >>> print(a.shape, b.shape, c.shape)
+        (5, 8) (5, 8) (5, 8)
+        >>> d = cf.Data.concatenate([a, a.copy(), b, c], axis=1)
+        >>> print(d.shape)
+        (5, 32)
+
+        >>> d.get_filenames()
+        {'file_A.nc', 'file_B.nc'}
+        >>> d[:, 2:7].get_filenames()
+        {'file_A.nc'}
+        >>> d[:, 2:14].get_filenames()
+        {'file_A.nc', 'file_B.nc'}
+        >>> d[:, 2:20].get_filenames()
+        {'file_A.nc', 'file_B.nc'}
+        >>> d[:, 2:30].get_filenames()
+        {'file_A.nc', 'file_B.nc'}
+        >>> d[:, 29:30].get_filenames()
+        set()
+        >>> d[2, 3] = -99
+        >>> d[2, 3].get_filenames()
+        {'file_A.nc'}
+
+        """
+        from dask.base import collections_to_dsk
+
+        out = set()
+        dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
+        for a in dsk.values():
+            try:
+                out.add(a.get_filename())
+            except AttributeError:
+                pass
+
+        return out
 
     def get_units(self, default=ValueError()):
         """Return the units.
@@ -6778,7 +6801,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             `set`
                 The cyclic axes prior to the change, or the current
-                cylcic axes if no axes are specified.
+                cyclic axes if no axes are specified.
 
         **Examples**
 
@@ -7895,33 +7918,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def first_element(self):
         """Return the first element of the data as a scalar.
 
-        If the value is deemed too expensive to compute then a
-        `ValueError` is raised instead. It is considered acceptable to
-        compute the value in the following circumstances:
-
-        * The `force_compute` attribute is True.
-
-        * The current log level is ``'DEBUG'``.
-
-        * The stored computations consist only of initialisation,
-          subspace or copy functions.
-
-        .. versionadded:: TODODASKVER
-
         .. seealso:: `last_element`, `second_element`
 
         :Returns:
 
-                The first element of the data
+                The first element of the data.
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2], [3, 4]])
-        >>> d.first_element()
-        1
-        >>> d[0, 0] = cf.masked
-        >>> d.first_element()
-        masked
+        >>> d = {{package}}.{{class}}(9.0)
+        >>> x = d.first_element()
+        >>> print(x, type(x))
+        9.0 <class 'float'>
+
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> x = d.first_element()
+        >>> print(x, type(x))
+        1 <class 'int'>
+        >>> d[0, 0] = {{package}}.masked
+        >>> y = d.first_element()
+        >>> print(y, type(y))
+        -- <class 'numpy.ma.core.MaskedConstant'>
+
+        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> x = d.first_element()
+        >>> print(x, type(x))
+        foo <class 'str'>
 
         """
         try:
@@ -7934,33 +7956,27 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def second_element(self):
         """Return the second element of the data as a scalar.
 
-        If the value is deemed too expensive to compute then a
-        `ValueError` is raised instead. It is considered acceptable to
-        compute the value in the following circumstances:
-
-        * The `force_compute` attribute is True.
-
-        * The current log level is ``'DEBUG'``.
-
-        * The stored computations consist only of initialisation,
-          subspace or copy functions.
-
-        .. versionadded:: TODODASKVER
-
-        .. seealso:: `last_element`, `first_element`
+        .. seealso:: `first_element`, `last_element`
 
         :Returns:
 
-                The second element of the data
+                The second element of the data.
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2], [3, 4]])
-        >>> d.second_element()
-        2
-        >>> d[0, 1] = cf.masked
-        >>> d.second_element()
-        masked
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> x = d.second_element()
+        >>> print(x, type(x))
+        2 <class 'int'>
+        >>> d[0, 1] = {{package}}.masked
+        >>> y = d.second_element()
+        >>> print(y, type(y))
+        -- <class 'numpy.ma.core.MaskedConstant'>
+
+        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> x = d.second_element()
+        >>> print(x, type(x))
+        bar <class 'str'>
 
         """
         try:
@@ -7973,33 +7989,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def last_element(self):
         """Return the last element of the data as a scalar.
 
-        If the value is deemed too expensive to compute then a
-        `ValueError` is raised instead. It is considered acceptable to
-        compute the value in the following circumstances:
-
-        * The `force_compute` attribute is True.
-
-        * The current log level is ``'DEBUG'``.
-
-        * The stored computations consist only of initialisation,
-          subspace or copy functions.
-
-        .. versionadded:: TODODASKVER
-
         .. seealso:: `first_element`, `second_element`
 
         :Returns:
 
-                The last element of the data
+                The last element of the data.
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2], [3, 4]])
-        >>> d.last_element()
-        4
-        >>> d[1, 1] = cf.masked
-        >>> d.last_element()
-        masked
+        >>> d = {{package}}.{{class}}(9.0)
+        >>> x = d.last_element()
+        >>> print(x, type(x))
+        9.0 <class 'float'>
+
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> x = d.last_element()
+        >>> print(x, type(x))
+        4 <class 'int'>
+        >>> d[-1, -1] = {{package}}.masked
+        >>> y = d.last_element()
+        >>> print(y, type(y))
+        -- <class 'numpy.ma.core.MaskedConstant'>
+
+        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> x = d.last_element()
+        >>> print(x, type(x))
+        bar <class 'str'>
 
         """
         try:
@@ -8477,7 +8492,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                      assignment).
 
                      To guarantee that the mask hardness of the
-                     returned dassk array is correct, set the
+                     returned dask array is correct, set the
                      *apply_mask_hardness* parameter to True.
 
         .. versionadded:: TODODASKVER
@@ -8510,13 +8525,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dask.array<cf_soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
 
         """
-        if apply_mask_hardness:
+        if apply_mask_hardness and "dask" in self._custom:
             if self.hardmask:
                 self.harden_mask()
             else:
                 self.soften_mask()
 
-        return self._custom["dask"]
+        try:
+            return self._custom["dask"]
+        except KeyError:
+            raise ValueError(f"{self.__class__.__name__} object has no data")
 
     def datum(self, *index):
         """Return an element of the data array as a standard Python
@@ -9679,7 +9697,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         of the result is identical to the original size of the
         array. Leading size 1 dimensions of these parameters are
         ignored, thereby also ensuring that the shape of the result is
-        identical to the orginal shape of the array.
+        identical to the original shape of the array.
 
         If *condition* is a `Query` object then for the purposes of
         broadcasting, the condition is considered to be that which is
@@ -10519,7 +10537,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         chunks=_DEFAULT_CHUNKS,
     ):
         """Return a new array of given shape and type, without
-        initializing entries.
+        initialising entries.
 
         .. seealso:: `full`, `ones`, `zeros`
 
@@ -10548,7 +10566,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `Data`
-                Array of uninitialized (arbitrary) data of the given
+                Array of uninitialised (arbitrary) data of the given
                 shape and dtype.
 
         **Examples**
@@ -10556,11 +10574,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data.empty((2, 2))
         >>> print(d.array)
         [[ -9.74499359e+001  6.69583040e-309],
-         [  2.13182611e-314  3.06959433e-309]]         #uninitialized
+         [  2.13182611e-314  3.06959433e-309]]         #uninitialised
 
         >>> d = cf.Data.empty((2,), dtype=bool)
         >>> print(d.array)
-        [ False  True]                                 #uninitialized
+        [ False  True]                                 #uninitialised
 
         """
         dx = da.empty(shape, dtype=dtype, chunks=chunks)

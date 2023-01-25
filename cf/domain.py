@@ -129,6 +129,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def close(self):
         """Close all files referenced by the domain construct.
 
+        Deprecated at version TODODASKVER. All files are now
+        automatically closed when not being accessed.
+
         Note that a closed file will be automatically reopened if its
         contents are subsequently required.
 
@@ -141,9 +144,13 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         >>> d.close()
 
         """
-        # TODODASK - is this still needed?
-
-        self.constructs.close()
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "close",
+            "All files are now automatically closed when not being accessed.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):
@@ -258,29 +265,6 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         return self._default(
             default, message=f"{self.__class__.__name__} has no data"
         )
-
-    def get_filenames(self):
-        """Return the file names containing the metadata construct data.
-
-        Deprecated at version TODODASKVER and and is no longer
-        available. Consider using the `get_original_filenames` method
-        instead.
-
-        .. note:: Might get re-instated in a later version.
-
-        :Returns:
-
-            `set`
-                The file names in normalized, absolute form. If all of the
-                data are in memory then an empty `set` is returned.
-
-        """
-        _DEPRECATION_ERROR_METHOD(
-            self,
-            "get_filenames",
-            "Consider using the 'get_original_filenames' method instead.",
-            version="TODODASKVER",
-        )  # pragma: no cover
 
     def identity(self, default="", strict=False, relaxed=False, nc_only=False):
         """Return the canonical identity.
@@ -401,11 +385,11 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         The identities comprise:
 
         * The "id" attribute, preceded by ``'id%'``.
-        * The ``cf_role`` property, preceeded by ``'cf_role='``.
-        * The ``long_name`` property, preceeded by ``'long_name='``.
-        * All other properties, preceeded by the property name and a
+        * The ``cf_role`` property, preceded by ``'cf_role='``.
+        * The ``long_name`` property, preceded by ``'long_name='``.
+        * All other properties, preceded by the property name and a
           equals e.g. ``'foo=bar'``.
-        * The netCDF variable name, preceeded by ``'ncvar%'``.
+        * The netCDF variable name, preceded by ``'ncvar%'``.
 
         .. versionadded:: (cfdm) 1.9.0.0
 
@@ -599,16 +583,16 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 ``'method:mean'``) then it will only be compared with the
                 most recently applied cell method operation.
 
-                Alternatively, one or more cell method constucts may be
-                identified in a single string with a CF-netCDF cell
+                Alternatively, one or more cell method constructs may
+                be identified in a single string with a CF-netCDF cell
                 methods-like syntax for describing both the collapse
                 dimensions, the collapse method, and any cell method
-                construct qualifiers. If N cell methods are described in
-                this way then they will collectively identify the N most
-                recently applied cell method operations. For example,
-                ``'T: maximum within years T: mean over years'`` will be
-                compared with the most two most recently applied cell
-                method operations.
+                construct qualifiers. If N cell methods are described
+                in this way then they will collectively identify the N
+                most recently applied cell method operations. For
+                example, ``'T: maximum within years T: mean over
+                years'`` will be compared with the most two most
+                recently applied cell method operations.
 
                 *Parameter example:*
                   ``identity='latitude'``
@@ -680,8 +664,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         :Returns:
 
             `bool`
-                Whether or not the domain construct contains the specfied
-                metadata constructs.
+                Whether or not the domain construct contains the
+                specified metadata constructs.
 
         **Examples**
 
@@ -1016,7 +1000,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         relative ordering defined by the *axes* parameter. For
         instance, if the given *axes* are ``['X', 'Z', 'Y']`` then a
         metadata construct whose data axis order is ``('Y', 'X')``
-        will be tranposed to have data order ``('X', 'Y')``.
+        will be transposed to have data order ``('X', 'Y')``.
 
         .. versionadded:: 3.11.0
 

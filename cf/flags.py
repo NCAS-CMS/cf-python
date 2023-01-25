@@ -27,7 +27,7 @@ class Flags:
     """
 
     def __init__(self, **kwargs):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 

@@ -216,6 +216,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DomainAncillary.to_dask_array
    ~cf.DomainAncillary.__getitem__
    ~cf.DomainAncillary.del_data
    ~cf.DomainAncillary.get_data
@@ -292,6 +293,7 @@ Data
    ~cf.DomainAncillary.iscyclic
    ~cf.DomainAncillary.isperiodic
    ~cf.DomainAncillary.get_original_filenames
+   ~cf.DomainAncillary.persist
 
 Miscellaneous
 -------------
@@ -308,6 +310,7 @@ Miscellaneous
    ~cf.DomainAncillary.creation_commands
    ~cf.DomainAncillary.equals
    ~cf.DomainAncillary.inspect
+   ~cf.DomainAncillary.to_memory
    ~cf.DomainAncillary.uncompress
    
 Mathematical operations
@@ -662,6 +665,7 @@ Deprecated
    ~cf.DomainAncillary.isdomainancillary
    ~cf.DomainAncillary.isfieldancillary
    ~cf.DomainAncillary.ismeasure
+   ~cf.DomainAncillary.mask_invalid
    ~cf.DomainAncillary.name
    ~cf.DomainAncillary.remove_data
    ~cf.DomainAncillary.select

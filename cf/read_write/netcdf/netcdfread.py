@@ -1,16 +1,15 @@
 import cfdm
-import netCDF4
 import numpy as np
 
 """
 TODOCFA: remove aggregation_* properties from constructs
 
-TODOCFA: Create auxiliary coordinates from non-standardized terms
+TODOCFA: Create auxiliary coordinates from non-standardised terms
 
 TODOCFA: Reference instruction variables (and/or set as
          "do_not_create_field")
 
-TODOCFA: Create auxiliary coordinates from non-standardized terms
+TODOCFA: Create auxiliary coordinates from non-standardised terms
 
 TODOCFA: Consider scanning for cfa variables to the top (e.g. where
          scanning for geometry varables is). This will probably need a
@@ -219,9 +218,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # Return the data
         return self._create_Data(
             cfa_array,
+            ncvar,
             units=kwargs["units"],
             calendar=kwargs["calendar"],
-            ncvar=ncvar,
         )
 
     def _is_cfa_variable(self, ncvar):
@@ -277,20 +276,39 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
     def _create_Data(
         self,
-        array=None,
+        array,
+        ncvar,
         units=None,
         calendar=None,
-        ncvar=None,
         **kwargs,
     ):
-        """Create a Data object.
+        """Create a Data object from a netCDF variable.
 
         .. versionadded:: 3.0.0
 
         :Parameters:
 
+            array: `Array`
+                The file array.
+
             ncvar: `str`
-                The netCDF variable from which to get units and calendar.
+                The name of netCDF variable.
+
+            units: `str`, optional
+                The units of *array*. By default, or if `None`, it is
+                assumed that there are no units.
+
+            calendar: `str`, optional
+                The calendar of *array*. By default, or if `None`, it is
+                assumed that there is no calendar.
+
+            kwargs: optional
+                Extra parameters to pass to the initialisation of the
+                returned `Data` object.
+
+        :Returns:
+
+            `Data`
 
         """
         if array.dtype is None:
@@ -298,15 +316,15 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # therefore has unknown data type. To find the correct
             # data type (e.g. "|S7"), we need to read the data into
             # memory.
-            array = self._array_from_variable(ncvar)
+            array = array[...]
 
         chunks = self.read_vars.get("chunks", "auto")
 
         data = super()._create_Data(
-            array=array,
+            array,
+            ncvar,
             units=units,
             calendar=calendar,
-            ncvar=ncvar,
             chunks=chunks,
             **kwargs,
         )
@@ -355,80 +373,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 ].split()
                 if ncdimensions:
                     dimensions[ncvar] = tuple(map(str, ncdimensions))
-
-    def _array_from_variable(self, ncvar):
-        """Convert a netCDF variable to a `numpy` array.
-
-        For char and string netCDF types, the array is processed into
-        a CF-friendly format.
-
-        .. versionadded:: TODODASKVER
-
-        .. note:: This code is copied from
-                  `cfdm.NetCDFArray.__getitem__`.
-
-        :Parmaeters:
-
-            ncvar: `str`
-                The netCDF variable name of the variable to be read.
-
-        :Returns:
-
-            `numpy.ndarray`
-                The array containing the variable's data.
-
-        """
-        variable = self.read_vars["variable_dataset"][ncvar][ncvar]
-        array = variable[...]
-
-        string_type = isinstance(array, str)
-        if string_type:
-            # --------------------------------------------------------
-            # A netCDF string type scalar variable comes out as Python
-            # str object, so convert it to a numpy array.
-            # --------------------------------------------------------
-            array = np.array(array, dtype=f"S{len(array)}")
-
-        if not variable.ndim:
-            # Hmm netCDF4 has a thing for making scalar size 1 , 1d
-            array = array.squeeze()
-
-        kind = array.dtype.kind
-        if not string_type and kind in "SU":
-            # --------------------------------------------------------
-            # Collapse (by concatenation) the outermost (fastest
-            # varying) dimension of char array into
-            # memory. E.g. [['a','b','c']] becomes ['abc']
-            # --------------------------------------------------------
-            if kind == "U":
-                array = array.astype("S")
-
-            array = netCDF4.chartostring(array)
-            shape = array.shape
-            array = np.array([x.rstrip() for x in array.flat], dtype="S")
-            array = np.reshape(array, shape)
-            array = np.ma.masked_where(array == b"", array)
-
-        elif not string_type and kind == "O":
-            # --------------------------------------------------------
-            # A netCDF string type N-d (N>=1) variable comes out as a
-            # numpy object array, so convert it to numpy string array.
-            # --------------------------------------------------------
-            array = array.astype("S")  # , copy=False)
-
-            # --------------------------------------------------------
-            # netCDF4 does not auto-mask VLEN variable, so do it here.
-            # --------------------------------------------------------
-            array = np.ma.where(array == b"", np.ma.masked, array)
-
-        elif not string_type and kind == "O":
-            # --------------------------------------------------------
-            # A netCDF string type N-d (N>=1) variable comes out as a
-            # numpy object array, so convert it to numpy string array.
-            # --------------------------------------------------------
-            array = array.astype("S")
-
-        return array
 
     def _cache_data_elements(self, data, ncvar):
         """Cache selected element values.
@@ -495,7 +439,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if np.ma.is_masked(value):
                 value = np.ma.masked
             else:
-                value = value.item()
+                try:
+                    value = value.item()
+                except (AttributeError, ValueError):
+                    # AttributeError: A netCDF string type scalar
+                    # variable comes out as Python str object, which
+                    # has no 'item' method.
+                    #
+                    # ValueError: A size-0 array can't be converted to
+                    # a Python scalar.
+                    pass
 
             elements[element] = value
 

@@ -125,7 +125,7 @@ Data
    :template: attribute.rst
 
    ~cf.Count.array
-   ~cf.Count.Data
+   ~cf.Count.to_dask_array
    ~cf.Count.data
    ~cf.Count.datetime_array
    ~cf.Count.datum
@@ -220,6 +220,7 @@ Data
    ~cf.Count.isperiodic
    ~cf.Count.get_original_filenames
    ~cf.Count.has_bounds
+   ~cf.Count.persist
 
 Miscellaneous
 -------------
@@ -235,6 +236,7 @@ Miscellaneous
    ~cf.Count.copy
    ~cf.Count.creation_commands
    ~cf.Count.equals
+   ~cf.Count.to_memory
    ~cf.Count.uncompress
 
 .. rubric:: Attributes
@@ -603,6 +605,7 @@ Deprecated
    ~cf.Count.asdatetime
    ~cf.Count.asreftime
    ~cf.Count.attributes
+   ~cf.Count.Data
    ~cf.Count.delprop
    ~cf.Count.dtvarray
    ~cf.Count.expand_dims
@@ -618,6 +621,7 @@ Deprecated
    ~cf.Count.isdomainancillary
    ~cf.Count.isfieldancillary
    ~cf.Count.ismeasure
+   ~cf.Count.mask_invalid
    ~cf.Count.name
    ~cf.Count.remove_data
    ~cf.Count.select

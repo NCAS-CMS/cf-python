@@ -12,10 +12,13 @@
 
 * Make sure that `Changelog.rst` is up to date.
 
-* Check the code for deprecated keyword arguments that can be
-  completely removed, i.e. those with a "removed_at" version that is
-  at or before the version being released. Remove any reference to them
-  in the method/class along with the @_deprecated_kwarg_check decorator.
+* Deprecated methods and keyword arguments: Check the code for
+  deprecated methods and keyword arguments that can be completely
+  removed, i.e. those with a ``removed_at`` version that is at or
+  before the version being released. Remove any reference to them in
+  the method, class, or fucntion (including, if appropriate, the
+  ``@_deprecated_kwarg_check`` decorator), and remove them from the
+  relevant documentation ``.rst`` files.
 
 * Check that the documentation API coverage is complete:
 
@@ -52,7 +55,7 @@
   the dev build.)
 
   ```bash
-  ./release_docs <vn> dev-clean # E.g. ./release_docs 3.3.0 dev-clean
+  ./release_docs dev-clean
   ```
 
 * Check that no typos or spelling mistakes have been introduced to the
@@ -110,13 +113,13 @@
 * Create an archived copy of the documentation:
 
   ```bash
-  ./release_docs <vn> archive # E.g. ./release_docs 3.3.0 archive
+  ./release_docs archive
   ```
 
 * Update the latest documentation:
 
   ```bash
-  ./release_docs <vn> latest # E.g. ./release_docs 3.3.0 latest
+  ./release_docs latest
   ```
   
 * Create a source tarball:

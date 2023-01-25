@@ -39,6 +39,43 @@ Inspection
    ~cf.Domain.size
    ~cf.Domain.rank
    
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Domain.del_property
+   ~cf.Domain.get_property
+   ~cf.Domain.has_property
+   ~cf.Domain.set_property
+   ~cf.Domain.properties
+   ~cf.Domain.clear_properties
+   ~cf.Domain.set_properties
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Domain.calendar
+   ~cf.Domain.comment
+   ~cf.Domain.history
+   ~cf.Domain.leap_month
+   ~cf.Domain.leap_year
+   ~cf.Domain.long_name
+   ~cf.Domain.month_lengths
+   ~cf.Domain.standard_name
+   ~cf.Domain.units
+   ~cf.Domain.valid_max
+   ~cf.Domain.valid_min
+   ~cf.Domain.valid_range
+
 Selection
 ---------
 
@@ -123,24 +160,6 @@ Metadata constructs
 
    ~cf.Domain.constructs
  
-Properties
-----------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Domain.del_property
-   ~cf.Domain.get_property
-   ~cf.Domain.has_property
-   ~cf.Domain.set_property
-   ~cf.Domain.properties
-   ~cf.Domain.clear_properties
-   ~cf.Domain.set_properties
-
 Miscellaneous
 -------------
 
@@ -163,6 +182,7 @@ Miscellaneous
    ~cf.Domain.apply_masking   
    ~cf.Domain.get_original_filenames
    ~cf.Domain.close
+   ~cf.Domain.uncompress
 
 Domain axes
 -----------

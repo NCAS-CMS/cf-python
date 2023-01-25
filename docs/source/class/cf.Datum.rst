@@ -55,6 +55,7 @@ Miscellaneous
    :template: method.rst
    
    ~cf.Datum.copy
+   ~cf.Datum.get_original_filenames
    ~cf.Datum.equals
 
 Groups

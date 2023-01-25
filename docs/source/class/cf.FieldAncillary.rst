@@ -146,6 +146,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.FieldAncillary.to_dask_array
    ~cf.FieldAncillary.__getitem__
    ~cf.FieldAncillary.del_data
    ~cf.FieldAncillary.get_data
@@ -224,6 +225,7 @@ Data
    ~cf.FieldAncillary.isperiodic
    ~cf.FieldAncillary.get_original_filenames
    ~cf.FieldAncillary.has_bounds
+   ~cf.FieldAncillary.persist
 
 Miscellaneous
 -------------
@@ -239,6 +241,7 @@ Miscellaneous
    ~cf.FieldAncillary.copy
    ~cf.FieldAncillary.creation_commands
    ~cf.FieldAncillary.equals
+   ~cf.FieldAncillary.to_memory
    ~cf.FieldAncillary.uncompress
 
 .. rubric:: Attributes
@@ -608,6 +611,7 @@ Deprecated
    ~cf.FieldAncillary.isdomainancillary
    ~cf.FieldAncillary.isfieldancillary
    ~cf.FieldAncillary.ismeasure
+   ~cf.FieldAncillary.mask_invalid
    ~cf.FieldAncillary.name
    ~cf.FieldAncillary.remove_data
    ~cf.FieldAncillary.select
