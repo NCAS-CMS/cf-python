@@ -18,5 +18,7 @@ do
   rc=$?
   if [[ $rc != 0 ]]; then
     exit $rc
+    # echo -e "\n\n$file FAILED \n\n"
   fi
 done
+
