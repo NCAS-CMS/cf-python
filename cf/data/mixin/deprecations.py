@@ -14,7 +14,7 @@ class DataClassDeprecationsMixin:
         Deprecated at version TODODASKVER. Consider using the
         `cf.hash_array` function instead.
 
-        Generating the hash temporarily realizes the entire array in
+        Generating the hash temporarily realises the entire array in
         memory, which may not be possible for large arrays.
 
         The hash value is dependent on the data-type and shape of the data
@@ -247,7 +247,11 @@ class DataClassDeprecationsMixin:
 
     def expand_dims(self, position=0, i=False):
         """Deprecated at version 3.0.0, use method `insert_dimension`
-        instead."""
+        instead.
+
+        May get re-instated at a later version.
+
+        """
         _DEPRECATION_ERROR_METHOD(
             self,
             "expand_dims",
@@ -341,7 +345,7 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def dumpd(self):
-        """Return a serialization of the data array.
+        """Return a serialisation of the data array.
 
         Deprecated at version TODODASKVER. Consider inspecting the dask
         array returned by `to_dask_array` instead.
@@ -351,7 +355,7 @@ class DataClassDeprecationsMixin:
         :Returns:
 
             `dict`
-                The serialization.
+                The serialisation.
 
         **Examples**
 
@@ -406,7 +410,7 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def dumps(self):
-        """Return a JSON string serialization of the data array.
+        """Return a JSON string serialisation of the data array.
 
         Deprecated at version TODODASKVER. Consider inspecting the dask
         array returned by `to_dask_array` instead.
@@ -501,7 +505,7 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def loadd(self, d, chunk=True):
-        """Reset the data in place from a dictionary serialization.
+        """Reset the data in place from a dictionary serialisation.
 
         Deprecated at version TODODASKVER. Consider inspecting the dask
         array returned by `to_dask_array` instead.
@@ -511,7 +515,7 @@ class DataClassDeprecationsMixin:
         :Parameters:
 
             d: `dict`
-                A dictionary serialization of a `cf.Data` object, such as
+                A dictionary serialisation of a `cf.Data` object, such as
                 one as returned by the `dumpd` method.
 
             chunk: `bool`, optional
@@ -548,7 +552,7 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def loads(self, j, chunk=True):
-        """Reset the data in place from a string serialization.
+        """Reset the data in place from a string serialisation.
 
         Deprecated at version TODODASKVER. Consider inspecting the dask
         array returned by `to_dask_array` instead.
@@ -558,7 +562,7 @@ class DataClassDeprecationsMixin:
         :Parameters:
 
             j: `str`
-                A JSON document string serialization of a `cf.Data` object.
+                A JSON document string serialisation of a `cf.Data` object.
 
             chunk: `bool`, optional
                 If True (the default) then the reset data array will be

@@ -125,7 +125,6 @@ Data
    :template: attribute.rst
 
    ~cf.Index.array
-   ~cf.Index.Data
    ~cf.Index.data
    ~cf.Index.datetime_array
    ~cf.Index.datum
@@ -143,6 +142,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Index.to_dask_array
    ~cf.Index.__getitem__
    ~cf.Index.del_data
    ~cf.Index.get_data
@@ -237,6 +237,7 @@ Miscellaneous
    ~cf.Index.copy
    ~cf.Index.creation_commands
    ~cf.Index.equals
+   ~cf.Index.to_memory
    ~cf.Index.uncompress
 
 .. rubric:: Attributes
@@ -603,6 +604,7 @@ Deprecated
    ~cf.Index.asdatetime
    ~cf.Index.asreftime
    ~cf.Index.attributes
+   ~cf.Index.Data
    ~cf.Index.delprop
    ~cf.Index.dtvarray
    ~cf.Index.expand_dims
@@ -617,6 +619,7 @@ Deprecated
    ~cf.Index.isdomainancillary
    ~cf.Index.isfieldancillary
    ~cf.Index.ismeasure
+   ~cf.Index.mask_invalid
    ~cf.Index.name
    ~cf.Index.remove_data
    ~cf.Index.select

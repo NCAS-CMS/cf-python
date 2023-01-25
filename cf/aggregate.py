@@ -140,7 +140,7 @@ class _Meta:
         field_identity=None,
         copy=True,
     ):
-        """**initialization**
+        """**initialisation**
 
         :Parameters:
 
@@ -193,7 +193,7 @@ class _Meta:
         self.field_identity = field_identity
         self.ncvar_identities = ncvar_identities
 
-        # Initialize the flag which indicates whether or not this
+        # Initialise the flag which indicates whether or not this
         # field has already been aggregated
         self.aggregated_field = False
 
@@ -738,7 +738,7 @@ class _Meta:
         self.respect_valid = respect_valid
         self.structural_signature()
 
-        # Initialize the flag which indicates whether or not this
+        # Initialise the flag which indicates whether or not this
         # field has already been aggregated
         self.aggregated_field = False
 
@@ -1127,7 +1127,7 @@ class _Meta:
         """
         f = self.field
 
-        # Initialize the structual signature with:
+        # Initialise the structual signature with:
         #
         # * the construct type (field or domain)
         # * the identity

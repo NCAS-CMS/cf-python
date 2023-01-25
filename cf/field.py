@@ -319,7 +319,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -335,12 +335,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 `set_properties` and `set_property` methods.
 
             source: optional
-                Initialize the properties, data and metadata constructs
+                Initialise the properties, data and metadata constructs
                 from those of *source*.
 
             copy: `bool`, optional
                 If False then do not deep copy input parameters prior to
-                initialization. By default arguments are deep copied.
+                initialisation. By default arguments are deep copied.
 
         """
         super().__init__(
@@ -4613,12 +4613,20 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         if insert:
             _DEPRECATION_ERROR_KWARGS(
-                self, "cell_area", {"insert": insert}, version="3.0.0"
+                self,
+                "cell_area",
+                {"insert": insert},
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if force:
             _DEPRECATION_ERROR_KWARGS(
-                self, "cell_area", {"force": force}, version="3.0.0"
+                self,
+                "cell_area",
+                {"force": force},
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         w = self.weights(
@@ -5434,11 +5442,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "auto",
                 message="Use value True instead.",
                 version="3.0.7",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, "weights", kwargs
+                self, "weights", kwargs, version="3.0.0", removed_at="4.0.0"
             )  # pragma: no cover
 
         if measure and scale is not None:
@@ -6710,7 +6719,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dims = []
         names = []
 
-        # Initialize the output binned field
+        # Initialise the output binned field
         out = type(self)(properties=self.properties())
 
         # Sort out its identity
@@ -6815,7 +6824,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             names.append(dim.identity())
 
         # ------------------------------------------------------------
-        # Initialize the ouput data as a totally masked array
+        # Initialise the ouput data as a totally masked array
         # ------------------------------------------------------------
         if method == "sample_size":
             dtype = int
@@ -7517,7 +7526,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 Create weights which are cell measures, i.e. which
                 describe actual cell sizes (e.g. cell area) with
                 appropriate units (e.g. metres squared). By default the
-                weights are normalized and have arbitrary units.
+                weights are normalised and have arbitrary units.
 
                 Cell measures can be created for any combination of
                 axes. For example, cell measures for a time axis are the
@@ -8401,11 +8410,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "collapse",
                 {"_debug": _debug},
                 "Use keyword 'verbose' instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, "collapse", kwargs
+                self, "collapse", kwargs, version="3.0.0", removed_at="4.0.0"
             )  # pragma: no cover
 
         if inplace:
@@ -10749,6 +10760,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "indices",
                 "exact",
                 "Keywords are now never interpreted as regular expressions.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if len(mode) > 1:
@@ -11312,6 +11325,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "or",
                     message="Use 'OR=True' instead.",
                     version="3.1.0",
+                    removed_at="4.0.0",
                 )  # pragma: no cover
 
             if identities[0] == "and":
@@ -11321,6 +11335,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "and",
                     message="Use 'OR=False' instead.",
                     version="3.1.0",
+                    removed_at="4.0.0",
                 )  # pragma: no cover
 
         if not identities and not conditions:
@@ -12075,6 +12090,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 {"weights": weights},
                 message="Use keyword 'window' instead.",
                 version="3.3.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if isinstance(window, str):
@@ -12083,7 +12099,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "at version 3.0.0 and is no longer available. Provide a "
                 "sequence of numerical window weights instead. "
                 "scipy.signal.windows may be used to generate particular "
-                "window functions."
+                "window functions.",
+                version="3.3.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if isinstance(window[0], str):
@@ -12092,7 +12110,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "deprecated at version 3.0.0 and is no longer available. "
                 "Provide a sequence of numerical window weights instead. "
                 "scipy.signal.windows may be used to generate particular "
-                "window functions."
+                "window functions.",
+                version="3.3.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         # Retrieve the axis
@@ -12403,6 +12423,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         """Flip (reverse the direction of) axes of the field.
@@ -12444,7 +12465,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         if kwargs:
-            _DEPRECATION_ERROR_KWARGS(self, "flip", kwargs)  # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(
+                self, "flip", kwargs, version="3.0.0", removed_at="4.0.0"
+            )  # pragma: no cover
 
         if axes is None and not kwargs:
             # Flip all the axes
@@ -12624,7 +12647,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, "squeeze", kwargs
+                self, "squeeze", kwargs, version="3.0.0", removed_at="4.0.0"
             )  # pragma: no cover
 
         data_axes = self.get_data_axes()
@@ -12648,6 +12671,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Squeeze the field's data array
         return super().squeeze(iaxes, inplace=inplace)
 
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         """Interchange two axes of the data.
@@ -12787,11 +12811,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "transpose",
                 {"items": items},
                 "Use keyword 'constructs' instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, "transpose", kwargs
+                self, "transpose", kwargs, version="3.0.0", removed_at="4.0.0"
             )  # pragma: no cover
 
         if axes is None:
@@ -12851,7 +12877,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, "unsqueeze", kwargs
+                self, "unsqueeze", kwargs, version="3.0.0", removed_at="4.0.0"
             )  # pragma: no cover
 
         if axes is not None:
@@ -12862,6 +12888,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "All size one domain axes missing from the data are "
                 "inserted. Use method 'insert_dimension' to insert an "
                 "individual size one domain axis.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         f = _inplace_enabled_define_and_cleanup(self)
@@ -12935,7 +12963,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
-                self, "axes_names", kwargs
+                self, "axes_names", kwargs, version="3.0.0", removed_at="4.0.0"
             )  # pragma: no cover
 
         out = self.domain_axes(todict=True).copy()
@@ -12985,7 +13013,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """
         if axes:
             _DEPRECATION_ERROR_KWARGS(
-                self, "axis_size", "Use keyword 'identity' instead."
+                self,
+                "axis_size",
+                "Use keyword 'identity' instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         axis = self.domain_axis(*identity, default=None, **filter_kwargs)
@@ -13766,7 +13798,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
         # ------------------------------------------------------------
-        # Initialize the output field with the percentile data
+        # Initialise the output field with the percentile data
         # ------------------------------------------------------------
 
         # TODODASK: Make sure that this is OK whaen `ranks` is a
@@ -14295,10 +14327,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         The array and the *condition*, *x* and *y* parameters must all
         be broadcastable across the original array, such that the size
-        of the result is identical to the orginal size of the
+        of the result is identical to the original size of the
         array. Leading size 1 dimensions of these parameters are
         ignored, thereby also ensuring that the shape of the result is
-        identical to the orginal shape of the array.
+        identical to the original shape of the array.
 
         If *condition* is a `Query` object then for the purposes of
         broadcasting, the condition is considered to be that which is
@@ -14546,11 +14578,17 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "where",
                 {"item": item},
                 "Use keyword 'construct' instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if item_options:
             _DEPRECATION_ERROR_KWARGS(
-                self, "where", {"item_options": item_options}
+                self,
+                "where",
+                {"item_options": item_options},
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if x is None and y is None:
@@ -14896,7 +14934,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         a coarser to a finer grid. Linear interpolation is
         available. The latter method is particular useful for cases
         when the latitude and longitude coordinate cell boundaries are
-        not known nor inferable. Higher order patch recovery is
+        not known nor inferrable. Higher order patch recovery is
         available as an alternative to linear interpolation. This
         typically results in better approximations to values and
         derivatives compared to the latter, but the weight matrix can
@@ -15743,7 +15781,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         grid. (Multi)linear interpolation is available. The latter
         method is particular useful for cases when the latitude and
         longitude coordinate cell boundaries are not known nor
-        inferable. Higher order patch recovery is available as an
+        inferrable. Higher order patch recovery is available as an
         alternative to (multi)linear interpolation.  This typically
         results in better approximations to values and derivatives
         compared to the latter, but the weight matrix can be larger
@@ -16536,6 +16574,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "derivative",
                 {"cyclic": cyclic},
                 "Use the 'wrap' keyword instead",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         # Retrieve the axis
@@ -16705,7 +16745,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "axis_name", "Use 'domain_axis_identity' method instead."
+            self,
+            "axis_name",
+            "Use 'domain_axis_identity' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def data_axes(self):
@@ -16715,7 +16759,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "data_axes", "Use 'get_data_axes' method instead."
+            self,
+            "data_axes",
+            "Use 'get_data_axes' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @_manage_log_level_via_verbosity
@@ -16741,8 +16789,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             "example_field",
             "Use function 'cf.example_field' instead.",
             version="3.0.5",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
+    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def expand_dims(self, position=0, axes=None, i=False, **kwargs):
         """Insert a size 1 axis into the data array.
 
@@ -16751,7 +16801,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "expand_dims", "Use 'insert_dimension' method instead."
+            self,
+            "expand_dims",
+            "Use 'insert_dimension' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def field(
@@ -16774,7 +16828,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "field", "Use 'convert' method instead."
+            self,
+            "field",
+            "Use 'convert' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def HDF_chunks(self, *chunksizes):
@@ -16791,6 +16849,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             "Use methods 'Data.nc_hdf5_chunksizes', "
             "'Data.nc_set_hdf5_chunksizes', "
             "'Data.nc_clear_hdf5_chunksizes' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_measure(
@@ -16802,7 +16862,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_measure", "Use method 'set_construct' instead."
+            self,
+            "insert_measure",
+            "Use method 'set_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_dim(self, item, key=None, axes=None, copy=True, replace=True):
@@ -16812,7 +16876,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_dim", "Use method 'set_construct' instead."
+            self,
+            "insert_dim",
+            "Use method 'set_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_axis(self, axis, key=None, replace=True):
@@ -16822,7 +16890,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_axis", "Use method 'set_construct' instead."
+            self,
+            "insert_axis",
+            "Use method 'set_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_item(
@@ -16834,7 +16906,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_item", "Use method 'set_construct' instead."
+            self,
+            "insert_item",
+            "Use method 'set_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_aux(self, item, key=None, axes=None, copy=True, replace=True):
@@ -16844,7 +16920,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_aux", "Use method 'set_construct' instead."
+            self,
+            "insert_aux",
+            "Use method 'set_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_cell_methods(self, item):
@@ -16854,7 +16934,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_cell_methods", "Use method 'set_construct' instead."
+            self,
+            "insert_cell_methods",
+            "Use method 'set_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_domain_anc(
@@ -16866,7 +16950,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_domain_anc", "Use method 'set_construct' instead."
+            self,
+            "insert_domain_anc",
+            "Use method 'set_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_data(self, data, axes=None, copy=True, replace=True):
@@ -16876,7 +16964,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_data", "Use method 'set_data' instead."
+            self,
+            "insert_data",
+            "Use method 'set_data' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_field_anc(
@@ -16889,7 +16981,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_field_anc", "Use method 'set_construct' instead."
+            self,
+            "insert_field_anc",
+            "Use method 'set_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_ref(self, item, key=None, axes=None, copy=True, replace=True):
@@ -16904,6 +17000,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             "insert_ref",
             "Use method 'set_construct' or 'set_coordinate_reference' "
             "instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def item(
@@ -16920,7 +17018,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "item", "Use 'construct' method instead."
+            self,
+            "item",
+            "Use 'construct' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def items(self, *identities, **filter_kwargs):
@@ -16930,7 +17032,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "items", "Use 'constructs' method instead."
+            self,
+            "items",
+            "Use 'constructs' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def item_axes(
@@ -16954,7 +17060,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "item_axes", "Use method 'get_data_axes' instead."
+            self,
+            "item_axes",
+            "Use method 'get_data_axes' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def items_axes(
@@ -16980,6 +17090,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             self,
             "items_axes",
             "Use the 'data_axes' method of attribute 'constructs' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def key_item(self, identity, default=ValueError(), **kwargs):
@@ -16988,7 +17100,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Deprecated at version 3.0.0
 
         """
-        _DEPRECATION_ERROR_METHOD(self, "key_item")
+        _DEPRECATION_ERROR_METHOD(
+            self, "key_item", version="3.0.0", removed_at="4.0.0"
+        )
 
     def new_identifier(self, item_type):
         """Return a new, unused construct key.
@@ -17001,6 +17115,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             self,
             " new_identifier",
             "Use 'new_identifier' method of 'constructs' attribute instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def remove_item(
@@ -17023,7 +17139,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "remove_item", "Use method 'del_construct' instead."
+            self,
+            "remove_item",
+            "Use method 'del_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def remove_items(
@@ -17045,7 +17165,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "remove_items", "Use method 'del_construct' instead."
+            self,
+            "remove_items",
+            "Use method 'del_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def remove_axes(self, axes=None, **kwargs):
@@ -17055,7 +17179,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "remove_axes", "Use method 'del_construct' instead."
+            self,
+            "remove_axes",
+            "Use method 'del_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def remove_axis(self, axes=None, size=None, **kwargs):
@@ -17065,7 +17193,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "remove_axis", "Use method 'del_construct' instead."
+            self,
+            "remove_axis",
+            "Use method 'del_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def remove_data(self, default=ValueError()):
@@ -17075,7 +17207,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "remove_data", "Use method 'del_data' instead."
+            self,
+            "remove_data",
+            "Use method 'del_data' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def transpose_item(self, description=None, iaxes=None, **kwargs):
@@ -17086,7 +17222,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "transpose_item", "Use method 'transpose_construct' instead."
+            self,
+            "transpose_item",
+            "Use method 'transpose_construct' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def unlimited(self, *args):
@@ -17101,4 +17241,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             "unlimited",
             "Use methods 'DomainAxis.nc_is_unlimited', and "
             "'DomainAxis.nc_set_unlimited' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover

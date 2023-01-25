@@ -209,7 +209,7 @@ _docstring_substitution_definitions = {
 
                 *Parameter example:*
                   A size in bytes, like ``"100MiB"`` which will choose
-                  a uniform block-like shape, prefering square-like
+                  a uniform block-like shape, preferring square-like
                   chunk shapes.
 
                 *Parameter example:*

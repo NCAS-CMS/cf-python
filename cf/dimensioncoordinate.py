@@ -917,5 +917,9 @@ class DimensionCoordinate(
         """Deprecated at version 3.0.0, use `construct_type` attribute
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "role", "Use attribute 'construct_type' instead"
+            self,
+            "role",
+            "Use attribute 'construct_type' instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover

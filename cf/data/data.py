@@ -168,7 +168,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         init_options=None,
         _use_array=True,
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -253,7 +253,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 .. versionadded:: 3.0.5
 
             source: optional
-                Initialize the data values and metadata (such as
+                Initialise the data values and metadata (such as
                 units, mask hardness, etc.) from the data of
                 *source*. All other arguments, with the exception of
                 *copy*, are ignored.
@@ -269,7 +269,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             copy: `bool`, optional
                 If False then do not deep copy input parameters prior to
-                initialization. By default arguments are deep copied.
+                initialisation. By default arguments are deep copied.
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
@@ -336,12 +336,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data(tuple('fly'))
 
         """
-        if array is None and source is None:  # don't create no/empty Data
-            raise ValueError(
-                "Can't create empty data: some input data or datum must be "
-                "provided via the 'source' or 'array' parameters."
-            )
-
         if source is None and isinstance(array, self.__class__):
             source = array
 
@@ -387,6 +381,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self.hardmask = hardmask
 
         if array is None:
+            # No data has been set
             return
 
         try:
@@ -795,7 +790,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         **Performance**
 
         If the shape of the data is unknown then it is calculated
-        immediately by exectuting all delayed operations.
+        immediately by executing all delayed operations.
 
         . seealso:: `__setitem__`, `__keepdims_indexing__`,
                     `__orthogonal_indexing__`
@@ -1008,6 +1003,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         shape = self.shape
 
+        ancillary_mask = ()
+        try:
+            arg = indices[0]
+        except (IndexError, TypeError):
+            pass
+        else:
+            if isinstance(arg, str) and arg == "mask":
+                # The indices include an ancillary mask that defines
+                # elements which are protected from assignment
+                original_self = self.copy()
+                ancillary_mask = indices[1]
+                indices = indices[2:]
+
         indices, roll = parse_indices(
             shape,
             indices,
@@ -1097,6 +1105,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if roll:
             shifts = [-shift for shift in shifts]
             self.roll(shift=shifts, axis=roll_axes, inplace=True)
+
+        # Reset the original array values at locations that are
+        # excluded from the assignment by True values in any ancillary
+        # masks
+        if ancillary_mask:
+            indices = tuple(indices)
+            original_self = original_self[indices]
+            reset = self[indices]
+            for mask in ancillary_mask:
+                reset.where(mask, original_self, inplace=True)
+
+            self[indices] = reset
 
         # Remove elements made invalid by updating the `dask` array
         self._conform_after_dask_update()
@@ -3284,7 +3304,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     other, calendar=getattr(self.Units, "calendar", "standard")
                 )
             elif other is None:
-                # Can't sensibly initialize a Data object from a bare
+                # Can't sensibly initialise a Data object from a bare
                 # `None` (issue #281)
                 other = np.array(None, dtype=object)
 
@@ -4038,11 +4058,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def chunks(self):
         """The chunk sizes for each dimension.
 
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `npartitions`, `numblocks`, `rechunk`
+
         **Examples**
 
-        >>> d = cf.Data.ones((4, 5), chunks=(2, 4))
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
         >>> d.chunks
-        ((2, 2), (4, 1))
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
 
         """
         return self.to_dask_array().chunks
@@ -4358,6 +4386,48 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         return dx.ndim
+
+    @property
+    def npartitions(self):
+        """The total number of chunks.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `chunks`, `numblocks`, `rechunk`
+
+        **Examples**
+
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        return self.to_dask_array().npartitions
+
+    @property
+    def numblocks(self):
+        """The number of chunks along each dimension.
+
+        .. versionadded:: TODODASKVER
+
+        .. seealso:: `chunks`, `npartitions`, `rechunk`
+
+        **Examples**
+
+        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        return self.to_dask_array().numblocks
 
     @property
     def shape(self):
@@ -6594,7 +6664,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             `set`
                 The cyclic axes prior to the change, or the current
-                cylcic axes if no axes are specified.
+                cyclic axes if no axes are specified.
 
         **Examples**
 
@@ -8285,7 +8355,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                      assignment).
 
                      To guarantee that the mask hardness of the
-                     returned dassk array is correct, set the
+                     returned dask array is correct, set the
                      *apply_mask_hardness* parameter to True.
 
         .. versionadded:: TODODASKVER
@@ -8318,13 +8388,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dask.array<cf_soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
 
         """
-        if apply_mask_hardness:
+        if apply_mask_hardness and "dask" in self._custom:
             if self.hardmask:
                 self.harden_mask()
             else:
                 self.soften_mask()
 
-        return self._custom["dask"]
+        try:
+            return self._custom["dask"]
+        except KeyError:
+            raise ValueError(f"{self.__class__.__name__} object has no data")
 
     def datum(self, *index):
         """Return an element of the data array as a standard Python
@@ -9487,7 +9560,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         of the result is identical to the original size of the
         array. Leading size 1 dimensions of these parameters are
         ignored, thereby also ensuring that the shape of the result is
-        identical to the orginal shape of the array.
+        identical to the original shape of the array.
 
         If *condition* is a `Query` object then for the purposes of
         broadcasting, the condition is considered to be that which is
@@ -10327,7 +10400,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         chunks=_DEFAULT_CHUNKS,
     ):
         """Return a new array of given shape and type, without
-        initializing entries.
+        initialising entries.
 
         .. seealso:: `full`, `ones`, `zeros`
 
@@ -10356,7 +10429,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `Data`
-                Array of uninitialized (arbitrary) data of the given
+                Array of uninitialised (arbitrary) data of the given
                 shape and dtype.
 
         **Examples**
@@ -10364,11 +10437,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d = cf.Data.empty((2, 2))
         >>> print(d.array)
         [[ -9.74499359e+001  6.69583040e-309],
-         [  2.13182611e-314  3.06959433e-309]]         #uninitialized
+         [  2.13182611e-314  3.06959433e-309]]         #uninitialised
 
         >>> d = cf.Data.empty((2,), dtype=bool)
         >>> print(d.array)
-        [ False  True]                                 #uninitialized
+        [ False  True]                                 #uninitialised
 
         """
         dx = da.empty(shape, dtype=dtype, chunks=chunks)

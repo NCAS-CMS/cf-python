@@ -47,7 +47,7 @@ class ConstructList(list, Container, cfdm.Container):
     """
 
     def __init__(self, constructs=None):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -497,6 +497,8 @@ class ConstructList(list, Container, cfdm.Container):
                 "equals",
                 {"ignore": ignore},
                 "Use keyword 'ignore_properties' instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         # Check for object identity
@@ -690,13 +692,17 @@ class ConstructList(list, Container, cfdm.Container):
                 "Use methods 'select_by_units', 'select_by_construct', "
                 "'select_by_properties', 'select_by_naxes', 'select_by_rank' "
                 "instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         if identities and isinstance(identities[0], (list, tuple, set)):
             _DEPRECATION_ERROR(
                 f"Use of a {identities[0].__class__.__name__!r} for "
                 "identities has been deprecated. Use the * operator to "
-                "unpack the arguments instead."
+                "unpack the arguments instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         for i in identities:
@@ -704,7 +710,9 @@ class ConstructList(list, Container, cfdm.Container):
                 _DEPRECATION_ERROR_DICT(
                     "Use methods 'select_by_units', 'select_by_construct', "
                     "'select_by_properties', 'select_by_naxes', "
-                    "'select_by_rank' instead."
+                    "'select_by_rank' instead.",
+                    version="3.0.0",
+                    removed_at="4.0.0",
                 )  # pragma: no cover
 
             if isinstance(i, str) and ":" in i:
@@ -718,7 +726,9 @@ class ConstructList(list, Container, cfdm.Container):
                     _DEPRECATION_ERROR(
                         f"The identity format {i!r} has been deprecated at "
                         f"version 3.0.0. Try {i.replace(':', '=', 1)!r} "
-                        "instead."
+                        "instead.",
+                        version="3.0.0",
+                        removed_at="4.0.0",
                     )  # pragma: no cover
 
         return self.select_by_identity(*identities)
