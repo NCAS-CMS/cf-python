@@ -7063,7 +7063,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 atol=float(atol),
             )
         elif not self_is_numeric and not other_is_numeric:
-            data_comparison = da.all(self_dx == other_dx)
+            # Apply bool() since the output may be numeric and we need a
+            # Boolean result to avoid casting error ("... can't be cast using
+            # casting='same_kind'")
+            data_comparison = bool(da.all(self_dx == other_dx))
         else:  # one is numeric and other isn't => not equal (incompat. dtype)
             logger.info(
                 f"{self.__class__.__name__}: Different data types:"
