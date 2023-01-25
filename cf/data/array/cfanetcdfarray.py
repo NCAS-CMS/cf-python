@@ -285,9 +285,9 @@ class CFANetCDFArray(NetCDFArray):
 
         >>> a.shape
         (12, 1, 73, 144)
-        >>> a.get_fragement_shape()
+        >>> a.get_fragment_shape()
         (2, 1, 1, 1)
-        >>> a.fragemented_dimensions()
+        >>> a.fragmented_dimensions()
         [0]
         >>> a.subarray_shapes(-1)
         ((6, 6), (1,), (73,), (144,))
@@ -402,9 +402,9 @@ class CFANetCDFArray(NetCDFArray):
 
         >>> a.shape
         (12, 73, 144)
-        >>> a.get_fragement_shape()
+        >>> a.get_fragment_shape()
         (2, 1, 1)
-        >>> a.fragemented_dimensions()
+        >>> a.fragmented_dimensions()
         [0]
         >>> subarray_shapes = a.subarray_shapes({1: 40})
         >>> print(subarray_shapes)
@@ -641,7 +641,7 @@ class CFANetCDFArray(NetCDFArray):
                 `dask.array.from_array` function is allowed.
 
                 The chunk sizes implied by *chunks* for a dimension that
-                has been fragemented are ignored and replaced with values
+                has been fragmented are ignored and replaced with values
                 that are implied by that dimensions fragment sizes.
 
         :Returns:

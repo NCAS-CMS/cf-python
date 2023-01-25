@@ -147,6 +147,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Bounds.to_dask_array
    ~cf.Bounds.__getitem__
    ~cf.Bounds.del_data
    ~cf.Bounds.get_data
@@ -241,6 +242,7 @@ Miscellaneous
    ~cf.Bounds.copy
    ~cf.Bounds.creation_commands
    ~cf.Bounds.equals
+   ~cf.Bounds.to_memory
    ~cf.Bounds.uncompress
 
 .. rubric:: Attributes
@@ -618,6 +620,7 @@ Deprecated
    ~cf.Bounds.isfieldancillary
    ~cf.Bounds.ismeasure
    ~cf.Bounds.isauxiliary
+   ~cf.Bounds.mask_invalid
    ~cf.Bounds.name
    ~cf.Bounds.remove_data
    ~cf.Bounds.select

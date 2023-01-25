@@ -99,15 +99,28 @@ jobs:
       run: |
         cd ${{ github.workspace }}/main/cf/umread_lib/c-lib
         make
+
     # Install the coverage library
     # We do so with conda which was setup in a previous step.
     - name: Install coverage
       shell: bash -l {0}
       run: |
         conda install coverage
+
     # Provide another notification message
     - name: Notify about starting testing
       run: echo Setup complete. Now starting to run the cf-python test suite...
+
+    # Create netCDF files needed for testing. A separate step is required
+    # for this so the files can be registered and recognised first; locally
+    # they are created and used on-the-fly by 'run_tests_and_coverage'.
+    - name: Create netCDF test files, e.g. test_file.nc
+      shell: bash -l {0}
+      run: |
+        cd ${{ github.workspace }}/main/cf/test
+        python create_test_files.py
+        python setup_create_field.py
+        ls -la
 
     # Finally run the relevant tests: firstly test_Data.py...
     - name: Run the test_Data test module

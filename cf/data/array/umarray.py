@@ -32,7 +32,7 @@ class UMArray(FileArray):
         source=None,
         copy=True,
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 

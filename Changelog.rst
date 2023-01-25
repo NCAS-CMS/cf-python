@@ -1,7 +1,7 @@
 version 3.14.0
 --------------
 
-**2023-01-??**
+**2023-01-31**
 
 * New method: `cf.Field.get_original_filenames`
   (https://github.com/NCAS-CMS/cf-python/issues/448)
@@ -159,7 +159,7 @@ version 3.9.0
   https://github.com/NCAS-CMS/cf-python/issues/202)
 * New write mode ``mode='a'`` for appending to, rather than over-writing,
   a netCDF file on disk (https://github.com/NCAS-CMS/cf-python/issues/30)
-* Temporarily removed the experimental ability to parallelize the
+* Temporarily removed the experimental ability to parallelise the
   collapse operation with MPI
   (https://github.com/NCAS-CMS/cf-python/issues/207)
 * Improved docstrings
@@ -939,7 +939,7 @@ version 2.0.4
 * API change for `cf.Field.axis`: now returns a `cf.DomainAxis` object
   by default
 * Bug fix in `cf.Field.where`
-* Bug fix when initializing a field with the source parameter
+* Bug fix when initialising a field with the source parameter
 * Changed default output format to NETCDF4 (from NETCDF3_CLASSIC)
 
 ----
@@ -1418,7 +1418,7 @@ version 0.9.8
 **2013-12-06**
 
 * Improved API.
-* Plenty of speed and memory optimizations.
+* Plenty of speed and memory optimisations.
 * A proper treatment of datetimes.
 * WGDOS-packed PP fields are now unpacked on demand.
 * Fixed bug in functions.py for numpy v1.7. Fixed bug when deleting

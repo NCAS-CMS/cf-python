@@ -20,7 +20,7 @@ class FullArray(Array):
         source=None,
         copy=True,
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 

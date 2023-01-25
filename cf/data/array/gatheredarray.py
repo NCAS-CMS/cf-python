@@ -43,7 +43,7 @@ class GatheredArray(CompressedArrayMixin, ArrayMixin, cfdm.GatheredArray):
                 `dask.array.from_array` function is allowed.
 
                 The chunk sizes implied by *chunks* for a dimension that
-                has been fragemented are ignored and replaced with values
+                has been fragmented are ignored and replaced with values
                 that are implied by that dimensions fragment sizes.
 
         :Returns:
