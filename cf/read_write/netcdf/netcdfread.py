@@ -4,12 +4,12 @@ import numpy as np
 """
 TODOCFA: remove aggregation_* properties from constructs
 
-TODOCFA: Create auxiliary coordinates from non-standardized terms
+TODOCFA: Create auxiliary coordinates from non-standardised terms
 
 TODOCFA: Reference instruction variables (and/or set as
          "do_not_create_field")
 
-TODOCFA: Create auxiliary coordinates from non-standardized terms
+TODOCFA: Create auxiliary coordinates from non-standardised terms
 
 TODOCFA: Consider scanning for cfa variables to the top (e.g. where
          scanning for geometry varables is). This will probably need a

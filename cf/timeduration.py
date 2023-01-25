@@ -245,7 +245,7 @@ class TimeDuration:
     def __init__(
         self, duration, units=None, month=1, day=1, hour=0, minute=0, second=0
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 

@@ -322,7 +322,7 @@ class Properties(Container):
         """The long_name CF property.
 
         A descriptive name that indicates a nature of the data. This name
-        is not standardized. See http://cfconventions.org/latest.html for
+        is not standardised. See http://cfconventions.org/latest.html for
         details.
 
         **Examples**
@@ -426,7 +426,7 @@ class Properties(Container):
         """The units CF property.
 
         The units of the data. The value of the `units` property is a
-        string that can be recognized by UNIDATA's Udunits package
+        string that can be recognised by UNIDATA's Udunits package
         (http://www.unidata.ucar.edu/software/udunits). See
         http://cfconventions.org/latest.html for details.
 
@@ -1126,7 +1126,9 @@ class Properties(Container):
             _DEPRECATION_ERROR(
                 f"Use of a {identities[0].__class__.__name__!r} for "
                 "identities has been deprecated. Use the "
-                "* operator to unpack the arguments instead."
+                "* operator to unpack the arguments instead.",
+                version="3.0.0",
+                removed_at="4.0.0",
             )  # pragma: no cover
 
         for i in identities:
@@ -1144,26 +1146,42 @@ class Properties(Container):
         """Deprecated at version 3.0.0, use method `set_property`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "setprop", "Use method 'set_property' instead"
+            self,
+            "setprop",
+            "Use method 'set_property' instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def delprop(self, prop):
         """Deprecated at version 3.0.0, use method `del_property`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "delprop", "Use method 'del_property' instead"
+            self,
+            "delprop",
+            "Use method 'del_property' instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def hasprop(self, prop):
         """Deprecated at version 3.0.0, use method `has_property`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "hasprop", "Use method 'has_property' instead"
+            self,
+            "hasprop",
+            "Use method 'has_property' instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def getprop(self, prop):
         """Deprecated at version 3.0.0, use method `get_property`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "getprop", "Use method 'get_property' instead"
+            self,
+            "getprop",
+            "Use method 'get_property' instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover

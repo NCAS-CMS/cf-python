@@ -644,7 +644,11 @@ class CellMethod(cfdm.CellMethod):
         if axis_map is None:  # distinguish from falsy '{}'
             axis_map = {}
         _DEPRECATION_ERROR_METHOD(
-            self, "write", "Use 'str(cell_method)' instead."
+            self,
+            "write",
+            "Use 'str(cell_method)' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def remove_axes(self, axes):
@@ -654,5 +658,9 @@ class CellMethod(cfdm.CellMethod):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "remove_axes", "Use method 'del_axes' instead."
+            self,
+            "remove_axes",
+            "Use method 'del_axes' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover

@@ -5,12 +5,17 @@ The Python `cf` package is an Earth Science data analysis library that
 is built on a complete implementation of the CF data model.
 
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/NCAS-CMS/cf-python?color=000000&label=latest%20version)](https://ncas-cms.github.io/cf-python/Changelog.html)
-[![PyPI](https://img.shields.io/pypi/v/cf-python?color=000000)](https://ncas-cms.github.io/cf-python/installation.html#pip)
+[![PyPI](https://img.shields.io/pypi/v/cf-python?color=000000)](https://pypi.org/project/cf-python/)
+[![Conda](https://img.shields.io/conda/v/conda-forge/cf-python?color=000000)](https://anaconda.org/conda-forge/cf-python)
 
+[![Conda](https://img.shields.io/conda/pn/conda-forge/cf-python?color=2d8659)](https://ncas-cms.github.io/cf-python/installation.html#operating-systems)
 [![Website](https://img.shields.io/website?color=2d8659&down_message=online&label=documentation&up_message=online&url=https%3A%2F%2Fncas-cms.github.io%2Fcf-python%2F)](https://ncas-cms.github.io/cf-python/index.html)
-[![GitHub](https://img.shields.io/github/license/NCAS-CMS/cf-python?color=2d8659)](https://github.com/NCAS-CMS/cf-python/blob/master/LICENSE)
+[![GitHub](https://img.shields.io/github/license/NCAS-CMS/cf-python?color=2d8659)](https://github.com/NCAS-CMS/cf-python/blob/main/LICENSE)
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/NCAS-CMS/cf-python/Run%20test%20suite?color=006666&label=test%20suite%20workflow)](https://github.com/NCAS-CMS/cf-python/actions) [![Codecov](https://img.shields.io/codecov/c/github/NCAS-CMS/cf-python?color=006666)](https://codecov.io/gh/NCAS-CMS/cf-python)
+[![Codecov](https://img.shields.io/codecov/c/github/NCAS-CMS/cfdm?color=006666)](https://codecov.io/gh/NCAS-CMS/cfdm)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/NCAS-CMS/cfdm/run-test-suite.yml?branch=main?color=006666&label=test%20suite%20workflow)](https://github.com/NCAS-CMS/cfdm/actions)
+
+[![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu)
 
 #### References
 
@@ -18,10 +23,12 @@ is built on a complete implementation of the CF data model.
 [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.5194%2Fgmd-10-4619-2017&label=GMD&up_color=264d73&up_message=10.5194%2Fgmd-10-4619-2017&url=https%3A%2F%2Fwww.geosci-model-dev.net%2F10%2F4619%2F2017%2F)](https://www.geosci-model-dev.net/10/4619/2017/)
 [![Website](https://img.shields.io/website?down_color=264d73&down_message=10.21105%2Fjoss.02717&label=JOSS&up_color=264d73&up_message=10.21105%2Fjoss.02717&url=https:%2F%2Fjoss.theoj.org%2Fpapers%2F10.21105%2Fjoss.02717%2Fstatus.svg)](https://doi.org/10.21105/joss.02717)
 
-#### Compliance with [FAIR principles](https://fair-software.eu/about/)
+Dask
+====
 
-[![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu)
-
+From version 3.14.0, the `cf` package uses
+[Dask](https://ncas-cms.github.io/cf-python/performance.html) for all
+of its data manipulations.
 
 Documentation
 =============
@@ -46,13 +53,13 @@ https://ncas-cms.github.io/cf-python/tutorial.html
 Functionality
 =============
 
-The `cf` package implements the CF data model
-(https://doi.org/10.5194/gmd-10-4619-2017) for its internal data
-structures and so is able to process any CF-compliant dataset. It is
-not strict about CF-compliance, however, so that partially conformant
-datasets may be ingested from existing datasets and written to new
-datasets. This is so that datasets which are partially conformant may
-nonetheless be modified in memory.
+The `cf` package implements the [CF data
+model](https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-CF-data-model)
+for its internal data structures and so is able to process any
+CF-compliant dataset. It is not strict about CF-compliance, however,
+so that partially conformant datasets may be ingested from existing
+datasets and written to new datasets. This is so that datasets which
+are partially conformant may nonetheless be modified in memory.
 
 A simple example of reading a field construct from a file and
 inspecting it:
@@ -94,8 +101,9 @@ The `cf` package can:
 * incorporate, and create, metadata stored in external files,
 
 * read, write, and create data that have been compressed by convention
-  (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form,
+  (i.e. ragged or gathered arrays, or coordinate arrays compressed by
+  subsampling), whilst presenting a view of the data in its
+  uncompressed form,
 
 * combine field constructs arithmetically,
 
@@ -113,7 +121,7 @@ The `cf` package can:
 
 * apply convolution filters to field constructs,
 
-* create moving means from field constructs,
+* create running means from field constructs,
 
 * apply differential operators to field constructs,
 
@@ -121,21 +129,6 @@ The `cf` package can:
 
 All of the above use LAMA functionality, which allows multiple
 fields larger than the available memory to exist and be manipulated.
-
-> **This version of `cf` is for Python 3 only** and there are
-> [incompatible differences between versions 2.x and
-> 3.x](https://ncas-cms.github.io/cf-python/2_to_3_changes.html) of
-> `cf`.
->
-> Scripts written for version 2.x but running under version
-> 3.x should either work as expected, or provide informative
-> error messages on the new API usage. However, it is advised
-> that the outputs of older scripts be checked when running
-> with Python 3 versions of the `cf` library.
->
-> For version 2.x documentation, see the [older
->  releases](https://ncas-cms.github.io/cf-python/releases.html) page.
-
 
 Visualization
 =============

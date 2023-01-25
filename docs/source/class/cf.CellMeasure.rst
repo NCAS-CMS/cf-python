@@ -170,6 +170,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.CellMeasure.to_dask_array
    ~cf.CellMeasure.__getitem__
    ~cf.CellMeasure.del_data
    ~cf.CellMeasure.get_data
@@ -264,6 +265,7 @@ Miscellaneous
    ~cf.CellMeasure.copy
    ~cf.CellMeasure.creation_commands
    ~cf.CellMeasure.equals
+   ~cf.CellMeasure.to_memory
    ~cf.CellMeasure.uncompress
 
 .. rubric:: Attributes
@@ -632,6 +634,7 @@ Deprecated
    ~cf.CellMeasure.isdomainancillary
    ~cf.CellMeasure.isfieldancillary
    ~cf.CellMeasure.ismeasure
+   ~cf.CellMeasure.mask_invalid
    ~cf.CellMeasure.name
    ~cf.CellMeasure.remove_data
    ~cf.CellMeasure.select
