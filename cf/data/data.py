@@ -4588,11 +4588,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "because calendar is 'none'"
             )
 
-        units, reftime = units.units.split(" since ")
+        units1, reftime = units.units.split(" since ")
 
         # Convert months and years to days, because cftime won't work
         # otherwise.
-        if units in ("months", "month"):
+        if units1 in ("months", "month"):
             d = self * _month_length
             d.override_units(
                 Units(
@@ -4601,7 +4601,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 ),
                 inplace=True,
             )
-        elif units in ("years", "year", "yr"):
+        elif units1 in ("years", "year", "yr"):
             d = self * _year_length
             d.override_units(
                 Units(
