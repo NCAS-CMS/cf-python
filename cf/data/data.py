@@ -4166,7 +4166,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def dtype(self):
         """The `numpy` data-type of the data.
 
-        Always returned as `numpy` data-type instance, but may be set
+        Always returned as a `numpy` data-type instance, but may be set
         as any object that converts to a `numpy` data-type.
 
         **Examples**
