@@ -12,7 +12,7 @@ class AuxiliaryCoordinate(
     locate the cells of the domain and which depend on a subset of the
     domain axis constructs. Auxiliary coordinate constructs have to be
     used, instead of dimension coordinate constructs, when a single
-    domain axis requires more then one set of coordinate values, when
+    domain axis requires more than one set of coordinate values, when
     coordinate values are not numeric, strictly monotonic, or contain
     missing values, or when they vary along more than one domain axis
     construct simultaneously. CF-netCDF auxiliary coordinate variables
