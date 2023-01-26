@@ -146,7 +146,33 @@ class _Meta:
 
             f: `Field` or `Domain`
 
-            {{verbose: `int` or `str` or `None`, optional}}
+            verbose: `int` or `str` or `None`, optional
+                If an integer from ``-1`` to ``3``, or an equivalent
+                string equal ignoring case to one of:
+
+                * ``'DISABLE'`` (``0``)
+                * ``'WARNING'`` (``1``)
+                * ``'INFO'`` (``2``)
+                * ``'DETAIL'`` (``3``)
+                * ``'DEBUG'`` (``-1``)
+
+                set for the duration of the method call only as the
+                minimum cut-off for the verboseness level of displayed
+                output (log) messages, regardless of the
+                globally-configured `cf.log_level`. Note that
+                increasing numerical value corresponds to increasing
+                verbosity, with the exception of ``-1`` as a special
+                case of maximal and extreme verbosity.
+
+                Otherwise, if `None` (the default value), output
+                messages will be shown according to the value of the
+                `cf.log_level` setting.
+
+                Overall, the higher a non-negative integer or
+                equivalent string that is set (up to a maximum of
+                ``3``/``'DETAIL'``) for increasing verbosity, the more
+                description that is printed to convey information
+                about the operation.
 
             relaxed_units: `bool`, optional
                 If True then assume that field and metadata constructs
@@ -162,9 +188,15 @@ class _Meta:
                 that aggregation may occur. By default such field
                 constructs are not aggregatable.
 
-            {{rtol: number, optional}}
+            rtol: number, optional
+                The tolerance on relative differences between real
+                numbers. The default value is set by the
+                `cf.rtol` function.
 
-            {{atol: number, optional}}
+            atol: number, optional
+                The tolerance on absolute differences between real
+                numbers. The default value is set by the
+                `cf.atol` function.
 
             dimension: (sequence of) `str`, optional
                 Create new axes for each input field which has one or
@@ -1575,19 +1607,15 @@ def aggregate(
             should only be used in cases for which it is known that the
             non-aggregating axes are in fact already entirely consistent.
 
-        atol: float, optional
-            The absolute tolerance for all numerical comparisons. The
-            tolerance is a non-negative, typically very small number. Two
-            numbers, x and y, are considered the same if :math:`|x-y| \le
-            atol + rtol*|y|`. By default the value returned by the `atol`
-            function is used.
+        atol: number, optional
+            The tolerance on absolute differences between real
+            numbers. The default value is set by the
+            `cf.atol` function.
 
-        rtol: float, optional
-            The relative tolerance for all numerical comparisons. The
-            tolerance is a non-negative, typically very small number. Two
-            numbers, x and y, are considered the same if :math:`|x-y| \le
-            atol + rtol*|y|`. By default the value returned by the `rtol`
-            function is used.
+        rtol: number, optional
+            The tolerance on relative differences between real
+            numbers. The default value is set by the
+            `cf.rtol` function.
 
         no_overlap:
             Use the *overlap* parameter instead.
