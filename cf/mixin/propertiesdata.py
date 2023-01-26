@@ -5287,7 +5287,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, iaxis, shift, inplace=False, i=False):
-        """Rollthe data along one or more axes.
+        """Roll the data along one or more axes.
 
         Elements that roll beyond the last position are re-introduced
         at the first.
