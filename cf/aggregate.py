@@ -146,26 +146,42 @@ class _Meta:
 
             f: `Field` or `Domain`
 
-            verbose: `int` or `str` or `None`, optional
-                See the `aggregate` function for details.
+            {{verbose: `int` or `str` or `None`, optional}}
 
             relaxed_units: `bool`, optional
-                See the `aggregate` function for details.
+                If True then assume that field and metadata constructs
+                with the same identity but missing units actually have
+                equivalent (but unspecified) units, so that aggregation
+                may occur. By default such field constructs are not
+                aggregatable.
 
             allow_no_identity: `bool`, optional
-                See the `aggregate` function for details.
+                If True then assume that field and metadata constructs with
+                no identity (see the *relaxed_identities* parameter) actually
+                have the same (but unspecified) identity, so that aggregation
+                may occur. By default such field constructs are not
+                aggregatable.
 
-            rtol: `float`, optional
-                See the `aggregate` function for details.
+            {{rtol: number, optional}}
 
-            atol: `float`, optional
-                See the `aggregate` function for details.
+            {{atol: number, optional}}
 
             dimension: (sequence of) `str`, optional
-                See the `aggregate` function for details.
+                Create new axes for each input field which has one or more of
+                the given properties. For each CF property name specified, if
+                an input field has the property then, prior to aggregation, a
+                new axis is created with an auxiliary coordinate whose datum
+                is the property's value and the property itself is deleted
+                from that field.
 
             copy: `bool` optional
-                See the `aggregate` function for details.
+                If False then do not copy fields prior to aggregation.
+                Setting this option to False may change input fields in place,
+                and the output fields may not be independent of the
+                inputs. However, if it is known that the input fields are
+                never to accessed again (such as in this case: ``f =
+                cf.aggregate(f)``) then setting *copy* to False can reduce the
+                time taken for aggregation.
 
         """
         self._bool = False
