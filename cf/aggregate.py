@@ -156,32 +156,32 @@ class _Meta:
                 aggregatable.
 
             allow_no_identity: `bool`, optional
-                If True then assume that field and metadata constructs with
-                no identity (see the *relaxed_identities* parameter) actually
-                have the same (but unspecified) identity, so that aggregation
-                may occur. By default such field constructs are not
-                aggregatable.
+                If True then assume that field and metadata constructs
+                with no identity (see the *relaxed_identities* parameter)
+                actually have the same (but unspecified) identity, so
+                that aggregation may occur. By default such field
+                constructs are not aggregatable.
 
             {{rtol: number, optional}}
 
             {{atol: number, optional}}
 
             dimension: (sequence of) `str`, optional
-                Create new axes for each input field which has one or more of
-                the given properties. For each CF property name specified, if
-                an input field has the property then, prior to aggregation, a
-                new axis is created with an auxiliary coordinate whose datum
-                is the property's value and the property itself is deleted
-                from that field.
+                Create new axes for each input field which has one or
+                more of the given properties. For each CF property name
+                specified, if an input field has the property then, prior
+                to aggregation, a new axis is created with an auxiliary
+                coordinate whose datum is the property's value and the
+                property itself is deleted from that field.
 
             copy: `bool` optional
                 If False then do not copy fields prior to aggregation.
-                Setting this option to False may change input fields in place,
-                and the output fields may not be independent of the
-                inputs. However, if it is known that the input fields are
-                never to accessed again (such as in this case: ``f =
-                cf.aggregate(f)``) then setting *copy* to False can reduce the
-                time taken for aggregation.
+                Setting this option to False may change input fields in
+                place, and the output fields may not be independent of
+                the inputs. However, if it is known that the input
+                fields are never to accessed again (such as in this case:
+                ``f = cf.aggregate(f)``) then setting *copy* to False can
+                reduce the time taken for aggregation.
 
         """
         self._bool = False
