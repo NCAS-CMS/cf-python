@@ -10874,7 +10874,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         # TODODASKAPI - consider matching the numpy/dask api:
         #               "shift,axis=", and the default axis behaviour
-        #               of a a flattened roll followed by shape
+        #               of a flattened roll followed by shape
         #               restore
 
         d = _inplace_enabled_define_and_cleanup(self)
