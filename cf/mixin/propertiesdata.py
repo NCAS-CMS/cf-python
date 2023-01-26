@@ -5313,7 +5313,7 @@ class PropertiesData(Properties):
                 The number of places by which elements are shifted.
                 If a `tuple`, then *axis* must be a tuple of the same
                 size, and each of the given axes is shifted by the
-                corresponding number.  If an `int` while `*axis* is a
+                corresponding number. If an `int` while *axis* is a
                 `tuple` of `int`, then the same value is used for all
                 given axes.
 
