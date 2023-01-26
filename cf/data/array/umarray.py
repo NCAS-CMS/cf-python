@@ -355,18 +355,22 @@ class UMArray(FileArray):
         return units, calendar
 
     def _test_condition(self, condition, int_hdr):
-        """Return `True` if a field satisfies the condition specified
-        for a STASH code to standard name conversion.
+        """Return `True` if a field satisfies a condition for a STASH
+        code to standard name conversion.
 
         .. versionadded:: TODODASKVER
 
         :Parameters:
 
             condition: `str`
-                TODODASKDOCS
+                The condition. If False then the condition is always
+                passed, otherwise the condition is specified as
+                ``'true_latitude_longitude'`` or
+                ``'rotated_latitude_longitude'``.
 
             int_hdr: `numpy.ndarray`
-                TODODASKDOCS
+                The integer lookup header used to evaluate the
+                condition.
 
         :Returns:
 
@@ -409,16 +413,15 @@ class UMArray(FileArray):
         :Parameters:
 
             valid_from: number or `None`
-                TODODASKDOCS
+                The lower bound of the version range, e.g. ``4.5``,
+                ``606.1``, etc.
 
             valid_to: number or `None`
-                TODODASKDOCS
+                The upper bound of the version range, e.g. ``4.5``,
+                ``606.1``, etc.
 
             version: number
-                TODODASKDOCS
-
-            int_hdr: `numpy.ndarray`
-                TODODASKDOCS
+                The version of field, e.g. ``4.5``, ``606.1``, etc.
 
         :Returns:
 

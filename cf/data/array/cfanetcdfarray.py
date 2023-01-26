@@ -266,13 +266,20 @@ class CFANetCDFArray(NetCDFArray):
 
         :Parameters:
 
-            shapes:
-                TODODASKDOCS
+           shapes: `int`, sequence, `dict` or `str`, optional
+                Define the subarray shapes.
+
+                Any value accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is allowed.
+
+                The subarray sizes implied by *chunks* for a dimension
+                that has been fragmented are ignored, so their
+                specification is arbitrary.
 
         :Returns:
 
-            `list`
-                The subarray sizes along each uncompressed dimension.
+            `tuple`
+                The subarray sizes along each dimension.
 
         **Examples**
 
@@ -470,9 +477,9 @@ class CFANetCDFArray(NetCDFArray):
             u_shapes.append(c)
 
             if dim in f_dims:
-                # no fragmentation along this dimension
                 f_locations.append(tuple(range(nc)))
             else:
+                # No fragmentation along this dimension
                 f_locations.append((0,) * nc)
 
             c = tuple(accumulate((0,) + c))
