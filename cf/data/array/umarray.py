@@ -366,7 +366,7 @@ class UMArray(FileArray):
                 The condition. If False then the condition is always
                 passed, otherwise the condition is specified as
                 ``'true_latitude_longitude'`` or
-                ''`rotated_latitude_longitude'``.
+                ``'rotated_latitude_longitude'``.
 
             int_hdr: `numpy.ndarray`
                 The integer lookup header used to evaluate the
