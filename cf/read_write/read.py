@@ -588,9 +588,9 @@ def read(
                   variable with a ``standard_name`` attribute of
                   ``'time'`` and an ``axis`` attribute of ``'T'``,
                   then the same chunking could be specified with
-                  either ``{'time': 12, 'ncdim%lat', None, 'ndim%lon':
+                  either ``{'time': 12, 'ncdim%lat', None, 'ncdim%lon':
                   None}`` or ``{'T': 12, 'ncdim%lat', None,
-                  'ndim%lon': None}``.
+                  'ncdim%lon': None}``.
 
                 .. note:: The *chunks* parameter is ignored for PP and
                           UM fields files, for which the chunking is
