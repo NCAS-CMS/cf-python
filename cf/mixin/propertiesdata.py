@@ -2570,14 +2570,18 @@ class PropertiesData(Properties):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull_graph=True):
         """Join a sequence of variables together.
+
+        .. seealso:: `Data.cull_graph`
 
         :Parameters:
 
             variables: sequence of constructs.
 
             axis: `int`, optional
+
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
@@ -2589,12 +2593,12 @@ class PropertiesData(Properties):
         if len(variables) == 1:
             return variable0.copy()
 
-        out = variable0.copy()  # data=False)
+        out = variable0.copy()
 
         data = Data.concatenate(
             [v.get_data(_fill_value=False) for v in variables],
             axis=axis,
-            _preserve=_preserve,
+            cull_graph=cull_graph,
         )
         out.set_data(data, copy=False)
 

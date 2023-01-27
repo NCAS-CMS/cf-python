@@ -7,7 +7,6 @@ import cfdm
 import numpy as np
 from numpy import array as numpy_array
 from numpy import array_equal as numpy_array_equal
-from numpy import can_cast as numpy_can_cast
 from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import finfo as numpy_finfo
@@ -3899,28 +3898,31 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            w: `Data
+            w: `Data`
+                The weights to be scaled.
 
-            scale: number
+            scale: number or `None`
+                The maximum value of the scaled weights. If `None` then no
+                scaling is applied.
 
         :Returns:
 
             `Data`
+                The scaled weights.
 
         """
-        scale = Data.asdata(scale).datum()
+        if scale is None:
+            return w
+
         if scale <= 0:
             raise ValueError(
-                "'scale' parameter must be a positive number. " f"Got {scale}"
+                "Can't set 'scale' parameter to a negative number. "
+                f"Got {scale!r}"
             )
 
-        wmax = w.maximum()
-        factor = wmax / scale
-        factor.dtype = float
-        if numpy_can_cast(factor.dtype, w.dtype):
-            w /= factor
-        else:
-            w = w / factor
+        w = w / w.max()
+        if scale != 1:
+            w = w * scale
 
         return w
 
@@ -4015,18 +4017,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "must have the same shape. "
                 f"Got {aux_X.bounds.shape} and {aux_Y.bounds.shape}"
             )
-
-        # TODODASK: This if block is probably deletable with the
-        #           demise of LAMA, but check!
-        if not methods:
-            if aux_X.bounds.data.fits_in_one_chunk_in_memory(
-                aux_X.bounds.dtype.itemsize
-            ):
-                aux_X.bounds.varray
-            if aux_X.bounds.data.fits_in_one_chunk_in_memory(
-                aux_Y.bounds.dtype.itemsize
-            ):
-                aux_X.bounds.varray
 
         if aux_Z is None:
             for key, aux in auxiliary_coordinates_1d.items():
@@ -5045,7 +5035,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return axis in self.cyclic()
 
     @classmethod
-    def concatenate(cls, fields, axis=0, _preserve=True):
+    def concatenate(cls, fields, axis=0, cull_graph=True):
         """Join a sequence of fields together.
 
         This is different to `cf.aggregate` because it does not account
@@ -5054,22 +5044,26 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         .. versionadded:: 1.0
 
-        .. seealso:: `cf.aggregate`, `Data.concatenate`
+        .. seealso:: `cf.aggregate`, `Data.concatenate`,
+                     `Data.cull_graph`
 
         :Parameters:
 
-            fields: `FieldList`
-                The sequence of fields to concatenate.
+            fields: (sequence of) `Field`
+                The fields to concatenate.
 
             axis: `int`, optional
                 The axis along which the arrays will be joined. The
-                default is 0. Note that scalar arrays are treated as if
-                they were one dimensional.
+                default is 0. Note that scalar arrays are treated as
+                if they were one dimensional.
+
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
             `Field`
-                The field generated from the concatenation of input fields.
+                The field generated from the concatenation of input
+                fields.
 
         """
         if isinstance(fields, cls):
@@ -5084,7 +5078,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new_data = Data.concatenate(
             [f.get_data(_fill_value=False) for f in fields],
             axis=axis,
-            _preserve=_preserve,
+            cull_graph=cull_graph,
         )
 
         # Change the domain axis size
@@ -5129,7 +5123,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 construct = construct.concatenate(
                     constructs,
                     axis=construct_axes.index(dim),
-                    _preserve=_preserve,
+                    cull_graph=cull_graph,
                 )
             except ValueError:
                 # Couldn't concatenate this construct, so remove it from
@@ -6958,7 +6952,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         group_span=None,
         group_contiguous=1,
         measure=False,
-        scale=None,
+        scale=1,
         radius="earth",
         great_circle=False,
         verbose=None,
@@ -7469,13 +7463,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             weights: optional
                 Specify the weights for the collapse axes. The weights
-                are, in general, those that would be returned by this call
-                of the field construct's `weights` method:
+                are, in general, those that would be returned by this
+                call of the field construct's `weights` method:
                 ``f.weights(weights, axes=axes, measure=measure,
                 scale=scale, radius=radius, great_circle=great_circle,
-                components=True)``. See the *axes*, *measure*, *scale*,
-                *radius* and *great_circle* parameters and
-                `cf.Field.weights` for details.
+                components=True)``. See the *axes*, *measure*,
+                *scale*, *radius* and *great_circle* parameters and
+                `cf.Field.weights` for details, and note that the
+                value of *scale* may be modified depending on the
+                value of *measure*.
 
                 .. note:: By default *weights* is `None`, resulting in
                           **unweighted calculations**.
@@ -7559,15 +7555,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 .. versionadded:: 3.0.2
 
-            scale: number, optional
-                If set to a positive number then scale the weights so that
-                they are less than or equal to that number. By default the
-                weights are scaled to lie between 0 and 1 (i.e.  *scale*
-                is 1).
+            scale: number or `None`, optional
+                If set to a positive number then scale the weights so
+                that they are less than or equal to that number. If
+                set to `None` the weights are not scaled. In general
+                the default is for weights to be scaled to lie between
+                0 and 1; however if *measure* is True then the weights
+                are never scaled and the value of *scale* is taken as
+                `None`, regardless of its setting.
 
                 *Parameter example:*
-                  To scale all weights so that they lie between 0 and 0.5:
-                  ``scale=0.5``.
+                  To scale all weights so that they lie between 0 and
+                  10 ``scale=10``.
 
                 .. versionadded:: 3.0.2
 
@@ -8652,41 +8651,18 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 if method not in _collapse_weighted_methods:
                     g_weights = None
                 else:
-                    # if isinstance(weights, (dict, self.__class__, Data)):
-                    #     if measure:
-                    #         raise ValueError(
-                    #             "TODO")
-                    #
-                    #     if scale is not None:
-                    #         raise ValueError(
-                    #             "TODO")
-                    if method == "integral":
-                        if not measure:
-                            raise ValueError(
-                                "Must set measure=True for 'integral' "
-                                "collapses."
-                            )
-
-                        if scale is not None:
-                            raise ValueError(
-                                "Can't set scale for 'integral' collapses."
-                            )
-                    elif not measure and scale is None:
-                        scale = 1.0
-                    elif measure and scale is not None:
+                    if measure:
+                        # Never scale weights that are cell measures
+                        scale = None
+                    elif method == "integral":
                         raise ValueError(
-                            "Can't scale weights which are created as cell "
-                            "measures i.e. can't scale the weights if "
-                            "measure parameter is set to True."
+                            f"Must set measure=True for {method!r} collapses"
                         )
-
-                    #                    if weights is True:
-                    #                        weights = tuple(collapse_axes.keys())
 
                     g_weights = f.weights(
                         weights,
                         components=True,
-                        axes=list(collapse_axes),  # .keys()),
+                        axes=list(collapse_axes),
                         scale=scale,
                         measure=measure,
                         radius=radius,
@@ -8696,7 +8672,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     if not g_weights:
                         g_weights = None
 
-                #                axis = collapse_axes.key()
                 axis = [a for a in collapse_axes][0]
 
                 f = f._collapse_grouped(
@@ -8765,30 +8740,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             d_kwargs = {}
             if weights is not None:
-                # if isinstance(weights, (dict, self.__class__, Data)):
-                #     if measure:
-                #         raise ValueError("TODO")
-                #
-                #     if scale is not None:
-                #         raise ValueError("TODO")
-
-                if method == "integral":
-                    if not measure:
-                        raise ValueError(
-                            f"Must set measure=True for {method!r} collapses"
-                        )
-
-                    if scale is not None:
-                        raise ValueError(
-                            "Can't set scale for 'integral' collapses."
-                        )
-                elif not measure and scale is None:
-                    scale = 1.0
-                elif measure and scale is not None:
+                if measure:
+                    # Never scale weights that are cell measures
+                    scale = None
+                elif method == "integral":
                     raise ValueError(
-                        "Can't scale weights which are created as cell "
-                        "measures i.e. can't scale the weights if "
-                        "measure parameter is set to True."
+                        f"Must set measure=True for {method!r} collapses"
                     )
 
                 d_weights = f.weights(
@@ -10341,7 +10298,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Concatenate the partial collapses
             # --------------------------------------------------------
             try:
-                f = self.concatenate(fl, axis=iaxis, _preserve=False)
+                f = self.concatenate(fl, axis=iaxis)
             except ValueError as error:
                 raise ValueError(f"Can't collapse: {error}")
 
@@ -12521,6 +12478,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         print("This method is not ready for use.")
         return
 
+    # TODODASK
     # Keep these commented lines for using with the future dask version
     #
     #        standard_name = None
