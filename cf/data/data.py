@@ -10011,7 +10011,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
           0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
            0), (slice(0, 2, 1),))}
         >>> d.cull_graph()
-        dict(d.to_dask_array().dask)
+        >>> dict(d.to_dask_array().dask)
         {('getitem-3e4edac0a632402f6b45923a6b9d215f',
           0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
            0), (slice(0, 2, 1),)),
