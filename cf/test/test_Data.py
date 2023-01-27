@@ -151,15 +151,27 @@ class DataTest(unittest.TestCase):
 
     def test_Data__init__basic(self):
         """Test basic `__init__` cases for Data."""
-        # Most __init__ parameters are covered by the various other tests,
-        # so this is mainly to check trivial cases and especially the edge
-        # case of 'default' Data i.e. if no parameters are specified.
+        # Most __init__ parameters are covered by the various other
+        # tests, so this is mainly to check trivial cases.
         cf.Data(0, "s")
         cf.Data(array=np.arange(5))
         cf.Data(source=self.filename)
 
+        d = cf.Data()
         with self.assertRaises(ValueError):
-            cf.Data()
+            d.ndim
+
+        with self.assertRaises(ValueError):
+            d.get_filenames()
+
+    def test_Data__init__no_args(self):
+        """Test `__init__` with no arg."""
+        # Most __init__ parameters are covered by the various other
+        # tests, so this is mainly to check trivial cases.
+        cf.Data()
+        cf.Data(0, "s")
+        cf.Data(array=np.arange(5))
+        cf.Data(source=self.filename)
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""
@@ -854,12 +866,14 @@ class DataTest(unittest.TestCase):
                 "sample_size": 1,
             },
         )
+
         # NaN values aren't 'equal' to e/o, so check call works and that some
         # representative values are as expected, in this case
         s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
+
         self.assertEqual(len(s5), 16)
         self.assertEqual(s5["minimum"], -2)
-        self.assertEqual(s5["sum"], 3)
+        self.assertEqual(s5["sum"], 0)
         self.assertEqual(s5["sample_size"], 6)
         self.assertTrue(np.isnan(s5["mean"]))
         self.assertTrue(np.isnan(s5["variance"]))  # needs all=True to show up
@@ -1658,12 +1672,6 @@ class DataTest(unittest.TestCase):
         e = d.clip(0.003, 0.009, "km")
         self.assertTrue((e.array == b).all())
 
-    @unittest.skipIf(
-        True,
-        "Failing due to 'has_year_zero' differences in actual and expected "
-        "outputs: relates to github.com/Unidata/cftime/issues/233, see also "
-        "NCAS-CMS/cfunits/commit/ca15e7f6db76fe613db740993b4e45115341d865.",
-    )
     def test_Data_months_years(self):
         """Test Data with 'months/years since' units specifications."""
         calendar = "360_day"
@@ -1679,9 +1687,7 @@ class DataTest(unittest.TestCase):
             ]
         )
 
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         calendar = "standard"
         d = cf.Data(
@@ -1695,9 +1701,7 @@ class DataTest(unittest.TestCase):
                 cf.dt(2000, 3, 1, 20, 58, 7, 662446, calendar=calendar),
             ]
         )
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         calendar = "360_day"
         d = cf.Data(
@@ -1710,9 +1714,7 @@ class DataTest(unittest.TestCase):
                 cf.dt(2002, 1, 11, 11, 37, 31, 949357, calendar=calendar),
             ]
         )
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         calendar = "standard"
         d = cf.Data(
@@ -1725,9 +1727,7 @@ class DataTest(unittest.TestCase):
                 cf.dt(2001, 12, 31, 11, 37, 31, 949357, calendar=calendar),
             ]
         )
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         d = cf.Data(
             [1.0, 2],
@@ -4420,6 +4420,16 @@ class DataTest(unittest.TestCase):
         d[0] = 1
         for element in elements0:
             self.assertNotIn(element, d._custom)
+
+    def test_Data_cull_graph(self):
+        """Test `Data.cull`"""
+        d = cf.Data([1, 2, 3, 4, 5], chunks=3)
+        d = d[:2]
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 3)
+
+        # Check that there are fewer keys after culling
+        d.cull_graph()
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 2)
 
     def test_Data_npartitions(self):
         """Test the `npartitions` Data property."""

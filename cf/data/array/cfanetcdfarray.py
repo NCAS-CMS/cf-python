@@ -266,21 +266,28 @@ class CFANetCDFArray(NetCDFArray):
 
         :Parameters:
 
-            shapes:
-                TODODASKDOCS
+           shapes: `int`, sequence, `dict` or `str`, optional
+                Define the subarray shapes.
+
+                Any value accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is allowed.
+
+                The subarray sizes implied by *chunks* for a dimension
+                that has been fragmented are ignored, so their
+                specification is arbitrary.
 
         :Returns:
 
-            `list`
-                The subarray sizes along each uncompressed dimension.
+            `tuple`
+                The subarray sizes along each dimension.
 
         **Examples**
 
         >>> a.shape
         (12, 1, 73, 144)
-        >>> a.get_fragement_shape()
+        >>> a.get_fragment_shape()
         (2, 1, 1, 1)
-        >>> a.fragemented_dimensions()
+        >>> a.fragmented_dimensions()
         [0]
         >>> a.subarray_shapes(-1)
         ((6, 6), (1,), (73,), (144,))
@@ -395,9 +402,9 @@ class CFANetCDFArray(NetCDFArray):
 
         >>> a.shape
         (12, 73, 144)
-        >>> a.get_fragement_shape()
+        >>> a.get_fragment_shape()
         (2, 1, 1)
-        >>> a.fragemented_dimensions()
+        >>> a.fragmented_dimensions()
         [0]
         >>> subarray_shapes = a.subarray_shapes({1: 40})
         >>> print(subarray_shapes)
@@ -470,9 +477,9 @@ class CFANetCDFArray(NetCDFArray):
             u_shapes.append(c)
 
             if dim in f_dims:
-                # no fragmentation along this dimension
                 f_locations.append(tuple(range(nc)))
             else:
+                # No fragmentation along this dimension
                 f_locations.append((0,) * nc)
 
             c = tuple(accumulate((0,) + c))
@@ -634,7 +641,7 @@ class CFANetCDFArray(NetCDFArray):
                 `dask.array.from_array` function is allowed.
 
                 The chunk sizes implied by *chunks* for a dimension that
-                has been fragemented are ignored and replaced with values
+                has been fragmented are ignored and replaced with values
                 that are implied by that dimensions fragment sizes.
 
         :Returns:

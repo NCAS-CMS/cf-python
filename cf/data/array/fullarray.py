@@ -20,22 +20,39 @@ class FullArray(Array):
         source=None,
         copy=True,
     ):
-        """**Initialization**
+        """**Initialisation**
 
-        TODODASKDOCS
+        :Parameters:
 
-            :Parameters:
+            fill_value : scalar, optional
+                The fill value for the array. May be set to
+                `cf.masked` or `np.ma.masked`.
 
-                dtype : numpy.dtype
-                    The numpy data type of the data array.
+            dtype: `numpy.dtype`
+                The data type of the array.
 
-                shape : tuple
-                    The data array's dimension sizes.
+            shape: `tuple`
+                The array dimension sizes.
 
-                size : int
-                    Number of elements indexin the data array.
+            units: `str` or `None`, optional
+                The units of the netCDF variable. Set to `None` to
+                indicate that there are no units. If unset then the
+                units will be set to `None` during the first
+                `__getitem__` call.
 
-                fill_value : scalar, optional
+            calendar: `str` or `None`, optional
+                The calendar of the netCDF variable. By default, or if
+                set to `None`, then the CF default calendar is
+                assumed, if applicable. If unset then the calendar
+                will be set to `None` during the first `__getitem__`
+                call.
+
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+            {{deep copy}}
 
         """
         super().__init__(source=source, copy=copy)
@@ -141,9 +158,18 @@ class FullArray(Array):
         return f"Filled with {fill_value!r}"
 
     def _set_units(self):
-        """TODODASKDOCS.
+        """The units and calendar properties.
+
+        These are the values set during initialisation, defaulting to
+        `None` if either was not set at that time.
 
         .. versionadded:: TODODASKVER
+
+        :Returns:
+
+            `tuple`
+                The units and calendar values, either of which may be
+                `None`.
 
         """
         # TODOCFA: Consider moving _set_units to cfdm.Array, or some
@@ -178,7 +204,7 @@ class FullArray(Array):
 
         :Returns:
 
-            TODODASKDOCS
+                The fill value.
 
         """
         return self._get_component("fill_value", None)

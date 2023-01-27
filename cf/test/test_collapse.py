@@ -190,10 +190,52 @@ class Field_collapseTest(unittest.TestCase):
         g = f.collapse(
             "T: max within years time: minimum over years",
             within_years=cf.seasons(),
+            over_years=cf.Y(1),
+        )
+        expected_shape = list(f.shape)
+        expected_shape[0] = 12
+
+        if verbose:
+            print("\n", f)
+            print(g)
+            print(g.constructs)
+        self.assertEqual(list(g.shape), expected_shape)
+
+        g = f.collapse(
+            "T: max within years time: minimum over years",
+            within_years=cf.seasons(),
             over_years=cf.Y(2),
         )
         expected_shape = list(f.shape)
         expected_shape[0] = 8
+
+        if verbose:
+            print("\n", f)
+            print(g)
+            print(g.constructs)
+        self.assertEqual(list(g.shape), expected_shape)
+
+        g = f.collapse(
+            "T: max within years time: minimum over years",
+            within_years=cf.seasons(),
+            over_years=cf.Y(3),
+        )
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
+
+        if verbose:
+            print("\n", f)
+            print(g)
+            print(g.constructs)
+        self.assertEqual(list(g.shape), expected_shape)
+
+        g = f.collapse(
+            "T: max within years time: minimum over years",
+            within_years=cf.seasons(),
+            over_years=None,
+        )
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
 
         if verbose:
             print("\n", f)
