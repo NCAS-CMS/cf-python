@@ -3902,7 +3902,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 The weights to be scaled.
 
             scale: number or `None`
-                The maximum value of the scaled, If `None` then no
+                The maximum value of the scaled weights. If `None` then no
                 scaling is applied.
 
         :Returns:
