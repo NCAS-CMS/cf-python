@@ -11,6 +11,33 @@ logger = logging.getLogger(__name__)
 class Constructs(cfdm.Constructs):
     """A container for metadata constructs.
 
+    The container has similarities to a `dict` in that it presents the
+    metadata constructs as key/value pairs, where the key is the
+    unique identifier that corresponds to a metadata construct value;
+    is indexable by metadata construct identifier; and provides a
+    subset of the usual dictionary methods: `get`, `items`, `keys`,
+    and `values`. The container can be converted to an actual `dict`
+    with the `todict` method.
+
+    **Filtering**
+
+    A subset of the metadata constructs can be defined and returned in
+    a new `Constructs` instance by using the various filter
+    methods. See `filter` for more details.
+
+    **Calling**
+
+    Calling a `Constructs` instance also creates a new `Constructs`
+    instance that contains a subset of the metadata constructs,
+    primarily selecting by construct identity. For instance, selecting
+    constructs that have an identity of 'latitude' could be done by
+    either ``x = c('latitude')`` or ``x =
+    c.filter_by_identity('latitude')``. More generally,
+    ``c(*identities, **filter_kwargs)`` is equivalent to
+    ``c.filter(filter_by_identity=identities, **filter_kwargs)``
+
+    **Metadata constructs**
+
     The following metadata constructs can be included:
 
     * auxiliary coordinate constructs
@@ -21,22 +48,6 @@ class Constructs(cfdm.Constructs):
     * domain axis constructs
     * cell method constructs
     * field ancillary constructs
-
-    The container may be used by `Field` and `Domain` instances. In
-    the latter case cell method and field ancillary constructs must be
-    flagged as "ignored" (see the *_ignore* parameter).
-
-    The container is like a dictionary in many ways, in that it stores
-    key/value pairs where the key is the unique construct key with
-    corresponding metadata construct value, and provides some of the
-    usual dictionary methods.
-
-    **Calling**
-
-    Calling a `Constructs` instance selects metadata constructs by
-    identity and is an alias for the `filter_by_identity` method. For
-    example, to select constructs that have an identity of
-    'air_temperature': ``d = c('air_temperature')``.
 
     .. versionadded:: 3.0.0
 
@@ -159,37 +170,6 @@ class Constructs(cfdm.Constructs):
 
         return super()._filter_by_identity(arg, identities, todict, config)
 
-    #    def _filter_by_coordinate_type(self, arg, ctypes, todict):
-    #        """Worker function for `filter_by_identity` and `filter`.
-    #
-    #        See `filter_by_identity` for details.
-    #
-    #        .. versionadded:: 3.9.0
-    #
-    #        """
-    #        out, pop = self._filter_preprocess(
-    #            arg,
-    #            filter_applied={"filter_by_identity": ctypes},
-    #            todict=todict,
-    #        )
-    #
-    #        if not ctypes:
-    #            # Return all constructs if no coordinate types have been
-    #            # provided
-    #            return out
-    #
-    #        for cid, construct in tuple(out.items()):
-    #            ok = False
-    #            for ctype in ctypes:
-    #                if getattr(construct, ctype, False):
-    #                    ok = True
-    #                    break
-    #
-    #            if not ok:
-    #                pop(cid)
-    #
-    #        return out
-
     @classmethod
     def _short_iteration(cls, x):
         """The default short circuit test.
@@ -200,7 +180,7 @@ class Constructs(cfdm.Constructs):
 
         See `_filter_by_identity` for details.
 
-        .. versionadded:: (cfdm) 1.8.9.0
+        .. versionadded:: 3.9.0
 
         :Parameters:
 

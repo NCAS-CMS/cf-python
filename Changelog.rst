@@ -14,6 +14,10 @@ version 3.14.0
   method (https://github.com/NCAS-CMS/cf-python/issues/487)
 * New keyword parameter to `cf.write`: ``omit_data``
   (https://github.com/NCAS-CMS/cf-python/issues/477)
+* New keyword parameter to `cf.read`: ``chunks``
+  (https://github.com/NCAS-CMS/cf-python/pull/522)
+* Extend functionality of `cf.Data.roll` and `cf.Field.roll` to allow
+  multiple axes to be rolled simultaneously.
 * Fixed bug that raised an exception when using the ``equal`` or
   ``exist`` keyword of `cf.aggregate`
   (https://github.com/NCAS-CMS/cf-python/issues/499)

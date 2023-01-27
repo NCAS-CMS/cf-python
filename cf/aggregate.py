@@ -3079,7 +3079,6 @@ def _aggregate_2_fields(
             data = Data.concatenate(
                 (construct0.get_data(), construct1.get_data()),
                 axis,
-                _preserve=False,
             )
             construct0.set_data(data, copy=False)
             if construct0.has_bounds():
@@ -3089,7 +3088,6 @@ def _aggregate_2_fields(
                         construct1.bounds.get_data(_fill_value=False),
                     ),
                     axis,
-                    _preserve=False,
                 )
                 construct0.bounds.set_data(data, copy=False)
         else:
@@ -3100,7 +3098,6 @@ def _aggregate_2_fields(
                     construct0.get_data(_fill_value=False),
                 ),
                 axis,
-                _preserve=False,
             )
             construct0.set_data(data)
             if construct0.has_bounds():
@@ -3110,7 +3107,6 @@ def _aggregate_2_fields(
                         construct0.bounds.get_data(_fill_value=False),
                     ),
                     axis,
-                    _preserve=False,
                 )
                 construct0.bounds.set_data(data)
 
@@ -3161,12 +3157,12 @@ def _aggregate_2_fields(
         if direction0:
             # The fields are increasing along the aggregating axis
             data = Data.concatenate(
-                (parent0.get_data(), parent1.get_data()), axis, _preserve=False
+                (parent0.get_data(), parent1.get_data()), axis
             )
         else:
             # The fields are decreasing along the aggregating axis
             data = Data.concatenate(
-                (parent1.get_data(), parent0.get_data()), axis, _preserve=False
+                (parent1.get_data(), parent0.get_data()), axis
             )
 
         # Update the size of the aggregating axis in parent0
