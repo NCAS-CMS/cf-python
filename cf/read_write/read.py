@@ -77,7 +77,6 @@ def read(
     `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
-
     **NetCDF hierarchical groups**
 
     Hierarchical groups in CF provide a mechanism to structure
@@ -86,7 +85,7 @@ def read(
     rules in the CF conventions for resolving references to
     out-of-group netCDF variables and dimensions. The group structure
     is preserved in the field construct's netCDF interface. Groups
-    were incorporated into C-1.8. For files with groups that state
+    were incorporated into CF-1.8. For files with groups that state
     compliance to earlier versions of the CF conventions, the groups
     will be interpreted as per the latest release of CF.
 
@@ -137,8 +136,8 @@ def read(
 
     2-d "slices" within a single file are always combined, where
     possible, into field constructs with 3-d, 4-d or 5-d data. This is
-    done prior to the field construct aggregation carried out by the
-    `cf.read` function.
+    done prior to any field construct aggregation (see the *aggregate*
+    parameter).
 
     When reading PP and UM fields files, the *relaxed_units* aggregate
     option is set to `True` by default, because units are not always
@@ -148,11 +147,25 @@ def read(
     **Performance**
 
     Descriptive properties are always read into memory, but lazy
-    loading is employed for all data arrays, which means that no data
-    is read into memory until the data is required for inspection or
-    to modify the array contents. This maximises the number of field
-    constructs that may be read within a session, and makes the read
-    operation fast.
+    loading is employed for all data arrays which means that, in
+    general, data is not read into memory until the data is required
+    for inspection or to modify the array contents. This maximises the
+    number of field constructs that may be read within a session, and
+    makes the read operation fast. The exceptions to the lazy reading
+    of data arrays are:
+
+    * Data that define purely structural elements of other data arrays
+      that are compressed by convention (such as a count variable for
+      a ragged contiguous array). These are always read from disk.
+
+    * If field or domain aggregation is in use (as it is by default,
+      see the *aggregate* parameter), then the data of metadata
+      constructs may have to be read to determine how the contents of
+      the input files may be aggregated. This won't happen for a
+      particular field or domain's metadata, though, if it can be
+      ascertained from descriptive properties alone that it can't be
+      aggregated with anything else (as would be the case, for
+      instance, when a field has a unique standard name).
 
     However, when two or more field or domain constructs are
     aggregated to form a single construct then the data arrays of some
