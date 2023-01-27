@@ -2170,7 +2170,8 @@ class UMField:
 
         :Returns:
 
-            `None`
+            `list`
+                The keys of the auxiliary coordinates.
 
         """
         BDX = self.bdx
