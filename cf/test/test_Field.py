@@ -2484,6 +2484,13 @@ class FieldTest(unittest.TestCase):
 
         self.assertIsNone(g.persist(inplace=True))
 
+    def test_Field_subspace(self):
+        f = self.f
+
+        g = f.subspace(grid_longitude=20)
+        h = f.subspace(grid_longitude=np.float64(20))
+        self.assertTrue(g.equals(h))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
