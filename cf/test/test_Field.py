@@ -465,6 +465,7 @@ class FieldTest(unittest.TestCase):
             for method in (
                 "mean",
                 "mean_absolute_value",
+                "mean_of_upper_decile",
                 "root_mean_square",
             ):
                 for weights in (None, "area"):
