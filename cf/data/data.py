@@ -7063,10 +7063,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 atol=float(atol),
             )
         elif not self_is_numeric and not other_is_numeric:
-            # Apply bool() since the output may be numeric and we need a
-            # Boolean result to avoid casting error ("... can't be cast using
-            # casting='same_kind'")
-            data_comparison = bool(da.all(self_dx == other_dx))
+            # If the array (say d) is fully masked, then the output of
+            # np.all(d == d) and therefore da.all(d == d) will be a
+            # np.ma.masked object which has dtype('float64'), and not
+            # a Boolean, causing issues later. To ensure data_comparison
+            # is Boolean, we must do an early compute to check if it is
+            # a masked object and if so, force the desired result (True).
+            #
+            # This early compute won't degrade performance because it
+            # would be performed towards result.compute() below anyway.
+            data_comparison = da.all(self_dx == other_dx).compute()
+            if data_comparison is np.ma.masked:
+                data_comparison = True
+
         else:  # one is numeric and other isn't => not equal (incompat. dtype)
             logger.info(
                 f"{self.__class__.__name__}: Different data types:"
