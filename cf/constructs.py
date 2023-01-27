@@ -28,7 +28,7 @@ class Constructs(cfdm.Constructs):
     **Calling**
 
     Calling a `Constructs` instance also creates a new `Constructs`
-    instance that contians subset of the metadata constructs,
+    instance that contains a subset of the metadata constructs,
     primarily selecting by construct identity. For instance, selecting
     constructs that have an identity of 'latitude' could be done by
     either ``x = c('latitude')`` or ``x =
