@@ -512,7 +512,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         return array, kwargs
 
     def _parse_chunks(self, ncvar):
-        # Parse dask chunks
         """Parse the dask chunks.
 
         .. versionadded:: TODODASKVER
