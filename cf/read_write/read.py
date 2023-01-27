@@ -578,7 +578,7 @@ def read(
                 *Parameter example:*
                   If a netCDF file contains dimensions ``time``,
                   ``z``, ``lat`` and ``lon``, then ``{'ncdim%time':
-                  12, 'ncdim%lat', None, 'ndim%lon': None}`` will
+                  12, 'ncdim%lat', None, 'ncdim%lon': None}`` will
                   ensure that all ``time`` axes have a chunksize of
                   12; and all ``lat`` and ``lon`` axes are not
                   chunked; and all ``z`` axes are chunked to comply as
