@@ -542,7 +542,7 @@ def read(
                   A chunksize of 2 MiB may be specified as
                   ``'2097152'`` or ``'2 MiB'``.
 
-                If *chunks* is `-1` or `None` then each there is no
+                If *chunks* is `-1` or `None` then for each there is no
                 chunking, i.e. every data array has one chunk
                 regardless of its size
 
