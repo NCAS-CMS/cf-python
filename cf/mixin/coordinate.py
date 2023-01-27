@@ -394,7 +394,7 @@ class Coordinate:
             TODO
 
             config: `dict`
-                Additional parameters for optimizing the
+                Additional parameters for optimising the
                 operation. See the code for details.
 
                 .. versionadded:: 3.9.0

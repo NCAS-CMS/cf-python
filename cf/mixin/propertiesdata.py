@@ -75,7 +75,7 @@ class PropertiesData(Properties):
     def __data__(self):
         """Returns a new reference to the data.
 
-        Allows the construct to initialize a `Data` object.
+        Allows the construct to initialise a `Data` object.
 
         :Returns:
 
@@ -1549,7 +1549,7 @@ class PropertiesData(Properties):
         """The units CF property.
 
         The units of the data. The value of the `units` property is a
-        string that can be recognized by UNIDATA's Udunits package
+        string that can be recognised by UNIDATA's Udunits package
         (http://www.unidata.ucar.edu/software/udunits). See
         http://cfconventions.org/latest.html for details.
 
@@ -5287,15 +5287,35 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, iaxis, shift, inplace=False, i=False):
-        """Roll the data along an axis.
+        """Roll the data along one or more axes.
+
+        Elements that roll beyond the last position are re-introduced
+        at the first.
 
         .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
                      `transpose`
 
         :Parameters:
 
-            iaxis: `int`
-                TODO
+            axis: `int`, or `tuple` of `int`
+                Axis or axes along which elements are shifted.
+
+                *Parameter example:*
+                  Roll the second axis: ``axis=1``.
+
+                *Parameter example:*
+                  Roll the last axis: ``axis=-1``.
+
+                *Parameter example:*
+                  Roll the first and last axes: ``axis=(0, -1)``.
+
+            shift: `int`, or `tuple` of `int`
+                The number of places by which elements are shifted.
+                If a `tuple`, then *axis* must be a tuple of the same
+                size, and each of the given axes is shifted by the
+                corresponding number. If an `int` while *axis* is a
+                `tuple` of `int`, then the same value is used for all
+                given axes.
 
             {{inplace: `bool`, optional}}
 
@@ -5304,11 +5324,17 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                TODO
+                The construct with rolled data. If the operation was
+                in-place then `None` is returned.
 
         **Examples**
 
-        TODO
+        >>> print(f.array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11]
+        >>> print(f.roll(0, 2).array)
+        [10 11  0  1  2  3  4  5  6  7  8  9]
+        >>> print(f.roll(0, -2).array)
+        [ 2  3  4  5  6  7  8  9 10 11  0  1]
 
         """
         return self._apply_data_oper(

@@ -21,7 +21,7 @@ from .um import UMRead
 _cached_temporary_files = {}
 
 # --------------------------------------------------------------------
-# Create an implementation container and initialize a read object for
+# Create an implementation container and initialise a read object for
 # each format
 # --------------------------------------------------------------------
 _implementation = implementation()
@@ -133,7 +133,7 @@ def read(
     the first 64 bits in the file, but for the few occasions when this
     is not possible, the *um* keyword allows the format to be
     specified, as well as the UM version (if the latter is not
-    inferable from the PP or lookup header information).
+    inferrable from the PP or lookup header information).
 
     2-d "slices" within a single file are always combined, where
     possible, into field constructs with 3-d, 4-d or 5-d data. This is
@@ -429,7 +429,7 @@ def read(
             files only, provide extra decoding instructions. This
             option is ignored for input files which are not PP or
             fields files. In most cases, how to decode a file is
-            inferable from the file's contents, but if not then each
+            inferrable from the file's contents, but if not then each
             key/value pair in the dictionary sets a decoding option as
             follows:
 
@@ -755,7 +755,7 @@ def read(
             f"when recursive={recursive!r}"
         )
 
-    # Initialize the output list of fields/domains
+    # Initialise the output list of fields/domains
     if domain:
         out = DomainList()
     else:

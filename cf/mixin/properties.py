@@ -322,7 +322,7 @@ class Properties(Container):
         """The long_name CF property.
 
         A descriptive name that indicates a nature of the data. This name
-        is not standardized. See http://cfconventions.org/latest.html for
+        is not standardised. See http://cfconventions.org/latest.html for
         details.
 
         **Examples**
@@ -426,7 +426,7 @@ class Properties(Container):
         """The units CF property.
 
         The units of the data. The value of the `units` property is a
-        string that can be recognized by UNIDATA's Udunits package
+        string that can be recognised by UNIDATA's Udunits package
         (http://www.unidata.ucar.edu/software/udunits). See
         http://cfconventions.org/latest.html for details.
 

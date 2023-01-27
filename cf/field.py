@@ -319,7 +319,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -335,12 +335,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 `set_properties` and `set_property` methods.
 
             source: optional
-                Initialize the properties, data and metadata constructs
+                Initialise the properties, data and metadata constructs
                 from those of *source*.
 
             copy: `bool`, optional
                 If False then do not deep copy input parameters prior to
-                initialization. By default arguments are deep copied.
+                initialisation. By default arguments are deep copied.
 
         """
         super().__init__(
@@ -6719,7 +6719,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dims = []
         names = []
 
-        # Initialize the output binned field
+        # Initialise the output binned field
         out = type(self)(properties=self.properties())
 
         # Sort out its identity
@@ -6824,7 +6824,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             names.append(dim.identity())
 
         # ------------------------------------------------------------
-        # Initialize the ouput data as a totally masked array
+        # Initialise the ouput data as a totally masked array
         # ------------------------------------------------------------
         if method == "sample_size":
             dtype = int
@@ -7526,7 +7526,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 Create weights which are cell measures, i.e. which
                 describe actual cell sizes (e.g. cell area) with
                 appropriate units (e.g. metres squared). By default the
-                weights are normalized and have arbitrary units.
+                weights are normalised and have arbitrary units.
 
                 Cell measures can be created for any combination of
                 axes. For example, cell measures for a time axis are the
@@ -13798,7 +13798,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         )
 
         # ------------------------------------------------------------
-        # Initialize the output field with the percentile data
+        # Initialise the output field with the percentile data
         # ------------------------------------------------------------
 
         # TODODASK: Make sure that this is OK whaen `ranks` is a
@@ -14228,11 +14228,12 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         :Parameters:
 
             axis:
-                The cyclic axis to be rolled, defined by that which would
-                be selected by passing the given axis description to a
-                call of the field construct's `domain_axis` method. For
-                example, for a value of ``'X'``, the domain axis construct
-                returned by ``f.domain_axis('X')`` is selected.
+                The cyclic axis to be rolled, defined by that which
+                would be selected by passing the given axis
+                description to a call of the field construct's
+                `domain_axis` method. For example, for a value of
+                ``'X'``, the domain axis construct returned by
+                ``f.domain_axis('X')`` is selected.
 
             shift: `int`
                 The number of places by which the selected cyclic axis is
@@ -14327,10 +14328,10 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         The array and the *condition*, *x* and *y* parameters must all
         be broadcastable across the original array, such that the size
-        of the result is identical to the orginal size of the
+        of the result is identical to the original size of the
         array. Leading size 1 dimensions of these parameters are
         ignored, thereby also ensuring that the shape of the result is
-        identical to the orginal shape of the array.
+        identical to the original shape of the array.
 
         If *condition* is a `Query` object then for the purposes of
         broadcasting, the condition is considered to be that which is
@@ -14934,7 +14935,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         a coarser to a finer grid. Linear interpolation is
         available. The latter method is particular useful for cases
         when the latitude and longitude coordinate cell boundaries are
-        not known nor inferable. Higher order patch recovery is
+        not known nor inferrable. Higher order patch recovery is
         available as an alternative to linear interpolation. This
         typically results in better approximations to values and
         derivatives compared to the latter, but the weight matrix can
@@ -15781,7 +15782,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         grid. (Multi)linear interpolation is available. The latter
         method is particular useful for cases when the latitude and
         longitude coordinate cell boundaries are not known nor
-        inferable. Higher order patch recovery is available as an
+        inferrable. Higher order patch recovery is available as an
         alternative to (multi)linear interpolation.  This typically
         results in better approximations to values and derivatives
         compared to the latter, but the weight matrix can be larger
