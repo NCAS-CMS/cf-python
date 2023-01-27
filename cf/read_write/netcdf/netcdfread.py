@@ -542,14 +542,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             # For ncdimensions = ('time', 'lat'):
             #
-            # {} -> ["auto", "auto"]
-            # {'ncdim%time': 12} -> [12, "auto"]
-            # {'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
-            # {'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
-            # {'ncdim%time': 12, 'latitude': -1} -> [12, -1]
-            # {'ncdim%time': 12, 'Y': None} -> [12, None]
-            # {'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
-            # {'ncdim%time': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
+            # chunks={} -> ["auto", "auto"]
+            # chunks={'ncdim%time': 12} -> [12, "auto"]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
+            # chunks={'ncdim%time': 12, 'latitude': -1} -> [12, -1]
+            # chunks={'ncdim%time': 12, 'Y': None} -> [12, None]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
             attributes = g["variable_attributes"]
             chunks2 = []
             for ncdim in g["variable_dimensions"][ncvar]:
