@@ -544,7 +544,7 @@ def read(
 
                 If *chunks* is `-1` or `None` then for each there is no
                 chunking, i.e. every data array has one chunk
-                regardless of its size
+                regardless of its size.
 
                 If *chunks* is a positive `int` then each data array
                 dimension has chunks with this number of elements.
