@@ -857,9 +857,7 @@ class DataTest(unittest.TestCase):
 
         # NaN values aren't 'equal' to e/o, so check call works and that some
         # representative values are as expected, in this case
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
+        s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
 
         self.assertEqual(len(s5), 16)
         self.assertEqual(s5["minimum"], -2)
