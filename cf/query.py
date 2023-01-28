@@ -188,7 +188,7 @@ class Query:
 
     @_deprecated_kwarg_check("exact", version="3.0.0", removed_at="4.0.0")
     def __init__(self, operator, value, units=None, attr=None, exact=True):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 

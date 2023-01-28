@@ -617,6 +617,7 @@ Performance
    ~cf.Data.close
    ~cf.Data.chunks
    ~cf.Data.rechunk
+   ~cf.Data.cull
    ~cf.Data.add_partitions
    ~cf.Data.partition_boundaries
    ~cf.Data.partition_configuration

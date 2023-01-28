@@ -1903,7 +1903,7 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     if not isinstance(indices, tuple):
         indices = (indices,)
 
-    # Initialize the list of parsed indices as the input indices with any
+    # Initialise the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
     length = len(indices)
     n = len(shape)

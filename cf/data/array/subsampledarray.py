@@ -80,7 +80,7 @@ class SubsampledArray(CompressedArrayMixin, ArrayMixin, cfdm.SubsampledArray):
         return super().__repr__().replace("<", "<CF ", 1)
 
     def to_dask_array(self, chunks="auto"):
-        """Create a dask array TODODASKDOCS.
+        """Convert the data to a `dask` array.
 
         .. versionadded:: TODODASKVER
 
@@ -93,12 +93,13 @@ class SubsampledArray(CompressedArrayMixin, ArrayMixin, cfdm.SubsampledArray):
                 `dask.array.from_array` function is allowed.
 
                 The chunk sizes implied by *chunks* for a dimension that
-                has been fragemented are ignored and replaced with values
+                has been fragmented are ignored and replaced with values
                 that are implied by that dimensions fragment sizes.
 
         :Returns:
 
             `dask.array.Array`
+                The `dask` array representation.
 
         """
         from functools import partial

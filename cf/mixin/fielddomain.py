@@ -250,7 +250,7 @@ class FieldDomain:
 
         domain_axes = self.domain_axes(todict=True)
 
-        # Initialize the index for each axis
+        # Initialise the index for each axis
         indices = {axis: slice(None) for axis in domain_axes}
 
         parsed = {}
@@ -443,7 +443,7 @@ class FieldDomain:
                     # 1-d CASE 3: All other 1-d cases
                     logger.debug("  1-d CASE 3:")  # pragma: no cover
 
-                    index = value == item
+                    index = item == value
                     index = index.data.to_dask_array()
 
                     if envelope or full:
@@ -500,7 +500,7 @@ class FieldDomain:
 
                 # Find where each construct matches its value
                 item_matches = [
-                    (value == construct).data
+                    (construct == value).data
                     for value, construct in zip(points, transposed_constructs)
                 ]
 
@@ -1077,7 +1077,7 @@ class FieldDomain:
             {{verbose: `int` or `str` or `None`, optional}}
 
             config: `dict`
-                Additional parameters for optimizing the
+                Additional parameters for optimising the
                 operation. See the code for details.
 
                 .. versionadded:: 3.9.0
@@ -1540,7 +1540,7 @@ class FieldDomain:
                 units as the dimension coordinates.
 
             config: `dict`
-                Additional parameters for optimizing the
+                Additional parameters for optimising the
                 operation. See the code for details.
 
                 .. versionadded:: 3.9.0
@@ -2107,7 +2107,7 @@ class FieldDomain:
                 construct is copied.
 
             autocyclic: `dict`, optional
-                Additional parameters for optimizing the operation,
+                Additional parameters for optimising the operation,
                 relating to coordinate periodicity and cyclicity. See
                 the code for details.
 

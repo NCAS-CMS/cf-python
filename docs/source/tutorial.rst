@@ -522,10 +522,10 @@ files <External-variables-with-cfa>`.
 
 ----
 
-**Visualization**
+**Visualisation**
 -----------------
 
-Powerful, flexible, and very simple to produce visualizations of field
+Powerful, flexible, and very simple to produce visualisations of field
 constructs are available with the `cfplot` package (that needs to be
 installed separately to cf, see http://ajheaps.github.io/cf-plot for
 details).
@@ -4222,7 +4222,7 @@ been generated with dummy values using `numpy.arange`):
    import numpy
    import cf
    
-   # Initialize the field construct
+   # Initialise the field construct
    tas = cf.Field(
        properties={'project': 'research',
                    'standard_name': 'air_temperature',
@@ -4501,12 +4501,12 @@ instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The `cf.read`
 function creates data in this manner. A pointer to an array in a
 netCDF file can be stored in a `cf.NetCDFArray` instance, which is is
-used to initialize a `cf.Data` instance.
+used to initialise a `cf.Data` instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
              and use it to create a NetCDFArray instance with which to
-             initialize a Data instance.*
+             initialise a Data instance.*
 		
    >>> import netCDF4
    >>> nc = netCDF4.Dataset('file.nc', 'r')
@@ -4528,7 +4528,7 @@ used to initialize a `cf.Data` instance.
    True
 
 Note that data type, number of dimensions, dimension sizes and number
-of elements of the array on disk that are used to initialize the
+of elements of the array on disk that are used to initialise the
 `cf.NetCDFArray` instance are those expected by the CF data model,
 which may be different to those of the netCDF variable in the file
 (although they are the same in the above example). For example, a
@@ -6458,7 +6458,7 @@ data array elements are modified:
    ''
    
 A construct with an underlying gathered array is created by
-initializing a `cf.Data` instance with a gathered array that is stored
+initialising a `cf.Data` instance with a gathered array that is stored
 in the special `cf.GatheredArray` array object. The following code
 creates a simple field construct with an underlying gathered array:
 
@@ -6594,7 +6594,7 @@ fields files of any endian-ness can be read. In nearly all cases the
 file format is auto-detectable from the first 64 bits in the file, but
 for the few occasions when this is not possible [#um]_, the *um*
 keyword of `cf.read` allows the format to be specified. The the UM
-version (if not inferable from the PP or lookup header information)
+version (if not inferrable from the PP or lookup header information)
 and the height of the upper bound of the top model level may also be
 set with the *um* keyword.
 

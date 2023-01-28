@@ -14,7 +14,7 @@ class DataClassDeprecationsMixin:
         Deprecated at version TODODASKVER. Consider using the
         `cf.hash_array` function instead.
 
-        Generating the hash temporarily realizes the entire array in
+        Generating the hash temporarily realises the entire array in
         memory, which may not be possible for large arrays.
 
         The hash value is dependent on the data-type and shape of the data
@@ -249,7 +249,7 @@ class DataClassDeprecationsMixin:
         """Deprecated at version 3.0.0, use method `insert_dimension`
         instead.
 
-        May get re-instated ata  later version.
+        May get re-instated at a later version.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -316,6 +316,9 @@ class DataClassDeprecationsMixin:
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
 
+        Deprecated at version TODODASKVER. Use the `rechunk` method
+        instead.
+
         :Parameters:
 
             chunksize: `int`, optional
@@ -341,11 +344,15 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            "TODODASKMSG. Use 'rechunk' instead"
+            self,
+            "chunk",
+            message="Use the 'rechunk' method instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     def dumpd(self):
-        """Return a serialization of the data array.
+        """Return a serialisation of the data array.
 
         Deprecated at version TODODASKVER. Consider inspecting the dask
         array returned by `to_dask_array` instead.
@@ -355,7 +362,7 @@ class DataClassDeprecationsMixin:
         :Returns:
 
             `dict`
-                The serialization.
+                The serialisation.
 
         **Examples**
 
@@ -410,7 +417,7 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def dumps(self):
-        """Return a JSON string serialization of the data array.
+        """Return a JSON string serialisation of the data array.
 
         Deprecated at version TODODASKVER. Consider inspecting the dask
         array returned by `to_dask_array` instead.
@@ -505,7 +512,7 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def loadd(self, d, chunk=True):
-        """Reset the data in place from a dictionary serialization.
+        """Reset the data in place from a dictionary serialisation.
 
         Deprecated at version TODODASKVER. Consider inspecting the dask
         array returned by `to_dask_array` instead.
@@ -515,7 +522,7 @@ class DataClassDeprecationsMixin:
         :Parameters:
 
             d: `dict`
-                A dictionary serialization of a `cf.Data` object, such as
+                A dictionary serialisation of a `cf.Data` object, such as
                 one as returned by the `dumpd` method.
 
             chunk: `bool`, optional
@@ -552,7 +559,7 @@ class DataClassDeprecationsMixin:
         )  # pragma: no cover
 
     def loads(self, j, chunk=True):
-        """Reset the data in place from a string serialization.
+        """Reset the data in place from a string serialisation.
 
         Deprecated at version TODODASKVER. Consider inspecting the dask
         array returned by `to_dask_array` instead.
@@ -562,7 +569,7 @@ class DataClassDeprecationsMixin:
         :Parameters:
 
             j: `str`
-                A JSON document string serialization of a `cf.Data` object.
+                A JSON document string serialisation of a `cf.Data` object.
 
             chunk: `bool`, optional
                 If True (the default) then the reset data array will be
@@ -586,6 +593,9 @@ class DataClassDeprecationsMixin:
     def add_partitions(self, extra_boundaries, pdim):
         """Add partition boundaries.
 
+        Deprecated at version TODODASKVER. Use the `rechunk` method
+        instead.
+
         :Parameters:
 
             extra_boundaries: `list` of `int`
@@ -604,7 +614,11 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            "TODODASKMSG Consider using rechunk instead"
+            self,
+            "add_partitions",
+            message="Use the 'rechunk' method instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     @staticmethod
@@ -727,6 +741,9 @@ class DataClassDeprecationsMixin:
         """Return the partition boundaries for each partition matrix
         dimension.
 
+        Deprecated at version TODODASKVER. Consider using the `chunks`
+        attribute instead.
+
         :Returns:
 
             `dict`
@@ -735,7 +752,11 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            "TODODASKMSG - consider using 'chunks' instead"
+            self,
+            "partition_boundaries",
+            message="Consider using the 'chunks' attribute instead.",
+            version="TODODASKVER",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     def save_to_disk(self, itemsize=None):
