@@ -114,7 +114,7 @@ square-like shapes. A new default chunk size is set with the
 `cf.chunksize` function. The default chunk size and shape may be
 overridden by `cf.read`, as well when creating `cf.Data` instances ab
 initio. Any data may be re-chunked after its creation with the
-`cf.Data.rechunk` method.
+`cf.Data.rechunk` method, although this operation can be expensive.
 
 In general, good performance results from following these rules for
 chunk sizes and shapes (copied from the `Dask chunks documentation
@@ -200,7 +200,8 @@ simple data computation over four chunks:
    >>> d.chunks
    ((3, 2), (3, 3))
    >>> print(d.array)
-   [[ 6  7  8  9 10 11]
+   [[ 0  1  2  3  4  5]
+    [ 6  7  8  9 10 11]
     [12 13 14 15 16 17]
     [18 19 20 21 22 23]
     [24 25 26 27 28 29]]
