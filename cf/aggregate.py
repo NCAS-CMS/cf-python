@@ -147,25 +147,73 @@ class _Meta:
             f: `Field` or `Domain`
 
             verbose: `int` or `str` or `None`, optional
-                See the `aggregate` function for details.
+                If an integer from ``-1`` to ``3``, or an equivalent
+                string equal ignoring case to one of:
+
+                * ``'DISABLE'`` (``0``)
+                * ``'WARNING'`` (``1``)
+                * ``'INFO'`` (``2``)
+                * ``'DETAIL'`` (``3``)
+                * ``'DEBUG'`` (``-1``)
+
+                set for the duration of the method call only as the
+                minimum cut-off for the verboseness level of displayed
+                output (log) messages, regardless of the
+                globally-configured `cf.log_level`. Note that
+                increasing numerical value corresponds to increasing
+                verbosity, with the exception of ``-1`` as a special
+                case of maximal and extreme verbosity.
+
+                Otherwise, if `None` (the default value), output
+                messages will be shown according to the value of the
+                `cf.log_level` setting.
+
+                Overall, the higher a non-negative integer or
+                equivalent string that is set (up to a maximum of
+                ``3``/``'DETAIL'``) for increasing verbosity, the more
+                description that is printed to convey information
+                about the operation.
 
             relaxed_units: `bool`, optional
-                See the `aggregate` function for details.
+                If True then assume that field and metadata constructs
+                with the same identity but missing units actually have
+                equivalent (but unspecified) units, so that aggregation
+                may occur. By default such field constructs are not
+                aggregatable.
 
             allow_no_identity: `bool`, optional
-                See the `aggregate` function for details.
+                If True then assume that field and metadata constructs
+                with no identity (see the *relaxed_identities* parameter)
+                actually have the same (but unspecified) identity, so
+                that aggregation may occur. By default such field
+                constructs are not aggregatable.
 
-            rtol: `float`, optional
-                See the `aggregate` function for details.
+            rtol: number, optional
+                The tolerance on relative differences between real
+                numbers. The default value is set by the
+                `cf.rtol` function.
 
-            atol: `float`, optional
-                See the `aggregate` function for details.
+            atol: number, optional
+                The tolerance on absolute differences between real
+                numbers. The default value is set by the
+                `cf.atol` function.
 
             dimension: (sequence of) `str`, optional
-                See the `aggregate` function for details.
+                Create new axes for each input field which has one or
+                more of the given properties. For each CF property name
+                specified, if an input field has the property then, prior
+                to aggregation, a new axis is created with an auxiliary
+                coordinate whose datum is the property's value and the
+                property itself is deleted from that field.
 
             copy: `bool` optional
-                See the `aggregate` function for details.
+                If False then do not copy fields prior to aggregation.
+                Setting this option to False may change input fields in
+                place, and the output fields may not be independent of
+                the inputs. However, if it is known that the input
+                fields are never to accessed again (such as in this case:
+                ``f = cf.aggregate(f)``) then setting *copy* to False can
+                reduce the time taken for aggregation.
 
         """
         self._bool = False
@@ -1559,19 +1607,15 @@ def aggregate(
             should only be used in cases for which it is known that the
             non-aggregating axes are in fact already entirely consistent.
 
-        atol: float, optional
-            The absolute tolerance for all numerical comparisons. The
-            tolerance is a non-negative, typically very small number. Two
-            numbers, x and y, are considered the same if :math:`|x-y| \le
-            atol + rtol*|y|`. By default the value returned by the `atol`
-            function is used.
+        atol: number, optional
+            The tolerance on absolute differences between real
+            numbers. The default value is set by the
+            `cf.atol` function.
 
-        rtol: float, optional
-            The relative tolerance for all numerical comparisons. The
-            tolerance is a non-negative, typically very small number. Two
-            numbers, x and y, are considered the same if :math:`|x-y| \le
-            atol + rtol*|y|`. By default the value returned by the `rtol`
-            function is used.
+        rtol: number, optional
+            The tolerance on relative differences between real
+            numbers. The default value is set by the
+            `cf.rtol` function.
 
         no_overlap:
             Use the *overlap* parameter instead.
@@ -3079,7 +3123,6 @@ def _aggregate_2_fields(
             data = Data.concatenate(
                 (construct0.get_data(), construct1.get_data()),
                 axis,
-                _preserve=False,
             )
             construct0.set_data(data, copy=False)
             if construct0.has_bounds():
@@ -3089,7 +3132,6 @@ def _aggregate_2_fields(
                         construct1.bounds.get_data(_fill_value=False),
                     ),
                     axis,
-                    _preserve=False,
                 )
                 construct0.bounds.set_data(data, copy=False)
         else:
@@ -3100,7 +3142,6 @@ def _aggregate_2_fields(
                     construct0.get_data(_fill_value=False),
                 ),
                 axis,
-                _preserve=False,
             )
             construct0.set_data(data)
             if construct0.has_bounds():
@@ -3110,7 +3151,6 @@ def _aggregate_2_fields(
                         construct0.bounds.get_data(_fill_value=False),
                     ),
                     axis,
-                    _preserve=False,
                 )
                 construct0.bounds.set_data(data)
 
@@ -3161,12 +3201,12 @@ def _aggregate_2_fields(
         if direction0:
             # The fields are increasing along the aggregating axis
             data = Data.concatenate(
-                (parent0.get_data(), parent1.get_data()), axis, _preserve=False
+                (parent0.get_data(), parent1.get_data()), axis
             )
         else:
             # The fields are decreasing along the aggregating axis
             data = Data.concatenate(
-                (parent1.get_data(), parent0.get_data()), axis, _preserve=False
+                (parent1.get_data(), parent0.get_data()), axis
             )
 
         # Update the size of the aggregating axis in parent0

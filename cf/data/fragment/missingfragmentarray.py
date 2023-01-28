@@ -5,7 +5,7 @@ from .abstract import FragmentArray
 
 
 class MissingFragmentArray(FragmentArray):
-    """A CFA fragment array stored in a netCDF file TODODASKDOCS.
+    """A CFA fragment array that is wholly missing data.
 
     .. versionadded:: TODODASKVER
 

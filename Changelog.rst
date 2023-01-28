@@ -3,6 +3,10 @@ version 3.14.0
 
 **2023-01-31**
 
+* Introduction of `dask` for all data manipulations, replacing the old
+  LAMA methodology
+  (e.g. https://github.com/NCAS-CMS/cf-python/issues/295,
+  https://github.com/NCAS-CMS/cf-python/issues/428)
 * New method: `cf.Field.get_original_filenames`
   (https://github.com/NCAS-CMS/cf-python/issues/448)
 * New method: `cf.Field.to_dask_array`
@@ -10,14 +14,18 @@ version 3.14.0
   method (https://github.com/NCAS-CMS/cf-python/issues/487)
 * New keyword parameter to `cf.write`: ``omit_data``
   (https://github.com/NCAS-CMS/cf-python/issues/477)
+* New keyword parameter to `cf.read`: ``chunks``
+  (https://github.com/NCAS-CMS/cf-python/pull/522)
+* Extend functionality of `cf.Data.roll` and `cf.Field.roll` to allow
+  multiple axes to be rolled simultaneously.
 * Fixed bug that raised an exception when using the ``equal`` or
   ``exist`` keyword of `cf.aggregate`
   (https://github.com/NCAS-CMS/cf-python/issues/499)
 * Fixed bug that created incorrect cyclic Voronoi bounds from
   `DimensionCoordinate.create_bounds`
   (https://github.com/NCAS-CMS/cf-python/issues/514)
-* Changed dependency: ``1.10.0.1<=cfdm<1.10.1.0``
-* New dependency: ``dask>=2022.6.0``
+* Changed dependency: ``1.10.0.2<=cfdm<1.10.1.0``
+* New dependency: ``dask>=2022.12.1``
 
 ----
 

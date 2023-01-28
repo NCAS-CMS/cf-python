@@ -460,14 +460,12 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes)
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        f"{method} weights={weights}, axes={axes}, {a!r}, "
-                        f"{b!r}",
                     )
 
             for method in (
                 "mean",
                 "mean_absolute_value",
-                # 'mean_of_upper_decile',
+                "mean_of_upper_decile",
                 "root_mean_square",
             ):
                 for weights in (None, "area"):
@@ -475,13 +473,10 @@ class FieldTest(unittest.TestCase):
                         d_weights = f.weights(weights, components=True)
                     else:
                         d_weights = weights
-
                     a = f.collapse(method, axes=axes, weights=weights).data
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        f"{method} weights={weights}, axes={axes}, {a!r}, "
-                        f"{b!r}",
                     )
 
             for method in ("integral",):
@@ -493,7 +488,6 @@ class FieldTest(unittest.TestCase):
                 b = getattr(f.data, method)(axes=axes, weights=d_weights)
                 self.assertTrue(
                     a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                    f"{method} weighted axes={axes}, {a!r}, {b!r}",
                 )
 
         for axes in axes_combinations(f):
@@ -513,8 +507,6 @@ class FieldTest(unittest.TestCase):
                     )
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        f"{method} weights={weights}, axes={axes}, {a!r}, "
-                        f"{b!r}",
                     )
 
             for method in ("mean_of_upper_decile",):
@@ -528,8 +520,6 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
                     self.assertTrue(
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
-                        f"{method} weights={weights}, axes={axes}, {a!r}, "
-                        f"{b!r}",
                     )
 
     def test_Field_all(self):
