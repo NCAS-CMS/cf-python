@@ -48,7 +48,7 @@ class ConstructList(list, Container, cfdm.Container):
     """
 
     def __init__(self, constructs=None):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 

@@ -209,7 +209,7 @@ _docstring_substitution_definitions = {
 
                 *Parameter example:*
                   A size in bytes, like ``"100MiB"`` which will choose
-                  a uniform block-like shape, prefering square-like
+                  a uniform block-like shape, preferring square-like
                   chunk shapes.
 
                 *Parameter example:*
@@ -402,6 +402,16 @@ _docstring_substitution_definitions = {
     "{{bounds: `bool`, optional}}": """bounds: `bool`, optional
                 If False then do not alter any bounds. By default any
                 bounds are also altered.""",
+    # cull
+    "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
+                By default *cull_graph* is True, meaning that
+                unnecessary tasks are removed (culled) from each
+                array's dask graph before concatenation. This process
+                has a small overhead but can improve performance
+                overall. If set to False then dask graphs are not
+                culled. See `dask.optimization.cull` for details.
+
+                .. versionadded:: TODODASKVER""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

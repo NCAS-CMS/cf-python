@@ -383,11 +383,11 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         The identities comprise:
 
         * The "id" attribute, preceded by ``'id%'``.
-        * The ``cf_role`` property, preceeded by ``'cf_role='``.
-        * The ``long_name`` property, preceeded by ``'long_name='``.
-        * All other properties, preceeded by the property name and a
+        * The ``cf_role`` property, preceded by ``'cf_role='``.
+        * The ``long_name`` property, preceded by ``'long_name='``.
+        * All other properties, preceded by the property name and a
           equals e.g. ``'foo=bar'``.
-        * The netCDF variable name, preceeded by ``'ncvar%'``.
+        * The netCDF variable name, preceded by ``'ncvar%'``.
 
         .. versionadded:: (cfdm) 1.9.0.0
 
@@ -581,16 +581,16 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 ``'method:mean'``) then it will only be compared with the
                 most recently applied cell method operation.
 
-                Alternatively, one or more cell method constucts may be
-                identified in a single string with a CF-netCDF cell
+                Alternatively, one or more cell method constructs may
+                be identified in a single string with a CF-netCDF cell
                 methods-like syntax for describing both the collapse
                 dimensions, the collapse method, and any cell method
-                construct qualifiers. If N cell methods are described in
-                this way then they will collectively identify the N most
-                recently applied cell method operations. For example,
-                ``'T: maximum within years T: mean over years'`` will be
-                compared with the most two most recently applied cell
-                method operations.
+                construct qualifiers. If N cell methods are described
+                in this way then they will collectively identify the N
+                most recently applied cell method operations. For
+                example, ``'T: maximum within years T: mean over
+                years'`` will be compared with the most two most
+                recently applied cell method operations.
 
                 *Parameter example:*
                   ``identity='latitude'``
@@ -662,8 +662,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         :Returns:
 
             `bool`
-                Whether or not the domain construct contains the specfied
-                metadata constructs.
+                Whether or not the domain construct contains the
+                specified metadata constructs.
 
         **Examples**
 
@@ -998,7 +998,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         relative ordering defined by the *axes* parameter. For
         instance, if the given *axes* are ``['X', 'Z', 'Y']`` then a
         metadata construct whose data axis order is ``('Y', 'X')``
-        will be tranposed to have data order ``('X', 'Y')``.
+        will be transposed to have data order ``('X', 'Y')``.
 
         .. versionadded:: 3.11.0
 
