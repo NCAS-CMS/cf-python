@@ -12479,7 +12479,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             axis: optional
                 Select the domain axis over which to locate the
                 maximum values, defined by the domain axis that would
-                be selected by passing the given *ais* to a call of
+                be selected by passing the given *axis* to a call of
                 the field construct's `domain_axis` method. For
                 example, for a value of ``'X'``, the domain axis
                 construct returned by ``f.domain_axis('X')`` is
