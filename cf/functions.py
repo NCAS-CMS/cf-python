@@ -3117,7 +3117,7 @@ def size(a):
     1
     >>> cf.size([9])
     1
-    >>> cf.size((8, 9)
+    >>> cf.size((8, 9))
     2
     >>> import numpy as np
     >>> cf.size(np.arange(9))
