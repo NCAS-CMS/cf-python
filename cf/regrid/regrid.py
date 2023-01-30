@@ -1417,7 +1417,7 @@ def create_ESMF_grid(grid=None, mask=None):
             grid_mask = esmf_grid.add_item(ESMF.GridItem.MASK)
             if len(grid.coords) == 2 and mask.ndim == 1:
                 # ESMF grid has a dummy size 1 dimension, so we need to
-                # include this int he mas as well.
+                # include this in the mask as well.
                 mask = np.expand_dims(mask, 1)
 
             # Note: 'mask' has True/False for masked/unmasked
