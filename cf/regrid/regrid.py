@@ -270,7 +270,6 @@ def regrid(
     elif not create_regrid_operator:
         n_axes = len(dst_axes)
     elif coord_sys == "Cartesian":
-        #    if create_regrid_operator and coord_sys == "Cartesian":
         if isinstance(axes, str):
             axes = (axes,)
 
