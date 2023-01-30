@@ -825,7 +825,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
     if x_axis == y_axis:
         raise ValueError(
             "The X and Y axes must be distinct, but they are "
-            "the same for {name} field {f!r}."
+            f"the same for {name} field {f!r}."
         )
 
     if not (coords_1d or coords_2d):
