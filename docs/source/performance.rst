@@ -229,4 +229,14 @@ values in ``e.array``.
 
    *The dask task graph from dask_task_graph.png*
 
+
+NetCDF file access
+^^^^^^^^^^^^^^^^^^
+
+Note that reading from and writing to netCDF files is currently a
+serial operation, i.e. only one Dask chunk can access any netCDF file
+at any given moment. This situation can result in slower-than-expected
+performance. When a thread-safe version of the netCDF-C library is
+available we hope to lift this restriction.
+
 ----
