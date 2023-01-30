@@ -256,7 +256,7 @@ Miscellaneous data operations
    ~cf.Field.period
    ~cf.Field.get_original_filenames
    ~cf.Field.close
-   ~cf.Field.chunk
+   ~cf.Field.rechunk
    ~cf.Field.persist
  
 Metadata constructs

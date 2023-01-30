@@ -217,7 +217,7 @@ Data
    :template: method.rst
 	      
    ~cf.Bounds.autoperiod
-   ~cf.Bounds.chunk
+   ~cf.Bounds.rechunk
    ~cf.Bounds.close
    ~cf.Bounds.convert_reference_time
    ~cf.Bounds.cyclic
@@ -606,6 +606,7 @@ Deprecated
    ~cf.Bounds.asdatetime
    ~cf.Bounds.asreftime
    ~cf.Bounds.attributes
+   ~cf.Bounds.chunk
    ~cf.Bounds.delprop
    ~cf.Bounds.dtvarray
    ~cf.Bounds.expand_dims

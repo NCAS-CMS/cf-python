@@ -240,7 +240,7 @@ Data
    :template: method.rst
 	      
 
-   ~cf.CellMeasure.chunk
+   ~cf.CellMeasure.rechunk
    ~cf.CellMeasure.close
    ~cf.CellMeasure.convert_reference_time
    ~cf.CellMeasure.cyclic
@@ -623,6 +623,7 @@ Deprecated
    ~cf.CellMeasure.asdatetime
    ~cf.CellMeasure.asreftime
    ~cf.CellMeasure.attributes
+   ~cf.CellMeasure.chunk
    ~cf.CellMeasure.delprop
    ~cf.CellMeasure.dtvarray
    ~cf.CellMeasure.expand_dims

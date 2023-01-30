@@ -455,6 +455,27 @@ _docstring_substitution_definitions = {
     "{{aggregated_calendar: `str` or `None`, optional}}": """aggregated_calendar: `str` or `None`, optional
                 The calendar of the aggregated array. Set to `None` to
                 indicate the CF default calendar, if applicable.""",
+    # threshold
+    "{{threshold: `int`, optional}}": """threshold: `int`, optional
+                The graph growth factor under which we don't bother
+                introducing an intermediate step. See
+                `dask.array.rechunk` for details.""",
+    # block_size_limit
+    "{{block_size_limit: `int`, optional}}": """block_size_limit: `int`, optional
+                The maximum block size (in bytes) we want to produce,
+                as defined by the `cf.chunksize` function.""",
+    # balance
+    "{{balance: `bool`, optional}}": """balance: `bool`, optional
+                If True, try to make each chunk the same size. By
+                default this is not attempted.
+
+                This means ``balance=True`` will remove any small
+                leftover chunks, so using ``d.rechunk(chunks=len(d) //
+                N, balance=True)`` will almost certainly result in
+                ``N`` chunks.""",
+    # bounds
+    "{{bounds: `bool`, optional}}": """bounds: `bool`, optional
+                If True (the default) then alter any bounds.""",
     # cull
     "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
                 By default *cull_graph* is True, meaning that

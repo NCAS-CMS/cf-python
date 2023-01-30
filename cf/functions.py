@@ -742,11 +742,11 @@ class chunksize(ConstantAccess):
             (rounded down) will be used.
 
             *Parameter example:*
-               A chunksize of 2 MiB may be specified as ``2097152`` or
-               ``'2 MiB'``
+               A chunksize of 2 MiB may be specified as ``'2097152'``
+               or ``'2 MiB'``
 
             *Parameter example:*
-               Chunksizes of ``2678.9`` and ``'2.6789 KB'``are both
+               Chunksizes of ``'2678.9'`` and ``'2.6789 KB'`` are both
                equvalent to ``2678``.
 
     :Returns:
