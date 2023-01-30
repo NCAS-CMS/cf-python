@@ -123,7 +123,7 @@ be found with the `cf.CF` function:
 	     
    >>> import cf
    >>> cf.CF()
-   '1.9'
+   '1.10'
 
 This indicates which version of the CF conventions are represented by
 this release of the cf package, and therefore the version can not be
@@ -136,7 +136,7 @@ version , and is found in the usual manner:
    :caption: *Retrieve the version of the cf package.*
 	     	     
    >>> cf.__version__
-   '3.13.0'
+   '3.14.0'
 
 The next section outlines the scheme used to set version identifiers.
 
@@ -144,7 +144,7 @@ Versioning strategy
 ^^^^^^^^^^^^^^^^^^^
 
 An ``epoch.major.minor`` numeric version scheme is used,
-e.g. ``3.7.1``.
+e.g. ``3.13.1``.
 
 **Epoch** changes comprise
 
