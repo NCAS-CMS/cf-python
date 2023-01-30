@@ -140,7 +140,7 @@ class RegridTest(unittest.TestCase):
             ("regrids", "regridc"),
             ({}, {"axes": ["Y", "X"]}),
         ):
-            # Lopp over whether or not to use the destination grid
+            # Loop over whether or not to use the destination grid
             # masked points
             for use_dst_mask in (False, True):
                 src = src0.copy()
