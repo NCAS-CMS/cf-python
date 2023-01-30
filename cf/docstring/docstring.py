@@ -400,8 +400,7 @@ _docstring_substitution_definitions = {
                 ``N`` chunks.""",
     # bounds
     "{{bounds: `bool`, optional}}": """bounds: `bool`, optional
-                If False then do not alter any bounds. By default any
-                bounds are also altered.""",
+                If True (the default) then alter any bounds.""",
     # cull
     "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
                 By default *cull_graph* is True, meaning that
