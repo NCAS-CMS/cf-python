@@ -21,9 +21,9 @@ class RegridOperator(mixin_Container, Container):
 
     def __init__(
         self,
-        weights,
-        row,
-        col,
+        weights=None,
+        row=None,
+        col=None,
         coord_sys=None,
         method=None,
         src_shape=None,
@@ -117,6 +117,10 @@ class RegridOperator(mixin_Container, Container):
 
         """
         super().__init__()
+        
+        if weights is None or row is None or col is None:
+            # This to allow a no-arg init!
+            return
 
         self._set_component("weights", weights, copy=False)
         self._set_component("row", row, copy=False)
@@ -137,6 +141,7 @@ class RegridOperator(mixin_Container, Container):
         self._set_component("dst", dst, copy=False)
 
     def __repr__(self):
+        """x.__repr__() <==> repr(x)"""
         return (
             f"<CF {self.__class__.__name__}: {self.coord_sys} {self.method}>"
         )
