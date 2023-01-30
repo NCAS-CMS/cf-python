@@ -367,7 +367,7 @@ _docstring_substitution_definitions = {
 
                 Ignored if *dst* is a `RegridOperator`.""",
     # use_dst_mask
-    "{{use_dst_mask: `bool`, optional}}}": """use_dst_mask: `bool`, optional
+    "{{use_dst_mask: `bool`, optional}}": """use_dst_mask: `bool`, optional
                 If *dst* is a `Field` and *use_dst_mask* is False (the
                 default) then the mask of data on the destination grid
                 is **not** taken into account when performing
