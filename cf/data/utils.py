@@ -22,7 +22,7 @@ _units_None = Units(None)
 def is_numeric_dtype(array):
     """True if the given array is of a numeric or boolean data type.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
         :Parameters:
 

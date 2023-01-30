@@ -31,7 +31,7 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     the corresponding NumPy method (see the `numpy.ma.allclose` API
     reference).
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
         :Parameters:
 
