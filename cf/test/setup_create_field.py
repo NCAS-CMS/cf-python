@@ -88,7 +88,12 @@ class create_fieldTest(unittest.TestCase):
             )
         )
         aux4.standard_name = "greek_letters"
-        aux4[0] = cf.masked
+
+        # ------------------------------------------------------------
+        # TODO: Re-instate this line when
+        #       https://github.com/dask/dask/pull/9627 is resolved
+        # ------------------------------------------------------------
+        # aux4[0] = cf.masked
 
         # Cell measures
         msr0 = cf.CellMeasure(
@@ -209,4 +214,4 @@ if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
     print()
-    unittest.main(module=__file__.split(".")[0], verbosity=2)
+    unittest.main(verbosity=2)

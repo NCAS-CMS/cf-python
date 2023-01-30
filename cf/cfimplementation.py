@@ -49,7 +49,7 @@ class CFImplementation(cfdm.CFDMImplementation):
         Does not attempt to conform cell method nor coordinate
         reference constructs, as that has been handled by `cfdm`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 

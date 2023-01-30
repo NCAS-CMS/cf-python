@@ -1272,7 +1272,7 @@ class PropertiesDataBounds(PropertiesData):
     def close(self):
         """Close all files referenced by the construct.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         Note that a closed file will be automatically re-opened if its
@@ -1293,19 +1293,23 @@ class PropertiesDataBounds(PropertiesData):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull_graph=True):
         """Join a sequence of variables together.
+
+        .. seealso:: `Data.cull_graph`
 
         :Parameters:
 
             variables: sequence of constructs
 
             axis: `int`, optional
+
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
@@ -1317,14 +1321,14 @@ class PropertiesDataBounds(PropertiesData):
         if len(variables) == 1:
             return variable0.copy()
 
-        out = super().concatenate(variables, axis=axis, _preserve=_preserve)
+        out = super().concatenate(variables, axis=axis, cull_graph=cull_graph)
 
         bounds = variable0.get_bounds(None)
         if bounds is not None:
             bounds = bounds.concatenate(
                 [v.get_bounds() for v in variables],
                 axis=axis,
-                _preserve=_preserve,
+                cull_graph=cull_graph,
             )
             out.set_bounds(bounds, copy=False)
 
@@ -1333,7 +1337,7 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring = interior_ring.concatenate(
                 [v.get_interior_ring() for v in variables],
                 axis=axis,
-                _preserve=_preserve,
+                cull_graph=cull_graph,
             )
             out.set_interior_ring(interior_ring, copy=False)
 
@@ -2030,7 +2034,7 @@ class PropertiesDataBounds(PropertiesData):
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
 
-        Deprecated at version TODODASKVER. Use the method
+        Deprecated at version 3.14.0. Use the method
         `masked_invalid` instead.
 
         Note that:
@@ -2095,7 +2099,7 @@ class PropertiesDataBounds(PropertiesData):
             self,
             "mask_invalid",
             message="Use the method 'masked_invalid' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -2432,7 +2436,7 @@ class PropertiesDataBounds(PropertiesData):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASKVER
+            size: deprecated at version 3.14.0
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -2452,7 +2456,7 @@ class PropertiesDataBounds(PropertiesData):
                 "halo",
                 {"size": None},
                 message="Use the 'depth' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -3723,7 +3727,7 @@ class PropertiesDataBounds(PropertiesData):
 
         `persist` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -3902,14 +3906,22 @@ class PropertiesDataBounds(PropertiesData):
         """Deprecated at version 3.0.0, use method `has_bounds`
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "hasbounds", "Use method 'has_bounds' instead."
+            self,
+            "hasbounds",
+            "Use method 'has_bounds' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         """Deprecated at version 3.0.0, use method `insert_dimension`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "expand_dims", "Use method 'insert_dimension' instead."
+            self,
+            "expand_dims",
+            "Use method 'insert_dimension' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def files(self):

@@ -22,10 +22,15 @@ elif [[ $1 = "dev" ]] ; then
 elif [[ $1 = "dev-clean" ]] ; then
   # For testing: creates separate dir and does not (git) commit and
   # also deletes an existing .doctrees subdirectory
+    dir=$PWD/docs/dev
+elif [[ $1 = "dev-scrub" ]] ; then
+  # For testing: creates separate dir and does not (git) commit and
+  # also completely deletes the new target directory.
   dir=$PWD/docs/dev
+  rm -fr $dir
 else
   set +x
-  echo "\$1 must be one of 'latest', 'archive', 'dev' or 'dev-clean'"
+  echo "\$1 must be one of 'dev', 'dev-clean', 'dev-scrub', 'latest', or 'archive'"
   exit 2
 fi
 
@@ -94,10 +99,10 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
   cd $dir
   git add \
           *.html \
-	        class/*.html \
-	        function/*.html \
-	        method/*.html \
-	        attribute/*.html \
+	  class/*.html \
+	  function/*.html \
+	  method/*.html \
+	  attribute/*.html \
           *.inv \
           *.js \
           _static \

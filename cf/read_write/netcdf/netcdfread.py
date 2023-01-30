@@ -4,12 +4,12 @@ import numpy as np
 """
 TODOCFA: remove aggregation_* properties from constructs
 
-TODOCFA: Create auxiliary coordinates from non-standardized terms
+TODOCFA: Create auxiliary coordinates from non-standardised terms
 
 TODOCFA: Reference instruction variables (and/or set as
          "do_not_create_field")
 
-TODOCFA: Create auxiliary coordinates from non-standardized terms
+TODOCFA: Create auxiliary coordinates from non-standardised terms
 
 TODOCFA: Consider scanning for cfa variables to the top (e.g. where
          scanning for geometry varables is). This will probably need a
@@ -226,7 +226,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def _is_cfa_variable(self, ncvar):
         """Return True if *ncvar* is a CFA variable.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -266,7 +266,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # TODOCFA: Modify this message for v4.0.0.
             raise ValueError(
                 "The reading of CFA-0.4 files was permanently disabled at "
-                "version TODODASKVER. However, CFA-0.4 functionality is "
+                "version 3.14.0. However, CFA-0.4 functionality is "
                 "still available at version 3.13.1. "
                 "The reading and writing of CFA-0.6 files will become "
                 "available at version 4.0.0."
@@ -280,6 +280,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         ncvar,
         units=None,
         calendar=None,
+        ncdimensions=(),
         **kwargs,
     ):
         """Create a Data object from a netCDF variable.
@@ -292,7 +293,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 The file array.
 
             ncvar: `str`
-                The name of netCDF variable.
+                The netCDF variable containing the array.
+
+            ncdimensions: sequence of `str`, optional
+                The netCDF dimensions spanned by the array.
+
+                .. versionadded:: 3.14.0
 
             units: `str`, optional
                 The units of *array*. By default, or if `None`, it is
@@ -318,7 +324,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # memory.
             array = array[...]
 
-        chunks = self.read_vars.get("chunks", "auto")
+        # Parse dask chunks
+        chunks = self._parse_chunks(ncvar)
 
         data = super()._create_Data(
             array,
@@ -385,7 +392,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         retrieved from *data* (which would require a whole dask chunk
         to be read to get each single value).
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -503,3 +510,68 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         array = self.implementation.initialise_CFANetCDFArray(**kwargs)
 
         return array, kwargs
+
+    def _parse_chunks(self, ncvar):
+        """Parse the dask chunks.
+
+        .. versionadded:: 3.14.0
+
+        :Parameters:
+
+            ncvar: `str`
+                The name of the netCDF variable containing the array.
+
+        :Returns:
+
+            `str`, `int` or `dict`
+                The parsed chunks that are suitable for passing to a
+                `Data` object containing the variable's array.
+
+        """
+        g = self.read_vars
+
+        default_chunks = "auto"
+        chunks = g.get("chunks", default_chunks)
+
+        if chunks is None:
+            return -1
+
+        if isinstance(chunks, dict):
+            if not chunks:
+                return default_chunks
+
+            # For ncdimensions = ('time', 'lat'):
+            #
+            # chunks={} -> ["auto", "auto"]
+            # chunks={'ncdim%time': 12} -> [12, "auto"]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
+            # chunks={'ncdim%time': 12, 'latitude': -1} -> [12, -1]
+            # chunks={'ncdim%time': 12, 'Y': None} -> [12, None]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
+            attributes = g["variable_attributes"]
+            chunks2 = []
+            for ncdim in g["variable_dimensions"][ncvar]:
+                key = f"ncdim%{ncdim}"
+                if key in chunks:
+                    chunks2.append(chunks[key])
+                    continue
+
+                found_coord_attr = False
+                dim_coord_attrs = attributes.get(ncdim)
+                if dim_coord_attrs is not None:
+                    for attr in ("standard_name", "axis"):
+                        key = dim_coord_attrs.get(attr)
+                        if key in chunks:
+                            found_coord_attr = True
+                            chunks2.append(chunks[key])
+                            break
+
+                if not found_coord_attr:
+                    # Use default chunks for this dimension
+                    chunks2.append(default_chunks)
+
+            chunks = chunks2
+
+        return chunks

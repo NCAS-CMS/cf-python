@@ -103,10 +103,10 @@ jobs:
     - name: Notify about starting the sdist test
       run: echo Setup complete. Now creating and testing the source dist...
 
-    # Create a file needed for testing. A separate step is required for this
-    # so the file can be registered and recognised first. Locally, the file
-    # is created and used on-the-fly by the 'run_tests_and_coverage' script.
-    - name: Create test_file.nc
+    # Create netCDF files needed for testing. A separate step is required
+    # for this so the files can be registered and recognised first; locally
+    # they are created and used on-the-fly by 'run_tests_and_coverage'.
+    - name: Create netCDF test files, e.g. test_file.nc
       shell: bash -l {0}
       run: |
         cd ${{ github.workspace }}/main/cf/test

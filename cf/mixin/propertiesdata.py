@@ -75,7 +75,7 @@ class PropertiesData(Properties):
     def __data__(self):
         """Returns a new reference to the data.
 
-        Allows the construct to initialize a `Data` object.
+        Allows the construct to initialise a `Data` object.
 
         :Returns:
 
@@ -1549,7 +1549,7 @@ class PropertiesData(Properties):
         """The units CF property.
 
         The units of the data. The value of the `units` property is a
-        string that can be recognized by UNIDATA's Udunits package
+        string that can be recognised by UNIDATA's Udunits package
         (http://www.unidata.ucar.edu/software/udunits). See
         http://cfconventions.org/latest.html for details.
 
@@ -1601,7 +1601,7 @@ class PropertiesData(Properties):
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
 
-        Deprecated at version TODODASKVER. Use the method
+        Deprecated at version 3.14.0. Use the method
         `masked_invalid` instead.
 
         Note that:
@@ -1666,7 +1666,7 @@ class PropertiesData(Properties):
             self,
             "mask_invalid",
             message="Use the method 'masked_invalid' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -1926,7 +1926,7 @@ class PropertiesData(Properties):
 
         `persist` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2397,7 +2397,7 @@ class PropertiesData(Properties):
             "varray",
             message="Data are now stored as `dask` arrays for which, "
             "in general, a numpy array view is not robust.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -2544,7 +2544,7 @@ class PropertiesData(Properties):
     def close(self):
         """Close all files referenced by the construct.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         Note that a closed file will be automatically reopened if its
@@ -2565,19 +2565,23 @@ class PropertiesData(Properties):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull_graph=True):
         """Join a sequence of variables together.
+
+        .. seealso:: `Data.cull_graph`
 
         :Parameters:
 
             variables: sequence of constructs.
 
             axis: `int`, optional
+
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
@@ -2589,12 +2593,12 @@ class PropertiesData(Properties):
         if len(variables) == 1:
             return variable0.copy()
 
-        out = variable0.copy()  # data=False)
+        out = variable0.copy()
 
         data = Data.concatenate(
             [v.get_data(_fill_value=False) for v in variables],
             axis=axis,
-            _preserve=_preserve,
+            cull_graph=cull_graph,
         )
         out.set_data(data, copy=False)
 
@@ -4533,7 +4537,7 @@ class PropertiesData(Properties):
     def to_dask_array(self):
         """Convert the data to a `dask` array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `cf.Data.to_dask_array`
 
@@ -5029,7 +5033,7 @@ class PropertiesData(Properties):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASKVER
+            size: deprecated at version 3.14.0
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -5049,7 +5053,7 @@ class PropertiesData(Properties):
                 "halo",
                 {"size": None},
                 message="Use the 'depth' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -5287,15 +5291,35 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, iaxis, shift, inplace=False, i=False):
-        """Roll the data along an axis.
+        """Roll the data along one or more axes.
+
+        Elements that roll beyond the last position are re-introduced
+        at the first.
 
         .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
                      `transpose`
 
         :Parameters:
 
-            iaxis: `int`
-                TODO
+            axis: `int`, or `tuple` of `int`
+                Axis or axes along which elements are shifted.
+
+                *Parameter example:*
+                  Roll the second axis: ``axis=1``.
+
+                *Parameter example:*
+                  Roll the last axis: ``axis=-1``.
+
+                *Parameter example:*
+                  Roll the first and last axes: ``axis=(0, -1)``.
+
+            shift: `int`, or `tuple` of `int`
+                The number of places by which elements are shifted.
+                If a `tuple`, then *axis* must be a tuple of the same
+                size, and each of the given axes is shifted by the
+                corresponding number. If an `int` while *axis* is a
+                `tuple` of `int`, then the same value is used for all
+                given axes.
 
             {{inplace: `bool`, optional}}
 
@@ -5304,11 +5328,17 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                TODO
+                The construct with rolled data. If the operation was
+                in-place then `None` is returned.
 
         **Examples**
 
-        TODO
+        >>> print(f.array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11]
+        >>> print(f.roll(0, 2).array)
+        [10 11  0  1  2  3  4  5  6  7  8  9]
+        >>> print(f.roll(0, -2).array)
+        [ 2  3  4  5  6  7  8  9 10 11  0  1]
 
         """
         return self._apply_data_oper(
@@ -5482,14 +5512,20 @@ class PropertiesData(Properties):
     @property
     def attributes(self):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_ATTRIBUTE(self, "attributes")
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "attributes", version="3.0.0", removed_at="4.0.0"
+        )
 
     @property
     def Data(self):
         """Deprecated at version 3.0.0, use `data` attribute or
         `get_data` method instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "Data", "Use 'data' attribute or 'get_data' method instead."
+            self,
+            "Data",
+            "Use 'data' attribute or 'get_data' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @Data.setter
@@ -5497,7 +5533,11 @@ class PropertiesData(Properties):
         """Deprecated at version 3.0.0, use `set_data` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "Data", "Use 'data' attribute or 'set_data' method instead."
+            self,
+            "Data",
+            "Use 'data' attribute or 'set_data' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @Data.deleter
@@ -5505,20 +5545,30 @@ class PropertiesData(Properties):
         """Deprecated at version 3.0.0, use `del_data` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "Data", "Use 'data' attribute or 'del_data' method instead."
+            self,
+            "Data",
+            "Use 'data' attribute or 'del_data' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
     def dtvarray(self):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_ATTRIBUTE(self, "dtvarray")  # pragma: no cover
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, "dtvarray", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
     @property
     def hasbounds(self):
         """Deprecated at version 3.0.0, use `has_bounds` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "hasbounds", "Use 'has_bounds' method instead"
+            self,
+            "hasbounds",
+            "Use 'has_bounds' method instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )
 
     @property
@@ -5526,7 +5576,11 @@ class PropertiesData(Properties):
         """Deprecated at version 3.0.0, use `has_data` method
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "hasdata", "Use 'has_data' method instead"
+            self,
+            "hasdata",
+            "Use 'has_data' method instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )
 
     @property
@@ -5538,6 +5592,7 @@ class PropertiesData(Properties):
             "isauxiliary",
             "Use 'construct_type'' attribute instead.",
             version="3.7.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5549,6 +5604,7 @@ class PropertiesData(Properties):
             "isdimension",
             "Use 'construct_type'' attribute instead.",
             version="3.7.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5560,6 +5616,7 @@ class PropertiesData(Properties):
             "isdomainancillary",
             "Use 'construct_type'' attribute instead.",
             version="3.7.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5570,6 +5627,8 @@ class PropertiesData(Properties):
             self,
             "isfieldancillary",
             "Use 'construct_type'' attribute instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5581,6 +5640,7 @@ class PropertiesData(Properties):
             "ismeasure",
             "Use 'construct_type'' attribute instead.",
             version="3.7.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -5592,28 +5652,41 @@ class PropertiesData(Properties):
             "unsafe_array",
             "Use 'array' attribute instead.",
             version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def asdatetime(self, i=False):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_METHOD(self, "asdatetime")  # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, "asdatetime", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
     def asreftime(self, i=False):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_METHOD(self, "asreftime")  # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, "asreftime", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         """Deprecated at version 3.0.0, use `insert_dimension` method
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "expand_dims", "Use method 'insert_dimension' instead."
+            self,
+            "expand_dims",
+            "Use method 'insert_dimension' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def insert_data(self, data, copy=True):
         """Deprecated at version 3.0.0, use `set_data` method
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "insert_data", "Use method 'set_data' instead."
+            self,
+            "insert_data",
+            "Use method 'set_data' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def name(
@@ -5622,19 +5695,29 @@ class PropertiesData(Properties):
         """Deprecated at version 3.0.0, use method 'identity'
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "name", "Use method 'identity' instead"
+            self,
+            "name",
+            "Use method 'identity' instead",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def remove_data(self):
         """Deprecated at version 3.0.0, use method `del_data`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "remove_data", "Use method 'del_data' instead."
+            self,
+            "remove_data",
+            "Use method 'del_data' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def select(self, *args, **kwargs):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_METHOD(self, "select")  # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, "select", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
 
 class Subspace:

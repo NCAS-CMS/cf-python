@@ -62,9 +62,9 @@ work is underway to replace this functionality with a dask
 implementation.)
 
 
-**Visualization**
+**Visualisation**
 
-Powerful, flexible, and very simple to produce visualizations of field
+Powerful, flexible, and very simple to produce visualisations of field
 constructs uses the `cfplot` package
 (http://ajheaps.github.io/cf-plot), that is automatically installed
 along with with `cf`.
@@ -75,7 +75,7 @@ installation and source code.
 """
 
 __Conventions__ = "CF-1.10"
-__date__ = "2022-01-18"
+__date__ = "2023-01-31"
 __version__ = "3.14.0b0"
 
 _requires = (
@@ -199,7 +199,7 @@ if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     )
 
 # Check the version of dask
-_minimum_vn = "2022.6.0"
+_minimum_vn = "2022.12.1"
 if Version(dask.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad dask version: cf requires dask>={_minimum_vn}. "
@@ -252,7 +252,6 @@ from .fieldancillary import FieldAncillary
 from .field import Field
 from .data import Data
 from .data.array import (
-    CachedArray,
     CFANetCDFArray,
     FullArray,
     GatheredArray,

@@ -27,8 +27,6 @@ is built on a complete implementation of the :ref:`CF-data-model`.
    :local:
    :backlinks: entry
 
-----
-
 **Functionality**
 -----------------
 
@@ -114,11 +112,11 @@ fields larger than the available memory to exist and be manipulated.
 
 ----
 
-**Visualization**
+**Visualisation**
 -----------------
 
 
-Powerful, flexible, and very simple to produce visualizations of field
+Powerful, flexible, and very simple to produce visualisations of field
 constructs are available with the `cfplot` package, that is installed
 separately to cf (see http://ajheaps.github.io/cf-plot for details).
 

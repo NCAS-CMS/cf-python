@@ -231,6 +231,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.AuxiliaryCoordinate.to_dask_array
    ~cf.AuxiliaryCoordinate.__getitem__
    ~cf.AuxiliaryCoordinate.del_data
    ~cf.AuxiliaryCoordinate.get_data
@@ -353,6 +354,7 @@ Miscellaneous
    ~cf.AuxiliaryCoordinate.creation_commands
    ~cf.AuxiliaryCoordinate.equals
    ~cf.AuxiliaryCoordinate.inspect
+   ~cf.AuxiliaryCoordinate.to_memory
    ~cf.AuxiliaryCoordinate.uncompress
    
 Mathematical operations
@@ -699,6 +701,7 @@ Deprecated
    ~cf.AuxiliaryCoordinate.getprop
    ~cf.AuxiliaryCoordinate.hasprop
    ~cf.AuxiliaryCoordinate.insert_data
+   ~cf.AuxiliaryCoordinate.mask_invalid
    ~cf.AuxiliaryCoordinate.name
    ~cf.AuxiliaryCoordinate.remove_data
    ~cf.AuxiliaryCoordinate.select

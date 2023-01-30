@@ -70,7 +70,7 @@ def is_numeric_dtype(array):
 def convert_to_datetime(a, units):
     """Convert a dask array of numbers to one of date-time objects.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso `convert_to_reftime`
 
@@ -108,7 +108,7 @@ def convert_to_reftime(a, units=None, first_value=None):
     """Convert a dask array of string or object date-times to floating
     point reference times.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso `convert_to_datetime`
 
@@ -160,7 +160,10 @@ def convert_to_reftime(a, units=None, first_value=None):
             else:
                 YMD = "1970-01-01"
 
-            units = Units("days since " + YMD, default_calendar)
+            units = Units(
+                "days since " + YMD,
+                getattr(units, "calendar", default_calendar),
+            )
 
         a = a.map_blocks(
             partial(st2rt, units_in=units, units_out=units), dtype=float
@@ -211,7 +214,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 def first_non_missing_value(a, cached=None, method="index"):
     """Return the first non-missing value of a dask array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -316,7 +319,7 @@ def first_non_missing_value(a, cached=None, method="index"):
 def unique_calendars(a):
     """Find the unique calendars from a dask array of date-time objects.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -361,7 +364,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 
     The name is arbitrary and has no semantic meaning.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -417,7 +420,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `chunk_shapes`
 
@@ -447,7 +450,7 @@ def chunk_positions(chunks):
 def chunk_shapes(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `chunk_positions`
 
@@ -477,7 +480,7 @@ def chunk_shapes(chunks):
 def scalar_masked_array(dtype=float):
     """Return a scalar masked array.
 
-     .. versionadded:: TODODASKVER
+     .. versionadded:: 3.14.0
 
      :Parmaeters:
 
@@ -535,7 +538,7 @@ def conform_units(value, units, message=None):
 
     In all other cases *value* is returned unchanged.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -603,7 +606,7 @@ def YMDhms(d, attr):
     Only applicable for data with reference time units. The returned
     `Data` will have the same mask hardness as the original array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
                  `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
@@ -651,7 +654,7 @@ def where_broadcastable(data, x, name):
     *x* are ignored, thereby also ensuring that the shape of the
     result is identical to the shape of *data*.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Data.where`
 
