@@ -1845,7 +1845,7 @@ class UMField:
         recs = self.recs
 
         um_Units = self.um_Units
-        units = um_Units.units
+        units = getattr(um_Units, "units", None)
         calendar = getattr(um_Units, "calendar", None)
 
         data_type_in_file = self.data_type_in_file

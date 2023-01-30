@@ -14,7 +14,6 @@ from dask import compute, delayed  # noqa: F401
 from dask.array import Array
 from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
-from dask.core import flatten
 from dask.highlevelgraph import HighLevelGraph
 from dask.optimization import cull
 
@@ -3392,6 +3391,144 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "Use function 'cf.parse_indices' instead."
         )
 
+    def _regrid(
+        self,
+        method=None,
+        operator=None,
+        regrid_axes=None,
+        regridded_sizes=None,
+        min_weight=None,
+    ):
+        """Regrid the data.
+
+        See `cf.regrid.regrid` for details.
+
+        .. versionadded:: 3.14.0
+
+        .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`
+
+        :Parameters:
+
+            {{method: `str` or `None`, optional}}
+
+            operator: `RegridOperator`
+                The definition of the source and destination grids and
+                the regridding weights.
+
+            regrid_axes: sequence of `int`
+                The positions of the regrid axes in the data, given in
+                the relative order expected by the regrid
+                operator. For spherical regridding this order is [Y,
+                X].
+
+                *Parameter example:*
+                  ``[2, 3]``
+
+            regridded_sizes: `dict`
+                Mapping of the regrid axes, defined by the integer
+                elements of *regrid_axes*, to their regridded sizes.
+
+                *Parameter example:*
+                  ``{3: 128, 2: 64}``
+
+            {{min_weight: float, optional}}
+
+        :Returns:
+
+            `Data`
+                The regridded data.
+
+        """
+        from dask import delayed
+
+        from .dask_regrid import regrid, regrid_weights
+
+        shape = self.shape
+        src_shape = tuple(shape[i] for i in regrid_axes)
+        if src_shape != operator.src_shape:
+            raise ValueError(
+                f"Regrid axes shape {src_shape} does not match "
+                f"the shape of the regrid operator: {operator.src_shape}"
+            )
+
+        dx = self.to_dask_array()
+
+        # Rechunk so that each chunk contains data in the form
+        # expected by the regrid operator, i.e. the regrid axes all
+        # have chunksize -1.
+        numblocks = dx.numblocks
+        if not all(numblocks[i] == 1 for i in regrid_axes):
+            chunks = [
+                (-1,) if i in regrid_axes else c
+                for i, c in enumerate(dx.chunks)
+            ]
+            dx = dx.rechunk(chunks)
+
+        # Define the regridded chunksizes
+        regridded_chunks = tuple(
+            (regridded_sizes[i],) if i in regridded_sizes else c
+            for i, c in enumerate(dx.chunks)
+        )
+
+        # Set the output data type
+        if method in ("nearest_dtos", "nearest_stod"):
+            dst_dtype = dx.dtype
+        else:
+            dst_dtype = float
+
+        non_regrid_axes = [i for i in range(self.ndim) if i not in regrid_axes]
+
+        # Cast weights and mask arrays as dask arrays
+        weights = da.asanyarray(operator.weights)
+        row = da.asanyarray(operator.row)
+        col = da.asanyarray(operator.col)
+
+        src_mask = operator.src_mask
+        if src_mask is not None:
+            src_mask = da.asanyarray(src_mask)
+
+        dst_mask = operator.dst_mask
+        if dst_mask is not None:
+            dst_mask = da.asanyarray(dst_mask)
+
+        # Create a delayed object that calculates the weights
+        # matrix
+        weights_func = partial(
+            regrid_weights,
+            src_shape=src_shape,
+            dst_shape=operator.dst_shape,
+            dtype=dst_dtype,
+            start_index=operator.start_index,
+        )
+        weights = delayed(weights_func, pure=True)(
+            weights=weights,
+            row=row,
+            col=col,
+            dst_mask=dst_mask,
+        )
+
+        # Create a regridding function to apply to each chunk
+        regrid_func = partial(
+            regrid,
+            method=method,
+            src_shape=src_shape,
+            dst_shape=operator.dst_shape,
+            axis_order=non_regrid_axes + list(regrid_axes),
+            min_weight=min_weight,
+        )
+
+        dx = dx.map_blocks(
+            regrid_func,
+            weights=weights,
+            ref_src_mask=src_mask,
+            chunks=regridded_chunks,
+            meta=np.array((), dtype=dst_dtype),
+        )
+
+        d = self.copy()
+        d._set_dask(dx)
+        return d
+
     @classmethod
     def concatenate(cls, data, axis=0, cull_graph=True):
         """Join a sequence of data arrays together.
@@ -5518,7 +5655,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         faster than ``d.convert_reference_time(cf.Units('days since
         1901-1-1'))``.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seeealso:: `change_calendar`, `datetime_array`, `Units`
 
