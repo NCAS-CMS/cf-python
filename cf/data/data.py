@@ -253,11 +253,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 .. versionadded:: 3.0.5
 
-            source: optional
-                Initialise the data values and metadata (such as
-                units, mask hardness, etc.) from the data of
-                *source*. All other arguments, with the exception of
-                *copy*, are ignored.
+            {{init source: optional}}
 
             hardmask: `bool`, optional
                 If False then the mask is soft. By default the mask is
@@ -268,9 +264,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 given by the *array* parameter are re-interpreted as
                 date-time objects. By default they are not.
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior to
-                initialisation. By default arguments are deep copied.
+            {{init copy: `bool`, optional}}
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 

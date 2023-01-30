@@ -333,13 +333,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 Properties may also be set after initialisation with the
                 `set_properties` and `set_property` methods.
 
-            source: optional
-                Initialise the properties, data and metadata constructs
-                from those of *source*.
+            {{init source: optional}}
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior to
-                initialisation. By default arguments are deep copied.
+            {{init copy: `bool`, optional}}
 
         """
         super().__init__(

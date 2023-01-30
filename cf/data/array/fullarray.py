@@ -47,12 +47,9 @@ class FullArray(Array):
                 will be set to `None` during the first `__getitem__`
                 call.
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         super().__init__(source=source, copy=copy)

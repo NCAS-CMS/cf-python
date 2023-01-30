@@ -104,12 +104,9 @@ class CFANetCDFArray(NetCDFArray):
                 The calendar of the aggregated data. Set to `None` to
                 indicate the CF default calendar, if applicable.
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
             instructions: `str`, optional
                 The ``aggregated_data`` attribute value found on the
