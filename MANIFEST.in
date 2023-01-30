@@ -5,6 +5,7 @@ recursive-include cf *
 recursive-include scripts *
 recursive-exclude * *~ *.gz *.pyc
 recursive-exclude cf *.o *.so *.a .nfs*
+recursive-exclude cf/data *.rst
 prune cf/test
 recursive-include cf/test __init__.py test_*.py 
 recursive-include cf/test cfa_test.sh run_tests.py setup_create_field.py create_test_files.py
