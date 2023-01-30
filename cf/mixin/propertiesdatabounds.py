@@ -3790,9 +3790,8 @@ class PropertiesDataBounds(PropertiesData):
                 any bounds are also rechunked.
 
             interior_ring: `bool`, optional
-                If False then do not rechunk an interior ring array,
-                if one exists. By default an interior ring array is
-                rechunked.
+                If True (the default) rechunk an interior ring array,
+                if one exists.
 
         :Returns:
 
