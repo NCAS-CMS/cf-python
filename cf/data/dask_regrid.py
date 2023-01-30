@@ -293,7 +293,7 @@ def _regrid(
             matrix. If `None` then no source grid cells are masked. If
             a Boolean `numpy` array then it must have shape ``(I,)``,
             where ``I`` is the number of source grid cells, and `True`
-            signifies as masked cell.
+            signifies a masked cell.
 
         weights: `numpy.ndarray`
             The weights matrix that defines the regridding
