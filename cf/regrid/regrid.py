@@ -1387,20 +1387,6 @@ def create_ESMF_grid(grid=None, mask=None):
             grid_corner = esmf_grid.get_coords(dim, staggerloc=staggerloc)
             grid_corner[...] = b
 
-    #    # Add an ESMF.Grid mask
-    #    if mask is not None:
-    #        m = None
-    #        mask = np.asanyarray(mask)
-    #        if np.ma.isMA(mask):
-    #            if np.ma.is_masked(mask):
-    #                m = mask.mask
-    #        elif mask.dtype == bool and mask.any():
-    #            m = mask
-    #
-    #        if m is not None:
-    #            grid_mask = esmf_grid.add_item(ESMF.GridItem.MASK)
-    #            # Note: ESMF mask has False for masked elements.
-    #            grid_mask[...] = np.invert(m).astype("int32")
 
     # Add an ESMF.Grid mask
     if mask is not None:
