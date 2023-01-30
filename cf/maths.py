@@ -116,7 +116,7 @@ def relative_vorticity(
         raise ValueError("No unique u-wind Y dimension coordinate")
 
     if v_x is None:
-        raise ValueError("No unique v-wind Y dimension coordinate")
+        raise ValueError("No unique v-wind X dimension coordinate")
 
     if v_y is None:
         raise ValueError("No unique v-wind Y dimension coordinate")
