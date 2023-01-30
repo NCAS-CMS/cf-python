@@ -97,18 +97,10 @@ def relative_vorticity(
     v = v.copy()
 
     # Get the X and Y coordinates
-    u_x_key, u_x = u.dimension_coordinate(
-        "X", default=(None, None), items=True
-    )
-    u_y_key, u_y = u.dimension_coordinate(
-        "Y", default=(None, None), items=True
-    )
-    v_x_key, v_x = v.dimension_coordinate(
-        "X", default=(None, None), items=True
-    )
-    v_y_key, v_y = v.dimension_coordinate(
-        "Y", default=(None, None), items=True
-    )
+    u_x_key, u_x = u.dimension_coordinate("X", default=(None, None), item=True)
+    u_y_key, u_y = u.dimension_coordinate("Y", default=(None, None), item=True)
+    v_x_key, v_x = v.dimension_coordinate("X", default=(None, None), item=True)
+    v_y_key, v_y = v.dimension_coordinate("Y", default=(None, None), item=True)
     if u_x is None:
         raise ValueError("No unique u-wind X dimension coordinate")
 
@@ -155,11 +147,13 @@ def relative_vorticity(
 
         # Reshape for broadcasting
         u_shape = [1] * u.ndim
-        u_y_index = u.get_data_axes().index(u_y_key)
+        u_y_axis = u.get_data_axes(u_y_key)[0]
+        u_y_index = u.get_data_axes().index(u_y_axis)
         u_shape[u_y_index] = u_y.size
 
         v_shape = [1] * v.ndim
-        v_y_index = v.get_data_axes().index(v_y_key)
+        v_y_axis = u.get_data_axes(v_y_key)[0]
+        v_y_index = v.get_data_axes().index(v_y_axis)
         v_shape[v_y_index] = v_y.size
 
         # Calculate the correction term

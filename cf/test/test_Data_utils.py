@@ -181,9 +181,13 @@ class DataUtilsTest(unittest.TestCase):
         c = cf.data.utils.unique_calendars(d)
         self.assertEqual(c, set(["standard"]))
 
-        d[()] = np.ma.masked
-        c = cf.data.utils.unique_calendars(d)
-        self.assertEqual(c, set())
+        # ------------------------------------------------------------
+        # TODO: re-instate when dask has fixed this:
+        #       https://github.com/dask/dask/pull/9627
+        # ------------------------------------------------------------
+        # d[()] = np.ma.masked
+        # c = cf.data.utils.unique_calendars(d)
+        # self.assertEqual(c, set())
 
         a = [
             cftime.DatetimeGregorian(2000, 12, 1),
