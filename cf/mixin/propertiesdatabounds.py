@@ -3771,7 +3771,7 @@ class PropertiesDataBounds(PropertiesData):
     ):
         """Change the chunk structure of the data.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `cf.Data.rechunk`
 
