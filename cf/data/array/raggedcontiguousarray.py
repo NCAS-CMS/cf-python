@@ -1,10 +1,11 @@
 import cfdm
 
+from ...mixin_container import Container
 from .mixin import ArrayMixin, RaggedArrayMixin
 
 
 class RaggedContiguousArray(
-    RaggedArrayMixin, ArrayMixin, cfdm.RaggedContiguousArray
+    RaggedArrayMixin, ArrayMixin, Container, cfdm.RaggedContiguousArray
 ):
     """An underlying contiguous ragged array.
 

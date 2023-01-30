@@ -11,7 +11,7 @@ class DataClassDeprecationsMixin:
     def __hash__(self):
         """The built-in function `hash`.
 
-        Deprecated at version TODODASKVER. Consider using the
+        Deprecated at version 3.14.0. Consider using the
         `cf.hash_array` function instead.
 
         Generating the hash temporarily realises the entire array in
@@ -65,7 +65,7 @@ class DataClassDeprecationsMixin:
             self,
             "__hash__",
             message="Consider using 'cf.hash_array' function array instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )
 
@@ -73,25 +73,25 @@ class DataClassDeprecationsMixin:
     def _HDF_chunks(self):
         """The HDF chunksizes.
 
-        Deprecated at version TODODASKVER.
+        Deprecated at version 3.14.0.
 
         DO NOT CHANGE IN PLACE.
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "_HDF_chunks", version="TODODASKVER", removed_at="5.0.0"
+            self, "_HDF_chunks", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
     @_HDF_chunks.setter
     def _HDF_chunks(self, value):
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "_HDF_chunks", version="TODODASKVER", removed_at="5.0.0"
+            self, "_HDF_chunks", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
     @_HDF_chunks.deleter
     def _HDF_chunks(self):
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "_HDF_chunks", version="TODODASKVER", removed_at="5.0.0"
+            self, "_HDF_chunks", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
     @property
@@ -116,18 +116,18 @@ class DataClassDeprecationsMixin:
     def in_memory(self):
         """True if the array is retained in memory.
 
-        Deprecated at version TODODASKVER.
+        Deprecated at version 3.14.0.
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "in_memory", version="TODODASKVER", removed_at="5.0.0"
+            self, "in_memory", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
     @property
     def ismasked(self):
         """True if the data array has any masked values.
 
-        Deprecated at version TODODASKVER. Use the `is_masked` attribute
+        Deprecated at version 3.14.0. Use the `is_masked` attribute
         instead.
 
         **Examples**
@@ -144,7 +144,7 @@ class DataClassDeprecationsMixin:
             self,
             "ismasked",
             message="Use the 'is_masked' attribute instead",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -152,7 +152,7 @@ class DataClassDeprecationsMixin:
     def isscalar(self):
         """True if the data is a 0-d scalar array.
 
-        Deprecated at version TODODASKVER. Use `d.ndim == 0`` instead.
+        Deprecated at version 3.14.0. Use `d.ndim == 0`` instead.
 
         **Examples**
 
@@ -171,7 +171,7 @@ class DataClassDeprecationsMixin:
             self,
             "isscalar",
             message="Use 'd.ndim == 0' instead",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -193,7 +193,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "ispartitioned", version="TODODASKVER", removed_at="5.0.0"
+            self, "ispartitioned", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
     @property
@@ -215,7 +215,7 @@ class DataClassDeprecationsMixin:
     def varray(self):
         """A numpy array view of the data array.
 
-        Deprecated at version TODODASKVER. Data are now stored as `dask`
+        Deprecated at version 3.14.0. Data are now stored as `dask`
         arrays for which, in general, a numpy array view is not
         robust.
 
@@ -241,7 +241,7 @@ class DataClassDeprecationsMixin:
             "varray",
             message="Data are now stored as `dask` arrays for which, "
             "in general, a numpy array view is not robust.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -274,7 +274,7 @@ class DataClassDeprecationsMixin:
         """Return True if the master array is small enough to be
         retained in memory.
 
-        Deprecated at version TODODASKVER.
+        Deprecated at version 3.14.0.
 
         :Parameters:
 
@@ -294,29 +294,29 @@ class DataClassDeprecationsMixin:
         _DEPRECATION_ERROR_METHOD(
             self,
             "fits_in_one_chunk_in_memory",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def close(self):
         """Close all files referenced by the data array.
 
-        Deprecated at version TODODASKVER. All files are now
-        automatically closed when not being accessed.
+        Deprecated at version 3.14.0. All files are now automatically
+        closed when not being accessed.
 
         """
         _DEPRECATION_ERROR_METHOD(
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def chunk(self, chunksize=None, total=None, omit_axes=None, pmshape=None):
         """Partition the data array.
 
-        Deprecated at version TODODASKVER. Use the `rechunk` method
+        Deprecated at version 3.14.0. Use the `rechunk` method
         instead.
 
         :Parameters:
@@ -347,14 +347,14 @@ class DataClassDeprecationsMixin:
             self,
             "chunk",
             message="Use the 'rechunk' method instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def dumpd(self):
         """Return a serialisation of the data array.
 
-        Deprecated at version TODODASKVER. Consider inspecting the dask
+        Deprecated at version 3.14.0. Consider inspecting the dask
         array returned by `to_dask_array` instead.
 
         .. seealso:: `loadd`, `loads`
@@ -412,15 +412,15 @@ class DataClassDeprecationsMixin:
             "dumpd",
             message="Consider inspecting the dask array returned "
             "by 'to_dask_array' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def dumps(self):
         """Return a JSON string serialisation of the data array.
 
-        Deprecated at version TODODASKVER. Consider inspecting the dask
-        array returned by `to_dask_array` instead.
+        Deprecated at version 3.14.0. Consider inspecting the dask array
+        returned by `to_dask_array` instead.
 
         """
         _DEPRECATION_ERROR_METHOD(
@@ -428,7 +428,7 @@ class DataClassDeprecationsMixin:
             "dumps",
             message="Consider inspecting the dask array returned "
             "by 'to_dask_array' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -438,7 +438,7 @@ class DataClassDeprecationsMixin:
         The HDF chunk sizes may be used by external code that allows
         `Data` objects to be written to netCDF files.
 
-        Deprecated at version TODODASKVER and is no longer available. Use
+        Deprecated at version 3.14.0 and is no longer available. Use
         the methods `nc_clear_hdf5_chunksizes`, `nc_hdf5_chunksizes`,
         and `nc_set_hdf5_chunksizes` instead.
 
@@ -507,14 +507,14 @@ class DataClassDeprecationsMixin:
             message="Use the methods 'nc_clear_hdf5_chunksizes', "
             "'nc_hdf5_chunksizes', and 'nc_set_hdf5_chunksizes' "
             "instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def loadd(self, d, chunk=True):
         """Reset the data in place from a dictionary serialisation.
 
-        Deprecated at version TODODASKVER. Consider inspecting the dask
+        Deprecated at version 3.14.0. Consider inspecting the dask
         array returned by `to_dask_array` instead.
 
         .. seealso:: `dumpd`, `loads`
@@ -554,14 +554,14 @@ class DataClassDeprecationsMixin:
             "loadd",
             message="Consider inspecting the dask array returned "
             "by 'to_dask_array' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def loads(self, j, chunk=True):
         """Reset the data in place from a string serialisation.
 
-        Deprecated at version TODODASKVER. Consider inspecting the dask
+        Deprecated at version 3.14.0. Consider inspecting the dask
         array returned by `to_dask_array` instead.
 
         .. seealso:: `dumpd`, `loadd`
@@ -586,14 +586,14 @@ class DataClassDeprecationsMixin:
             "loads",
             message="Consider inspecting the dask array returned "
             "by 'to_dask_array' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     def add_partitions(self, extra_boundaries, pdim):
         """Add partition boundaries.
 
-        Deprecated at version TODODASKVER. Use the `rechunk` method
+        Deprecated at version 3.14.0. Use the `rechunk` method
         instead.
 
         :Parameters:
@@ -617,7 +617,7 @@ class DataClassDeprecationsMixin:
             self,
             "add_partitions",
             message="Use the 'rechunk' method instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -626,7 +626,7 @@ class DataClassDeprecationsMixin:
         """Masking of floating-point errors in the results of arithmetic
         operations.
 
-        Deprecated at version TODODASKVER. It is currently not possible
+        Deprecated at version 3.14.0. It is currently not possible
         to control how floating-point errors are handled, due to the
         use of `dask` for handling all array manipulations. This may
         change in the future (see
@@ -690,7 +690,7 @@ class DataClassDeprecationsMixin:
 
         """
         raise DeprecationError(
-            "Data method 'mask_fpe' has been deprecated at version TODODASKVER "
+            "Data method 'mask_fpe' has been deprecated at version 3.14.0 "
             "and is not available.\n\n"
             "It is currently not possible to control how floating-point errors "
             "are handled, due to the use of `dask` for handling all array "
@@ -701,7 +701,7 @@ class DataClassDeprecationsMixin:
     def mask_invalid(self, *args, **kwargs):
         """Mask the array where invalid values occur (NaN or inf).
 
-        Deprecated at version TODODASKVER. Use the method
+        Deprecated at version 3.14.0. Use the method
         `masked_invalid` instead.
 
         .. seealso:: `where`
@@ -733,7 +733,7 @@ class DataClassDeprecationsMixin:
             self,
             "mask_invalid",
             message="Use the method 'masked_invalid' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -741,7 +741,7 @@ class DataClassDeprecationsMixin:
         """Return the partition boundaries for each partition matrix
         dimension.
 
-        Deprecated at version TODODASKVER. Consider using the `chunks`
+        Deprecated at version 3.14.0. Consider using the `chunks`
         attribute instead.
 
         :Returns:
@@ -755,7 +755,7 @@ class DataClassDeprecationsMixin:
             self,
             "partition_boundaries",
             message="Consider using the 'chunks' attribute instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -768,7 +768,7 @@ class DataClassDeprecationsMixin:
     def to_disk(self):
         """Store the data array on disk.
 
-        Deprecated at version TODODASKVER.
+        Deprecated at version 3.14.0.
 
         There is no change to partitions whose sub-arrays are already
         on disk.
@@ -783,7 +783,7 @@ class DataClassDeprecationsMixin:
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "to_disk", version="TODODASKVER", removed_at="5.0.0"
+            self, "to_disk", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
     @staticmethod
@@ -791,7 +791,7 @@ class DataClassDeprecationsMixin:
         """Set how floating-point errors in the results of arithmetic
         operations are handled.
 
-        Deprecated at version TODODASKVER. It is currently not possible
+        Deprecated at version 3.14.0. It is currently not possible
         to control how floating-point errors are handled, due to the
         use of `dask` for handling all array manipulations. This may
         change in the future (see
@@ -929,7 +929,7 @@ class DataClassDeprecationsMixin:
 
         """
         raise DeprecationError(
-            "Data method 'seterr' has been deprecated at version TODODASKVER "
+            "Data method 'seterr' has been deprecated at version 3.14.0 "
             "and is not available.\n\n"
             "It is currently not possible to control how floating-point errors "
             "are handled, due to the use of `dask` for handling all array "
@@ -944,7 +944,7 @@ class DataClassDeprecationsMixin:
         with a Data object. Returns a reconstructed cf.Data object with
         the sections in the original order.
 
-        Deprecated at version TODODASKVER and is no longer available.
+        Deprecated at version 3.14.0 and is no longer available.
 
         :Parameters:
 
@@ -970,7 +970,7 @@ class DataClassDeprecationsMixin:
         """
         raise DeprecationError(
             "Data method 'reconstruct_sectioned_data' has been deprecated "
-            "at version TODODASKVER and is no longer available"
+            "at version 3.14.0 and is no longer available"
         )
 
     @classmethod
@@ -998,6 +998,6 @@ class DataClassDeprecationsMixin:
         """
         raise DeprecationError(
             "Data method 'concatenate_data' has been deprecated at "
-            "version TODODASKVER and is no longer available. Use "
+            "version 3.14.0 and is no longer available. Use "
             "'concatenate' instead."
         )

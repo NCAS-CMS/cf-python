@@ -131,7 +131,7 @@ class Constructs(cfdm.Constructs):
     def close(self):
         """Close all files referenced by the metadata constructs.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         Note that a closed file will be automatically reopened if its
@@ -150,7 +150,7 @@ class Constructs(cfdm.Constructs):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 

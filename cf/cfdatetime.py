@@ -5,6 +5,7 @@ import cftime
 import numpy as np
 
 from .functions import _DEPRECATION_ERROR_CLASS
+from .functions import size as cf_size
 
 default_calendar = "gregorian"
 
@@ -241,7 +242,7 @@ def dt_vector(
         )
 
     sizes = set(
-        map(np.size, (arg, month, day, hour, minute, second, microsecond))
+        map(cf_size, (arg, month, day, hour, minute, second, microsecond))
     )
 
     if len(sizes) == 1 and 1 in sizes:

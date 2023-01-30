@@ -609,7 +609,7 @@ def read(
                           UM fields files, for which the chunking is
                           pre-determined by the file format.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -650,7 +650,7 @@ def read(
         select_options: deprecated at version 3.0.0
             Use methods on the returned `FieldList` instead.
 
-        chunk: deprecated at version TODODASKVER
+        chunk: deprecated at version 3.14.0
             Use the *chunks* parameter instead.
 
     :Returns:
@@ -733,7 +733,7 @@ def read(
             "cf.read",
             {"chunk": chunk},
             "Use keyword 'chunks' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 

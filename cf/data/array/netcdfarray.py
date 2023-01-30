@@ -1,13 +1,14 @@
 import cfdm
 from dask.utils import SerializableLock
 
+from ...mixin_container import Container
 from .mixin import FileArrayMixin
 
 # Global lock for netCDF file access
 _lock = SerializableLock()
 
 
-class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
+class NetCDFArray(FileArrayMixin, Container, cfdm.NetCDFArray):
     """An array stored in a netCDF file."""
 
     def __repr__(self):
@@ -29,7 +30,7 @@ class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
         regardless of the dataset they access, which means that all
         files access coordinates around the same lock.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         filename = self.get_filename(None)
