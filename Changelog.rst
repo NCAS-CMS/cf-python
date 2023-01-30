@@ -1565,7 +1565,7 @@ version 0.9.4
 version 0.9.3.3
 ---------------
 
-**2018-02-08**
+**2012-02-08**
 
 * Objects renamed in line with the CF data model: `cf.Space` becomes
   `cf.Field` and `cf.Grid` becomes `cf.Space`.
