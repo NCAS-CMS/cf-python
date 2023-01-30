@@ -2139,6 +2139,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [2 2 3 3]]
 
         """
+        from dask.core import flatten
+
         # TODODASKAPI: interpolation -> method
         if interpolation is not None:
             _DEPRECATION_ERROR_KWARGS(

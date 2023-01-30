@@ -6,7 +6,6 @@ from operator import mul as operator_mul
 import cfdm
 import numpy as np
 from numpy import array as numpy_array
-from numpy import can_cast as numpy_can_cast
 from numpy import diff as numpy_diff
 from numpy import empty as numpy_empty
 from numpy import full as numpy_full
@@ -17,7 +16,6 @@ from numpy import shape as numpy_shape
 from numpy import squeeze as numpy_squeeze
 from numpy import unique as numpy_unique
 from numpy import where as numpy_where
-from numpy.ma import is_masked as numpy_ma_is_masked
 
 from . import (
     AuxiliaryCoordinate,

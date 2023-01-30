@@ -117,7 +117,7 @@ class RegridOperator(mixin_Container, Container):
 
         """
         super().__init__()
-        
+
         if weights is None or row is None or col is None:
             # This to allow a no-arg init!
             return
