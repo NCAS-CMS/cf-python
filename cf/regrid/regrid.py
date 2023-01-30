@@ -1386,7 +1386,6 @@ def create_ESMF_grid(grid=None, mask=None):
             grid_corner = esmf_grid.get_coords(dim, staggerloc=staggerloc)
             grid_corner[...] = b
 
-
     # Add an ESMF.Grid mask
     if mask is not None:
         if mask.dtype != bool:

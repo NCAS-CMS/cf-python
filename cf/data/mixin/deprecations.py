@@ -178,7 +178,7 @@ class DataClassDeprecationsMixin:
     @property
     def ispartitioned(self):
         """True if the data array is partitioned.
-        
+
         Deprecated at version 3.14.0 and is no longer available.
 
         **Examples**
