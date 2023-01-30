@@ -1,8 +1,7 @@
 import logging
 from itertools import chain
 
-from numpy import array as numpy_array
-from numpy import result_type as numpy_result_type
+import numpy as np
 
 from ..cfdatetime import dt
 from ..data import Data
@@ -593,7 +592,7 @@ class PropertiesData(Properties):
         if isinstance(y, self.__class__):
             y = y.data
         elif y is None:
-            y = Data(numpy_array(None, dtype=object))
+            y = Data(np.array(None, dtype=object))
 
         if not inplace:
             new = self.copy()  # data=False) TODO
@@ -1358,7 +1357,7 @@ class PropertiesData(Properties):
     @add_offset.setter
     def add_offset(self, value):
         self.set_property("add_offset", value)
-        self.dtype = numpy_result_type(self.dtype, numpy_array(value).dtype)
+        self.dtype = np.result_type(self.dtype, np.array(value).dtype)
 
     @add_offset.deleter
     def add_offset(self):

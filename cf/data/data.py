@@ -4880,7 +4880,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     #    **Examples**
     #
     #        '''
-    #        return cls(numpy_arctan2(y, x), units=_units_radians)
+    #        return cls(np.arctan2(y, x), units=_units_radians)
 
     @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):
