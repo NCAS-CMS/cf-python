@@ -61,7 +61,7 @@ _docstring_substitution_definitions = {
         the regridding axes must be the same across all non-regridding
         axes. In these special cases an exception will be raised if
         the source data mask does not meet this requirement.""",
-    # regrid Masked cells
+    # regrid Implementation
     "{{regrid Implementation}}": """**Implementation**
 
         The interpolation is carried out using regridding weights
