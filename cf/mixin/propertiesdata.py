@@ -2494,7 +2494,7 @@ class PropertiesData(Properties):
             self,
             "chunk",
             "Use the 'rechunk' method instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
