@@ -1805,7 +1805,7 @@ class PropertiesDataBounds(PropertiesData):
 
         >>> print(f.array)
         [0 1 2 3]
-        >>> d.Units
+        >>> f.Units
         <Units: months since 2004-1-1>
         >>> print(f.datetime_array)
         [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
