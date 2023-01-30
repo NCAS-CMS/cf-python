@@ -3491,7 +3491,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if dst_mask is not None:
             dst_mask = da.asanyarray(dst_mask)
 
-        # Create a delayed object that calculates creates the weights
+        # Create a delayed object that calculates the weights
         # matrix
         weights_func = partial(
             regrid_weights,
