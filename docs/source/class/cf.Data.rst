@@ -208,6 +208,8 @@ Date-time support
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.Data.change_calendar
+   ~cf.Data.convert_reference_time
    ~cf.Data.datetime_array
    ~cf.Data.datetime_as_string
    ~cf.Data.day
@@ -616,6 +618,7 @@ Performance
    ~cf.Data.nc_set_hdf5_chunksizes
    ~cf.Data.close
    ~cf.Data.chunk
+   ~cf.Data.cull
    ~cf.Data.add_partitions
    ~cf.Data.partition_boundaries
    ~cf.Data.partition_configuration

@@ -2,6 +2,7 @@ import logging
 import os
 import tempfile
 from glob import glob
+from numbers import Integral
 from os.path import isdir
 from re import Pattern
 
@@ -76,7 +77,6 @@ def read(
     `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
-
     **NetCDF hierarchical groups**
 
     Hierarchical groups in CF provide a mechanism to structure
@@ -85,10 +85,9 @@ def read(
     rules in the CF conventions for resolving references to
     out-of-group netCDF variables and dimensions. The group structure
     is preserved in the field construct's netCDF interface. Groups
-    were incorporated into C-1.8. For files with groups that state
+    were incorporated into CF-1.8. For files with groups that state
     compliance to earlier versions of the CF conventions, the groups
     will be interpreted as per the latest release of CF.
-
 
     **CF-compliance**
 
@@ -109,7 +108,6 @@ def read(
     `~cf.Field.dataset_compliance` method of the field construct, as
     well as optionally displayed when the dataset is read by setting
     the warnings parameter.
-
 
     **CDL files**
 
@@ -138,8 +136,8 @@ def read(
 
     2-d "slices" within a single file are always combined, where
     possible, into field constructs with 3-d, 4-d or 5-d data. This is
-    done prior to the field construct aggregation carried out by the
-    `cf.read` function.
+    done prior to any field construct aggregation (see the *aggregate*
+    parameter).
 
     When reading PP and UM fields files, the *relaxed_units* aggregate
     option is set to `True` by default, because units are not always
@@ -149,11 +147,25 @@ def read(
     **Performance**
 
     Descriptive properties are always read into memory, but lazy
-    loading is employed for all data arrays, which means that no data
-    is read into memory until the data is required for inspection or
-    to modify the array contents. This maximises the number of field
-    constructs that may be read within a session, and makes the read
-    operation fast.
+    loading is employed for all data arrays which means that, in
+    general, data is not read into memory until the data is required
+    for inspection or to modify the array contents. This maximises the
+    number of field constructs that may be read within a session, and
+    makes the read operation fast. The exceptions to the lazy reading
+    of data arrays are:
+
+    * Data that define purely structural elements of other data arrays
+      that are compressed by convention (such as a count variable for
+      a ragged contiguous array). These are always read from disk.
+
+    * If field or domain aggregation is in use (as it is by default,
+      see the *aggregate* parameter), then the data of metadata
+      constructs may have to be read to determine how the contents of
+      the input files may be aggregated. This won't happen for a
+      particular field or domain's metadata, though, if it can be
+      ascertained from descriptive properties alone that it can't be
+      aggregated with anything else (as would be the case, for
+      instance, when a field has a unique standard name).
 
     However, when two or more field or domain constructs are
     aggregated to form a single construct then the data arrays of some
@@ -411,7 +423,7 @@ def read(
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field contructs and metadata constructs that have
+            on field constructs and metadata constructs that have
             data. By default no such warning is issued.
 
             "Out-of-range" data values in the file, as defined by any
@@ -428,7 +440,7 @@ def read(
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
             files only, provide extra decoding instructions. This
-            option is ignored for input files which are notPP or
+            option is ignored for input files which are not PP or
             fields files. In most cases, how to decode a file is
             inferrable from the file's contents, but if not then each
             key/value pair in the dictionary sets a decoding option as
@@ -524,9 +536,80 @@ def read(
 
             .. versionadded:: 1.5
 
-        chunks: TODODASK
+        chunks: `str`, `int`, `None`, or `dict`, optional
+                Specify the `dask` chunking of dimensions for data in
+                the input files.
 
-            .. versionadded:: TODODASKVER
+                By default, ``'auto'`` is used to specify the array
+                chunking, which uses a chunk size in bytes defined by
+                the `cf.chunksize` function, preferring square-like
+                chunk shapes across all data dimensions.
+
+                If *chunks* is a `str` then each data array uses this
+                chunk size in bytes, preferring square-like chunk
+                shapes across all data dimensions. Any string value
+                accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is permitted.
+
+                *Parameter example:*
+                  A chunksize of 2 MiB may be specified as
+                  ``'2097152'`` or ``'2 MiB'``.
+
+                If *chunks* is `-1` or `None` then for each there is no
+                chunking, i.e. every data array has one chunk
+                regardless of its size.
+
+                If *chunks* is a positive `int` then each data array
+                dimension has chunks with this number of elements.
+
+                If *chunks* is a `dict`, then each of its keys
+                identifies dimension in the file, with a value that
+                defines the chunking for that dimension whenever it is
+                spanned by data.
+
+                Each dictionary key identifies a file dimension in one
+                of three ways: 1. the netCDF dimension name, preceeded
+                by ``ncdim%`` (e.g. ``'ncdim%lat'``); 2. the "standard
+                name" attribute of a CF-netCDF coordinate variable
+                that spans the dimension (e.g. ``'latitude'``); or
+                3. the "axis" attribute of a CF-netCDF coordinate
+                variable that spans the dimension (e.g. ``'Y'``).
+
+                The dictionary values may be `str`, `int` or `None`,
+                with the same meanings as those types for the *chunks*
+                parameter but applying only to the specified
+                dimension. A `tuple` or `list` of integers that sum to
+                the dimension size may also be given.
+
+                Not specifying a file dimension in the dictionary is
+                equivalent to it being defined with a value of
+                ``'auto'``.
+
+                *Parameter example:*
+                  ``{'T': '0.5 MiB', 'Y': [36, 37], 'X': None}``
+
+                *Parameter example:*
+                  If a netCDF file contains dimensions ``time``,
+                  ``z``, ``lat`` and ``lon``, then ``{'ncdim%time':
+                  12, 'ncdim%lat', None, 'ncdim%lon': None}`` will
+                  ensure that all ``time`` axes have a chunksize of
+                  12; and all ``lat`` and ``lon`` axes are not
+                  chunked; and all ``z`` axes are chunked to comply as
+                  closely as possible with the default chunks size.
+
+                  If the netCDF also contains a ``time`` coordinate
+                  variable with a ``standard_name`` attribute of
+                  ``'time'`` and an ``axis`` attribute of ``'T'``,
+                  then the same chunking could be specified with
+                  either ``{'time': 12, 'ncdim%lat', None, 'ncdim%lon':
+                  None}`` or ``{'T': 12, 'ncdim%lat', None,
+                  'ncdim%lon': None}``.
+
+                .. note:: The *chunks* parameter is ignored for PP and
+                          UM fields files, for which the chunking is
+                          pre-determined by the file format.
+
+                .. versionadded:: 3.14.0
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -567,7 +650,7 @@ def read(
         select_options: deprecated at version 3.0.0
             Use methods on the returned `FieldList` instead.
 
-        chunk: deprecated at version TODODASKVER
+        chunk: deprecated at version 3.14.0
             Use the *chunks* parameter instead.
 
     :Returns:
@@ -618,12 +701,15 @@ def read(
     """
     if field:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            "cf.read", {"field": field}, "Use keyword 'extra' instead"
+            "cf.read",
+            {"field": field},
+            "Use keyword 'extra' instead",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     if select_options:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            "cf.read", {"select_options": select_options}
+            "cf.read", {"select_options": select_options}, removed_at="4.0.0"
         )  # pragma: no cover
 
     if follow_symlinks:
@@ -631,6 +717,7 @@ def read(
             "cf.read",
             {"follow_symlinks": follow_symlinks},
             "Use keyword 'followlink' instead.",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     if height_at_top_of_model is not None:
@@ -638,6 +725,7 @@ def read(
             "cf.read",
             {"height_at_top_of_model": height_at_top_of_model},
             "Use keyword 'um' instead.",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     if chunk is not True:
@@ -645,12 +733,20 @@ def read(
             "cf.read",
             {"chunk": chunk},
             "Use keyword 'chunks' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     # Parse select
     if isinstance(select, (str, Query, Pattern)):
         select = (select,)
+
+    # Check chunks
+    if chunks is not None and not isinstance(chunks, (str, Integral, dict)):
+        raise ValueError(
+            "'chunks' parameter must be of type str, int, None or dict. "
+            f"Got: {chunks!r}"
+        )
 
     # Manage input parameters where contradictions are possible:
     if cdl_string and fmt:
@@ -796,7 +892,6 @@ def read(
                 um=um,
                 extra=extra,
                 height_at_top_of_model=height_at_top_of_model,
-                #                chunk=chunk,
                 chunks=chunks,
                 mask=mask,
                 warn_valid=warn_valid,
@@ -1051,7 +1146,6 @@ def _read_a_file(
             fmt=fmt,
             word_size=word_size,
             endian=endian,
-            chunk=chunks,
             select=select,
         )
 

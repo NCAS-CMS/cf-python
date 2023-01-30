@@ -866,12 +866,14 @@ class DataTest(unittest.TestCase):
                 "sample_size": 1,
             },
         )
+
         # NaN values aren't 'equal' to e/o, so check call works and that some
         # representative values are as expected, in this case
         s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
+
         self.assertEqual(len(s5), 16)
         self.assertEqual(s5["minimum"], -2)
-        self.assertEqual(s5["sum"], 3)
+        self.assertEqual(s5["sum"], 0)
         self.assertEqual(s5["sample_size"], 6)
         self.assertTrue(np.isnan(s5["mean"]))
         self.assertTrue(np.isnan(s5["variance"]))  # needs all=True to show up
@@ -1670,12 +1672,6 @@ class DataTest(unittest.TestCase):
         e = d.clip(0.003, 0.009, "km")
         self.assertTrue((e.array == b).all())
 
-    @unittest.skipIf(
-        True,
-        "Failing due to 'has_year_zero' differences in actual and expected "
-        "outputs: relates to github.com/Unidata/cftime/issues/233, see also "
-        "NCAS-CMS/cfunits/commit/ca15e7f6db76fe613db740993b4e45115341d865.",
-    )
     def test_Data_months_years(self):
         """Test Data with 'months/years since' units specifications."""
         calendar = "360_day"
@@ -1691,9 +1687,7 @@ class DataTest(unittest.TestCase):
             ]
         )
 
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         calendar = "standard"
         d = cf.Data(
@@ -1707,9 +1701,7 @@ class DataTest(unittest.TestCase):
                 cf.dt(2000, 3, 1, 20, 58, 7, 662446, calendar=calendar),
             ]
         )
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         calendar = "360_day"
         d = cf.Data(
@@ -1722,9 +1714,7 @@ class DataTest(unittest.TestCase):
                 cf.dt(2002, 1, 11, 11, 37, 31, 949357, calendar=calendar),
             ]
         )
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         calendar = "standard"
         d = cf.Data(
@@ -1737,9 +1727,7 @@ class DataTest(unittest.TestCase):
                 cf.dt(2001, 12, 31, 11, 37, 31, 949357, calendar=calendar),
             ]
         )
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         d = cf.Data(
             [1.0, 2],
@@ -2458,7 +2446,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.argmax().array, 1)
 
         # Bad axis
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             d.argmax(axis=d.ndim)
 
     def test_Data_percentile_median(self):
@@ -4433,6 +4421,16 @@ class DataTest(unittest.TestCase):
         for element in elements0:
             self.assertNotIn(element, d._custom)
 
+    def test_Data_cull_graph(self):
+        """Test `Data.cull`"""
+        d = cf.Data([1, 2, 3, 4, 5], chunks=3)
+        d = d[:2]
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 3)
+
+        # Check that there are fewer keys after culling
+        d.cull_graph()
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 2)
+
     def test_Data_npartitions(self):
         """Test the `npartitions` Data property."""
         d = cf.Data.ones((4, 5), chunks=(2, 4))
@@ -4442,6 +4440,24 @@ class DataTest(unittest.TestCase):
         """Test the `numblocks` Data property."""
         d = cf.Data.ones((4, 5), chunks=(2, 4))
         self.assertEqual(d.numblocks, (2, 2))
+
+    def test_Data_convert_reference_time(self):
+        """Test `Data.convert_reference_time`"""
+        d = cf.Data([2, 1, 0, -1], units="months since 2003-12-01")
+        e = d.convert_reference_time(calendar_months=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.assertTrue((e.array == [62, 31, 0, -30]).all())
+
+        d = cf.Data([2, 1, 0, -1], units="years since 2003-12-01")
+        e = d.convert_reference_time(calendar_years=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.assertTrue((e.array == [731, 366, 0, -365]).all())
+
+        d = cf.Data([2, 1, 0, -1], units="days since 2003-12-01")
+        units = cf.Units("hours since 2003-11-30")
+        e = d.convert_reference_time(units)
+        self.assertEqual(e.Units, units)
+        self.assertTrue((e.array == [72, 48, 24, 0]).all())
 
 
 if __name__ == "__main__":

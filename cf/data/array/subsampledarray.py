@@ -1,9 +1,12 @@
 import cfdm
 
+from ...mixin_container import Container
 from .mixin import ArrayMixin, CompressedArrayMixin
 
 
-class SubsampledArray(CompressedArrayMixin, ArrayMixin, cfdm.SubsampledArray):
+class SubsampledArray(
+    CompressedArrayMixin, ArrayMixin, Container, cfdm.SubsampledArray
+):
     """An underlying subsampled array.
 
     For some structured coordinate data (e.g. coordinates describing
@@ -65,7 +68,7 @@ class SubsampledArray(CompressedArrayMixin, ArrayMixin, cfdm.SubsampledArray):
      [305.0 333.75]
      [333.75 360.0]]
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
@@ -80,9 +83,9 @@ class SubsampledArray(CompressedArrayMixin, ArrayMixin, cfdm.SubsampledArray):
         return super().__repr__().replace("<", "<CF ", 1)
 
     def to_dask_array(self, chunks="auto"):
-        """Create a dask array TODODASKDOCS.
+        """Convert the data to a `dask` array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -99,6 +102,7 @@ class SubsampledArray(CompressedArrayMixin, ArrayMixin, cfdm.SubsampledArray):
         :Returns:
 
             `dask.array.Array`
+                The `dask` array representation.
 
         """
         from functools import partial

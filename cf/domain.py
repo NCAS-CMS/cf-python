@@ -129,7 +129,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def close(self):
         """Close all files referenced by the domain construct.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         Note that a closed file will be automatically reopened if its
@@ -148,7 +148,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 

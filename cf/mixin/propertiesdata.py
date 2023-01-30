@@ -1,10 +1,8 @@
 import logging
-from functools import partial as functools_partial
 from itertools import chain
 
 from numpy import array as numpy_array
 from numpy import result_type as numpy_result_type
-from numpy import vectorize as numpy_vectorize
 
 from ..cfdatetime import dt
 from ..data import Data
@@ -22,7 +20,6 @@ from ..functions import (
 )
 from ..functions import equivalent as cf_equivalent
 from ..functions import inspect as cf_inspect
-from ..timeduration import TimeDuration
 from ..units import Units
 from . import Properties
 
@@ -1601,7 +1598,7 @@ class PropertiesData(Properties):
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
 
-        Deprecated at version TODODASKVER. Use the method
+        Deprecated at version 3.14.0. Use the method
         `masked_invalid` instead.
 
         Note that:
@@ -1666,7 +1663,7 @@ class PropertiesData(Properties):
             self,
             "mask_invalid",
             message="Use the method 'masked_invalid' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -1926,7 +1923,7 @@ class PropertiesData(Properties):
 
         `persist` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2397,7 +2394,7 @@ class PropertiesData(Properties):
             "varray",
             message="Data are now stored as `dask` arrays for which, "
             "in general, a numpy array view is not robust.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -2544,7 +2541,7 @@ class PropertiesData(Properties):
     def close(self):
         """Close all files referenced by the construct.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         Note that a closed file will be automatically reopened if its
@@ -2565,19 +2562,23 @@ class PropertiesData(Properties):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull_graph=True):
         """Join a sequence of variables together.
+
+        .. seealso:: `Data.cull_graph`
 
         :Parameters:
 
             variables: sequence of constructs.
 
             axis: `int`, optional
+
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
@@ -2589,12 +2590,12 @@ class PropertiesData(Properties):
         if len(variables) == 1:
             return variable0.copy()
 
-        out = variable0.copy()  # data=False)
+        out = variable0.copy()
 
         data = Data.concatenate(
             [v.get_data(_fill_value=False) for v in variables],
             axis=axis,
-            _preserve=_preserve,
+            cull_graph=cull_graph,
         )
         out.set_data(data, copy=False)
 
@@ -3129,14 +3130,6 @@ class PropertiesData(Properties):
         "months", which have special definition. See the note and examples
         below for more details.
 
-        For conversions which do not require a change in the date-times
-        implied by the data values, this method will be considerably
-        slower than a simple reassignment of the units. For example, if
-        the original units are ``'days since 2000-12-1'`` then ``c.Units =
-        cf.Units('days since 1901-1-1')`` will give the same result and be
-        considerably faster than ``c.convert_reference_time(cf.Units('days
-        since 1901-1-1'))``.
-
         .. note:: It is recommended that the units "year" and "month" be
                   used with caution, as explained in the following excerpt
                   from the CF conventions: "The Udunits package defines a
@@ -3148,6 +3141,17 @@ class PropertiesData(Properties):
                   365.25 days, and a Gregorian_year is 365.2425 days. For
                   similar reasons the unit ``month``, which is defined to
                   be exactly year/12, should also be used with caution.
+
+        **Performance**
+
+        For conversions which do not require a change in the
+        date-times implied by the data values, this method will be
+        considerably slower than a simple reassignment of the
+        units. For example, if the original units are ``'days since
+        2000-12-1'`` then ``c.Units = cf.Units('days since
+        1901-1-1')`` will give the same result and be considerably
+        faster than ``c.convert_reference_time(cf.Units('days since
+        1901-1-1'))``.
 
         :Parameters:
 
@@ -3183,116 +3187,41 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The construct with converted reference time data values.
+                The construct with converted reference time data
+                values, or `None` if the operation was in-place.
 
         **Examples**
 
         >>> print(f.array)
-        [1  2  3  4]
+        [0 1 2 3]
         >>> f.Units
-        <Units: months since 2000-1-1>
+        <Units: months since 2004-1-1>
         >>> print(f.datetime_array)
-        [datetime.datetime(2000, 1, 31, 10, 29, 3, 831197) TODO
-         datetime.datetime(2000, 3, 1, 20, 58, 7, 662441)
-         datetime.datetime(2000, 4, 1, 7, 27, 11, 493645)
-         datetime.datetime(2000, 5, 1, 17, 56, 15, 324889)]
-        >>> f.convert_reference_time(calendar_months=True, inplace=True)
-        >>> print(f.datetime_array)
-        [datetime.datetime(2000, 2, 1, 0, 0) TODOx
-         datetime.datetime(2000, 3, 1, 0, 0)
-         datetime.datetime(2000, 4, 1, 0, 0)
-         datetime.datetime(2000, 5, 1, 0, 0)]
-        >>> print(f.array)
-        [  31.   60.   91.  121.]
-        >>> f.Units
-        <Units: days since 2000-1-1>
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2003, 12, 31, 10, 29, 3, 831223, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 30, 20, 58, 7, 662446, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 7, 27, 11, 493670, has_year_zero=False)]
+        >>> g = f.convert_reference_time(calendar_months=True)
+        >>> g.Units
+        <Units: days since 2004-1-1>
+        >>> print(g.datetime_array)
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 2, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 0, 0, 0, 0, has_year_zero=False)]
+        >>> print(g.array)
+        [ 0 31 62 91]
 
         """
-
-        def _convert_reftime_units(value, units, reftime):  # , calendar):
-            """sads.
-
-            :Parameters:
-
-                value: number
-
-                units: `Units`
-
-            :Returns:
-
-                `datetime.datetime` or `cf.Datetime`
-
-            """
-            t = TimeDuration(value, units=units)
-            if value > 0:
-                return t.interval(reftime, end=False)[1]
-            else:
-                return t.interval(reftime, end=True)[0]
-
-        if not self.Units.isreftime:
-            raise ValueError(
-                f"{self.__class__.__name__} must have reference time units, "
-                f"not {self.Units!r}"
-            )
-
-        v = _inplace_enabled_define_and_cleanup(self)
-
-        units0 = self.Units
-
-        if units is None:
-            # By default, set the target units to "days since
-            # <reference time of self.Units>,
-            # calendar=<self.calendar>"
-            units = Units(
-                "days since " + units0.units.split(" since ")[1],
-                calendar=units0._calendar,
-            )
-        elif not getattr(units, "isreftime", False):
-            raise ValueError(
-                f"New units must be reference time units, not {units!r}"
-            )
-
-        if units0._units_since_reftime in _month_units:
-            if calendar_months:
-                units0 = Units(
-                    "calendar_" + units0.units, calendar=units0._calendar
-                )
-            else:
-                units0 = Units(
-                    "days since " + units0.units.split(" since ")[1],
-                    calendar=units0._calendar,
-                )
-                v.Units = units0
-        elif units0._units_since_reftime in _year_units:
-            if calendar_years:
-                units0 = Units(
-                    "calendar_" + units0.units, calendar=units0._calendar
-                )
-            else:
-                units0 = Units(
-                    "days since " + units0.units.split(" since ")[1],
-                    calendar=units0._calendar,
-                )
-                v.Units = units0
-
-        # Not LAMAed!
-        v.set_data(
-            Data(
-                numpy_vectorize(
-                    functools_partial(
-                        _convert_reftime_units,
-                        units=units0._units_since_reftime,
-                        reftime=dt(units0.reftime, calendar=units0._calendar),
-                    ),
-                    otypes=[object],
-                )(v),
-                units=units,
-            )
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "convert_reference_time",
+            inplace=inplace,
+            units=units,
+            calendar_months=calendar_months,
+            calendar_years=calendar_years,
         )
 
-        return v
-
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         """Flatten axes of the data.
@@ -4533,7 +4462,7 @@ class PropertiesData(Properties):
     def to_dask_array(self):
         """Convert the data to a `dask` array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `cf.Data.to_dask_array`
 
@@ -5029,7 +4958,7 @@ class PropertiesData(Properties):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASKVER
+            size: deprecated at version 3.14.0
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -5049,7 +4978,7 @@ class PropertiesData(Properties):
                 "halo",
                 {"size": None},
                 message="Use the 'depth' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -5287,15 +5216,35 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def roll(self, iaxis, shift, inplace=False, i=False):
-        """Roll the data along an axis.
+        """Roll the data along one or more axes.
+
+        Elements that roll beyond the last position are re-introduced
+        at the first.
 
         .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
                      `transpose`
 
         :Parameters:
 
-            iaxis: `int`
-                TODO
+            axis: `int`, or `tuple` of `int`
+                Axis or axes along which elements are shifted.
+
+                *Parameter example:*
+                  Roll the second axis: ``axis=1``.
+
+                *Parameter example:*
+                  Roll the last axis: ``axis=-1``.
+
+                *Parameter example:*
+                  Roll the first and last axes: ``axis=(0, -1)``.
+
+            shift: `int`, or `tuple` of `int`
+                The number of places by which elements are shifted.
+                If a `tuple`, then *axis* must be a tuple of the same
+                size, and each of the given axes is shifted by the
+                corresponding number. If an `int` while *axis* is a
+                `tuple` of `int`, then the same value is used for all
+                given axes.
 
             {{inplace: `bool`, optional}}
 
@@ -5304,11 +5253,17 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                TODO
+                The construct with rolled data. If the operation was
+                in-place then `None` is returned.
 
         **Examples**
 
-        TODO
+        >>> print(f.array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11]
+        >>> print(f.roll(0, 2).array)
+        [10 11  0  1  2  3  4  5  6  7  8  9]
+        >>> print(f.roll(0, -2).array)
+        [ 2  3  4  5  6  7  8  9 10 11  0  1]
 
         """
         return self._apply_data_oper(

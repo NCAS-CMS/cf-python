@@ -443,7 +443,7 @@ class FieldDomain:
                     # 1-d CASE 3: All other 1-d cases
                     logger.debug("  1-d CASE 3:")  # pragma: no cover
 
-                    index = value == item
+                    index = item == value
                     index = index.data.to_dask_array()
 
                     if envelope or full:
@@ -500,7 +500,7 @@ class FieldDomain:
 
                 # Find where each construct matches its value
                 item_matches = [
-                    (value == construct).data
+                    (construct == value).data
                     for value, construct in zip(points, transposed_constructs)
                 ]
 
@@ -2124,7 +2124,7 @@ class FieldDomain:
                 dimension or auxiliary coordinate construct
                 identifiers.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 

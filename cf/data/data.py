@@ -15,6 +15,7 @@ from dask.array import Array
 from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
 from dask.highlevelgraph import HighLevelGraph
+from dask.optimization import cull
 
 from ..cfdatetime import dt as cf_dt
 from ..constants import masked as cf_masked
@@ -37,10 +38,7 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import (  # cfa_to_dask,; compressed_to_dask,
-    generate_axis_identifiers,
-    to_dask,
-)
+from .creation import generate_axis_identifiers, to_dask
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -77,6 +75,9 @@ _empty_set = set()
 _units_None = Units()
 _units_1 = Units("1")
 _units_radians = Units("radians")
+
+_month_units = ("month", "months")
+_year_units = ("year", "years", "yr")
 
 _dtype_float32 = np.dtype("float32")
 _dtype_float = np.dtype(float)
@@ -251,11 +252,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 .. versionadded:: 3.0.5
 
-            source: optional
-                Initialise the data values and metadata (such as
-                units, mask hardness, etc.) from the data of
-                *source*. All other arguments, with the exception of
-                *copy*, are ignored.
+            {{init source: optional}}
 
             hardmask: `bool`, optional
                 If False then the mask is soft. By default the mask is
@@ -266,13 +263,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 given by the *array* parameter are re-interpreted as
                 date-time objects. By default they are not.
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior to
-                initialisation. By default arguments are deep copied.
+            {{init copy: `bool`, optional}}
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             to_memory: `bool`, optional
                 If True then ensure that the original data are in
@@ -294,7 +289,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If the input *array* is a `dask.array.Array` object
                 then *to_memory* is ignored.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             init_options: `dict`, optional
                 Provide optional keyword arguments to methods and
@@ -321,7 +316,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                  *Parameter example:*
                    ``{'from_array': {'inline_array': True}}``
 
-            chunk: deprecated at version TODODASKVER
+            chunk: deprecated at version 3.14.0
                 Use the *chunks* parameter instead.
 
         **Examples**
@@ -475,11 +470,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     @property
     def dask_compressed_array(self):
-        """TODODASKDOCS.
+        """Returns a dask array of the compressed data.
+
+        .. versionadded:: 3.14.0
 
         :Returns:
 
             `dask.array.Array`
+                The compressed data.
+
+        **Examples**
+
+        >>> a = d.dask_compressed_array
 
         """
         ca = self.source(None)
@@ -1134,7 +1136,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         then they subspace along each dimension independently. This
         behaviour is similar to Fortran, but different to `numpy`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `__keepdims_indexing__`, `__getitem__`,
                      `__setitem__`,
@@ -1172,7 +1174,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         single-axis index reduces the number of array dimensions by
         1. This behaviour is the same as `numpy`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `__orthogonal_indexing__`, `__getitem__`,
                      `__setitem__`
@@ -1245,7 +1247,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * Deletes a source array.
         * Deletes cached element values.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -1258,7 +1260,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _set_dask(self, array, copy=False, conform=True):
         """Set the dask array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
                      `_del_dask`
@@ -1313,7 +1315,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _del_dask(self, default=ValueError(), conform=True):
         """Remove the dask array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
                      `_set_dask`
@@ -1383,7 +1385,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                   `_del_cached_elements` must be called explicitly to
                   ensure consistency.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `_del_dask`, `_set_cached_elements`, `_set_dask`
 
@@ -1402,7 +1404,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Updates *data* in-place to store the given element values
         within its ``custom`` dictionary.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `_del_cached_elements`
 
@@ -1820,10 +1822,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check(
-        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
-    )
-    def median(self, axes=None, squeeze=False, mtol=1, inplace=False):
+    def median(
+        self,
+        axes=None,
+        squeeze=False,
+        mtol=1,
+        inplace=False,
+    ):
         """Calculate median values.
 
         Calculates the median value or the median values along axes.
@@ -1904,7 +1909,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{collapse squeeze: `bool`, optional}}
 
@@ -1920,7 +1925,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -1977,9 +1982,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check(
-        "_preserve_partitions", version="TODODASKVER", removed_at="5.0.0"
-    )
     @_inplace_enabled(default=False)
     def percentile(
         self,
@@ -1989,7 +1991,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         squeeze=False,
         mtol=1,
         inplace=False,
-        _preserve_partitions=False,
         interpolation=None,
         interpolation2=None,
     ):
@@ -2049,7 +2050,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             squeeze: `bool`, optional
                 If True then all axes over which percentiles are
@@ -2063,14 +2064,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
-            interpolation: deprecated at version TODODASKVER
+            interpolation: deprecated at version 3.14.0
                 Use the *method* parameter instead.
-
-            _preserve_partitions: deprecated at version TODODASKVER
 
         :Returns:
 
@@ -2146,7 +2145,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "percentile",
                 {"interpolation": None},
                 message="Use the 'method' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -2261,7 +2260,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `persist` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `compute`, `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2343,7 +2342,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `array` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `persist`, `array`, `datetime_array`
 
@@ -2594,13 +2593,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 Choose which method to use to perform the cumulative
                 sum. See `dask.array.cumsum` for details.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
                 .. versionadded:: 3.3.0
 
-            masked_as_zero: deprecated at version TODODASKVER
+            masked_as_zero: deprecated at version 3.14.0
                 See the examples for the new behaviour when there are
                 masked values.
 
@@ -2651,7 +2650,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "cumsum",
                 {"masked_as_zero": None},
                 message="",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -2674,7 +2673,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     ):
         """Change the chunk structure of the data.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `chunks`, `dask.array.rechunk`
 
@@ -3531,8 +3530,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @classmethod
-    def concatenate(cls, data, axis=0, _preserve=True):
+    def concatenate(cls, data, axis=0, cull_graph=True):
         """Join a sequence of data arrays together.
+
+        .. seealso:: `cull_graph`
 
         :Parameters:
 
@@ -3551,8 +3552,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 .. note:: If the axis specified is cyclic, it will become
                           non-cyclic in the output.
 
-            _preserve: `bool`, optional
-                Deprecated at version TODODASKVER.
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
@@ -3595,6 +3595,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "Can't concatenate: Must provide at least two data arrays"
             )
 
+        if cull_graph:
+            # Remove unnecessary components from the graph, which may
+            # improve performance, and because complicated task graphs
+            # can sometimes confuse da.concatenate.
+            for d in data:
+                d.cull_graph()
+
         data0 = data[0].copy()
 
         processed_data = []
@@ -3617,15 +3624,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             elif not units0.equals(data1.Units):  # conform for consistency
                 if not copied:
                     data1 = data1.copy()
+
                 data1.Units = units0
 
             processed_data.append(data1)
 
         # Get data as dask arrays and apply concatenation operation
-        dxs = []
-        for data1 in processed_data:
-            dxs.append(data1.to_dask_array())
-
+        dxs = [d.to_dask_array() for d in processed_data]
         data0._set_dask(da.concatenate(dxs, axis=axis))
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
@@ -4195,7 +4200,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def chunks(self):
         """The chunk sizes for each dimension.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `npartitions`, `numblocks`, `rechunk`
 
@@ -4296,33 +4301,30 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def dtype(self):
         """The `numpy` data-type of the data.
 
+        Always returned as a `numpy` data-type instance, but may be set
+        as any object that converts to a `numpy` data-type.
+
         **Examples**
 
-        TODODASKDOCS
-        >>> d = cf.Data([0.5, 1.5, 2.5])
+        >>> d = cf.Data([1, 2.5, 3.9])
         >>> d.dtype
-        dtype(float64')
-        >>> type(d.dtype)
-        <type 'numpy.dtype'>
-
-        >>> d = cf.Data([0.5, 1.5, 2.5])
-        >>> import numpy
-        >>> d.dtype = numpy.dtype(int)
+        dtype('float64')
         >>> print(d.array)
-        [0 1 2]
-        >>> d.dtype = bool
-        >>> print(d.array)
-        [False  True  True]
-        >>> d.dtype = 'float64'
-        >>> print(d.array)
-        [ 0.  1.  1.]
-
-        >>> d = cf.Data([0.5, 1.5, 2.5])
+        [1.  2.5 3.9]
         >>> d.dtype = int
-        >>> d.dtype = bool
-        >>> d.dtype = float
+        >>> d.dtype
+        dtype('int64')
         >>> print(d.array)
-        [ 0.5  1.5  2.5]
+        [1 2 3]
+        >>> d.dtype = 'float32'
+        >>> print(d.array)
+        [1. 2. 3.]
+        >>> import numpy as np
+        >>> d.dtype = np.dtype('int32')
+        >>> d.dtype
+        dtype('int32')
+        >>> print(d.array)
+        [1 2 3]
 
         """
         dx = self.to_dask_array()
@@ -4528,7 +4530,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def npartitions(self):
         """The total number of chunks.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `chunks`, `numblocks`, `rechunk`
 
@@ -4549,7 +4551,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def numblocks(self):
         """The number of chunks along each dimension.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `chunks`, `npartitions`, `rechunk`
 
@@ -4721,11 +4723,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "because calendar is 'none'"
             )
 
-        units, reftime = units.units.split(" since ")
+        units1, reftime = units.units.split(" since ")
 
         # Convert months and years to days, because cftime won't work
         # otherwise.
-        if units in ("months", "month"):
+        if units1 in ("months", "month"):
             d = self * _month_length
             d.override_units(
                 Units(
@@ -4734,7 +4736,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 ),
                 inplace=True,
             )
-        elif units in ("years", "year", "yr"):
+        elif units1 in ("years", "year", "yr"):
             d = self * _year_length
             d.override_units(
                 Units(
@@ -5550,14 +5552,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             unravel: `bool`, optional
                 If True then when locating the maximum over the whole
-                data, return the location as an index for each axis as
-                a `tuple`. By default an index to the flattened array
-                is returned in this case. Ignored if locating the
-                maxima over a subset of the axes.
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the maxima over a subset of the axes.
 
         :Returns:
 
-            `Data` or `tuple`
+            `Data` or `tuple` of `int`
                 The location of the maximum, or maxima.
 
         **Examples**
@@ -5606,6 +5608,177 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             return tuple(np.array(da.unravel_index(a, self.shape)))
 
         return type(self)(a)
+
+    @_inplace_enabled(default=False)
+    def convert_reference_time(
+        self,
+        units=None,
+        calendar_months=False,
+        calendar_years=False,
+        inplace=False,
+    ):
+        """Convert reference time data values to have new units.
+
+        Conversion is done by decoding the reference times to
+        date-time objects and then re-encoding them for the new units.
+
+        Any conversions are possible, but this method is primarily for
+        conversions which require a change in the date-times
+        originally encoded. For example, use this method to
+        reinterpret data values in units of "months" since a reference
+        time to data values in "calendar months" since a reference
+        time. This is often necessary when units of "calendar months"
+        were intended but encoded as "months", which have special
+        definition. See the note and examples below for more details.
+
+        .. note:: It is recommended that the units "year" and "month"
+                  be used with caution, as explained in the following
+                  excerpt from the CF conventions: "The Udunits
+                  package defines a year to be exactly 365.242198781
+                  days (the interval between 2 successive passages of
+                  the sun through vernal equinox). It is not a
+                  calendar year. Udunits includes the following
+                  definitions for years: a common_year is 365 days, a
+                  leap_year is 366 days, a Julian_year is 365.25 days,
+                  and a Gregorian_year is 365.2425 days. For similar
+                  reasons the unit ``month``, which is defined to be
+                  exactly year/12, should also be used with caution.
+
+        **Performance**
+
+        For conversions which do not require a change in the
+        date-times implied by the data orginal values, this method
+        will be considerably slower than a simple reassignment of the
+        units. For example, if the original units are ``'days since
+        2000-12-1'`` then ``d.Units = cf.Units('days since
+        1901-1-1')`` will give the same result and be considerably
+        faster than ``d.convert_reference_time(cf.Units('days since
+        1901-1-1'))``.
+
+        .. versionadded:: TODODASKVER
+
+        .. seeealso:: `change_calendar`, `datetime_array`, `Units`
+
+        :Parameters:
+
+            units: `Units`, optional
+                The reference time units to convert to. By default the
+                units are days since the original reference time in
+                the original calendar.
+
+                *Parameter example:*
+                  If the original units are ``'months since
+                  2000-1-1'`` in the Gregorian calendar then the
+                  default units to convert to are ``'days since
+                  2000-1-1'`` in the Gregorian calendar.
+
+            calendar_months: `bool`, optional
+                If True then treat units of ``'months'`` as if they
+                were calendar months (in whichever calendar is
+                originally specified), rather than a 12th of the
+                interval between two successive passages of the sun
+                through vernal equinox (i.e. 365.242198781/12 days).
+
+            calendar_years: `bool`, optional
+                If True then treat units of ``'years'`` as if they
+                were calendar years (in whichever calendar is
+                originally specified), rather than the interval
+                between two successive passages of the sun through
+                vernal equinox (i.e. 365.242198781 days).
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The data with converted reference time values, or
+                `None` if the operation was in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3, 4], units="months since 2004-1-1")
+        >>> d.Units
+        <Units: months since 2004-1-1>
+        >>> print(d.datetime_array)
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2003, 12, 31, 10, 29, 3, 831223, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 30, 20, 58, 7, 662446, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 7, 27, 11, 493670, has_year_zero=False)]
+        >>> print(d.array)
+        [0 1 2 3]
+        >>> e = d.convert_reference_time(calendar_months=True)
+        >>> e.Units
+        <Units: days since 2004-1-1>
+        >>> print(e.datetime_array)
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 2, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 0, 0, 0, 0, has_year_zero=False)]
+        >>> print(e.array)
+        [ 0 31 62 91]
+
+        """
+        units0 = self.Units
+
+        if not units0.isreftime:
+            raise ValueError(
+                f"{self.__class__.__name__} must have reference time units. "
+                f"Got {units0!r}"
+            )
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if units is None:
+            # By default, set the target units to "days since
+            # <reference time of units0>, calendar=<calendar of
+            # units0>"
+            units = Units(
+                "days since " + units0.units.split(" since ")[1],
+                calendar=units0._calendar,
+            )
+        elif not getattr(units, "isreftime", False):
+            raise ValueError(
+                f"New units must be reference time units, not {units!r}"
+            )
+
+        units0_since_reftime = units0._units_since_reftime
+        if units0_since_reftime in _month_units:
+            if calendar_months:
+                units0 = Units(
+                    "calendar_" + units0.units, calendar=units0._calendar
+                )
+            else:
+                units0 = Units(
+                    "days since " + units0.units.split(" since ")[1],
+                    calendar=units0._calendar,
+                )
+                d.Units = units0
+        elif units0_since_reftime in _year_units:
+            if calendar_years:
+                units0 = Units(
+                    "calendar_" + units0.units, calendar=units0._calendar
+                )
+            else:
+                units0 = Units(
+                    "days since " + units0.units.split(" since ")[1],
+                    calendar=units0._calendar,
+                )
+                d.Units = units0
+
+        dx = d.to_dask_array()
+
+        # Convert to the correct date-time objects
+        dx = dx.map_blocks(cf_rt2dt, units=units0, dtype=object)
+
+        # Convert the date-time objects to reference times
+        dx = dx.map_blocks(cf_dt2rt, units=units, dtype=float)
+
+        d._set_dask(dx)
+        d.override_units(units, inplace=True)
+
+        return d
 
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
@@ -5845,7 +6018,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -5908,7 +6081,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -5955,7 +6128,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         split_every=None,
         inplace=False,
         i=False,
-        _preserve_partitions=False,
     ):
         """Calculate minimum values.
 
@@ -5977,7 +6149,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -6039,7 +6211,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -6111,7 +6283,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -6188,7 +6360,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -6240,7 +6412,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         weights=None,
         split_every=None,
         inplace=False,
-        _preserve_partitions=False,
     ):
         """Calculate summed values.
 
@@ -6264,7 +6435,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -6355,7 +6526,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -7384,7 +7555,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("size", version="TODODASKVER", removed_at="5.0.0")
+    @_deprecated_kwarg_check("size", version="3.14.0", removed_at="5.0.0")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
@@ -7493,7 +7664,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASKVER
+            size: deprecated at version 3.14.0
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -7578,7 +7749,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "halo",
                 {"size": None},
                 message="Use the 'depth' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -7737,7 +7908,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `harden_mask` sets
         `hardmask` to `True`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `hardmask`, `soften_mask`
 
@@ -7834,7 +8005,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `soften_mask` sets
         `hardmask` to `False`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `hardmask`, `harden_mask`
 
@@ -7920,6 +8091,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. seealso:: `last_element`, `second_element`
 
+        **Performance**
+
+        If possible, a cached value is returned. Otherwise the delayed
+        operations needed to compute the element are executed, and
+        cached for subsequent calls.
+
         :Returns:
 
                 The first element of the data.
@@ -7958,6 +8135,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. seealso:: `first_element`, `last_element`
 
+        **Performance**
+
+        If possible, a cached value is returned. Otherwise the delayed
+        operations needed to compute the element are executed, and
+        cached for subsequent calls.
+
         :Returns:
 
                 The second element of the data.
@@ -7990,6 +8173,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Return the last element of the data as a scalar.
 
         .. seealso:: `first_element`, `second_element`
+
+        **Performance**
+
+        If possible, a cached value is returned. Otherwise the delayed
+        operations needed to compute the element are executed, and
+        cached for subsequent calls.
 
         :Returns:
 
@@ -8495,7 +8684,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                      returned dask array is correct, set the
                      *apply_mask_hardness* parameter to True.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -8843,7 +9032,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -8911,7 +9100,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -9260,7 +9449,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -9530,8 +9719,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "mid_range",
             "minimum_absolute_value",
             "maximum_absolute_value",
-            "sum",
-            "sum_of_squares",
         )
 
         out = {}
@@ -9636,7 +9823,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Parameters:
 
-            itemsize: deprecated at version TODODASKVER
+            itemsize: deprecated at version 3.14.0
                 The number of bytes per word of the master data array.
 
         :Returns:
@@ -10114,6 +10301,48 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
+    def cull_graph(self):
+        """Remove unnecessary tasks from the dask graph in-place.
+
+        **Performance**
+
+        An unnecessary task is one which does not contribute to the
+        computed result. Such tasks will be automatically removed
+        (culled) at compute time, but removing them beforehand might
+        improve performance by reducing the amount of work done in
+        later steps.
+
+        .. versionadded:: 3.14.0
+
+        .. seealso:: `dask.optimization.cull`
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3, 4, 5], chunks=3)
+        >>> d = d[:2]
+        >>> dict(d.to_dask_array().dask)
+        {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
+         ('array-21ea057f160746a3d3f0943bba945460', 1): array([4, 5]),
+         ('getitem-3e4edac0a632402f6b45923a6b9d215f',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
+           0), (slice(0, 2, 1),))}
+        >>> d.cull_graph()
+        >>> dict(d.to_dask_array().dask)
+        {('getitem-3e4edac0a632402f6b45923a6b9d215f',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
+           0), (slice(0, 2, 1),)),
+         ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
+
+        """
+        dx = self.to_dask_array()
+        dsk, _ = cull(dx.dask, dx.__dask_keys__())
+        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
+        self._set_dask(dx, conform=False)
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def tanh(self, inplace=False):
@@ -10558,9 +10787,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
-            fill_value: deprecated at version TODODASKVER
+            fill_value: deprecated at version 3.14.0
                 Use `set_fill_value` instead.
 
         :Returns:
@@ -10619,7 +10848,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -10683,7 +10912,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -10735,7 +10964,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -10757,7 +10986,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = da.zeros(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
-    @_deprecated_kwarg_check("out", version="TODODASKVER", removed_at="5.0.0")
+    @_deprecated_kwarg_check("out", version="3.14.0", removed_at="5.0.0")
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def func(
@@ -10779,7 +11008,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             units: `Units`, optional
 
-            out: deprecated at version TODODASKVER
+            out: deprecated at version 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -10888,7 +11117,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -10927,32 +11156,34 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def roll(self, axis, shift, inplace=False, i=False):
-        """Roll array elements along a given axis.
+        """Roll array elements along one or more axes.
 
-        Equivalent in function to `numpy.roll`.
+        Elements that roll beyond the last position are re-introduced
+        at the first.
 
-        TODODASKDOCS  - note that it works for multiple axes
+        .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
+                     `transpose`
 
         :Parameters:
 
-            axis: `int`
-                Select the axis over which the elements are to be rolled.
-                removed. The *axis* parameter is an integer that selects
-                the axis corresponding to the given position in the list
-                of axes of the data.
+            axis: `int`, or `tuple` of `int`
+                Axis or axes along which elements are shifted.
 
                 *Parameter example:*
-                  Convolve the second axis: ``axis=1``.
+                  Roll the second axis: ``axis=1``.
 
                 *Parameter example:*
-                  Convolve the last axis: ``axis=-1``.
+                  Roll the last axis: ``axis=-1``.
+
+                *Parameter example:*
+                  Roll the first and last axes: ``axis=(0, -1)``.
 
             shift: `int`, or `tuple` of `int`
                 The number of places by which elements are shifted.
                 If a `tuple`, then *axis* must be a tuple of the same
                 size, and each of the given axes is shifted by the
                 corresponding number. If an `int` while *axis* is a
-                tuple of `int`, then the same value is used for all
+                `tuple` of `int`, then the same value is used for all
                 given axes.
 
             {{inplace: `bool`, optional}}
@@ -10962,9 +11193,51 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `Data` or `None`
+                The rolled data.
+
+        **Examples**
+
+        >>> d = cf.Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+        >>> print(d.roll(0, 2).array)
+        [10 11  0  1  2  3  4  5  6  7  8  9]
+        >>> print(d.roll(0, -2).array)
+        [ 2  3  4  5  6  7  8  9 10 11  0  1]
+
+        >>> d2 = d.reshape(3, 4)
+        >>> print(d2.array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> print(d2.roll(0, 1).array)
+        [[ 8  9 10 11]
+         [ 0  1  2  3]
+         [ 4  5  6  7]]
+        >>> print(d2.roll(0, -1).array)
+        [[ 4  5  6  7]
+         [ 8  9 10 11]
+         [ 0  1  2  3]]
+        >>> print(d2.roll(1, 1).array)
+        [[ 3  0  1  2]
+         [ 7  4  5  6]
+         [11  8  9 10]]
+        >>> print(d2.roll(1, -1).array)
+        [[ 1  2  3  0]
+         [ 5  6  7  4]
+         [ 9 10 11  8]]
+        >>> print(d2.roll((1, 0), (1, 1)).array)
+        [[11  8  9 10]
+         [ 3  0  1  2]
+         [ 7  4  5  6]]
+        >>> print(d2.roll((1, 0), (2, 1)).array)
+        [[10 11  8  9]
+         [ 2  3  0  1]
+         [ 6  7  4  5]]
 
         """
-        # TODODASKAPI - consider matching the numpy/dask api: "shift, axis="
+        # TODODASKAPI - consider matching the numpy/dask api:
+        #               "shift,axis=", and the default axis behaviour
+        #               of a flattened roll followed by shape
+        #               restore
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -11009,7 +11282,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -11087,7 +11360,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -11171,7 +11444,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {[inplace: `bool`, optional}}
 
@@ -11269,7 +11542,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {[inplace: `bool`, optional}}
 
@@ -11367,7 +11640,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -11454,7 +11727,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -11532,13 +11805,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 sectioned.
 
             stop: `int`, optional
-                Deprecated at version TODODASKVER.
+                Deprecated at version 3.14.0.
 
                 Stop after this number of sections and return. If stop is
                 None all sections are taken.
 
             chunks: `bool`, optional
-                Deprecated at version TODODASKVER. Consider using
+                Deprecated at version 3.14.0. Consider using
                 `cf.Data.rechunk` instead.
 
                 If True return sections that are of the maximum possible
@@ -11580,7 +11853,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "section",
                 {"chunks": chunks},
                 message="Consider using Data.rechunk() instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -11589,7 +11862,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 self,
                 "section",
                 {"stop": stop},
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -11599,7 +11872,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def square(self, dtype=None, inplace=False):
         """Calculate the element-wise square.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `sqrt`, `sum_of_squares`
 
@@ -11646,7 +11919,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def sqrt(self, dtype=None, inplace=False):
         """Calculate the non-negative square root.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `square`
 
@@ -11892,7 +12165,7 @@ def _collapse(
 ):
     """Collapse data in-place using a given funcion.
 
-     .. versionadded:: TODODASKVER
+     .. versionadded:: 3.14.0
 
      .. seealso:: `_parse_weights`
 
@@ -12004,7 +12277,7 @@ def _collapse(
 def _parse_weights(d, weights, axis=None):
     """Parse the weights input to `_collapse`.
 
-     .. versionadded:: TODODASKVER
+     .. versionadded:: 3.14.0
 
      .. seealso:: `_collapse`
 
@@ -12102,24 +12375,15 @@ def _parse_weights(d, weights, axis=None):
     # For each component, add missing dimensions as size 1.
     w = []
     shape = d.shape
+    axes = d._axes
     for key, value in weights.items():
         value = Data.asdata(value)
 
         # Make sure axes are in ascending order
-        skey = tuple(sorted(key))
-        if key != skey:
-            value = value.transpose(skey)
-            key = skey
-
-        if not all(
-            True if i in (j, 1) else False
-            for i, j in zip(value.shape, [shape[i] for i in key])
-        ):
-            raise ValueError(
-                f"Weights component for axes {tuple(key)} with shape "
-                f"{value.shape} is not broadcastable to data with "
-                f"shape {shape}"
-            )
+        if key != tuple(sorted(key)):
+            key1 = [axes[i] for i in key]
+            new_order = [key1.index(axis) for axis in axes if axis in key1]
+            value = value.transpose(new_order)
 
         new_shape = [n if i in key else 1 for i, n in enumerate(shape)]
         w.append(value.reshape(new_shape))
