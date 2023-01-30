@@ -13913,7 +13913,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         When a grid is defined by 2-d latitude and longitude
         coordinates, it is necessary for their X and Y dimensions to
         be defined. This is either automatically inferred from the
-        exitence of 1-d dimension coordinates, or else must be
+        existence of 1-d dimension coordinates, or else must be
         specified with *src_axes* or *dst_axes* parameters
 
         **Curvilinear Grids**
