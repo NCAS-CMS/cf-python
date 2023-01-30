@@ -11520,104 +11520,94 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def argmax(self, axis=None):
+    def argmax(self, axis=None, unravel=False):
         """Return the indices of the maximum values along an axis.
 
         If no axis is specified then the returned index locates the
         maximum of the whole data.
 
-        .. seealso:: `argmin`, `where`
+        In case of multiple occurrences of the maximum values, the
+        indices corresponding to the first occurrence are returned.
+
+        **Performance**
+
+        If the data index is returned as a `tuple` (see the *unravel*
+        parameter) then all delayed operations are computed.
+
+        .. seealso:: `where`, `cf.Data.argmax`
 
         :Parameters:
 
+            axis: optional
+                Select the domain axis over which to locate the
+                maximum values, defined by the domain axis that would
+                be selected by passing the given *axis* to a call of
+                the field construct's `domain_axis` method. For
+                example, for a value of ``'X'``, the domain axis
+                construct returned by ``f.domain_axis('X')`` is
+                selected.
+
+                By default the maximum over the flattened data is
+                located.
+
+            unravel: `bool`, optional
+                If True then when locating the maximum over the whole
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the maxima over a subset of the axes.
+
         :Returns:
+
+            `Data` or `tuple` of `int`
+                The location of the maximum, or maxima.
 
         **Examples**
 
-        >>> g = f.argmax('T')
+        >>> f = cf.example_field(2)
+        >>> print(f)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+        Cell methods    : area: mean
+        Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        Find the T axis indices of the maximum at each X-Y location:
+
+        >>> i = f.argmax('T')
+        >>> print(i.array)
+        [[31 10  2 27 16  7 21 17]
+         [24 34  1 22 28 17 19 13]
+         [20  7 15 21  6 20  8 18]
+         [24  1  7 18 19  6 11 18]
+         [16  8 12  9 12  2  6 17]]
+
+        Find the coordinates of the global maximum value, showing that
+        it occurs on 1960-11-16 at location 292.5 degrees east, 45.0
+        degrees north:
+
+        >>> g = f[f.argmax(unravel=True)]
+        >>> print(g)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(1), latitude(1), longitude(1)) K
+        Cell methods    : area: mean
+        Dimension coords: time(1) = [1960-11-16 00:00:00]
+                        : latitude(1) = [45.0] degrees_north
+                        : longitude(1) = [292.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        See `cf.Data.argmax` for further examples.
 
         """
-        print("This method is not ready for use.")
-        return
+        if axis is not None:
+            axis = self.domain_axis(axis, key=True)
+            axis = self.get_data_axes().index(axis)
 
-    # TODODASK
-    # Keep these commented lines for using with the future dask version
-    #
-    #        standard_name = None
-    #
-    #        if axis is not None:
-    #            axis_key = self.domain_axis(
-    #                axis, key=True, default=ValueError("TODO")
-    #            )
-    #            axis = self.get_data_axes.index(axis_key)
-    #            standard_name = self.domain_axis_identity(
-    #                axis_key, strict=True, default=None
-    #            )
-    #
-    #        indices = self.data.argmax(axis, unravel=True)
-    #
-    #        if axis is None:
-    #            return self[indices]
-    #
-    #        # What if axis_key does not span array?
-    #        out = self.subspace(**{axis_key: [0]})
-    #        out.squeeze(axis_key, inplace=True)
-    #
-    #        for i in indices.ndindex():
-    #            out.data[i] = org.data[indices[i].datum()]
-    #
-    #        for key, c in tuple(
-    #            out.constructs.filter_by_type(
-    #                "dimension_coordinate",
-    #                "auxiliary_coordinate",
-    #                "cell_measure",
-    #                "domain_ancillary",
-    #                "field_ancillary",
-    #            )
-    #            .filter_by_axis("and", axis_key)
-    #            .items()
-    #        ):
-    #
-    #            out.del_construct(key)
-    #
-    #            if c.construct_type == (
-    #                "cell_measure",
-    #                "domain_ancillary",
-    #                "field_ancillary",
-    #            ):
-    #                continue
-    #
-    #            aux = self._AuxiliaryCoordinate()
-    #            aux.set_properties(c.properties())
-    #
-    #            c_data = c.get_data(None)
-    #            if c_data is not None:
-    #                data = Data.empty(indices.shape, dtype=c.dtype)
-    #                for x in indices.ndindex():
-    #                    data[x] = c_data[indices[x]]
-    #
-    #                aux.set_data(data, copy=False)
-    #
-    #            c_bounds_data = c.get_bounds_data(None)
-    #            if c_bounds_data is not None:
-    #                bounds = Data.empty(
-    #                    indices.shape + (c_bounds_data.shape[-1],),
-    #                    dtype=c_bounds_data.dtype,
-    #                )
-    #                for x in indices.ndindex():
-    #                    bounds[x] = c_bounds_data[indices[x]]
-    #
-    #                aux.set_bounds(
-    #                    self._Bounds(data=bounds, copy=False), copy=False
-    #                )
-    #
-    #            out.set_construct(aux, axes=out.get_data_axes(), copy=False)
-    #
-    #        if standard_name:
-    #            cm = CellMethod()
-    #            cm.create(standard_name + ": maximum")
-    #
-    #        return out
+        return self.data.argmax(axis=axis, unravel=unravel)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):

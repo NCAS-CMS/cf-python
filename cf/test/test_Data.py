@@ -2446,7 +2446,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.argmax().array, 1)
 
         # Bad axis
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             d.argmax(axis=d.ndim)
 
     def test_Data_percentile_median(self):

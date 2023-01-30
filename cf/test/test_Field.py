@@ -2484,6 +2484,21 @@ class FieldTest(unittest.TestCase):
 
         self.assertIsNone(g.persist(inplace=True))
 
+    def test_Field_argmax(self):
+        """Test the `argmax` Field method."""
+        f = cf.example_field(2)
+        i = f.argmax("T")
+        self.assertEqual(i.shape, f.shape[1:])
+
+        i = f.argmax(unravel=True)
+        self.assertIsInstance(i, tuple)
+        g = f[i]
+        self.assertEqual(g.shape, (1, 1, 1))
+
+        # Bad axis
+        with self.assertRaises(ValueError):
+            f.argmax(axis="foo")
+
     def test_Field_subspace(self):
         f = self.f
 
