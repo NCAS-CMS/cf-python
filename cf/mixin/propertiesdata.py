@@ -1601,7 +1601,7 @@ class PropertiesData(Properties):
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
 
-        Deprecated at version TODODASKVER. Use the method
+        Deprecated at version 3.14.0. Use the method
         `masked_invalid` instead.
 
         Note that:
@@ -1666,7 +1666,7 @@ class PropertiesData(Properties):
             self,
             "mask_invalid",
             message="Use the method 'masked_invalid' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -1926,7 +1926,7 @@ class PropertiesData(Properties):
 
         `persist` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2397,7 +2397,7 @@ class PropertiesData(Properties):
             "varray",
             message="Data are now stored as `dask` arrays for which, "
             "in general, a numpy array view is not robust.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -2544,7 +2544,7 @@ class PropertiesData(Properties):
     def close(self):
         """Close all files referenced by the construct.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         Note that a closed file will be automatically reopened if its
@@ -2565,7 +2565,7 @@ class PropertiesData(Properties):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -4537,7 +4537,7 @@ class PropertiesData(Properties):
     def to_dask_array(self):
         """Convert the data to a `dask` array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `cf.Data.to_dask_array`
 
@@ -5033,7 +5033,7 @@ class PropertiesData(Properties):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASKVER
+            size: deprecated at version 3.14.0
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -5053,7 +5053,7 @@ class PropertiesData(Properties):
                 "halo",
                 {"size": None},
                 message="Use the 'depth' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 

@@ -4105,7 +4105,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def varray(self):
         """A numpy array view of the data array.
 
-        Deprecated at version TODODASKVER. Data are now stored as
+        Deprecated at version 3.14.0. Data are now stored as
         `dask` arrays for which, in general, a numpy array view is not
         robust.
 
@@ -4136,7 +4136,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             "varray",
             message="Data are now stored as `dask` arrays for which, "
             "in general, a numpy array view is not robust.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -4969,7 +4969,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def close(self):
         """Close all files referenced by the field construct.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         Note that a closed file will be automatically reopened if its
@@ -4988,7 +4988,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -12269,11 +12269,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{inplace: `bool`, optional}}
 
-            coordinate: deprecated at version TODODASKVER
+            coordinate: deprecated at version 3.14.0
                 Set how the cell coordinate values for the summed axis
                 are defined, relative to the new cell bounds.
 
-            masked_as_zero: deprecated at version TODODASKVER
+            masked_as_zero: deprecated at version 3.14.0
                 See `Data.cumsum` for examples of the new behaviour
                 when there are masked values.
 
@@ -12333,7 +12333,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "cumsum",
                 {"masked_as_zero": None},
                 message="",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -12344,7 +12344,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "cumsum",
                 {"coordinate": None},
                 message="",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -13318,7 +13318,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASKVER
+            size: deprecated at version 3.14.0
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -13418,7 +13418,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "halo",
                 {"size": None},
                 message="Use the 'depth' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -13594,7 +13594,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             squeeze: `bool`, optional
                 If True then all size 1 axes are removed from the returned
@@ -13620,7 +13620,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   datum if more than 25% of its input array elements are
                   missing data: ``mtol=0.25``.
 
-            interpolation: deprecated at version TODODASKVER
+            interpolation: deprecated at version 3.14.0
                 Use the *method* parameter instead.
 
         :Returns:
@@ -13728,7 +13728,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 "percentile",
                 {"interpolation": None},
                 message="Use the 'method' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -14239,7 +14239,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         iaxes = self._axis_positions(axis, parse=False)
         if iaxes:
             # TODODASK - remove these two lines when multiaxis rolls
-            #            are allowed at TODODASKVER
+            #            are allowed at 3.14.0
             iaxis = iaxes[0]
             shift = shift[0]
 

@@ -5,7 +5,7 @@ from .abstract import FragmentArray
 class UMFragmentArray(FragmentArray):
     """A CFA fragment array stored in a UM or PP file.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 

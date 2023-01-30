@@ -274,7 +274,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             to_memory: `bool`, optional
                 If True then ensure that the original data are in
@@ -296,7 +296,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If the input *array* is a `dask.array.Array` object
                 then *to_memory* is ignored.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             init_options: `dict`, optional
                 Provide optional keyword arguments to methods and
@@ -323,7 +323,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                  *Parameter example:*
                    ``{'from_array': {'inline_array': True}}``
 
-            chunk: deprecated at version TODODASKVER
+            chunk: deprecated at version 3.14.0
                 Use the *chunks* parameter instead.
 
         **Examples**
@@ -479,7 +479,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def dask_compressed_array(self):
         """Returns a dask array of the compressed data.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -1143,7 +1143,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         then they subspace along each dimension independently. This
         behaviour is similar to Fortran, but different to `numpy`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `__keepdims_indexing__`, `__getitem__`,
                      `__setitem__`,
@@ -1181,7 +1181,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         single-axis index reduces the number of array dimensions by
         1. This behaviour is the same as `numpy`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `__orthogonal_indexing__`, `__getitem__`,
                      `__setitem__`
@@ -1254,7 +1254,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         * Deletes a source array.
         * Deletes cached element values.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -1267,7 +1267,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _set_dask(self, array, copy=False, conform=True):
         """Set the dask array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
                      `_del_dask`
@@ -1322,7 +1322,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _del_dask(self, default=ValueError(), conform=True):
         """Remove the dask array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
                      `_set_dask`
@@ -1392,7 +1392,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                   `_del_cached_elements` must be called explicitly to
                   ensure consistency.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `_del_dask`, `_set_cached_elements`, `_set_dask`
 
@@ -1411,7 +1411,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Updates *data* in-place to store the given element values
         within its ``custom`` dictionary.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `_del_cached_elements`
 
@@ -1916,7 +1916,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{collapse squeeze: `bool`, optional}}
 
@@ -1932,7 +1932,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -2057,7 +2057,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{percentile method: `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             squeeze: `bool`, optional
                 If True then all axes over which percentiles are
@@ -2071,11 +2071,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
-            interpolation: deprecated at version TODODASKVER
+            interpolation: deprecated at version 3.14.0
                 Use the *method* parameter instead.
 
         :Returns:
@@ -2152,7 +2152,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "percentile",
                 {"interpolation": None},
                 message="Use the 'method' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -2267,7 +2267,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `persist` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `compute`, `array`, `datetime_array`,
                      `dask.array.Array.persist`
@@ -2349,7 +2349,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         `array` causes all delayed operations to be computed.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `persist`, `array`, `datetime_array`
 
@@ -2600,13 +2600,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 Choose which method to use to perform the cumulative
                 sum. See `dask.array.cumsum` for details.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
                 .. versionadded:: 3.3.0
 
-            masked_as_zero: deprecated at version TODODASKVER
+            masked_as_zero: deprecated at version 3.14.0
                 See the examples for the new behaviour when there are
                 masked values.
 
@@ -2657,7 +2657,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "cumsum",
                 {"masked_as_zero": None},
                 message="",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -2680,7 +2680,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     ):
         """Change the chunk structure of the data.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `chunks`, `dask.array.rechunk`
 
@@ -4069,7 +4069,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def chunks(self):
         """The chunk sizes for each dimension.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `npartitions`, `numblocks`, `rechunk`
 
@@ -4399,7 +4399,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def npartitions(self):
         """The total number of chunks.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `chunks`, `numblocks`, `rechunk`
 
@@ -4420,7 +4420,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def numblocks(self):
         """The number of chunks along each dimension.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `chunks`, `npartitions`, `rechunk`
 
@@ -5716,7 +5716,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -5779,7 +5779,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -5847,7 +5847,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -5909,7 +5909,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -5981,7 +5981,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -6058,7 +6058,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -6133,7 +6133,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -6224,7 +6224,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -7253,7 +7253,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    @_deprecated_kwarg_check("size", version="TODODASKVER", removed_at="5.0.0")
+    @_deprecated_kwarg_check("size", version="3.14.0", removed_at="5.0.0")
     @_inplace_enabled(default=False)
     @_manage_log_level_via_verbosity
     def halo(
@@ -7362,7 +7362,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASKVER
+            size: deprecated at version 3.14.0
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -7447,7 +7447,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "halo",
                 {"size": None},
                 message="Use the 'depth' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -7606,7 +7606,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `harden_mask` sets
         `hardmask` to `True`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `hardmask`, `soften_mask`
 
@@ -7703,7 +7703,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         determined by its `hardmask` property. `soften_mask` sets
         `hardmask` to `False`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `hardmask`, `harden_mask`
 
@@ -8382,7 +8382,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                      returned dask array is correct, set the
                      *apply_mask_hardness* parameter to True.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -8730,7 +8730,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -8798,7 +8798,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -9147,7 +9147,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -9521,7 +9521,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Parameters:
 
-            itemsize: deprecated at version TODODASKVER
+            itemsize: deprecated at version 3.14.0
                 The number of bytes per word of the master data array.
 
         :Returns:
@@ -10010,7 +10010,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         improve performance by reducing the amount of work done in
         later steps.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `dask.optimization.cull`
 
@@ -10485,9 +10485,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
-            fill_value: deprecated at version TODODASKVER
+            fill_value: deprecated at version 3.14.0
                 Use `set_fill_value` instead.
 
         :Returns:
@@ -10546,7 +10546,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -10610,7 +10610,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -10662,7 +10662,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -10684,7 +10684,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = da.zeros(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
-    @_deprecated_kwarg_check("out", version="TODODASKVER", removed_at="5.0.0")
+    @_deprecated_kwarg_check("out", version="3.14.0", removed_at="5.0.0")
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def func(
@@ -10706,7 +10706,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             units: `Units`, optional
 
-            out: deprecated at version TODODASKVER
+            out: deprecated at version 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -10815,7 +10815,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -10980,7 +10980,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -11058,7 +11058,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -11142,7 +11142,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {[inplace: `bool`, optional}}
 
@@ -11240,7 +11240,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {[inplace: `bool`, optional}}
 
@@ -11338,7 +11338,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -11425,7 +11425,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
@@ -11503,13 +11503,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 sectioned.
 
             stop: `int`, optional
-                Deprecated at version TODODASKVER.
+                Deprecated at version 3.14.0.
 
                 Stop after this number of sections and return. If stop is
                 None all sections are taken.
 
             chunks: `bool`, optional
-                Deprecated at version TODODASKVER. Consider using
+                Deprecated at version 3.14.0. Consider using
                 `cf.Data.rechunk` instead.
 
                 If True return sections that are of the maximum possible
@@ -11551,7 +11551,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "section",
                 {"chunks": chunks},
                 message="Consider using Data.rechunk() instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -11560,7 +11560,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 self,
                 "section",
                 {"stop": stop},
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -11570,7 +11570,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def square(self, dtype=None, inplace=False):
         """Calculate the element-wise square.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `sqrt`, `sum_of_squares`
 
@@ -11617,7 +11617,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def sqrt(self, dtype=None, inplace=False):
         """Calculate the non-negative square root.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `square`
 
@@ -11863,7 +11863,7 @@ def _collapse(
 ):
     """Collapse data in-place using a given funcion.
 
-     .. versionadded:: TODODASKVER
+     .. versionadded:: 3.14.0
 
      .. seealso:: `_parse_weights`
 
@@ -11975,7 +11975,7 @@ def _collapse(
 def _parse_weights(d, weights, axis=None):
     """Parse the weights input to `_collapse`.
 
-     .. versionadded:: TODODASKVER
+     .. versionadded:: 3.14.0
 
      .. seealso:: `_collapse`
 

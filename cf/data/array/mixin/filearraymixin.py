@@ -4,7 +4,7 @@ import numpy as np
 class FileArrayMixin:
     """Mixin class for an array stored in a file.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
@@ -15,7 +15,7 @@ class FileArrayMixin:
         This is the kind of array that will result from slicing the
         file array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `dask.array.from_array`
 

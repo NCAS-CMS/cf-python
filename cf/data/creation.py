@@ -9,7 +9,7 @@ from dask.base import is_dask_collection
 def to_dask(array, chunks, **from_array_options):
     """Create a `dask` array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -93,7 +93,7 @@ def generate_axis_identifiers(n):
 
     The names are arbitrary and have no semantic meaning.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 

@@ -278,7 +278,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         """Close all files referenced by coordinate conversion term
         values.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         :Returns:
@@ -294,7 +294,7 @@ class CoordinateReference(cfdm.CoordinateReference):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 

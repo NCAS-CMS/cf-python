@@ -264,15 +264,15 @@ def configuration(
             current value.
 
         of_fraction: `float` or `Constant`, optional
-            Deprecated at version TODODASKVER and is no longer
+            Deprecated at version 3.14.0 and is no longer
             available.
 
         collapse_parallel_mode: `int` or `Constant`, optional
-            Deprecated at version TODODASKVER and is no longer
+            Deprecated at version 3.14.0 and is no longer
             available.
 
         free_memory_factor: `float` or `Constant`, optional
-            Deprecated at version TODODASKVER and is no longer
+            Deprecated at version 3.14.0 and is no longer
             available.
 
     :Returns:
@@ -593,7 +593,7 @@ class collapse_parallel_mode(ConstantAccess):
     """Which mode to use when collapse is run in parallel. There are
     three possible modes:
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     0.  This attempts to maximise parallelism, possibly at the expense
         of extra communication. This is the default mode.
@@ -637,7 +637,7 @@ class collapse_parallel_mode(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        Deprecated at version TODODASKVER and is no longer available.
+        Deprecated at version 3.14.0 and is no longer available.
 
         .. versionaddedd:: 3.8.0
 
@@ -657,7 +657,7 @@ class collapse_parallel_mode(ConstantAccess):
         """
         # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION(
-            "collapse_parallel_mode", version="TODODASKVER", removed_at="5.0.0"
+            "collapse_parallel_mode", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
 
@@ -854,7 +854,7 @@ class of_fraction(ConstantAccess):
     """The amount of concurrently open files above which files
     containing data arrays may be automatically closed.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     The amount is expressed as a fraction of the maximum possible
     number of concurrently open files.
@@ -904,7 +904,7 @@ class of_fraction(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        Deprecated at version TODODASKVER and is no longer available.
+        Deprecated at version 3.14.0 and is no longer available.
 
         .. versionaddedd:: 3.8.0
 
@@ -924,14 +924,14 @@ class of_fraction(ConstantAccess):
         """
         # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION(
-            "of_fraction", version="TODODASKVER", removed_at="5.0.0"
+            "of_fraction", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
 
 class free_memory_factor(ConstantAccess):
     """Set the fraction of memory kept free as a temporary workspace.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     Users should set the free memory factor through cf.set_performance
     so that the upper limit to the chunksize is recalculated
@@ -957,7 +957,7 @@ class free_memory_factor(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        Deprecated at version TODODASKVER and is no longer available.
+        Deprecated at version 3.14.0 and is no longer available.
 
         .. versionaddedd:: 3.8.0
 
@@ -977,7 +977,7 @@ class free_memory_factor(ConstantAccess):
         """
         # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION(
-            "free_memory_factor", version="TODODASKVER", removed_at="5.0.0"
+            "free_memory_factor", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
 
@@ -1168,7 +1168,7 @@ def fm_threshold():
     """The amount of memory which is kept free as a temporary work
     space.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     :Returns:
 
@@ -1183,14 +1183,14 @@ def fm_threshold():
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "fm_threshold", version="TODODASKVER", removed_at="5.0.0"
+        "fm_threshold", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
 def set_performance(chunksize=None, free_memory_factor=None):
     """Tune performance of parallelisation.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     Sets the chunksize and free memory factor. By just providing the
     chunksize it can be changed to a smaller value than an upper
@@ -1224,19 +1224,19 @@ def set_performance(chunksize=None, free_memory_factor=None):
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "set_performance", version="TODODASKVER", removed_at="5.0.0"
+        "set_performance", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
 def min_total_memory():
     """The minimum total memory across nodes.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "min_total_memory", version="TODODASKVER", removed_at="5.0.0"
+        "min_total_memory", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1261,12 +1261,12 @@ def RTOL(*new_rtol):
 def FREE_MEMORY_FACTOR(*new_free_memory_factor):
     """Alias for `cf.free_memory_factor`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "FREE_MEMORY_FACTOR", version="TODODASKVER", removed_at="5.0.0"
+        "FREE_MEMORY_FACTOR", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1283,24 +1283,24 @@ def CHUNKSIZE(*new_chunksize):
 def SET_PERFORMANCE(*new_set_performance):
     """Alias for `cf.set_performance`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "SET_PERFORMANCE", version="TODODASKVER", removed_at="5.0.0"
+        "SET_PERFORMANCE", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
 def OF_FRACTION(*new_of_fraction):
     """Alias for `cf.of_fraction`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "OF_FRACTION", version="TODODASKVER", removed_at="5.0.0"
+        "OF_FRACTION", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1312,12 +1312,12 @@ def REGRID_LOGGING(*new_regrid_logging):
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     """Alias for `cf.collapse_parallel_mode`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "COLLAPSE_PARALLEL_MODE", version="TODODASKVER", removed_at="5.0.0"
+        "COLLAPSE_PARALLEL_MODE", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1329,12 +1329,12 @@ def RELAXED_IDENTITIES(*new_relaxed_identities):
 def MIN_TOTAL_MEMORY(*new_min_total_memory):
     """Alias for `cf.min_total_memory`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "MIN_TOTAL_MEMORY", version="TODODASKVER", removed_at="5.0.0"
+        "MIN_TOTAL_MEMORY", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1351,12 +1351,12 @@ def TOTAL_MEMORY(*new_total_memory):
 def FM_THRESHOLD(*new_fm_threshold):
     """Alias for `cf.fm_threshold`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "FM_THRESHOLD", version="TODODASKVER", removed_at="5.0.0"
+        "FM_THRESHOLD", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1440,7 +1440,7 @@ def open_files_threshold_exceeded():
     """Return True if the total number of open files is greater than the
     current threshold.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     The threshold is defined as a fraction of the maximum possible number
     of concurrently open files (an operating system dependent amount). The
@@ -1472,7 +1472,7 @@ def open_files_threshold_exceeded():
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "open_files_threshold_exceeded",
-        version="TODODASKVER",
+        version="3.14.0",
         removed_at="5.0.0",
     )  # pragma: no cover
 
@@ -1480,7 +1480,7 @@ def open_files_threshold_exceeded():
 def close_files(file_format=None):
     """Close open files containing sub-arrays of data arrays.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     By default all such files are closed, but this may be restricted
     to files of a particular format.
@@ -1513,7 +1513,7 @@ def close_files(file_format=None):
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "close_files", version="TODODASKVER", removed_at="5.0.0"
+        "close_files", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1521,7 +1521,7 @@ def close_one_file(file_format=None):
     """Close an arbitrary open file containing a sub-array of a data
     array.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     By default a file of arbitrary format is closed, but the choice
     may be restricted to files of a particular format.
@@ -1563,7 +1563,7 @@ def close_one_file(file_format=None):
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "close_one_file", version="TODODASKVER", removed_at="5.0.0"
+        "close_one_file", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1571,7 +1571,7 @@ def open_files(file_format=None):
     """Return the open files containing sub-arrays of master data
     arrays.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     By default all such files are returned, but the selection may be
     restricted to files of a particular format.
@@ -1608,7 +1608,7 @@ def open_files(file_format=None):
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "open_files", version="TODODASKVER", removed_at="5.0.0"
+        "open_files", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1739,7 +1739,7 @@ def indices_shape(indices, full_shape, keepdims=True):
     Boolean `dask` arrays will be computed, and `dask` arrays with
     unknown size will have their chunk sizes computed.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.parse_indices`
 
@@ -2614,7 +2614,7 @@ def hash_array(array, algorithm=hashlib.sha1):
             Constructor function for the desired hash algorithm,
             e.g. `hashlib.md5`, `hashlib.sha256`, etc.
 
-            .. versionadded:: TODODASKVER
+            .. versionadded:: 3.14.0
 
     :Returns:
 
@@ -2862,13 +2862,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
             passed. By default it is False.
 
         stop: `int`, optional
-            Deprecated at version TODODASKVER.
+            Deprecated at version 3.14.0.
 
             Stop after taking this number of sections and return. If
             stop is None all sections are taken.
 
         chunks: `bool`, optional
-            Deprecated at version TODODASKVER. Consider using
+            Deprecated at version 3.14.0. Consider using
             `cf.Data.rechunk` instead.
 
             If True return sections that are of the maximum possible
@@ -2903,13 +2903,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     if stop is not None:
         raise DeprecationError(
             "The 'stop' keyword of cf._section() was deprecated at "
-            "version TODODASKVER and is no longer available"
+            "version 3.14.0 and is no longer available"
         )
 
     if chunks:
         raise DeprecationError(
             "The 'chunks' keyword of cf._section() was deprecated at "
-            "version TODODASKVER and is no longer available. Consider using "
+            "version 3.14.0 and is no longer available. Consider using "
             "cf.Data.rechunk instead."
         )
 
