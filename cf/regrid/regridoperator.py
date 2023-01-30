@@ -103,7 +103,7 @@ class RegridOperator(mixin_Container, Container):
                 or 1-based indexing. By default 0-based indexing is
                 used.
 
-            parameters: Deprecated at version TODODASKVER
+            parameters: Deprecated at version 3.14.0
                 Use keyword parameters instead.
 
             dst: `Field` or `Domain`
@@ -146,7 +146,7 @@ class RegridOperator(mixin_Container, Container):
         """The 1-d array of the column indices of the regridding
         weights.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("col")
@@ -155,7 +155,7 @@ class RegridOperator(mixin_Container, Container):
     def coord_sys(self):
         """The name of the regridding coordinate system.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("coord_sys")
@@ -166,7 +166,7 @@ class RegridOperator(mixin_Container, Container):
 
         Either a `Field` or` Domain`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("dst")
@@ -177,7 +177,7 @@ class RegridOperator(mixin_Container, Container):
 
         If not required then this will be `None`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("dst_axes")
@@ -200,7 +200,7 @@ class RegridOperator(mixin_Container, Container):
         operation. The mask must have shape `!dst_shape`, and a value
         of `True` signifies a masked destination grid cell.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("dst_mask")
@@ -209,7 +209,7 @@ class RegridOperator(mixin_Container, Container):
     def dst_shape(self):
         """The shape of the destination grid.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("dst_shape")
@@ -218,7 +218,7 @@ class RegridOperator(mixin_Container, Container):
     def method(self):
         """The name of the regridding method.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("method")
@@ -229,7 +229,7 @@ class RegridOperator(mixin_Container, Container):
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "name",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )
 
@@ -237,7 +237,7 @@ class RegridOperator(mixin_Container, Container):
     def row(self):
         """The 1-d array of the row indices of the regridding weights.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("row")
@@ -249,7 +249,7 @@ class RegridOperator(mixin_Container, Container):
         If not required then this will be `None`.
 
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("src_axes")
@@ -258,7 +258,7 @@ class RegridOperator(mixin_Container, Container):
     def src_bounds(self):
         """The bounds of the source grid cells.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("src_bounds")
@@ -267,7 +267,7 @@ class RegridOperator(mixin_Container, Container):
     def src_coords(self):
         """The coordinates of the source grid cells.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("src_coords")
@@ -276,7 +276,7 @@ class RegridOperator(mixin_Container, Container):
     def src_cyclic(self):
         """Whether or not the source grid longitude axis is cyclic.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("src_cyclic")
@@ -293,7 +293,7 @@ class RegridOperator(mixin_Container, Container):
         is the source grid mask that was used during the creation of
         the *weights*.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("src_mask")
@@ -302,7 +302,7 @@ class RegridOperator(mixin_Container, Container):
     def src_shape(self):
         """The shape of the source grid.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("src_shape")
@@ -311,7 +311,7 @@ class RegridOperator(mixin_Container, Container):
     def start_index(self):
         """The start index of the row and column indices.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("start_index")
@@ -320,7 +320,7 @@ class RegridOperator(mixin_Container, Container):
     def weights(self):
         """The 1-d array of the regridding weights.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return self._get_component("weights")
@@ -361,7 +361,7 @@ class RegridOperator(mixin_Container, Container):
         Returns a description of all properties, including
         the weights and their row and column indices.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -416,7 +416,7 @@ class RegridOperator(mixin_Container, Container):
                 If set to an `Exception` instance then it will be
                 raised instead.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -439,7 +439,7 @@ class RegridOperator(mixin_Container, Container):
             self,
             "get_parameter",
             message="Using attributes instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )
 
@@ -456,7 +456,7 @@ class RegridOperator(mixin_Container, Container):
     def parameters(self):
         """Get the CF metadata parameters for the destination grid.
 
-        Deprecated at version TODODASKVER.
+        Deprecated at version 3.14.0.
 
         Any parameter names and values are allowed, and it is assumed
         that these are well defined during the creation and
@@ -478,14 +478,14 @@ class RegridOperator(mixin_Container, Container):
         _DEPRECATION_ERROR_METHOD(
             self,
             "parameters",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )
 
     def todense(self, order="C"):
         """Return the weights in dense format.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `tosparse`
 
@@ -511,7 +511,7 @@ class RegridOperator(mixin_Container, Container):
     def tosparse(self):
         """Return the weights in sparse COOrdinate format.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `todense`
 

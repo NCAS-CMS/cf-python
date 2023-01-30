@@ -38,7 +38,7 @@ ESMF_methods = {
 class Grid:
     """A source or destination grid definition.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
@@ -102,7 +102,7 @@ def regrid(
     This is a worker function primarily intended to be called by
     `cf.Field.regridc` and `cf.Field.regrids`.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`,
                  `cf.data.dask_regrid.regrid`.
@@ -310,7 +310,7 @@ def regrid(
         if isinstance(dst, dict):
             raise DeprecationError(
                 "Setting the 'dst' parameter to a dictionary was "
-                "deprecated at version TODODASKVER. Use a sequence of "
+                "deprecated at version 3.14.0. Use a sequence of "
                 "Coordinate instances instead. See the docs for details."
             )
 
@@ -520,7 +520,7 @@ def spherical_coords_to_domain(
 ):
     """Convert a sequence of `Coordinate` to spherical grid definition.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -647,7 +647,7 @@ def spherical_coords_to_domain(
 def Cartesian_coords_to_domain(dst, domain_class=None):
     """Convert a sequence of `Coordinate` to Cartesian grid definition.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -688,7 +688,7 @@ def get_grid(coord_sys, f, name=None, method=None, cyclic=None, axes=None):
 
     See `spherical_grid` and `Cartesian_grid` for details.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
         coord_sys: `str`
             The coordinate system of the source and destination grids.
@@ -711,7 +711,7 @@ def spherical_grid(f, name=None, method=None, cyclic=None, axes=None):
     are found then these are returned. Otherwise if 2-d lat/lon
     coordinates found then these are returned.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `Cartesian_grid`
 
@@ -900,7 +900,7 @@ def Cartesian_grid(f, name=None, method=None, axes=None):
     """Retrieve the specified Cartesian dimension coordinates of the
     field and their corresponding keys.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `spherical_grid`
 
@@ -1019,7 +1019,7 @@ def conform_coordinate_units(src_grid, dst_grid):
     Modifies *src_grid* in-place so that its coordinates and bounds
     have the same units as the coordinates and bounds of *dst_grid*.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `get_spherical_grid`, `regrid`
 
@@ -1067,7 +1067,7 @@ def conform_coordinate_units(src_grid, dst_grid):
 def check_operator(src, src_grid, regrid_operator, check_coordinates=False):
     """Check compatibility of the source field and regrid operator.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `regrid`
 
@@ -1195,7 +1195,7 @@ def ESMF_initialise():
 def create_ESMF_grid(grid=None, mask=None):
     """Create an `ESMF` Grid.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -1423,7 +1423,7 @@ def create_ESMF_weights(
 ):
     """Create the `ESMF` regridding weights.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -1608,7 +1608,7 @@ def contiguous_bounds(b, cyclic=False, period=None):
 def get_bounds(method, coords):
     """Get coordinate bounds needed for defining an `ESMF.Grid`.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -1642,7 +1642,7 @@ def get_bounds(method, coords):
 def conservative_regridding(method):
     """Whether or not a regridding method is conservative.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
