@@ -340,12 +340,7 @@ def _regrid(
             * `numpy.ndarray`: The weights matrix used to regrid *a*.
 
     """
-    if src_mask is None:
-        # ------------------------------------------------------------
-        # Source data is not masked
-        # ------------------------------------------------------------
-        w = weights
-    elif not src_mask.any():
+    if src_mask is None or not src_mask.any():
         # ------------------------------------------------------------
         # Source data is not masked
         # ------------------------------------------------------------
