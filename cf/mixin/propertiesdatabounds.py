@@ -3790,12 +3790,12 @@ class PropertiesDataBounds(PropertiesData):
             {{balance: `bool`, optional}}
 
             bounds: `bool`, optional
-                If False then do not rechunk any bounds. By default
-                any bounds are also rechunked.
+                If True (the default) then rechunk the bounds, if
+                they are exist.
 
             interior_ring: `bool`, optional
-                If True (the default) rechunk an interior ring array,
-                if one exists.
+                If True (the default) then rechunk an interior ring
+                array, if one exists.
 
         :Returns:
 
