@@ -313,7 +313,7 @@ def _regrid(
             for all other regrid methods, or if data being regridded
             has no missing values.
 
-            See `regrid` for details`
+            See `regrid` for details.
 
         method: `str`
             The name of the regridding method.
