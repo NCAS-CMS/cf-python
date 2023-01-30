@@ -95,7 +95,7 @@ all of its metadata. It is defined as follows:
 |
 
 .. figure:: images/cfdm_field.svg
-   :scale: 35 %
+   :scale: 8 %
 
    *The constructs of the CF data model described using UML. The field construct corresponds to a CF-netCDF data variable. The domain construct provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.*
 

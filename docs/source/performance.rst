@@ -225,7 +225,7 @@ row are the result of the computation which combine to produce the
 values in ``e.array``.
 
 .. figure:: images/dask_task_graph.svg
-   :scale: 10 %
+   :scale: 8 %
 
    *The dask task graph from dask_task_graph.png*
 
