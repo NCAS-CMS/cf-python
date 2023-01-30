@@ -2154,7 +2154,6 @@ class DataTest(unittest.TestCase):
                 else:
                     message = "Failed in {!r}**{!r}".format(d, x)
                     self.assertTrue((d**x).all(), message)
-        # --- End: for
 
         for a0 in arrays:
             d = cf.Data(a0, "metre")
@@ -2357,6 +2356,10 @@ class DataTest(unittest.TestCase):
                         cf.Data(a0.__truediv__(x.datum()), ""), verbose=1
                     )
                 )
+
+            d = cf.Data([1, 2])
+            with self.assertRaises(TypeError):
+                d + ("foo",)
 
     def test_Data_BROADCASTING(self):
         """Test broadcasting of arrays in binary Data operations."""

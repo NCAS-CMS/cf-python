@@ -1286,7 +1286,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         if array is NotImplemented:
             logger.warning(
-                "NotImplemented has been set in the place of a dask array."
+                "WARNING: NotImplemented has been set in the place of a "
+                "dask array."
                 "\n\n"
                 "This could occur if any sort of exception is raised "
                 "by a function that is run on chunks (via, for "
@@ -3340,6 +3341,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             result = getattr(dx0, equiv_method)(dx1)
         else:
             result = getattr(dx0, method)(dx1)
+
+        if result is NotImplemented:
+            raise TypeError(
+                f"Unsupported operands for {method}: {self!r} and {other!r}"
+            )
 
         # Set axes when other has more dimensions than self
         axes = None

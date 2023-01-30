@@ -699,7 +699,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(a.equals(b, verbose=2))
         self.assertTrue(b.equals(a, verbose=2))
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             f + ("a string",)
 
     def test_Field__mul__(self):
