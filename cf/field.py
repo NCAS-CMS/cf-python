@@ -7923,11 +7923,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                     d = aux[0]
 
-                    # TODODASK: remove once dask. For some reason,
-                    # without this we now get LAMA related failures in
-                    # Partition.nbytes ...
-                    _ = aux.dtype
-
                     if aux.has_bounds() or (aux[:-1] != aux[1:]).any():
                         logger.info(
                             f"    Removing {aux.construct_type} {key!r}"
@@ -12807,8 +12802,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Initialise the output field with the percentile data
         # ------------------------------------------------------------
 
-        # TODODASK: Make sure that this is OK whaen `ranks` is a
-        #           scalar
+        # TODODASK: Make sure that this is OK when `ranks` is a scalar
 
         out = type(self)()
         out.set_properties(self.properties())
@@ -13267,7 +13261,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f.roll('X', -3)
 
         """
-        # TODODASK - allow multiple roll axes
+        # TODODASK: Consider allowing multiple roll axes, since Data
+        #           now supports them.
 
         axis = self.domain_axis(
             axis,
@@ -13286,8 +13281,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         iaxes = self._axis_positions(axis, parse=False)
         if iaxes:
-            # TODODASK - remove these two lines when multiaxis rolls
-            #            are allowed at 3.14.0
+            # TODODASK: Remove these two lines if multiaxis rolls are
+            #           allowed
+
             iaxis = iaxes[0]
             shift = shift[0]
 
@@ -13881,7 +13877,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          <CF Field: eastward_wind(model_level_number(1), latitude(145), longitude(192)) m s-1>]
 
         """
-
         # TODODASK: This still need some attention, keyword checking,
         #           testing, docs, etc., but has been partially
         #           already updated due to changes already happening
@@ -14462,7 +14457,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Retrieve the destination field's mask if appropriate
         dst_mask = None
         if dst_field and use_dst_mask and dst.data.ismasked:
-            # TODODASK: Just get the mask?
             dst_mask = regrid_get_destination_mask(
                 dst, dst_order, axes=dst_axis_keys
             )
@@ -15216,7 +15210,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Retrieve the destination field's mask if appropriate
         dst_mask = None
         if not dst_dict and use_dst_mask and dst.data.ismasked:
-            # TODODASK: Just get the mask?
             dst_mask = regrid_get_destination_mask(
                 dst,
                 dst_order,
