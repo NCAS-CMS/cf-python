@@ -12524,7 +12524,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          [16  8 12  9 12  2  6 17]]
 
         Find the coordinates of the global maximum value, showing that
-        it occurs on 1960-11-16 at location 292.5 degrees_east, 45.0
+        it occurs on 1960-11-16 at location 292.5 degrees east, 45.0
         degrees north:
 
         >>> g = f[f.argmax(unravel=True)]
