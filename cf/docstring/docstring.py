@@ -355,7 +355,7 @@ _docstring_substitution_definitions = {
                 ``'midpoint'``
                 ===============================""",
     # use_src_mask
-    "{{use_src_mask: `bool`, optional}}}": """use_src_mask: `bool`, optional
+    "{{use_src_mask: `bool`, optional}}": """use_src_mask: `bool`, optional
                 By default the mask of the source field is taken into
                 account during the regridding process. The only
                 possible exception to this is when the nearest source
