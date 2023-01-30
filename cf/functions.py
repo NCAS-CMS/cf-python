@@ -3096,6 +3096,43 @@ def default_netCDF_fillvals():
     return netCDF4.default_fillvals
 
 
+def size(a):
+    """Return the number of elements.
+
+    :Parameters:
+
+        a: array_like
+            Input data.
+
+    :Returns:
+
+        `int`
+            The number of elements.
+
+    **Examples**
+
+    >>> cf.size(9)
+    1
+    >>> cf.size("foo")
+    1
+    >>> cf.size([9])
+    1
+    >>> cf.size((8, 9))
+    2
+    >>> import numpy as np
+    >>> cf.size(np.arange(9))
+    9
+    >>> import dask.array as da
+    >>> cf.size(da.arange(9))
+    9
+
+    """
+    try:
+        return a.size
+    except AttributeError:
+        return np.asanyarray(a).size
+
+
 def unique_constructs(constructs, copy=True):
     return cfdm.unique_constructs(constructs, copy=copy)
 
