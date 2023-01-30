@@ -3403,7 +3403,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         See `cf.regrid.regrid` for details.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`
 
@@ -5655,7 +5655,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         faster than ``d.convert_reference_time(cf.Units('days since
         1901-1-1'))``.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seeealso:: `change_calendar`, `datetime_array`, `Units`
 

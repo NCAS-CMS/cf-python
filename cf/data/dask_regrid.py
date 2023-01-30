@@ -14,7 +14,7 @@ def regrid(
 ):
     """Regrid an array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `regrid_weights`, `_regrid`, `cf.Data._regrid`
 
@@ -275,7 +275,7 @@ def _regrid(
     and then creates the regridded array by forming the dot product of
     the modified *weights* and *a*.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `regrid`, `regrid_weights`
 
@@ -469,7 +469,7 @@ def regrid_weights(
 ):
     """Create a weights matrix for use in `regrid`.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `regrid`, `_regrid`, `ESMF.Regrid.get_weights_dict`
 

@@ -14051,22 +14051,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{check_coordinates: `bool`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{min_weight: float, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
-                Deprecated at version TODODASKVER.
+                Deprecated at version 3.14.0.
 
             fracfield: `bool`, optional
-                Deprecated at version TODODASKVER.
+                Deprecated at version 3.14.0.
 
             _compute_field_mass: `dict`, optional
-                Deprecated at version TODODASKVER.
+                Deprecated at version 3.14.0.
 
             {{i: deprecated at version 3.0.0}}
 
@@ -14240,7 +14240,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Parameter example:*
                   ``[1, 0]``
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             dst_axes: `sequence`, optional
                 When the destination grid is defined by a `Field` or
@@ -14266,7 +14266,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 *Parameter example:*
                   ``[1, 0]``
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             axes: optional
                 Define the axes to be regridded for the source grid
@@ -14285,22 +14285,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             {{check_coordinates: `bool`, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{min_weight: float, optional}}
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
             axis_order: sequence, optional
-                Deprecated at version TODODASKVER.
+                Deprecated at version 3.14.0.
 
             fracfield: `bool`, optional
-                Deprecated at version TODODASKVER.
+                Deprecated at version 3.14.0.
 
             _compute_field_mass: `dict`, optional
-                Deprecated at version TODODASKVER.
+                Deprecated at version 3.14.0.
 
             {{i: deprecated at version 3.0.0}}
 
