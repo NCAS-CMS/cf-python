@@ -61,12 +61,9 @@ class MissingFragmentArray(FragmentArray):
 
             {{aggregated_calendar: `str` or `None`, optional}}
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         if source is not None:
