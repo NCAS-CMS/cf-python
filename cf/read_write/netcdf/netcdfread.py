@@ -226,7 +226,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def _is_cfa_variable(self, ncvar):
         """Return True if *ncvar* is a CFA variable.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -266,7 +266,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # TODOCFA: Modify this message for v4.0.0.
             raise ValueError(
                 "The reading of CFA-0.4 files was permanently disabled at "
-                "version TODODASKVER. However, CFA-0.4 functionality is "
+                "version 3.14.0. However, CFA-0.4 functionality is "
                 "still available at version 3.13.1. "
                 "The reading and writing of CFA-0.6 files will become "
                 "available at version 4.0.0."
@@ -298,7 +298,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             ncdimensions: sequence of `str`, optional
                 The netCDF dimensions spanned by the array.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
             units: `str`, optional
                 The units of *array*. By default, or if `None`, it is
@@ -392,7 +392,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         retrieved from *data* (which would require a whole dask chunk
         to be read to get each single value).
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -514,7 +514,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def _parse_chunks(self, ncvar):
         """Parse the dask chunks.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 

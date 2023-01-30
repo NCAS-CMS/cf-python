@@ -1,9 +1,12 @@
 import cfdm
 
+from ...mixin_container import Container
 from .mixin import ArrayMixin, CompressedArrayMixin
 
 
-class GatheredArray(CompressedArrayMixin, ArrayMixin, cfdm.GatheredArray):
+class GatheredArray(
+    CompressedArrayMixin, ArrayMixin, Container, cfdm.GatheredArray
+):
     """An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array
@@ -32,7 +35,7 @@ class GatheredArray(CompressedArrayMixin, ArrayMixin, cfdm.GatheredArray):
     def to_dask_array(self, chunks="auto"):
         """Convert the data to a `dask` array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 

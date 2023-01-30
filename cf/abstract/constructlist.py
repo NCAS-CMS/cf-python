@@ -245,7 +245,7 @@ class ConstructList(list, Container, cfdm.Container):
     def close(self):
         """Close all files referenced by each construct in the list.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         :Returns:
@@ -261,7 +261,7 @@ class ConstructList(list, Container, cfdm.Container):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 

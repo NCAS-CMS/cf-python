@@ -4,11 +4,13 @@ These will typically be functions that operate on dask chunks. For
 instance, as would be passed to `dask.array.map_blocks`.
 
 """
+from functools import partial
+
 import dask.array as da
 import numpy as np
 from dask.core import flatten
 
-from ..cfdatetime import dt2rt, rt2dt
+from ..cfdatetime import dt, dt2rt, rt2dt
 from ..functions import atol as cf_atol
 from ..functions import rtol as cf_rtol
 from ..units import Units
@@ -31,9 +33,7 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     the corresponding NumPy method (see the `numpy.ma.allclose` API
     reference).
 
-    TODODASK: put in a PR to Dask to request to add as genuine method.
-
-    .. versionadded:: 4.0.0
+    .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -58,6 +58,8 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
                 the given *rtol* and *atol* tolerance.
 
     """
+    # TODODASK: put in a PR to Dask to request to add as genuine method.
+
     if rtol is None:
         rtol = cf_rtol()
     if atol is None:
@@ -104,7 +106,7 @@ def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
 def cf_contains(a, value):
     """Whether or not an array contains a value.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Data.__contains__`
 
@@ -136,7 +138,7 @@ except ImportError:
 def cf_convolve1d(a, window=None, axis=-1, origin=0):
     """Calculate a 1-d convolution along the given axis.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Data.convolution_filter`
 
@@ -185,7 +187,7 @@ def cf_harden_mask(a):
 
     Has no effect if the array is not a masked array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Data.harden_mask`
 
@@ -219,7 +221,7 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     .. note:: This function correctly sets the mask hardness of the
               output array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Data.percentile`
 
@@ -348,7 +350,7 @@ def cf_soften_mask(a):
 
     Has no effect if the array is not a masked array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Data.soften_mask`
 
@@ -384,7 +386,7 @@ def cf_where(array, condition, x, y, hardmask):
     .. note:: This function correctly sets the mask hardness of the
               output array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Data.where`
 
@@ -482,7 +484,7 @@ def cf_YMDhms(a, attr):
     Only applicable for data with reference time units. The returned
     array will have the same mask hardness as the original array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
                  `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
@@ -519,7 +521,7 @@ def cf_YMDhms(a, attr):
 def cf_rt2dt(a, units):
     """Convert an array of reference times to date-time objects.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf._dt2rt`, `cf.Data._asdatetime`
 
@@ -545,13 +547,33 @@ def cf_rt2dt(a, units):
      cftime.DatetimeGregorian(2000, 1, 2, 0, 0, 0, 0, has_year_zero=False)]
 
     """
-    return rt2dt(a, units_in=units)
+    if not units.iscalendartime:
+        return rt2dt(a, units_in=units)
+
+    # Calendar month/year units
+    from ..timeduration import TimeDuration
+
+    def _convert(x, units, reftime):
+        t = TimeDuration(x, units=units)
+        if x > 0:
+            return t.interval(reftime, end=False)[1]
+        else:
+            return t.interval(reftime, end=True)[0]
+
+    return np.vectorize(
+        partial(
+            _convert,
+            units=units._units_since_reftime,
+            reftime=dt(units.reftime, calendar=units._calendar),
+        ),
+        otypes=[object],
+    )(a)
 
 
 def cf_dt2rt(a, units):
     """Convert an array of date-time objects to reference times.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf._rt2dt`, `cf.Data._asreftime`
 
@@ -585,7 +607,7 @@ def cf_dt2rt(a, units):
 def cf_units(a, from_units, to_units):
     """Convert array values to have different equivalent units.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Data.Units`
 

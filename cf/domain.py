@@ -6,6 +6,7 @@ from . import mixin
 from .constructs import Constructs
 from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from .domainaxis import DomainAxis
 from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_METHOD,
@@ -74,8 +75,9 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def __new__(cls, *args, **kwargs):
         """Creates a new Domain instance."""
         instance = super().__new__(cls)
-        instance._Data = Data
         instance._Constructs = Constructs
+        instance._Data = Data
+        instance._DomainAxis = DomainAxis
         return instance
 
     def __repr__(self):
@@ -127,7 +129,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def close(self):
         """Close all files referenced by the domain construct.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         Note that a closed file will be automatically reopened if its
@@ -146,7 +148,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -781,7 +783,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         >>> f.roll('X', -3)
 
         """
-        # TODODASK - allow multiple roll axes
+        # TODODASK: Consider allowing multiple roll axes, now that
+        #           Data supports them.
 
         axis = self.domain_axis(
             axis,

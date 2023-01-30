@@ -2154,7 +2154,6 @@ class DataTest(unittest.TestCase):
                 else:
                     message = "Failed in {!r}**{!r}".format(d, x)
                     self.assertTrue((d**x).all(), message)
-        # --- End: for
 
         for a0 in arrays:
             d = cf.Data(a0, "metre")
@@ -2358,6 +2357,10 @@ class DataTest(unittest.TestCase):
                     )
                 )
 
+            d = cf.Data([1, 2])
+            with self.assertRaises(TypeError):
+                d + ("foo",)
+
     def test_Data_BROADCASTING(self):
         """Test broadcasting of arrays in binary Data operations."""
         A = [
@@ -2446,7 +2449,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.argmax().array, 1)
 
         # Bad axis
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             d.argmax(axis=d.ndim)
 
     def test_Data_percentile_median(self):
@@ -4440,6 +4443,24 @@ class DataTest(unittest.TestCase):
         """Test the `numblocks` Data property."""
         d = cf.Data.ones((4, 5), chunks=(2, 4))
         self.assertEqual(d.numblocks, (2, 2))
+
+    def test_Data_convert_reference_time(self):
+        """Test `Data.convert_reference_time`"""
+        d = cf.Data([2, 1, 0, -1], units="months since 2003-12-01")
+        e = d.convert_reference_time(calendar_months=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.assertTrue((e.array == [62, 31, 0, -30]).all())
+
+        d = cf.Data([2, 1, 0, -1], units="years since 2003-12-01")
+        e = d.convert_reference_time(calendar_years=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.assertTrue((e.array == [731, 366, 0, -365]).all())
+
+        d = cf.Data([2, 1, 0, -1], units="days since 2003-12-01")
+        units = cf.Units("hours since 2003-11-30")
+        e = d.convert_reference_time(units)
+        self.assertEqual(e.Units, units)
+        self.assertTrue((e.array == [72, 48, 24, 0]).all())
 
 
 if __name__ == "__main__":

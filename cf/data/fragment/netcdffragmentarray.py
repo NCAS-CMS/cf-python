@@ -5,7 +5,7 @@ from .abstract import FragmentArray
 class NetCDFFragmentArray(FragmentArray):
     """A CFA fragment array stored in a netCDF file.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
@@ -62,12 +62,9 @@ class NetCDFFragmentArray(FragmentArray):
 
             {{aggregated_calendar: `str` or `None`, optional}}
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         if source is not None:
@@ -131,7 +128,7 @@ class NetCDFFragmentArray(FragmentArray):
         dimensions then the entire array is read into memory before
         the requested subspace of it is returned.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         indices = self._parse_indices(indices)

@@ -3,7 +3,7 @@
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
 
-Special docstring subtitutions, as defined by a class's
+Special docstring substitutions, as defined by a class's
 `_docstring_special_substitutions` method, may be used in the
 replacement text, and will be substituted as usual.
 
@@ -22,26 +22,66 @@ Keys must be `str` or `re.Pattern` objects:
 """
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
-    # General susbstitutions (not indent-dependent)
+    # General substitutions (not indent-dependent)
     # ----------------------------------------------------------------
     "{{repr}}": "CF ",
     # ----------------------------------------------------------------
-    # Class description susbstitutions (1 level of indentation)
+    # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
     "{{formula terms links}}": """See CF section 4.3.3 "Parametric Vertical Coordinate" and CF
     Appendix D "Parametric Vertical Coordinates" for details.""",
     # ----------------------------------------------------------------
-    # Class description susbstitutions (1 level of indentation)
+    # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
     #
     # ----------------------------------------------------------------
-    # Method description susbstitutions (2 levels of indentation)
+    # Method description substitutions (2 levels of indentation)
     # ----------------------------------------------------------------
     # List comparison
     "{{List comparison}}": """Each construct in the list is compared with its `!equals`
         method, rather than the ``==`` operator.""",
+    # regridding overview
+    "{{regridding overview}}": """Regridding is the process of interpolating the field data
+        values while preserving the qualities of the original data,
+        and the metadata of the unaffected axes. The metadata for the
+        regridded axes are taken from the *dst* parameter.""",
+    # regrid Masked cells
+    "{{regrid Masked cells}}": """**Masked cells**
+
+        By default, the data mask of the source data is taken into
+        account during the regridding process, but the destination
+        grid mask is not. This behaviour may be changed with the
+        *use_src_mask* and *use_dst_mask* parameters.
+
+        In general the source data may be arbitrarily masked, meaning
+        that the mask for the regridding axes may vary along the
+        non-regridding axes. The exceptions to this are for
+        second-order conservative, patch recovery regridding, and
+        nearest source to destination methods, for which the mask of
+        the regridding axes must be the same across all non-regridding
+        axes. In these special cases an exception will be raised if
+        the source data mask does not meet this requirement.""",
+    # regrid Implementation
+    "{{regrid Implementation}}": """**Implementation**
+
+        The interpolation is carried out using regridding weights
+        calculated by the `ESMF` package, a Python interface to the
+        Earth System Modeling Framework (ESMF) regridding utility:
+        `https://earthsystemmodeling.org/regrid`_. Outside of `ESMF`,
+        these weights are then modified for masked cells (if required)
+        and the regridded data are created as the dot product of the
+        weights with the source data. (Note that whilst the `ESMF`
+        package is able to also create the regridded data from its
+        weights, this feature can't be integrated with the `dask`
+        framework that underpins the field's data.)""",
+    # regrid Logging
+    "{{regrid Logging}}": """**Logging**
+
+        Whether `ESMF` logging is enabled or not is determined by
+        `cf.regrid_logging`. If it is logging takes place after every
+        call. By default logging is disabled.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (3 levels of indentataion)
+    # Method description substitutions (3 levels of indentation)
     # ----------------------------------------------------------------
     # i: deprecated at version 3.0.0
     "{{i: deprecated at version 3.0.0}}": """i: deprecated at version 3.0.0
@@ -63,116 +103,58 @@ _docstring_substitution_definitions = {
                 itself is returned. If *key* is True then *item* is
                 ignored.""",
     # method: `str`, optional
-    "{{method: `str`, optional}}": """method: `str`, optional
-                Specify the regridding method. This parameter must be
-                set unless the new grid is specified by a regridding
-                operator, which stores its own method. See the *dst*
-                parameter.
+    "{{method: `str` or `None`, optional}}": """method: `str` or `None`, optional
+                Specify the regridding interpolation method. This
+                parameter must be set unless *dst* is a
+                `RegridOperator`, when the *method* is ignored.
 
                 The *method* parameter may be one of the following:
 
-                ======================  ==============================
-                Method                  Description
-                ======================  ==============================
-                ``'linear'``            Bilinear interpolation.
+                * ``'linear'``: Bilinear interpolation.
 
-                ``'bilinear'``          Deprecated alias for
-                                        ``'linear'``.
+                * ``'bilinear'``: Deprecated alias for ``'linear'``.
 
-                ``'conservative_1st'``  First order conservative
-                                        interpolation.
+                * ``'conservative_1st'``: First order conservative
+                  interpolation. Preserves the area integral of the
+                  data across the interpolation from source to
+                  destination. It uses the proportion of the area of
+                  the overlapping source and destination cells to
+                  determine appropriate weights.
 
-                                        Preserve the area integral of
-                                        the data across the
-                                        interpolation from source to
-                                        destination. It uses the
-                                        proportion of the area of the
-                                        overlapping source and
-                                        destination cells to determine
-                                        appropriate weights.
+                * ``'conservative'``: Alias for ``'conservative_1st'``
 
-                                        In particular, the weight of a
-                                        source cell is the ratio of
-                                        the area of intersection of
-                                        the source and destination
-                                        cells to the area of the whole
-                                        destination cell.
+                * ``'conservative_2nd'``: Second-order conservative
+                  interpolation. As with first order conservative
+                  interpolation, preserves the area integral of the
+                  field between source and destination using a
+                  weighted sum, with weights based on the
+                  proportionate area of intersection. In addition the
+                  second-order conservative method takes the source
+                  gradient into account, so it yields a smoother
+                  destination field that typically better matches the
+                  source data.
 
-                                        It does not account for the
-                                        field gradient across the
-                                        source cell, unlike the
-                                        second-order conservative
-                                        method (see below).
+                * ``'patch'`` Patch recovery interpolation. A second
+                  degree 2-d polynomial regridding method, which uses
+                  a least squares algorithm to calculate the
+                  polynomials. This method typically results in
+                  better approximations to values and derivatives when
+                  compared to bilinear interpolation.
 
-                ``'conservative_2nd'``  Second-order conservative
-                                        interpolation.
+                * ``'nearest_stod'``: Nearest neighbour interpolation
+                  for which each destination point is mapped to the
+                  closest source point. Useful for extrapolation of
+                  categorical data. Some destination cells may be
+                  unmapped.
 
-                                        As with first order (see
-                                        above), preserves the area
-                                        integral of the field between
-                                        source and destination using a
-                                        weighted sum, with weights
-                                        based on the proportionate
-                                        area of intersection.
+                * ``'nearest_dtos'``: Nearest neighbour interpolation
+                  for which each source point is mapped to the
+                  destination point. Useful for extrapolation of
+                  categorical data. All destination cells will be
+                  mapped.
 
-                                        Unlike first-order, the
-                                        second-order method
-                                        incorporates further terms to
-                                        take into consideration the
-                                        gradient of the field across
-                                        the source cell, thereby
-                                        typically producing a smoother
-                                        result of higher accuracy.
-
-                ``'conservative'``      Alias for
-                                        ``'conservative_1st'``
-
-                ``'patch'``             Higher-order patch recovery
-                                        interpolation.
-
-                                        A second degree polynomial
-                                        regridding method, which uses
-                                        a least squares algorithm to
-                                        calculate the polynomial.
-
-                                        This method gives better
-                                        derivatives in the resulting
-                                        destination data than the
-                                        linear method.
-
-                ``'nearest_stod'``      Nearest neighbour
-                                        interpolation for which each
-                                        destination point is mapped to
-                                        the closest source point.
-
-                                        Useful for extrapolation of
-                                        categorical data.
-
-                ``'nearest_dtos'``      Nearest neighbour
-                                        interpolation for which each
-                                        source point is mapped to the
-                                        destination point.
-
-                                        Useful for extrapolation of
-                                        categorical data.
-
-                                        A given destination point may
-                                        receive input from multiple
-                                        source points, but no source
-                                        point will map to more than
-                                        one destination point.
-
-                `None`                  This is the default and can
-                                        only be used the new grid is
-                                        specified by a regridding
-                                        operator, which stores its own
-                                        method.
-                ======================  ==============================
-
-                .. note:: When *dst* is a regrid operator then the
-                          *method* may still be set, but must have the
-                          value `None` or else agree with the
-                          regridding operator's method.""",
+                * `None`: This is the default and can only be used
+                  when *dst* is a `RegridOperator`.""",
     # radius: optional
     "{{radius: optional}}": """radius: optional
                 Specify the radius of the latitude-longitude plane
@@ -237,7 +219,7 @@ _docstring_substitution_definitions = {
 
                 * A tuple containing the construct key of the vertical
                   domain axis. If the vertical axis does not appear in
-                  the computed non-parametric coodinates then this an
+                  the computed non-parametric coordinates then this an
                   empty tuple.""",
     # collapse axes
     "{{collapse axes: (sequence of) `int`, optional}}": """axes: (sequence of) `int`, optional
@@ -372,6 +354,99 @@ _docstring_substitution_definitions = {
                 ``'nearest'``
                 ``'midpoint'``
                 ===============================""",
+    # use_src_mask
+    "{{use_src_mask: `bool`, optional}}": """use_src_mask: `bool`, optional
+                By default the mask of the source field is taken into
+                account during the regridding process. The only
+                possible exception to this is when the nearest source
+                to destination regridding method (``'nearest_stod'``)
+                is being used. In this case, if *use_src_mask* is
+                False then each destination point is mapped to the
+                closest source point, whether or not it is masked (see
+                the *method* parameter for details).
+
+                Ignored if *dst* is a `RegridOperator`.""",
+    # use_dst_mask
+    "{{use_dst_mask: `bool`, optional}}": """use_dst_mask: `bool`, optional
+                If *dst* is a `Field` and *use_dst_mask* is False (the
+                default) then the mask of data on the destination grid
+                is **not** taken into account when performing
+                regridding. If *use_dst_mask* is True then any masked
+                cells in the *dst* field construct are transferred to
+                the result. If *dst* has more dimensions than are
+                being regridded, then the mask of the destination grid
+                is taken as the subspace defined by index ``0`` of all
+                the non-regridding dimensions.
+
+                Ignored if *dst* is not a `Field`.""",
+    # ignore_degenerate
+    "{{ignore_degenerate: `bool`, optional}}": """ignore_degenerate: `bool`, optional
+                For conservative regridding methods, if True (the
+                default) then degenerate cells (those for which enough
+                vertices collapse to leave a cell as either a line or
+                a point) are skipped, not producing a
+                result. Otherwise an error will be produced if
+                degenerate cells are found, that will be present in
+                the ESMF log files.
+
+                For all other regridding methods, degenerate cells are
+                always skipped, regardless of the value of
+                *ignore_degenerate*.
+
+                Ignored if *dst* is a `RegridOperator`.""",
+    # return_operator
+    "{{return_operator: `bool`, optional}}": """return_operator: `bool`, optional
+                If True then do not perform the regridding, rather
+                return the `RegridOperator` instance that defines the
+                regridding operation, and which can be used in
+                subsequent calls. See the *dst* parameter for
+                details.""",
+    # check_coordinates
+    "{{check_coordinates: `bool`, optional}}": """check_coordinates: `bool`, optional
+                If True and *dst* is a `RegridOperator`then the source
+                grid coordinates defined by the operator are checked
+                for compatibility against those of the source field. By
+                default this check is not carried out. See the *dst*
+                parameter for details.
+
+                Ignored unless *dst* is a `RegridOperator`.""",
+    # min_weight
+    "{{min_weight: float, optional}}": """min_weight: float, optional
+                A very small non-negative number. By default
+                *min_weight* is ``2.5 * np.finfo("float64").eps``,
+                i.e. ``5.551115123125783e-16`. It is used during
+                linear and first-order conservative regridding when
+                adjusting the weights matrix to account for the data
+                mask. It is ignored for all other regrid methods, or
+                if data being regridded has no missing values.
+
+                In some cases (described below) for which weights
+                might only be non-zero as a result of rounding errors,
+                the *min_weight* parameter controls whether or a not
+                cell in the regridded field is masked.
+
+                The default value has been chosen empirically as the
+                smallest value that produces the same masks as ESMF
+                for the use cases defined in the cf test suite.
+
+                Define w_ji as the multiplicative weight that defines
+                how much of Vs_i (the value in source grid cell i)
+                contributes to Vd_j (the value in destination grid
+                cell j).
+
+                **Linear regridding**
+
+                Destination grid cell j will only be masked if a) it
+                is masked in destination grid definition; or b) ``w_ji
+                >= min_weight`` for those masked source grid cells i
+                for which ``w_ji > 0``.
+
+                **Conservative first-order regridding**
+
+                Destination grid cell j will only be masked if a) it
+                is masked in destination grid definition; or b) The
+                sum of ``w_ji`` for all non-masked source grid cells i
+                is strictly less than *min_weight*.""",
     # aggregated_units
     "{{aggregated_units: `str` or `None`, optional}}": """aggregated_units: `str` or `None`, optional
                 The units of the aggregated array. Set to `None` to
@@ -380,6 +455,27 @@ _docstring_substitution_definitions = {
     "{{aggregated_calendar: `str` or `None`, optional}}": """aggregated_calendar: `str` or `None`, optional
                 The calendar of the aggregated array. Set to `None` to
                 indicate the CF default calendar, if applicable.""",
+    # threshold
+    "{{threshold: `int`, optional}}": """threshold: `int`, optional
+                The graph growth factor under which we don't bother
+                introducing an intermediate step. See
+                `dask.array.rechunk` for details.""",
+    # block_size_limit
+    "{{block_size_limit: `int`, optional}}": """block_size_limit: `int`, optional
+                The maximum block size (in bytes) we want to produce,
+                as defined by the `cf.chunksize` function.""",
+    # balance
+    "{{balance: `bool`, optional}}": """balance: `bool`, optional
+                If True, try to make each chunk the same size. By
+                default this is not attempted.
+
+                This means ``balance=True`` will remove any small
+                leftover chunks, so using ``d.rechunk(chunks=len(d) //
+                N, balance=True)`` will almost certainly result in
+                ``N`` chunks.""",
+    # bounds
+    "{{bounds: `bool`, optional}}": """bounds: `bool`, optional
+                If True (the default) then alter any bounds.""",
     # cull
     "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
                 By default *cull_graph* is True, meaning that
@@ -389,11 +485,37 @@ _docstring_substitution_definitions = {
                 overall. If set to False then dask graphs are not
                 culled. See `dask.optimization.cull` for details.
 
-                .. versionadded:: TODODASKVER""",
+                .. versionadded:: 3.14.0""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (4 levels of indentataion)
+    # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
     # Returns construct
     "{{Returns construct}}": """The selected construct, or its identifier if *key* is
                 True, or a tuple of both if *item* is True.""",
+    # regrid RegridOperator
+    "{{regrid RegridOperator}}": """* `RegridOperator`: The grid is defined by a regrid
+                  operator that has been returned by a previous call
+                  with the *return_operator* parameter set to True.
+
+                  Unlike the other options, for which the regrid
+                  weights need to be calculated, the regrid operator
+                  already contains the weights. Therefore, for cases
+                  where multiple fields with the same source grids
+                  need to be regridded to the same destination grid,
+                  using a regrid operator can give performance
+                  improvements by avoiding having to calculate the
+                  weights for each source field. Note that for the
+                  other types of *dst* parameter, the calculation of
+                  the regrid weights is not a lazy operation.
+
+                  .. note:: The source grid of the regrid operator is
+                            immediately checked for compatibility with
+                            the grid of the source field. By default
+                            only the computationally cheap tests are
+                            performed (checking that the coordinate
+                            system, cyclicity and grid shape are the
+                            same), with the grid coordinates not being
+                            checked. The coordinates check will be
+                            carried out, however, if the
+                            *check_coordinates* parameter is True.""",
 }

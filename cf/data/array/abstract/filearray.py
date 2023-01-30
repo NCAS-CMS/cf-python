@@ -35,15 +35,14 @@ class FileArray(FileArrayMixin, Array):
     def filename(self):
         """The name of the file containing the array.
 
-        Deprecated at version TODODASKVER. Use method `get_filename`
-        instead.
+        Deprecated at version 3.14.0. Use method `get_filename` instead.
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "filename",
             message="Use method 'get_filename' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -61,7 +60,7 @@ class FileArray(FileArrayMixin, Array):
     def get_address(self):
         """The address in the file of the variable.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 

@@ -10,18 +10,6 @@ cf.RegridOperator
    :no-members:
    :no-inherited-members:
 
-.. rubric:: Attributes
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.RegridOperator.method
-   ~cf.RegridOperator.name
-   ~cf.RegridOperator.regrid
-   ~cf.RegridOperator.parameters
-
 .. rubric:: Methods
 	    
 .. autosummary::
@@ -29,10 +17,38 @@ cf.RegridOperator
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.RegridOperator.check_method
    ~cf.RegridOperator.copy
-   ~cf.RegridOperator.destroy
+   ~cf.RegridOperator.dump
    ~cf.RegridOperator.get_parameter
+   ~cf.RegridOperator.parameters
+   ~cf.RegridOperator.todense
+   ~cf.RegridOperator.tosparse
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.RegridOperator.col
+   ~cf.RegridOperator.coord_sys
+   ~cf.RegridOperator.dst
+   ~cf.RegridOperator.dst_axes
+   ~cf.RegridOperator.dst_cyclic
+   ~cf.RegridOperator.dst_mask
+   ~cf.RegridOperator.dst_shape
+   ~cf.RegridOperator.method
+   ~cf.RegridOperator.name
+   ~cf.RegridOperator.row
+   ~cf.RegridOperator.src_axes
+   ~cf.RegridOperator.src_bounds
+   ~cf.RegridOperator.src_coords
+   ~cf.RegridOperator.src_cyclic
+   ~cf.RegridOperator.src_mask
+   ~cf.RegridOperator.src_shape
+   ~cf.RegridOperator.start_index
+   ~cf.RegridOperator.weights
 
 Special
 -------
@@ -44,7 +60,6 @@ Special
    :toctree: ../method/
    :template: method.rst
    
-   ~cf.RegridOperator.__del__
    ~cf.RegridOperator.__repr__
    
    

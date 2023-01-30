@@ -763,7 +763,7 @@ class Query:
     def iscontains(self):
         """Return True if the query is a "cell contains" condition.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `cf.contains`
 

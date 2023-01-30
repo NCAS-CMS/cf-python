@@ -47,12 +47,9 @@ class FullArray(Array):
                 will be set to `None` during the first `__getitem__`
                 call.
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         super().__init__(source=source, copy=copy)
@@ -163,7 +160,7 @@ class FullArray(Array):
         These are the values set during initialisation, defaulting to
         `None` if either was not set at that time.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -200,7 +197,7 @@ class FullArray(Array):
     def get_fill_value(self):
         """Return the data array fill value.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 

@@ -369,7 +369,7 @@ class FieldDomain:
 
                     if envelope or full:
                         size = domain_axes[axis].get_size()
-                        # TODODASK - consider using dask.arange here
+                        # TODODASK: consider using dask.arange here
                         d = np.arange(size)  # self._Data(range(size))
                         ind = (d[value],)  # .array,)
                         index = slice(None)
@@ -443,7 +443,7 @@ class FieldDomain:
                     # 1-d CASE 3: All other 1-d cases
                     logger.debug("  1-d CASE 3:")  # pragma: no cover
 
-                    index = value == item
+                    index = item == value
                     index = index.data.to_dask_array()
 
                     if envelope or full:
@@ -500,7 +500,7 @@ class FieldDomain:
 
                 # Find where each construct matches its value
                 item_matches = [
-                    (value == construct).data
+                    (construct == value).data
                     for value, construct in zip(points, transposed_constructs)
                 ]
 
@@ -735,8 +735,8 @@ class FieldDomain:
                 # This construct does not span the roll axes
                 continue
 
-            # TODODASK - remove these two lines when multiaxis rolls
-            #            are allowed at v4.0.0
+            # TODODASK: Consider removing these two lines, now that
+            #           multiaxis rolls are allowed on Data objects.
             c_axes = c_axes[0]
             c_shifts = c_shifts[0]
 
@@ -2124,7 +2124,7 @@ class FieldDomain:
                 dimension or auxiliary coordinate construct
                 identifiers.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
