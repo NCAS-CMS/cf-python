@@ -163,7 +163,7 @@ class FullArray(Array):
         These are the values set during initialisation, defaulting to
         `None` if either was not set at that time.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -200,7 +200,7 @@ class FullArray(Array):
     def get_fill_value(self):
         """Return the data array fill value.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 

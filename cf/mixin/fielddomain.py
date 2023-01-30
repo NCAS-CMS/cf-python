@@ -2124,7 +2124,7 @@ class FieldDomain:
                 dimension or auxiliary coordinate construct
                 identifiers.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 

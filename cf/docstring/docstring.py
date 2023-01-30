@@ -389,7 +389,7 @@ _docstring_substitution_definitions = {
                 overall. If set to False then dask graphs are not
                 culled. See `dask.optimization.cull` for details.
 
-                .. versionadded:: TODODASKVER""",
+                .. versionadded:: 3.14.0""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

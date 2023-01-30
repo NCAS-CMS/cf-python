@@ -13,14 +13,14 @@ from .netcdfarray import NetCDFArray
 class CFANetCDFArray(NetCDFArray):
     """A CFA aggregated array stored in a netCDF file.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
     def __new__(cls, *args, **kwargs):
         """Store fragment array classes.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         instance = super().__new__(cls)
@@ -190,7 +190,7 @@ class CFANetCDFArray(NetCDFArray):
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         aggregated_data = self._get_component("instructions", None)
@@ -216,7 +216,7 @@ class CFANetCDFArray(NetCDFArray):
         the fragments and the instructions on how to aggregate them,
         and is updated in-place.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -260,7 +260,7 @@ class CFANetCDFArray(NetCDFArray):
     def _subarray_shapes(self, shapes):
         """Create the subarray shapes.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `subarrays`
 
@@ -363,7 +363,7 @@ class CFANetCDFArray(NetCDFArray):
     def _subarrays(self, subarray_shapes):
         """Return descriptors for every subarray.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `subarray_shapes`
 
@@ -516,7 +516,7 @@ class CFANetCDFArray(NetCDFArray):
         The keys are indices of the CFA fragment dimensions,
         e.g. ``(1, 0, 0 ,0)``.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -561,7 +561,7 @@ class CFANetCDFArray(NetCDFArray):
     def get_FragmentArray(self, fragment_format):
         """Return a Fragment class.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -587,7 +587,7 @@ class CFANetCDFArray(NetCDFArray):
     def get_fragmented_dimensions(self):
         """Get the positions dimension that have two or more fragments.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -617,7 +617,7 @@ class CFANetCDFArray(NetCDFArray):
         The fragment dimension sizes are given in the same order as
         the aggregated dimension sizes given by `shape`
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -630,7 +630,7 @@ class CFANetCDFArray(NetCDFArray):
     def to_dask_array(self, chunks="auto"):
         """Create a dask array with `FragmentArray` chunks.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 

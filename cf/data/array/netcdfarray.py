@@ -29,7 +29,7 @@ class NetCDFArray(FileArrayMixin, cfdm.NetCDFArray):
         regardless of the dataset they access, which means that all
         files access coordinates around the same lock.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         filename = self.get_filename(None)
