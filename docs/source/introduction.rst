@@ -20,7 +20,7 @@
 
 Version |release| for version |version| of the CF conventions.
 
-The Python cf package is an Earth Science data analysis library that
+The Python `cf` package is an Earth Science data analysis library that
 is built on a complete implementation of the :ref:`CF-data-model`.
 
 .. contents::
@@ -30,12 +30,12 @@ is built on a complete implementation of the :ref:`CF-data-model`.
 **Functionality**
 -----------------
 
-The cf package implements the :ref:`CF-data-model` [#cfdm]_ for its
-internal data structures and so is able to process any CF-compliant
-dataset. It is not strict about CF-compliance, however, so that
-partially conformant datasets may be ingested from existing datasets
-and written to new datasets.This is so that datasets that are
-partially conformant may nonetheless be modified in memory.
+The `cf` package implements the :ref:`CF-data-model` for its internal
+data structures and so is able to process any CF-compliant dataset. It
+is not strict about CF-compliance, however, so that partially
+conformant datasets may be ingested from existing datasets and written
+to new datasets.This is so that datasets that are partially conformant
+may nonetheless be modified in memory.
 
 .. code-block:: python
    :caption: *A simple example of reading a field construct from a
@@ -55,7 +55,8 @@ partially conformant may nonetheless be modified in memory.
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
 
-The cf package can:
+The `cf` package uses :ref:`Dask <Performance>` for all of its array
+manipulation and can:
 
 * read :term:`field constructs <field construct>` and :term:`domain
   constructs <domain construct>` from netCDF, CDL, PP and UM datasets,
@@ -118,7 +119,7 @@ fields larger than the available memory to exist and be manipulated.
 
 Powerful, flexible, and very simple to produce visualisations of field
 constructs are available with the `cfplot` package, that is installed
-separately to cf (see http://ajheaps.github.io/cf-plot for details).
+separately to `cf` (see http://ajheaps.github.io/cf-plot for details).
 
 See the `cfplot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
@@ -128,10 +129,3 @@ range plotting possibilities with example code.
 
    *Example output of cfplot displaying a cf field construct.*
 
-----
-
-.. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
-           Taylor, K. E.: A data model of the Climate and Forecast
-           metadata conventions (CF-1.6) with a software
-           implementation (cf-python v2.1), Geosci. Model Dev., 10,
-           4619-4646, https://doi.org/10.5194/gmd-10-4619-2017, 2017.
