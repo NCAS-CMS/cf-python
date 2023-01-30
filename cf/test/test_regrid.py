@@ -262,7 +262,7 @@ class RegridTest(unittest.TestCase):
 
         # Can't compute the 2-d regrid of the following methods when
         # the source grid mask varies over different regridding slices
-        # (which it does coming out if the previous for loop)
+        # (which it does coming out of the previous for loop)
         for method in (
             "conservative_2nd",
             "nearest_stod",
