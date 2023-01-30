@@ -12490,14 +12490,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             unravel: `bool`, optional
                 If True then when locating the maximum over the whole
-                data, return the location as an index for each axis as
-                a `tuple`. By default an index to the flattened array
-                is returned in this case. Ignored if locating the
-                maxima over a subset of the axes.
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the maxima over a subset of the axes.
 
         :Returns:
 
-            `Data` or `tuple`
+            `Data` or `tuple` of `int`
                 The location of the maximum, or maxima.
 
         **Examples**
