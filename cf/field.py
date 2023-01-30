@@ -13914,7 +13914,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         coordinates, it is necessary for their X and Y dimensions to
         be defined. This is either automatically inferred from the
         existence of 1-d dimension coordinates, or else must be
-        specified with *src_axes* or *dst_axes* parameters
+        specified with *src_axes* or *dst_axes* parameters.
 
         **Curvilinear Grids**
 
