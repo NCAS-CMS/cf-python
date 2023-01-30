@@ -615,7 +615,7 @@ def write(
               constructs: ``omit_data=['domain_ancillary',
               'cell_measure']``.
 
-            .. versionadded:: TODODASKVER
+            .. versionadded:: 3.14.0
 
         HDF_chunksizes: deprecated at version 3.0.0
             HDF chunk sizes may be set for individual constructs prior

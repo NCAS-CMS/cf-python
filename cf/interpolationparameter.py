@@ -25,7 +25,7 @@ class InterpolationParameter(
     subarea dimension name, if required, are set on the
     corresponding tie point index variable.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `TiePointIndex`
 

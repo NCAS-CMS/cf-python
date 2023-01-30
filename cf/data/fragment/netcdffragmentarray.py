@@ -5,7 +5,7 @@ from .abstract import FragmentArray
 class NetCDFFragmentArray(FragmentArray):
     """A CFA fragment array stored in a netCDF file.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
@@ -131,7 +131,7 @@ class NetCDFFragmentArray(FragmentArray):
         dimensions then the entire array is read into memory before
         the requested subspace of it is returned.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         indices = self._parse_indices(indices)

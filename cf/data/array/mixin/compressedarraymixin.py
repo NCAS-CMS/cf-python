@@ -4,7 +4,7 @@ import dask.array as da
 class CompressedArrayMixin:
     """Mixin class for compressed arrays.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
@@ -12,7 +12,7 @@ class CompressedArrayMixin:
         """Try to return a dask array that does not support concurrent
         reads.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
