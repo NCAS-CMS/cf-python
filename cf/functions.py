@@ -746,7 +746,7 @@ class chunksize(ConstantAccess):
                or ``'2 MiB'``
 
             *Parameter example:*
-               Chunksizes of ``'2678.9'`` and ``'2.6789 KB'``are both
+               Chunksizes of ``'2678.9'`` and ``'2.6789 KB'`` are both
                equvalent to ``2678``.
 
     :Returns:
