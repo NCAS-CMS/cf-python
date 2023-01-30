@@ -511,6 +511,9 @@ class RegridOperator(mixin_Container, Container):
     def tosparse(self):
         """Return the weights in sparse COOrdinate format.
 
+        See `scipy.sparse._arrays.coo_array` for sparse format
+        details.
+
         .. versionadded:: 3.14.0
 
         .. seealso:: `todense`
