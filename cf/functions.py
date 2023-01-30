@@ -2921,10 +2921,10 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     ndim = x.ndim
     shape = x.shape
 
-    # TODODASK: For v4.0.0, redefine axes by removing the next
-    #           line. I.e. the specified axes would be those that you
-    #           want to be chopped, not those that you want to remain
-    #           whole.
+    # TODODASK: For v4.0.0, consider redefining the axes by removing
+    #           the next line. I.e. the specified axes would be those
+    #           that you want to be chopped, not those that you want
+    #           to remain whole.
     axes = [i for i in range(ndim) if i not in axes]
 
     indices = [

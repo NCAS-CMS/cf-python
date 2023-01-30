@@ -783,7 +783,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         >>> f.roll('X', -3)
 
         """
-        # TODODASK - allow multiple roll axes
+        # TODODASK: Consider allowing multiple roll axes, now that
+        #           Data supports them.
 
         axis = self.domain_axis(
             axis,

@@ -19,10 +19,10 @@ from .dask_utils import cf_YMDhms
 _units_None = Units(None)
 
 
-def _is_numeric_dtype(array):
+def is_numeric_dtype(array):
     """True if the given array is of a numeric or boolean data type.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -36,29 +36,27 @@ def _is_numeric_dtype(array):
     **Examples**
 
     >>> a = np.array([0, 1, 2])
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.array([False, True, True])
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.array(["a", "b", "c"], dtype="S1")
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     False
     >>> a = np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0])
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.array(10)
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.empty(1, dtype=object)
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     False
 
     """
-    # TODODASK: do we need to make any specific checks relating to ways of
-    # encoding datetimes, which could be encoded as strings, e.g. as in
-    # "2000-12-3 12:00", yet could be considered, or encoded as, numeric?
     dtype = array.dtype
+
     # This checks if the dtype is either a standard "numeric" type (i.e.
     # int types, floating point types or complex floating point types)
     # or Boolean, which are effectively a restricted int type (0 or 1).
