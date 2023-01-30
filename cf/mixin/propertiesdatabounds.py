@@ -1184,7 +1184,7 @@ class PropertiesDataBounds(PropertiesData):
     def chunk(self, chunksize=None):
         """Partition the data array.
 
-        Deprecated at version TODODASKVER. Use the `rechunk` method
+        Deprecated at version 3.14.0. Use the `rechunk` method
         instead.
 
         :Parameters:
