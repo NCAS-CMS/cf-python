@@ -3184,7 +3184,7 @@ class PropertiesData(Properties):
 
             `{{class}}` or `None`
                 The construct with converted reference time data
-                values, or `None` if the operation was in-place..
+                values, or `None` if the operation was in-place.
 
         **Examples**
 
