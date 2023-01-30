@@ -4441,6 +4441,24 @@ class DataTest(unittest.TestCase):
         d = cf.Data.ones((4, 5), chunks=(2, 4))
         self.assertEqual(d.numblocks, (2, 2))
 
+    def test_Data_convert_reference_time(self):
+        """Test `Data.convert_reference_time`"""
+        d = cf.Data([2, 1, 0, -1], units="months since 2003-12-01")
+        e = d.convert_reference_time(calendar_months=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.assertTrue((e.array == [62, 31, 0, -30]).all())
+
+        d = cf.Data([2, 1, 0, -1], units="years since 2003-12-01")
+        e = d.convert_reference_time(calendar_years=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.assertTrue((e.array == [731, 366, 0, -365]).all())
+
+        d = cf.Data([2, 1, 0, -1], units="days since 2003-12-01")
+        units = cf.Units("hours since 2003-11-30")
+        e = d.convert_reference_time(units)
+        self.assertEqual(e.Units, units)
+        self.assertTrue((e.array == [72, 48, 24, 0]).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

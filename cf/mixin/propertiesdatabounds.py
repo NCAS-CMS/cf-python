@@ -1745,15 +1745,6 @@ class PropertiesDataBounds(PropertiesData):
         were intended but encoded as "months", which have special
         definition. See the note and examples below for more details.
 
-        For conversions which do not require a change in the
-        date-times implied by the data values, this method will be
-        considerably slower than a simple reassignment of the
-        units. For example, if the original units are ``'days since
-        2000-12-1'`` then ``c.Units = cf.Units('days since
-        1901-1-1')`` will give the same result and be considerably
-        faster than ``c.convert_reference_time(cf.Units('days since
-        1901-1-1'))``.
-
         .. note:: It is recommended that the units "year" and "month"
                   be used with caution, as explained in the following
                   excerpt from the CF conventions: "The Udunits
@@ -1766,6 +1757,17 @@ class PropertiesDataBounds(PropertiesData):
                   and a Gregorian_year is 365.2425 days. For similar
                   reasons the unit ``month``, which is defined to be
                   exactly year/12, should also be used with caution.
+
+        **Performance**
+
+        For conversions which do not require a change in the
+        date-times implied by the data values, this method will be
+        considerably slower than a simple reassignment of the
+        units. For example, if the original units are ``'days since
+        2000-12-1'`` then ``c.Units = cf.Units('days since
+        1901-1-1')`` will give the same result and be considerably
+        faster than ``c.convert_reference_time(cf.Units('days since
+        1901-1-1'))``.
 
         :Parameters:
 
@@ -1802,36 +1804,37 @@ class PropertiesDataBounds(PropertiesData):
 
             `{{class}}` or `None`
                 The construct with converted reference time data
-                values.
+                values, or `None` if the operation was in-place.
 
         **Examples**
 
         >>> print(f.array)
-        [1  2  3  4]
+        [0 1 2 3]
         >>> f.Units
-        <Units: months since 2000-1-1>
+        <Units: months since 2004-1-1>
         >>> print(f.datetime_array)
-        [datetime.datetime(2000, 1, 31, 10, 29, 3, 831197) TODO
-         datetime.datetime(2000, 3, 1, 20, 58, 7, 662441)
-         datetime.datetime(2000, 4, 1, 7, 27, 11, 493645)
-         datetime.datetime(2000, 5, 1, 17, 56, 15, 324889)]
-        >>> f.convert_reference_time(calendar_months=True, inplace=True)
-        >>> print(f.datetime_array)
-        [datetime.datetime(2000, 2, 1, 0, 0) TODOx
-         datetime.datetime(2000, 3, 1, 0, 0)
-         datetime.datetime(2000, 4, 1, 0, 0)
-         datetime.datetime(2000, 5, 1, 0, 0)]
-        >>> print(f.array)
-        [  31.   60.   91.  121.]
-        >>> f.Units
-        <Units: days since 2000-1-1>
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2003, 12, 31, 10, 29, 3, 831223, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 30, 20, 58, 7, 662446, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 7, 27, 11, 493670, has_year_zero=False)]
+        >>> g = f.convert_reference_time(calendar_months=True)
+        >>> g.Units
+        <Units: days since 2004-1-1>
+        >>> print(g.datetime_array)
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 2, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 0, 0, 0, 0, has_year_zero=False)]
+        >>> print(g.array)
+        [ 0 31 62 91]
 
         """
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self),
             "convert_reference_time",
             inplace=inplace,
-            i=i,
+            bounds=True,
+            interior_ring=False,
             units=units,
             calendar_months=calendar_months,
             calendar_years=calendar_years,
