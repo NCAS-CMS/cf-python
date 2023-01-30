@@ -129,3 +129,15 @@ range plotting possibilities with example code.
 
    *Example output of cfplot displaying a cf field construct.*
 
+----
+
+**Command line utilities**
+--------------------------
+
+During installation the ``cfa`` command line utility is also
+installed, which
+
+* generates text descriptions of field constructs contained in files,
+  and
+
+* creates new datasets aggregated from existing files.
