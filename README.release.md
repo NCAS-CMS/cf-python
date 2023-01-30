@@ -55,7 +55,7 @@
   the dev build.)
 
   ```bash
-  ./release_docs dev-clean
+  ./release_docs dev-scrub
   ```
 
 * Check that no typos or spelling mistakes have been introduced to the
@@ -131,7 +131,7 @@
 * Test the tarball release using
 
   ```bash
-  ./test_release <vn> # E.g. ./test_release 3.3.0
+  ./test_release <vn> # E.g. ./test_release 3.14.0
   ```
 
 * Push recent commits using
@@ -143,7 +143,7 @@
 * Tag the release:
 
   ```bash
-  ./tag <vn> # E.g. ./tag 3.3.0
+  ./tag <vn> # E.g. ./tag 3.14.0
   ```
   
 * Upload the source tarball to PyPI. Note this requires the `twine`
@@ -151,7 +151,7 @@
   privileges on PyPI.
 
   ```bash
-  ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 3.3.0
+  ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 3.14.0
   ```
 
 * Update the GitHub releases page for the new version:
