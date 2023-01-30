@@ -3791,7 +3791,7 @@ class PropertiesDataBounds(PropertiesData):
 
             bounds: `bool`, optional
                 If True (the default) then rechunk the bounds, if
-                they are exist.
+                they exist.
 
             interior_ring: `bool`, optional
                 If True (the default) then rechunk an interior ring
