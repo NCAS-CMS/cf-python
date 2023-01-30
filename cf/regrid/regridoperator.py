@@ -459,7 +459,7 @@ class RegridOperator(mixin_Container, Container):
         Deprecated at version TODODASKVER.
 
         Any parameter names and values are allowed, and it is assumed
-        that the these are well defined during the creation and
+        that these are well defined during the creation and
         subsequent use of a `RegridOperator` instance.
 
         :Returns:
