@@ -14341,7 +14341,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                         : longitude(8) = [22.5, ..., 337.5] degrees_east
                         : time(1) = [2019-01-01 00:00:00]
-        >>> x = src.regrids(dst, method='linear', axes=['Y'], )
+        >>> x = src.regridc(dst, method='linear', axes=['Y'])
         >>> print(x)
         Field: air_temperature (ncvar%ta)
         ---------------------------------
@@ -14356,8 +14356,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                         : surface_altitude(latitude(5), grid_longitude(9)) = [[--, ..., --]] m
 
-        >>> r = src.regrids(dst, method='linear', axes=['Y'], return_operator=True)
-        >>> y = src.regrids(r)
+        >>> r = src.regridc(dst, method='linear', axes=['Y'], return_operator=True)
+        >>> y = src.regridc(r)
         >>> y.equals(x)
         True
 
