@@ -453,7 +453,7 @@ class RegridTest(unittest.TestCase):
             self.assertTrue(d1.coord(coord).equals(d0.coord(coord)))
 
         for coord in ("T", "Z"):
-            # The coords for non-regridded axes shoul be the same as
+            # The coords for non-regridded axes should be the same as
             # the source grid
             self.assertTrue(d1.coord(coord).equals(src.coord(coord)))
 
