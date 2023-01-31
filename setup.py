@@ -71,8 +71,6 @@ class build_umread(build):
 
         cmd = ["make", "-C", build_dir]
 
-        #        rc = subprocess.call(cmd)
-
         def compile():
             print("*" * 80)
             print("Running:", " ".join(cmd), "\n")
@@ -108,15 +106,14 @@ class build_umread(build):
 
         self.execute(compile, [], "compiling umread")
 
-    # --- End: class
-
 
 long_description = """
 CF Python
 =========
 
 The Python cf package is an Earth science data analysis library that
-is built on a complete implementation of the CF data model.
+is built on a complete implementation of the [CF data
+model](https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-CF-data-model).
 
 Documentation
 =============
@@ -299,6 +296,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
     packages=[
         "cf",
