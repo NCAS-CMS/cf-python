@@ -1,0 +1,1320 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.FieldAncillary &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.FieldAncillary.dump" href="../method/cf.FieldAncillary.dump.html" />
+    <link rel="prev" title="cf.DomainAxis.__str__" href="../method/cf.DomainAxis.__str__.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.DomainAxis.__str__.html" title="previous chapter">cf.DomainAxis.__str__</a></li>
+      <li>Next: <a href="../method/cf.FieldAncillary.dump.html" title="next chapter">cf.FieldAncillary.dump</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-fieldancillary">
+<span id="id1"></span><h1>cf.FieldAncillary<a class="headerlink" href="#cf-fieldancillary" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.FieldAncillary">
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">FieldAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/fieldancillary.py#L6-L40"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.fieldancillary.FieldAncillary</span></code></p>
+<p>A field ancillary construct of the CF data model.</p>
+<p>The field ancillary construct provides metadata which are
+distributed over the same sampling domain as the field itself. For
+example, if a data variable holds a variable retrieved from a
+satellite instrument, a related ancillary data variable might
+provide the uncertainty estimates for those retrievals (varying
+over the same spatiotemporal domain).</p>
+<p>The field ancillary construct consists of an array of the
+ancillary data, which is zero-dimensional or which depends on one
+or more of the domain axes, and properties to describe the
+data. It is assumed that the data do not depend on axes of the
+domain which are not spanned by the array, along which the values
+are implicitly propagated. CF-netCDF ancillary data variables
+correspond to field ancillary constructs. Note that a field
+ancillary construct is constrained by the domain definition of the
+parent field construct but does not contribute to the domain’s
+definition, unlike, for instance, an auxiliary coordinate
+construct or domain ancillary construct.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>{{netcdf variable}}</p>
+<p><strong>Initialisation</strong></p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
+<div><p>Set descriptive properties. The dictionary keys are
+property names, with corresponding values.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cf.FieldAncillary.set_properties.html#cf.FieldAncillary.set_properties" title="cf.FieldAncillary.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.FieldAncillary.set_property.html#cf.FieldAncillary.set_property" title="cf.FieldAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+</div></blockquote>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude'}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>data: data_like, optional</dt><dd><p>Set the data.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cf instances that contain
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
+<p>The data also may be set after initialisation with the
+<a class="reference internal" href="../method/cf.FieldAncillary.set_data.html#cf.FieldAncillary.set_data" title="cf.FieldAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.FieldAncillary(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.dump.html#cf.FieldAncillary.dump" title="cf.FieldAncillary.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<td><p>A full description of the field ancillary construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.identity.html#cf.FieldAncillary.identity" title="cf.FieldAncillary.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p></td>
+<td><p>Return the canonical identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.identities.html#cf.FieldAncillary.identities" title="cf.FieldAncillary.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p></td>
+<td><p>Return all possible identities.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.inspect.html#cf.FieldAncillary.inspect" title="cf.FieldAncillary.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
+<td><p>Inspect the object for debugging.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.construct_type.html#cf.FieldAncillary.construct_type" title="cf.FieldAncillary.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<td><p>Return a description of the construct type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.id.html#cf.FieldAncillary.id" title="cf.FieldAncillary.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></p></td>
+<td><p>An identity for the FieldAncillary object.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="selection">
+<h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.match_by_identity.html#cf.FieldAncillary.match_by_identity" title="cf.FieldAncillary.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></p></td>
+<td><p>Whether or not the construct identity satisfies conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.match_by_naxes.html#cf.FieldAncillary.match_by_naxes" title="cf.FieldAncillary.match_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_naxes</span></code></a></p></td>
+<td><p>Whether or not the data has a given dimensionality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.match_by_ncvar.html#cf.FieldAncillary.match_by_ncvar" title="cf.FieldAncillary.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a></p></td>
+<td><p>Whether or not the netCDF variable name satisfies conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.match_by_property.html#cf.FieldAncillary.match_by_property" title="cf.FieldAncillary.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></p></td>
+<td><p>Whether or not properties satisfy conditions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.match_by_units.html#cf.FieldAncillary.match_by_units" title="cf.FieldAncillary.match_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_units</span></code></a></p></td>
+<td><p>Whether or not the construct has given units.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.del_property.html#cf.FieldAncillary.del_property" title="cf.FieldAncillary.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.get_property.html#cf.FieldAncillary.get_property" title="cf.FieldAncillary.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Get a CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.has_property.html#cf.FieldAncillary.has_property" title="cf.FieldAncillary.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Whether a property has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.set_property.html#cf.FieldAncillary.set_property" title="cf.FieldAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<td><p>Set a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.properties.html#cf.FieldAncillary.properties" title="cf.FieldAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.clear_properties.html#cf.FieldAncillary.clear_properties" title="cf.FieldAncillary.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<td><p>Remove all properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.set_properties.html#cf.FieldAncillary.set_properties" title="cf.FieldAncillary.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set properties.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.add_offset.html#cf.FieldAncillary.add_offset" title="cf.FieldAncillary.add_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_offset</span></code></a></p></td>
+<td><p>The add_offset CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.calendar.html#cf.FieldAncillary.calendar" title="cf.FieldAncillary.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a></p></td>
+<td><p>The calendar CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.comment.html#cf.FieldAncillary.comment" title="cf.FieldAncillary.comment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comment</span></code></a></p></td>
+<td><p>The comment CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary._FillValue.html#cf.FieldAncillary._FillValue" title="cf.FieldAncillary._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a></p></td>
+<td><p>The _FillValue CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.history.html#cf.FieldAncillary.history" title="cf.FieldAncillary.history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">history</span></code></a></p></td>
+<td><p>The history CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.leap_month.html#cf.FieldAncillary.leap_month" title="cf.FieldAncillary.leap_month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_month</span></code></a></p></td>
+<td><p>The leap_month CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.leap_year.html#cf.FieldAncillary.leap_year" title="cf.FieldAncillary.leap_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_year</span></code></a></p></td>
+<td><p>The leap_year CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.long_name.html#cf.FieldAncillary.long_name" title="cf.FieldAncillary.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a></p></td>
+<td><p>The long_name CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.missing_value.html#cf.FieldAncillary.missing_value" title="cf.FieldAncillary.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a></p></td>
+<td><p>The missing_value CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.month_lengths.html#cf.FieldAncillary.month_lengths" title="cf.FieldAncillary.month_lengths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month_lengths</span></code></a></p></td>
+<td><p>The month_lengths CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.scale_factor.html#cf.FieldAncillary.scale_factor" title="cf.FieldAncillary.scale_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_factor</span></code></a></p></td>
+<td><p>The scale_factor CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.standard_name.html#cf.FieldAncillary.standard_name" title="cf.FieldAncillary.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a></p></td>
+<td><p>The standard_name CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.units.html#cf.FieldAncillary.units" title="cf.FieldAncillary.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a></p></td>
+<td><p>The units CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.valid_max.html#cf.FieldAncillary.valid_max" title="cf.FieldAncillary.valid_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_max</span></code></a></p></td>
+<td><p>The valid_max CF property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.valid_min.html#cf.FieldAncillary.valid_min" title="cf.FieldAncillary.valid_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_min</span></code></a></p></td>
+<td><p>The valid_min CF property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.valid_range.html#cf.FieldAncillary.valid_range" title="cf.FieldAncillary.valid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_range</span></code></a></p></td>
+<td><p>The valid_range CF property.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="units">
+<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.override_units.html#cf.FieldAncillary.override_units" title="cf.FieldAncillary.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a></p></td>
+<td><p>Override the units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.override_calendar.html#cf.FieldAncillary.override_calendar" title="cf.FieldAncillary.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_calendar</span></code></a></p></td>
+<td><p>Override the calendar of date-time units.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.Units.html#cf.FieldAncillary.Units" title="cf.FieldAncillary.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object containing the units of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.array.html#cf.FieldAncillary.array" title="cf.FieldAncillary.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
+<td><p>A numpy array deep copy of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.Data.html#cf.FieldAncillary.Data" title="cf.FieldAncillary.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> attribute or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.data.html#cf.FieldAncillary.data" title="cf.FieldAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.datetime_array.html#cf.FieldAncillary.datetime_array" title="cf.FieldAncillary.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.datum.html#cf.FieldAncillary.datum" title="cf.FieldAncillary.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a></p></td>
+<td><p>Return an element of the data array as a standard Python scalar.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.dtype.html#cf.FieldAncillary.dtype" title="cf.FieldAncillary.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.isscalar.html#cf.FieldAncillary.isscalar" title="cf.FieldAncillary.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
+<td><p>True if the data array is scalar.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.ndim.html#cf.FieldAncillary.ndim" title="cf.FieldAncillary.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
+<td><p>The number of dimensions in the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.shape.html#cf.FieldAncillary.shape" title="cf.FieldAncillary.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>A tuple of the data array’s dimension sizes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.size.html#cf.FieldAncillary.size" title="cf.FieldAncillary.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<td><p>The number of elements in the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.varray.html#cf.FieldAncillary.varray" title="cf.FieldAncillary.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p></td>
+<td><p>A numpy array view of the data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.to_dask_array.html#cf.FieldAncillary.to_dask_array" title="cf.FieldAncillary.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
+<td><p>Convert the data to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__getitem__.html#cf.FieldAncillary.__getitem__" title="cf.FieldAncillary.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Return a subspace defined by indices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.del_data.html#cf.FieldAncillary.del_data" title="cf.FieldAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></p></td>
+<td><p>Remove the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.get_data.html#cf.FieldAncillary.get_data" title="cf.FieldAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<td><p>Return the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.has_data.html#cf.FieldAncillary.has_data" title="cf.FieldAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.set_data.html#cf.FieldAncillary.set_data" title="cf.FieldAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
+<td><p>Set the data.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rearranging elements</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.flatten.html#cf.FieldAncillary.flatten" title="cf.FieldAncillary.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
+<td><p>Flatten axes of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.flip.html#cf.FieldAncillary.flip" title="cf.FieldAncillary.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a></p></td>
+<td><p>Flip (reverse the direction of) data dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.insert_dimension.html#cf.FieldAncillary.insert_dimension" title="cf.FieldAncillary.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
+<td><p>Expand the shape of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.roll.html#cf.FieldAncillary.roll" title="cf.FieldAncillary.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a></p></td>
+<td><p>Roll the data along one or more axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.squeeze.html#cf.FieldAncillary.squeeze" title="cf.FieldAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<td><p>Remove size one axes from the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.swapaxes.html#cf.FieldAncillary.swapaxes" title="cf.FieldAncillary.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a></p></td>
+<td><p>Interchange two axes of an array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.transpose.html#cf.FieldAncillary.transpose" title="cf.FieldAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p></td>
+<td><p>Permute the axes of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Data array mask</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.apply_masking.html#cf.FieldAncillary.apply_masking" title="cf.FieldAncillary.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.count.html#cf.FieldAncillary.count" title="cf.FieldAncillary.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
+<td><p>Count the non-masked elements of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.count_masked.html#cf.FieldAncillary.count_masked" title="cf.FieldAncillary.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></p></td>
+<td><p>Count the masked elements of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.fill_value.html#cf.FieldAncillary.fill_value" title="cf.FieldAncillary.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
+<td><p>Return the data array missing data value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.masked_invalid.html#cf.FieldAncillary.masked_invalid" title="cf.FieldAncillary.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
+</tr>
+</tbody>
+</table>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.binary_mask.html#cf.FieldAncillary.binary_mask" title="cf.FieldAncillary.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></p></td>
+<td><p>A binary (0 and 1) missing data mask of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.hardmask.html#cf.FieldAncillary.hardmask" title="cf.FieldAncillary.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p></td>
+<td><p>Whether the mask is hard (True) or soft (False).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.mask.html#cf.FieldAncillary.mask" title="cf.FieldAncillary.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
+<td><p>The mask of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+</tbody>
+</table>
+<p class="rubric"><em>Changing data values</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__setitem__.html#cf.FieldAncillary.__setitem__" title="cf.FieldAncillary.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
+<td><p>Called to implement assignment to x[indices]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.halo.html#cf.FieldAncillary.halo" title="cf.FieldAncillary.halo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">halo</span></code></a></p></td>
+<td><p>Expand the data by adding a halo.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.masked_invalid.html#cf.FieldAncillary.masked_invalid" title="cf.FieldAncillary.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.subspace.html#cf.FieldAncillary.subspace" title="cf.FieldAncillary.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p></td>
+<td><p>Return a new variable whose data is subspaced.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.where.html#cf.FieldAncillary.where" title="cf.FieldAncillary.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p></td>
+<td><p>Set data array elements depending on a condition.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Miscellaneous</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.rechunk.html#cf.FieldAncillary.rechunk" title="cf.FieldAncillary.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
+<td><p>Change the chunk structure of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.close.html#cf.FieldAncillary.close" title="cf.FieldAncillary.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<td><p>Close all files referenced by the construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.convert_reference_time.html#cf.FieldAncillary.convert_reference_time" title="cf.FieldAncillary.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></p></td>
+<td><p>Convert reference time data values to have new units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.cyclic.html#cf.FieldAncillary.cyclic" title="cf.FieldAncillary.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
+<td><p>Set the cyclicity of an axis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.period.html#cf.FieldAncillary.period" title="cf.FieldAncillary.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a></p></td>
+<td><p>Return or set the period of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.iscyclic.html#cf.FieldAncillary.iscyclic" title="cf.FieldAncillary.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a></p></td>
+<td><p>Whether or not a given axis is cyclic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.isperiodic.html#cf.FieldAncillary.isperiodic" title="cf.FieldAncillary.isperiodic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isperiodic</span></code></a></p></td>
+<td><p>True if a given axis is periodic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.get_original_filenames.html#cf.FieldAncillary.get_original_filenames" title="cf.FieldAncillary.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<td><p>The names of files containing the original data and metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.has_bounds.html#cf.FieldAncillary.has_bounds" title="cf.FieldAncillary.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not there are cell bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.persist.html#cf.FieldAncillary.persist" title="cf.FieldAncillary.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
+<td><p>Persist the underlying dask array into memory.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.concatenate.html#cf.FieldAncillary.concatenate" title="cf.FieldAncillary.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></p></td>
+<td><p>Join a sequence of variables together.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.copy.html#cf.FieldAncillary.copy" title="cf.FieldAncillary.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Return a deep copy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.creation_commands.html#cf.FieldAncillary.creation_commands" title="cf.FieldAncillary.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.equals.html#cf.FieldAncillary.equals" title="cf.FieldAncillary.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.to_memory.html#cf.FieldAncillary.to_memory" title="cf.FieldAncillary.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring data on disk into memory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.uncompress.html#cf.FieldAncillary.uncompress" title="cf.FieldAncillary.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<td><p>Uncompress the construct.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.T.html#cf.FieldAncillary.T" title="cf.FieldAncillary.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.X.html#cf.FieldAncillary.X" title="cf.FieldAncillary.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
+<td><p>Always False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.Y.html#cf.FieldAncillary.Y" title="cf.FieldAncillary.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></p></td>
+<td><p>Always False.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.Z.html#cf.FieldAncillary.Z" title="cf.FieldAncillary.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></p></td>
+<td><p>Always False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.id.html#cf.FieldAncillary.id" title="cf.FieldAncillary.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></p></td>
+<td><p>An identity for the FieldAncillary object.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mathematical-operations">
+<h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<p class="rubric"><em>Trigonometrical and hyperbolic functions</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.arccos.html#cf.FieldAncillary.arccos" title="cf.FieldAncillary.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
+<td><p>Take the trigonometric inverse cosine of the data element- wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.arccosh.html#cf.FieldAncillary.arccosh" title="cf.FieldAncillary.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccosh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.arcsin.html#cf.FieldAncillary.arcsin" title="cf.FieldAncillary.arcsin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsin</span></code></a></p></td>
+<td><p>Take the trigonometric inverse sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.arcsinh.html#cf.FieldAncillary.arcsinh" title="cf.FieldAncillary.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.arctan.html#cf.FieldAncillary.arctan" title="cf.FieldAncillary.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
+<td><p>Take the trigonometric inverse tangent of the data element- wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.arctanh.html#cf.FieldAncillary.arctanh" title="cf.FieldAncillary.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctanh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic tangent of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.cos.html#cf.FieldAncillary.cos" title="cf.FieldAncillary.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></p></td>
+<td><p>Take the trigonometric cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.cosh.html#cf.FieldAncillary.cosh" title="cf.FieldAncillary.cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosh</span></code></a></p></td>
+<td><p>Take the hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.sin.html#cf.FieldAncillary.sin" title="cf.FieldAncillary.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p></td>
+<td><p>Take the trigonometric sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.sinh.html#cf.FieldAncillary.sinh" title="cf.FieldAncillary.sinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sinh</span></code></a></p></td>
+<td><p>Take the hyperbolic sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.tan.html#cf.FieldAncillary.tan" title="cf.FieldAncillary.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p></td>
+<td><p>Take the trigonometric tangent of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.tanh.html#cf.FieldAncillary.tanh" title="cf.FieldAncillary.tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanh</span></code></a></p></td>
+<td><p>Take the hyperbolic tangent of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rounding and truncation</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.ceil.html#cf.FieldAncillary.ceil" title="cf.FieldAncillary.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code></a></p></td>
+<td><p>The ceiling of the data, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.clip.html#cf.FieldAncillary.clip" title="cf.FieldAncillary.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a></p></td>
+<td><p>Limit the values in the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.floor.html#cf.FieldAncillary.floor" title="cf.FieldAncillary.floor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floor</span></code></a></p></td>
+<td><p>Floor the data array, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.rint.html#cf.FieldAncillary.rint" title="cf.FieldAncillary.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code></a></p></td>
+<td><p>Round the data to the nearest integer, element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.round.html#cf.FieldAncillary.round" title="cf.FieldAncillary.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a></p></td>
+<td><p>Round the data to the given number of decimals.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.trunc.html#cf.FieldAncillary.trunc" title="cf.FieldAncillary.trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunc</span></code></a></p></td>
+<td><p>Truncate the data, element-wise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Statistical collapses</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.max.html#cf.FieldAncillary.max" title="cf.FieldAncillary.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.mean.html#cf.FieldAncillary.mean" title="cf.FieldAncillary.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
+<td><p>The unweighted mean the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.mid_range.html#cf.FieldAncillary.mid_range" title="cf.FieldAncillary.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a></p></td>
+<td><p>The unweighted average of the maximum and minimum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.min.html#cf.FieldAncillary.min" title="cf.FieldAncillary.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.range.html#cf.FieldAncillary.range" title="cf.FieldAncillary.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></p></td>
+<td><p>The absolute difference between the maximum and minimum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.sample_size.html#cf.FieldAncillary.sample_size" title="cf.FieldAncillary.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a></p></td>
+<td><p>The number of non-missing data elements in the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.sum.html#cf.FieldAncillary.sum" title="cf.FieldAncillary.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p></td>
+<td><p>The sum of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.sd.html#cf.FieldAncillary.sd" title="cf.FieldAncillary.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.var.html#cf.FieldAncillary.var" title="cf.FieldAncillary.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.standard_deviation.html#cf.FieldAncillary.standard_deviation" title="cf.FieldAncillary.standard_deviation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></a></p></td>
+<td><p>The unweighted sample standard deviation of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.variance.html#cf.FieldAncillary.variance" title="cf.FieldAncillary.variance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></a></p></td>
+<td><p>The unweighted sample variance of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.maximum.html#cf.FieldAncillary.maximum" title="cf.FieldAncillary.maximum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code></a></p></td>
+<td><p>The maximum of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.minimum.html#cf.FieldAncillary.minimum" title="cf.FieldAncillary.minimum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code></a></p></td>
+<td><p>The minimum of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Exponential and logarithmic functions</em></p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.exp.html#cf.FieldAncillary.exp" title="cf.FieldAncillary.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a></p></td>
+<td><p>The exponential of the data, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.log.html#cf.FieldAncillary.log" title="cf.FieldAncillary.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a></p></td>
+<td><p>The logarithm of the data array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="date-time-operations">
+<h2>Date-time operations<a class="headerlink" href="#date-time-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.day.html#cf.FieldAncillary.day" title="cf.FieldAncillary.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></p></td>
+<td><p>The day of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.datetime_array.html#cf.FieldAncillary.datetime_array" title="cf.FieldAncillary.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
+<td><p>An independent numpy array of date-time objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.hour.html#cf.FieldAncillary.hour" title="cf.FieldAncillary.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code></a></p></td>
+<td><p>The hour of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.minute.html#cf.FieldAncillary.minute" title="cf.FieldAncillary.minute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code></a></p></td>
+<td><p>The minute of each date-time data array element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.month.html#cf.FieldAncillary.month" title="cf.FieldAncillary.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></a></p></td>
+<td><p>The month of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.reference_datetime.html#cf.FieldAncillary.reference_datetime" title="cf.FieldAncillary.reference_datetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_datetime</span></code></a></p></td>
+<td><p>The reference date-time of units of elapsed time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.second.html#cf.FieldAncillary.second" title="cf.FieldAncillary.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></a></p></td>
+<td><p>The second of each date-time data array element.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.year.html#cf.FieldAncillary.year" title="cf.FieldAncillary.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code></a></p></td>
+<td><p>The year of each date-time data array element.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="logic-functions">
+<h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Truth value testing</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.all.html#cf.FieldAncillary.all" title="cf.FieldAncillary.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a></p></td>
+<td><p>Test whether all data elements evaluate to True.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.any.html#cf.FieldAncillary.any" title="cf.FieldAncillary.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a></p></td>
+<td><p>Test whether any data elements evaluate to True.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Comparison</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.allclose.html#cf.FieldAncillary.allclose" title="cf.FieldAncillary.allclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allclose</span></code></a></p></td>
+<td><p>Test whether all data are element-wise equal to other, broadcastable data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.equals.html#cf.FieldAncillary.equals" title="cf.FieldAncillary.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<td><p>Whether two instances are the same.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.equivalent.html#cf.FieldAncillary.equivalent" title="cf.FieldAncillary.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></p></td>
+<td><p>True if two constructs are equal, False otherwise.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Set operations</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.unique.html#cf.FieldAncillary.unique" title="cf.FieldAncillary.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></p></td>
+<td><p>The unique elements of the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.nc_del_variable.html#cf.FieldAncillary.nc_del_variable" title="cf.FieldAncillary.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></p></td>
+<td><p>Remove the netCDF variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.nc_get_variable.html#cf.FieldAncillary.nc_get_variable" title="cf.FieldAncillary.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></p></td>
+<td><p>Return the netCDF variable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.nc_has_variable.html#cf.FieldAncillary.nc_has_variable" title="cf.FieldAncillary.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></p></td>
+<td><p>Whether the netCDF variable name has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.nc_set_variable.html#cf.FieldAncillary.nc_set_variable" title="cf.FieldAncillary.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></p></td>
+<td><p>Set the netCDF variable name.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="aliases">
+<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.match.html#cf.FieldAncillary.match" title="cf.FieldAncillary.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.FieldAncillary.dtarray.html#cf.FieldAncillary.dtarray" title="cf.FieldAncillary.dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></a></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="arithmetic-and-comparison-operations">
+<h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
+<p>Arithmetic, bitwise and comparison operations are defined as
+element-wise operations on the data, which yield a new construct or,
+for augmented assignments, modify the construct’s data in-place.</p>
+<p class="rubric">Comparison operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__lt__.html#cf.FieldAncillary.__lt__" title="cf.FieldAncillary.__lt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lt__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__le__.html#cf.FieldAncillary.__le__" title="cf.FieldAncillary.__le__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__le__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__eq__.html#cf.FieldAncillary.__eq__" title="cf.FieldAncillary.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">==</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__ne__.html#cf.FieldAncillary.__ne__" title="cf.FieldAncillary.__ne__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ne__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">!=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__gt__.html#cf.FieldAncillary.__gt__" title="cf.FieldAncillary.__gt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__gt__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__ge__.html#cf.FieldAncillary.__ge__" title="cf.FieldAncillary.__ge__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ge__</span></code></a></p></td>
+<td><p>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary arithmetic operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__add__.html#cf.FieldAncillary.__add__" title="cf.FieldAncillary.__add__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__add__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__sub__.html#cf.FieldAncillary.__sub__" title="cf.FieldAncillary.__sub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__sub__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__mul__.html#cf.FieldAncillary.__mul__" title="cf.FieldAncillary.__mul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__mul__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__div__.html#cf.FieldAncillary.__div__" title="cf.FieldAncillary.__div__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__div__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__truediv__.html#cf.FieldAncillary.__truediv__" title="cf.FieldAncillary.__truediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__truediv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__floordiv__.html#cf.FieldAncillary.__floordiv__" title="cf.FieldAncillary.__floordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__floordiv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__pow__.html#cf.FieldAncillary.__pow__" title="cf.FieldAncillary.__pow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__pow__</span></code></a></p></td>
+<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__mod__.html#cf.FieldAncillary.__mod__" title="cf.FieldAncillary.__mod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__mod__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary arithmetic operators with reflected (swapped) operands</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__radd__.html#cf.FieldAncillary.__radd__" title="cf.FieldAncillary.__radd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__radd__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rsub__.html#cf.FieldAncillary.__rsub__" title="cf.FieldAncillary.__rsub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rsub__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rmul__.html#cf.FieldAncillary.__rmul__" title="cf.FieldAncillary.__rmul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmul__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rdiv__.html#cf.FieldAncillary.__rdiv__" title="cf.FieldAncillary.__rdiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rdiv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rtruediv__.html#cf.FieldAncillary.__rtruediv__" title="cf.FieldAncillary.__rtruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rtruediv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division) with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rfloordiv__.html#cf.FieldAncillary.__rfloordiv__" title="cf.FieldAncillary.__rfloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rfloordiv__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rpow__.html#cf.FieldAncillary.__rpow__" title="cf.FieldAncillary.__rpow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rpow__</span></code></a></p></td>
+<td><p>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rmod__.html#cf.FieldAncillary.__rmod__" title="cf.FieldAncillary.__rmod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmod__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code> with reflected operands.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Augmented arithmetic assignments</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__iadd__.html#cf.FieldAncillary.__iadd__" title="cf.FieldAncillary.__iadd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iadd__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">+=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__isub__.html#cf.FieldAncillary.__isub__" title="cf.FieldAncillary.__isub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__isub__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">-=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__imul__.html#cf.FieldAncillary.__imul__" title="cf.FieldAncillary.__imul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__imul__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">*=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__idiv__.html#cf.FieldAncillary.__idiv__" title="cf.FieldAncillary.__idiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__idiv__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">/=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__itruediv__.html#cf.FieldAncillary.__itruediv__" title="cf.FieldAncillary.__itruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__itruediv__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">/=</span></code> (true division)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__ifloordiv__.html#cf.FieldAncillary.__ifloordiv__" title="cf.FieldAncillary.__ifloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ifloordiv__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">//=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__ipow__.html#cf.FieldAncillary.__ipow__" title="cf.FieldAncillary.__ipow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ipow__</span></code></a></p></td>
+<td><p>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">**=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__imod__.html#cf.FieldAncillary.__imod__" title="cf.FieldAncillary.__imod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__imod__</span></code></a></p></td>
+<td><p>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%=</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Unary arithmetic operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__neg__.html#cf.FieldAncillary.__neg__" title="cf.FieldAncillary.__neg__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__neg__</span></code></a></p></td>
+<td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__pos__.html#cf.FieldAncillary.__pos__" title="cf.FieldAncillary.__pos__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__pos__</span></code></a></p></td>
+<td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__abs__.html#cf.FieldAncillary.__abs__" title="cf.FieldAncillary.__abs__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__abs__</span></code></a></p></td>
+<td><p>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">abs</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary bitwise operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__and__.html#cf.FieldAncillary.__and__" title="cf.FieldAncillary.__and__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__and__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__or__.html#cf.FieldAncillary.__or__" title="cf.FieldAncillary.__or__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__or__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__xor__.html#cf.FieldAncillary.__xor__" title="cf.FieldAncillary.__xor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__xor__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__lshift__.html#cf.FieldAncillary.__lshift__" title="cf.FieldAncillary.__lshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rshift__.html#cf.FieldAncillary.__rshift__" title="cf.FieldAncillary.__rshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary bitwise operators with reflected (swapped) operands</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rand__.html#cf.FieldAncillary.__rand__" title="cf.FieldAncillary.__rand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rand__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__ror__.html#cf.FieldAncillary.__ror__" title="cf.FieldAncillary.__ror__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ror__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rxor__.html#cf.FieldAncillary.__rxor__" title="cf.FieldAncillary.__rxor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rxor__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rlshift__.html#cf.FieldAncillary.__rlshift__" title="cf.FieldAncillary.__rlshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rlshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code> with reflected operands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__rrshift__.html#cf.FieldAncillary.__rrshift__" title="cf.FieldAncillary.__rrshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rrshift__</span></code></a></p></td>
+<td><p>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code> with reflected operands.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Augmented bitwise assignments</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__iand__.html#cf.FieldAncillary.__iand__" title="cf.FieldAncillary.__iand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iand__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&amp;=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__ior__.html#cf.FieldAncillary.__ior__" title="cf.FieldAncillary.__ior__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ior__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">|=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__ixor__.html#cf.FieldAncillary.__ixor__" title="cf.FieldAncillary.__ixor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ixor__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">^=</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__ilshift__.html#cf.FieldAncillary.__ilshift__" title="cf.FieldAncillary.__ilshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ilshift__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&lt;&lt;=</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__irshift__.html#cf.FieldAncillary.__irshift__" title="cf.FieldAncillary.__irshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__irshift__</span></code></a></p></td>
+<td><p>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&gt;&gt;=</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Unary bitwise operators</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__invert__.html#cf.FieldAncillary.__invert__" title="cf.FieldAncillary.__invert__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__invert__</span></code></a></p></td>
+<td><p>The unary bitwise operation <code class="docutils literal notranslate"><span class="pre">~</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<section id="groups">
+<h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.nc_variable_groups.html#cf.FieldAncillary.nc_variable_groups" title="cf.FieldAncillary.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a></p></td>
+<td><p>Return the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.nc_clear_variable_groups.html#cf.FieldAncillary.nc_clear_variable_groups" title="cf.FieldAncillary.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a></p></td>
+<td><p>Remove the netCDF variable group hierarchy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.nc_set_variable_groups.html#cf.FieldAncillary.nc_set_variable_groups" title="cf.FieldAncillary.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a></p></td>
+<td><p>Set the netCDF variable group hierarchy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__contains__.html#cf.FieldAncillary.__contains__" title="cf.FieldAncillary.__contains__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__contains__</span></code></a></p></td>
+<td><p>Called to implement membership test operators.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__deepcopy__.html#cf.FieldAncillary.__deepcopy__" title="cf.FieldAncillary.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__getitem__.html#cf.FieldAncillary.__getitem__" title="cf.FieldAncillary.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
+<td><p>Return a subspace defined by indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__repr__.html#cf.FieldAncillary.__repr__" title="cf.FieldAncillary.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__setitem__.html#cf.FieldAncillary.__setitem__" title="cf.FieldAncillary.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
+<td><p>Called to implement assignment to x[indices]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__str__.html#cf.FieldAncillary.__str__" title="cf.FieldAncillary.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__array__.html#cf.FieldAncillary.__array__" title="cf.FieldAncillary.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></p></td>
+<td><p>Returns a numpy array representation of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.__data__.html#cf.FieldAncillary.__data__" title="cf.FieldAncillary.__data__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__data__</span></code></a></p></td>
+<td><p>Returns a new reference to the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deprecated">
+<h2>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.asdatetime.html#cf.FieldAncillary.asdatetime" title="cf.FieldAncillary.asdatetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.asreftime.html#cf.FieldAncillary.asreftime" title="cf.FieldAncillary.asreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.attributes.html#cf.FieldAncillary.attributes" title="cf.FieldAncillary.attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.chunk.html#cf.FieldAncillary.chunk" title="cf.FieldAncillary.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
+<td><p>Partition the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.delprop.html#cf.FieldAncillary.delprop" title="cf.FieldAncillary.delprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.dtvarray.html#cf.FieldAncillary.dtvarray" title="cf.FieldAncillary.dtvarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.expand_dims.html#cf.FieldAncillary.expand_dims" title="cf.FieldAncillary.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code> method instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.get_filenames.html#cf.FieldAncillary.get_filenames" title="cf.FieldAncillary.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the name of the file or files containing the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.getprop.html#cf.FieldAncillary.getprop" title="cf.FieldAncillary.getprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.hasbounds.html#cf.FieldAncillary.hasbounds" title="cf.FieldAncillary.hasbounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasbounds</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code> method instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.hasdata.html#cf.FieldAncillary.hasdata" title="cf.FieldAncillary.hasdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasdata</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.hasprop.html#cf.FieldAncillary.hasprop" title="cf.FieldAncillary.hasprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.insert_data.html#cf.FieldAncillary.insert_data" title="cf.FieldAncillary.insert_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code> method instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.isauxiliary.html#cf.FieldAncillary.isauxiliary" title="cf.FieldAncillary.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.isdimension.html#cf.FieldAncillary.isdimension" title="cf.FieldAncillary.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.isdomainancillary.html#cf.FieldAncillary.isdomainancillary" title="cf.FieldAncillary.isdomainancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdomainancillary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.isfieldancillary.html#cf.FieldAncillary.isfieldancillary" title="cf.FieldAncillary.isfieldancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isfieldancillary</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.ismeasure.html#cf.FieldAncillary.ismeasure" title="cf.FieldAncillary.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></p></td>
+<td><p>Deprecated at version 3.7.0, use <code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code> attribute instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.mask_invalid.html#cf.FieldAncillary.mask_invalid" title="cf.FieldAncillary.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.name.html#cf.FieldAncillary.name" title="cf.FieldAncillary.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method ‘identity’ instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.remove_data.html#cf.FieldAncillary.remove_data" title="cf.FieldAncillary.remove_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_data</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.select.html#cf.FieldAncillary.select" title="cf.FieldAncillary.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.setprop.html#cf.FieldAncillary.setprop" title="cf.FieldAncillary.setprop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code> instead.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.FieldAncillary.unsafe_array.html#cf.FieldAncillary.unsafe_array" title="cf.FieldAncillary.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
+<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-01-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

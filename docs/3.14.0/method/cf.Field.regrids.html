@@ -1,0 +1,532 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Field.regrids &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.day" href="../attribute/cf.Field.day.html" />
+    <link rel="prev" title="cf.Field.regridc" href="cf.Field.regridc.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.regridc.html" title="previous chapter">cf.Field.regridc</a></li>
+      <li>Next: <a href="../attribute/cf.Field.day.html" title="next chapter">cf.Field.day</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-field-regrids">
+<h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.regrids">
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">regrids</code><span class="sig-paren">(</span><em class="sig-param">dst</em>, <em class="sig-param">method=None</em>, <em class="sig-param">src_cyclic=None</em>, <em class="sig-param">dst_cyclic=None</em>, <em class="sig-param">use_src_mask=True</em>, <em class="sig-param">use_dst_mask=False</em>, <em class="sig-param">fracfield=False</em>, <em class="sig-param">src_axes=None</em>, <em class="sig-param">dst_axes=None</em>, <em class="sig-param">axis_order=None</em>, <em class="sig-param">ignore_degenerate=True</em>, <em class="sig-param">return_operator=False</em>, <em class="sig-param">check_coordinates=False</em>, <em class="sig-param">min_weight=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/field.py#L13856-L14131"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regrid the field to a new latitude and longitude grid.</p>
+<p>Regridding is the process of interpolating the field data
+values while preserving the qualities of the original data,
+and the metadata of the unaffected axes. The metadata for the
+regridded axes are taken from the <em>dst</em> parameter.</p>
+<p>The 2-d regridding takes place on a sphere, with the grid
+being defined by latitude and longitude spherical polar
+coordinates.</p>
+<p><strong>Latitude and longitude coordinates</strong></p>
+<p>The source and destination grids of the regridding must both
+be defined by latitude and longitude coordinates, which may be
+1-d dimension coordinates or 2-d auxiliary coordinates. These
+are automatically detected from the field being regridded and
+the specification of the destination grid given by the <em>dst</em>
+parameter.</p>
+<p>When a grid is defined by 2-d latitude and longitude
+coordinates, it is necessary for their X and Y dimensions to
+be defined. This is either automatically inferred from the
+existence of 1-d dimension coordinates, or else must be
+specified with <em>src_axes</em> or <em>dst_axes</em> parameters.</p>
+<p><strong>Curvilinear Grids</strong></p>
+<p>Grids in projection coordinate systems can be regridded as
+long as two dimensional latitude and longitude coordinates are
+present.</p>
+<p><strong>Tripolar Grids</strong></p>
+<p>Connections across the bipole fold are not currently
+supported, but are not necessary in some cases, for example if
+the points on either side are together without a gap (as is
+the case for NEMO model outputs).</p>
+<p><strong>Cyclicity of the X axis</strong></p>
+<p>The cyclicity of the X (longitude) axes of the source and
+destination grids (i.e. whether or not the first and last
+cells of the axis are adjacent) are taken into account. By
+default, the cyclicity is inferred from the grids’ defining
+coordinates, but may be also be provided with the <em>src_cyclic</em>
+and <em>dst_cyclic</em> parameters.</p>
+<p><strong>Masked cells</strong></p>
+<p>By default, the data mask of the source data is taken into
+account during the regridding process, but the destination
+grid mask is not. This behaviour may be changed with the
+<em>use_src_mask</em> and <em>use_dst_mask</em> parameters.</p>
+<p>In general the source data may be arbitrarily masked, meaning
+that the mask for the regridding axes may vary along the
+non-regridding axes. The exceptions to this are for
+second-order conservative, patch recovery regridding, and
+nearest source to destination methods, for which the mask of
+the regridding axes must be the same across all non-regridding
+axes. In these special cases an exception will be raised if
+the source data mask does not meet this requirement.</p>
+<p><strong>Implementation</strong></p>
+<p>The interpolation is carried out using regridding weights
+calculated by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> package, a Python interface to the
+Earth System Modeling Framework (ESMF) regridding utility:
+<a href="#id5"><span class="problematic" id="id6">`https://earthsystemmodeling.org/regrid`_</span></a>. Outside of <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code>,
+these weights are then modified for masked cells (if required)
+and the regridded data are created as the dot product of the
+weights with the source data. (Note that whilst the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code>
+package is able to also create the regridded data from its
+weights, this feature can’t be integrated with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
+framework that underpins the field’s data.)</p>
+<p><strong>Logging</strong></p>
+<p>Whether <code class="xref py py-obj docutils literal notranslate"><span class="pre">ESMF</span></code> logging is enabled or not is determined by
+<a class="reference internal" href="../function/cf.regrid_logging.html#cf.regrid_logging" title="cf.regrid_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.regrid_logging</span></code></a>. If it is logging takes place after every
+call. By default logging is disabled.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.0.4.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>dst: <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code>, <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a> or sequence of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Coordinate</span></code></dt><dd><p>The definition of the destination grid on which to
+regrid the field’s data. One of:</p>
+<ul>
+<li><p><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>: The grid is defined by the latitude and
+longitude coordinates of the field construct’s
+domain.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code>: The grid is defined by the latitude and
+longitude coordinates of the domain construct.</p></li>
+<li><p>Sequence of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Coordinate</span></code>: The grid is defined by two
+1-d dimension coordinate constructs, or two 2-d
+auxiliary coordinate constructs, that define the
+spherical latitude and longitude coordinates (in any
+order) of the destination grid.</p>
+<p>In the 2-d case, both coordinate constructs must
+have their axes in the same order, which must be
+specified by the <em>dst_axes</em> parameter.</p>
+</li>
+<li><p><a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>: The grid is defined by a regrid
+operator that has been returned by a previous call
+with the <em>return_operator</em> parameter set to True.</p>
+<p>Unlike the other options, for which the regrid
+weights need to be calculated, the regrid operator
+already contains the weights. Therefore, for cases
+where multiple fields with the same source grids
+need to be regridded to the same destination grid,
+using a regrid operator can give performance
+improvements by avoiding having to calculate the
+weights for each source field. Note that for the
+other types of <em>dst</em> parameter, the calculation of
+the regrid weights is not a lazy operation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The source grid of the regrid operator is
+immediately checked for compatibility with
+the grid of the source field. By default
+only the computationally cheap tests are
+performed (checking that the coordinate
+system, cyclicity and grid shape are the
+same), with the grid coordinates not being
+checked. The coordinates check will be
+carried out, however, if the
+<em>check_coordinates</em> parameter is True.</p>
+</div>
+</li>
+</ul>
+</dd>
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>Specify the regridding interpolation method. This
+parameter must be set unless <em>dst</em> is a
+<a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>, when the <em>method</em> is ignored.</p>
+<p>The <em>method</em> parameter may be one of the following:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code>: Bilinear interpolation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'bilinear'</span></code>: Deprecated alias for <code class="docutils literal notranslate"><span class="pre">'linear'</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conservative_1st'</span></code>: First order conservative
+interpolation. Preserves the area integral of the
+data across the interpolation from source to
+destination. It uses the proportion of the area of
+the overlapping source and destination cells to
+determine appropriate weights.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conservative'</span></code>: Alias for <code class="docutils literal notranslate"><span class="pre">'conservative_1st'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conservative_2nd'</span></code>: Second-order conservative
+interpolation. As with first order conservative
+interpolation, preserves the area integral of the
+field between source and destination using a
+weighted sum, with weights based on the
+proportionate area of intersection. In addition the
+second-order conservative method takes the source
+gradient into account, so it yields a smoother
+destination field that typically better matches the
+source data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'patch'</span></code> Patch recovery interpolation. A second
+degree 2-d polynomial regridding method, which uses
+a least squares algorithm to calculate the
+polynomials. This method typically results in
+better approximations to values and derivatives when
+compared to bilinear interpolation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'nearest_stod'</span></code>: Nearest neighbour interpolation
+for which each destination point is mapped to the
+closest source point. Useful for extrapolation of
+categorical data. Some destination cells may be
+unmapped.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'nearest_dtos'</span></code>: Nearest neighbour interpolation
+for which each source point is mapped to the
+destination point. Useful for extrapolation of
+categorical data. All destination cells will be
+mapped.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>: This is the default and can only be used
+when <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt>src_cyclic: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Specifies whether or not the source grid longitude
+axis is cyclic (i.e. the first and last cells of the
+axis are adjacent). If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) then the
+cyclicity will be inferred from the source grid
+coordinates, defaulting to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> if it can not be
+determined.</p>
+</dd>
+<dt>dst_cyclic: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Specifies whether or not the destination grid
+longitude axis is cyclic (i.e. the first and last
+cells of the axis are adjacent). If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the
+default) then the cyclicity will be inferred from the
+destination grid coordinates, defaulting to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> if
+it can not be determined.</p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+</dd>
+<dt>use_src_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>By default the mask of the source field is taken into
+account during the regridding process. The only
+possible exception to this is when the nearest source
+to destination regridding method (<code class="docutils literal notranslate"><span class="pre">'nearest_stod'</span></code>)
+is being used. In this case, if <em>use_src_mask</em> is
+False then each destination point is mapped to the
+closest source point, whether or not it is masked (see
+the <em>method</em> parameter for details).</p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+</dd>
+<dt>use_dst_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If <em>dst</em> is a <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> and <em>use_dst_mask</em> is False (the
+default) then the mask of data on the destination grid
+is <strong>not</strong> taken into account when performing
+regridding. If <em>use_dst_mask</em> is True then any masked
+cells in the <em>dst</em> field construct are transferred to
+the result. If <em>dst</em> has more dimensions than are
+being regridded, then the mask of the destination grid
+is taken as the subspace defined by index <code class="docutils literal notranslate"><span class="pre">0</span></code> of all
+the non-regridding dimensions.</p>
+<p>Ignored if <em>dst</em> is not a <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>.</p>
+</dd>
+<dt>src_axes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>When the source grid’s X and Y dimensions can not be
+inferred from the existence of 1-d dimension
+coordinates, then they must be identified with the
+<em>src_axes</em> dictionary, with keys <code class="docutils literal notranslate"><span class="pre">'X'</span></code> and <code class="docutils literal notranslate"><span class="pre">'Y'</span></code>.</p>
+<p>The dictionary values identify a unique domain axis by
+passing the given axis description to a call of the
+field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example,
+for a value of <code class="docutils literal notranslate"><span class="pre">'ncdim%x'</span></code>, the domain axis
+construct returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('ncdim%x')</span></code> is
+selected.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'X':</span> <span class="pre">'ncdim%x',</span> <span class="pre">'Y':</span> <span class="pre">'ncdim%y'}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'X':</span> <span class="pre">1,</span> <span class="pre">'Y':</span> <span class="pre">0}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>dst_axes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>When the destination grid’s X and Y dimensions can not
+be inferred from the existence of 1-d dimension
+coordinates, then they must be identified with the
+<em>dst_axes</em> dictionary, with keys <code class="docutils literal notranslate"><span class="pre">'X'</span></code> and <code class="docutils literal notranslate"><span class="pre">'Y'</span></code>.</p>
+<p>If <em>dst</em> is a <a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code>, then the dictionary
+values identify a unique domain axis by passing the
+given axis description to a call of the destination
+field or domain construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
+example, for a value of <code class="docutils literal notranslate"><span class="pre">'ncdim%x'</span></code>, the domain axis
+construct returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('ncdim%x')</span></code> is
+selected.</p>
+<p>If <em>dst</em> is a sequence of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Coordinate</span></code>, then the
+dictionary values identify a unique domain axis by its
+position in the 2-d coordinates’ data arrays, i.e. the
+dictionary values must be <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code>:</p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'X':</span> <span class="pre">'ncdim%x',</span> <span class="pre">'Y':</span> <span class="pre">'ncdim%y'}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'X':</span> <span class="pre">1,</span> <span class="pre">'Y':</span> <span class="pre">0}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>ignore_degenerate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>For conservative regridding methods, if True (the
+default) then degenerate cells (those for which enough
+vertices collapse to leave a cell as either a line or
+a point) are skipped, not producing a
+result. Otherwise an error will be produced if
+degenerate cells are found, that will be present in
+the ESMF log files.</p>
+<p>For all other regridding methods, degenerate cells are
+always skipped, regardless of the value of
+<em>ignore_degenerate</em>.</p>
+<p>Ignored if <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+</dd>
+<dt>return_operator: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do not perform the regridding, rather
+return the <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a> instance that defines the
+regridding operation, and which can be used in
+subsequent calls. See the <em>dst</em> parameter for
+details.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.10.0.</span></p>
+</div>
+</dd>
+<dt>check_coordinates: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True and <em>dst</em> is a <a href="#id1"><span class="problematic" id="id2">`</span></a>RegridOperator`then the source
+grid coordinates defined by the operator are checked
+for compatibility against those of the source field. By
+default this check is not carried out. See the <em>dst</em>
+parameter for details.</p>
+<p>Ignored unless <em>dst</em> is a <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+</div>
+</dd>
+<dt>min_weight: float, optional</dt><dd><p>A very small non-negative number. By default
+<em>min_weight</em> is <code class="docutils literal notranslate"><span class="pre">2.5</span> <span class="pre">*</span> <span class="pre">np.finfo(&quot;float64&quot;).eps</span></code>,
+i.e. <a href="#id3"><span class="problematic" id="id4">``</span></a>5.551115123125783e-16`. It is used during
+linear and first-order conservative regridding when
+adjusting the weights matrix to account for the data
+mask. It is ignored for all other regrid methods, or
+if data being regridded has no missing values.</p>
+<p>In some cases (described below) for which weights
+might only be non-zero as a result of rounding errors,
+the <em>min_weight</em> parameter controls whether or a not
+cell in the regridded field is masked.</p>
+<p>The default value has been chosen empirically as the
+smallest value that produces the same masks as ESMF
+for the use cases defined in the cf test suite.</p>
+<p>Define w_ji as the multiplicative weight that defines
+how much of Vs_i (the value in source grid cell i)
+contributes to Vd_j (the value in destination grid
+cell j).</p>
+<p><strong>Linear regridding</strong></p>
+<p>Destination grid cell j will only be masked if a) it
+is masked in destination grid definition; or b) <code class="docutils literal notranslate"><span class="pre">w_ji</span>
+<span class="pre">&gt;=</span> <span class="pre">min_weight</span></code> for those masked source grid cells i
+for which <code class="docutils literal notranslate"><span class="pre">w_ji</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>.</p>
+<p><strong>Conservative first-order regridding</strong></p>
+<p>Destination grid cell j will only be masked if a) it
+is masked in destination grid definition; or b) The
+sum of <code class="docutils literal notranslate"><span class="pre">w_ji</span></code> for all non-masked source grid cells i
+is strictly less than <em>min_weight</em>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+</div>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+<dt>axis_order: sequence, optional</dt><dd><p>Deprecated at version 3.14.0.</p>
+</dd>
+<dt>fracfield: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0.</p>
+</dd>
+<dt>_compute_field_mass: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Deprecated at version 3.14.0.</p>
+</dd>
+<dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference internal" href="../class/cf.RegridOperator.html#cf.RegridOperator" title="cf.RegridOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegridOperator</span></code></a></dt><dd><p>The regridded field construct; or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
+operation was in-place or the regridding operator if
+<em>return_operator</em> is True.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_fields</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+<span class="go">Field: air_temperature (ncvar%ta)</span>
+<span class="go">---------------------------------</span>
+<span class="go">Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
+<span class="go">Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum</span>
+<span class="go">Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K</span>
+<span class="go">Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]</span>
+<span class="go">                : grid_latitude(10) = [2.2, ..., -1.76] degrees</span>
+<span class="go">                : grid_longitude(9) = [-4.7, ..., -1.18] degrees</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
+<span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b&#39;kappa&#39;]</span>
+<span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
+<span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
+<span class="go">                : standard_name:atmosphere_hybrid_height_coordinate</span>
+<span class="go">Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m</span>
+<span class="go">                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
+<span class="go">                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">Field: air_temperature (ncvar%ta)</span>
+<span class="go">---------------------------------</span>
+<span class="go">Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), latitude(5), longitude(8)) K</span>
+<span class="go">Cell methods    : latitude(5): longitude(8): mean where land (interval: 0.1 degrees) time(1): maximum</span>
+<span class="go">Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]</span>
+<span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="go">Coord references: standard_name:atmosphere_hybrid_height_coordinate</span>
+<span class="go">Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m</span>
+<span class="go">                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
+<span class="go">                : surface_altitude(latitude(5), longitude(8)) = [[--, ..., --]] m</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">return_operator</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-01-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

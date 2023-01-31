@@ -1,0 +1,536 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Recipes using cf &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Contributing" href="contributing.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.14.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="contributing.html" title="previous chapter"><strong>Contributing</strong></a></li>
+      <li>Next: <a href="tutorial.html" title="next chapter"><strong>Tutorial</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="recipes-using-cf">
+<h1><strong>Recipes using cf</strong><a class="headerlink" href="#recipes-using-cf" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p>Version 3.14.0 for version 1.10 of the CF conventions.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#calculating-global-mean-temperature-timeseries" id="id2"><strong>Calculating global mean temperature timeseries</strong></a></p>
+<ul>
+<li><p><a class="reference internal" href="#calculating-and-plotting-the-global-average-temperature-anomalies" id="id3">Calculating and plotting the global average temperature anomalies</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#plotting-global-mean-temperatures-spatially" id="id4"><strong>Plotting global mean temperatures spatially</strong></a></p></li>
+<li><p><a class="reference internal" href="#comparing-two-datasets-with-different-resolutions-using-regridding" id="id5"><strong>Comparing two datasets with different resolutions using regridding</strong></a></p></li>
+<li><p><a class="reference internal" href="#plotting-wind-vectors-overlaid-on-precipitation-data" id="id6"><strong>Plotting wind vectors overlaid on precipitation data</strong></a></p></li>
+</ul>
+</div>
+<section id="calculating-global-mean-temperature-timeseries">
+<h2><a class="toc-backref" href="#id2"><strong>Calculating global mean temperature timeseries</strong></a><a class="headerlink" href="#calculating-global-mean-temperature-timeseries" title="Permalink to this headline">¶</a></h2>
+<p>In this recipe we will calculate and plot monthly and annual global mean temperature timeseries.</p>
+<ol class="arabic">
+<li><p>Import cf-python and cf-plot:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+</pre></div>
+</div>
+</li>
+<li><p>Read the field constructs using <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a> function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: ncvar%stn(long_name=time(120), long_name=latitude(360), long_name=longitude(720))&gt;,</span>
+<span class="go"> &lt;CF Field: long_name=near-surface temperature(long_name=time(120), long_name=latitude(360), long_name=longitude(720)) degrees Celsius&gt;]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Select near surface temperature by index and look at its contents:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">temp</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+<span class="go">Field: long_name=near-surface temperature (ncvar%tmp)</span>
+<span class="go">-----------------------------------------------------</span>
+<span class="go">Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius</span>
+<span class="go">Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian</span>
+<span class="go">                : long_name=latitude(360) = [-89.75, ..., 89.75] degrees_north</span>
+<span class="go">                : long_name=longitude(720) = [-179.75, ..., 179.75] degrees_east</span>
+</pre></div>
+</div>
+</li>
+<li><p>Select latitude and longitude dimensions by identities, with two different techniques, using the <a class="reference internal" href="method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate</span></code></a> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;long_name=longitude&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Print the desciption of near surface temperature using the <a class="reference internal" href="method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method to show properties of all constructs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">temp</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">-----------------------------------------------------</span>
+<span class="go">Field: long_name=near-surface temperature (ncvar%tmp)</span>
+<span class="go">-----------------------------------------------------</span>
+<span class="go">Conventions = &#39;CF-1.4&#39;</span>
+<span class="go">_FillValue = 9.96921e+36</span>
+<span class="go">comment = &#39;Access to these data is available to any registered CEDA user.&#39;</span>
+<span class="go">contact = &#39;support@ceda.ac.uk&#39;</span>
+<span class="go">correlation_decay_distance = 1200.0</span>
+<span class="go">history = &#39;Fri 29 Apr 14:35:01 BST 2022 : User f098 : Program makegridsauto.for</span>
+<span class="go">           called by update.for&#39;</span>
+<span class="go">institution = &#39;Data held at British Atmospheric Data Centre, RAL, UK.&#39;</span>
+<span class="go">long_name = &#39;near-surface temperature&#39;</span>
+<span class="go">missing_value = 9.96921e+36</span>
+<span class="go">references = &#39;Information on the data is available at</span>
+<span class="go">              http://badc.nerc.ac.uk/data/cru/&#39;</span>
+<span class="go">source = &#39;Run ID = 2204291347. Data generated from:tmp.2204291209.dtb&#39;</span>
+<span class="go">title = &#39;CRU TS4.06 Mean Temperature&#39;</span>
+<span class="go">units = &#39;degrees Celsius&#39;</span>
+
+<span class="go">Data(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) = [[[--, ..., --]]] degrees Celsius</span>
+
+<span class="go">Domain Axis: long_name=latitude(360)</span>
+<span class="go">Domain Axis: long_name=longitude(720)</span>
+<span class="go">Domain Axis: long_name=time(1452)</span>
+
+<span class="go">Dimension coordinate: long_name=time</span>
+<span class="go">    calendar = &#39;gregorian&#39;</span>
+<span class="go">    long_name = &#39;time&#39;</span>
+<span class="go">    units = &#39;days since 1900-1-1&#39;</span>
+<span class="go">    Data(long_name=time(1452)) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian</span>
+
+<span class="go">Dimension coordinate: long_name=latitude</span>
+<span class="go">    long_name = &#39;latitude&#39;</span>
+<span class="go">    units = &#39;degrees_north&#39;</span>
+<span class="go">    Data(long_name=latitude(360)) = [-89.75, ..., 89.75] degrees_north</span>
+
+<span class="go">Dimension coordinate: long_name=longitude</span>
+<span class="go">    long_name = &#39;longitude&#39;</span>
+<span class="go">    units = &#39;degrees_east&#39;</span>
+<span class="go">    Data(long_name=longitude(720)) = [-179.75, ..., 179.75] degrees_east</span>
+</pre></div>
+</div>
+</li>
+<li><p>Latitude and longitude dimension coordinate cell bounds are absent, but they can be created using <a class="reference internal" href="method/cf.DimensionCoordinate.create_bounds.html#cf.DimensionCoordinate.create_bounds" title="cf.DimensionCoordinate.create_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_bounds</span></code></a> and set using <a class="reference internal" href="method/cf.DimensionCoordinate.set_bounds.html#cf.DimensionCoordinate.set_bounds" title="cf.DimensionCoordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">create_bounds</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">Dimension coordinate: long_name=latitude</span>
+<span class="go">    long_name = &#39;latitude&#39;</span>
+<span class="go">    units = &#39;degrees_north&#39;</span>
+<span class="go">    Data(360) = [-89.75, ..., 89.75] degrees_north</span>
+<span class="go">    Bounds:units = &#39;degrees_north&#39;</span>
+<span class="go">    Bounds:Data(360, 2) = [[-90.0, ..., 90.0]] degrees_north</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">create_bounds</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">Dimension coordinate: long_name=longitude</span>
+<span class="go">    long_name = &#39;longitude&#39;</span>
+<span class="go">    units = &#39;degrees_east&#39;</span>
+<span class="go">    Data(720) = [-179.75, ..., 179.75] degrees_east</span>
+<span class="go">    Bounds:units = &#39;degrees_east&#39;</span>
+<span class="go">    Bounds:Data(720, 2) = [[-180.0, ..., 180.0]] degrees_east</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-180.  -179.5]</span>
+<span class="go"> [-179.5 -179. ]</span>
+<span class="go"> [-179.  -178.5]</span>
+<span class="go"> ...</span>
+<span class="go"> [ 178.5  179. ]</span>
+<span class="go"> [ 179.   179.5]</span>
+<span class="go"> [ 179.5  180. ]]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Time dimension coordinate cell bounds are similarly created and set for cell sizes of one calendar month:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;long_name=time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">create_bounds</span><span class="p">(</span><span class="n">cellsize</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">M</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">Dimension coordinate: long_name=time</span>
+<span class="go">    calendar = &#39;gregorian&#39;</span>
+<span class="go">    long_name = &#39;time&#39;</span>
+<span class="go">    units = &#39;days since 1900-1-1&#39;</span>
+<span class="go">    Data(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian</span>
+<span class="go">    Bounds:calendar = &#39;gregorian&#39;</span>
+<span class="go">    Bounds:units = &#39;days since 1900-1-1&#39;</span>
+<span class="go">    Bounds:Data(1452, 2) = [[1901-01-01 00:00:00, ..., 2022-01-01 00:00:00]] gregorian</span>
+</pre></div>
+</div>
+</li>
+<li><p>Calculate and plot the area weighted mean surface temperature for each time using the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">global_avg</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">global_avg</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Global mean surface temperature&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/global_mean_temp.png" src="_images/global_mean_temp.png" />
+</figure>
+</li>
+</ol>
+<p>9. Calculate and plot the annual global mean surface temperature using <a class="reference external" href="http://ajheaps.github.io/cf-plot/lineplot.html">cfplot.lineplot</a>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">annual_global_avg</span> <span class="o">=</span> <span class="n">global_avg</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Y</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">annual_global_avg</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Annual global mean surface temperature&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/annual_mean_temp.png" src="_images/annual_mean_temp.png" />
+</figure>
+</div></blockquote>
+<section id="calculating-and-plotting-the-global-average-temperature-anomalies">
+<h3><a class="toc-backref" href="#id3">Calculating and plotting the global average temperature anomalies</a><a class="headerlink" href="#calculating-and-plotting-the-global-average-temperature-anomalies" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic">
+<li><p>The temperature values are averaged for the climatological period of 1961-1990 by defining a subspace within these years using <a class="reference internal" href="function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a> query instance over <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> and doing a statistical collapse with the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">annual_global_avg_61_90</span> <span class="o">=</span> <span class="n">annual_global_avg</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">year</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">1961</span><span class="p">,</span> <span class="mi">1990</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">annual_global_avg_61_90</span><span class="p">)</span>
+<span class="go">Field: long_name=near-surface temperature (ncvar%tmp)</span>
+<span class="go">-----------------------------------------------------</span>
+<span class="go">Data            : long_name=near-surface temperature(long_name=time(30), long_name=latitude(1), long_name=longitude(1)) degrees Celsius</span>
+<span class="go">Cell methods    : area: mean long_name=time(30): mean</span>
+<span class="go">Dimension coords: long_name=time(30) = [1961-07-02 12:00:00, ..., 1990-07-02 12:00:00] gregorian</span>
+<span class="go">                : long_name=latitude(1) = [0.0] degrees_north</span>
+<span class="go">                : long_name=longitude(1) = [0.0] degrees_east</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">temp_clim</span> <span class="o">=</span> <span class="n">annual_global_avg_61_90</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">temp_clim</span><span class="p">)</span>
+<span class="go">Field: long_name=near-surface temperature (ncvar%tmp)</span>
+<span class="go">-----------------------------------------------------</span>
+<span class="go">Data            : long_name=near-surface temperature(long_name=time(1), long_name=latitude(1), long_name=longitude(1)) degrees Celsius</span>
+<span class="go">Cell methods    : area: mean long_name=time(1): mean</span>
+<span class="go">Dimension coords: long_name=time(1) = [1976-01-01 12:00:00] gregorian</span>
+<span class="go">                : long_name=latitude(1) = [0.0] degrees_north</span>
+<span class="go">                : long_name=longitude(1) = [0.0] degrees_east</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>2. The temperature anomaly is then calculated by subtracting these climatological temperature values from the annual global average temperatures and plotting them using <a class="reference external" href="http://ajheaps.github.io/cf-plot/lineplot.html">lineplot</a>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">temp_anomaly</span> <span class="o">=</span> <span class="n">annual_global_avg</span> <span class="o">-</span> <span class="n">temp_clim</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">temp_anomaly</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Global Average Temperature Anomaly (1901-2021)&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;1961-1990 climatology difference &#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">yunits</span><span class="o">=</span><span class="s1">&#39;degree Celcius&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/anomaly.png" src="_images/anomaly.png" />
+</figure>
+</div></blockquote>
+</section>
+</section>
+<section id="plotting-global-mean-temperatures-spatially">
+<h2><a class="toc-backref" href="#id4"><strong>Plotting global mean temperatures spatially</strong></a><a class="headerlink" href="#plotting-global-mean-temperatures-spatially" title="Permalink to this headline">¶</a></h2>
+<p>In this recipe, we will plot the global mean temperature spatially.</p>
+<ol class="arabic">
+<li><p>Import cf-python and cf-plot:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+</pre></div>
+</div>
+</li>
+<li><p>Read the field constructs using <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a> function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: ncvar%stn(long_name=time(1452), long_name=latitude(360), long_name=longitude(720))&gt;,</span>
+<span class="go"> &lt;CF Field: long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius&gt;]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Select near surface temperature by index and look at its contents:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">temp</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+<span class="go">Field: long_name=near-surface temperature (ncvar%tmp)</span>
+<span class="go">-----------------------------------------------------</span>
+<span class="go">Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius</span>
+<span class="go">Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian</span>
+<span class="go">                : long_name=latitude(360) = [-89.75, ..., 89.75] degrees_north</span>
+<span class="go">                : long_name=longitude(720) = [-179.75, ..., 179.75] degrees_east</span>
+</pre></div>
+</div>
+</li>
+<li><p>Average the monthly mean surface temperature values by the time axis using the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">global_avg</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span>  <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;long_name=time&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Plot the global mean surface temperatures using using <a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">global_avg</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Global mean surface temperature&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/global_mean_map.png" src="_images/global_mean_map.png" />
+</figure>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="comparing-two-datasets-with-different-resolutions-using-regridding">
+<h2><a class="toc-backref" href="#id5"><strong>Comparing two datasets with different resolutions using regridding</strong></a><a class="headerlink" href="#comparing-two-datasets-with-different-resolutions-using-regridding" title="Permalink to this headline">¶</a></h2>
+<p>In this recipe, we will regrid two different datasets with different resolutions. An example use case could be one where the observational dataset with a higher resolution needs to be regridded to that of the model dataset so that they can be compared with each other.</p>
+<ol class="arabic">
+<li><p>Import cf-python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+</pre></div>
+</div>
+</li>
+<li><p>Read the field constructs using <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a> function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;observation.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: ncvar%stn(long_name=time(1452), long_name=latitude(360), long_name=longitude(720))&gt;,</span>
+<span class="go">&lt;CF Field: long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;model.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: air_temperature(time(1980), latitude(144), longitude(192)) K&gt;]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Select observation and model temperature fields by identity and index respectively, and look at their contents:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obs_temp</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s1">&#39;long_name=near-surface temperature&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">obs_temp</span><span class="p">)</span>
+<span class="go">Field: long_name=near-surface temperature (ncvar%tmp)</span>
+<span class="go">-----------------------------------------------------</span>
+<span class="go">Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius</span>
+<span class="go">Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian</span>
+<span class="go">                : long_name=latitude(360) = [-89.75, ..., 89.75] degrees_north</span>
+<span class="go">                : long_name=longitude(720) = [-179.75, ..., 179.75] degrees_east</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model_temp</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">model_temp</span><span class="p">)</span>
+<span class="go">Field: air_temperature (ncvar%tasmax)</span>
+<span class="go">-------------------------------------</span>
+<span class="go">Data            : air_temperature(time(1980), latitude(144), longitude(192)) K</span>
+<span class="go">Cell methods    : time(1980): maximum (interval: 1 hour)</span>
+<span class="go">Dimension coords: time(1980) = [1850-01-16 00:00:00, ..., 2014-12-16 00:00:00] 360_day</span>
+<span class="go">                : latitude(144) = [-89.375, ..., 89.375] degrees_north</span>
+<span class="go">                : longitude(192) = [0.9375, ..., 359.0625] degrees_east</span>
+<span class="go">                : height(1) = [1.5] m</span>
+<span class="go">Coord references: grid_mapping_name:latitude_longitude</span>
+</pre></div>
+</div>
+</li>
+<li><p>Regrid observational data to that of the model data (<a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method) and create a new low resolution observational data using bilinear interpolation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obs_temp_regrid</span> <span class="o">=</span> <span class="n">obs_temp</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">model_temp</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">obs_temp_regrid</span><span class="p">)</span>
+<span class="go">Field: long_name=near-surface temperature (ncvar%tmp)</span>
+<span class="go">-----------------------------------------------------</span>
+<span class="go">Data            : long_name=near-surface temperature(long_name=time(1452), latitude(144), longitude(192)) degrees Celsius</span>
+<span class="go">Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian</span>
+<span class="go">                : latitude(144) = [-89.375, ..., 89.375] degrees_north</span>
+<span class="go">                : longitude(192) = [0.9375, ..., 359.0625] degrees_east</span>
+<span class="go">Coord references: grid_mapping_name:latitude_longitude</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="plotting-wind-vectors-overlaid-on-precipitation-data">
+<h2><a class="toc-backref" href="#id6"><strong>Plotting wind vectors overlaid on precipitation data</strong></a><a class="headerlink" href="#plotting-wind-vectors-overlaid-on-precipitation-data" title="Permalink to this headline">¶</a></h2>
+<p>In this recipe we will plot wind vectors, derived from northward and eastward wind components, over precipitation data.</p>
+<ol class="arabic">
+<li><p>Import cf-python and cf-plot:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+</pre></div>
+</div>
+</li>
+<li><p>Read the field constructs using <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f1</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;northward.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f1</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: northward_wind(time(1980), latitude(144), longitude(192)) m s-1&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;eastward.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f2</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: eastward_wind(time(1980), latitude(144), longitude(192)) m s-1&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f3</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;monthly_precipitation.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f3</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: long_name=precipitation(long_name=time(1452), latitude(144), longitude(192)) mm/month&gt;]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Select wind vectors and precipitation data by index and look at their contents:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">f1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">Field: northward_wind (ncvar%vas)</span>
+<span class="go">---------------------------------</span>
+<span class="go">Data            : northward_wind(time(1980), latitude(144), longitude(192)) m s-1</span>
+<span class="go">Cell methods    : area: time(1980): mean</span>
+<span class="go">Dimension coords: time(1980) = [1850-01-16 00:00:00, ..., 2014-12-16 00:00:00] 360_day</span>
+<span class="go">                : latitude(144) = [-89.375, ..., 89.375] degrees_north</span>
+<span class="go">                : longitude(192) = [0.0, ..., 358.125] degrees_east</span>
+<span class="go">                : height(1) = [10.0] m</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">f2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="go">Field: eastward_wind (ncvar%uas)</span>
+<span class="go">--------------------------------</span>
+<span class="go">Data            : eastward_wind(time(1980), latitude(144), longitude(192)) m s-1</span>
+<span class="go">Cell methods    : area: time(1980): mean</span>
+<span class="go">Dimension coords: time(1980) = [1850-01-16 00:00:00, ..., 2014-12-16 00:00:00] 360_day</span>
+<span class="go">                : latitude(144) = [-89.375, ..., 89.375] degrees_north</span>
+<span class="go">                : longitude(192) = [0.0, ..., 358.125] degrees_east</span>
+<span class="go">                : height(1) = [10.0] m</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pre</span> <span class="o">=</span> <span class="n">f3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span>
+<span class="go">Field: long_name=precipitation (ncvar%pre)</span>
+<span class="go">------------------------------------------</span>
+<span class="go">Data            : long_name=precipitation(long_name=time(1452), latitude(144), longitude(192)) mm/month</span>
+<span class="go">Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 00:00:00] gregorian</span>
+<span class="go">                : latitude(144) = [-89.375, ..., 89.375] degrees_north</span>
+<span class="go">                : longitude(192) = [0.0, ..., 358.125] degrees_east</span>
+</pre></div>
+</div>
+</li>
+<li><p>Plot the wind vectors on top of precipitation data for June 1995 by creating a subspace (<a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a>) with a date-time object (<a class="reference internal" href="function/cf.dt.html#cf.dt" title="cf.dt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt</span></code></a>) and using <a class="reference external" href="http://ajheaps.github.io/cf-plot/con.html">cfplot.con</a>. Here <a class="reference external" href="http://ajheaps.github.io/cf-plot/gopen.html">cfplot.gopen</a> is used to define the parts of the plot area, which is closed by <a class="reference external" href="http://ajheaps.github.io/cf-plot/gclose.html">cfplot.gclose</a>; <a class="reference external" href="http://ajheaps.github.io/cf-plot/cscale.html">cfplot.cscale</a> is used to choose one of the colour maps amongst many available; <a class="reference external" href="http://ajheaps.github.io/cf-plot/levs.html">cfplot.levs</a> is used to set the contour levels for precipitation data; and <a class="reference external" href="http://ajheaps.github.io/cf-plot/vect.html">cfplot.vect</a> is used to plot the wind vectors for June 1995:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">june_95</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">year</span><span class="p">(</span><span class="mi">1995</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">cf</span><span class="o">.</span><span class="n">month</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;precip4_11lev&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">pre</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">june_95</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;June 1995 monthly global precipitation&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">june_95</span><span class="p">),</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">june_95</span><span class="p">),</span>
+<span class="gp">... </span>         <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/june1995_preci.png" src="_images/june1995_preci.png" />
+</figure>
+</li>
+</ol>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-01-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
