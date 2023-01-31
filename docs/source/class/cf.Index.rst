@@ -212,7 +212,7 @@ Data
    :template: method.rst
 	      
 
-   ~cf.Index.chunk
+   ~cf.Index.rechunk
    ~cf.Index.close
    ~cf.Index.convert_reference_time
    ~cf.Index.cyclic
@@ -607,6 +607,7 @@ Deprecated
    ~cf.Index.asdatetime
    ~cf.Index.asreftime
    ~cf.Index.attributes
+   ~cf.Index.chunk
    ~cf.Index.Data
    ~cf.Index.delprop
    ~cf.Index.dtvarray

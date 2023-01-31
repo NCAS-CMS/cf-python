@@ -208,6 +208,8 @@ Date-time support
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.Data.change_calendar
+   ~cf.Data.convert_reference_time
    ~cf.Data.datetime_array
    ~cf.Data.datetime_as_string
    ~cf.Data.day
@@ -614,6 +616,7 @@ Performance
    ~cf.Data.nc_clear_hdf5_chunksizes
    ~cf.Data.nc_hdf5_chunksizes
    ~cf.Data.nc_set_hdf5_chunksizes
+   ~cf.Data.rechunk
    ~cf.Data.close
    ~cf.Data.chunks
    ~cf.Data.rechunk
@@ -627,10 +630,7 @@ Performance
    ~cf.Data.to_memory
    ~cf.Data.in_memory
    ~cf.Data.fits_in_memory
-   ~cf.Data.fits_in_one_chunk_in_memory
    ~cf.Data.section
-   ~cf.Data.reconstruct_sectioned_data
-   ~cf.Data.HDF_chunks
    ~cf.Data.persist
 
 .. rubric:: Attributes
@@ -640,6 +640,7 @@ Performance
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.Data.chunks
    ~cf.Data.npartitions
    ~cf.Data.numblocks
 
@@ -820,10 +821,27 @@ Deprecated
    ~cf.Data.dumps
    ~cf.Data.expand_dims
    ~cf.Data.files
-   ~cf.Data.get_filenames
+   ~cf.Data.fits_in_one_chunk_in_memory
+   ~cf.Data.HDF_chunks
+   ~cf.Data.in_memory
    ~cf.Data.ismasked
    ~cf.Data.mask_fpe
    ~cf.Data.mask_invalid
+   ~cf.Data.partition_boundaries
+   ~cf.Data.partition_configuration
+   ~cf.Data.partitions
+   ~cf.Data.reconstruct_sectioned_data
    ~cf.Data.save_to_disk
    ~cf.Data.seterr
+   ~cf.Data.to_disk
+   ~cf.Data.to_memory
    ~cf.Data.unsafe_array
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.ispartitioned

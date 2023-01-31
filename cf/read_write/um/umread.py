@@ -1845,7 +1845,7 @@ class UMField:
         recs = self.recs
 
         um_Units = self.um_Units
-        units = um_Units.units
+        units = getattr(um_Units, "units", None)
         calendar = getattr(um_Units, "calendar", None)
 
         data_type_in_file = self.data_type_in_file
@@ -2803,13 +2803,13 @@ class UMField:
     #                ppfile.seek(file_position, os.SEEK_SET)
     #                data = None
     #                # dch also test in bmdi?:
-    #                if numpy_any(bounds[..., 1] == _pp_rmdi):
+    #                if np.any(bounds[..., 1] == _pp_rmdi):
     #                    # dch also test in bmdi?:
-    #                    if not numpy_any(bounds[..., 0] == _pp_rmdi):
+    #                    if not np.any(bounds[..., 0] == _pp_rmdi):
     #                        data = bounds[..., 0]
     #                    bounds = None
     #                else:
-    #                    data = numpy_mean(bounds, axis=1)
+    #                    data = np.mean(bounds, axis=1)
     #
     #                if (data, bounds) != (None, None):
     #                    aux = "aux%(auxN)d" % locals()
@@ -2838,7 +2838,7 @@ class UMField:
     #                    # Reset the file pointer after reading the
     #                    # extra data into a numpy array
     #                    ppfile.seek(file_position, os.SEEK_SET)
-    #                    if not numpy_any(data == _pp_rmdi):  # dch + test in bmdi
+    #                    if not np.any(data == _pp_rmdi):  # dch + test in bmdi
     #                        aux = "aux%(auxN)d" % locals()
     #                        auxN += 1  # Increment auxiliary number
     #                        coord = _create_Coordinate(

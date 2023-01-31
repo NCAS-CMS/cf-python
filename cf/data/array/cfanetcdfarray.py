@@ -104,12 +104,9 @@ class CFANetCDFArray(NetCDFArray):
                 The calendar of the aggregated data. Set to `None` to
                 indicate the CF default calendar, if applicable.
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
             instructions: `str`, optional
                 The ``aggregated_data`` attribute value found on the
@@ -134,7 +131,7 @@ class CFANetCDFArray(NetCDFArray):
                 aggregated_data = source.get_aggregated_data(copy=False)
             except AttributeError:
                 aggregated_data = {}
-        else:
+        elif filename is not None:
             from CFAPython import CFAFileFormat
             from CFAPython.CFADataset import CFADataset
             from CFAPython.CFAExceptions import CFAException
@@ -182,6 +179,22 @@ class CFANetCDFArray(NetCDFArray):
             )
 
             del cfa
+        else:
+            super().__init__(
+                filename=filename,
+                ncvar=ncvar,
+                varid=varid,
+                group=group,
+                dtype=dtype,
+                mask=mask,
+                units=units,
+                calendar=calendar,
+                copy=copy,
+            )
+
+            fragment_shape = None
+            aggregated_data = None
+            instructions = None
 
         self._set_component("fragment_shape", fragment_shape, copy=False)
         self._set_component("aggregated_data", aggregated_data, copy=False)
@@ -206,6 +219,7 @@ class CFANetCDFArray(NetCDFArray):
         )
 
     def __getitem__(self, indices):
+        """x.__getitem__(indices) <==> x[indices]"""
         return NotImplemented  # pragma: no cover
 
     def _set_fragment(self, var, frag_loc, aggregated_data, cfa_filename):

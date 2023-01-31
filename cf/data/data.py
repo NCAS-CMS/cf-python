@@ -14,7 +14,6 @@ from dask import compute, delayed  # noqa: F401
 from dask.array import Array
 from dask.array.core import normalize_chunks
 from dask.base import is_dask_collection, tokenize
-from dask.core import flatten
 from dask.highlevelgraph import HighLevelGraph
 from dask.optimization import cull
 
@@ -39,10 +38,7 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import (  # cfa_to_dask,; compressed_to_dask,
-    generate_axis_identifiers,
-    to_dask,
-)
+from .creation import generate_axis_identifiers, to_dask
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -57,11 +53,11 @@ from .dask_utils import (
 from .mixin import DataClassDeprecationsMixin
 from .utils import (
     YMDhms,
-    _is_numeric_dtype,
     conform_units,
     convert_to_datetime,
     convert_to_reftime,
     first_non_missing_value,
+    is_numeric_dtype,
     new_axis_identifier,
     scalar_masked_array,
 )
@@ -79,6 +75,9 @@ _empty_set = set()
 _units_None = Units()
 _units_1 = Units("1")
 _units_radians = Units("radians")
+
+_month_units = ("month", "months")
+_year_units = ("year", "years", "yr")
 
 _dtype_float32 = np.dtype("float32")
 _dtype_float = np.dtype(float)
@@ -253,11 +252,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 .. versionadded:: 3.0.5
 
-            source: optional
-                Initialise the data values and metadata (such as
-                units, mask hardness, etc.) from the data of
-                *source*. All other arguments, with the exception of
-                *copy*, are ignored.
+            {{init source: optional}}
 
             hardmask: `bool`, optional
                 If False then the mask is soft. By default the mask is
@@ -268,9 +263,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 given by the *array* parameter are re-interpreted as
                 date-time objects. By default they are not.
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior to
-                initialisation. By default arguments are deep copied.
+            {{init copy: `bool`, optional}}
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
@@ -1293,7 +1286,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         if array is NotImplemented:
             logger.warning(
-                "NotImplemented has been set in the place of a dask array."
+                "WARNING: NotImplemented has been set in the place of a "
+                "dask array."
                 "\n\n"
                 "This could occur if any sort of exception is raised "
                 "by a function that is run on chunks (via, for "
@@ -2145,6 +2139,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
          [2 2 3 3]]
 
         """
+        from dask.core import flatten
+
         # TODODASKAPI: interpolation -> method
         if interpolation is not None:
             _DEPRECATION_ERROR_KWARGS(
@@ -2693,23 +2689,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
 
-            threshold: `int`, optional
-                The graph growth factor under which we don't bother
-                introducing an intermediate step. See
-                `dask.array.rechunk` for details.
+            {{threshold: `int`, optional}}
 
-            block_size_limit: `int`, optional
-                The maximum block size (in bytes) we want to produce,
-                as defined by the `cf.chunksize` function.
+            {{block_size_limit: `int`, optional}}
 
-            balance: `bool`, optional
-                If True, try to make each chunk the same size. By
-                default this is not attempted.
-
-                This means ``balance=True`` will remove any small
-                leftover chunks, so using ``d.rechunk(chunks=len(d) //
-                N, balance=True)`` will almost certainly result in
-                ``N`` chunks.
+            {{balance: `bool`, optional}}
 
         :Returns:
 
@@ -3365,6 +3349,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         else:
             result = getattr(dx0, method)(dx1)
 
+        if result is NotImplemented:
+            raise TypeError(
+                f"Unsupported operands for {method}: {self!r} and {other!r}"
+            )
+
         # Set axes when other has more dimensions than self
         axes = None
         ndim0 = dx0.ndim
@@ -3402,6 +3391,144 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "'cf.Data._parse_indices' is not available. "
             "Use function 'cf.parse_indices' instead."
         )
+
+    def _regrid(
+        self,
+        method=None,
+        operator=None,
+        regrid_axes=None,
+        regridded_sizes=None,
+        min_weight=None,
+    ):
+        """Regrid the data.
+
+        See `cf.regrid.regrid` for details.
+
+        .. versionadded:: 3.14.0
+
+        .. seealso:: `cf.Field.regridc`, `cf.Field.regrids`
+
+        :Parameters:
+
+            {{method: `str` or `None`, optional}}
+
+            operator: `RegridOperator`
+                The definition of the source and destination grids and
+                the regridding weights.
+
+            regrid_axes: sequence of `int`
+                The positions of the regrid axes in the data, given in
+                the relative order expected by the regrid
+                operator. For spherical regridding this order is [Y,
+                X].
+
+                *Parameter example:*
+                  ``[2, 3]``
+
+            regridded_sizes: `dict`
+                Mapping of the regrid axes, defined by the integer
+                elements of *regrid_axes*, to their regridded sizes.
+
+                *Parameter example:*
+                  ``{3: 128, 2: 64}``
+
+            {{min_weight: float, optional}}
+
+        :Returns:
+
+            `Data`
+                The regridded data.
+
+        """
+        from dask import delayed
+
+        from .dask_regrid import regrid, regrid_weights
+
+        shape = self.shape
+        src_shape = tuple(shape[i] for i in regrid_axes)
+        if src_shape != operator.src_shape:
+            raise ValueError(
+                f"Regrid axes shape {src_shape} does not match "
+                f"the shape of the regrid operator: {operator.src_shape}"
+            )
+
+        dx = self.to_dask_array()
+
+        # Rechunk so that each chunk contains data in the form
+        # expected by the regrid operator, i.e. the regrid axes all
+        # have chunksize -1.
+        numblocks = dx.numblocks
+        if not all(numblocks[i] == 1 for i in regrid_axes):
+            chunks = [
+                (-1,) if i in regrid_axes else c
+                for i, c in enumerate(dx.chunks)
+            ]
+            dx = dx.rechunk(chunks)
+
+        # Define the regridded chunksizes
+        regridded_chunks = tuple(
+            (regridded_sizes[i],) if i in regridded_sizes else c
+            for i, c in enumerate(dx.chunks)
+        )
+
+        # Set the output data type
+        if method in ("nearest_dtos", "nearest_stod"):
+            dst_dtype = dx.dtype
+        else:
+            dst_dtype = float
+
+        non_regrid_axes = [i for i in range(self.ndim) if i not in regrid_axes]
+
+        # Cast weights and mask arrays as dask arrays
+        weights = da.asanyarray(operator.weights)
+        row = da.asanyarray(operator.row)
+        col = da.asanyarray(operator.col)
+
+        src_mask = operator.src_mask
+        if src_mask is not None:
+            src_mask = da.asanyarray(src_mask)
+
+        dst_mask = operator.dst_mask
+        if dst_mask is not None:
+            dst_mask = da.asanyarray(dst_mask)
+
+        # Create a delayed object that calculates the weights
+        # matrix
+        weights_func = partial(
+            regrid_weights,
+            src_shape=src_shape,
+            dst_shape=operator.dst_shape,
+            dtype=dst_dtype,
+            start_index=operator.start_index,
+        )
+        weights = delayed(weights_func, pure=True)(
+            weights=weights,
+            row=row,
+            col=col,
+            dst_mask=dst_mask,
+        )
+
+        # Create a regridding function to apply to each chunk
+        regrid_func = partial(
+            regrid,
+            method=method,
+            src_shape=src_shape,
+            dst_shape=operator.dst_shape,
+            axis_order=non_regrid_axes + list(regrid_axes),
+            min_weight=min_weight,
+        )
+
+        dx = dx.map_blocks(
+            regrid_func,
+            weights=weights,
+            ref_src_mask=src_mask,
+            chunks=regridded_chunks,
+            meta=np.array((), dtype=dst_dtype),
+        )
+
+        d = self.copy()
+        d._set_dask(dx)
+        return d
 
     @classmethod
     def concatenate(cls, data, axis=0, cull_graph=True):
@@ -4758,7 +4885,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     #    **Examples**
     #
     #        '''
-    #        return cls(numpy_arctan2(y, x), units=_units_radians)
+    #        return cls(np.arctan2(y, x), units=_units_radians)
 
     @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):
@@ -5426,14 +5553,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             unravel: `bool`, optional
                 If True then when locating the maximum over the whole
-                data, return the location as an index for each axis as
-                a `tuple`. By default an index to the flattened array
-                is returned in this case. Ignored if locating the
-                maxima over a subset of the axes.
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the maxima over a subset of the axes.
 
         :Returns:
 
-            `Data` or `tuple`
+            `Data` or `tuple` of `int`
                 The location of the maximum, or maxima.
 
         **Examples**
@@ -5482,6 +5609,177 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             return tuple(np.array(da.unravel_index(a, self.shape)))
 
         return type(self)(a)
+
+    @_inplace_enabled(default=False)
+    def convert_reference_time(
+        self,
+        units=None,
+        calendar_months=False,
+        calendar_years=False,
+        inplace=False,
+    ):
+        """Convert reference time data values to have new units.
+
+        Conversion is done by decoding the reference times to
+        date-time objects and then re-encoding them for the new units.
+
+        Any conversions are possible, but this method is primarily for
+        conversions which require a change in the date-times
+        originally encoded. For example, use this method to
+        reinterpret data values in units of "months" since a reference
+        time to data values in "calendar months" since a reference
+        time. This is often necessary when units of "calendar months"
+        were intended but encoded as "months", which have special
+        definition. See the note and examples below for more details.
+
+        .. note:: It is recommended that the units "year" and "month"
+                  be used with caution, as explained in the following
+                  excerpt from the CF conventions: "The Udunits
+                  package defines a year to be exactly 365.242198781
+                  days (the interval between 2 successive passages of
+                  the sun through vernal equinox). It is not a
+                  calendar year. Udunits includes the following
+                  definitions for years: a common_year is 365 days, a
+                  leap_year is 366 days, a Julian_year is 365.25 days,
+                  and a Gregorian_year is 365.2425 days. For similar
+                  reasons the unit ``month``, which is defined to be
+                  exactly year/12, should also be used with caution.
+
+        **Performance**
+
+        For conversions which do not require a change in the
+        date-times implied by the data orginal values, this method
+        will be considerably slower than a simple reassignment of the
+        units. For example, if the original units are ``'days since
+        2000-12-1'`` then ``d.Units = cf.Units('days since
+        1901-1-1')`` will give the same result and be considerably
+        faster than ``d.convert_reference_time(cf.Units('days since
+        1901-1-1'))``.
+
+        .. versionadded:: 3.14.0
+
+        .. seeealso:: `change_calendar`, `datetime_array`, `Units`
+
+        :Parameters:
+
+            units: `Units`, optional
+                The reference time units to convert to. By default the
+                units are days since the original reference time in
+                the original calendar.
+
+                *Parameter example:*
+                  If the original units are ``'months since
+                  2000-1-1'`` in the Gregorian calendar then the
+                  default units to convert to are ``'days since
+                  2000-1-1'`` in the Gregorian calendar.
+
+            calendar_months: `bool`, optional
+                If True then treat units of ``'months'`` as if they
+                were calendar months (in whichever calendar is
+                originally specified), rather than a 12th of the
+                interval between two successive passages of the sun
+                through vernal equinox (i.e. 365.242198781/12 days).
+
+            calendar_years: `bool`, optional
+                If True then treat units of ``'years'`` as if they
+                were calendar years (in whichever calendar is
+                originally specified), rather than the interval
+                between two successive passages of the sun through
+                vernal equinox (i.e. 365.242198781 days).
+
+            {{inplace: `bool`, optional}}
+
+            {{i: deprecated at version 3.0.0}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The data with converted reference time values, or
+                `None` if the operation was in-place.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3, 4], units="months since 2004-1-1")
+        >>> d.Units
+        <Units: months since 2004-1-1>
+        >>> print(d.datetime_array)
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2003, 12, 31, 10, 29, 3, 831223, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 30, 20, 58, 7, 662446, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 7, 27, 11, 493670, has_year_zero=False)]
+        >>> print(d.array)
+        [0 1 2 3]
+        >>> e = d.convert_reference_time(calendar_months=True)
+        >>> e.Units
+        <Units: days since 2004-1-1>
+        >>> print(e.datetime_array)
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 2, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 0, 0, 0, 0, has_year_zero=False)]
+        >>> print(e.array)
+        [ 0 31 62 91]
+
+        """
+        units0 = self.Units
+
+        if not units0.isreftime:
+            raise ValueError(
+                f"{self.__class__.__name__} must have reference time units. "
+                f"Got {units0!r}"
+            )
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if units is None:
+            # By default, set the target units to "days since
+            # <reference time of units0>, calendar=<calendar of
+            # units0>"
+            units = Units(
+                "days since " + units0.units.split(" since ")[1],
+                calendar=units0._calendar,
+            )
+        elif not getattr(units, "isreftime", False):
+            raise ValueError(
+                f"New units must be reference time units, not {units!r}"
+            )
+
+        units0_since_reftime = units0._units_since_reftime
+        if units0_since_reftime in _month_units:
+            if calendar_months:
+                units0 = Units(
+                    "calendar_" + units0.units, calendar=units0._calendar
+                )
+            else:
+                units0 = Units(
+                    "days since " + units0.units.split(" since ")[1],
+                    calendar=units0._calendar,
+                )
+                d.Units = units0
+        elif units0_since_reftime in _year_units:
+            if calendar_years:
+                units0 = Units(
+                    "calendar_" + units0.units, calendar=units0._calendar
+                )
+            else:
+                units0 = Units(
+                    "days since " + units0.units.split(" since ")[1],
+                    calendar=units0._calendar,
+                )
+                d.Units = units0
+
+        dx = d.to_dask_array()
+
+        # Convert to the correct date-time objects
+        dx = dx.map_blocks(cf_rt2dt, units=units0, dtype=object)
+
+        # Convert the date-time objects to reference times
+        dx = dx.map_blocks(cf_dt2rt, units=units, dtype=float)
+
+        d._set_dask(dx)
+        d.override_units(units, inplace=True)
+
+        return d
 
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
@@ -7133,8 +7431,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # We assume that all inputs are masked arrays. Note we compare the
         # data first as this may return False due to different dtype without
         # having to wait until the compute call.
-        self_is_numeric = _is_numeric_dtype(self_dx)
-        other_is_numeric = _is_numeric_dtype(other_dx)
+        self_is_numeric = is_numeric_dtype(self_dx)
+        other_is_numeric = is_numeric_dtype(other_dx)
         if self_is_numeric and other_is_numeric:
             data_comparison = _da_ma_allclose(
                 self_dx,
@@ -9510,9 +9808,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Return True if the array is small enough to be retained in
         memory.
 
-        Returns True if the size of the array with all delayed
-        operations computed, always including space for a full boolean
-        mask, is small enough to be retained in available memory.
+        Returns True if the size of the computed array, always
+        including space for a full boolean mask, is small enough to be
+        retained in available memory.
 
         **Performance**
 
@@ -10206,8 +10504,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # TODODASK - check if axis parsing is done in dask
-
         if not d.ndim:
             if axes or axes == 0:
                 raise ValueError(
@@ -10762,10 +11058,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
 
-        # TODODASK: Steps to preserve invalid values shown, taking same
-        # approach as pre-daskification, but maybe we can now change approach
-        # to avoid finding mask and data, which requires early compute...
-        # Step 1. extract the non-masked data and the mask separately
         if preserve_invalid:
             # Assume all inputs are masked, as checking for a mask to confirm
             # is expensive. If unmasked, effective mask will be all False.

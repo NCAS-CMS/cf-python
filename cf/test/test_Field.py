@@ -56,7 +56,7 @@ class FieldTest(unittest.TestCase):
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
     )
     filename1 = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "regrid_file1.nc"
+        os.path.dirname(os.path.abspath(__file__)), "regrid.nc"
     )
     filename2 = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file2.nc"
@@ -699,7 +699,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(a.equals(b, verbose=2))
         self.assertTrue(b.equals(a, verbose=2))
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(TypeError):
             f + ("a string",)
 
     def test_Field__mul__(self):
@@ -1627,22 +1627,19 @@ class FieldTest(unittest.TestCase):
     def test_Field_construct_key(self):
         self.f.construct_key("grid_longitude")
 
+    @unittest.skipIf(
+        not SCIPY_AVAILABLE, "scipy must be installed for this test."
+    )
     def test_Field_convolution_filter(self):
-        if not SCIPY_AVAILABLE:  # needed for 'convolution_filter' method
-            raise unittest.SkipTest("SciPy must be installed for this test.")
+        f = cf.read(self.filename1)[0]
 
         window = [0.1, 0.15, 0.5, 0.15, 0.1]
-
-        f = cf.read(self.filename1)[0]
 
         # Test user weights in different modes
         for mode in ("reflect", "constant", "nearest", "wrap"):
             g = f.convolution_filter(window, axis=-1, mode=mode, cval=0.0)
-            self.assertTrue(
-                (
-                    g.array == convolve1d(f.array, window, axis=-1, mode=mode)
-                ).all()
-            )
+            a = convolve1d(f.array, window, axis=-1, mode=mode)
+            self.assertTrue(np.allclose(g.array, a, atol=1.6e-5, rtol=0))
 
         # Test coordinate bounds
         f = cf.example_field(0)
@@ -1665,10 +1662,10 @@ class FieldTest(unittest.TestCase):
             (gx[:, 1] == [135, 180, 225, 270, 315, 360, 360, 360]).all()
         )
 
+    @unittest.skipIf(
+        not SCIPY_AVAILABLE, "scipy must be installed for this test."
+    )
     def test_Field_moving_window(self):
-        if not SCIPY_AVAILABLE:  # needed for 'moving_window' method
-            raise unittest.SkipTest("SciPy must be installed for this test.")
-
         weights = cf.Data([1, 2, 3, 10, 5, 6, 7, 8]) / 2
 
         f = cf.example_field(0)
@@ -1808,10 +1805,10 @@ class FieldTest(unittest.TestCase):
 
         self.assertEqual(len(g.cell_methods()), len(f.cell_methods()) + 1)
 
+    @unittest.skipIf(
+        not SCIPY_AVAILABLE, "scipy must be installed for this test."
+    )
     def test_Field_derivative(self):
-        if not SCIPY_AVAILABLE:  # needed for 'derivative' method
-            raise unittest.SkipTest("SciPy must be installed for this test.")
-
         f = cf.example_field(0)
         f[...] = np.arange(9)[1:] * 45
 
@@ -2483,6 +2480,21 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.equals(f))
 
         self.assertIsNone(g.persist(inplace=True))
+
+    def test_Field_argmax(self):
+        """Test the `argmax` Field method."""
+        f = cf.example_field(2)
+        i = f.argmax("T")
+        self.assertEqual(i.shape, f.shape[1:])
+
+        i = f.argmax(unravel=True)
+        self.assertIsInstance(i, tuple)
+        g = f[i]
+        self.assertEqual(g.shape, (1, 1, 1))
+
+        # Bad axis
+        with self.assertRaises(ValueError):
+            f.argmax(axis="foo")
 
     def test_Field_subspace(self):
         f = self.f

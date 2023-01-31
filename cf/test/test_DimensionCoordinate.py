@@ -512,6 +512,16 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         self.assertIsNone(d.persist(inplace=True))
 
+    def test_DimensiconCoordinate_rechunk(self):
+        """Test the `rechunk` DimensionCoordinate method."""
+        d = self.dim.copy()
+        self.assertIsNone(d.rechunk(-1, inplace=True))
+        self.assertEqual(d.data.chunks, ((d.size,),))
+
+        d = d.rechunk({-1: 1})
+        self.assertEqual(d.data.chunks, ((1,) * d.size,))
+        self.assertEqual(d.bounds.data.chunks, ((1,) * d.size, (2,)))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

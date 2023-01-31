@@ -5,6 +5,7 @@ import platform
 import sys
 import unittest
 
+import dask.array as da
 import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -354,6 +355,18 @@ class functionTest(unittest.TestCase):
             [],
         )
         self.assertEqual(cf.indices_shape((2, 3), shape, keepdims=False), [])
+
+    def test_size(self):
+        self.assertEqual(cf.size(9), 1)
+        self.assertEqual(cf.size("foobar"), 1)
+        self.assertEqual(cf.size([9]), 1)
+        self.assertEqual(cf.size((8, 9)), 2)
+
+        x = np.arange(9)
+        self.assertEqual(cf.size(x), x.size)
+
+        x = da.arange(9)
+        self.assertEqual(cf.size(x), x.size)
 
 
 if __name__ == "__main__":

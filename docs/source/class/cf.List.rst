@@ -212,7 +212,7 @@ Data
    :template: method.rst
 	      
 
-   ~cf.List.chunk
+   ~cf.List.rechunk
    ~cf.List.close
    ~cf.List.convert_reference_time
    ~cf.List.cyclic
@@ -593,6 +593,7 @@ Deprecated
    ~cf.List.asdatetime
    ~cf.List.asreftime
    ~cf.List.attributes
+   ~cf.List.chunk
    ~cf.List.Data
    ~cf.List.delprop
    ~cf.List.dtvarray

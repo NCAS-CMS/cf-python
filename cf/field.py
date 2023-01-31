@@ -5,22 +5,6 @@ from operator import mul as operator_mul
 
 import cfdm
 import numpy as np
-from numpy import array as numpy_array
-from numpy import array_equal as numpy_array_equal
-from numpy import diff as numpy_diff
-from numpy import empty as numpy_empty
-from numpy import finfo as numpy_finfo
-from numpy import full as numpy_full
-from numpy import ndarray as numpy_ndarray
-from numpy import prod as numpy_prod
-from numpy import reshape as numpy_reshape
-from numpy import shape as numpy_shape
-from numpy import size as numpy_size
-from numpy import squeeze as numpy_squeeze
-from numpy import tile as numpy_tile
-from numpy import unique as numpy_unique
-from numpy import where as numpy_where
-from numpy.ma import is_masked as numpy_ma_is_masked
 
 from . import (
     AuxiliaryCoordinate,
@@ -62,41 +46,11 @@ from .functions import (
     _DEPRECATION_ERROR_METHOD,
     DeprecationError,
     _section,
-    chunksize,
     parse_indices,
 )
 from .functions import relaxed_identities as cf_relaxed_identities
+from .functions import size as cf_size
 from .query import Query, eq, ge, gt, le, lt
-from .regrid import (
-    RegridOperator,
-    conservative_regridding_methods,
-    create_Field,
-    create_Grid,
-    create_Regrid,
-    get_cartesian_coords,
-    grids_have_same_coords,
-    grids_have_same_masks,
-    regrid_check_bounds,
-    regrid_check_method,
-    regrid_check_use_src_mask,
-    regrid_compute_field_mass,
-    regrid_copy_coordinate_references,
-    regrid_create_operator,
-    regrid_fill_fields,
-    regrid_get_axis_indices,
-    regrid_get_coord_order,
-    regrid_get_destination_mask,
-    regrid_get_latlon,
-    regrid_get_operator_method,
-    regrid_get_regridded_data,
-    regrid_get_reordered_sections,
-    regrid_get_section_shape,
-    regrid_initialize,
-    regrid_update_coordinate_references,
-    regrid_update_coordinates,
-    regrid_use_bounds,
-    run_Regrid,
-)
 from .subspacefield import SubspaceField
 from .timeduration import TimeDuration
 from .units import Units
@@ -333,13 +287,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 Properties may also be set after initialisation with the
                 `set_properties` and `set_property` methods.
 
-            source: optional
-                Initialise the properties, data and metadata constructs
-                from those of *source*.
+            {{init source: optional}}
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior to
-                initialisation. By default arguments are deep copied.
+            {{init copy: `bool`, optional}}
 
         """
         super().__init__(
@@ -912,944 +862,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return positions
 
-    def _binary_operation_old(self, other, method):
-        """Implement binary arithmetic and comparison operations on the
-        master data array with metadata-aware broadcasting.
-
-        It is intended to be called by the binary arithmetic and
-        comparison methods, such as `__sub__`, `__imul__`, `__rdiv__`,
-        `__lt__`, etc.
-
-        :Parameters:
-
-            other: `Field` or `Query` or any object that broadcasts to the field construct's data
-
-            method: `str`
-                The binary arithmetic or comparison method name (such as
-                ``'__idiv__'`` or ``'__ge__'``).
-
-        :Returns:
-
-            `Field`
-                The new field, or the same field if the operation was an
-                in place augmented arithmetic assignment.
-
-        **Examples**
-
-        >>> h = f._binary_operation(g, '__add__')
-        >>> h = f._binary_operation(g, '__ge__')
-        >>> f._binary_operation(g, '__isub__')
-        >>> f._binary_operation(g, '__rdiv__')
-
-        """
-        if getattr(other, "_NotImplemented_RHS_Data_op", False):
-            return NotImplemented
-
-        if not isinstance(other, self.__class__):
-            # --------------------------------------------------------
-            # Combine the field with anything other than a Query
-            # object or another field construct
-            # --------------------------------------------------------
-            if numpy_size(other) == 1:
-                # ----------------------------------------------------
-                # No changes to the field metadata constructs are
-                # required so can use the metadata-unaware parent
-                # method
-                # ----------------------------------------------------
-                other = Data(other)
-                if other.ndim > 0:
-                    other.squeeze(inplace=True)
-
-                return super()._binary_operation(other, method)
-
-            if self._is_broadcastable(numpy_shape(other)):
-                return super()._binary_operation(other, method)
-
-            raise ValueError(
-                f"Can't combine {self.__class__.__name__!r} with "
-                f"{other.__class__.__name__!r} due to incompatible data "
-                f"shapes: {self.shape}, {numpy_shape(other)}"
-            )
-
-        # ============================================================
-        # Still here? Then combine the field with another field
-        # ============================================================
-
-        units = self.Units
-        sn = self.get_property("standard_name", None)
-        ln = self.get_property("long_name", None)
-
-        other_sn = other.get_property("standard_name", None)
-        other_ln = other.get_property("long_name", None)
-
-        # ------------------------------------------------------------
-        # Analyse each domain
-        # ------------------------------------------------------------
-        relaxed_identities = cf_relaxed_identities()
-        s = self.analyse_items(relaxed_identities=relaxed_identities)
-        v = other.analyse_items(relaxed_identities=relaxed_identities)
-
-        logger.debug(s)  # pragma: no cover
-        logger.debug()  # pragma: no cover
-        logger.debug(v)  # pragma: no cover
-
-        if s["warnings"] or v["warnings"]:
-            raise ValueError(
-                f"Can't combine fields: {s['warnings'] or v['warnings']}"
-            )
-
-        # Check that at most one field has undefined axes
-        if s["undefined_axes"] and v["undefined_axes"]:
-            raise ValueError(
-                "Can't combine fields: Both fields have not-strictly-defined "
-                "axes: {!r}, {!r}. Consider setting "
-                "cf.relaxed_identities(True)".format(
-                    tuple(
-                        self.constructs.domain_axis_identity(a)
-                        for a in s["undefined_axes"]
-                    ),
-                    tuple(
-                        other.constructs.domain_axis_identity(a)
-                        for a in v["undefined_axes"]
-                    ),
-                )
-            )
-
-        # Find the axis names which are present in both fields
-        matching_ids = set(s["id_to_axis"]).intersection(v["id_to_axis"])
-        logger.debug(
-            f"s['id_to_axis'] = {s['id_to_axis']}"
-        )  # pragma: no cover
-        logger.debug(
-            f"v['id_to_axis'] = {v['id_to_axis']}"
-        )  # pragma: no cover
-        logger.debug(f"matching_ids    = {matching_ids}")  # pragma: no cover
-
-        # Check that any matching axes defined by an auxiliary
-        # coordinate are done so in both fields.
-        for identity in set(s["id_to_aux"]).symmetric_difference(
-            v["id_to_aux"]
-        ):
-            if identity in matching_ids:
-                raise ValueError(
-                    f"Can't combine fields: {identity!r} axis defined by "
-                    "auxiliary in only 1 field"
-                )  # TODO ~WRONG
-
-        #  ------------------------------------------------------------
-        # For matching dimension coordinates check that they have
-        # consistent coordinate references and that one of the following is
-        # true:
-        #
-        # 1) They have equal size > 1 and their data arrays are
-        #    equivalent
-        #
-        # 2) They have unequal sizes and one of them has size 1
-        #
-        # 3) They have equal size = 1. In this case, if the data
-        #    arrays are not equivalent then the axis will be omitted
-        #    from the result field.
-        # -------------------------------------------------------------
-
-        # List of size 1 axes to be completely removed from the result
-        # field. Such an axis's size 1 defining coordinates have
-        # unequivalent data arrays.
-        #
-        # For example:
-        # >>> remove_size1_axes0
-        # ['dim2']
-        remove_size1_axes0 = []
-
-        # List of matching axes with equivalent defining dimension
-        # coordinate data arrays.
-        #
-        # Note that we don't need to include matching axes with
-        # equivalent defining *auxiliary* coordinate data arrays.
-        #
-        # For example:
-        # >>>
-        # [('dim2', 'dim0')]
-        matching_axes_with_equivalent_data = {}
-
-        # For each field, list those of its matching axes which need
-        # to be broadcast against the other field. I.e. those axes
-        # which are size 1 but size > 1 in the other field.
-        #
-        # For example:
-        # >>> s['size1_broadcast_axes']
-        # ['dim1']
-        s["size1_broadcast_axes"] = []
-        v["size1_broadcast_axes"] = []
-
-        # DO SOMETING WITH v['size1_broadcast_axes'] to be symmetrical with regards
-        # coord refs!!!!!
-
-        # Map axes in field1 to axes in field0 and vice versa
-        #
-        # For example:
-        # >>> axis1_to_axis0
-        # {'dim1': 'dim0', 'dim2': 'dim1', 'dim0': 'dim2'}
-        # >>> axis0_to_axis1
-        # {'dim0': 'dim1', 'dim1': 'dim2', 'dim2': 'dim0'}
-        axis1_to_axis0 = {}
-        axis0_to_axis1 = {}
-
-        remove_items = set()
-
-        for identity in matching_ids:
-            axis0 = s["id_to_axis"][identity]
-            axis1 = v["id_to_axis"][identity]
-
-            axis1_to_axis0[axis1] = axis0
-            axis0_to_axis1[axis0] = axis1
-
-            key0 = s["id_to_coord"][identity]
-            key1 = v["id_to_coord"][identity]
-
-            coord0 = self.constructs[key0]
-            coord1 = other.constructs[key1]
-
-            # Check the sizes of the defining coordinates
-            size0 = coord0.size
-            size1 = coord1.size
-            if size0 != size1:
-                # Defining coordinates have different sizes
-                if size0 == 1:
-                    # Broadcast
-                    s["size1_broadcast_axes"].append(axis0)
-                elif size1 == 1:
-                    # Broadcast
-                    v["size1_broadcast_axes"].append(axis1)
-                else:
-                    # Can't broadcast
-                    raise ValueError(
-                        "Can't combine fields: Can't broadcast "
-                        f"{identity!r} axes with sizes {size0} and {size1}"
-                    )
-
-                # Move on to the next identity if the defining
-                # coordinates have different sizes
-                continue
-
-            # Still here? Then the defining coordinates have the same
-            # size.
-
-            # Check that equally sized defining coordinate data arrays
-            # are compatible
-            if coord0._equivalent_data(coord1):
-                # The defining coordinates have equivalent data
-                # arrays
-
-                # If the defining coordinates are attached to
-                # coordinate references then check that those
-                # coordinate references are equivalent
-
-                # For each field, find the coordinate references which
-                # contain the defining coordinate.
-                # refs0 = [ref for ref in self.coordinate_references.values()
-                #          if key0 in ref.coordinates()]
-                refs0 = [
-                    key
-                    for key, ref in self.coordinate_references.items()
-                    if key0 in ref.coordinates()
-                ]
-                refs1 = [
-                    key
-                    for key, ref in other.coordinate_references.items()
-                    if key1 in ref.coordinates()
-                ]
-
-                nrefs = len(refs0)
-                if nrefs > 1 or nrefs != len(refs1):
-                    # The defining coordinate are associated with
-                    # different numbers of coordinate references
-                    equivalent_refs = False
-                elif not nrefs:
-                    # Neither defining coordinate is associated with a
-                    # coordinate reference
-                    equivalent_refs = True
-                else:
-                    # Each defining coordinate is associated with
-                    # exactly one coordinate reference
-                    equivalent_refs = self._equivalent_coordinate_references(
-                        other, key0=refs0[0], key1=refs1[0], s=s, t=v
-                    )
-
-                if not equivalent_refs:
-                    # The defining coordinates have non-equivalent
-                    # coordinate references
-                    if coord0.size == 1:
-                        # The defining coordinates have non-equivalent
-                        # coordinate references but both defining
-                        # coordinates are of size 1 => flag this axis
-                        # to be omitted from the result field.
-                        # remove_size1_axes0.append(axis0)            dch
-                        if refs0:
-                            key0 = refs0[0]
-                            ref0 = self.coordinate_references[key0]
-                            remove_items.add(refs0[0])
-                            remove_items.update(
-                                ref0.coordinate_conversion.domain_ancillaries().values()
-                            )
-                    else:
-                        # The defining coordinates have non-equivalent
-                        # coordinate references and they are of size >
-                        # 1
-                        raise ValueError(
-                            "Can't combine fields: Incompatible coordinate "
-                            f"references for {identity!r} coordinates"
-                        )
-
-                elif identity not in s["id_to_aux"]:
-                    # The defining coordinates are both dimension
-                    # coordinates, have equivalent data arrays and
-                    # have equivalent coordinate references.
-                    matching_axes_with_equivalent_data[axis0] = axis1
-                else:
-                    # The defining coordinates are both auxiliary
-                    # coordinates, have equivalent data arrays and
-                    # have equivalent coordinate references.
-                    pass
-
-            else:
-                if coord0.size > 1:
-                    # The defining coordinates have non-equivalent
-                    # data arrays and are both of size > 1
-                    raise ValueError(
-                        f"Can't combine fields: Incompatible {identity!r} "
-                        f"coordinate values: {coord0.data}, {coord1.data}"
-                    )
-                else:
-                    # The defining coordinates have non-equivalent
-                    # data arrays and are both size 1 => this axis to
-                    # be omitted from the result field
-                    remove_size1_axes0.append(axis0)
-
-        logger.debug(
-            f"1: s['size1_broadcast_axes'] = {s['size1_broadcast_axes']}"
-        )  # pragma: no cover
-        logger.debug(
-            f"1: v['size1_broadcast_axes'] = {v['size1_broadcast_axes']}"
-        )  # pragma: no cover
-        logger.debug(
-            f"1: remove_size1_axes0 = {remove_size1_axes0}"
-        )  # pragma: no cover
-
-        matching_axis1_to_axis0 = axis1_to_axis0.copy()
-        matching_axis0_to_axis1 = axis0_to_axis1.copy()
-
-        logger.debug(
-            f"1: axis1_to_axis0 = {axis1_to_axis0}"
-        )  # pragma: no cover
-        logger.debug(
-            f"1: axis0_to_axis1 = {axis0_to_axis1}"
-        )  # pragma: no cover
-
-        # ------------------------------------------------------------
-        # Still here? Then the two fields are combinable!
-        # ------------------------------------------------------------
-
-        # ------------------------------------------------------------
-        # 2.1 Create copies of the two fields, unless it is an in
-        #     place combination, in which case we don't want to copy
-        #     self)
-        # ------------------------------------------------------------
-        field1 = other.copy()
-
-        inplace = method[2] == "i"
-        if not inplace:
-            field0 = self.copy()
-        else:
-            field0 = self
-
-        s["new_size1_axes"] = []
-
-        # ------------------------------------------------------------
-        # Permute the axes of the data array of field0 so that:
-        #
-        # * All of the matching axes are the inner (fastest varying)
-        #   axes
-        #
-        # * All of the undefined axes are the outer (slowest varying)
-        #   axes
-        #
-        # * All of the defined but unmatched axes are in the middle
-        # ------------------------------------------------------------
-        data_axes0 = field0.get_data_axes()
-        axes_unD = []  # Undefined axes
-        axes_unM = []  # Defined but unmatched axes
-        axes0_M = []  # Defined and matched axes
-        for axis0 in data_axes0:
-            if axis0 in axis0_to_axis1:
-                # Matching axis
-                axes0_M.append(axis0)
-            elif axis0 in s["undefined_axes"]:
-                # Undefined axis
-                axes_unD.append(axis0)
-            else:
-                # Defined but unmatched axis
-                axes_unM.append(axis0)
-
-        logger.debug(
-            "2: axes_unD, axes_unM, axes0_M = "
-            f"{axes_unD} {axes_unM} {axes0_M}"
-        )  # pragma: no cover
-
-        field0.transpose(axes_unD + axes_unM + axes0_M, inplace=True)
-
-        end_of_undefined0 = len(axes_unD)
-        start_of_unmatched0 = end_of_undefined0
-        start_of_matched0 = start_of_unmatched0 + len(axes_unM)
-        logger.debug(
-            f"2: end_of_undefined0   = {end_of_undefined0}"
-        )  # pragma: no cover
-        logger.debug(
-            f"2: start_of_unmatched0 = {start_of_unmatched0}"
-        )  # pragma: no cover
-        logger.debug(
-            f"2: start_of_matched0   = {start_of_matched0}"
-        )  # pragma: no cover
-
-        # ------------------------------------------------------------
-        # Permute the axes of the data array of field1 so that:
-        #
-        # * All of the matching axes are the inner (fastest varying)
-        #   axes and in corresponding positions to data0
-        #
-        # * All of the undefined axes are the outer (slowest varying)
-        #   axes
-        #
-        # * All of the defined but unmatched axes are in the middle
-        # ------------------------------------------------------------
-        data_axes1 = field1.get_data_axes()
-        axes_unD = []
-        axes_unM = []
-        axes1_M = [axis0_to_axis1[axis0] for axis0 in axes0_M]
-        for axis1 in data_axes1:
-            if axis1 in axes1_M:
-                pass
-            elif axis1 in axis1_to_axis0:
-                # Matching axis
-                axes_unM.append(axis1)
-            elif axis1 in v["undefined_axes"]:
-                # Undefined axis
-                axes_unD.append(axis1)
-            else:
-                # Defined but unmatched axis
-                axes_unM.append(axis1)
-
-        logger.debug(
-            "2: axes_unD , axes_unM , axes0_M = "
-            f"{axes_unD} {axes_unM} {axes0_M}"
-        )  # pragma: no cover
-
-        field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
-
-        start_of_unmatched1 = len(axes_unD)
-        start_of_matched1 = start_of_unmatched1 + len(axes_unM)
-        undefined_indices1 = slice(None, start_of_unmatched1)
-        unmatched_indices1 = slice(start_of_unmatched1, start_of_matched1)
-        logger.debug(
-            f"2: start_of_unmatched1 = {start_of_unmatched1}"
-        )  # pragma: no cover
-        logger.debug(
-            f"2: start_of_matched1   = {start_of_matched1}"
-        )  # pragma: no cover
-        logger.debug(
-            f"2: undefined_indices1  = {undefined_indices1}"
-        )  # pragma: no cover
-        logger.debug(
-            f"2: unmatched_indices1  = {unmatched_indices1}"
-        )  # pragma: no cover
-
-        # ------------------------------------------------------------
-        # Make sure that each pair of matching axes run in the same
-        # direction
-        #
-        # Note that the axis0_to_axis1 dictionary currently only maps
-        # matching axes
-        # ------------------------------------------------------------
-        logger.debug(
-            "2: axis0_to_axis1 = {}", axis0_to_axis1
-        )  # pragma: no cover
-
-        for axis0, axis1 in axis0_to_axis1.items():
-            if field1.direction(axis1) != field0.direction(axis0):
-                field1.flip(axis1, inplace=True)
-
-        # ------------------------------------------------------------
-        # 2f. Insert size 1 axes into the data array of field0 to
-        #     correspond to defined but unmatched axes in field1
-        #
-        # For example, if   field0.data is      1 3         T Y X
-        #              and  field1.data is          4 1 P Z   Y X
-        #              then field0.data becomes 1 3     1 1 T Y X
-        # ------------------------------------------------------------
-        unmatched_axes1 = data_axes1[unmatched_indices1]
-        logger.debug(
-            "2: unmatched_axes1=", unmatched_axes1
-        )  # pragma: no cover
-
-        if unmatched_axes1:
-            for axis1 in unmatched_axes1:
-                new_axis = field0.set_construct(field0._DomainAxis(1))
-                field0.insert_dimension(
-                    new_axis, end_of_undefined0, inplace=True
-                )
-                logger.debug(
-                    f"2: axis1, field0.shape = {axis1} {field0.data.shape}"
-                )  # pragma: no cover
-
-                axis0 = (
-                    set(field0.get_data_axes()).difference(data_axes0).pop()
-                )
-
-                axis1_to_axis0[axis1] = axis0
-                axis0_to_axis1[axis0] = axis1
-                s["new_size1_axes"].append(axis0)
-
-                start_of_unmatched0 += 1
-                start_of_matched0 += 1
-
-                data_axes0 = field0.get_data_axes()
-
-        # ------------------------------------------------------------
-        # Insert size 1 axes into the data array of field1 to
-        # correspond to defined but unmatched axes in field0
-        #
-        # For example, if   field0.data is      1 3     1 1 T Y X
-        #              and  field1.data is          4 1 P Z   Y X
-        #              then field1.data becomes     4 1 P Z 1 Y X
-        # ------------------------------------------------------------
-        unmatched_axes0 = data_axes0[start_of_unmatched0:start_of_matched0]
-        logger.debug(
-            f"2: unmatched_axes0 = {unmatched_axes0}"
-        )  # pragma: no cover
-
-        if unmatched_axes0:
-            for axis0 in unmatched_axes0:
-                new_axis = field1.set_construct(field1._DomainAxis(1))
-                field1.insert_dimension(
-                    new_axis, start_of_matched1, inplace=True
-                )
-                logger.debug(
-                    f"2: axis0, field1.shape = {axis0} {field1.shape}"
-                )  # pragma: no cover
-
-                axis1 = (
-                    set(field1.get_data_axes()).difference(data_axes1).pop()
-                )
-
-                axis0_to_axis1[axis0] = axis1
-                axis1_to_axis0[axis1] = axis0
-
-                start_of_unmatched1 += 1
-
-                data_axes1 = field1.get_data_axes()
-
-        # ------------------------------------------------------------
-        # Insert size 1 axes into the data array of field0 to
-        # correspond to undefined axes (of any size) in field1
-        #
-        # For example, if   field0.data is      1 3     1 1 T Y X
-        #              and  field1.data is          4 1 P Z 1 Y X
-        #              then field0.data becomes 1 3 1 1 1 1 T Y X
-        # ------------------------------------------------------------
-        axes1 = data_axes1[undefined_indices1]
-        if axes1:
-            for axis1 in axes1:
-                new_axis = field0.set_construct(field0._DomainAxis(1))
-                field0.insert_dimension(
-                    new_axis, end_of_undefined0, inplace=True
-                )
-
-                axis0 = (
-                    set(field0.get_data_axes()).difference(data_axes0).pop()
-                )
-
-                axis0_to_axis1[axis0] = axis1
-                axis1_to_axis0[axis1] = axis0
-                s["new_size1_axes"].append(axis0)
-
-                data_axes0 = field0.get_data_axes()
-
-        logger.debug(
-            f"2: axis0_to_axis1 = {axis0_to_axis1}"
-        )  # pragma: no cover
-        logger.debug(
-            f"2: axis1_to_axis0 = {axis1_to_axis0}"
-        )  # pragma: no cover
-        logger.debug(
-            f"2: s['new_size1_axes']  = {s['new_size1_axes']}"
-        )  # pragma: no cover
-
-        # ============================================================
-        # 3. Combine the data objects
-        #
-        # Note that, by now, field0.ndim >= field1.ndim.
-        # ============================================================
-        new_data0 = field0.data._binary_operation(field1.data, method)
-        #        new_data0 = super(Field, field0)._binary_operation(
-        #                        field1, method).data
-
-        logger.debug(
-            f"3: new_data0.shape = {new_data0.shape}"
-        )  # pragma: no cover
-        logger.debug(
-            f"3: field0.shape = {field0.data.shape}"
-        )  # pragma: no cover
-
-        # ============================================================
-        # 4. Adjust the domain of field0 to accommodate its new data
-        # ============================================================
-        # Field 1 dimension coordinate to be inserted into field 0
-        insert_dim = {}
-        # Field 1 auxiliary coordinate to be inserted into field 0
-        insert_aux = {}
-        # Field 1 domain ancillaries to be inserted into field 0
-        insert_domain_anc = {}
-        # Field 1 coordinate references to be inserted into field 0
-        insert_ref = set()
-
-        # ------------------------------------------------------------
-        # 4a. Remove selected size 1 axes
-        # ------------------------------------------------------------
-        logger.debug(
-            f"4: field0.constructs.keys() = {sorted(field0.constructs.keys())}"
-        )  # pragma: no cover
-        logger.debug(
-            f"4: field1.constructs.keys() = {sorted(field1.constructs.keys())}"
-        )  # pragma: no cover
-
-        # AND HEREIN LIES THE PROBLEM            TODO
-        for size1_axis in remove_size1_axes0:
-            field0.del_construct(size1_axis)
-
-        # ------------------------------------------------------------
-        # 4b. If broadcasting has grown any size 1 axes in field0
-        #     then replace their size 1 coordinates with the
-        #     corresponding size > 1 coordinates from field1.
-        # ------------------------------------------------------------
-        refs0 = dict(field0.coordinate_references)
-        refs1 = dict(field1.coordinate_references)
-
-        field1_dimension_coordinates = field1.dimension_coordinates(
-            todict=True
-        )
-        #        field1_auxiliary_coordinates = field1.auxiliary_coordinates(todict=True)
-        field1_coordinate_references = field1.coordinate_references(
-            todict=True
-        )
-
-        field1_domain_ancillaries = field1.domain_ancillaries(todict=True)
-        field1_domain_axes = field1.domain_axes(todict=True)
-
-        #        field0_auxiliary_coordinates = field0.auxiliary_coordinates(todict=True)
-        #        field0_domain_ancillaries = field0_domain_ancillaries(todict=True)
-
-        #        c = field0.constructs.filter_by_type(
-        #            "auxiliary_coordinate", "domain_ancillary",
-        #        )
-
-        for axis0 in s["size1_broadcast_axes"] + s["new_size1_axes"]:
-            axis1 = axis0_to_axis1[axis0]
-
-            field0.set_construct(field1_domain_axes[axis1], key=axis0)
-
-            # Copy field1 1-d coordinates for this axis to field0
-            #            if axis1 in field1.Items.d:
-            if axis1 in field1_dimension_coordinates:
-                insert_dim[axis1] = [axis0]
-
-            for key1 in field1.auxiliary_coordinates(
-                filter_by_axis=(axis1,), axis_mode="exact", todict=True
-            ):
-                insert_aux[key1] = [axis0]
-
-            # Copy field1 coordinate references which span this axis
-            # to field0, along with all of their domain ancillaries
-            # (even if those domain ancillaries do not span this
-            # axis).
-            for key1, ref1 in refs1.items():
-                if axis1 not in field1.coordinate_reference_domain_axes(key1):
-                    continue
-
-            # Remove all field0 auxiliary coordinates and domain
-            # ancillaries which span this axis
-            remove_items.update(
-                field0.constructs.filter(
-                    filter_by_type=(
-                        "auxiliary_coordinate",
-                        "domain_ancillary",
-                    ),
-                    filter_by_axis=(axis0,),
-                    # TODO check if we need an axis_mode="or" or "subset" here
-                    todict=True,
-                )
-            )
-
-            # Remove all field0 coordinate references which span this
-            # axis, and their domain ancillaries (even if those domain
-            # ancillaries do not span this axis).
-            for key0 in tuple(refs0):
-                if axis0 in field0.coordinate_reference_domain_axes(key0):
-                    ref0 = refs0.pop(key0)
-                    remove_items.add(key0)
-                    remove_items.update(
-                        field0.domain_ancillaries(
-                            *tuple(
-                                ref0.coordinate_conversion.domain_ancillaries().values()
-                            ),
-                            todict=True,
-                        )
-                    )
-
-        # ------------------------------------------------------------
-        # Consolidate auxiliary coordinates for matching axes
-        #
-        # A field0 auxiliary coordinate is retained if:
-        #
-        # 1) it is the defining coordinate for its axis
-        #
-        # 2) there is a corresponding field1 auxiliary coordinate
-        #    spanning the same axes which has the same identity and
-        #    equivalent data array
-        #
-        # 3) there is a corresponding field1 auxiliary coordinate
-        #    spanning the same axes which has the same identity and a
-        #    size-1 data array.
-        # -------------------------------------------------------------
-        field1_auxiliary_coordinates = field1.auxiliary_coordinates(
-            todict=True
-        )
-        auxs1 = field1_auxiliary_coordinates.copy()
-        #        auxs1 = dict(field1_auxiliary_coordinates.items())
-        logger.debug(f"5: remove_items = {remove_items}")  # pragma: no cover
-
-        for key0, aux0 in field0.auxiliary_coordinates(todict=True).items():
-            if key0 in remove_items:
-                # Field0 auxiliary coordinate has already marked for
-                # removal
-                continue
-
-            if key0 in s["id_to_aux"].values():
-                # Field0 auxiliary coordinate has already been checked
-                continue
-
-            if aux0.identity() is None:
-                # Auxiliary coordinate has no identity
-                remove_items.add(key0)
-                continue
-
-            axes0 = field0.get_data_axes(key0)
-            if not set(axes0).issubset(matching_axis0_to_axis1):
-                # Auxiliary coordinate spans at least on non-matching
-                # axis
-                remove_items.add(key0)
-                continue
-
-            found_equivalent_auxiliary_coordinates = False
-            for key1, aux1 in tuple(auxs1.items()):
-                if key1 in v["id_to_aux"].values():
-                    # Field1 auxiliary coordinate has already been checked
-                    del auxs1[key1]
-                    continue
-
-                if aux1.identity() is None:
-                    # Field1 auxiliary coordinate has no identity
-                    del auxs1[key1]
-                    continue
-
-                axes1 = field1.get_data_axes(key0)
-                if not set(axes1).issubset(matching_axis1_to_axis0):
-                    # Field 1 auxiliary coordinate spans at least one
-                    # non-matching axis
-                    del auxs1[key1]
-                    continue
-
-                if field1.constructs[key1].size == 1:
-                    # Field1 auxiliary coordinate has size-1 data array
-                    found_equivalent_auxiliary_coordinates = True
-                    del auxs1[key1]
-                    break
-
-                if field0._equivalent_construct_data(
-                    field1, key0=key0, key1=key1, s=s, t=v
-                ):
-                    # Field0 auxiliary coordinate has equivalent data
-                    # to a field1 auxiliary coordinate
-                    found_equivalent_auxiliary_coordinates = True
-                    del auxs1[key1]
-                    break
-
-            if not found_equivalent_auxiliary_coordinates:
-                remove_items.add(key0)
-
-        # ------------------------------------------------------------
-        # Copy field1 auxiliary coordinates which do not span any
-        # matching axes to field0
-        # ------------------------------------------------------------
-        field1_data_axes = field1.constructs.data_axes()
-        for key1 in field1_auxiliary_coordinates:
-            if key1 in insert_aux:
-                continue
-
-            axes1 = field1_data_axes[key1]
-            if set(axes1).isdisjoint(matching_axis1_to_axis0):
-                insert_aux[key1] = [axis1_to_axis0[axis1] for axis1 in axes1]
-
-        # ------------------------------------------------------------
-        # Insert field1 items into field0
-        # ------------------------------------------------------------
-
-        # Map field1 items keys to field0 item keys
-        key1_to_key0 = {}
-
-        logger.debug(
-            f"5: insert_dim               = {insert_dim}"
-        )  # pragma: no cover
-        logger.debug(
-            f"5: insert_aux               = {insert_aux}"
-        )  # pragma: no cover
-        logger.debug(
-            f"5: insert_domain_anc        = {insert_domain_anc}"
-        )  # pragma: no cover
-        logger.debug(
-            f"5: insert_ref               = {insert_ref}"
-        )  # pragma: no cover
-        logger.debug(
-            f"5: field0.constructs.keys() = {sorted(field0.constructs.keys())}"
-        )  # pragma: no cover
-        logger.debug(
-            f"5: field1.constructs.keys() = {sorted(field1.constructs.keys())}"
-        )  # pragma: no cover
-
-        for key1, axes0 in insert_dim.items():
-            try:
-                key0 = field0.set_construct(
-                    field1_dimension_coordinates[key1], axes=axes0
-                )
-            except ValueError:
-                # There was some sort of problem with the insertion, so
-                # just ignore this item.
-                pass
-            else:
-                key1_to_key0[key1] = key0
-
-            logger.debug(
-                "axes0, key1, field1.constructs[key1] = "
-                f"{axes0}, {key1}, {field1.constructs[key1]!r}"
-            )  # pragma: no cover
-
-        for key1, axes0 in insert_aux.items():
-            try:
-                key0 = field0.set_construct(
-                    field1_auxiliary_coordinates[key1], axes=axes0
-                )
-            except ValueError:
-                # There was some sort of problem with the insertion, so
-                # just ignore this item.
-                pass
-            else:
-                key1_to_key0[key1] = key0
-
-            logger.debug(
-                "axes0, key1, field1.constructs[key1] = "
-                f"{axes0}, {key1}, {field1.constructs[key1]!r}"
-            )  # pragma: no cover
-
-        #        field1_domain_ancillaries = field1.domain_ancillaries(todict=True)
-
-        for key1, axes0 in insert_domain_anc.items():
-            try:
-                key0 = field0.set_construct(
-                    field1_domain_ancillaries[key1], axes=axes0
-                )
-            except ValueError as error:
-                # There was some sort of problem with the insertion, so
-                # just ignore this item.
-                logger.debug(
-                    f"Domain ancillary insertion problem: {error}"
-                )  # pragma: no cover
-            else:
-                key1_to_key0[key1] = key0
-
-            logger.debug(
-                "domain ancillary axes0, key1, field1.constructs[key1] ="
-                f" {axes0}, {key1}, {field1.constructs[key1]!r}"
-            )  # pragma: no cover
-
-        # ------------------------------------------------------------
-        # Remove field0 which are no longer required
-        # ------------------------------------------------------------
-        if remove_items:
-            logger.debug(sorted(field0.constructs.keys()))  # pragma: no cover
-            logger.debug(
-                f"Removing {sorted(remove_items)!r} from field0"
-            )  # pragma: no cover
-
-            for key in remove_items:
-                field0.del_construct(key, default=None)
-
-        # ------------------------------------------------------------
-        # Copy coordinate references from field1 to field0 (do this
-        # after removing any coordinates and domain ancillaries)
-        # ------------------------------------------------------------
-        for key1 in insert_ref:
-            ref1 = field1_coordinate_references[key1]
-            logger.debug(
-                f"Copying {ref1!r} from field1 to field0"
-            )  # pragma: no cover
-
-            identity_map = dict(
-                field1.constructs.filter_by_type(
-                    "dimension_coordinate",
-                    "axuiliary_coordinate",
-                    "domain_ancillary",
-                    todict=True,
-                )
-            )
-            for key1, item1 in identity_map.copy().items():
-                identity_map[key1] = key1_to_key0.get(key1, item1.identity())
-
-            new_ref0 = ref1.change_identifiers(identity_map, strict=True)
-
-            field0.set_construct(new_ref0, copy=False)
-
-        field0.set_data(new_data0, set_axes=False, copy=False)
-
-        # ------------------------------------------------------------
-        # Remove misleading identities
-        # ------------------------------------------------------------
-        # Warning: This code is replicated in PropertiesData
-        if sn != other_sn:
-            if sn is not None and other_sn is not None:
-                field0.del_property("standard_name", None)
-                field0.del_property("long_name", None)
-            elif other_sn is not None:
-                field0.set_property("standard_name", other_sn, copy=False)
-                if other_ln is None:
-                    field0.del_property("long_name", None)
-                else:
-                    field0.set_property("long_name", other_ln, copy=False)
-        elif ln is None and other_ln is not None:
-            field0.set_property("long_name", other_ln, copy=False)
-
-        # Warning: This code is replicated in PropertiesData
-        new_units = field0.Units
-        if (
-            method in _relational_methods
-            or not units.equivalent(new_units)
-            and not (units.isreftime and new_units.isreftime)
-        ):
-            field0.del_property("standard_name", None)
-            field0.del_property("long_name", None)
-
-        if method in _relational_methods:
-            field0.override_units(Units(), inplace=True)
-
-        return field0
-
     def _binary_operation(self, other, method):
         """Implement binary arithmetic and comparison operations on the
         master data array with metadata-aware broadcasting.
@@ -1892,14 +904,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Combine the field with anything other than a Query
             # object or another field construct
             # --------------------------------------------------------
-            if numpy_size(other) == 1:
+            if cf_size(other) == 1:
                 # ----------------------------------------------------
                 # No changes to the field metadata constructs are
                 # required so can use the metadata-unaware parent
                 # method
                 # ----------------------------------------------------
                 if other is None:
-                    other = numpy_array(None, dtype=object)
+                    other = np.array(None, dtype=object)
 
                 other = Data(other)
                 if other.ndim > 0:
@@ -1907,13 +919,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 return super()._binary_operation(other, method)
 
-            if self._is_broadcastable(numpy_shape(other)):
+            if self._is_broadcastable(np.shape(other)):
                 return super()._binary_operation(other, method)
 
             raise ValueError(
                 f"Can't combine {self.__class__.__name__!r} with "
                 f"{other.__class__.__name__!r} due to incompatible data "
-                f"shapes: {self.shape}, {numpy_shape(other)})"
+                f"shapes: {self.shape}, {np.shape(other)})"
             )
 
         # ============================================================
@@ -6799,7 +5811,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dim.set_data(data=data, copy=False)
 
             bounds_data = Data(
-                numpy_reshape(bin_bounds, (bin_count, 2)), units=units
+                np.reshape(bin_bounds, (bin_count, 2)), units=units
             )
             dim.set_bounds(self._Bounds(data=bounds_data))
 
@@ -6851,11 +5863,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Find the unique multi-dimensional bin indices (TODO: can I
         # LAMA this?)
         # ------------------------------------------------------------
-        y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
+        y = np.empty((len(bin_indices), bin_indices[0].size), dtype=int)
         for i, f in enumerate(bin_indices):
             y[i, :] = f.array.flatten()
 
-        unique_indices = numpy_unique(y, axis=1)
+        unique_indices = np.unique(y, axis=1)
         del f
         del y
 
@@ -8865,11 +7877,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                     d = aux[0]
 
-                    # TODODASK: remove once dask. For some reason,
-                    # without this we now get LAMA related failures in
-                    # Partition.nbytes ...
-                    _ = aux.dtype
-
                     if aux.has_bounds() or (aux[:-1] != aux[1:]).any():
                         logger.info(
                             f"    Removing {aux.construct_type} {key!r}"
@@ -9314,7 +8321,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 n += 1
 
             #                if group_span is not None:
-            #                    x = numpy_where(classification==n)[0]
+            #                    x = np.where(classification==n)[0]
             #                    for i in range(1, max(1, int(float(len(x))/group_span))):
             #                        n += 1
             #                        classification[x[i*group_span:(i + 1)*group_span]] = n
@@ -9334,7 +8341,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 `numpy.ndarray`
 
             """
-            x = numpy_where(numpy_diff(classification))[0] + 1
+            x = np.where(np.diff(classification))[0] + 1
             if not x.size:
                 if classification[0] >= 0:
                     classification[:] = 0
@@ -9524,8 +8531,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "collapse"
                 )
 
-            if isinstance(group, numpy_ndarray):
-                classification = numpy_squeeze(group.copy())
+            if isinstance(group, np.ndarray):
+                classification = np.squeeze(group.copy())
 
                 if classification.dtype.kind != "i":
                     raise ValueError(
@@ -9550,7 +8557,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # E.g. group=3
                 # ----------------------------------------------------
                 coord = None
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
 
                 start = 0
                 end = group
@@ -9578,7 +8585,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "grouped collapse with TimeDuration groups."
                     )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 lower, upper, lower_limit, upper_limit = _tyu(
@@ -9636,7 +8643,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         f"{axis_id!r} axis units {coord.Units!r}"
                     )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 group = group.squeeze()
@@ -9679,7 +8686,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             "sequence of groups."
                         )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 classification, n = _selection(
@@ -9742,7 +8749,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 coordinate = "minimum"
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 if isinstance(over_days, TimeDuration):
@@ -9873,7 +8880,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 coordinate = "minimum"
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 if isinstance(over_years, TimeDuration):
@@ -9976,7 +8983,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "required for a 'within days' collapse"
                     )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 # Parse the within_days parameter
@@ -10064,7 +9071,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         'bounds are required for a "within years" collapse'
                     )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 # Parse within_years
@@ -10146,13 +9153,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 f"        classification    = {classification}"
             )  # pragma: no cover
 
-            unique = numpy_unique(classification)
-            unique = unique[numpy_where(unique >= 0)[0]]
+            unique = np.unique(classification)
+            unique = unique[np.where(unique >= 0)[0]]
             unique.sort()
 
             ignore_n = -1
             for u in unique:
-                index = numpy_where(classification == u)[0].tolist()
+                index = np.where(classification == u)[0].tolist()
 
                 pc = self.subspace(**{axis: index})
 
@@ -11765,7 +10772,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f = f * w
 
         # Create the window weights
-        window = numpy_full((window_size,), 1.0)
+        window = np.full((window_size,), 1.0)
         if weights is None and method == "mean":
             # If there is no data weighting, make sure that the sum of
             # the window weights is 1.
@@ -12458,104 +11465,94 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
-    def argmax(self, axis=None):
+    def argmax(self, axis=None, unravel=False):
         """Return the indices of the maximum values along an axis.
 
         If no axis is specified then the returned index locates the
         maximum of the whole data.
 
-        .. seealso:: `argmin`, `where`
+        In case of multiple occurrences of the maximum values, the
+        indices corresponding to the first occurrence are returned.
+
+        **Performance**
+
+        If the data index is returned as a `tuple` (see the *unravel*
+        parameter) then all delayed operations are computed.
+
+        .. seealso:: `where`, `cf.Data.argmax`
 
         :Parameters:
 
+            axis: optional
+                Select the domain axis over which to locate the
+                maximum values, defined by the domain axis that would
+                be selected by passing the given *axis* to a call of
+                the field construct's `domain_axis` method. For
+                example, for a value of ``'X'``, the domain axis
+                construct returned by ``f.domain_axis('X')`` is
+                selected.
+
+                By default the maximum over the flattened data is
+                located.
+
+            unravel: `bool`, optional
+                If True then when locating the maximum over the whole
+                data, return the location as an integer index for each
+                axis as a `tuple`. By default an index to the
+                flattened array is returned in this case. Ignored if
+                locating the maxima over a subset of the axes.
+
         :Returns:
+
+            `Data` or `tuple` of `int`
+                The location of the maximum, or maxima.
 
         **Examples**
 
-        >>> g = f.argmax('T')
+        >>> f = cf.example_field(2)
+        >>> print(f)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+        Cell methods    : area: mean
+        Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        Find the T axis indices of the maximum at each X-Y location:
+
+        >>> i = f.argmax('T')
+        >>> print(i.array)
+        [[31 10  2 27 16  7 21 17]
+         [24 34  1 22 28 17 19 13]
+         [20  7 15 21  6 20  8 18]
+         [24  1  7 18 19  6 11 18]
+         [16  8 12  9 12  2  6 17]]
+
+        Find the coordinates of the global maximum value, showing that
+        it occurs on 1960-11-16 at location 292.5 degrees east, 45.0
+        degrees north:
+
+        >>> g = f[f.argmax(unravel=True)]
+        >>> print(g)
+        Field: air_potential_temperature (ncvar%air_potential_temperature)
+        ------------------------------------------------------------------
+        Data            : air_potential_temperature(time(1), latitude(1), longitude(1)) K
+        Cell methods    : area: mean
+        Dimension coords: time(1) = [1960-11-16 00:00:00]
+                        : latitude(1) = [45.0] degrees_north
+                        : longitude(1) = [292.5] degrees_east
+                        : air_pressure(1) = [850.0] hPa
+
+        See `cf.Data.argmax` for further examples.
 
         """
-        print("This method is not ready for use.")
-        return
+        if axis is not None:
+            axis = self.domain_axis(axis, key=True)
+            axis = self.get_data_axes().index(axis)
 
-    # TODODASK
-    # Keep these commented lines for using with the future dask version
-    #
-    #        standard_name = None
-    #
-    #        if axis is not None:
-    #            axis_key = self.domain_axis(
-    #                axis, key=True, default=ValueError("TODO")
-    #            )
-    #            axis = self.get_data_axes.index(axis_key)
-    #            standard_name = self.domain_axis_identity(
-    #                axis_key, strict=True, default=None
-    #            )
-    #
-    #        indices = self.data.argmax(axis, unravel=True)
-    #
-    #        if axis is None:
-    #            return self[indices]
-    #
-    #        # What if axis_key does not span array?
-    #        out = self.subspace(**{axis_key: [0]})
-    #        out.squeeze(axis_key, inplace=True)
-    #
-    #        for i in indices.ndindex():
-    #            out.data[i] = org.data[indices[i].datum()]
-    #
-    #        for key, c in tuple(
-    #            out.constructs.filter_by_type(
-    #                "dimension_coordinate",
-    #                "auxiliary_coordinate",
-    #                "cell_measure",
-    #                "domain_ancillary",
-    #                "field_ancillary",
-    #            )
-    #            .filter_by_axis("and", axis_key)
-    #            .items()
-    #        ):
-    #
-    #            out.del_construct(key)
-    #
-    #            if c.construct_type == (
-    #                "cell_measure",
-    #                "domain_ancillary",
-    #                "field_ancillary",
-    #            ):
-    #                continue
-    #
-    #            aux = self._AuxiliaryCoordinate()
-    #            aux.set_properties(c.properties())
-    #
-    #            c_data = c.get_data(None)
-    #            if c_data is not None:
-    #                data = Data.empty(indices.shape, dtype=c.dtype)
-    #                for x in indices.ndindex():
-    #                    data[x] = c_data[indices[x]]
-    #
-    #                aux.set_data(data, copy=False)
-    #
-    #            c_bounds_data = c.get_bounds_data(None)
-    #            if c_bounds_data is not None:
-    #                bounds = Data.empty(
-    #                    indices.shape + (c_bounds_data.shape[-1],),
-    #                    dtype=c_bounds_data.dtype,
-    #                )
-    #                for x in indices.ndindex():
-    #                    bounds[x] = c_bounds_data[indices[x]]
-    #
-    #                aux.set_bounds(
-    #                    self._Bounds(data=bounds, copy=False), copy=False
-    #                )
-    #
-    #            out.set_construct(aux, axes=out.get_data_axes(), copy=False)
-    #
-    #        if standard_name:
-    #            cm = CellMethod()
-    #            cm.create(standard_name + ": maximum")
-    #
-    #        return out
+        return self.data.argmax(axis=axis, unravel=unravel)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
@@ -13759,8 +12756,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Initialise the output field with the percentile data
         # ------------------------------------------------------------
 
-        # TODODASK: Make sure that this is OK whaen `ranks` is a
-        #           scalar
+        # TODODASK: Make sure that this is OK when `ranks` is a scalar
 
         out = type(self)()
         out.set_properties(self.properties())
@@ -14073,7 +13069,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new_data_axes = [
             axis for i, axis in enumerate(data_axes) if i not in iaxes
         ]
-        new_axis_size = numpy_prod([shape[i] for i in iaxes])
+        new_axis_size = np.prod([shape[i] for i in iaxes])
         new_axis = f.set_construct(self._DomainAxis(new_axis_size))
         new_data_axes.insert(iaxes[0], new_axis)
 
@@ -14219,7 +13215,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f.roll('X', -3)
 
         """
-        # TODODASK - allow multiple roll axes
+        # TODODASK: Consider allowing multiple roll axes, since Data
+        #           now supports them.
 
         axis = self.domain_axis(
             axis,
@@ -14238,8 +13235,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         iaxes = self._axis_positions(axis, parse=False)
         if iaxes:
-            # TODODASK - remove these two lines when multiaxis rolls
-            #            are allowed at 3.14.0
+            # TODODASK: Remove these two lines if multiaxis rolls are
+            #           allowed
+
             iaxis = iaxes[0]
             shift = shift[0]
 
@@ -14833,7 +13831,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
          <CF Field: eastward_wind(model_level_number(1), latitude(145), longitude(192)) m s-1>]
 
         """
-
         # TODODASK: This still need some attention, keyword checking,
         #           testing, docs, etc., but has been partially
         #           already updated due to changes already happening
@@ -14871,99 +13868,35 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         dst_axes=None,
         axis_order=None,
         ignore_degenerate=True,
+        return_operator=False,
+        check_coordinates=False,
+        min_weight=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
-        return_operator=False,
     ):
-        """Return the field regridded onto a new latitude-longitude
-        grid.
+        """Regrid the field to a new latitude and longitude grid.
 
-        Regridding, also called remapping or interpolation, is the
-        process of changing the grid underneath field data values
-        while preserving the qualities of the original data.
+        {{regridding overview}}
 
-        The regridding method must be specified. First-order
-        conservative interpolation conserves the global area integral
-        of the field, but may not give approximations to the values as
-        good as linear interpolation. Second-order conservative
-        interpolation also takes into account the gradient across the
-        source cells, so in general gives a smoother, more accurate
-        representation of the source field especially when going from
-        a coarser to a finer grid. Linear interpolation is
-        available. The latter method is particular useful for cases
-        when the latitude and longitude coordinate cell boundaries are
-        not known nor inferrable. Higher order patch recovery is
-        available as an alternative to linear interpolation. This
-        typically results in better approximations to values and
-        derivatives compared to the latter, but the weight matrix can
-        be larger than the linear matrix, which can be an issue when
-        regridding close to the memory limit on a machine. Nearest
-        neighbour interpolation is also available. Nearest source to
-        destination is particularly useful for regridding integer
-        fields such as land use.
-
-
-        **Metadata**
-
-        The field construct's domain must have well defined X and Y
-        axes with latitude and longitude coordinate values, which may
-        be stored as dimension coordinate objects or two dimensional
-        auxiliary coordinate objects. If the latitude and longitude
-        coordinates are two dimensional then the X and Y axes must be
-        defined by dimension coordinates if present or by the netCDF
-        dimensions. In the latter case the X and Y axes must be
-        specified using the *src_axes* or *dst_axes* keyword. The same
-        is true for the destination grid, if it provided as part of
-        another field.
-
-        The cyclicity of the X axes of the source field and
-        destination grid is taken into account. If an X axis is in
-        fact cyclic but is not registered as such by its parent field
-        (see `cf.Field.iscyclic`), then the cyclicity may be set with
-        the *src_cyclic* or *dst_cyclic* parameters. In the case of
-        two dimensional latitude and longitude dimension coordinates
-        without bounds it will be necessary to specify *src_cyclic* or
-        *dst_cyclic* manually if the field is global.
-
-        The output field construct's coordinate objects which span the
-        X and/or Y axes are replaced with those from the destination
-        grid. Any fields contained in coordinate reference objects
-        will also be regridded, if possible.
-
-
-        **Mask**
-
-        The data array mask of the field is automatically taken into
-        account, such that the regridded data array will be masked in
-        regions where the input data array is masked. By default the
-        mask of the destination grid is not taken into account. If the
-        destination field data has more than two dimensions then the
-        mask, if used, is taken from the two dimensional section of
-        the data where the indices of all axes other than X and Y are
-        zero.
-
-
-        **Implementation**
-
-        The interpolation is carried out using the `ESMF` package, a
-        Python interface to the Earth System Modeling Framework (ESMF)
-        `regridding utility
-        <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
-
-
-        **Logging**
-
-        Whether ESMF logging is enabled or not is determined by
-        `cf.regrid_logging`. If it is logging takes place after every
-        call. By default logging is disabled.
-
-
-        **Latitude-Longitude Grid**
-
-        The canonical grid with independent latitude and longitude
+        The 2-d regridding takes place on a sphere, with the grid
+        being defined by latitude and longitude spherical polar
         coordinates.
 
+        **Latitude and longitude coordinates**
+
+        The source and destination grids of the regridding must both
+        be defined by latitude and longitude coordinates, which may be
+        1-d dimension coordinates or 2-d auxiliary coordinates. These
+        are automatically detected from the field being regridded and
+        the specification of the destination grid given by the *dst*
+        parameter.
+
+        When a grid is defined by 2-d latitude and longitude
+        coordinates, it is necessary for their X and Y dimensions to
+        be defined. This is either automatically inferred from the
+        existence of 1-d dimension coordinates, or else must be
+        specified with *src_axes* or *dst_axes* parameters.
 
         **Curvilinear Grids**
 
@@ -14971,27 +13904,27 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         long as two dimensional latitude and longitude coordinates are
         present.
 
-
-        **Rotated Pole Grids**
-
-        Rotated pole grids can be regridded as long as two dimensional
-        latitude and longitude coordinates are present. It may be
-        necessary to explicitly identify the grid latitude and grid
-        longitude coordinates as being the X and Y axes and specify
-        the *src_cyclic* or *dst_cyclic* keywords.
-
-
         **Tripolar Grids**
 
-        Tripolar grids are logically rectangular and so may be able to
-        be regridded. If no dimension coordinates are present it will
-        be necessary to specify which netCDF dimensions are the X and
-        Y axes using the *src_axes* or *dst_axes* keywords.
         Connections across the bipole fold are not currently
-        supported, but are not be necessary in some cases, for example
-        if the points on either side are together without a gap. It
-        will also be necessary to specify *src_cyclic* or *dst_cyclic*
-        if the grid is global.
+        supported, but are not necessary in some cases, for example if
+        the points on either side are together without a gap (as is
+        the case for NEMO model outputs).
+
+        **Cyclicity of the X axis**
+
+        The cyclicity of the X (longitude) axes of the source and
+        destination grids (i.e. whether or not the first and last
+        cells of the axis are adjacent) are taken into account. By
+        default, the cyclicity is inferred from the grids' defining
+        coordinates, but may be also be provided with the *src_cyclic*
+        and *dst_cyclic* parameters.
+
+        {{regrid Masked cells}}
+
+        {{regrid Implementation}}
+
+        {{regrid Logging}}
 
         .. versionadded:: 1.0.4
 
@@ -14999,709 +13932,203 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         :Parameters:
 
-            dst: `Field` or `dict` or `RegridOperator`
-                The destination grid. Must be one of:
+            dst: `Field`, `Domain`, `RegridOperator` or sequence of `Coordinate`
+                The definition of the destination grid on which to
+                regrid the field's data. One of:
 
-                * `Field`. The grid is defined by the field
-                  construct's domain.
+                * `Field`: The grid is defined by the latitude and
+                  longitude coordinates of the field construct's
+                  domain.
 
-                * `dict`. The grid is defined by a dictionary with
-                  keys ``'latitude'`` and ``'longitude'`` whose values
-                  are with either both 1-d dimension coordinates
-                  constructs, or both 2-d auxiliary coordinate
-                  constructs. In the 2-d case, both coordinate
-                  constructs must have their axes in the same order
-                  and this must be specified with the ``'axes'`` key
-                  as either of the tuples ``('X', 'Y')`` or ``('Y',
-                  'X')``.
+                * `Domain`: The grid is defined by the latitude and
+                  longitude coordinates of the domain construct.
 
-                * `RegridOperator`. The grid is defined by a regrid
-                  operator that has been returned by a previous call
-                  to `regrids` with ``return_operator=True``.
+                * Sequence of `Coordinate`: The grid is defined by two
+                  1-d dimension coordinate constructs, or two 2-d
+                  auxiliary coordinate constructs, that define the
+                  spherical latitude and longitude coordinates (in any
+                  order) of the destination grid.
 
-                  This option can give large performance increases, as
-                  greatest computational expense is often the creation
-                  of the regrid operator, rather than running the
-                  regrid operator to regrid the data.
+                  In the 2-d case, both coordinate constructs must
+                  have their axes in the same order, which must be
+                  specified by the *dst_axes* parameter.
 
-                  The regrid operator defines the source grid and the
-                  regridding weights, so the *method*, *axes*,
-                  *ignore_degenerate*, *use_src_mask*, and
-                  *use_dst_mask* parameters are not required and are
-                  ignored if set.
+                {{regrid RegridOperator}}
 
-                  An exception will be raised if the domain of the
-                  source field being regridded is inconsistent with
-                  source grid of the regrid operator.
+            {{method: `str` or `None`, optional}}
 
-                  The source field being regridded may, however, have
-                  a different data mask to that of the source grid in
-                  the regrid operator. In this case a new regrid
-                  operator is automatically created, with the
-                  associated loss in performance.
+            src_cyclic: `None` or `bool`, optional
+                Specifies whether or not the source grid longitude
+                axis is cyclic (i.e. the first and last cells of the
+                axis are adjacent). If `None` (the default) then the
+                cyclicity will be inferred from the source grid
+                coordinates, defaulting to `False` if it can not be
+                determined.
 
-            {{method: `str`, optional}}
+            dst_cyclic: `None` or `bool`, optional
+                Specifies whether or not the destination grid
+                longitude axis is cyclic (i.e. the first and last
+                cells of the axis are adjacent). If `None` (the
+                default) then the cyclicity will be inferred from the
+                destination grid coordinates, defaulting to `False` if
+                it can not be determined.
 
-            src_cyclic: `bool`, optional
-                Specifies whether the longitude for the source grid is
-                periodic or not. If `None` then, if possible, this is
-                determined automatically otherwise it defaults to
-                False.
+                Ignored if *dst* is a `RegridOperator`.
 
-            dst_cyclic: `bool`, optional
-                Specifies whether the longitude for the destination
-                grid is periodic of not. If `None` then, if possible,
-                this is determined automatically otherwise it defaults
-                to False.
+            {{use_src_mask: `bool`, optional}}
 
-                .. note:: When *dst* is a regrid operator then
-                          *dst_cyclic* is ignored, and its value is
-                          set by the regrid operator's parameters.
-
-            use_src_mask: `bool`, optional
-                For all methods other than 'nearest_stod', this must
-                be True as it does not make sense to set it to
-                False. For the 'nearest_stod' method if it is True
-                then points in the result that are nearest to a masked
-                source point are masked. Otherwise, if it is False,
-                then these points are interpolated to the nearest
-                unmasked source points.
-
-                .. note:: When *dst* is a regrid operator then
-                          *use_src_mask* is ignored, and its value is
-                          set by the regridding operator's parameters.
-
-            use_dst_mask: `bool`, optional
-                By default the mask of the data on the destination
-                grid is not taken into account when performing
-                regridding. If this option is set to true then it
-                is. If the destination field has more than two
-                dimensions then the first 2-d slice in index space is
-                used for the mask e.g. for an field varying with (X,
-                Y, Z, T) the mask is taken from the slice (X, Y, 0,
-                0).
-
-                .. note:: When *dst* is a regrid operator then
-                          *use_dst_mask* is ignored, and its value is
-                          set by the regrid operator's parameters.
-
-            fracfield: `bool`, optional
-                If the method of regridding is conservative the
-                fraction of each destination grid cell involved in the
-                regridding is returned instead of the regridded data
-                if this is True. Otherwise this is ignored.
+            {{use_dst_mask: `bool`, optional}}
 
             src_axes: `dict`, optional
-                A dictionary specifying the axes of the 2-d latitude
-                and longitude coordinates of the source field when no
-                1-d dimension coordinates are present. It must have
-                keys ``'X'`` and ``'Y'``. TODO
+                When the source grid's X and Y dimensions can not be
+                inferred from the existence of 1-d dimension
+                coordinates, then they must be identified with the
+                *src_axes* dictionary, with keys ``'X'`` and ``'Y'``.
+
+                The dictionary values identify a unique domain axis by
+                passing the given axis description to a call of the
+                field construct's `domain_axis` method. For example,
+                for a value of ``'ncdim%x'``, the domain axis
+                construct returned by ``f.domain_axis('ncdim%x')`` is
+                selected.
 
                 *Parameter example:*
-                  ``src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
+                  ``{'X': 'ncdim%x', 'Y': 'ncdim%y'}``
 
                 *Parameter example:*
-                  ``src_axes={'X': 1, 'Y': 0}``
+                  ``{'X': 1, 'Y': 0}``
 
             dst_axes: `dict`, optional
-                A dictionary specifying the axes of the 2-d latitude
-                and longitude auxiliary coordinates of the destination
-                grid when no dimension coordinates are present. It
-                must have keys ``'X'`` and ``'Y'``.
+                When the destination grid's X and Y dimensions can not
+                be inferred from the existence of 1-d dimension
+                coordinates, then they must be identified with the
+                *dst_axes* dictionary, with keys ``'X'`` and ``'Y'``.
+
+                If *dst* is a `Field` or `Domain`, then the dictionary
+                values identify a unique domain axis by passing the
+                given axis description to a call of the destination
+                field or domain construct's `domain_axis` method. For
+                example, for a value of ``'ncdim%x'``, the domain axis
+                construct returned by ``f.domain_axis('ncdim%x')`` is
+                selected.
+
+                If *dst* is a sequence of `Coordinate`, then the
+                dictionary values identify a unique domain axis by its
+                position in the 2-d coordinates' data arrays, i.e. the
+                dictionary values must be ``0`` and ``1``:
+
+                Ignored if *dst* is a `RegridOperator`.
 
                 *Parameter example:*
-                  ``dst_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
+                  ``{'X': 'ncdim%x', 'Y': 'ncdim%y'}``
 
-                .. note:: When *dst* is a regrid operator then
-                          *dst_axes* is ignored, and its value is
-                          set by the regrid operator's parameters.
+                *Parameter example:*
+                  ``{'X': 1, 'Y': 0}``
 
-            axis_order: sequence, optional
-                A sequence of items specifying dimension coordinates
-                as retrieved by the `dim` method. These determine the
-                order in which to iterate over the other axes of the
-                field when regridding X-Y slices. The slowest moving
-                axis will be the first one specified. Currently the
-                regridding weights are recalculated every time the
-                mask of an X-Y slice changes with respect to the
-                previous one, so this option allows the user to
-                minimise how frequently the mask changes. TODO.
+            {{ignore_degenerate: `bool`, optional}}
 
-            ignore_degenerate: `bool`, optional
-                True by default. Instructs ESMF to ignore degenerate
-                cells when checking the grids for errors. Regridding
-                will proceed and degenerate cells will be skipped, not
-                producing a result, when set to True. Otherwise an
-                error will be produced if degenerate cells are
-                found. This will be present in the ESMF log files if
-                `cf.regrid_logging` is set to True. As of ESMF 7.0.0
-                this only applies to conservative regridding.  Other
-                methods always skip degenerate cells.
+            {{return_operator: `bool`, optional}}
 
-                .. note:: When *dst* is a regrid operator then
-                          *ignore_degenerate* is ignored, and its
-                          value is set by the regrid operator's
-                          parameters.
+                .. versionadded:: 3.10.0
+
+            {{check_coordinates: `bool`, optional}}
+
+                .. versionadded:: 3.14.0
+
+            {{min_weight: float, optional}}
+
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
+            axis_order: sequence, optional
+                Deprecated at version 3.14.0.
+
+            fracfield: `bool`, optional
+                Deprecated at version 3.14.0.
+
             _compute_field_mass: `dict`, optional
-                If this is a dictionary then the field masses of the
-                source and destination fields are computed and
-                returned within the dictionary. The keys of the
-                dictionary indicates the lat-long slice of the field
-                and the corresponding value is a tuple containing the
-                source field construct's mass and the destination
-                field construct's mass. The calculation is only done
-                if conservative regridding is being performed. This is
-                for debugging purposes.
-
-            return_operator: `bool`, optional
-                If True then do not perform the regridding, rather
-                return a `RegridOperator` instance that defines the
-                regridding operation, including the destination grid,
-                and which can be used in subsequent calls to
-                `regrids`.
-
-                .. versionadded:: 3.10.0
+                Deprecated at version 3.14.0.
 
             {{i: deprecated at version 3.0.0}}
 
         :Returns:
 
             `Field` or `None` or `RegridOperator`
-                The regridded field construct, or `None` if the
-                operation was in-place, or the regridding operator if
+                The regridded field construct; or `None` if the
+                operation was in-place or the regridding operator if
                 *return_operator* is True.
 
         **Examples**
 
-        Regrid field construct ``f`` conservatively onto a grid
-        contained in field construct ``g``:
+        >>> src, dst = cf.example_fields(1, 0)
+        >>> print(src)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+        Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+        Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                        : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                        : time(1) = [2019-01-01 00:00:00]
+        Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                        : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+        Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+        Coord references: grid_mapping_name:rotated_latitude_longitude
+                        : standard_name:atmosphere_hybrid_height_coordinate
+        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                        : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+        >>> print(dst)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> x = src.regrids(dst, method='linear')
+        >>> print(x)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), latitude(5), longitude(8)) K
+        Cell methods    : latitude(5): longitude(8): mean where land (interval: 0.1 degrees) time(1): maximum
+        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        Coord references: standard_name:atmosphere_hybrid_height_coordinate
+        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                        : surface_altitude(latitude(5), longitude(8)) = [[--, ..., --]] m
 
-        >>> h = f.regrids(g, 'conservative')
-
-        Regrid f to the grid of g using linear regridding and forcing
-        the source field f to be treated as cyclic.
-
-        >>> h = f.regrids(g, src_cyclic=True, method='linear')
-
-        Regrid f to the grid of g using the mask of g.
-
-        >>> h = f.regrids(g, 'conservative_1st', use_dst_mask=True)
-
-        Regrid f to 2-d auxiliary coordinates lat and lon, which have
-        their dimensions ordered "Y" first then "X".
-
-        >>> lat
-        <CF AuxiliaryCoordinate: latitude(110, 106) degrees_north>
-        >>> lon
-        <CF AuxiliaryCoordinate: longitude(110, 106) degrees_east>
-        >>> h = f.regrids(
-        ...         {'longitude': lon, 'latitude': lat, 'axes': ('Y', 'X')},
-        ...         'conservative'
-        ...     )
-
-        Regrid field, f, on tripolar grid to latitude-longitude grid
-        of field, g.
-
-        >>> h = f.regrids(g, 'linear',
-        ...               src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
-        ...               src_cyclic=True)
-
-        Regrid f to the grid of g iterating over the 'Z' axis last and
-        the 'T' axis next to last to minimise the number of times the
-        mask is changed.
-
-        >>> h = f.regrids(g, 'nearest_dtos', axis_order='ZT')
-
-        Store the regrid operator and use it for a subsequent regrids:
-
-        >>> op = f.regrids(g, method='conservative', return_operator=True)
-        >>> h = f.regrids(op)
-        >>> h2 = f2.regrids(op)
+        >>> r = src.regrids(dst, method='linear', return_operator=True)
+        >>> y = src.regrids(r)
+        >>> y.equals(x)
+        True
 
         """
-        # Initialise ESMF for regridding
-        regrid_initialize()
+        from .regrid import regrid
 
-        f = _inplace_enabled_define_and_cleanup(self)
-
-        dst_regrid = isinstance(dst, RegridOperator)
-        if dst_regrid:
-            operator = dst
-            method = regrid_get_operator_method(operator, method)
-
-            if return_operator:
-                return operator.copy()
-
-            regridSrc2Dst = operator.regrid
-
-            # Override input arguments with those stored in the regrid
-            # operator
-            dst = operator.get_parameter("dst")
-            dst_axes = operator.get_parameter("dst_axes")
-            dst_cyclic = operator.get_parameter("dst_cyclic")
-            ignore_degenerate = operator.get_parameter("ignore_degenerate")
-            use_dst_mask = operator.get_parameter("use_dst_mask")
-            use_src_mask = operator.get_parameter("use_src_mask")
-            operator_src_cyclic = operator.get_parameter("src_cyclic")
-
-        dst_field = isinstance(dst, self.__class__)
-        dst_dict = not dst_field and isinstance(dst, dict)
-
-        # Check the method
-        regrid_check_method(method)
-
-        # Retrieve the source field's latitude and longitude
-        # coordinates
-        (
-            src_axis_keys,
-            src_axis_sizes,
-            src_coord_keys,
-            src_coords,
-            src_coords_2D,
-        ) = regrid_get_latlon(f, "source", method, axes=src_axes)
-
-        # Retrieve the destination field's latitude and longitude
-        # coordinates
-        if dst_field:
-            # dst is a field construct
-            (
-                dst_axis_keys,
-                dst_axis_sizes,
-                dst_coord_keys,
-                dst_coords,
-                dst_coords_2D,
-            ) = regrid_get_latlon(dst, "destination", method, axes=dst_axes)
-        elif dst_dict:
-            # dst is a dictionary
-            try:
-                dst_coords = (dst["longitude"], dst["latitude"])
-            except KeyError:
-                raise ValueError(
-                    "Keys 'longitude' and 'latitude' must be "
-                    "specified for destination."
-                )
-
-            if dst_coords[0].ndim == 1:
-                dst_coords_2D = False
-                dst_axis_sizes = [coord.size for coord in dst_coords]
-            elif dst_coords[0].ndim == 2:
-                try:
-                    axis_order = dst["axes"]
-                except KeyError:
-                    raise ValueError(
-                        "Key 'axes' must be specified for 2-d "
-                        "latitude/longitude coordinates."
-                    )
-                dst_coords_2D = True
-                if axis_order == ("X", "Y"):
-                    dst_axis_sizes = dst_coords[0].shape
-                elif axis_order == ("Y", "X"):
-                    dst_axis_sizes = dst_coords[0].shape[::-1]
-                else:
-                    raise ValueError(
-                        "Keyword 'axes' must either be "
-                        "('X', 'Y') or ('Y', 'X')."
-                    )
-                if dst_coords[0].shape != dst_coords[1].shape:
-                    raise ValueError(
-                        "Longitude and latitude coordinates for "
-                        "destination must have the same shape."
-                    )
-            else:
-                raise ValueError(
-                    "Longitude and latitude coordinates for "
-                    "destination must have 1 or 2 dimensions."
-                )
-
-            dst_axis_keys = None
-        else:
-            raise TypeError(
-                "dst parameter must be Field, dict or RegridOperator. "
-                f"Got: {type(dst)}"
-            )
-
-        # Automatically detect the cyclicity of the source longitude
-        # axis if src_cyclic is None
-        if src_cyclic is None:
-            src_cyclic = f.iscyclic(src_axis_keys[0])
-
-        # Check that src_cyclic agrees with that of the regrid
-        # operator
-        if dst_regrid and bool(src_cyclic) != bool(operator_src_cyclic):
-            raise ValueError(
-                f"Can't regrid {self!r} with regridding operator "
-                f"{operator!r}: Cyclicity of the source field "
-                "longitude axis does not match that of the "
-                "regridding operator"
-            )
-
-        # Automatically detect the cyclicity of the destination
-        # longitude if dst is not a dictionary and dst_cyclic is None
-        if dst_field and dst_cyclic is None:
-            dst_cyclic = dst.iscyclic(dst_axis_keys[0])
-        elif dst_dict and dst_cyclic is None:
-            dst = dst.copy()
-            dst["longitude"] = dst["longitude"].autoperiod()
-            dst_cyclic = dst["longitude"].isperiodic
-
-        # Get the axis indices and their order for the source field
-        (
-            src_axis_indices,
-            src_non_regridding_axis_indices,
-            src_order,
-        ) = regrid_get_axis_indices(f, src_axis_keys)
-
-        # Get the axis indices and their order for the destination
-        # field.
-        if dst_field:
-            dst = dst.copy()
-            dst_axis_indices, _, dst_order = regrid_get_axis_indices(
-                dst, dst_axis_keys
-            )
-
-        # Get the order of the X and Y axes for each 2-d auxiliary
-        # coordinate.
-        src_coord_order = None
-        dst_coord_order = None
-        if src_coords_2D:
-            src_coord_order = regrid_get_coord_order(
-                f, src_axis_keys, src_coord_keys
-            )
-
-        if dst_coords_2D:
-            if dst_dict:
-                if axis_order == ("X", "Y"):
-                    dst_coord_order = [[0, 1], [0, 1]]
-                elif axis_order == ("Y", "X"):
-                    dst_coord_order = [[1, 0], [1, 0]]
-                else:
-                    raise ValueError(
-                        "Keyword 'axes' must either be ('X', 'Y') or "
-                        "('Y', 'X')."
-                    )
-            else:
-                dst_coord_order = regrid_get_coord_order(
-                    dst, dst_axis_keys, dst_coord_keys
-                )
-
-        # Get the shape of each section after it has been regridded.
-        shape = regrid_get_section_shape(
-            self, dst_axis_sizes, src_axis_indices
-        )
-
-        # Check that use_src_mask is True for all methods other than
-        # nearest_stod
-        regrid_check_use_src_mask(use_src_mask, method)
-
-        # Bounds must be used if the regridding method is conservative.
-        use_bounds = regrid_use_bounds(method)
-
-        # Check the bounds of the coordinates
-        regrid_check_bounds(src_coords, dst_coords, method)
-
-        # Slice the source data into 2-d latitude/longitude sections,
-        # also getting a list of dictionary keys in the order
-        # requested. If axis_order has not been set, then the order is
-        # random, and so in this case the order in which sections are
-        # regridded is random.
-        section_keys, sections = regrid_get_reordered_sections(
-            self, axis_order, src_axis_keys, src_axis_indices
-        )
-
-        # Retrieve the destination field's mask if appropriate
-        dst_mask = None
-        if dst_field and use_dst_mask and dst.data.ismasked:
-            # TODODASK: Just get the mask?
-            dst_mask = regrid_get_destination_mask(
-                dst, dst_order, axes=dst_axis_keys
-            )
-
-        if dst_regrid:
-            srcgrid = create_Grid(
-                src_coords,
-                use_bounds,
-                cyclic=src_cyclic,
-                coords_2D=src_coords_2D,
-                coord_order=src_coord_order,
-            )
-            if not grids_have_same_coords(
-                srcgrid, regridSrc2Dst.srcfield.grid
-            ):
-                srcgrid.destroy()
-                raise ValueError(
-                    f"Can't regrid {self!r} with regridding operator "
-                    f"{operator!r}: Source grid coordinates do not match."
-                )
-            srcgrid.destroy()
-
-        # Get the destination ESMF Grid, Field and fractional Field
-        if dst_regrid:
-            dstgrid = regridSrc2Dst.dstfield.grid
-            dstfield = regridSrc2Dst.dstfield
-            dstfracfield = regridSrc2Dst.dst_frac_field
-        else:
-            dstgrid = create_Grid(
-                dst_coords,
-                use_bounds,
-                mask=dst_mask,
-                cyclic=dst_cyclic,
-                coords_2D=dst_coords_2D,
-                coord_order=dst_coord_order,
-            )
-
-            # dstfield will be reused to receive the regridded source
-            # data for each section, one after the other
-            dstfield = create_Field(dstgrid, "dstfield")
-            dstfracfield = create_Field(dstgrid, "dstfracfield")
-
-        # Regrid each section
-        old_mask = None
-        unmasked_grid_created = False
-        destroy_old_Regrid = False
-        for k in section_keys:
-            d = sections[k]  # d is a Data object
-
-            # Retrieve the source field's grid, create the ESMF Grid
-            # and a handle to regridding.dst_dict
-            src_data = d
-            if src_non_regridding_axis_indices:
-                src_data = src_data.squeeze(src_non_regridding_axis_indices)
-
-            src_data = src_data.transpose(src_order).array
-
-            if not (
-                method == "nearest_stod" and use_src_mask
-            ) and np.ma.is_masked(src_data):
-                mask = src_data.mask
-                if not np.array_equal(mask, old_mask):
-                    # Release old memory
-                    if old_mask is not None:
-                        srcfracfield.destroy()  # noqa: F821
-                        srcfield.destroy()  # noqa: F821
-                        srcgrid.destroy()  # noqa: F821
-
-                    # (Re)create the source ESMF Grid and Fields
-                    srcgrid = create_Grid(
-                        src_coords,
-                        use_bounds,
-                        mask=mask,
-                        cyclic=src_cyclic,
-                        coords_2D=src_coords_2D,
-                        coord_order=src_coord_order,
-                    )
-                    srcfield = create_Field(srcgrid, "srcfield")
-                    srcfracfield = create_Field(srcgrid, "srcfracfield")
-
-                    # (Re)initialise the regridder
-                    create_new_regridder = not dst_regrid
-                    if dst_regrid:
-                        create_new_regridder = not grids_have_same_masks(
-                            srcgrid, regridSrc2Dst.srcfield.grid
-                        )
-
-                    if create_new_regridder:
-                        if destroy_old_Regrid:
-                            regridSrc2Dst.destroy()  # noqa: F821
-
-                        regridSrc2Dst = create_Regrid(
-                            srcfield,
-                            dstfield,
-                            srcfracfield,
-                            dstfracfield,
-                            method,
-                            ignore_degenerate=ignore_degenerate,
-                        )
-                        destroy_old_Regrid = True
-
-                    old_mask = mask
-            else:
-                # The source data for this section is either a) not
-                # masked or b) has the same mask as the previous
-                # section.
-                if not unmasked_grid_created or old_mask is not None:
-                    # Create the source ESMF Grid and Fields
-                    srcgrid = create_Grid(
-                        src_coords,
-                        use_bounds,
-                        cyclic=src_cyclic,
-                        coords_2D=src_coords_2D,
-                        coord_order=src_coord_order,
-                    )
-                    srcfield = create_Field(srcgrid, "srcfield")
-                    srcfracfield = create_Field(srcgrid, "srcfracfield")
-
-                    # Initialise the regridder. This also creates the
-                    # weights needed for the regridding.
-                    create_new_regridder = not dst_regrid
-                    if dst_regrid:
-                        create_new_regridder = not grids_have_same_masks(
-                            srcgrid, regridSrc2Dst.srcfield.grid
-                        )
-
-                    if create_new_regridder:
-                        if destroy_old_Regrid:
-                            regridSrc2Dst.destroy()  # noqa: F821
-
-                        regridSrc2Dst = create_Regrid(
-                            srcfield,
-                            dstfield,
-                            srcfracfield,
-                            dstfracfield,
-                            method,
-                            ignore_degenerate=ignore_degenerate,
-                        )
-                        destroy_old_Regrid = True
-
-                    unmasked_grid_created = True
-                    old_mask = None
-
-            if return_operator:
-                # Return the first created regrid operator, which
-                # contaions the ESMF regrid operator and the input
-                # parameters.
-                parameters = {
-                    "dst": dst.copy(),
-                    "dst_axes": dst_axes,
-                    "dst_cyclic": dst_cyclic,
-                    "src_cyclic": src_cyclic,
-                    "ignore_degenerate": ignore_degenerate,
-                    "use_dst_mask": use_dst_mask,
-                    "use_src_mask": use_src_mask,
-                }
-                return regrid_create_operator(
-                    regridSrc2Dst, "regrids", parameters
-                )
-
-            # Fill the source and destination fields (the destination
-            # field gets filled with a fill value, the source field
-            # with the section's data)
-            regrid_fill_fields(
-                src_data, srcfield, dstfield, f.fill_value(default="netCDF")
-            )
-
-            # Run regridding (dstfield is an ESMF Field)
-            dstfield = run_Regrid(regridSrc2Dst, srcfield, dstfield)
-
-            # Compute field mass if requested for conservative regridding
-            if (
-                _compute_field_mass is not None
-                and method in conservative_regridding_methods
-            ):
-                # Update the _compute_field_mass dictionary in-place,
-                # thereby making the field mass available after
-                # returning
-                regrid_compute_field_mass(
-                    f,
-                    _compute_field_mass,
-                    k,
-                    srcgrid,
-                    srcfield,
-                    srcfracfield,
-                    dstgrid,
-                    dstfield,
-                )
-
-            # Get the regridded data or frac field as a numpy array
-            # (regridded_data is a numpy array)
-            regridded_data = regrid_get_regridded_data(
-                f, method, fracfield, dstfield, dstfracfield
-            )
-
-            # Insert regridded data, with axes in order of the
-            # original section. This puts the regridded data back into
-            # the sections dictionary, with the same key, as a new
-            # Data object. Note that the reshape is necessary to
-            # replace any size 1 dimensions that we squeezed out
-            # earlier.
-            sections[k] = Data(
-                regridded_data.transpose(src_order).reshape(shape),
-                units=f.Units,
-            )
-
-        # Release memory for source grid/fields in the data sections
-        srcfracfield.destroy()
-        srcfield.destroy()
-        srcgrid.destroy()
-
-        # Construct new data from regridded sections
-        new_data = Data.reconstruct_sectioned_data(sections)
-
-        # Construct new field.
-        # Note: cannot call `_inplace_enabled_define_and_cleanup(self)` to
-        # apply this if-else logic (it deletes the decorator attribute so
-        # can only be used once)
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
-
-        # Update ancillary variables of new field
-        # f._conform_ancillary_variables(src_axis_keys, keep_size_1=False)
-
-        #        for k_s, new_size in zip(src_axis_keys, dst_axis_sizes):
-        #            f.domain_axes[k_s].set_size(new_size)
-
-        # Update coordinate references of new field
-        regrid_update_coordinate_references(
-            f,
+        return regrid(
+            "spherical",
+            self,
             dst,
-            src_axis_keys,
-            dst_axis_sizes,
-            method,
-            use_dst_mask,
+            method=method,
             src_cyclic=src_cyclic,
             dst_cyclic=dst_cyclic,
+            use_src_mask=use_src_mask,
+            use_dst_mask=use_dst_mask,
+            src_axes=src_axes,
+            dst_axes=dst_axes,
+            ignore_degenerate=ignore_degenerate,
+            return_operator=return_operator,
+            check_coordinates=check_coordinates,
+            min_weight=min_weight,
+            inplace=inplace,
         )
-
-        # Update coordinates of new field
-        regrid_update_coordinates(
-            f,
-            dst,
-            dst_dict,
-            dst_coords,
-            src_axis_keys,
-            dst_axis_keys,
-            dst_axis_sizes=dst_axis_sizes,
-            dst_coords_2D=dst_coords_2D,
-            dst_coord_order=dst_coord_order,
-        )
-
-        # Copy across destination fields coordinate references if necessary
-        if not dst_dict:
-            regrid_copy_coordinate_references(f, dst, dst_axis_keys)
-
-        # Insert regridded data into new field
-        f.set_data(new_data, axes=self.get_data_axes(), copy=False)
-
-        # Set the cyclicity of the destination longitude
-        key, x = f.dimension_coordinate("X", default=(None, None), item=True)
-        if x is not None and x.Units.equivalent(Units("degrees")):
-            f.cyclic(
-                key,
-                iscyclic=dst_cyclic,
-                config={"coord": x, "period": Data(360.0, "degrees")},
-            )
-
-        # Explicitly release all the memory that will not be needed anymore
-        if not dst_regrid:
-            # explicitly release memory for destination ESMF objects
-            # as they were only created locally (i.e. not originating
-            # from an existing regrid operator) and they will not be
-            # used anymore
-            dstfracfield.destroy()
-            dstfield.destroy()
-            dstgrid.destroy()
-
-            # explicitly release memory for ESMF Regrid and its
-            # associated objects which is safe to do so since the
-            # regrid operator was not returned so the weights will
-            # not be used anymore
-            del regridSrc2Dst
-
-        return f
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -15715,726 +14142,226 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         fracfield=False,
         axis_order=None,
         ignore_degenerate=True,
+        return_operator=False,
+        check_coordinates=False,
+        min_weight=None,
         inplace=False,
         i=False,
         _compute_field_mass=None,
-        return_operator=False,
     ):
-        """Return the field with the specified Cartesian axes regridded
-        onto a new grid.
+        """Regrid the field to a new Cartesian grid.
 
-        Between 1 and 3 dimensions may be regridded.
+        {{regridding overview}}
 
-        Regridding, also called remapping or interpolation, is the
-        process of changing the grid underneath field data values
-        while preserving the qualities of the original data.
+        Between one and three axes may be simultaneously regridded in
+        Cartesian space.
 
-        The regridding method must be specified. First-order
-        conservative interpolation conserves the global spatial
-        integral of the field, but may not give approximations to the
-        values as good as (multi)linear interpolation. Second-order
-        conservative interpolation also takes into account the
-        gradient across the source cells, so in general gives a
-        smoother, more accurate representation of the source field
-        especially when going from a coarser to a finer
-        grid. (Multi)linear interpolation is available. The latter
-        method is particular useful for cases when the latitude and
-        longitude coordinate cell boundaries are not known nor
-        inferrable. Higher order patch recovery is available as an
-        alternative to (multi)linear interpolation.  This typically
-        results in better approximations to values and derivatives
-        compared to the latter, but the weight matrix can be larger
-        than the linear matrix, which can be an issue when regridding
-        close to the memory limit on a machine. It is only available
-        in 2-d. Nearest neighbour interpolation is also
-        available. Nearest source to destination is particularly
-        useful for regridding integer fields such as land use.
+        **Coordinates**
 
-        **Metadata**
+        The source and destination grids of the regridding must both
+        be defined by equivalent coordinates, which must be 1-d
+        dimension coordinates. These are automatically detected from
+        the field being regridded and the specification of the
+        destination grid given by the *dst* parameter.
 
-        The field construct's domain must have axes matching those
-        specified in *src_axes*. The same is true for the destination
-        grid, if it provided as part of another field. Optionally the
-        axes to use from the destination grid may be specified
-        separately in *dst_axes*.
+        {{regrid Masked cells}}
 
-        The output field construct's coordinate objects which span the
-        specified axes are replaced with those from the destination
-        grid. Any fields contained in coordinate reference objects
-        will also be regridded, if possible.
+        {{regrid Implementation}}
 
-
-        **Mask**
-
-        The data array mask of the field is automatically taken into
-        account, such that the regridded data array will be masked in
-        regions where the input data array is masked. By default the
-        mask of the destination grid is not taken into account. If the
-        destination field data has more dimensions than the number of
-        axes specified then, if used, its mask is taken from the 1-3
-        dimensional section of the data where the indices of all axes
-        other than X and Y are zero.
-
-
-        **Implementation**
-
-        The interpolation is carried out using the `ESMF` package, a
-        Python interface to the Earth System Modeling Framework (ESMF)
-        `regridding utility
-        <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
-
-
-        **Logging**
-
-        Whether ESMF logging is enabled or not is determined by
-        `cf.regrid_logging`. If it is logging takes place after every
-        call. By default logging is disabled.
+        {{regrid Logging}}
 
         .. seealso:: `regrids`
 
         :Parameters:
 
-            dst: `Field` or `dict` or `RegridOperator`
-                The destination grid. Must be one of:
+            dst: `Field`, `Domain`, `RegridOperator` or sequence of `DimensionCoordinate`
+                The definition of the destination grid on which to
+                regrid the field's data. One of:
 
-                * `Field`. The grid is defined by the field
-                  construct's domain.
+                * `Field`: The grid is defined by the coordinates of
+                  the field construct's domain.
 
-                * `dict`. The grid is defined by a dictionary with
-                  keys ``'latitude'`` and ``'longitude'`` whose values
-                  are with either both 1-d dimension coordinates
-                  constructs, or both 2-d auxiliary coordinate
-                  constructs. In the 2-d case, both coordinate
-                  constructs must have their axes in the same order
-                  and this must be specified with the ``'axes'`` key
-                  as either of the tuples ``('X', 'Y')`` or ``('Y',
-                  'X')``.
+                * `Domain`: The grid is defined by the coordinates of
+                  the domain construct.
 
-                * `RegridOperator`. The grid is defined by a regrid
-                  operator that has been returned by a previous call
-                  to `regridc` with ``return_operator=True``.
+                * Sequence of `DimensionCoordinate`: The grid is
+                  defined by between one and three 1-d dimension
+                  coordinate constructs that define the coordinates of
+                  the destination grid. The order of the coordinate
+                  constructs **must** match the order of source field
+                  regridding axes defined by the *src_axes* or *axes*
+                  parameter.
 
-                  This option can give large performance increases, as
-                  greatest computational expense is often the creation
-                  of the regrid operator, rather than running the
-                  regrid operator to regrid the data.
+                {{regrid RegridOperator}}
 
-                  The regrid operator defines the source grid and the
-                  regridding weights, so the *method*, *axes*,
-                  *ignore_degenerate*, *use_src_mask*, and
-                  *use_dst_mask* parameters are not required and are
-                  ignored if set.
+            {{method: `str` or `None`, optional}}
 
-                  An exception will be raised if the domain of the
-                  source field being regridded is inconsistent with
-                  source grid of the regrid operator.
+            {{use_src_mask: `bool`, optional}}
 
-                  The source field being regridded may, however, have
-                  a different data mask to that of the source grid in
-                  the regrid operator. In this case a new regrid
-                  operator is automatically created, with the
-                  associated loss in performance.
+            {{use_dst_mask: `bool`, optional}}
 
-            dst: `Field` or `dict` or `RegridOperator`
-                The field containing the new grid or a dictionary with
-                the axes specifiers as keys referencing dimension
-                coordinates.
+            src_axes: sequence, optional
+                Define the source grid axes to be regridded. The
+                sequence of between one and three values identify
+                unique domain axes by passing each axis description to
+                a call of the source field construct's `domain_axis`
+                method. For example, for a value of ``'ncdim%x'``, the
+                domain axis construct returned by
+                ``f.domain_axis('ncdim%x')`` is selected.
+
+                Must have the same number of values as the *dst_axes*
+                parameter, if set, and the source and destination
+                regridding axes must be specified in the same
+                order. See the *axes* parameter.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                *Parameter example:*
+                  ``['T']``
+
+                *Parameter example:*
+                  ``[1, 0]``
+
+                .. versionadded:: 3.14.0
+
+            dst_axes: `sequence`, optional
+                When the destination grid is defined by a `Field` or
+                `Domain`, define the destination grid axes to be
+                regridded. The sequence of between one and three
+                values identify unique domain axes by passing each
+                axis description to a call of the destination field or
+                domain construct's `domain_axis` method. For example,
+                for a value of ``'ncdim%x'``, the domain axis
+                construct returned by ``g.domain_axis('ncdim%x')`` is
+                selected.
+
+                Must have the same number of values as the *src_axes*
+                parameter, if set, and the source and destination
+                regridding axes must be specified in the same
+                order. See the *axes* parameter.
+
+                Ignored if *dst* is a `RegridOperator`.
+
+                *Parameter example:*
+                  ``['T']``
+
+                *Parameter example:*
+                  ``[1, 0]``
+
+                .. versionadded:: 3.14.0
 
             axes: optional
-                Select dimension coordinates from the source and
-                destination fields for regridding. See `cf.Field.axes`
-                TODO for options for selecting specific axes. However,
-                the number of axes returned by `cf.Field.axes` TODO
-                must be the same as the number of specifiers passed
-                in. TODO Can only be None if regridoperator
+                Define the axes to be regridded for the source grid
+                and, if *dst* is a `Field` or `Domain`, the
+                destination grid. The *axes* parameter is a
+                convenience that may be used to replace *src_axes* and
+                *dst_axes* when they would contain identical
+                sequences. It may also be used in place of *src_axes*
+                if *dst_axes* is not required.
 
-                .. note:: When *dst* is a regrid operator then *axes*
-                          is ignored, and its value is set by the
-                          regrid operator's parameters.
+            {{ignore_degenerate: `bool`, optional}}
 
-            {{method: `str`, optional}}
+            {{return_operator: `bool`, optional}}
 
-            use_src_mask: `bool`, optional
-                For all methods other than 'nearest_stod', this must
-                be True as it does not make sense to set it to
-                False. For the 'nearest_stod' method if it is True
-                then points in the result that are nearest to a masked
-                source point are masked. Otherwise, if it is False,
-                then these points are interpolated to the nearest
-                unmasked source points.
+                .. versionadded:: 3.10.0
 
-                .. note:: When *dst* is a regrid operator then
-                          *use_src_mask* is ignored, and its value is
-                          set by the regrid operator's parameters.
+            {{check_coordinates: `bool`, optional}}
 
-            use_dst_mask: `bool`, optional
-                By default the mask of the data on the destination
-                grid is not taken into account when performing
-                regridding. If this option is set to True then it is.
+                .. versionadded:: 3.14.0
 
-                .. note:: When *dst* is a regrid operator then
-                          *use_dst_mask* is ignored, and its value is
-                          set by the regrid operator's parameters.
+            {{min_weight: float, optional}}
 
-            fracfield: `bool`, optional
-                If the method of regridding is conservative the
-                fraction of each destination grid cell involved in the
-                regridding is returned instead of the regridded data
-                if this is True. Otherwise this is ignored.
-
-            axis_order: sequence, optional
-                A sequence of items specifying dimension coordinates
-                as retrieved by the `dim` method. These determine the
-                order in which to iterate over the other axes of the
-                field when regridding slices. The slowest moving axis
-                will be the first one specified. Currently the
-                regridding weights are recalculated every time the
-                mask of a slice changes with respect to the previous
-                one, so this option allows the user to minimise how
-                frequently the mask changes. TODO.
-
-            ignore_degenerate: `bool`, optional
-                True by default. Instructs ESMF to ignore degenerate
-                cells when checking the grids for errors. Regridding
-                will proceed and degenerate cells will be skipped, not
-                producing a result, when set to True. Otherwise an
-                error will be produced if degenerate cells are
-                found. This will be present in the ESMF log files if
-                cf.regrid_logging is set to True. As of ESMF 7.0.0
-                this only applies to conservative regridding.  Other
-                methods always skip degenerate cells.
-
-                .. note:: When *dst* is a regrid operator then
-                          *ignore_degenerate* is ignored, and its
-                          value is set by the regrid operator's
-                          parameters.
+                .. versionadded:: 3.14.0
 
             {{inplace: `bool`, optional}}
 
+            axis_order: sequence, optional
+                Deprecated at version 3.14.0.
+
+            fracfield: `bool`, optional
+                Deprecated at version 3.14.0.
+
             _compute_field_mass: `dict`, optional
-                If this is a dictionary then the field masses of the
-                source and destination fields are computed and
-                returned within the dictionary. The keys of the
-                dictionary indicates the lat/long slice of the field
-                and the corresponding value is a tuple containing the
-                source field construct's mass and the destination
-                field construct's mass. The calculation is only done
-                if conservative regridding is being performed. This is
-                for debugging purposes.
-
-            return_operator: `bool`, optional
-                If True then do not perform the regridding, rather
-                return a `RegridOperator` instance that defines the
-                regridding operation, including the destination grid,
-                and which can be used in subsequent calls to
-                `regridc`.
-
-                .. versionadded:: 3.10.0
+                Deprecated at version 3.14.0.
 
             {{i: deprecated at version 3.0.0}}
 
         :Returns:
 
             `Field` or `None` or `RegridOperator`
-                The regridded field construct, or `None` if the
-                operation was in-place, or the regridding operator if
+                The regridded field construct; or `None` if the
+                operation was in-place; or the regridding operator if
                 *return_operator* is True.
 
         **Examples**
 
-        Regrid the time axes of field ``f`` conservatively onto a grid
-        contained in field ``g``:
+        >>> src, dst = cf.example_fields(1, 0)
+        >>> print(src)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+        Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+        Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                        : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                        : time(1) = [2019-01-01 00:00:00]
+        Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                        : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+        Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+        Coord references: grid_mapping_name:rotated_latitude_longitude
+                        : standard_name:atmosphere_hybrid_height_coordinate
+        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                        : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+        >>> print(dst)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> x = src.regridc(dst, method='linear', axes=['Y'])
+        >>> print(x)
+        Field: air_temperature (ncvar%ta)
+        ---------------------------------
+        Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), latitude(5), grid_longitude(9)) K
+        Cell methods    : latitude(5): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+        Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                        : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                        : time(1) = [2019-01-01 00:00:00]
+        Coord references: standard_name:atmosphere_hybrid_height_coordinate
+        Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                        : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                        : surface_altitude(latitude(5), grid_longitude(9)) = [[--, ..., --]] m
 
-        >>> h = f.regridc(g, axes='T', method='conservative')
-
-        Regrid the T axis of field ``f`` conservatively onto the grid
-        specified in the dimension coordinate ``t``:
-
-        >>> h = f.regridc({'T': t}, axes=('T'), method='conservative_1st')
-
-        Regrid the T axis of field ``f`` using linear interpolation onto
-        a grid contained in field ``g``:
-
-        >>> h = f.regridc(g, axes=('T'), method='linear')
-
-        Regrid the X and Y axes of field ``f`` conservatively onto a grid
-        contained in field ``g``:
-
-        >>> h = f.regridc(g, axes=('X','Y'), method='conservative_1st')
-
-        Regrid the X and T axes of field ``f`` conservatively onto a grid
-        contained in field ``g`` using the destination mask:
-
-        >>> h = f.regridc(g, axes=('X','Y'), method='linear',
-        ...               use_dst_mask=True)
-
-        Store the regrid operator and use it for a subsequent regrids:
-
-        >>> op = f.regridc(g, axes='T', method='conservative',
-        ...                return_operator=True)
-        >>> h = f.regridc(op)
-        >>> h2 = f2.regridc(op)
+        >>> r = src.regridc(dst, method='linear', axes=['Y'], return_operator=True)
+        >>> y = src.regridc(r)
+        >>> y.equals(x)
+        True
 
         """
-        # Initialise ESMF for regridding
-        regrid_initialize()
+        from .regrid import regrid
 
-        f = _inplace_enabled_define_and_cleanup(self)
-
-        dst_regrid = isinstance(dst, RegridOperator)
-
-        if dst_regrid:
-            operator = dst
-            method = regrid_get_operator_method(operator, method)
-
-            if return_operator:
-                return operator.copy()
-
-            regridSrc2Dst = operator.regrid
-
-            # Override input arguments with those stored in the regrid
-            # operator
-            dst = operator.get_parameter("dst")
-            axes = operator.get_parameter("axes")
-            ignore_degenerate = operator.get_parameter("ignore_degenerate")
-            use_dst_mask = operator.get_parameter("use_dst_mask")
-            use_src_mask = operator.get_parameter("use_src_mask")
-        elif axes is None:
-            raise ValueError(
-                "Must set the axes parameter when the dst parameter is a "
-                f"{dst.__class__.__name__}"
-            )
-
-        dst_field = isinstance(dst, self.__class__)
-        dst_dict = not dst_field and isinstance(dst, dict)
-
-        # Check the method
-        regrid_check_method(method)
-
-        # Get the number of axes
-        if isinstance(axes, str):
-            axes = (axes,)
-
-        n_axes = len(axes)
-        if n_axes < 1 or n_axes > 3:
-            raise ValueError(
-                "Between 1 and 3 axes must be individually specified."
-            )
-
-        # Retrieve the source axis keys and dimension coordinates
-        src_axis_keys, src_coords = get_cartesian_coords(f, "source", axes)
-
-        # Retrieve the destination axis keys and dimension coordinates
-        if dst_dict:
-            dst_coords = []
-            for axis in axes:
-                try:
-                    dst_coords.append(dst[axis])
-                except KeyError:
-                    raise ValueError(f"Axis {axis!r} not specified in dst.")
-
-            dst_axis_keys = None
-        elif dst_field:
-            dst_axis_keys, dst_coords = get_cartesian_coords(
-                dst, "destination", axes
-            )
-        else:
-            raise TypeError(
-                "dst parameter must be Field, dict or RegridOperator. "
-                f"Got: {type(dst)}"
-            )
-        # Check that the units of the source and the destination
-        # coords are equivalent and if so set the units of the source
-        # coords to those of the destination coords
-        for src_coord, dst_coord in zip(src_coords, dst_coords):
-            if src_coord.Units.equivalent(dst_coord.Units):
-                src_coord.units = dst_coord.units
-            else:
-                raise ValueError(
-                    "Units of source and destination domains are not "
-                    f"equivalent: {src_coord.Units!r}, {dst_coord.Units!r}"
-                )
-
-        # Get the axis indices and their order for the source field
-        (
-            src_axis_indices,
-            src_non_regridding_axis_indices,
-            src_order,
-        ) = regrid_get_axis_indices(f, src_axis_keys)
-
-        # Get the axis indices and their order for the destination field.
-        if not dst_dict:
-            dst_axis_indices, _, dst_order = regrid_get_axis_indices(
-                dst, dst_axis_keys
-            )
-
-        # Pad out a single dimension with an extra one (see comments
-        # in regrid_check_bounds). Variables ending in _ext pertain
-        # the extra dimension.
-        axis_keys_ext = []
-        coords_ext = []
-        src_axis_indices_ext = src_axis_indices
-        src_order_ext = src_order
-        # Proceed if there is only one regridding dimension, but more
-        # than one dimension to the field that is not of size one.
-        if n_axes == 1 and f.squeeze().ndim > 1:
-            # Find the length and index of the longest axis not
-            # including the axis along which regridding will be
-            # performed.
-            src_shape = np.array(f.shape)
-            tmp = src_shape.copy()
-            tmp[src_axis_indices] = -1
-            max_length = -1
-            max_ind = -1
-            for ind, length in enumerate(tmp):
-                if length > max_length:
-                    max_length = length
-                    max_ind = ind
-
-            # If adding this extra dimension to the regridding axis
-            # will not create sections that exceed 1 chunk of memory
-            # proceed to get the coordinate and associated data for
-            # the extra dimension.
-            if src_shape[src_axis_indices].prod() * max_length * 8 < (
-                float(chunksize())
-            ):
-                axis_keys_ext, coords_ext = get_cartesian_coords(
-                    f, "source", [max_ind]
-                )
-                (
-                    src_axis_indices_ext,
-                    src_non_regridding_axis_indices,
-                    src_order_ext,
-                ) = regrid_get_axis_indices(f, axis_keys_ext + src_axis_keys)
-
-        # Calculate shape of each regridded section
-        shape = regrid_get_section_shape(
-            f,
-            [coord.size for coord in coords_ext + dst_coords],
-            src_axis_indices_ext,
-        )
-
-        # Check that use_src_mask is True for all methods other than
-        # nearest_stod
-        regrid_check_use_src_mask(use_src_mask, method)
-
-        # Check that the regridding axes span two dimensions if using
-        # higher order patch recovery
-        if method == "patch" and n_axes != 2:
-            raise ValueError(
-                "Higher order patch recovery is only available in 2-d."
-            )
-
-        # Check the bounds of the coordinates
-        regrid_check_bounds(
-            src_coords, dst_coords, method, ext_coords=coords_ext
-        )
-
-        # Deal with case of 1D nonconservative regridding
-        nonconservative1D = False
-        if (
-            method not in conservative_regridding_methods
-            and n_axes == 1
-            and coords_ext == []
-        ):
-            # Method is not conservative, regridding is to be done
-            # along one dimension and that dimension has not been
-            # padded out with an extra one.
-            nonconservative1D = True
-            coords_ext = [
-                DimensionCoordinate(
-                    data=Data(
-                        [
-                            numpy_finfo("float32").epsneg,
-                            numpy_finfo("float32").eps,
-                        ]
-                    )
-                )
-            ]
-
-        # Section the data into slices of up to three dimensions
-        # getting a list of reordered keys if required. Reordering on
-        # an extended axis will not have any effect as all the items
-        # in the keys will be None. Therefore it is only checked if
-        # the axes specified in axis_order are in the regridding axes
-        # as this is informative to the user.
-        section_keys, sections = regrid_get_reordered_sections(
-            self, axis_order, src_axis_keys, src_axis_indices_ext
-        )
-
-        # Use bounds if the regridding method is conservative.
-        use_bounds = regrid_use_bounds(method)
-
-        # Retrieve the destination field's mask if appropriate
-        dst_mask = None
-        if not dst_dict and use_dst_mask and dst.data.ismasked:
-            # TODODASK: Just get the mask?
-            dst_mask = regrid_get_destination_mask(
-                dst,
-                dst_order,
-                axes=dst_axis_keys,
-                cartesian=True,
-                coords_ext=coords_ext,
-            )
-
-        # Get the destination ESMF Grid, Field and fractional Field
-        if dst_regrid:
-            srcgrid = create_Grid(
-                coords_ext + src_coords, use_bounds, cartesian=True
-            )
-            if not grids_have_same_coords(
-                srcgrid, regridSrc2Dst.srcfield.grid
-            ):
-                srcgrid.destroy()
-                raise ValueError(
-                    f"Can't regrid {self!r} with regridding operator "
-                    f"{operator!r}: Source grid coordinates do not match."
-                )
-            srcgrid.destroy()
-
-            dstgrid = regridSrc2Dst.dstfield.grid
-            dstfield = regridSrc2Dst.dstfield
-            dstfracfield = regridSrc2Dst.dst_frac_field
-        else:
-            dstgrid = create_Grid(
-                coords_ext + dst_coords,
-                use_bounds,
-                mask=dst_mask,
-                cartesian=True,
-            )
-
-            # dstfield will be reused to receive the regridded source
-            # data for each section, one after the other
-            dstfield = create_Field(dstgrid, "dstfield")
-            dstfracfield = create_Field(dstgrid, "dstfracfield")
-
-        # Regrid each section
-        old_mask = None
-        unmasked_grid_created = False
-        destroy_old_Regrid = False
-        for k in section_keys:
-            d = sections[k]
-            subsections = d.data.section(
-                src_axis_indices_ext, chunks=True, min_step=2
-            )
-
-            for k2 in subsections.keys():
-                d2 = subsections[k2]
-                # Retrieve the source field's grid, create the ESMF
-                # grid and a handle to regridding.
-                src_data = d2
-                if src_non_regridding_axis_indices:
-                    src_data = src_data.squeeze(
-                        src_non_regridding_axis_indices
-                    )
-
-                src_data = src_data.transpose(src_order_ext).array
-
-                if nonconservative1D:
-                    src_data = numpy_tile(src_data, (2, 1))
-
-                if not (
-                    method == "nearest_stod" and use_src_mask
-                ) and numpy_ma_is_masked(src_data):
-                    mask = src_data.mask
-                    if not numpy_array_equal(mask, old_mask):
-                        # Release old memory
-                        if old_mask is not None:
-                            srcfracfield.destroy()  # noqa: F821
-                            srcfield.destroy()  # noqa: F821
-                            srcgrid.destroy()  # noqa: F821
-
-                        # (Re)create the source ESMF Grid and fields
-                        srcgrid = create_Grid(
-                            coords_ext + src_coords,
-                            use_bounds,
-                            mask=mask,
-                            cartesian=True,
-                        )
-                        srcfield = create_Field(srcgrid, "srcfield")
-                        srcfracfield = create_Field(srcgrid, "srcfracfield")
-
-                        # (Re)initialise the regridder
-                        create_new_regridder = not dst_regrid
-                        if dst_regrid:
-                            create_new_regridder = not grids_have_same_masks(
-                                srcgrid, regridSrc2Dst.srcfield.grid
-                            )
-
-                        if create_new_regridder:
-                            if destroy_old_Regrid:
-                                regridSrc2Dst.destroy()  # noqa: F821
-
-                            regridSrc2Dst = create_Regrid(
-                                srcfield,
-                                dstfield,
-                                srcfracfield,
-                                dstfracfield,
-                                method=method,
-                                ignore_degenerate=ignore_degenerate,
-                            )
-                            destroy_old_Regrid = True
-
-                        old_mask = mask
-                else:
-                    if not unmasked_grid_created or old_mask is not None:
-                        # Create the source ESMF Grid and Fields
-                        srcgrid = create_Grid(
-                            coords_ext + src_coords, use_bounds, cartesian=True
-                        )
-                        srcfield = create_Field(srcgrid, "srcfield")
-                        srcfracfield = create_Field(srcgrid, "srcfracfield")
-
-                        create_new_regridder = not dst_regrid
-                        if dst_regrid:
-                            create_new_regridder = not grids_have_same_masks(
-                                srcgrid, regridSrc2Dst.srcfield.grid
-                            )
-
-                        if create_new_regridder:
-                            if destroy_old_Regrid:
-                                regridSrc2Dst.destroy()  # noqa: F821
-
-                            regridSrc2Dst = create_Regrid(
-                                srcfield,
-                                dstfield,
-                                srcfracfield,
-                                dstfracfield,
-                                method=method,
-                                ignore_degenerate=ignore_degenerate,
-                            )
-                            destroy_old_Regrid = True
-
-                        unmasked_grid_created = True
-                        old_mask = None
-
-                if return_operator:
-                    # Return the first created regrid operator, which
-                    # contaions the ESMF regrid operator and the input
-                    # parameters.
-                    parameters = {
-                        "dst": dst.copy(),
-                        "axes": axes,
-                        "ignore_degenerate": ignore_degenerate,
-                        "use_dst_mask": use_dst_mask,
-                        "use_src_mask": use_src_mask,
-                    }
-                    return regrid_create_operator(
-                        regridSrc2Dst, "regridc", parameters
-                    )
-
-                # Fill the source and destination fields
-                regrid_fill_fields(
-                    src_data,
-                    srcfield,
-                    dstfield,
-                    f.fill_value(default="netCDF"),
-                )
-
-                # Run regridding
-                dstfield = run_Regrid(regridSrc2Dst, srcfield, dstfield)
-
-                # Compute field mass if requested for conservative regridding
-                if (
-                    _compute_field_mass is not None
-                    and method in conservative_regridding_methods
-                ):
-                    regrid_compute_field_mass(
-                        f,
-                        _compute_field_mass,
-                        k,
-                        srcgrid,
-                        srcfield,
-                        srcfracfield,
-                        dstgrid,
-                        dstfield,
-                    )
-
-                # Get the regridded data or frac field as a numpy
-                # array
-                regridded_data = regrid_get_regridded_data(
-                    f, method, fracfield, dstfield, dstfracfield
-                )
-
-                if nonconservative1D:
-                    # For nonconservative regridding along one
-                    # dimension where that dimension has not been
-                    # padded out take only one of the two rows of data
-                    # as they should be nearly identical.
-                    regridded_data = regridded_data[0]
-
-                # Insert regridded data, with axes in correct order
-                subsections[k2] = Data(
-                    regridded_data.squeeze()
-                    .transpose(src_order_ext)
-                    .reshape(shape),
-                    units=f.Units,
-                )
-
-            sections[k] = Data.reconstruct_sectioned_data(subsections)
-
-        # Release memory for source grid/fields created for data subsections
-        srcfracfield.destroy()
-        srcfield.destroy()
-        srcgrid.destroy()
-
-        # Construct new data from regridded sections
-        new_data = Data.reconstruct_sectioned_data(sections)
-
-        # # Update ancillary variables of new field
-        # f._conform_ancillary_variables(src_axis_keys, keep_size_1=False)
-
-        dst_axis_sizes = [c.size for c in dst_coords]
-
-        # Update coordinate references of new field
-        regrid_update_coordinate_references(
-            f,
+        return regrid(
+            "Cartesian",
+            self,
             dst,
-            src_axis_keys,
-            dst_axis_sizes,
-            method,
-            use_dst_mask,
-            cartesian=True,
+            method=method,
+            src_cyclic=False,
+            dst_cyclic=False,
+            use_src_mask=use_src_mask,
+            use_dst_mask=use_dst_mask,
             axes=axes,
-            n_axes=n_axes,
+            ignore_degenerate=ignore_degenerate,
+            return_operator=return_operator,
+            check_coordinates=check_coordinates,
+            min_weight=min_weight,
+            inplace=inplace,
         )
-
-        # Update coordinates of new field
-        regrid_update_coordinates(
-            f,
-            dst,
-            dst_dict,
-            dst_coords,
-            src_axis_keys,
-            dst_axis_keys,
-            cartesian=True,
-        )
-
-        # Copy across destination fields coordinate references if
-        # necessary
-        if not dst_dict:
-            regrid_copy_coordinate_references(f, dst, dst_axis_keys)
-
-        # Insert regridded data into new field
-        f.set_data(new_data, axes=self.get_data_axes())
-
-        # Explicitly release all the memory that will not be needed anymore
-        if not dst_regrid:
-            # explicitly release memory for destination ESMF objects
-            # as they were only created locally (i.e. not originating
-            # from an existing regrid operator) and they will not be
-            # used anymore
-            dstfracfield.destroy()
-            dstfield.destroy()
-            dstgrid.destroy()
-
-            # explicitly release memory for ESMF Regrid and its
-            # associated objects which is safe to do so since the
-            # regrid operator was not returned so the weights will
-            # not be used anymore
-            del regridSrc2Dst
-
-        return f
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
