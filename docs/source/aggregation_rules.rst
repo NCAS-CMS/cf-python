@@ -33,10 +33,11 @@ More than two field constructs are aggregated by repeated applications
 of the aggregation algorithm, and aggregations over multiple domain
 axis constructs are similarly possible.
 
-As of CF-1.9, :term:`Domain constructs <domain construct>` may also be
-aggregated. The rules for :term:`cell method constructs <cell method
-constructs>` and :term:`field ancillary constructs <field ancillary
-constructs>` are ignored for domain construct aggregation.
+From `cf` version 3.11.0, CF-1.9 is supported and :term:`Domain
+constructs <domain construct>` may also be aggregated. The rules for
+:term:`cell method constructs <cell method constructs>` and
+:term:`field ancillary constructs <field ancillary constructs>` are
+ignored for domain construct aggregation.
 
 Aggregation is implemented in the `cf.aggregate` function, and is
 applied by default by the `cf.read` function.

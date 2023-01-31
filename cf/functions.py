@@ -231,11 +231,9 @@ def configuration(
 
             The default is to not change the directory.
 
-
         chunksize: `float` or `Constant`, optional
             The new chunksize in bytes. The default is to not change
             the current behaviour.
-
 
         bounds_combination_mode: `str` or `Constant`, optional
             Determine how to deal with cell bounds in binary
@@ -726,16 +724,22 @@ class chunksize(ConstantAccess):
     If called without any arguments then the existing chunksize is
     returned.
 
-    .. note:: Setting the chunksize will change the `dask` global
-              configuration value ``'array.chunk-size'``. If
+    .. note:: Setting the chunk size will also change the `dask`
+              global configuration value ``'array.chunk-size'``. If
               `chunksize` is used in a context manager then the `dask`
               configuration value is only altered within that context.
+              Setting the chunk size directly from the `dask`
+              configuration API will affect susbsequent data creation,
+              but will *not* change the value of `chunksize`.
 
     :Parameters:
 
         arg: number or `str` or `Constant`, optional
             The chunksize in bytes. Any size accepted by
-            `dask.utils.parse_bytes` is accepted.
+            `dask.utils.parse_bytes` is accepted, for instance
+            ``100``, ``'100'``, ``'1e6'``, ``'100 MB'``, ``'100M'``,
+            ``'5kB'``, ``'5.4 kB'``, ``'1kiB'``, ``'1e6 kB'``, and
+            ``'MB'`` are all valid sizes.
 
             Note that if *arg* is a `float`, or a string that implies
             a non-integral amount of bytes, then the integer part

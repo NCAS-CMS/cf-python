@@ -34,8 +34,6 @@ Windows Subsystem for Linux (WSL)
 
 The cf package is only for Python 3.7 or newer.
 
-Versions 2.x of cf work only for Python 2.7.
-
 ----
 
 .. _pip:
