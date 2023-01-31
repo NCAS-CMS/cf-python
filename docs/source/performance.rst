@@ -112,7 +112,7 @@ chunks.
 By default, chunks have a size of at most ``128 MiB`` and prefer
 square-like shapes. A new default chunk size is set with the
 `cf.chunksize` function. The default chunk size and shape may be
-overridden by `cf.read`, as well when creating `cf.Data` instances ab
+overridden by `cf.read`, as well as when creating `cf.Data` instances ab
 initio. Any data may be re-chunked after its creation with the
 `cf.Data.rechunk` method, although this operation can be expensive.
 
