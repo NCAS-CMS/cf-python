@@ -133,12 +133,12 @@ Visualization
 =============
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the `cfplot` package
-(http://ajheaps.github.io/cf-plot), that needs to be installed
+constructs are available with the `cfplot package
+<http://ajheaps.github.io/cf-plot>`_, that needs to be installed
 seprately to the `cf` package.
 
-See the cf-plot gallery
-(http://ajheaps.github.io/cf-plot/gallery.html) for the full range
+See the `cf-plot gallery
+<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the full range
 range plotting possibilities with example code.
 
 ![Example output of cf-plot displaying a `cf` field construct](docs/source/images/cfplot_example.png)
