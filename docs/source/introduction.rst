@@ -34,7 +34,7 @@ The cf package uses for its internal data structures the
 :ref:`CF-data-model` inherited from the `cfdm` package, and so is able
 to process any CF-compliant dataset. It is not strict about
 CF-compliance, however, so that partially conformant datasets may be
-ingested from existing datasets and written to new datasets.This is so
+ingested from existing datasets and written to new datasets. This is so
 that datasets that are partially conformant may nonetheless be
 modified in memory.
 
