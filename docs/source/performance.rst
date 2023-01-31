@@ -221,7 +221,7 @@ final ``e.array`` command. The boxes represent the data chunks and the
 circles represent the operations to be performed on the chunks. The
 five boxes in the bottom row are the starting data (i.e. the four
 chunks of ``d`` and the scalar ``2``), and the four boxes in the top
-row are the result of the computation which combine to produce the
+row are the result of the computations which combine to produce the
 values in ``e.array``.
 
 .. figure:: images/dask_task_graph.svg
