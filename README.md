@@ -26,7 +26,7 @@ is built on a complete implementation of the CF data model.
 Dask
 ====
 
-From version 3.14.0, the `cf` package uses
+From version 3.14.0 the `cf` package uses
 [Dask](https://docs.dask.org) for all of its data manipulations.
 
 Documentation
