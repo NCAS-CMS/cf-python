@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Domain.match_by_construct &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Domain.anchor" href="cf.Domain.anchor.html" />
+    <link rel="prev" title="cf.Domain.match_by_rank" href="cf.Domain.match_by_rank.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Domain.html">cf.Domain</a><ul>
+      <li>Previous: <a href="cf.Domain.match_by_rank.html" title="previous chapter">cf.Domain.match_by_rank</a></li>
+      <li>Next: <a href="cf.Domain.anchor.html" title="next chapter">cf.Domain.anchor</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-domain-match-by-construct">
+<h1>cf.Domain.match_by_construct<a class="headerlink" href="#cf-domain-match-by-construct" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Domain.match_by_construct">
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">match_by_construct</code><span class="sig-paren">(</span><em class="sig-param">*identities</em>, <em class="sig-param">OR=False</em>, <em class="sig-param">**conditions</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/domain.py#L563-L743"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Domain.match_by_construct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not there are particular metadata constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.11.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Domain.match.html#cf.Domain.match" title="cf.Domain.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a>, <a class="reference internal" href="cf.Domain.match_by_property.html#cf.Domain.match_by_property" title="cf.Domain.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a>, <a class="reference internal" href="cf.Domain.match_by_rank.html#cf.Domain.match_by_rank" title="cf.Domain.match_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_rank</span></code></a>,
+<a class="reference internal" href="cf.Domain.match_by_identity.html#cf.Domain.match_by_identity" title="cf.Domain.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a>, <a class="reference internal" href="cf.Domain.match_by_ncvar.html#cf.Domain.match_by_ncvar" title="cf.Domain.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>identities: optional</dt><dd><p>Identify the metadata constructs by one or more of</p>
+<ul>
+<li><p>A metadata construct identity.</p>
+<p>A construct has a number of string-valued identities</p>
+</li>
+</ul>
+<p>defined by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method, and is selected
+if any of them match the <em>identity</em>
+parameter. <em>identity</em> may be a string that equals one
+of a construct’s identities; or a <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code> object
+that matches one of a construct’s identities via
+<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<p>Note that in the output of a <a class="reference internal" href="../function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+call, a metadata construct is always described by one
+of its identities, and so this description may always
+be used as an <em>identity</em> value.</p>
+<ul class="simple">
+<li><p>The key of a metadata construct</p></li>
+</ul>
+<p>If a cell method construct identity is given (such as
+<code class="docutils literal notranslate"><span class="pre">'method:mean'</span></code>) then it will only be compared with the
+most recently applied cell method operation.</p>
+<p>Alternatively, one or more cell method constructs may
+be identified in a single string with a CF-netCDF cell
+methods-like syntax for describing both the collapse
+dimensions, the collapse method, and any cell method
+construct qualifiers. If N cell methods are described
+in this way then they will collectively identify the N
+most recently applied cell method operations. For
+example, <code class="docutils literal notranslate"><span class="pre">'T:</span> <span class="pre">maximum</span> <span class="pre">within</span> <span class="pre">years</span> <span class="pre">T:</span> <span class="pre">mean</span> <span class="pre">over</span>
+<span class="pre">years'</span></code> will be compared with the most two most
+recently applied cell method operations.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='latitude'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><a href="#id1"><span class="problematic" id="id2">``</span></a>’T’</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'latitude'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'long_name=Cell</span> <span class="pre">Area'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'cellmeasure1'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'measure:area'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">cf.eq('time')'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">re.compile('^lat')</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'domainancillary2',</span> <span class="pre">'longitude'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'area:</span> <span class="pre">mean</span> <span class="pre">T:</span> <span class="pre">maximum'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">'grid_latitude',</span> <span class="pre">'area:</span> <span class="pre">mean</span> <span class="pre">T:</span> <span class="pre">maximum'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>conditions: optional</dt><dd><p>Identify the metadata constructs that have any of the
+given identities or construct keys, and whose data satisfy
+conditions.</p>
+<p>A construct identity or construct key (as defined by the
+<em>identities</em> parameter) is given as a keyword name and a
+condition on its data is given as the keyword value.</p>
+<p>The condition is satisfied if any of its data values
+equals the value provided.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">longitude=180.0</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">time=cf.dt('1959-12-16')</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">latitude=cf.ge(0)</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">latitude=cf.ge(0),</span> <span class="pre">air_pressure=500</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">**{'latitude':</span> <span class="pre">cf.ge(0),</span> <span class="pre">'long_name=soil_level':</span> <span class="pre">4}</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>OR: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if at least one metadata
+construct matches at least one of the criteria given by
+the <em>identities</em> or <em>conditions</em> arguments. By default
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is only returned if the field constructs matches
+each of the given criteria.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not the domain construct contains the
+specified metadata constructs.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">domain</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">match_by_construct</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">match_by_construct</span><span class="p">(</span><span class="s2">&quot;air_pressure&quot;</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">match_by_construct</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">match_by_construct</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mf">22.5</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">match_by_construct</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mf">15.5</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">match_by_construct</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">340</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">match_by_construct</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">240</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">match_by_construct</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s2">&quot;2019-01-01&quot;</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">match_by_construct</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">))</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-01-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf python package &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction" href="introduction.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="#">cf 3.14.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="introduction.html" title="next chapter"><strong>Introduction</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-python-package">
+<span id="cf-python-home"></span><h1><strong>cf python package</strong><a class="headerlink" href="#cf-python-package" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<style> .red {color:red} </style><style> .blue {color:blue} </style><section id="introduction">
+<h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>Version 3.14.0 for version 1.10 of the CF conventions.</p>
+<p>The Python <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package is an Earth Science data analysis library that
+is built on a complete implementation of the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a>.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#functionality" id="id4"><strong>Functionality</strong></a></p></li>
+<li><p><a class="reference internal" href="#visualisation" id="id5"><strong>Visualisation</strong></a></p></li>
+<li><p><a class="reference internal" href="#performance" id="id6"><strong>Performance</strong></a></p></li>
+<li><p><a class="reference internal" href="#command-line-utilities" id="id7"><strong>Command line utilities</strong></a></p></li>
+<li><p><a class="reference internal" href="#references" id="id8"><strong>References</strong></a></p></li>
+</ul>
+</div>
+<section id="functionality">
+<h3><a class="toc-backref" href="#id4"><strong>Functionality</strong></a><a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package implements the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a> for its internal
+data structures and so is able to process any CF-compliant dataset. It
+is not strict about CF-compliance, however, so that partially
+conformant datasets may be ingested from existing datasets and written
+to new datasets.This is so that datasets that are partially conformant
+may nonetheless be modified in memory.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text"><em>A simple example of reading a field construct from a
+file and inspecting it.</em></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">[&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">Field: air_temperature (ncvar%tas)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : air_temperature(time(12), latitude(64), longitude(128)) K</span>
+<span class="go">Cell methods    : time(12): mean (interval: 1.0 month)</span>
+<span class="go">Dimension coords: time(12) = [1991-11-16 00:00:00, ..., 1991-10-16 12:00:00] noleap</span>
+<span class="go">                : latitude(64) = [-87.8638, ..., 87.8638] degrees_north</span>
+<span class="go">                : longitude(128) = [0.0, ..., 357.1875] degrees_east</span>
+<span class="go">                : height(1) = [2.0] m</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package uses <a class="reference internal" href="performance.html#performance"><span class="std std-ref">Dask</span></a> for all of its array
+manipulation and can:</p>
+<ul class="simple">
+<li><p>read <a class="reference internal" href="cf_data_model.html#term-field-construct"><span class="xref std std-term">field constructs</span></a> and <a class="reference internal" href="cf_data_model.html#term-domain-construct"><span class="xref std std-term">domain
+constructs</span></a> from netCDF, CDL, PP and UM datasets,</p></li>
+<li><p>create new field constructs in memory,</p></li>
+<li><p>write and append field constructs to netCDF datasets on disk,</p></li>
+<li><p>read, write, and create coordinates defined by geometry cells,</p></li>
+<li><p>read netCDF and CDL datasets containing hierarchical groups,</p></li>
+<li><p>inspect field constructs,</p></li>
+<li><p>test whether two field constructs are the same,</p></li>
+<li><p>modify field construct metadata and data,</p></li>
+<li><p>create subspaces of field constructs,</p></li>
+<li><p>write field constructs to netCDF datasets on disk,</p></li>
+<li><p>incorporate, and create, metadata stored in external files,</p></li>
+<li><p>read, write, and create data that have been compressed by convention
+(i.e. ragged or gathered arrays, or coordinate arrays compressed by
+subsampling), whilst presenting a view of the data in its
+uncompressed form,</p></li>
+<li><p>combine field constructs arithmetically,</p></li>
+<li><p>manipulate field construct data by arithmetical and trigonometrical
+operations,</p></li>
+<li><p>perform statistical collapses on field constructs,</p></li>
+<li><p>perform histogram, percentile and binning operations on field
+constructs,</p></li>
+<li><p>regrid field constructs with (multi-)linear, nearest neighbour,
+first- and second-order conservative and higher order patch recovery
+methods,</p></li>
+<li><p>apply convolution filters to field constructs,</p></li>
+<li><p>create running means from field constructs,</p></li>
+<li><p>apply differential operators to field constructs,</p></li>
+<li><p>create derived quantities (such as relative vorticity).</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="visualisation">
+<h3><a class="toc-backref" href="#id5"><strong>Visualisation</strong></a><a class="headerlink" href="#visualisation" title="Permalink to this headline">¶</a></h3>
+<p>Powerful, flexible, and very simple to produce visualisations of field
+constructs are available with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot</span></code> package, that is installed
+separately to <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> (see <a class="reference external" href="http://ajheaps.github.io/cf-plot">http://ajheaps.github.io/cf-plot</a> for details).</p>
+<p>See the <a class="reference external" href="http://ajheaps.github.io/cf-plot/gallery.html">cfplot gallery</a> for the wide range
+range plotting possibilities with example code.</p>
+<figure class="align-default" id="id3">
+<img alt="_images/cfplot_example.png" src="_images/cfplot_example.png" />
+<figcaption>
+<p><span class="caption-text"><em>Example output of cfplot displaying a cf field construct.</em></span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<hr class="docutils" />
+<section id="performance">
+<h3><a class="toc-backref" href="#id6"><strong>Performance</strong></a><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h3>
+<p>As of version 3.14.0 (released 2023-01-31), cf uses <a class="reference internal" href="performance.html#performance"><span class="std std-ref">Dask</span></a> for all of its data manipulations, which provides lazy,
+parallelised, and out-of-core computations of array operations.</p>
+</section>
+<hr class="docutils" />
+<section id="command-line-utilities">
+<h3><a class="toc-backref" href="#id7"><strong>Command line utilities</strong></a><a class="headerlink" href="#command-line-utilities" title="Permalink to this headline">¶</a></h3>
+<p>During installation the <code class="docutils literal notranslate"><span class="pre">cfa</span></code> command line utility is also
+installed, which</p>
+<ul class="simple">
+<li><p>generates text descriptions of field constructs contained in files,
+and</p></li>
+<li><p>creates new datasets aggregated from existing files.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h3><a class="toc-backref" href="#id8"><strong>References</strong></a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S., Caron, J.,</dt><dd><p>Signell, R., et al. NetCDF Climate and Forecast (CF) Metadata
+Conventions. CF Conventions Committee.
+<a class="reference external" href="https://cfconventions.org/cf-conventions/cf-conventions.html">https://cfconventions.org/cf-conventions/cf-conventions.html</a></p>
+</dd>
+<dt>Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference</dt><dd><p>implementation of the CF data model. Journal of Open Source
+Software, 5(54), 2717, <a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
+</dd>
+<dt>Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and</dt><dd><p>Taylor, K. E. (2017). A data model of the Climate and Forecast
+metadata conventions (CF-1.6) with a software implementation
+(cf-python v2.1), Geosci. Model Dev., 10, 4619-4646,
+<a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a></p>
+</dd>
+<dt>Rew, R., and Davis, G. (1990). NetCDF: An Interface for Scientific</dt><dd><p>Data Access. IEEE Computer Graphics and Applications, 10(4),
+76–82. <a class="reference external" href="https://doi.org/10.1109/38.56302">https://doi.org/10.1109/38.56302</a></p>
+</dd>
+<dt>Rew, R., Hartnett, E., and Caron, J. (2006). NetCDF-4: Software</dt><dd><p>Implementing an Enhanced Data Model for the Geosciences. In 22nd
+International Conference on Interactive Information Processing
+Systems for Meteorology, Oceanography, and Hydrology. AMS. Retrieved
+from
+<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf">https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf</a></p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="id1">
+<h2><strong>Contents</strong><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+</div>
+</section>
+<section id="index-and-search">
+<h2><strong>Index and search</strong><a class="headerlink" href="#index-and-search" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-01-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

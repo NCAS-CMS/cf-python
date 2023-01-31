@@ -2367,6 +2367,8 @@ class PropertiesData(Properties):
     def varray(self):
         """A numpy array view of the data.
 
+        Deprecated at version 3.14.0.
+
         Changing the elements of the returned view changes the data array.
 
         .. seealso:: `array`, `data`, `datetime_array`, `dask_array`
