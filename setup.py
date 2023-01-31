@@ -118,11 +118,22 @@ CF Python
 The Python cf package is an Earth science data analysis library that
 is built on a complete implementation of the CF data model
 
-
 Documentation
 =============
 
 http://ncas-cms.github.io/cf-python
+
+Dask
+====
+
+From version 3.14.0, the `cf` package uses
+[Dask](https://ncas-cms.github.io/cf-python/performance.html) for all
+of its data manipulations.
+
+Recipes
+=======
+
+https://ncas-cms.github.io/cf-python/recipes.html
 
 Tutorial
 ========
@@ -138,41 +149,59 @@ http://ncas-cms.github.io/cf-python/installation
 Functionality
 =============
 
-The `cf` package implements the CF data model
-(https://doi.org/10.5194/gmd-10-4619-2017) for its internal data
-structures and so is able to process any CF-compliant dataset. It is
-not strict about CF-compliance, however, so that partially conformant
-datasets may be ingested from existing datasets and written to new
-datasets. This is so that datasets which are partially conformant may
-nonetheless be modified in memory.
+The `cf` package implements the [CF data
+model](https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-CF-data-model)
+for its internal data structures and so is able to process any
+CF-compliant dataset. It is not strict about CF-compliance, however,
+so that partially conformant datasets may be ingested from existing
+datasets and written to new datasets. This is so that datasets which
+are partially conformant may nonetheless be modified in memory.
 
-The `cf` package can:
+A simple example of reading a field construct from a file and
+inspecting it:
 
-* read field constructs and domain constructs from netCDF, CDL, PP and
-  UM datasets,
+    >>> import cf
+    >>> f = cf.read('file.nc')
+    >>> print(f[0])
+    Field: air_temperature (ncvar%tas)
+    ----------------------------------
+    Data            : air_temperature(time(12), latitude(64), longitude(128)) K
+    Cell methods    : time(12): mean (interval: 1.0 month)
+    Dimension coords: time(12) = [1991-11-16 00:00:00, ..., 1991-10-16 12:00:00] noleap
+                    : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
+                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
+                    : height(1) = [2.0] m
 
-* create new field and domain constructs in memory,
+The `cf` package uses
+[Dask](https://ncas-cms.github.io/cf-python/performance.html) for all
+of its array manipulation and can:
 
-* inspect field and domain constructs,
+* read field constructs from netCDF, CDL, PP and UM datasets,
 
-* test whether two constructs are the same,
-
-* modify field and domain construct metadata and data,
-
-* create subspaces of field and domain constructs,
+* create new field constructs in memory,
 
 * write and append field constructs to netCDF datasets on disk,
-
-* incorporate, and create, metadata stored in external files (*new in
-  version 3.0.0*),
-
-* read, write, and create data that have been compressed by convention
-  (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form,
 
 * read, write, and create coordinates defined by geometry cells,
 
 * read netCDF and CDL datasets containing hierarchical groups,
+
+* inspect field constructs,
+
+* test whether two field constructs are the same,
+
+* modify field construct metadata and data,
+
+* create subspaces of field constructs,
+
+* write field constructs to netCDF datasets on disk,
+
+* incorporate, and create, metadata stored in external files,
+
+* read, write, and create data that have been compressed by convention
+  (i.e. ragged or gathered arrays, or coordinate arrays compressed by
+  subsampling), whilst presenting a view of the data in its
+  uncompressed form,
 
 * combine field constructs arithmetically,
 
@@ -190,16 +219,11 @@ The `cf` package can:
 
 * apply convolution filters to field constructs,
 
-* calculate derivatives of field constructs,
+* create running means from field constructs,
 
-* create field constructs to create derived quantities (such as
-  vorticity).
+* apply differential operators to field constructs,
 
-All of the above use LAMA functionality, which allows multiple fields
-larger than the available memory to exist and be manipulated. (Note:
-work is underway to replace this functionality with a `dask`
-implementation.)
-
+* create derived quantities (such as relative vorticity).
 
 Visualization
 =============
@@ -212,7 +236,6 @@ seprately to the `cf` package.
 See the `cfplot` gallery (http://ajheaps.github.io/cf-plot/gallery.html)
 for the full range range plotting possibilities with example code.
 
-
 Command line utilities
 ======================
 
@@ -223,7 +246,6 @@ installed, which
   and
 
 * creates new datasets aggregated from existing files.
-
 
 Tests
 =====

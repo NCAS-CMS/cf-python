@@ -64,12 +64,14 @@ Some notable cases where non-lazy computations occur are:
 * **Regridding**
 
   When regridding a field construct with either of the
-  `cf.Field.regrids` or `cf.Field.regridc` methods, the regridding
-  weights are computed non-lazily, which requires calculations based
-  in some or all of the coordinate data. These computations can be
-  much more costly than the regridding itself. When multiple regrid
-  operations have the same weights, performance can be greatly
-  improved by calculating the weights once and re-using them:
+  `cf.Field.regrids` or `cf.Field.regridc` methods, the application of
+  the regridding operator is a lazy operation but the regridding
+  operator's weights are computed non-lazily, which requires
+  calculations based in some or all of the coordinate data. The
+  computation of the weights can be much more costly than the
+  regridding itself. When multiple regrid operations have the same
+  weights, performance can be greatly improved by calculating the
+  weights once and re-using them:
   
   .. code-block:: python
      :caption: *Regrid a list of fields with the same horizontal
@@ -238,5 +240,3 @@ serial operation, i.e. only one Dask chunk can access any netCDF file
 at any given moment. This situation can result in slower-than-expected
 performance. When a thread-safe version of the netCDF-C library is
 available we hope to lift this restriction.
-
-----

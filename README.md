@@ -66,12 +66,12 @@ inspecting it:
 
     >>> import cf
     >>> f = cf.read('file.nc')
-    >>> print(f)
+    >>> print(f[0])
     Field: air_temperature (ncvar%tas)
     ----------------------------------
     Data            : air_temperature(time(12), latitude(64), longitude(128)) K
     Cell methods    : time(12): mean (interval: 1.0 month)
-    Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap
+    Dimension coords: time(12) = [1991-11-16 00:00:00, ..., 1991-10-16 12:00:00] noleap
                     : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
                     : longitude(128) = [0.0, ..., 357.1875] degrees_east
                     : height(1) = [2.0] m
@@ -128,9 +128,6 @@ of its array manipulation and can:
 * apply differential operators to field constructs,
 
 * create derived quantities (such as relative vorticity).
-
-All of the above use LAMA functionality, which allows multiple
-fields larger than the available memory to exist and be manipulated.
 
 Visualization
 =============

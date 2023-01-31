@@ -8,32 +8,35 @@ datasets may be ingested from existing datasets and written to new
 datasets. This is so that datasets which are partially conformant may
 nonetheless be modified in memory.
 
-The `cf` package can:
+The `cf` package uses `dask` for all of its array manipulation and
+can:
 
-* read field constructs and domain constructs from netCDF, CDL, PP and
-  UM datasets,
+* read field constructs from netCDF, CDL, PP and UM datasets,
 
-* create new field and domain constructs in memory,
-
-* inspect field and domain constructs,
-
-* test whether two constructs are the same,
-
-* modify field and domain construct metadata and data,
-
-* create subspaces of field and domain constructs,
+* create new field constructs in memory,
 
 * write and append field constructs to netCDF datasets on disk,
-
-* incorporate, and create, metadata stored in external files,
-
-* read, write, and create data that have been compressed by convention
-  (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form,
 
 * read, write, and create coordinates defined by geometry cells,
 
 * read netCDF and CDL datasets containing hierarchical groups,
+
+* inspect field constructs,
+
+* test whether two field constructs are the same,
+
+* modify field construct metadata and data,
+
+* create subspaces of field constructs,
+
+* write field constructs to netCDF datasets on disk,
+
+* incorporate, and create, metadata stored in external files,
+
+* read, write, and create data that have been compressed by convention
+  (i.e. ragged or gathered arrays, or coordinate arrays compressed by
+  subsampling), whilst presenting a view of the data in its
+  uncompressed form,
 
 * combine field constructs arithmetically,
 
@@ -51,15 +54,11 @@ The `cf` package can:
 
 * apply convolution filters to field constructs,
 
-* calculate derivatives of field constructs,
+* create running means from field constructs,
 
-* create field constructs to create derived quantities (such as
-  vorticity).
+* apply differential operators to field constructs,
 
-All of the above use LAMA functionality, which allows multiple fields
-larger than the available memory to exist and be manipulated. (Note:
-work is underway to replace this functionality with a dask
-implementation.)
+* create derived quantities (such as relative vorticity).
 
 
 **Visualisation**
