@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.unique" href="cf.Field.unique.html" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.13.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
 
 
 
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -127,7 +128,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.percentile<a class="headerlink" href="#cf-field-percentile" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.percentile">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">percentile</code><span class="sig-paren">(</span><em class="sig-param">ranks</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">interpolation='linear'</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.1/cf/field.py#L14183-L14522"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.percentile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">percentile</code><span class="sig-paren">(</span><em class="sig-param">ranks</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">interpolation=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/field.py#L12523-L12893"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.percentile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute percentiles of the data along the specified axes.</p>
 <p>The default is to compute the percentiles along a flattened
 version of the data.</p>
@@ -141,6 +142,27 @@ percentile rank.</p>
 <p>The output field construct has a new dimension coordinate
 construct that records the percentile ranks represented by its
 data.</p>
+<p><strong>Accuracy</strong></p>
+<p>The <a class="reference internal" href="#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percentile</span></code></a> method returns results that are consistent
+with <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.percentile.html#numpy.percentile" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.percentile</span></code></a>, which may be different to those
+created by <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.percentile</span></code>. The dask method uses an
+algorithm that calculates approximate percentiles which are
+likely to be different from the correct values when there are
+two or more dask chunks.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dx</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">da</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="go">array([40.36])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="go">40.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="go">array([40.])</span>
+</pre></div>
+</div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.4.</span></p>
 </div>
@@ -154,49 +176,43 @@ data.</p>
 <dt>ranks: (sequence of) number</dt><dd><p>Percentile ranks, or sequence of percentile ranks, to
 compute, which must be between 0 and 100 inclusive.</p>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Select the domain axes over which to calculate the
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Select the domain axes over which to calculate the
 percentiles, defined by the domain axes that would be
 selected by passing each given axis description to a call
 of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
 example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
 returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X')</span></code> is selected.</p>
-<p>By default, or if <em>axes</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, all axes are selected.</p>
+<p>By default, or if <em>axes</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, all axes are selected.</p>
 </dd>
-<dt>interpolation: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the interpolation method to use when the desired
-percentile lies between two data values <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">&lt;</span> <span class="pre">j</span></code>:</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 73%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p><em>interpolation</em></p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">i+(j-i)*fraction</span></code>, where <code class="docutils literal notranslate"><span class="pre">fraction</span></code>
-is the fractional part of the index
-surrounded by <code class="docutils literal notranslate"><span class="pre">i</span></code> and <code class="docutils literal notranslate"><span class="pre">j</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'lower'</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">i</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'higher'</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">j</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'nearest'</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">i</span></code> or <code class="docutils literal notranslate"><span class="pre">j</span></code>, whichever is nearest.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'midpoint'</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">(i+j)/2</span></code></p></td>
-</tr>
-</tbody>
-</table>
-<p>By default <code class="docutils literal notranslate"><span class="pre">'linear'</span></code> interpolation is used.</p>
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the interpolation method to use when the
+percentile lies between two data values. The methods
+are listed here, but their definitions must be
+referenced from the documentation for
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.percentile.html#numpy.percentile" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.percentile</span></code></a>.</p>
+<p>For the default <code class="docutils literal notranslate"><span class="pre">'linear'</span></code> method, if the percentile
+lies between two adjacent data values <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">&lt;</span> <span class="pre">j</span></code> then
+the percentile is calculated as <code class="docutils literal notranslate"><span class="pre">i+(j-i)*fraction</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">fraction</span></code> is the fractional part of the index
+surrounded by <code class="docutils literal notranslate"><span class="pre">i</span></code> and <code class="docutils literal notranslate"><span class="pre">j</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'inverted_cdf'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'averaged_inverted_cdf'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'closest_observation'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'interpolated_inverted_cdf'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'hazen'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'weibull'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'linear'</span></code> (default)
+<code class="docutils literal notranslate"><span class="pre">'median_unbiased'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'normal_unbiased'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'lower'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'higher'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'nearest'</span></code>
+<code class="docutils literal notranslate"><span class="pre">'midpoint'</span></code>
+===============================</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+</div>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then all size 1 axes are removed from the returned
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then all size 1 axes are removed from the returned
 percentiles data. By default axes over which percentiles
 have been calculated are left in the result as axes with
 size 1, meaning that the result is guaranteed to broadcast
@@ -218,6 +234,8 @@ datum if more than 25% of its input array elements are
 missing data: <code class="docutils literal notranslate"><span class="pre">mtol=0.25</span></code>.</p>
 </dd>
 </dl>
+</dd>
+<dt>interpolation: deprecated at version 3.14.0</dt><dd><p>Use the <em>method</em> parameter instead.</p>
 </dd>
 </dl>
 </dd>
@@ -332,10 +350,10 @@ percentiles, and digitize the data based on these bins:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-31.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Data.array" href="../attribute/cf.Data.array.html" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.13.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
 
 
 
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -125,12 +126,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data<a class="headerlink" href="#cf-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cf.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunk=True</em>, <em class="sig-param">loadd=None</em>, <em class="sig-param">loads=None</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.1/cf/data/data.py#L333-L15412"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunks='auto'</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">to_memory=False</em>, <em class="sig-param">init_options=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/data/data.py#L90-L12122"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.mixin.deprecations.DataClassDeprecationsMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
 <li><p>Contains an N-dimensional, indexable and broadcastable array with
-many similarities to a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></li>
+many similarities to a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p></li>
 <li><p>Contains the units of the array elements.</p></li>
 <li><p>Supports masked arrays, regardless of whether or not it was
 initialised with a masked array.</p></li>
@@ -184,18 +185,12 @@ interface.</p>
 </li>
 </ul>
 <p><strong>Cyclic axes</strong></p>
-<p><strong>Miscellaneous</strong></p>
-<p>A <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object is picklable.</p>
-<p>A <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object is hashable, but note that, since it is mutable, its
-hash value is only valid whilst the data array is not changed in
-place.</p>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt>array: optional</dt><dd><p>The array of values. May be any scalar or array-like
-object, including another <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance. Ignored if the
-<em>source</em> parameter is set.</p>
+object, including another <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">array=[34.6]</span></code></p>
 </dd>
@@ -205,9 +200,8 @@ object, including another <a class="reference internal" href="#cf.Data" title="c
 </dd>
 </dl>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The physical units of the data. if a <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object is
-provided then this an also set the calendar. Ignored if
-the <em>source</em> parameter is set.</p>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The physical units of the data. if a <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object is
+provided then this an also set the calendar.</p>
 <p>The units (without the calendar) may also be set after
 initialisation with the <a class="reference internal" href="../method/cf.Data.set_units.html#cf.Data.set_units" title="cf.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a> method.</p>
 <dl class="simple">
@@ -217,8 +211,7 @@ initialisation with the <a class="reference internal" href="../method/cf.Data.se
 </dd>
 </dl>
 </dd>
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units. Ignored if the
-<em>source</em> parameter is set.</p>
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units.</p>
 <p>The calendar may also be set after initialisation with the
 <a class="reference internal" href="../method/cf.Data.set_calendar.html#cf.Data.set_calendar" title="cf.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a> method.</p>
 <dl class="simple">
@@ -227,10 +220,9 @@ initialisation with the <a class="reference internal" href="../method/cf.Data.se
 </dl>
 </dd>
 <dt>fill_value: optional</dt><dd><p>The fill value of the data. By default, or if set to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
 data-type will be used (see
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
-parameter is set.</p>
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>).</p>
 <p>The fill value may also be set after initialisation with
 the <a class="reference internal" href="../method/cf.Data.set_fill_value.html#cf.Data.set_fill_value" title="cf.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
 <dl class="simple">
@@ -239,7 +231,8 @@ the <a class="reference internal" href="../method/cf.Data.set_fill_value.html#cf
 </dl>
 </dd>
 <dt>dtype: data-type, optional</dt><dd><p>The desired data-type for the data. By default the
-data-type will be inferred form the <em>array</em> parameter.</p>
+data-type will be inferred form the <em>array</em>
+parameter.</p>
 <p>The data-type may also be set after initialisation with
 the <a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.dtype" title="cf.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a> attribute.</p>
 <dl class="simple">
@@ -255,52 +248,129 @@ the <a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.
 </div>
 </dd>
 <dt>mask: optional</dt><dd><p>Apply this mask to the data given by the <em>array</em>
-parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask is
-applied. May be any scalar or array-like object (such as a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance) that is
-broadcastable to the shape of <em>array</em>. Masking will be
-carried out where the mask elements evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask
+is applied. May be any scalar or array-like object
+(such as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance)
+that is broadcastable to the shape of <em>array</em>. Masking
+will be carried out where the mask elements evaluate
+to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <p>This mask will applied in addition to any mask already
 defined by the <em>array</em> parameter.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.5.</span></p>
 </div>
 </dd>
-<dt>source: optional</dt><dd><p>Initialize the array, units, calendar and fill value from
-those of <em>source</em>.</p>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cf.Data(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>hardmask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the mask is soft. By default the mask is
+<dt>hardmask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the mask is soft. By default the mask is
 hard.</p>
 </dd>
-<dt>dt: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then strings (such as <code class="docutils literal notranslate"><span class="pre">'1990-12-01</span> <span class="pre">12:00'</span></code>)
+<dt>dt: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then strings (such as <code class="docutils literal notranslate"><span class="pre">'1990-12-01</span> <span class="pre">12:00'</span></code>)
 given by the <em>array</em> parameter are re-interpreted as
 date-time objects. By default they are not.</p>
 </dd>
-<dt>loadd: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Initialise the data from a dictionary serialization of a
-<a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object. All other arguments are ignored. See the
-<a class="reference internal" href="../method/cf.Data.dumpd.html#cf.Data.dumpd" title="cf.Data.dumpd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumpd</span></code></a> and <a class="reference internal" href="../method/cf.Data.loadd.html#cf.Data.loadd" title="cf.Data.loadd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadd</span></code></a> methods.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+parameters prior to initialisation. By default the
+parameters are not deep copied.</p>
 </dd>
-<dt>loads: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Initialise the data array from a string serialization of a
-<a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object. All other arguments are ignored. See the
-<a class="reference internal" href="../method/cf.Data.dumps.html#cf.Data.dumps" title="cf.Data.dumps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumps</span></code></a> and <a class="reference internal" href="../method/cf.Data.loads.html#cf.Data.loads" title="cf.Data.loads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loads</span></code></a> methods.</p>
+<dt>chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the chunking of the underlying dask array.</p>
+<p>Any value accepted by the <em>chunks</em> parameter of the
+<a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.array.from_array.html#dask.array.from_array" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.from_array</span></code></a> function is allowed.</p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> is used to specify the array
+chunking, which uses a chunk size in bytes defined by
+the <a class="reference internal" href="../function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> function, preferring square-like
+chunk shapes.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>A blocksize like <code class="docutils literal notranslate"><span class="pre">1000</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
-initialization. By default arguments are deep copied.</p>
+<dt><em>Parameter example:</em></dt><dd><p>A blockshape like <code class="docutils literal notranslate"><span class="pre">(1000,</span> <span class="pre">1000)</span></code>.</p>
 </dd>
-<dt>chunk: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the data array will be stored in a single
-partition. By default the data array will be partitioned
-if it is larger than the chunk size, as returned by the
-<a class="reference internal" href="../function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> function.</p>
+<dt><em>Parameter example:</em></dt><dd><p>Explicit sizes of all blocks along all dimensions
+like <code class="docutils literal notranslate"><span class="pre">((1000,</span> <span class="pre">1000,</span> <span class="pre">500),</span> <span class="pre">(400,</span> <span class="pre">400))</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>A size in bytes, like <code class="docutils literal notranslate"><span class="pre">&quot;100MiB&quot;</span></code> which will choose
+a uniform block-like shape, preferring square-like
+chunk shapes.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>A blocksize of <code class="docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> in a tuple or
+dictionary indicates the size of the corresponding
+dimension.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>Blocksizes of some or all dimensions mapped to
+dimension positions, like <code class="docutils literal notranslate"><span class="pre">{1:</span> <span class="pre">200}</span></code>, or <code class="docutils literal notranslate"><span class="pre">{0:</span> <span class="pre">-1,</span>
+<span class="pre">1:</span> <span class="pre">(400,</span> <span class="pre">400)}</span></code>.</p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+</div>
+</dd>
+<dt>to_memory: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ensure that the original data are in
+memory, rather than on disk.</p>
+<p>If the original data are on disk, then reading data
+into memory during initialisation will slow down the
+initialisation process, but can considerably improve
+downstream performance by avoiding the need for
+independent reads for every dask chunk, each time the
+data are computed.</p>
+<p>In general, setting <em>to_memory</em> to True is not the same
+as calling the <a class="reference internal" href="../method/cf.Data.persist.html#cf.Data.persist" title="cf.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a> of the newly created <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+object, which also decompresses data compressed by
+convention and computes any data type, mask and
+date-time modifications.</p>
+<p>If the input <em>array</em> is a <a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.array.Array.html#dask.array.Array" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.Array</span></code></a> object
+then <em>to_memory</em> is ignored.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+</div>
+</dd>
+<dt>init_options: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Provide optional keyword arguments to methods and
+functions called during the initialisation process. A
+dictionary key identifies a method or function. The
+corresponding value is another dictionary whose
+key/value pairs are the keyword parameter names and
+values to be applied.</p>
+<p>Supported keys are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'from_array'</span></code>: Provide keyword arguments to
+the <a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.array.from_array.html#dask.array.from_array" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.from_array</span></code></a> function. This is used
+when initialising data that is not already a dask
+array and is not compressed by convention.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'first_non_missing_value'</span></code>: Provide keyword
+arguments to the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.data.utils.first_non_missing_value</span></code>
+function. This is used when the input array contains
+date-time strings or objects, and may affect
+performance.</p></li>
+</ul>
+<blockquote>
+<div><dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{'from_array':</span> <span class="pre">{'inline_array':</span> <span class="pre">True}}</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>chunk: deprecated at version 3.14.0</dt><dd><p>Use the <em>chunks</em> parameter instead.</p>
 </dd>
 </dl>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span>
 <span class="gp">... </span>            <span class="n">units</span><span class="o">=</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m/s&#39;</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">999</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="s1">&#39;fly&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="s1">&#39;fly&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -316,13 +386,13 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></p></td>
-<td><p>A numpy array copy the data array.</p></td>
+<td><p>A numpy array copy of the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.varray.html#cf.Data.varray" title="cf.Data.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p></td>
-<td><p>A numpy array view the data array.</p></td>
+<td><p>A numpy array view of the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.dtype" title="cf.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data-type of the data array.</p></td>
+<td><p>The <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data-type of the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.ndim.html#cf.Data.ndim" title="cf.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
 <td><p>Number of dimensions in the data array.</p></td>
@@ -343,7 +413,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>Inspect the object for debugging.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.isscalar.html#cf.Data.isscalar" title="cf.Data.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
-<td><p>True if the data array is a 0-d scalar array.</p></td>
+<td><p>True if the data is a 0-d scalar array.</p></td>
 </tr>
 </tbody>
 </table>
@@ -387,7 +457,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>Override the calendar of the data array elements.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.change_calendar.html#cf.Data.change_calendar" title="cf.Data.change_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">change_calendar</span></code></a></p></td>
-<td><p>Change the calendar of the data array elements.</p></td>
+<td><p>Change the calendar of date-time array elements.</p></td>
 </tr>
 </tbody>
 </table>
@@ -404,6 +474,50 @@ if it is larger than the chunk size, as returned by the
 </tbody>
 </table>
 </section>
+<section id="dask">
+<h2>Dask<a class="headerlink" href="#dask" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cull_graph.html#cf.Data.cull_graph" title="cf.Data.cull_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cull_graph</span></code></a></p></td>
+<td><p>Remove unnecessary tasks from the dask graph in-place.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.dask_compressed_array.html#cf.Data.dask_compressed_array" title="cf.Data.dask_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask_compressed_array</span></code></a></p></td>
+<td><p>Returns a dask array of the compressed data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.rechunk.html#cf.Data.rechunk" title="cf.Data.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
+<td><p>Change the chunk structure of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.to_dask_array.html#cf.Data.to_dask_array" title="cf.Data.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
+<td><p>Convert the data to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.compute.html#cf.Data.compute" title="cf.Data.compute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code></a></p></td>
+<td><p>A numpy view the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.chunks.html#cf.Data.chunks" title="cf.Data.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a></p></td>
+<td><p>The chunk sizes for each dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.npartitions.html#cf.Data.npartitions" title="cf.Data.npartitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">npartitions</span></code></a></p></td>
+<td><p>The total number of chunks.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.numblocks.html#cf.Data.numblocks" title="cf.Data.numblocks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numblocks</span></code></a></p></td>
+<td><p>The number of chunks along each dimension.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="data-creation-routines">
 <h2>Data creation routines<a class="headerlink" href="#data-creation-routines" title="Permalink to this headline">¶</a></h2>
 <section id="ones-and-zeros">
@@ -415,10 +529,10 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.empty.html#cf.Data.empty" title="cf.Data.empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">empty</span></code></a></p></td>
-<td><p>Create a new data array without initializing the elements.</p></td>
+<td><p>Return a new array of given shape and type, without initialising entries.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.full.html#cf.Data.full" title="cf.Data.full"><code class="xref py py-obj docutils literal notranslate"><span class="pre">full</span></code></a></p></td>
-<td><p>Returns a new data array of given shape and type, filled with the given value.</p></td>
+<td><p>Return a new array of given shape and type, filled with a fill value.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.ones.html#cf.Data.ones" title="cf.Data.ones"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ones</span></code></a></p></td>
 <td><p>Returns a new array filled with ones of set shape and type.</p></td>
@@ -427,7 +541,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>Returns a new array filled with zeros of set shape and type.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.masked_all.html#cf.Data.masked_all" title="cf.Data.masked_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_all</span></code></a></p></td>
-<td><p>Return a new data array of given shape and type with all elements masked.</p></td>
+<td><p>Return an empty masked array with all elements masked.</p></td>
 </tr>
 </tbody>
 </table>
@@ -447,10 +561,10 @@ if it is larger than the chunk size, as returned by the
 <td><p>Convert the input to a <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.loadd.html#cf.Data.loadd" title="cf.Data.loadd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadd</span></code></a></p></td>
-<td><p>Reset the data in place from a dictionary serialization.</p></td>
+<td><p>Reset the data in place from a dictionary serialisation.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.loads.html#cf.Data.loads" title="cf.Data.loads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loads</span></code></a></p></td>
-<td><p>Reset the data in place from a string serialization.</p></td>
+<td><p>Reset the data in place from a string serialisation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -467,7 +581,10 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.flatten.html#cf.Data.flatten" title="cf.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
-<td><p>Flatten axes of the data.</p></td>
+<td><p>Flatten specified axes of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.reshape.html#cf.Data.reshape" title="cf.Data.reshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reshape</span></code></a></p></td>
+<td><p>Change the shape of the data without changing its values.</p></td>
 </tr>
 </tbody>
 </table>
@@ -500,7 +617,10 @@ if it is larger than the chunk size, as returned by the
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.insert_dimension.html#cf.Data.insert_dimension" title="cf.Data.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></p></td>
 <td><p>Expand the shape of the data array in place.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.squeeze.html#cf.Data.squeeze" title="cf.Data.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.reshape.html#cf.Data.reshape" title="cf.Data.reshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reshape</span></code></a></p></td>
+<td><p>Change the shape of the data without changing its values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.squeeze.html#cf.Data.squeeze" title="cf.Data.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
 <td><p>Remove size 1 axes from the data array.</p></td>
 </tr>
 </tbody>
@@ -518,7 +638,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>Join a sequence of data arrays together.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.concatenate_data.html#cf.Data.concatenate_data" title="cf.Data.concatenate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate_data</span></code></a></p></td>
-<td><p>Concatenates a list of Data objects into a single Data object along the specified access (see cf.Data.concatenate for details).</p></td>
+<td><p>Concatenates a list of Data objects along the specified axis.</p></td>
 </tr>
 </tbody>
 </table>
@@ -532,7 +652,7 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.unique.html#cf.Data.unique" title="cf.Data.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></p></td>
-<td><p>The unique elements of the array.</p></td>
+<td><p>The unique elements of the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -549,7 +669,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>Reverse the direction of axes of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.roll.html#cf.Data.roll" title="cf.Data.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a></p></td>
-<td><p>Roll array elements along a given axis.</p></td>
+<td><p>Roll array elements along one or more axes.</p></td>
 </tr>
 </tbody>
 </table>
@@ -589,6 +709,12 @@ if it is larger than the chunk size, as returned by the
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.change_calendar.html#cf.Data.change_calendar" title="cf.Data.change_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">change_calendar</span></code></a></p></td>
+<td><p>Change the calendar of date-time array elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.convert_reference_time.html#cf.Data.convert_reference_time" title="cf.Data.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></p></td>
+<td><p>Convert reference time data values to have new units.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.datetime_array.html#cf.Data.datetime_array" title="cf.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
 <td><p>An independent numpy array of date-time objects.</p></td>
 </tr>
@@ -596,25 +722,25 @@ if it is larger than the chunk size, as returned by the
 <td><p>Returns an independent numpy array with datetimes as strings.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.day.html#cf.Data.day" title="cf.Data.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></p></td>
-<td><p>The day of each data array element.</p></td>
+<td><p>The day of each date-time value.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.dtarray.html#cf.Data.dtarray" title="cf.Data.dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></a></p></td>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.hour.html#cf.Data.hour" title="cf.Data.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code></a></p></td>
-<td><p>The hour of each data array element.</p></td>
+<td><p>The hour of each date-time value.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.minute.html#cf.Data.minute" title="cf.Data.minute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code></a></p></td>
-<td><p>The minute of each data array element.</p></td>
+<td><p>The minute of each date-time value.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.month.html#cf.Data.month" title="cf.Data.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></a></p></td>
-<td><p>The month of each data array element.</p></td>
+<td><p>The month of each date-time value.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.second.html#cf.Data.second" title="cf.Data.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></a></p></td>
-<td><p>The second of each data array element.</p></td>
+<td><p>The second of each date-time value.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.year.html#cf.Data.year" title="cf.Data.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code></a></p></td>
-<td><p>The year of each data array element.</p></td>
+<td><p>The year of each date-time value.</p></td>
 </tr>
 </tbody>
 </table>
@@ -671,7 +797,7 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cyclic.html#cf.Data.cyclic" title="cf.Data.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
-<td><p>Returns or sets the axes of the data array which are cyclic.</p></td>
+<td><p>Get or set the cyclic axes.</p></td>
 </tr>
 </tbody>
 </table>
@@ -685,13 +811,13 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.dumpd.html#cf.Data.dumpd" title="cf.Data.dumpd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumpd</span></code></a></p></td>
-<td><p>Return a serialization of the data array.</p></td>
+<td><p>Return a serialisation of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.dumps.html#cf.Data.dumps" title="cf.Data.dumps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumps</span></code></a></p></td>
-<td><p>Return a JSON string serialization of the data array.</p></td>
+<td><p>Return a JSON string serialisation of the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.tolist.html#cf.Data.tolist" title="cf.Data.tolist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tolist</span></code></a></p></td>
-<td><p>Return the array as a (possibly nested) list.</p></td>
+<td><p>Return the data as a scalar or (nested) list.</p></td>
 </tr>
 </tbody>
 </table>
@@ -738,10 +864,10 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.allclose.html#cf.Data.allclose" title="cf.Data.allclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allclose</span></code></a></p></td>
-<td><p>Returns True if two broadcastable arrays have equal values, False otherwise.</p></td>
+<td><p>Whether an array is element-wise equal within a tolerance.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.isclose.html#cf.Data.isclose" title="cf.Data.isclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isclose</span></code></a></p></td>
-<td><p>Return where data are element-wise equal to other, broadcastable data.</p></td>
+<td><p>Return where data are element-wise equal within a tolerance.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.equals.html#cf.Data.equals" title="cf.Data.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>True if two data arrays are logically equal, False otherwise.</p></td>
@@ -771,12 +897,12 @@ if it is larger than the chunk size, as returned by the
 <td><p>Return all non-masked values in a one dimensional data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.filled.html#cf.Data.filled" title="cf.Data.filled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filled</span></code></a></p></td>
-<td><p>Replace masked elements with the fill value.</p></td>
+<td><p>Replace masked elements with a fill value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.mask_fpe.html#cf.Data.mask_fpe" title="cf.Data.mask_fpe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_fpe</span></code></a></p></td>
-<td><p>Masking of floating-point errors in the results of arithmetic operations.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.harden_mask.html#cf.Data.harden_mask" title="cf.Data.harden_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">harden_mask</span></code></a></p></td>
+<td><p>Force the mask to hard.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.mask_invalid.html#cf.Data.mask_invalid" title="cf.Data.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.masked_invalid.html#cf.Data.masked_invalid" title="cf.Data.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a></p></td>
 <td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.del_fill_value.html#cf.Data.del_fill_value" title="cf.Data.del_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_fill_value</span></code></a></p></td>
@@ -791,6 +917,9 @@ if it is larger than the chunk size, as returned by the
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.set_fill_value.html#cf.Data.set_fill_value" title="cf.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a></p></td>
 <td><p>Set the missing data value.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.soften_mask.html#cf.Data.soften_mask" title="cf.Data.soften_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">soften_mask</span></code></a></p></td>
+<td><p>Force the mask to soft.</p></td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -804,13 +933,13 @@ if it is larger than the chunk size, as returned by the
 <td><p>A binary (0 and 1) mask of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p></td>
-<td><p>Whether the mask is hard (True) or soft (False).</p></td>
+<td><p>Hardness of the mask.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.ismasked.html#cf.Data.ismasked" title="cf.Data.ismasked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismasked</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.is_masked.html#cf.Data.is_masked" title="cf.Data.is_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_masked</span></code></a></p></td>
 <td><p>True if the data array has any masked values.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.mask.html#cf.Data.mask" title="cf.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
-<td><p>The boolean missing data mask of the data array.</p></td>
+<td><p>The Boolean missing data mask of the data array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.fill_value.html#cf.Data.fill_value" title="cf.Data.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
 <td><p>The data array missing data value.</p></td>
@@ -904,8 +1033,8 @@ if it is larger than the chunk size, as returned by the
 </tbody>
 </table>
 </section>
-<section id="sums-products-differences">
-<h3>Sums, products, differences<a class="headerlink" href="#sums-products-differences" title="Permalink to this headline">¶</a></h3>
+<section id="sums-products-differences-powers">
+<h3>Sums, products, differences, powers<a class="headerlink" href="#sums-products-differences-powers" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -918,8 +1047,14 @@ if it is larger than the chunk size, as returned by the
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.diff.html#cf.Data.diff" title="cf.Data.diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diff</span></code></a></p></td>
 <td><p>Calculate the n-th discrete difference along the given axis.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.square.html#cf.Data.square" title="cf.Data.square"><code class="xref py py-obj docutils literal notranslate"><span class="pre">square</span></code></a></p></td>
+<td><p>Calculate the element-wise square.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.sqrt.html#cf.Data.sqrt" title="cf.Data.sqrt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sqrt</span></code></a></p></td>
+<td><p>Calculate the non-negative square root.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.sum.html#cf.Data.sum" title="cf.Data.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p></td>
-<td><p>Collapse axes with their sum.</p></td>
+<td><p>Calculate sum values.</p></td>
 </tr>
 </tbody>
 </table>
@@ -982,7 +1117,7 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.unique.html#cf.Data.unique" title="cf.Data.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></p></td>
-<td><p>The unique elements of the array.</p></td>
+<td><p>The unique elements of the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1002,7 +1137,7 @@ if it is larger than the chunk size, as returned by the
 <td><p>Return the indices of the maximum values along an axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.where.html#cf.Data.where" title="cf.Data.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p></td>
-<td><p>Assign to data elements depending on a condition.</p></td>
+<td><p>Assign array elements depending on a condition.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1036,25 +1171,25 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.maximum.html#cf.Data.maximum" title="cf.Data.maximum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code></a></p></td>
-<td><p>Collapse axes with their maximum.</p></td>
+<td><p>Alias for <a class="reference external" href="https://docs.python.org/3/library/functions.html#max" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.maximum_absolute_value.html#cf.Data.maximum_absolute_value" title="cf.Data.maximum_absolute_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum_absolute_value</span></code></a></p></td>
-<td><p>Collapse axes with their maximum absolute value.</p></td>
+<td><p>Calculate maximum absolute values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.minimum.html#cf.Data.minimum" title="cf.Data.minimum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code></a></p></td>
-<td><p>Collapse axes with their minimum.</p></td>
+<td><p>Alias for <a class="reference external" href="https://docs.python.org/3/library/functions.html#min" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.minimum_absolute_value.html#cf.Data.minimum_absolute_value" title="cf.Data.minimum_absolute_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum_absolute_value</span></code></a></p></td>
-<td><p>Collapse axes with their minimum absolute value.</p></td>
+<td><p>Calculate minimum absolute values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.percentile.html#cf.Data.percentile" title="cf.Data.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percentile</span></code></a></p></td>
 <td><p>Compute percentiles of the data along the specified axes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.max.html#cf.Data.max" title="cf.Data.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
-<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code></p></td>
+<td><p>Calculate maximum values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.min.html#cf.Data.min" title="cf.Data.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
-<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code></p></td>
+<td><p>Calculate minimum values.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1068,37 +1203,40 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.mean.html#cf.Data.mean" title="cf.Data.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
-<td><p>Collapse axes with their mean.</p></td>
+<td><p>Calculate mean values.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.mean_absolute_value.html#cf.Data.mean_absolute_value" title="cf.Data.mean_absolute_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_absolute_value</span></code></a></p></td>
-<td><p>Collapse axes with their mean absolute value.</p></td>
+<td><p>Calculate mean absolute values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.mean_of_upper_decile.html#cf.Data.mean_of_upper_decile" title="cf.Data.mean_of_upper_decile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_of_upper_decile</span></code></a></p></td>
-<td><p>Compute the mean the of upper decile.</p></td>
+<td><p>Mean of values defined by the upper tenth of their distribution.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.median.html#cf.Data.median" title="cf.Data.median"><code class="xref py py-obj docutils literal notranslate"><span class="pre">median</span></code></a></p></td>
-<td><p>Compute the median of the values.</p></td>
+<td><p>Calculate median values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.mid_range.html#cf.Data.mid_range" title="cf.Data.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a></p></td>
-<td><p>Collapse axes with the unweighted average of their maximum and minimum values.</p></td>
+<td><p>Calculate mid-range values.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.range.html#cf.Data.range" title="cf.Data.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></p></td>
-<td><p>Collapse axes with the absolute difference between their maximum and minimum values.</p></td>
+<td><p>Calculate range values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.root_mean_square.html#cf.Data.root_mean_square" title="cf.Data.root_mean_square"><code class="xref py py-obj docutils literal notranslate"><span class="pre">root_mean_square</span></code></a></p></td>
-<td><p>Collapse axes with their root mean square.</p></td>
+<td><p>Calculate root mean square (RMS) values.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.standard_deviation.html#cf.Data.standard_deviation" title="cf.Data.standard_deviation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_deviation</span></code></a></p></td>
-<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.variance.html#cf.Data.variance" title="cf.Data.variance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variance</span></code></a></p></td>
 <td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.sd.html#cf.Data.sd" title="cf.Data.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a></p></td>
-<td><p>Collapse axes by calculating their standard deviation.</p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.var.html#cf.Data.var" title="cf.Data.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p></td>
-<td><p>Collapse axes with their weighted variance.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.std.html#cf.Data.std" title="cf.Data.std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code></a></p></td>
+<td><p>Calculate standard deviations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.var.html#cf.Data.var" title="cf.Data.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p></td>
+<td><p>Calculate variances.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1112,13 +1250,13 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.integral.html#cf.Data.integral" title="cf.Data.integral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integral</span></code></a></p></td>
-<td><p>Collapse axes with their integral.</p></td>
+<td><p>Calculate summed values.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.sum.html#cf.Data.sum" title="cf.Data.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p></td>
-<td><p>Collapse axes with their sum.</p></td>
+<td><p>Calculate sum values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.sum_of_squares.html#cf.Data.sum_of_squares" title="cf.Data.sum_of_squares"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum_of_squares</span></code></a></p></td>
-<td><p>Collapse axes with the sum of the squares of the values.</p></td>
+<td><p>Calculate sums of squares.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1146,16 +1284,16 @@ if it is larger than the chunk size, as returned by the
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.sample_size.html#cf.Data.sample_size" title="cf.Data.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a></p></td>
-<td><p>Collapses axes with their sample size.</p></td>
+<td><p>Calculate sample size values.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.stats.html#cf.Data.stats" title="cf.Data.stats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stats</span></code></a></p></td>
 <td><p>Calculate statistics of the data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.sum_of_weights.html#cf.Data.sum_of_weights" title="cf.Data.sum_of_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum_of_weights</span></code></a></p></td>
-<td><p>Collapse axes with the sum of weights.</p></td>
+<td><p>Calculate sums of weights.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.sum_of_weights2.html#cf.Data.sum_of_weights2" title="cf.Data.sum_of_weights2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum_of_weights2</span></code></a></p></td>
-<td><p>Collapse axes with the sum of squares of weights.</p></td>
+<td><p>Calculate sums of squares of weights.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1201,8 +1339,17 @@ if it is larger than the chunk size, as returned by the
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.get_list.html#cf.Data.get_list" title="cf.Data.get_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code></a></p></td>
 <td><p>Return the list variable for a compressed array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.uncompress.html#cf.Data.uncompress" title="cf.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
-<td><p>Uncompress the underlying data.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.get_dependent_tie_points.html#cf.Data.get_dependent_tie_points" title="cf.Data.get_dependent_tie_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dependent_tie_points</span></code></a></p></td>
+<td><p>Return the list variable for a compressed array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.get_interpolation_parameters.html#cf.Data.get_interpolation_parameters" title="cf.Data.get_interpolation_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_interpolation_parameters</span></code></a></p></td>
+<td><p>Return the list variable for a compressed array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.get_tie_point_indices.html#cf.Data.get_tie_point_indices" title="cf.Data.get_tie_point_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tie_point_indices</span></code></a></p></td>
+<td><p>Return the list variable for a compressed array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.uncompress.html#cf.Data.uncompress" title="cf.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<td><p>Uncompress the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1230,13 +1377,16 @@ if it is larger than the chunk size, as returned by the
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.creation_commands.html#cf.Data.creation_commands" title="cf.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
 <td><p>Return the commands that would create the data object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.get_filenames.html#cf.Data.get_filenames" title="cf.Data.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
-<td><p>Return the names of files containing parts of the data array.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.get_data.html#cf.Data.get_data" title="cf.Data.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.get_data.html#cf.Data.get_data" title="cf.Data.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></p></td>
 <td><p>Returns the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.source.html#cf.Data.source" title="cf.Data.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.get_filenames.html#cf.Data.get_filenames" title="cf.Data.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>The names of files containing parts of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.get_original_filenames.html#cf.Data.get_original_filenames" title="cf.Data.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<td><p>The names of files containing the original data and metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.source.html#cf.Data.source" title="cf.Data.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a></p></td>
 <td><p>Return the underlying array object.</p></td>
 </tr>
 </tbody>
@@ -1271,50 +1421,71 @@ if it is larger than the chunk size, as returned by the
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_hdf5_chunksizes</span></code></a></p></td>
 <td><p>Set the HDF5 chunksizes for the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.close.html#cf.Data.close" title="cf.Data.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.rechunk.html#cf.Data.rechunk" title="cf.Data.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
+<td><p>Change the chunk structure of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.close.html#cf.Data.close" title="cf.Data.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
 <td><p>Close all files referenced by the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.chunk.html#cf.Data.chunk" title="cf.Data.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
-<td><p>Partition the data array.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.chunks.html#cf.Data.chunks" title="cf.Data.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a></p></td>
+<td><p>The chunk sizes for each dimension.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.add_partitions.html#cf.Data.add_partitions" title="cf.Data.add_partitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_partitions</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.rechunk.html#cf.Data.rechunk" title="cf.Data.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
+<td><p>Change the chunk structure of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.cull</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.add_partitions.html#cf.Data.add_partitions" title="cf.Data.add_partitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_partitions</span></code></a></p></td>
 <td><p>Add partition boundaries.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.partition_boundaries.html#cf.Data.partition_boundaries" title="cf.Data.partition_boundaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partition_boundaries</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.partition_boundaries.html#cf.Data.partition_boundaries" title="cf.Data.partition_boundaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partition_boundaries</span></code></a></p></td>
 <td><p>Return the partition boundaries for each partition matrix dimension.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.partition_configuration.html#cf.Data.partition_configuration" title="cf.Data.partition_configuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partition_configuration</span></code></a></p></td>
-<td><p>Return parameters for opening and closing array partitions.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.partition_configuration</span></code></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.partitions.html#cf.Data.partitions" title="cf.Data.partitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partitions</span></code></a></p></td>
-<td><p>Storage for the partitions matrix.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.partitions</span></code></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.ispartitioned.html#cf.Data.ispartitioned" title="cf.Data.ispartitioned"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ispartitioned</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.ispartitioned.html#cf.Data.ispartitioned" title="cf.Data.ispartitioned"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ispartitioned</span></code></a></p></td>
 <td><p>True if the data array is partitioned.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.to_disk.html#cf.Data.to_disk" title="cf.Data.to_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_disk</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.to_disk.html#cf.Data.to_disk" title="cf.Data.to_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_disk</span></code></a></p></td>
 <td><p>Store the data array on disk.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.to_memory.html#cf.Data.to_memory" title="cf.Data.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
-<td><p>Store each partition’s data in memory in place if the master array is smaller than the chunk size.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.to_memory.html#cf.Data.to_memory" title="cf.Data.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring data on disk into memory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.in_memory.html#cf.Data.in_memory" title="cf.Data.in_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">in_memory</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.in_memory.html#cf.Data.in_memory" title="cf.Data.in_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">in_memory</span></code></a></p></td>
 <td><p>True if the array is retained in memory.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.fits_in_memory.html#cf.Data.fits_in_memory" title="cf.Data.fits_in_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fits_in_memory</span></code></a></p></td>
-<td><p>Return True if the master array is small enough to be retained in memory.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.fits_in_one_chunk_in_memory.html#cf.Data.fits_in_one_chunk_in_memory" title="cf.Data.fits_in_one_chunk_in_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fits_in_one_chunk_in_memory</span></code></a></p></td>
-<td><p>Return True if the master array is small enough to be retained in memory.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.fits_in_memory.html#cf.Data.fits_in_memory" title="cf.Data.fits_in_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fits_in_memory</span></code></a></p></td>
+<td><p>Return True if the array is small enough to be retained in memory.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.section.html#cf.Data.section" title="cf.Data.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a></p></td>
-<td><p>Returns a dictionary of sections of the Data object.</p></td>
+<td><p>Returns a dictionary of sections of the <a class="reference internal" href="#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.reconstruct_sectioned_data.html#cf.Data.reconstruct_sectioned_data" title="cf.Data.reconstruct_sectioned_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruct_sectioned_data</span></code></a></p></td>
-<td><p>Expects a dictionary of Data objects with ordering information as keys, as output by the section method when called with a Data object.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.persist.html#cf.Data.persist" title="cf.Data.persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist</span></code></a></p></td>
+<td><p>Persist the underlying dask array into memory.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.HDF_chunks.html#cf.Data.HDF_chunks" title="cf.Data.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HDF_chunks</span></code></a></p></td>
-<td><p>TODO.</p></td>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.chunks.html#cf.Data.chunks" title="cf.Data.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a></p></td>
+<td><p>The chunk sizes for each dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.npartitions.html#cf.Data.npartitions" title="cf.Data.npartitions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">npartitions</span></code></a></p></td>
+<td><p>The total number of chunks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.numblocks.html#cf.Data.numblocks" title="cf.Data.numblocks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numblocks</span></code></a></p></td>
+<td><p>The number of chunks along each dimension.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1359,7 +1530,7 @@ augmented assignments, modify the data in-place.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__bool__.html#cf.Data.__bool__" title="cf.Data.__bool__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__bool__</span></code></a></p></td>
-<td><p>Truth value testing and the built-in operation <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p></td>
+<td><p>Truth value testing and the built-in operation <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></p></td>
 </tr>
 </tbody>
 </table>
@@ -1583,37 +1754,28 @@ augmented assignments, modify the data in-place.</p>
 <td><p>Returns a new reference to self.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__deepcopy__.html#cf.Data.__deepcopy__" title="cf.Data.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__getitem__.html#cf.Data.__getitem__" title="cf.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the data defined by indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__hash__.html#cf.Data.__hash__" title="cf.Data.__hash__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__hash__</span></code></a></p></td>
-<td><p>The built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#hash" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash</span></code></a></p></td>
+<td><p>The built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#hash" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__iter__.html#cf.Data.__iter__" title="cf.Data.__iter__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iter__</span></code></a></p></td>
 <td><p>Called when an iterator is required.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__len__.html#cf.Data.__len__" title="cf.Data.__len__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__len__</span></code></a></p></td>
-<td><p>The built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#len" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a></p></td>
+<td><p>Called to implement the built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#len" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__repr__.html#cf.Data.__repr__" title="cf.Data.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__setitem__.html#cf.Data.__setitem__" title="cf.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p></td>
 <td><p>Implement indexed assignment.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__str__.html#cf.Data.__str__" title="cf.Data.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__query_set__.html#cf.Data.__query_set__" title="cf.Data.__query_set__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_set__</span></code></a></p></td>
-<td><p>Implements the “member of set” condition.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.__query_wi__.html#cf.Data.__query_wi__" title="cf.Data.__query_wi__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wi__</span></code></a></p></td>
-<td><p>Implements the “within a range” condition.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.__query_wo__.html#cf.Data.__query_wo__" title="cf.Data.__query_wo__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wo__</span></code></a></p></td>
-<td><p>Implements the “without a range” condition.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1627,23 +1789,83 @@ augmented assignments, modify the data in-place.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.Data.html#cf.Data.Data" title="cf.Data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.chunk.html#cf.Data.chunk" title="cf.Data.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></p></td>
+<td><p>Partition the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.Data.html#cf.Data.Data" title="cf.Data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.dtvarray.html#cf.Data.dtvarray" title="cf.Data.dtvarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.dtvarray.html#cf.Data.dtvarray" title="cf.Data.dtvarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.expand_dims.html#cf.Data.expand_dims" title="cf.Data.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.dumpd.html#cf.Data.dumpd" title="cf.Data.dumpd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumpd</span></code></a></p></td>
+<td><p>Return a serialisation of the data array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.dumps.html#cf.Data.dumps" title="cf.Data.dumps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumps</span></code></a></p></td>
+<td><p>Return a JSON string serialisation of the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.expand_dims.html#cf.Data.expand_dims" title="cf.Data.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></p></td>
 <td><p>Deprecated at version 3.0.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code> instead.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.files.html#cf.Data.files" title="cf.Data.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
-<td><p>Deprecated at version 3.4.0, use method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code> instead.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.files.html#cf.Data.files" title="cf.Data.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
+<td><p>Deprecated at version 3.4.0, consider using method <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code> instead.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.save_to_disk.html#cf.Data.save_to_disk" title="cf.Data.save_to_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_to_disk</span></code></a></p></td>
-<td><p>cf.Data.save_to_disk is dead.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.fits_in_one_chunk_in_memory.html#cf.Data.fits_in_one_chunk_in_memory" title="cf.Data.fits_in_one_chunk_in_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fits_in_one_chunk_in_memory</span></code></a></p></td>
+<td><p>Return True if the master array is small enough to be retained in memory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.HDF_chunks.html#cf.Data.HDF_chunks" title="cf.Data.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HDF_chunks</span></code></a></p></td>
+<td><p>Get or set HDF chunk sizes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.in_memory.html#cf.Data.in_memory" title="cf.Data.in_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">in_memory</span></code></a></p></td>
+<td><p>True if the array is retained in memory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.ismasked.html#cf.Data.ismasked" title="cf.Data.ismasked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismasked</span></code></a></p></td>
+<td><p>True if the data array has any masked values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.mask_fpe.html#cf.Data.mask_fpe" title="cf.Data.mask_fpe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_fpe</span></code></a></p></td>
+<td><p>Masking of floating-point errors in the results of arithmetic operations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.mask_invalid.html#cf.Data.mask_invalid" title="cf.Data.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></p></td>
+<td><p>Mask the array where invalid values occur (NaN or inf).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.partition_boundaries.html#cf.Data.partition_boundaries" title="cf.Data.partition_boundaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partition_boundaries</span></code></a></p></td>
+<td><p>Return the partition boundaries for each partition matrix dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.partition_configuration</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.partitions</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.reconstruct_sectioned_data.html#cf.Data.reconstruct_sectioned_data" title="cf.Data.reconstruct_sectioned_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstruct_sectioned_data</span></code></a></p></td>
+<td><p>Expects a dictionary of Data objects with ordering information as keys, as output by the section method when called with a Data object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.save_to_disk.html#cf.Data.save_to_disk" title="cf.Data.save_to_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_to_disk</span></code></a></p></td>
+<td><p>Deprecated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.seterr.html#cf.Data.seterr" title="cf.Data.seterr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seterr</span></code></a></p></td>
+<td><p>Set how floating-point errors in the results of arithmetic operations are handled.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.to_disk.html#cf.Data.to_disk" title="cf.Data.to_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_disk</span></code></a></p></td>
+<td><p>Store the data array on disk.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.to_memory.html#cf.Data.to_memory" title="cf.Data.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<td><p>Bring data on disk into memory.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.unsafe_array.html#cf.Data.unsafe_array" title="cf.Data.unsafe_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_array</span></code></a></p></td>
-<td><p>Deprecated at version 3.0.0, use <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute instead.</p></td>
+<td><p>Deprecated at version 3.0.0.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.ispartitioned.html#cf.Data.ispartitioned" title="cf.Data.ispartitioned"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ispartitioned</span></code></a></p></td>
+<td><p>True if the data array is partitioned.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1658,10 +1880,10 @@ augmented assignments, modify the data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-31.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

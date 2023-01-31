@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.13.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.14.0</a></h1>
 
 
 
@@ -64,12 +64,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -132,7 +133,7 @@ for python version 2.7.</p>
 </section>
 <section id="in-place-operations">
 <h2>In-place operations<a class="headerlink" href="#in-place-operations" title="Permalink to this headline">¶</a></h2>
-<p>At version 3.x, in-place operations return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, rather than the
+<p>At version 3.x, in-place operations return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, rather than the
 modified construct. The keyword that defines the operation to be
 in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tranpose</span><span class="p">()</span>
@@ -366,7 +367,7 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.identity.html#cf.Field.identity" title="cf.Field.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.identity</span></code></a></p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">relaxed_identity</span></code> parameter.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="attribute/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.indices</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.indices</span></code></a></p></td>
 <td><p>No <code class="docutils literal notranslate"><span class="pre">'exact'</span></code> mode. Construct identity
 arguments are no longer assumed to be an abbreviation.</p></td>
 </tr>
@@ -389,7 +390,7 @@ arguments are no longer assumed to be an abbreviation.</p></td>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.log.html#cf.Field.log" title="cf.Field.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.log</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="attribute/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask_invalid</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="method/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask_invalid</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="method/cf.Field.measure.html#cf.Field.measure" title="cf.Field.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.measure</span></code></a></p></td>
@@ -481,10 +482,10 @@ arguments are no longer assumed to be an abbreviation.</p></td>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-31.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

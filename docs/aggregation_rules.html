@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Performance" href="performance.html" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.13.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.14.0</a></h1>
 
 
 
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -120,7 +121,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="aggregation-rules">
 <span id="id1"></span><h1><strong>Aggregation rules</strong><a class="headerlink" href="#aggregation-rules" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.13.1 for version 1.9 of the CF conventions.</p>
+<p>Version 3.14.0 for version 1.10 of the CF conventions.</p>
 <p><em>David Hassell and Jonathan Gregory (2012)</em></p>
 <p><a class="reference external" href="https://cf-trac.llnl.gov/trac/ticket/78">https://cf-trac.llnl.gov/trac/ticket/78</a></p>
 <p>Aggregation is the combination of two field constructs <a class="reference internal" href="cf_data_model.html#term-field-construct"><span class="xref std std-term">field
@@ -139,8 +140,11 @@ aggregation of two field constructs.</p>
 <p>More than two field constructs are aggregated by repeated applications
 of the aggregation algorithm, and aggregations over multiple domain
 axis constructs are similarly possible.</p>
-<p>As of CF-1.9, <a class="reference internal" href="cf_data_model.html#term-domain-construct"><span class="xref std std-term">Domain constructs</span></a> may also be
-aggregated. The rules for <a class="reference internal" href="cf_data_model.html#term-cell-method-constructs"><span class="xref std std-term">cell method constructs</span></a> and <a class="reference internal" href="cf_data_model.html#term-field-ancillary-constructs"><span class="xref std std-term">field ancillary constructs</span></a> are ignored for domain construct aggregation.</p>
+<p>From <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> version 3.11.0, CF-1.9 is supported and <a class="reference internal" href="cf_data_model.html#term-domain-construct"><span class="xref std std-term">Domain
+constructs</span></a> may also be aggregated. The rules for
+<a class="reference internal" href="cf_data_model.html#term-cell-method-constructs"><span class="xref std std-term">cell method constructs</span></a> and
+<a class="reference internal" href="cf_data_model.html#term-field-ancillary-constructs"><span class="xref std std-term">field ancillary constructs</span></a> are
+ignored for domain construct aggregation.</p>
 <p>Aggregation is implemented in the <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> function, and is
 applied by default by the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function.</p>
 <hr class="docutils" />
@@ -334,10 +338,10 @@ implementation (cf-python v2.1), Geosci. Model Dev., 10,
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-31.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
