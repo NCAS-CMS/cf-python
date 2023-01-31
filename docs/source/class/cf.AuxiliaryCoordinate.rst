@@ -678,9 +678,6 @@ Special
    ~cf.AuxiliaryCoordinate.__str__
    ~cf.AuxiliaryCoordinate.__array__
    ~cf.AuxiliaryCoordinate.__data__
-   ~cf.AuxiliaryCoordinate.__query_set__
-   ~cf.AuxiliaryCoordinate.__query_wi__
-   ~cf.AuxiliaryCoordinate.__query_wo__
 
 Deprecated
 ----------

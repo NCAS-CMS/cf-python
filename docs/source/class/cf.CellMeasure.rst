@@ -606,9 +606,6 @@ Special
    ~cf.CellMeasure.__str__
    ~cf.CellMeasure.__array__
    ~cf.CellMeasure.__data__
-   ~cf.CellMeasure.__query_set__
-   ~cf.CellMeasure.__query_wi__
-   ~cf.CellMeasure.__query_wo__
    
 Deprecated
 ----------

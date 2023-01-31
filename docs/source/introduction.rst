@@ -20,7 +20,7 @@
 
 Version |release| for version |version| of the CF conventions.
 
-The Python cf package is an Earth Science data analysis library that
+The Python `cf` package is an Earth Science data analysis library that
 is built on a complete implementation of the :ref:`CF-data-model`.
 
 .. contents::
@@ -30,13 +30,12 @@ is built on a complete implementation of the :ref:`CF-data-model`.
 **Functionality**
 -----------------
 
-The cf package uses for its internal data structures the
-:ref:`CF-data-model` inherited from the `cfdm` package, and so is able
-to process any CF-compliant dataset. It is not strict about
-CF-compliance, however, so that partially conformant datasets may be
-ingested from existing datasets and written to new datasets. This is so
-that datasets that are partially conformant may nonetheless be
-modified in memory.
+The `cf` package implements the :ref:`CF-data-model` for its internal
+data structures and so is able to process any CF-compliant dataset. It
+is not strict about CF-compliance, however, so that partially
+conformant datasets may be ingested from existing datasets and written
+to new datasets.This is so that datasets that are partially conformant
+may nonetheless be modified in memory.
 
 .. code-block:: python
    :caption: *A simple example of reading a field construct from a
@@ -56,8 +55,8 @@ modified in memory.
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
 
-
-The cf package can:
+The `cf` package uses :ref:`Dask <Performance>` for all of its array
+manipulation and can:
 
 * read :term:`field constructs <field construct>` and :term:`domain
   constructs <domain construct>` from netCDF, CDL, PP and UM datasets,
@@ -120,7 +119,7 @@ fields larger than the available memory to exist and be manipulated.
 
 Powerful, flexible, and very simple to produce visualisations of field
 constructs are available with the `cfplot` package, that is installed
-separately to cf (see http://ajheaps.github.io/cf-plot for details).
+separately to `cf` (see http://ajheaps.github.io/cf-plot for details).
 
 See the `cfplot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
@@ -138,6 +137,19 @@ range plotting possibilities with example code.
 As of version 3.14.0 (released 2023-01-31), cf uses :ref:`Dask
 <Performance>` for all of its data manipulations, which provides lazy,
 parallelised, and out-of-core computations of array operations.
+
+----
+
+**Command line utilities**
+--------------------------
+
+During installation the ``cfa`` command line utility is also
+installed, which
+
+* generates text descriptions of field constructs contained in files,
+  and
+
+* creates new datasets aggregated from existing files.
 
 ----
 
@@ -169,3 +181,6 @@ Rew, R., Hartnett, E., and Caron, J. (2006). NetCDF-4: Software
   Systems for Meteorology, Oceanography, and Hydrology. AMS. Retrieved
   from
   https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf
+
+----
+

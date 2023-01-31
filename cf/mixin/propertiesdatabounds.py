@@ -3759,6 +3759,7 @@ class PropertiesDataBounds(PropertiesData):
             _inplace_enabled_define_and_cleanup(self),
             "persist",
             bounds=bounds,
+            interior_ring=True,
             inplace=inplace,
         )
 

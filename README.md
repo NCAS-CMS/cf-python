@@ -40,12 +40,15 @@ Installation
 
 http://ncas-cms.github.io/cf-python/installation.html
 
+Recipes
+=======
+
+https://ncas-cms.github.io/cf-python/recipes.html
 
 Tutorial
 ========
 
 https://ncas-cms.github.io/cf-python/tutorial.html
-
 
 Functionality
 =============
@@ -73,7 +76,9 @@ inspecting it:
                     : longitude(128) = [0.0, ..., 357.1875] degrees_east
                     : height(1) = [2.0] m
 
-The `cf` package can:
+The `cf` package uses
+[Dask](https://ncas-cms.github.io/cf-python/performance.html) for all
+of its array manipulation and can:
 
 * read field constructs from netCDF, CDL, PP and UM datasets,
 

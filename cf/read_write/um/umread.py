@@ -469,7 +469,7 @@ _rotated_latitude_longitude_lbcodes = set((101, 102, 111))
 #          'area': None,
 #      }
 
-_axis = {"area": None}
+_axis = {"area": "area"}
 
 _autocyclic_false = {"no-op": True, "X": False, "cyclic": False}
 
@@ -987,9 +987,11 @@ class UMField:
                 # Create UNROTATED, 2-D LATITUDE and LONGITUDE
                 # auxiliary coordinates
                 # ----------------------------------------------------
-                self.latitude_longitude_2d_aux_coordinates(
-                    yc, xc
-                )  # , rotated_pole)
+                aux_keys = self.latitude_longitude_2d_aux_coordinates(yc, xc)
+
+                self.implementation.set_coordinate_reference_coordinates(
+                    ref, [ykey, xkey] + aux_keys
+                )
 
             # --------------------------------------------------------
             # Create a RADIATION WAVELENGTH dimension coordinate
@@ -2168,7 +2170,8 @@ class UMField:
 
         :Returns:
 
-            `None`
+            `list`
+                The keys of the auxiliary coordinates.
 
         """
         BDX = self.bdx
@@ -2232,6 +2235,7 @@ class UMField:
 
         axes = [_axis["y"], _axis["x"]]
 
+        keys = []
         for axiscode, array, bounds in zip(
             (10, 11), (lat, lon), (lat_bounds, lon_bounds)
         ):
@@ -2245,9 +2249,12 @@ class UMField:
             )
             ac = self.coord_names(ac, axiscode)
 
-            self.implementation.set_auxiliary_coordinate(
+            key = self.implementation.set_auxiliary_coordinate(
                 self.field, ac, axes=axes, copy=False
             )
+            keys.append(key)
+
+        return keys
 
     def model_level_number_coordinate(self, aux=False):
         """model_level_number dimension or auxiliary coordinate.

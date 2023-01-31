@@ -580,9 +580,6 @@ Special
    ~cf.FieldAncillary.__str__
    ~cf.FieldAncillary.__array__
    ~cf.FieldAncillary.__data__
-   ~cf.FieldAncillary.__query_set__
-   ~cf.FieldAncillary.__query_wi__
-   ~cf.FieldAncillary.__query_wo__
 
 Deprecated
 ----------

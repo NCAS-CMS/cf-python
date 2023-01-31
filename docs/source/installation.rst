@@ -108,7 +108,7 @@ visualisation package <http://ajheaps.github.io/cf-plot>`_, run
    :caption: *Install with conda.*
 
    $ conda install -c conda-forge cf-python cf-plot udunits2
-   $ conda install -c conda-forge mpich esmf=8.2.0
+   $ conda install -c conda-forge esmpy
 
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work.
@@ -248,7 +248,7 @@ environments for which these features are not required.
 
   .. code-block:: console
 
-     $ conda install -c conda-forge mpich esmpy
+     $ conda install -c conda-forge esmpy
 
   or may be installed from source.
 
