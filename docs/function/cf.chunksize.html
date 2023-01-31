@@ -11,18 +11,18 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.collapse_parallel_mode" href="cf.collapse_parallel_mode.html" />
+    <link rel="next" title="cf.free_memory" href="cf.free_memory.html" />
     <link rel="prev" title="cf.configuration" href="cf.configuration.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.13.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
 
 
 
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -87,7 +88,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
       <li>Previous: <a href="cf.configuration.html" title="previous chapter">cf.configuration</a></li>
-      <li>Next: <a href="cf.collapse_parallel_mode.html" title="next chapter">cf.collapse_parallel_mode</a></li>
+      <li>Next: <a href="cf.free_memory.html" title="next chapter">cf.free_memory</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -125,24 +126,39 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.chunksize<a class="headerlink" href="#cf-chunksize" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.chunksize">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">chunksize</code><span class="sig-paren">(</span><em class="sig-param">*arg</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.1/cf/__init__.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.chunksize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the chunksize used by LAMA for partitioning the data array.</p>
-<p>This must be smaller than an upper limit determined by the free
-memory factor, which is the fraction of memory kept free as a
-temporary workspace, otherwise an error is raised. If called with
-None as the argument then the chunksize is set to its upper
-limit. If called without any arguments the existing chunksize is
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">chunksize</code><span class="sig-paren">(</span><em class="sig-param">*arg</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/__init__.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.chunksize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the default chunksize used by <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> arrays.</p>
+<p>If called without any arguments then the existing chunksize is
 returned.</p>
-<p>The upper limit to the chunksize is given by:</p>
-<div class="math notranslate nohighlight">
-\[upper\_chunksize = \dfrac{f \cdot total\_memory}{mpi\_size
-\cdot w_1 + w_2}\]</div>
-<p>where <span class="math notranslate nohighlight">\(f\)</span> is the <em>free memory factor</em> and <span class="math notranslate nohighlight">\(w_1\)</span> and
-<span class="math notranslate nohighlight">\(w_2\)</span> the <em>workspace factors</em> <em>1</em> and <em>2</em> respectively.</p>
-<dl class="field-list simple">
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Setting the chunk size will also change the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
+global configuration value <code class="docutils literal notranslate"><span class="pre">'array.chunk-size'</span></code>. If
+<a class="reference internal" href="#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a> is used in a context manager then the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
+configuration value is only altered within that context.
+Setting the chunk size directly from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
+configuration API will affect susbsequent data creation,
+but will <em>not</em> change the value of <a class="reference internal" href="#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a>.</p>
+</div>
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>arg: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The chunksize in bytes.</p>
+<dd class="field-odd"><dl>
+<dt>arg: number or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../class/cf.Constant.html#cf.Constant" title="cf.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The chunksize in bytes. Any size accepted by
+<a class="reference external" href="https://docs.dask.org/en/latest/api.html#dask.utils.parse_bytes" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.utils.parse_bytes</span></code></a> is accepted, for instance
+<code class="docutils literal notranslate"><span class="pre">100</span></code>, <code class="docutils literal notranslate"><span class="pre">'100'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1e6'</span></code>, <code class="docutils literal notranslate"><span class="pre">'100</span> <span class="pre">MB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'100M'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'5kB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'5.4</span> <span class="pre">kB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1kiB'</span></code>, <code class="docutils literal notranslate"><span class="pre">'1e6</span> <span class="pre">kB'</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">'MB'</span></code> are all valid sizes.</p>
+<p>Note that if <em>arg</em> is a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, or a string that implies
+a non-integral amount of bytes, then the integer part
+(rounded down) will be used.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>A chunksize of 2 MiB may be specified as <code class="docutils literal notranslate"><span class="pre">'2097152'</span></code>
+or <code class="docutils literal notranslate"><span class="pre">'2</span> <span class="pre">MiB'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>Chunksizes of <code class="docutils literal notranslate"><span class="pre">'2678.9'</span></code> and <code class="docutils literal notranslate"><span class="pre">'2.6789</span> <span class="pre">KB'</span></code> are both
+equvalent to <code class="docutils literal notranslate"><span class="pre">2678</span></code>.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd>
@@ -166,10 +182,10 @@ new value was specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-31.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

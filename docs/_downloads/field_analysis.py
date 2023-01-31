@@ -132,25 +132,25 @@ a = cf.read('air_temperature.nc')[0]
 b = cf.read('precipitation_flux.nc')[0]
 print(a)
 print(b)
-c = a.regrids(b, 'conservative')
+c = a.regrids(b, method='conservative')
 print(c)
 import numpy
 lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
 lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-c = a.regrids({'latitude': lat, 'longitude': lon}, 'linear')
+c = a.regrids([lat, lon], method='linear')
 time = cf.DimensionCoordinate()
 time.standard_name='time'
 time.set_data(cf.Data(numpy.arange(0.5, 60, 1),
                       units='days since 1860-01-01', calendar='360_day'))
 time
-c = a.regridc({'T': time}, axes='T', method='linear')
+c = a.regridc([time], axes='T', method='linear')
 try:
-    c = a.regridc({'T': time}, axes='T', method='conservative')  # Raises Exception
+    c = a.regridc([time], axes='T', method='conservative')  # Raises Exception
 except:
     pass
 bounds = time.create_bounds()
 time.set_bounds(bounds)
-c = a.regridc({'T': time}, axes='T', method='conservative')
+c = a.regridc([time], axes='T', method='conservative')
 print(c)
 v = cf.read('vertical.nc')[0]
 print(v)
@@ -163,7 +163,7 @@ _ = v.replace_construct('Z', new=z_ln_p)
 new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
 new_z_ln_p = new_z_p.log()
 new_z_ln_p.axis = 'Z'
-new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='linear')
+new_v = v.regridc([new_z_ln_p], axes='Z', method='linear')
 new_v.replace_construct('Z', new=new_z_p)
 print(new_v)
 q, t = cf.read('file.nc')
@@ -239,7 +239,7 @@ sin_lat.data
 d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
 e = d.arctanh()
 print(e.array)
-e.mask_invalid(inplace=True)
+e.masked_invalid(inplace=True)
 print(e.array)
 q
 q.log()

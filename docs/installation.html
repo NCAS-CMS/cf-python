@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Contributing" href="contributing.html" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.13.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.14.0</a></h1>
 
 
 
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -120,7 +121,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="installation">
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.13.1 for version 1.9 of the CF conventions.</p>
+<p>Version 3.14.0 for version 1.10 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#operating-systems" id="id19"><strong>Operating systems</strong></a></p></li>
@@ -152,8 +153,7 @@ Windows Subsystem for Linux (WSL)</a>.</p>
 </section>
 <section id="python-versions">
 <span id="id3"></span><h2><a class="toc-backref" href="#id20"><strong>Python versions</strong></a><a class="headerlink" href="#python-versions" title="Permalink to this headline">¶</a></h2>
-<p>The cf package is only for Python 3.7, 3.8 and 3.9.</p>
-<p>Versions 2.x of cf work only for Python 2.7.</p>
+<p>The cf package is only for Python 3.7 or newer.</p>
 <hr class="docutils" />
 </section>
 <section id="pip">
@@ -165,13 +165,13 @@ from <a class="reference internal" href="#udunits"><span class="std std-ref">Udu
 automatically installed via <code class="docutils literal notranslate"><span class="pre">pip</span></code>) run, for example :</p>
 <div class="literal-block-wrapper docutils container" id="id15">
 <div class="code-block-caption"><span class="caption-text"><em>Install as root, with any missing dependencies.</em></span><a class="headerlink" href="#id15" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install cf-python
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>cf-python
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id16">
 <div class="code-block-caption"><span class="caption-text"><em>Install as a user, with any missing dependencies.</em></span><a class="headerlink" href="#id16" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install cf-python --user
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>cf-python<span class="w"> </span>--user
 </pre></div>
 </div>
 </div>
@@ -179,7 +179,7 @@ automatically installed via <code class="docutils literal notranslate"><span cla
 <div class="literal-block-wrapper docutils container" id="id17">
 <div class="code-block-caption"><span class="caption-text"><em>Install as root without installing any of the
 dependencies.</em></span><a class="headerlink" href="#id17" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install cf-python --no-deps
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>cf-python<span class="w"> </span>--no-deps
 </pre></div>
 </div>
 </div>
@@ -190,7 +190,7 @@ options.</p>
 <p>Udunits (a C library that provides support for units of physical
 quantities) is a required dependency that is not installed by <code class="docutils literal notranslate"><span class="pre">pip</span></code>,
 but it is easily installed in a <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> conda install -c conda-forge udunits2
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>udunits2
 </pre></div>
 </div>
 <p>Alternatively, Udunits is often available in from operating system
@@ -204,20 +204,18 @@ details.</p>
 </section>
 <section id="conda">
 <span id="id6"></span><h2><a class="toc-backref" href="#id23"><strong>conda</strong></a><a class="headerlink" href="#conda" title="Permalink to this headline">¶</a></h2>
-<p>To install cf with
-all of its <a class="reference internal" href="#required"><span class="std std-ref">required</span></a> and <a class="reference internal" href="#optional"><span class="std std-ref">optional</span></a>
-dependencies, and the <a class="reference external" href="http://ajheaps.github.io/cf-plot">cf-plot visualisation package</a>, run</p>
+<p>To install cf with all of its <a class="reference internal" href="#required"><span class="std std-ref">required</span></a> and
+<a class="reference internal" href="#optional"><span class="std std-ref">optional</span></a> dependencies, and the <a class="reference external" href="http://ajheaps.github.io/cf-plot">cf-plot
+visualisation package</a>, run</p>
 <div class="literal-block-wrapper docutils container" id="id18">
 <div class="code-block-caption"><span class="caption-text"><em>Install with conda.</em></span><a class="headerlink" href="#id18" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> conda install -c conda-forge cf-python cf-plot udunits2
-<span class="gp">$</span> conda install -c conda-forge mpich esmpy
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>cf-python<span class="w"> </span>cf-plot<span class="w"> </span>udunits2
+<span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>esmpy
 </pre></div>
 </div>
 </div>
 <p>The second of the two <code class="docutils literal notranslate"><span class="pre">conda</span></code> commands is required for
-<a class="reference internal" href="tutorial.html#regridding"><span class="std std-ref">regridding</span></a> to work. (Note, however, that the
-installation of <code class="docutils literal notranslate"><span class="pre">esmpy</span></code> does not work for Anaconda version
-<code class="docutils literal notranslate"><span class="pre">2019.10</span></code>.)</p>
+<a class="reference internal" href="tutorial.html#regridding"><span class="std std-ref">regridding</span></a> to work.</p>
 <p>Note that <a class="reference internal" href="#unidata-udunits-2-library"><span class="std std-ref">some environment variables might also need setting</span></a> in order for the Udunits library to work
 properly, although the defaults are usually sufficient.</p>
 <hr class="docutils" />
@@ -228,9 +226,9 @@ properly, although the defaults are usually sufficient.</p>
 <ol class="arabic">
 <li><p>Download the cf package from <a class="reference external" href="https://pypi.org/project/cf-python">https://pypi.org/project/cf-python</a></p></li>
 <li><p>Unpack the library (replacing <code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> with the version that
-you want to install, e.g. <code class="docutils literal notranslate"><span class="pre">3.13.0</span></code>):</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tar zxvf cf-python-&lt;version&gt;.tar.gz
-<span class="gp">$</span> <span class="nb">cd</span> cf-python-&lt;version&gt;
+you want to install, e.g. <code class="docutils literal notranslate"><span class="pre">3.14.0</span></code>):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>tar<span class="w"> </span>zxvf<span class="w"> </span>cf-python-&lt;version&gt;.tar.gz
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>cf-python-&lt;version&gt;
 </pre></div>
 </div>
 </li>
@@ -239,19 +237,19 @@ you want to install, e.g. <code class="docutils literal notranslate"><span class
 <blockquote>
 <div><ul>
 <li><p>To install the cf-python package to a central location:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python setup.py install
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>setup.py<span class="w"> </span>install
 </pre></div>
 </div>
 </li>
 <li><p>To install the cf-python package locally to the user in the default
 location:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python setup.py install --user
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>setup.py<span class="w"> </span>install<span class="w"> </span>--user
 </pre></div>
 </div>
 </li>
 <li><p>To install the cf-python package in the <code class="docutils literal notranslate"><span class="pre">&lt;directory&gt;</span></code> of your
 choice:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python setup.py install --home<span class="o">=</span>&lt;directory&gt;
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>setup.py<span class="w"> </span>install<span class="w"> </span>--home<span class="o">=</span>&lt;directory&gt;
 </pre></div>
 </div>
 </li>
@@ -277,13 +275,14 @@ files</span></a>, and</p></li>
 <section id="required">
 <span id="id10"></span><h3><a class="toc-backref" href="#id27">Required</a><a class="headerlink" href="#required" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><a class="reference external" href="https://www.python.org/">Python</a>, 3.7, 3.8 or 3.9.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/numpy/">numpy</a>, 1.15 or newer.</p></li>
+<li><p><a class="reference external" href="https://www.python.org/">Python</a>, 3.7 or newer.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/numpy/">numpy</a>, 1.22 or newer.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/dask/">dask</a>, 2022.12.1 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/netcdf4/">netCDF4</a>, 1.5.4 or newer.</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.5.0 or newer
+<li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.6.0 or newer
 (note that this package may be installed with netCDF4).</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.9.0.3 or up to,
-but not including, 1.10.0.0.</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.10.0.2 or up to,
+but not including, 1.10.1.0.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.3.4 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/psutil/">psutil</a>, version 0.6.0 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/packaging/">packaging</a>, version 20.0 or newer.</p></li>
@@ -317,7 +316,7 @@ environments for which these features are not required.</p>
 <ul>
 <li><p><a class="reference external" href="https://earthsystemmodeling.org/esmpy/">ESMF</a>, version
 8.0.0 or newer. This is easily installed via conda with</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda install -c conda-forge mpich esmpy
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>esmpy
 </pre></div>
 </div>
 <p>or may be installed from source.</p>
@@ -333,17 +332,13 @@ containing a given value</p>
 <li><p><a class="reference external" href="https://pypi.org/project/matplotlib">matplotlib</a>, version 3.0.0
 or newer.</p></li>
 </ul>
-<p class="rubric">Parallel processing</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://pypi.org/project/mpi4py">mpi4py</a></p></li>
-</ul>
 <hr class="docutils" />
 </section>
 </section>
 <section id="tests">
 <span id="id13"></span><h2><a class="toc-backref" href="#id29"><strong>Tests</strong></a><a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
 <p>Tests are run from within the <code class="docutils literal notranslate"><span class="pre">cf/test</span></code> directory:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python run_tests.py
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>run_tests.py
 </pre></div>
 </div>
 <hr class="docutils" />
@@ -352,7 +347,6 @@ or newer.</p></li>
 <span id="id14"></span><h2><a class="toc-backref" href="#id30"><strong>Code repository</strong></a><a class="headerlink" href="#code-repository" title="Permalink to this headline">¶</a></h2>
 <p>The complete source code and issue tracker is available at
 <a class="reference external" href="https://github.com/NCAS-CMS/cf-python">https://github.com/NCAS-CMS/cf-python</a></p>
-<hr class="docutils" />
 </section>
 </section>
 
@@ -364,10 +358,10 @@ or newer.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-07-11.
+      &copy;2023, NCAS | Page built on 2023-01-31.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

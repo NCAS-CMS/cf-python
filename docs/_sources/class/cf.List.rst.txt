@@ -125,7 +125,6 @@ Data
    :template: attribute.rst
 
    ~cf.List.array
-   ~cf.List.Data
    ~cf.List.data
    ~cf.List.datetime_array
    ~cf.List.datum
@@ -143,6 +142,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.List.to_dask_array
    ~cf.List.__getitem__
    ~cf.List.del_data
    ~cf.List.get_data
@@ -171,20 +171,20 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.List.apply_masking
+   ~cf.List.count
+   ~cf.List.count_masked
    ~cf.List.fill_value
+   ~cf.List.masked_invalid
    
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cf.List.apply_masking
    ~cf.List.binary_mask
-   ~cf.List.count
-   ~cf.List.count_masked
    ~cf.List.hardmask
    ~cf.List.mask
-   ~cf.List.mask_invalid
 
 .. autosummary::
    :nosignatures:
@@ -200,7 +200,7 @@ Data
 
    ~cf.List.__setitem__
    ~cf.List.halo
-   ~cf.List.mask_invalid
+   ~cf.List.masked_invalid
    ~cf.List.subspace
    ~cf.List.where
 
@@ -212,15 +212,16 @@ Data
    :template: method.rst
 	      
 
-   ~cf.List.chunk
+   ~cf.List.rechunk
    ~cf.List.close
    ~cf.List.convert_reference_time
    ~cf.List.cyclic
    ~cf.List.period
    ~cf.List.iscyclic
    ~cf.List.isperiodic
-   ~cf.List.get_filenames
+   ~cf.List.get_original_filenames
    ~cf.List.has_bounds
+   ~cf.List.persist
 
 Miscellaneous
 -------------
@@ -236,6 +237,7 @@ Miscellaneous
    ~cf.List.copy
    ~cf.List.creation_commands
    ~cf.List.equals
+   ~cf.List.to_memory
    ~cf.List.uncompress
 
 .. rubric:: Attributes
@@ -574,9 +576,6 @@ Special
    ~cf.List.__str__
    ~cf.List.__array__
    ~cf.List.__data__
-   ~cf.List.__query_set__
-   ~cf.List.__query_wi__
-   ~cf.List.__query_wo__
 
 Deprecated
 ----------
@@ -591,9 +590,12 @@ Deprecated
    ~cf.List.asdatetime
    ~cf.List.asreftime
    ~cf.List.attributes
+   ~cf.List.chunk
+   ~cf.List.Data
    ~cf.List.delprop
    ~cf.List.dtvarray
    ~cf.List.expand_dims
+   ~cf.List.get_filenames
    ~cf.List.getprop
    ~cf.List.hasbounds
    ~cf.List.hasdata
@@ -604,6 +606,7 @@ Deprecated
    ~cf.List.isdomainancillary
    ~cf.List.isfieldancillary
    ~cf.List.ismeasure
+   ~cf.List.mask_invalid
    ~cf.List.name
    ~cf.List.remove_data
    ~cf.List.select

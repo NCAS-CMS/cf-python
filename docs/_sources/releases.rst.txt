@@ -13,13 +13,22 @@ Documentation for all versions of cf.
    :local:
    :backlinks: entry
 
+**CF-1.10**
+-----------
+
+* `Version 3.14.0 <https://ncas-cms.github.io/cf-python/3.14.0>`_ (2023-01-31 *first Dask release*)
+
+----
+
 **CF-1.9**
 ----------
 
-* `Version 3.13.1 <https://ncas-cms.github.io/cf-python/3.13.1>`_ (2022-10-17)
+* `Version 3.13.1 <https://ncas-cms.github.io/cf-python/3.13.1>`_ (2022-10-17 *last LAMA release*)
 * `Version 3.13.0 <https://ncas-cms.github.io/cf-python/3.13.0>`_ (2022-06-23)
 * `Version 3.12.0 <https://ncas-cms.github.io/cf-python/3.12.0>`_ (2022-01-18)
 * `Version 3.11.0 <https://ncas-cms.github.io/cf-python/3.11.0>`_ (2021-10-08)
+
+----
 
 **CF-1.8**
 ----------
@@ -114,7 +123,7 @@ be found with the `cf.CF` function:
 	     
    >>> import cf
    >>> cf.CF()
-   '1.9'
+   '1.10'
 
 This indicates which version of the CF conventions are represented by
 this release of the cf package, and therefore the version can not be
@@ -127,7 +136,7 @@ version , and is found in the usual manner:
    :caption: *Retrieve the version of the cf package.*
 	     	     
    >>> cf.__version__
-   '3.13.0'
+   '3.14.0'
 
 The next section outlines the scheme used to set version identifiers.
 
@@ -135,7 +144,7 @@ Versioning strategy
 ^^^^^^^^^^^^^^^^^^^
 
 An ``epoch.major.minor`` numeric version scheme is used,
-e.g. ``3.7.1``.
+e.g. ``3.13.1``.
 
 **Epoch** changes comprise
 

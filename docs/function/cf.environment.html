@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.example_field" href="cf.example_field.html" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.13.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
 
 
 
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -125,16 +126,16 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.environment<a class="headerlink" href="#cf-environment" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.environment">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">environment</code><span class="sig-paren">(</span><em class="sig-param">display=True</em>, <em class="sig-param">paths=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.1/cf/functions.py#L3236-L3328"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.environment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">environment</code><span class="sig-paren">(</span><em class="sig-param">display=True</em>, <em class="sig-param">paths=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/functions.py#L2966-L3073"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.environment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the names and versions of the cf package and its
 dependencies.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>display: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return the description of the environment as
+<dt>display: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return the description of the environment as
 a string. By default the description is printed.</p>
 </dd>
-<dt>paths: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not output the locations of each package.</p>
+<dt>paths: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not output the locations of each package.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.0.6.</span></p>
 </div>
@@ -143,8 +144,8 @@ a string. By default the description is printed.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>If <em>display</em> is True then the description of the
-environment is printed and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned. Otherwise
+<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>If <em>display</em> is True then the description of the
+environment is printed and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned. Otherwise
 the description is returned as a string.</p>
 </dd>
 </dl>
@@ -152,38 +153,45 @@ the description is returned as a string.</p>
 </dl>
 <p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">environment</span><span class="p">()</span>
-<span class="go">Platform: Linux-5.4.0-58-generic-x86_64-with-debian-bullseye-sid</span>
-<span class="go">HDF5 library: 1.10.5</span>
-<span class="go">netcdf library: 4.6.3</span>
+<span class="go">Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10</span>
+<span class="go">HDF5 library: 1.10.6</span>
+<span class="go">netcdf library: 4.8.0</span>
+<span class="go">udunits2 library: /home/username/anaconda3/envs/cf-env/lib/libudunits2.so.0</span>
+<span class="go">ESMF: 8.1.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/ESMF/__init__.py</span>
+<span class="go">Python: 3.8.10 /home/username/anaconda3/envs/cf-env/bin/python</span>
+<span class="go">dask: 2022.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/dask/__init__.py</span>
+<span class="go">netCDF4: 1.5.6 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/netCDF4/__init__.py</span>
+<span class="go">psutil: 5.9.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/psutil/__init__.py</span>
+<span class="go">packaging: 21.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/packaging/__init__.py</span>
+<span class="go">numpy: 1.22.2 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/numpy/__init__.py</span>
+<span class="go">scipy: 1.8.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py</span>
+<span class="go">matplotlib: 3.4.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/matplotlib/__init__.py</span>
+<span class="go">cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py</span>
+<span class="go">cfunits: 3.3.5 /home/username/cfunits/cfunits/__init__.py</span>
+<span class="go">cfplot: 3.1.18 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfplot/__init__.py</span>
+<span class="go">cfdm: 1.10.0.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py</span>
+<span class="go">cf: 3.14.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cf/__init__.py</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">environment</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10</span>
+<span class="go">HDF5 library: 1.10.6</span>
+<span class="go">netcdf library: 4.8.0</span>
 <span class="go">udunits2 library: libudunits2.so.0</span>
-<span class="go">python: 3.7.0 /home/space/anaconda3/bin/python</span>
-<span class="go">netCDF4: 1.5.4 /home/space/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py</span>
-<span class="go">cftime: 1.3.0 /home/space/anaconda3/lib/python3.7/site-packages/cftime/__init__.py</span>
-<span class="go">numpy: 1.18.4 /home/space/anaconda3/lib/python3.7/site-packages/numpy/__init__.py</span>
-<span class="go">psutil: 5.4.7 /home/space/anaconda3/lib/python3.7/site-packages/psutil/__init__.py</span>
-<span class="go">scipy: 1.1.1 /home/space/anaconda3/lib/python3.7/site-packages/scipy/__init__.py</span>
-<span class="go">matplotlib: 3.1.1 /home/space/anaconda3/lib/python3.7/site-packages/matplotlib/__init__.py</span>
-<span class="go">ESMF: 8.0.0 /home/space/anaconda3/lib/python3.7/site-packages/ESMF/__init__.py</span>
-<span class="go">cfdm: 1.8.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cfdm/__init__.py</span>
-<span class="go">cfunits: 3.3.1 /home/space/anaconda3/lib/python3.7/site-packages/cfunits/__init__.py</span>
-<span class="go">cfplot: 3.0.0 /home/space/anaconda3/lib/python3.7/site-packages/cfplot/__init__.py</span>
-<span class="go">cf: 3.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">environment</span><span class="p">(</span><span class="n">paths</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">HDF5 library: 1.10.5</span>
-<span class="go">netcdf library: 4.6.3</span>
-<span class="go">udunits2 library: libudunits2.so.0</span>
-<span class="go">Python: 3.7.0</span>
-<span class="go">netCDF4: 1.5.4</span>
-<span class="go">cftime: 1.3.0</span>
-<span class="go">numpy: 1.18.4</span>
-<span class="go">psutil: 5.4.7</span>
-<span class="go">scipy: 1.1.0</span>
-<span class="go">matplotlib: 2.2.3</span>
-<span class="go">ESMF: 8.0.0</span>
-<span class="go">cfdm: 1.8.8.0</span>
-<span class="go">cfunits: 3.3.1</span>
-<span class="go">cfplot: 3.0.38</span>
-<span class="go">cf: 3.8.0</span>
+<span class="go">ESMF: 8.1.1</span>
+<span class="go">Python: 3.8.10</span>
+<span class="go">dask: 2022.6.0</span>
+<span class="go">netCDF4: 1.5.6</span>
+<span class="go">psutil: 5.9.0</span>
+<span class="go">packaging: 21.3</span>
+<span class="go">numpy: 1.22.2</span>
+<span class="go">scipy: 1.8.0</span>
+<span class="go">matplotlib: 3.4.3</span>
+<span class="go">cftime: 1.6.0</span>
+<span class="go">cfunits: 3.3.5</span>
+<span class="go">cfplot: 3.1.18</span>
+<span class="go">cfdm: 1.10.0.1</span>
+<span class="go">cf: 3.14.0</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -198,10 +206,10 @@ the description is returned as a string.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-31.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

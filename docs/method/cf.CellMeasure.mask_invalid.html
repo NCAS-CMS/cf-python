@@ -11,19 +11,19 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.CellMeasure.subspace" href="cf.CellMeasure.subspace.html" />
-    <link rel="prev" title="cf.CellMeasure.halo" href="cf.CellMeasure.halo.html" />
+    <link rel="next" title="cf.CellMeasure.name" href="cf.CellMeasure.name.html" />
+    <link rel="prev" title="cf.CellMeasure.ismeasure" href="cf.CellMeasure.ismeasure.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.13.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
 
 
 
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -87,8 +88,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.CellMeasure.html">cf.CellMeasure</a><ul>
-      <li>Previous: <a href="cf.CellMeasure.halo.html" title="previous chapter">cf.CellMeasure.halo</a></li>
-      <li>Next: <a href="cf.CellMeasure.subspace.html" title="next chapter">cf.CellMeasure.subspace</a></li>
+      <li>Previous: <a href="cf.CellMeasure.ismeasure.html" title="previous chapter">cf.CellMeasure.ismeasure</a></li>
+      <li>Next: <a href="cf.CellMeasure.name.html" title="next chapter">cf.CellMeasure.name</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -127,15 +128,17 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.CellMeasure.mask_invalid<a class="headerlink" href="#cf-cellmeasure-mask-invalid" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CellMeasure.mask_invalid">
-<code class="sig-prename descclassname">CellMeasure.</code><code class="sig-name descname">mask_invalid</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.13.1/cf/decorators.py#L41-L65"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure.mask_invalid" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">CellMeasure.</code><code class="sig-name descname">mask_invalid</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/decorators.py#L47-L75"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure.mask_invalid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask the array where invalid values occur.</p>
+<p>Deprecated at version 3.14.0. Use the method
+<a class="reference internal" href="cf.CellMeasure.masked_invalid.html#cf.CellMeasure.masked_invalid" title="cf.CellMeasure.masked_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code></a> instead.</p>
 <p>Note that:</p>
 <ul class="simple">
 <li><p>Invalid values are Nan or inf</p></li>
 <li><p>Invalid values in the results of arithmetic operations only
-occur if the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
+occur if the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
 suppressed by <a class="reference internal" href="cf.Data.seterr.html#cf.Data.seterr" title="cf.Data.seterr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.seterr</span></code></a>.</p></li>
-<li><p>If the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
+<li><p>If the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
 allowed then invalid values in the results of arithmetic
 operations it is possible for them to be automatically converted
 to masked values, depending on the setting of
@@ -149,8 +152,8 @@ might be faster than calling <a class="reference internal" href="#cf.CellMeasure
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt><dd><p>Use the <em>inplace</em> parameter instead.</p>
 </dd>
@@ -158,7 +161,7 @@ might be faster than calling <a class="reference internal" href="#cf.CellMeasure
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference internal" href="../class/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>TODO</p>
+<dt><a class="reference internal" href="../class/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>TODO</p>
 </dd>
 </dl>
 </dd>
@@ -205,10 +208,10 @@ might be faster than calling <a class="reference internal" href="#cf.CellMeasure
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-31.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API reference" href="api_reference.html" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.13.1</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.14.0</a></h1>
 
 
 
@@ -66,12 +66,13 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -120,21 +121,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="analysis">
 <span id="id1"></span><h1><strong>Analysis</strong><a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.13.1 for version 1.9 of the CF conventions.</p>
+<p>Version 3.14.0 for version 1.10 of the CF conventions.</p>
 <p>All of the Python code in this tutorial is available in an executable
 script (<a class="reference download internal" download="" href="_downloads/field_analysis.py"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 8kB).</p>
 <p>Note that this page is duplicated in the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p><strong>This version of cf is for Python 3 only</strong> and there are
-<a class="reference internal" href="2_to_3_changes.html#two-to-three-changes"><span class="std std-ref">incompatible differences between versions 2.x and 3.x</span></a> of cf.</p>
-<p>Scripts written for version 2.x but running under version
-3.x should either work as expected, or provide informative
-error messages on the new API usage. However, it is advised
-that the outputs of older scripts are checked when running
-with Python 3 versions of the cf library.</p>
-<p>For version 2.x documentation, see the <a class="reference internal" href="releases.html#releases"><span class="std std-ref">releases</span></a> page.</p>
-</div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#sample-datasets" id="id84"><strong>Sample datasets</strong></a></p></li>
@@ -195,8 +185,8 @@ be found in the zip file <code class="docutils literal notranslate"><span class=
 164kB):</p>
 <div class="literal-block-wrapper docutils container" id="id27">
 <div class="code-block-caption"><span class="caption-text"><em>Unpack the sample datasets.</em></span><a class="headerlink" href="#id27" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>unzip -q cf_tutorial_files.zip
-<span class="gp">$ </span>ls -1
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>unzip<span class="w"> </span>-q<span class="w"> </span>cf_tutorial_files.zip
+<span class="gp">$ </span>ls<span class="w"> </span>-1
 <span class="go">air_temperature.nc</span>
 <span class="go">cf_tutorial_files.zip</span>
 <span class="go">contiguous.nc</span>
@@ -228,7 +218,7 @@ result is a new field construct with consistent metadata for the
 collapsed values. Collapses are carried with the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>
 method of the field construct.</p>
 <p>By default all axes with size greater than 1 are collapsed completely
-(i.e. to size 1) with a given <a class="reference internal" href="field_analysis.html#collapse-methods"><span class="std std-ref">collapse method</span></a>.</p>
+(i.e. to size 1) with a given <a class="reference internal" href="tutorial.html#collapse-methods"><span class="std std-ref">collapse method</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id28">
 <div class="code-block-caption"><span class="caption-text"><em>Find the minimum of the entire data.</em></span><a class="headerlink" href="#id28" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
@@ -335,8 +325,9 @@ reference system.</p>
 <section id="collapse-methods">
 <span id="id4"></span><h3><a class="toc-backref" href="#id86">Collapse methods</a><a class="headerlink" href="#collapse-methods" title="Permalink to this headline">¶</a></h3>
 <p>The following collapse methods are available, over any subset of the
-domain axes. The “Cell method” column in the table gives the method of
-the new cell method construct (if one is created).</p>
+domain axes. The “Cell method” column in the table gives the method
+name, defined by the CF conventions, of the new cell method construct
+(if one is created).</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 30%" />
@@ -350,116 +341,155 @@ the new cell method construct (if one is created).</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'maximum'</span></code></p></td>
-<td><p>The maximum of the values.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">maximum</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'minimum'</span></code></p></td>
-<td><p>The minimum of the values.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">minimum</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'maximum_absolute_value'</span></code></p></td>
-<td><p>The maximum of the absolute values.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">maximum_absolute_value</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'minimum_absolute_value'</span></code></p></td>
-<td><p>The minimum of the absolute values.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">minimum_absolute_value</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></p></td>
-<td><p>The average of the maximum and the
-minimum of the values.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mid_range</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'range'</span></code></p></td>
-<td><p>The absolute difference between the
-maximum and the minimum of the values.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">range</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'median'</span></code></p></td>
-<td><p>The median of the values.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">median</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></p></td>
-<td><p>The sample size, <span class="math notranslate nohighlight">\(N\)</span>, as would be
-used for other calculations, i.e. the
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></p></td>
+<td><p>The sample size, <span class="math notranslate nohighlight">\(N\)</span>, equal to the
 number of non-missing values.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">point</span></code></p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'maximum'</span></code></p></td>
+<td><p>The maximum of the non-missing values.</p>
+<div class="math notranslate nohighlight">
+\[m_x=\max\{x_0, \ldots, x_N\}\]</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">maximum</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'minimum'</span></code></p></td>
+<td><p>The minimum of the non-missing values.</p>
+<div class="math notranslate nohighlight">
+\[m_n=\min\{x_0, \ldots, x_N\}\]</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">minimum</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'maximum_absolute_value'</span></code></p></td>
+<td><p>The maximum of the non-missing absolute
+values.</p>
+<div class="math notranslate nohighlight">
+\[\max\{|x_0|, \ldots, |x_N|\}\]</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">maximum_absolute_value</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'minimum_absolute_value'</span></code></p></td>
+<td><p>The minimum of the non-missing absolute
+values.</p>
+<div class="math notranslate nohighlight">
+\[\min\{|x_0|, \ldots, |x_N|\}\]</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">minimum_absolute_value</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></p></td>
+<td><p>The average of the maximum and the
+minimum of the non-missing values.</p>
+<div class="math notranslate nohighlight">
+\[\frac{m_x + m_n}{2}\]</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mid_range</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'range'</span></code></p></td>
+<td><p>The absolute difference between the
+maximum and the minimum of the
+non-missing values.</p>
+<div class="math notranslate nohighlight">
+\[m_x - m_n\]</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">range</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'median'</span></code></p></td>
+<td><p>The median of the <span class="math notranslate nohighlight">\(N\)</span> non-missing
+values.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">median</span></code></p></td>
+</tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></p></td>
-<td><p>The sum of <span class="math notranslate nohighlight">\(N\)</span> weights
-<span class="math notranslate nohighlight">\(w_i\)</span>, as would be used for other
-calculations, is</p>
+<td><p>The sum of the <span class="math notranslate nohighlight">\(N\)</span> weights
+<span class="math notranslate nohighlight">\(w_i\)</span> that correspond to
+non-missing values.</p>
 <div class="math notranslate nohighlight">
 \[V_{1}=\sum_{i=1}^{N} w_i\]</div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">sum</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></p></td>
-<td><p>The sum of the squares of <span class="math notranslate nohighlight">\(N\)</span>
-weights <span class="math notranslate nohighlight">\(w_i\)</span>, as would be used
-for other calculations, is</p>
+<td><p>The sum of the squares of the <span class="math notranslate nohighlight">\(N\)</span>
+weights <span class="math notranslate nohighlight">\(w_i\)</span> that correspond to
+non-missing values.</p>
 <div class="math notranslate nohighlight">
-\[V_{2}=\sum_{i=1}^{N}  w_i^{2}\]</div>
+\[V_{2}=\sum_{i=1}^{N} w_i^{2}\]</div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">sum</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></p></td>
-<td><p>The unweighted sum of <span class="math notranslate nohighlight">\(N\)</span> values
-<span class="math notranslate nohighlight">\(x_i\)</span> is</p>
+<td><p>The unweighted sum of the <span class="math notranslate nohighlight">\(N\)</span>
+non-missing values <span class="math notranslate nohighlight">\(x_i\)</span> is</p>
 <div class="math notranslate nohighlight">
 \[t=\sum_{i=1}^{N} x_i\]</div>
+<p>The weighted sum of the <span class="math notranslate nohighlight">\(N\)</span>
+non-missing values <span class="math notranslate nohighlight">\(x_i\)</span> with
+corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[\hat{t}=\sum_{i=1}^{N} w_i x_i\]</div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">sum</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></p></td>
-<td><p>The unweighted sum of the squares of
-<span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> is</p>
+<td><p>The unweighted sum of the squares of the
+<span class="math notranslate nohighlight">\(N\)</span> non-missing values <span class="math notranslate nohighlight">\(x_i\)</span>
+is</p>
 <div class="math notranslate nohighlight">
 \[t_2=\sum_{i=1}^{N} x_{i}^{2}\]</div>
+<p>The weighted sum of the squares of the
+<span class="math notranslate nohighlight">\(N\)</span> non-missing values <span class="math notranslate nohighlight">\(x_i\)</span>
+with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span>
+is</p>
+<div class="math notranslate nohighlight">
+\[\hat{t}_2=\sum_{i=1}^{N}
+w_i x_{i}^{2}\]</div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">sum_of_squares</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></p></td>
-<td><p>The integral of <span class="math notranslate nohighlight">\(N\)</span> values
+<td><p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+sum of the <span class="math notranslate nohighlight">\(N\)</span> non-missing values
 <span class="math notranslate nohighlight">\(x_i\)</span> with corresponding cell
-measures <span class="math notranslate nohighlight">\(m_i\)</span> is</p>
+measures <span class="math notranslate nohighlight">\(m_i\)</span>.</p>
 <div class="math notranslate nohighlight">
 \[i=\sum_{i=1}^{N} m_i x_i\]</div>
-<p>Note that the integral differs from a
-weighted sum in that the units of the
-cell measures are incorporated into the
-result.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The integral differs from a
+weighted sum in that the units
+of the measures are
+incorporated into the result.</p>
+</div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">sum</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></p></td>
-<td><p>The unweighted mean of <span class="math notranslate nohighlight">\(N\)</span> values
-<span class="math notranslate nohighlight">\(x_i\)</span> is</p>
+<td><p>The unweighted mean of the <span class="math notranslate nohighlight">\(N\)</span>
+non-missing values <span class="math notranslate nohighlight">\(x_i\)</span> is</p>
 <div class="math notranslate nohighlight">
 \[\mu=\frac{1}{N}\sum_{i=1}^{N}
 x_i\]</div>
-<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
-mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
-with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span>
-is</p>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+mean of the <span class="math notranslate nohighlight">\(N\)</span> non-missing values
+<span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights
+<span class="math notranslate nohighlight">\(w_i\)</span>. is</p>
 <div class="math notranslate nohighlight">
 \[\hat{\mu}=\frac{1}{V_{1}}
-           \sum_{i=1}^{N}
+\sum_{i=1}^{N}
 w_i x_i\]</div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mean</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'mean_absolute_value'</span></code></p></td>
-<td><p>The unweighted mean of <span class="math notranslate nohighlight">\(N\)</span>
-values <span class="math notranslate nohighlight">\(x_i\)</span> absoluted is</p>
+<td><p>The unweighted mean of the <span class="math notranslate nohighlight">\(N\)</span>
+non-missing absolute values <span class="math notranslate nohighlight">\(x_i\)</span>
+is</p>
 <div class="math notranslate nohighlight">
 \[\mu_{abs}=\frac{1}{N}
 \sum_{i=1}^{N}|x_i|\]</div>
-<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
-mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
-absoluted with corresponding weights
-<span class="math notranslate nohighlight">\(w_i\)</span> is</p>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+mean of the <span class="math notranslate nohighlight">\(N\)</span> non-missing
+absolute values <span class="math notranslate nohighlight">\(x_i\)</span> with
+corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
 <div class="math notranslate nohighlight">
 \[\hat{\mu}_{abs}=
 \frac{1}{V_{1}}
@@ -474,8 +504,8 @@ the upper tenth of their distribution</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mean_of_upper_decile</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></p></td>
-<td><p>The unweighted variance of <span class="math notranslate nohighlight">\(N\)</span>
-values <span class="math notranslate nohighlight">\(x_i\)</span> and with
+<td><p>The unweighted variance of the <span class="math notranslate nohighlight">\(N\)</span>
+non-missing values <span class="math notranslate nohighlight">\(x_i\)</span> and with
 <span class="math notranslate nohighlight">\(N-ddof\)</span> degrees of freedom
 (<span class="math notranslate nohighlight">\(ddof\ge0\)</span>) is</p>
 <div class="math notranslate nohighlight">
@@ -489,50 +519,60 @@ unbiased estimate of the variance using
 Bessel’s correction
 (<span class="math notranslate nohighlight">\(s^{2}=s_{N-1}^{2}\)</span>) is given by
 <span class="math notranslate nohighlight">\(ddof=1\)</span>.</p>
-<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
-biased estimate of the variance of
-<span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> with
-corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+biased estimate of the variance of the
+<span class="math notranslate nohighlight">\(N\)</span> non-missing values <span class="math notranslate nohighlight">\(x_i\)</span>
+with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span>
+is</p>
 <div class="math notranslate nohighlight">
 \[\hat{s}_{N}^{2}=
 \frac{1}{V_{1}}
 \sum_{i=1}^{N}
 w_i(x_i -
 \hat{\mu})^{2}\]</div>
-<p>The corresponding <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a> unbiased estimate of
-the variance is</p>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+unbiased estimate of the variance of the
+<span class="math notranslate nohighlight">\(N\)</span> non-missing values <span class="math notranslate nohighlight">\(x_i\)</span>
+with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span>
+is</p>
 <div class="math notranslate nohighlight">
 \[\hat{s}^{2}=\frac{1}{V_{1} -
 (V_{1}/V_{2})}
 \sum_{i=1}^{N}
 w_i(x_i -
 \hat{\mu})^{2}\]</div>
-<p>In both cases, the weights are assumed
-to be non-random reliability weights, as
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The weights used in the
+variance calculations are
+assumed to be non-random
+reliability weights, as
 opposed to frequency weights.</p>
+</div>
 </td>
 <td><p><code class="docutils literal notranslate"><span class="pre">variance</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></p></td>
 <td><p>The standard deviation is the square
 root of the unweighted or
-<a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
-variance, as defined in this table.</p></td>
+<a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+variance.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></p></td>
-<td><p>The unweighted root mean square of
-<span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> is</p>
+<td><p>The unweighted root mean square of the
+<span class="math notranslate nohighlight">\(N\)</span> non-missing values
+<span class="math notranslate nohighlight">\(x_i\)</span> is</p>
 <div class="math notranslate nohighlight">
-\[RMS=\sqrt{\frac{1}{N}
+\[r=\sqrt{\frac{1}{N}
 \sum_{i=1}^{N}
 x_{i}^2}\]</div>
-<p>The <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighted</span></a>
-root mean square of <span class="math notranslate nohighlight">\(N\)</span> values
-<span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights
-<span class="math notranslate nohighlight">\(w_i\)</span> is</p>
+<p>The <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighted</span></a>
+root mean square of the <span class="math notranslate nohighlight">\(N\)</span>
+non-missing values <span class="math notranslate nohighlight">\(x_i\)</span> with
+corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
 <div class="math notranslate nohighlight">
-\[\hat{RMS}=\sqrt{
+\[\hat{r}=\sqrt{
 \frac{1}{V_{1}}
 \sum_{i=1}^{N} w_i
 x_{i}^2}\]</div>
@@ -1282,8 +1322,8 @@ field construct already in use.</em></span><a class="headerlink" href="#id51" ti
 <span id="id12"></span><h3><a class="toc-backref" href="#id95">Binning operations</a><a class="headerlink" href="#binning-operations" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a> method of the field construct groups its data into
 bins, where each group is defined by the elements that correspond to
-an <a class="reference internal" href="field_analysis.html#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
-representative value. The same <a class="reference internal" href="field_analysis.html#collapse-methods"><span class="std std-ref">collapse methods</span></a> and <a class="reference internal" href="field_analysis.html#collapse-weights"><span class="std std-ref">weighting options</span></a> as
+an <a class="reference internal" href="tutorial.html#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
+representative value. The same <a class="reference internal" href="tutorial.html#collapse-methods"><span class="std std-ref">collapse methods</span></a> and <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighting options</span></a> as
 the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> method are available.</p>
 <p>The result of the binning operation is a field construct whose domain
 axis and dimension coordinate constructs describe the sizes of the
@@ -1486,7 +1526,7 @@ coordinate systems. The interpolation is carried by out using the
 <a class="reference external" href="https://earthsystemmodeling.org/esmpy/">ESMF</a> package, a
 Python interface to the Earth System Modeling Framework regridding
 utility.</p>
-<p>As with <a class="reference internal" href="field_analysis.html#statistical-collapses"><span class="std std-ref">statistical collapses</span></a>,
+<p>As with <a class="reference internal" href="tutorial.html#statistical-collapses"><span class="std std-ref">statistical collapses</span></a>,
 regridding may be applied over a subset of the domain axes, and the
 domain axis constructs and coordinate constructs for the non-regridded
 dimensions remain the same.</p>
@@ -1590,7 +1630,7 @@ input at most one source point.</p>
 <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is only available for the ‘X’ and ‘Y’ axes
 simultaneously. All other axes are unchanged. The calculation of the
 regridding weights is based on areas and distances on the surface of
-the sphere, rather in <a class="reference internal" href="field_analysis.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
+the sphere, rather in <a class="reference internal" href="tutorial.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
 <p>The following combinations of spherical source and destination domain
 coordinate systems are available to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
 <table class="docutils align-default">
@@ -1681,7 +1721,7 @@ contained in field construct b.</em></span><a class="headerlink" href="#id58" ti
 <span class="go">                : latitude(64) = [-87.86380004882812, ..., 87.86380004882812] degrees_north</span>
 <span class="go">                : longitude(128) = [0.0, ..., 357.1875] degrees_east</span>
 <span class="go">                : height(1) = [2.0] m</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s1">&#39;conservative&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;conservative&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
@@ -1710,7 +1750,7 @@ coordinates latitude and longitude.</em></span><a class="headerlink" href="#id59
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mf">92.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span> <span class="s1">&#39;degrees_east&#39;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regrids</span><span class="p">({</span><span class="s1">&#39;latitude&#39;</span><span class="p">:</span> <span class="n">lat</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">:</span> <span class="n">lon</span><span class="p">},</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regrids</span><span class="p">([</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : air_temperature(time(2), latitude(73), longitude(72)) K</span>
@@ -1745,7 +1785,7 @@ construct.</p>
 <section id="cartesian-regridding">
 <span id="id17"></span><h3><a class="toc-backref" href="#id100">Cartesian regridding</a><a class="headerlink" href="#cartesian-regridding" title="Permalink to this headline">¶</a></h3>
 <p>Cartesian regridding with the <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> method is very
-similar to <a class="reference internal" href="field_analysis.html#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
+similar to <a class="reference internal" href="tutorial.html#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
 regridding dimensions are not restricted to the horizontal plane, the
 source and destination domains are assumed to be <a class="reference external" href="https://en.wikipedia.org/wiki/Euclidean_space">Euclidian spaces</a> for the purpose of
 calculating regridding weights, and all dimensions are assumed to be
@@ -1764,7 +1804,7 @@ time.</em></span><a class="headerlink" href="#id60" title="Permalink to this cod
 <span class="gp">... </span>                      <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 1860-01-01&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time</span>
 <span class="go">&lt;CF DimensionCoordinate: time(60) days since 1860-01-01 360_day&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">({</span><span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">},</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">([</span><span class="n">time</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : air_temperature(time(60), latitude(73), longitude(96)) K</span>
@@ -1782,11 +1822,11 @@ non-overlapping bounds on the destination domain:</p>
 <div class="code-block-caption"><span class="caption-text"><em>Regrid the time axis ‘T’ of field ‘a’ conservatively
 (to first order) onto the grid specified in the dimension
 coordinate time.</em></span><a class="headerlink" href="#id61" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">({</span><span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">},</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;conservative&#39;</span><span class="p">)</span>  <span class="c1"># Raises Exception</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">([</span><span class="n">time</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;conservative&#39;</span><span class="p">)</span>  <span class="c1"># Raises Exception</span>
 <span class="go">ValueError: Destination coordinates must have contiguous, non-overlapping bounds for conservative regridding.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bounds</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">create_bounds</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">({</span><span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">},</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;conservative&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">([</span><span class="n">time</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;conservative&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
@@ -1853,7 +1893,7 @@ to another.</em></span><a class="headerlink" href="#id62" title="Permalink to th
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_z_p</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">800</span><span class="p">,</span> <span class="mi">705</span><span class="p">,</span> <span class="mi">632</span><span class="p">,</span> <span class="mi">510</span><span class="p">,</span> <span class="mf">320.</span><span class="p">],</span> <span class="s1">&#39;hPa&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_z_ln_p</span> <span class="o">=</span> <span class="n">new_z_p</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_z_ln_p</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;Z&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new_v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">regridc</span><span class="p">({</span><span class="s1">&#39;Z&#39;</span><span class="p">:</span> <span class="n">new_z_ln_p</span><span class="p">},</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">regridc</span><span class="p">([</span><span class="n">new_z_ln_p</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_v</span><span class="o">.</span><span class="n">replace_construct</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="n">new_z_p</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new_v</span><span class="p">)</span>
 <span class="go">Field: eastward_wind (ncvar%ua)</span>
@@ -1980,7 +2020,7 @@ with corresponding coordinate constructs of size greater than 1 <em>and
 with different coordinate values</em>. In such circumstances, the field
 constructs’ data instances may be operated on directly, bypassing any
 checks on the metadata. See
-<a class="reference internal" href="field_analysis.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details. <em>(This
+<a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details. <em>(This
 will be made easier in a future release with a new function for
 combining such field constructs.)</em></p>
 <p class="rubric" id="bounds">Bounds</p>
@@ -2054,16 +2094,16 @@ context manager:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Care must be taken when combining a construct with a
-<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
+<a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or a <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance, due to the ways in
 which both of these objects allow themselves to be
 combined with other types:</p>
 <ul class="simple">
 <li><p>If the construct is on the left hand side (LHS) of the
 operation then, as expected, a construct is returned
 whose data is the combination of the original
-construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+construct’s data and the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</p></li>
-<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
+<li><p>If, however, the construct is on the RHS then a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.24)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>
 array or <a class="reference internal" href="class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on the
 LHS) is returned, containing the same data as in the
 first case.</p></li>
@@ -2212,13 +2252,13 @@ example, this will be the case if both operands are field constructs
 with corresponding coordinate constructs of size greater than 1 <em>and
 with different coordinate values</em>. In such circumstances, the field
 constructs’ data instances may be operated on directly, bypassing any
-checks on the metadata. See <a class="reference internal" href="field_analysis.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a>
+checks on the metadata. See <a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a>
 for more details. <em>(This will be made easier in a future release with
 a new function for combining such field constructs.)</em></p>
 </section>
 <section id="arithmetical-and-relational-operations-with-insufficient-metadata">
 <span id="id24"></span><h3><a class="toc-backref" href="#id107">Arithmetical and relational operations with insufficient metadata</a><a class="headerlink" href="#arithmetical-and-relational-operations-with-insufficient-metadata" title="Permalink to this headline">¶</a></h3>
-<p>When both operands of a <a class="reference internal" href="field_analysis.html#binary-arithmetical-operations"><span class="std std-ref">binary arithmetical</span></a> or <a class="reference internal" href="field_analysis.html#relational-operations"><span class="std std-ref">relational</span></a> operation are field constructs then the
+<p>When both operands of a <a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">binary arithmetical</span></a> or <a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operation are field constructs then the
 creation of the mapping of physically compatible dimensions relies on
 there being sufficient metadata. By default, the mapping relies on
 their being “strict” identities for the metadata constructs with
@@ -2242,12 +2282,12 @@ the operation to proceed:</p>
 <ul class="simple">
 <li><p><strong>Option 1:</strong> The operation may applied to the field constructs’
 data instances instead. See
-<a class="reference internal" href="field_analysis.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details.</p></li>
+<a class="reference internal" href="tutorial.html#operating-on-the-field-constructs-data"><span class="std std-ref">Operating on the field constructs’ data</span></a> for more details.</p></li>
 <li><p><strong>Option 2:</strong> If the mapping is not possible due to the absence of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code> properties (or <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code> attributes) on metadata
 constructs that are known to correspond, then setting “relaxed
 identities” with the <a class="reference internal" href="function/cf.relaxed_identities.html#cf.relaxed_identities" title="cf.relaxed_identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relaxed_identities</span></code></a> function may
-help. Setting relaxed identities to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> allows the <code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code>
+help. Setting relaxed identities to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> allows the <code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code>
 property and netCDF variable name (see the <a class="reference internal" href="tutorial.html#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>), to also be considered when identifying
 constructs.</p></li>
 <li><p><strong>Option 3:</strong> Add more metadata to the field and metadata constructs.</p></li>
@@ -2255,14 +2295,14 @@ constructs.</p></li>
 </section>
 <section id="operating-on-the-field-constructs-data">
 <span id="id25"></span><h3><a class="toc-backref" href="#id108">Operating on the field constructs’ data</a><a class="headerlink" href="#operating-on-the-field-constructs-data" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="field_analysis.html#binary-arithmetical-operations"><span class="std std-ref">Binary arithmetical</span></a> and
-<a class="reference internal" href="field_analysis.html#relational-operations"><span class="std std-ref">relational</span></a> operations between may also
+<p><a class="reference internal" href="tutorial.html#binary-arithmetical-operations"><span class="std std-ref">Binary arithmetical</span></a> and
+<a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operations between may also
 be carried out on their data instances, thereby bypassing any
 reference to, or checks on, the metadata constructs. This can be
-useful if there <a class="reference internal" href="field_analysis.html#arithmetical-and-relational-operations-with-insufficient-metadata"><span class="std std-ref">insufficient metadata</span></a>
+useful if there <a class="reference internal" href="tutorial.html#arithmetical-and-relational-operations-with-insufficient-metadata"><span class="std std-ref">insufficient metadata</span></a>
 for determining if the two field constructs are compatible; or if the
 domain metadata constructs of the result can not be
-<a class="reference internal" href="field_analysis.html#ambiguous-result"><span class="std std-ref">unambiguously defined</span></a>.</p>
+<a class="reference internal" href="tutorial.html#ambiguous-result"><span class="std std-ref">unambiguously defined</span></a>.</p>
 <p>In such cases the data instances may be operated on instead and the
 result then inserted into one of the field constructs, either with the
 <a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method of the field construct, or with
@@ -2408,7 +2448,7 @@ and therefore may return
 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/constants.html">“invalid” values</a>
 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">nan</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">inf</span></code>). When applying these methods to constructs with masked
 data, you may prefer to output masked values instead of invalid ones. In
-this case, you can use <code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code> to do the conversion afterwards:</p>
+this case, you can use <code class="xref py py-obj docutils literal notranslate"><span class="pre">masked_invalid</span></code> to do the conversion afterwards:</p>
 <div class="literal-block-wrapper docutils container" id="id77">
 <div class="code-block-caption"><span class="caption-text"><em>Take the `arctanh` of some masked data and then transform
 resultant invalid values into masked data values.</em></span><a class="headerlink" href="#id77" title="Permalink to this code">¶</a></div>
@@ -2416,7 +2456,7 @@ resultant invalid values into masked data values.</em></span><a class="headerlin
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">arctanh</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[-- nan inf 0.5493061443340548 --]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">mask_invalid</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">masked_invalid</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[-- -- -- 0.5493061443340548 --]</span>
 </pre></div>
@@ -2616,7 +2656,7 @@ options to</p>
 border, and</p></li>
 <li><p>Control the placement position of the filter window.</p></li>
 </ul>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.9.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating window weights for filtering:</p>
 <div class="literal-block-wrapper docutils container" id="id81">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
@@ -2643,7 +2683,7 @@ convolved values. For example, window weights of <code class="docutils literal n
 <span class="pre">0.2]</span></code> will produce a non-weighted 5-point running mean; and window
 weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running
 sum. Note that the window weights returned by functions of the
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.9.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not necessarily sum to 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <a class="reference internal" href="method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moving_window</span></code></a> method can not, in general, be
@@ -2856,10 +2896,10 @@ derivative wraps around by default.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-17.
+      &copy;2023, NCAS | Page built on 2023-01-31.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
