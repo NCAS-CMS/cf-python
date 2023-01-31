@@ -52,7 +52,7 @@ operations are not actually performed until the result is actually
 inspected by, for instance, creating a plot of the data, writing the
 data to disk, printing the array values, etc. When multiple operations
 are applied one after another, none of the operations are computed
-until the result of final one is requested.
+until the result of the final one is requested.
 
 When the result of a stack of lazy operations is computed it is not
 cached, so if the result is requested again then the calculations are
