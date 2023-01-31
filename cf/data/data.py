@@ -2676,6 +2676,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     ):
         """Change the chunk structure of the data.
 
+        **Performance**
+
+        Rechunking can sometimes be expensive and incur a lot of
+        communication overheads.
+
         .. versionadded:: 3.14.0
 
         .. seealso:: `chunks`, `dask.array.rechunk`
@@ -4880,7 +4885,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     #    **Examples**
     #
     #        '''
-    #        return cls(numpy_arctan2(y, x), units=_units_radians)
+    #        return cls(np.arctan2(y, x), units=_units_radians)
 
     @_inplace_enabled(default=False)
     def arctanh(self, inplace=False):

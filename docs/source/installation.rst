@@ -34,8 +34,6 @@ Windows Subsystem for Linux (WSL)
 
 The cf package is only for Python 3.7 or newer.
 
-Versions 2.x of cf work only for Python 2.7.
-
 ----
 
 .. _pip:
@@ -110,7 +108,7 @@ visualisation package <http://ajheaps.github.io/cf-plot>`_, run
    :caption: *Install with conda.*
 
    $ conda install -c conda-forge cf-python cf-plot udunits2
-   $ conda install -c conda-forge mpich esmf=8.2.0
+   $ conda install -c conda-forge esmpy
 
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work.
@@ -194,7 +192,7 @@ Required
 
 * `Python <https://www.python.org/>`_, 3.7 or newer.
 
-* `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
+* `numpy <https://pypi.org/project/numpy/>`_, 1.22 or newer.
 
 * `dask <https://pypi.org/project/dask/>`_, 2022.12.1 or newer.
 
@@ -250,7 +248,7 @@ environments for which these features are not required.
 
   .. code-block:: console
 
-     $ conda install -c conda-forge mpich esmpy
+     $ conda install -c conda-forge esmpy
 
   or may be installed from source.
 
@@ -286,12 +284,3 @@ Tests are run from within the ``cf/test`` directory:
 
 The complete source code and issue tracker is available at
 https://github.com/NCAS-CMS/cf-python
-
-----
-
-.. .. rubric:: Footnotes
-
-   .. [#installfiles] The ``requirements.txt`` file contains
-
-     .. include:: ../../requirements.txt
-        :literal:

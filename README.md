@@ -27,8 +27,7 @@ Dask
 ====
 
 From version 3.14.0, the `cf` package uses
-[Dask](https://ncas-cms.github.io/cf-python/performance.html) for all
-of its data manipulations.
+[Dask](https://docs.dask.org) for all of its data manipulations.
 
 Documentation
 =============
@@ -66,17 +65,19 @@ inspecting it:
 
     >>> import cf
     >>> f = cf.read('file.nc')
-    >>> print(f)
+    >>> print(f[0])
     Field: air_temperature (ncvar%tas)
     ----------------------------------
     Data            : air_temperature(time(12), latitude(64), longitude(128)) K
     Cell methods    : time(12): mean (interval: 1.0 month)
-    Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap
+    Dimension coords: time(12) = [1991-11-16 00:00:00, ..., 1991-10-16 12:00:00] noleap
                     : latitude(64) = [-87.8638, ..., 87.8638] degrees_north
                     : longitude(128) = [0.0, ..., 357.1875] degrees_east
                     : height(1) = [2.0] m
 
-The `cf` package can:
+The `cf` package uses
+[Dask](https://ncas-cms.github.io/cf-python/performance.html) for all
+of its array manipulation and can:
 
 * read field constructs from netCDF, CDL, PP and UM datasets,
 
@@ -127,20 +128,17 @@ The `cf` package can:
 
 * create derived quantities (such as relative vorticity).
 
-All of the above use LAMA functionality, which allows multiple
-fields larger than the available memory to exist and be manipulated.
-
 Visualization
 =============
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the `cfplot` package
-(http://ajheaps.github.io/cf-plot), that needs to be installed
+constructs are available with the [cfplot
+package](http://ajheaps.github.io/cf-plot), that needs to be installed
 seprately to the `cf` package.
 
-See the cf-plot gallery
-(http://ajheaps.github.io/cf-plot/gallery.html) for the full range
-range plotting possibilities with example code.
+See the [cf-plot
+gallery](http://ajheaps.github.io/cf-plot/gallery.html) for the full
+range range plotting possibilities with example code.
 
 ![Example output of cf-plot displaying a `cf` field construct](docs/source/images/cfplot_example.png)
 

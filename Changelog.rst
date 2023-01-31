@@ -7,6 +7,8 @@ version 3.14.0
   LAMA methodology
   (e.g. https://github.com/NCAS-CMS/cf-python/issues/295,
   https://github.com/NCAS-CMS/cf-python/issues/428)
+* Backwards incompatible API changes to facilitate the use of Dask
+  (https://github.com/NCAS-CMS/cf-python/issues/579)
 * New method: `cf.Field.get_original_filenames`
   (https://github.com/NCAS-CMS/cf-python/issues/448)
 * New method: `cf.Field.to_dask_array`
@@ -1565,7 +1567,7 @@ version 0.9.4
 version 0.9.3.3
 ---------------
 
-**2018-02-08**
+**2012-02-08**
 
 * Objects renamed in line with the CF data model: `cf.Space` becomes
   `cf.Field` and `cf.Grid` becomes `cf.Space`.

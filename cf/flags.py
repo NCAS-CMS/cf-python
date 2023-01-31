@@ -1,9 +1,7 @@
 import logging
 from copy import deepcopy
 
-from numpy import argsort as numpy_argsort
-from numpy import atleast_1d as numpy_atleast_1d
-from numpy import ndarray as numpy_ndarray
+import numpy as np
 
 from .decorators import (
     _deprecated_kwarg_check,
@@ -121,8 +119,8 @@ class Flags:
 
     @flag_values.setter
     def flag_values(self, value):
-        if not isinstance(value, numpy_ndarray):
-            value = numpy_atleast_1d(value)
+        if not isinstance(value, np.ndarray):
+            value = np.atleast_1d(value)
         self._flag_values = value
 
     @flag_values.deleter
@@ -164,8 +162,8 @@ class Flags:
 
     @flag_masks.setter
     def flag_masks(self, value):
-        if not isinstance(value, numpy_ndarray):
-            value = numpy_atleast_1d(value)
+        if not isinstance(value, np.ndarray):
+            value = np.atleast_1d(value)
 
         self._flag_masks = value
 
@@ -217,9 +215,9 @@ class Flags:
     @flag_meanings.setter
     def flag_meanings(self, value):
         if isinstance(value, str):
-            value = numpy_atleast_1d(value.split())
-        elif not isinstance(value, numpy_ndarray):
-            value = numpy_atleast_1d(value)
+            value = np.atleast_1d(value.split())
+        elif not isinstance(value, np.ndarray):
+            value = np.atleast_1d(value)
 
         self._flag_meanings = value
 
@@ -443,7 +441,7 @@ class Flags:
         # Sort all three attributes
         for attr in ("flag_values", "_flag_meanings", "_flag_masks"):
             if hasattr(self, attr):
-                indices = numpy_argsort(getattr(self, attr))
+                indices = np.argsort(getattr(self, attr))
                 break
 
         for attr in ("_flag_values", "_flag_meanings", "_flag_masks"):

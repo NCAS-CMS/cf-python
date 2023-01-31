@@ -20,19 +20,6 @@ scripts (:download:`download <../source/tutorial.py>`, 28kB,
 
 .. http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table
   
-.. important:: **This version of cf is for Python 3 only** and there are
-          :ref:`incompatible differences between versions 2.x and 3.x
-          <two-to-three-changes>` of cf.
-
-	  Scripts written for version 2.x but running under version
-          3.x should either work as expected, or provide informative
-          error messages on the new API usage. However, it is advised
-          that the outputs of older scripts are checked when running
-          with Python 3 versions of the cf library.
-
-	  For version 2.x documentation, see the :ref:`releases
-	  <Releases>` page.
-
 .. contents::
    :local:
    :backlinks: entry
@@ -933,14 +920,22 @@ is accessed with the `~Field.data` attribute of the field construct.
 
 The `cf.Data` instance provides access to the full array of values, as
 well as attributes to describe the array and methods for describing
-any :ref:`data compression <Compression>`. However, the field
-construct (and any other construct that contains data) also provides
-attributes for direct access.
+any :ref:`data compression <Compression>`. The field construct also
+has a `~Field.get_data` method as an alternative means of retrieving
+the data instance, which allows for a default to be returned if no
+data have been set; as well as a `~Field.del_data` method for removing
+the data.
+
+The field construct (and any other construct that contains data) also
+provides attributes for direct access.
 
 .. code-block:: python
    :caption: *Retrieve a numpy array of the data.*
       
-   >>> print(t.array)
+   >>> a = t.array
+   >>> type(a)
+   numpy.ma.core.MaskedArray
+   >>> print(a)
    [[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
      [269.7 279.1 273.4 274.2 279.6 270.2 280.  272.5 263.7]
@@ -965,10 +960,20 @@ attributes for direct access.
    >>> t.size
    90
 
-The field construct also has a `~Field.get_data` method as an
-alternative means of retrieving the data instance, which allows for a
-default to be returned if no data have been set; as well as a
-`~Field.del_data` method for removing the data.
+The array is stored internally as a :ref:`Dask array <Performance>`,
+which can be retrieved with the `~Field.to_dask_array()` method of the
+field construct:
+   
+.. code-block:: python
+   :caption: *Retrieve the dask array of the data.*
+      
+   >>> d = t.to_dask_array()
+   >>> d
+   dask.array<array, shape=(1, 10, 9), dtype=float64, chunksize=(1, 10, 9), chunktype=numpy.ndarray>
+
+Note that changes to the returned Dask array in-place will also be
+seen in the field construct.
+
 
 All of the methods and attributes related to the data are listed
 :ref:`here <Field-Data>`.

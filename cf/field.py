@@ -5,17 +5,6 @@ from operator import mul as operator_mul
 
 import cfdm
 import numpy as np
-from numpy import array as numpy_array
-from numpy import diff as numpy_diff
-from numpy import empty as numpy_empty
-from numpy import full as numpy_full
-from numpy import ndarray as numpy_ndarray
-from numpy import prod as numpy_prod
-from numpy import reshape as numpy_reshape
-from numpy import shape as numpy_shape
-from numpy import squeeze as numpy_squeeze
-from numpy import unique as numpy_unique
-from numpy import where as numpy_where
 
 from . import (
     AuxiliaryCoordinate,
@@ -922,7 +911,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # method
                 # ----------------------------------------------------
                 if other is None:
-                    other = numpy_array(None, dtype=object)
+                    other = np.array(None, dtype=object)
 
                 other = Data(other)
                 if other.ndim > 0:
@@ -930,13 +919,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 return super()._binary_operation(other, method)
 
-            if self._is_broadcastable(numpy_shape(other)):
+            if self._is_broadcastable(np.shape(other)):
                 return super()._binary_operation(other, method)
 
             raise ValueError(
                 f"Can't combine {self.__class__.__name__!r} with "
                 f"{other.__class__.__name__!r} due to incompatible data "
-                f"shapes: {self.shape}, {numpy_shape(other)})"
+                f"shapes: {self.shape}, {np.shape(other)})"
             )
 
         # ============================================================
@@ -5822,7 +5811,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             dim.set_data(data=data, copy=False)
 
             bounds_data = Data(
-                numpy_reshape(bin_bounds, (bin_count, 2)), units=units
+                np.reshape(bin_bounds, (bin_count, 2)), units=units
             )
             dim.set_bounds(self._Bounds(data=bounds_data))
 
@@ -5874,11 +5863,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         # Find the unique multi-dimensional bin indices (TODO: can I
         # LAMA this?)
         # ------------------------------------------------------------
-        y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
+        y = np.empty((len(bin_indices), bin_indices[0].size), dtype=int)
         for i, f in enumerate(bin_indices):
             y[i, :] = f.array.flatten()
 
-        unique_indices = numpy_unique(y, axis=1)
+        unique_indices = np.unique(y, axis=1)
         del f
         del y
 
@@ -8332,7 +8321,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 n += 1
 
             #                if group_span is not None:
-            #                    x = numpy_where(classification==n)[0]
+            #                    x = np.where(classification==n)[0]
             #                    for i in range(1, max(1, int(float(len(x))/group_span))):
             #                        n += 1
             #                        classification[x[i*group_span:(i + 1)*group_span]] = n
@@ -8352,7 +8341,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 `numpy.ndarray`
 
             """
-            x = numpy_where(numpy_diff(classification))[0] + 1
+            x = np.where(np.diff(classification))[0] + 1
             if not x.size:
                 if classification[0] >= 0:
                     classification[:] = 0
@@ -8542,8 +8531,8 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                     "collapse"
                 )
 
-            if isinstance(group, numpy_ndarray):
-                classification = numpy_squeeze(group.copy())
+            if isinstance(group, np.ndarray):
+                classification = np.squeeze(group.copy())
 
                 if classification.dtype.kind != "i":
                     raise ValueError(
@@ -8568,7 +8557,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 # E.g. group=3
                 # ----------------------------------------------------
                 coord = None
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
 
                 start = 0
                 end = group
@@ -8596,7 +8585,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "grouped collapse with TimeDuration groups."
                     )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 lower, upper, lower_limit, upper_limit = _tyu(
@@ -8654,7 +8643,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         f"{axis_id!r} axis units {coord.Units!r}"
                     )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 group = group.squeeze()
@@ -8697,7 +8686,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                             "sequence of groups."
                         )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 classification, n = _selection(
@@ -8760,7 +8749,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 coordinate = "minimum"
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 if isinstance(over_days, TimeDuration):
@@ -8891,7 +8880,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 coordinate = "minimum"
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 if isinstance(over_years, TimeDuration):
@@ -8994,7 +8983,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         "required for a 'within days' collapse"
                     )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 # Parse the within_days parameter
@@ -9082,7 +9071,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         'bounds are required for a "within years" collapse'
                     )
 
-                classification = numpy_empty((axis_size,), int)
+                classification = np.empty((axis_size,), int)
                 classification.fill(-1)
 
                 # Parse within_years
@@ -9164,13 +9153,13 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 f"        classification    = {classification}"
             )  # pragma: no cover
 
-            unique = numpy_unique(classification)
-            unique = unique[numpy_where(unique >= 0)[0]]
+            unique = np.unique(classification)
+            unique = unique[np.where(unique >= 0)[0]]
             unique.sort()
 
             ignore_n = -1
             for u in unique:
-                index = numpy_where(classification == u)[0].tolist()
+                index = np.where(classification == u)[0].tolist()
 
                 pc = self.subspace(**{axis: index})
 
@@ -10783,7 +10772,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             f = f * w
 
         # Create the window weights
-        window = numpy_full((window_size,), 1.0)
+        window = np.full((window_size,), 1.0)
         if weights is None and method == "mean":
             # If there is no data weighting, make sure that the sum of
             # the window weights is 1.
@@ -13080,7 +13069,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         new_data_axes = [
             axis for i, axis in enumerate(data_axes) if i not in iaxes
         ]
-        new_axis_size = numpy_prod([shape[i] for i in iaxes])
+        new_axis_size = np.prod([shape[i] for i in iaxes])
         new_axis = f.set_construct(self._DomainAxis(new_axis_size))
         new_data_axes.insert(iaxes[0], new_axis)
 

@@ -409,4 +409,3 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
       >>> cfp.gclose()
    .. figure:: images/june1995_preci.png
    
-----

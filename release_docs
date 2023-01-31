@@ -2,12 +2,19 @@
 
 set -x
 
-if [[ $2 ]] ; then 
-  echo "You no longer need to set the version. Hooray!"
+if [[ $2 ]] ; then
+  set +x
+  echo -e "You no longer need to set the version. Just do: ./release_docs $2"
   exit 1
 fi
 
-ersion=`python -c "import cf; print(cf.__version__)"`
+version=`python -c "import cf; print(cf.__version__)"`
+
+sphinx_version=`python -c "import sphinx; print(sphinx.__version__)"`
+if [[ $sphinx_version != "2.4.5"  ]] ; then
+  echo "ERROR: Must use sphinx version 2.4.5. Got $version"
+  exit 3
+fi
 
 if [[ $1 = "latest" ]] ; then 
   dir=$PWD/docs
