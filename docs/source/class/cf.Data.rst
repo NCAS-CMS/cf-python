@@ -67,6 +67,7 @@ Dask
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Data.cull_graph
    ~cf.Data.dask_compressed_array
    ~cf.Data.rechunk
    ~cf.Data.to_dask_array
