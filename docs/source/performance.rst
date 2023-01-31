@@ -121,7 +121,7 @@ chunk sizes and shapes (copied from the `Dask chunks documentation
 <https://docs.dask.org/en/stable/array-chunks.html>`_):
 
 * A chunk should be small enough to fit comfortably in memory. There
-  will have many chunks in memory at once. Dask will often have as
+  will be many chunks in memory at once. Dask will often have as
   many chunks in memory as twice the number of active threads.
 
 * A chunk must be large enough so that computations on that chunk take
