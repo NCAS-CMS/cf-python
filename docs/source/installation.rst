@@ -192,7 +192,7 @@ Required
 
 * `Python <https://www.python.org/>`_, 3.7 or newer.
 
-* `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
+* `numpy <https://pypi.org/project/numpy/>`_, 1.22 or newer.
 
 * `dask <https://pypi.org/project/dask/>`_, 2022.12.1 or newer.
 
@@ -284,12 +284,3 @@ Tests are run from within the ``cf/test`` directory:
 
 The complete source code and issue tracker is available at
 https://github.com/NCAS-CMS/cf-python
-
-----
-
-.. .. rubric:: Footnotes
-
-   .. [#installfiles] The ``requirements.txt`` file contains
-
-     .. include:: ../../requirements.txt
-        :literal:
