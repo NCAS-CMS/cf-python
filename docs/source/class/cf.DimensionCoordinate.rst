@@ -338,7 +338,7 @@ Cyclicity
    :template: method.rst
 	      
 
-   ~cf.DimensionCoordinate.chunk
+   ~cf.DimensionCoordinate.rechunk
    ~cf.DimensionCoordinate.close
    ~cf.DimensionCoordinate.convert_reference_time
    ~cf.DimensionCoordinate.cyclic
@@ -699,6 +699,7 @@ Deprecated
 
    ~cf.DimensionCoordinate.asdatetime
    ~cf.DimensionCoordinate.asreftime
+   ~cf.DimensionCoordinate.chunk
    ~cf.DimensionCoordinate.delprop
    ~cf.DimensionCoordinate.expand_dims
    ~cf.DimensionCoordinate.files
@@ -730,36 +731,4 @@ Deprecated
    ~cf.DimensionCoordinate.isfieldancillary
    ~cf.DimensionCoordinate.ismeasure
    ~cf.DimensionCoordinate.role
-   ~cf.DimensionCoordinate.unsafe_array
-
-Deprecated
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.asdatetime
-   ~cf.DimensionCoordinate.asreftime
-   ~cf.DimensionCoordinate.attributes
-   ~cf.DimensionCoordinate.delprop
-   ~cf.DimensionCoordinate.dtvarray
-   ~cf.DimensionCoordinate.expand_dims
-   ~cf.DimensionCoordinate.getprop
-   ~cf.DimensionCoordinate.hasbounds
-   ~cf.DimensionCoordinate.hasdata
-   ~cf.DimensionCoordinate.hasprop
-   ~cf.DimensionCoordinate.insert_data
-   ~cf.DimensionCoordinate.isauxiliary
-   ~cf.DimensionCoordinate.isdimension
-   ~cf.DimensionCoordinate.isdomainancillary
-   ~cf.DimensionCoordinate.isfieldancillary
-   ~cf.DimensionCoordinate.ismeasure
-   ~cf.DimensionCoordinate.name
-   ~cf.DimensionCoordinate.remove_data
-   ~cf.DimensionCoordinate.select
-   ~cf.DimensionCoordinate.setprop
    ~cf.DimensionCoordinate.unsafe_array

@@ -131,6 +131,15 @@ range plotting possibilities with example code.
 
 ----
 
+**Performance**
+---------------
+
+As of version 3.14.0 (released 2023-01-31), cf uses :ref:`Dask
+<Performance>` for all of its data manipulations, which provides lazy,
+parallelised, and out-of-core computations of array operations.
+
+----
+
 **Command line utilities**
 --------------------------
 
@@ -141,3 +150,37 @@ installed, which
   and
 
 * creates new datasets aggregated from existing files.
+
+----
+
+**References**
+--------------
+
+Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S., Caron, J.,
+  Signell, R., et al. NetCDF Climate and Forecast (CF) Metadata
+  Conventions. CF Conventions Committee.
+  https://cfconventions.org/cf-conventions/cf-conventions.html
+
+Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference
+  implementation of the CF data model. Journal of Open Source
+  Software, 5(54), 2717, https://doi.org/10.21105/joss.02717
+
+Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
+  Taylor, K. E. (2017). A data model of the Climate and Forecast
+  metadata conventions (CF-1.6) with a software implementation
+  (cf-python v2.1), Geosci. Model Dev., 10, 4619-4646,
+  https://doi.org/10.5194/gmd-10-4619-2017
+
+Rew, R., and Davis, G. (1990). NetCDF: An Interface for Scientific
+  Data Access. IEEE Computer Graphics and Applications, 10(4),
+  76–82. https://doi.org/10.1109/38.56302
+
+Rew, R., Hartnett, E., and Caron, J. (2006). NetCDF-4: Software
+  Implementing an Enhanced Data Model for the Geosciences. In 22nd
+  International Conference on Interactive Information Processing
+  Systems for Meteorology, Oceanography, and Hydrology. AMS. Retrieved
+  from
+  https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf
+
+----
+

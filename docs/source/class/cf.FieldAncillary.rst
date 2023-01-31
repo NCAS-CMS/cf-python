@@ -216,7 +216,7 @@ Data
    :template: method.rst
 	      
 
-   ~cf.FieldAncillary.chunk
+   ~cf.FieldAncillary.rechunk
    ~cf.FieldAncillary.close
    ~cf.FieldAncillary.convert_reference_time
    ~cf.FieldAncillary.cyclic
@@ -594,6 +594,7 @@ Deprecated
    ~cf.FieldAncillary.asdatetime
    ~cf.FieldAncillary.asreftime
    ~cf.FieldAncillary.attributes
+   ~cf.FieldAncillary.chunk
    ~cf.FieldAncillary.delprop
    ~cf.FieldAncillary.dtvarray
    ~cf.FieldAncillary.expand_dims

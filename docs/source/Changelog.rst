@@ -8,4 +8,6 @@
    :local:
    :backlinks: entry
 
+----
+
 .. include:: ../../Changelog.rst

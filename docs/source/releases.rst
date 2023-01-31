@@ -176,3 +176,5 @@ e.g. ``3.13.1``.
     * bug fixes;
     * changes to the documentation;
     * code tidying.
+
+----
