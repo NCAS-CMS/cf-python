@@ -30,7 +30,7 @@ contribute for the final result.
 The performance of `cf` is largely a function of the performance of
 Dask. All of the techniques that Dask supports for `improving
 performance <https://docs.dask.org/en/stable/best-practices.html>`_
-apply, and performance parameters are generally be set via Dask's
+apply, and performance parameters are generally best set via Dask's
 `configuration settings
 <https://docs.dask.org/en/stable/configuration.html>`_, but the value
 of the important :ref:`chunk size <Chunks>` is set through the `cf`
