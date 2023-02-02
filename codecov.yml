@@ -13,7 +13,7 @@ coverage:
         threshold: "0%"
         base: auto
         branches: 
-          - master
+          - main
         if_no_uploads: success
         if_not_found: success  
         if_ci_failed: error
@@ -24,7 +24,7 @@ coverage:
         threshold: "10%"
         base: auto
         branches:
-          - master
+          - main
         if_no_uploads: success
         if_not_found: success
         if_ci_failed: error
