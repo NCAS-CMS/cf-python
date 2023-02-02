@@ -319,7 +319,7 @@ In this recipe, we will regrid two different datasets with different resolutions
 
    .. code-block:: python
 
-      >>> obs_temp_regrid = obs_temp.regrids(model_temp, method='bilinear')
+      >>> obs_temp_regrid = obs_temp.regrids(model_temp, method='linear')
       >>> print(obs_temp_regrid)
       Field: long_name=near-surface temperature (ncvar%tmp)
       -----------------------------------------------------
@@ -408,4 +408,229 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
       ...          key_length=10, scale=35, stride=5)
       >>> cfp.gclose()
    .. figure:: images/june1995_preci.png
-   
+
+----
+
+**Converting from rotated latitude-longitude to regular latitude-longitude**
+----------
+
+In this recipe, we will be regridding from a rotated latitude-longitude source domain to a regular latitude-longitude destination domain.
+
+1. Import cf-python, cf-plot and numpy:
+
+   .. code-block:: python
+
+      >>> import cf
+      >>> import cfplot as cfp
+      >>> import numpy as np
+
+2. Read the field constructs of the UK Met Office PP format file using `~cf.read` function:
+
+   .. code-block:: python
+
+      >>> f = cf.read('file.pp')
+      >>> print(f)
+      [<CF Field: id%UM_m01s03i463_vn1006(time(8), grid_latitude(432), grid_longitude(444))>]
+
+3. Select the field by index and print its desciption using the `~cf.Field.dump` method to show properties of all constructs:
+
+   .. code-block:: python
+
+      >>> gust = f[0]
+      >>> gust.dump()
+      -----------------------------------------------------------
+      Field: id%UM_m01s03i463_vn1006 (ncvar%UM_m01s03i463_vn1006)
+      -----------------------------------------------------------
+      Conventions = 'CF-1.10'
+      _FillValue = -1073741824.0
+      history = 'Converted from UM/PP by cf-python v3.14.0'
+      lbproc = '8192'
+      lbtim = '122'
+      long_name = 'WIND GUST'
+      runid = 'aaaaa'
+      source = 'UM vn1006'
+      stash_code = '3463'
+      submodel = '1'
+      um_stash_source = 'm01s03i463'
+
+      Data(time(8), grid_latitude(432), grid_longitude(444)) = [[[5.587890625, ..., 5.1376953125]]]
+
+      Cell Method: time(8): maximum
+
+      Domain Axis: grid_latitude(432)
+      Domain Axis: grid_longitude(444)
+      Domain Axis: height(1)
+      Domain Axis: time(8)
+
+      Dimension coordinate: time
+          axis = 'T'
+          calendar = '360_day'
+          standard_name = 'time'
+          units = 'days since 2051-1-1'
+          Data(time(8)) = [2051-04-14 01:30:00, ..., 2051-04-14 22:30:00] 360_day
+          Bounds:calendar = '360_day'
+          Bounds:units = 'days since 2051-1-1'
+          Bounds:Data(time(8), 2) = [[2051-04-14 00:00:00, ..., 2051-04-15 00:00:00]] 360_day
+
+      Dimension coordinate: height
+          axis = 'Z'
+          positive = 'up'
+          standard_name = 'height'
+          units = 'm'
+          Data(height(1)) = [-1.0] m
+
+      Dimension coordinate: grid_latitude
+          axis = 'Y'
+          standard_name = 'grid_latitude'
+          units = 'degrees'
+          Data(grid_latitude(432)) = [-24.474999085068703, ..., 22.93500065803528] degrees
+          Bounds:units = 'degrees'
+          Bounds:Data(grid_latitude(432), 2) = [[-24.52999908477068, ..., 22.990000657737255]] degrees
+
+      Dimension coordinate: grid_longitude
+          axis = 'X'
+          standard_name = 'grid_longitude'
+          units = 'degrees'
+          Data(grid_longitude(444)) = [-29.47499145567417, ..., 19.255008280277252] degrees
+          Bounds:units = 'degrees'
+          Bounds:Data(grid_longitude(444), 2) = [[-29.52999145537615, ..., 19.31000827997923]] degrees
+
+      Auxiliary coordinate: latitude
+          standard_name = 'latitude'
+          units = 'degrees_north'
+          Data(grid_latitude(432), grid_longitude(444)) = [[20.576467692711244, ..., 66.9022518505943]] degrees_north
+          Bounds:units = 'degrees_north'
+          Bounds:Data(grid_latitude(432), grid_longitude(444), 4) = [[[20.505853650744182, ..., 66.82752183591477]]] degrees_north
+
+      Auxiliary coordinate: longitude
+          standard_name = 'longitude'
+          units = 'degrees_east'
+          Data(grid_latitude(432), grid_longitude(444)) = [[-10.577446822867152, ..., 68.72895292160312]] degrees_east
+          Bounds:units = 'degrees_east'
+          Bounds:Data(grid_latitude(432), grid_longitude(444), 4) = [[[-10.602339269012656, ..., 68.73573608505069]]] degrees_east
+
+      Coordinate reference: grid_mapping_name:rotated_latitude_longitude
+          Coordinate conversion:grid_mapping_name = rotated_latitude_longitude
+          Coordinate conversion:grid_north_pole_latitude = 39.25
+          Coordinate conversion:grid_north_pole_longitude = 198.0
+          Dimension Coordinate: grid_longitude
+          Dimension Coordinate: grid_latitude
+          Auxiliary Coordinate: longitude
+          Auxiliary Coordinate: latitude
+
+
+4. Access the time coordinate of the gust field using `~cf.Field.coordinate` method, retrieve the datetime values of the time coordinate using `~cf.DimensionCoordinate.datetime_array` and print the resulting datetime array:
+
+   .. code-block:: python
+
+      >>> print(gust.coordinate('time').datetime_array)
+      [cftime.Datetime360Day(2051, 4, 14, 1, 30, 0, 0, has_year_zero=True)
+       cftime.Datetime360Day(2051, 4, 14, 4, 30, 0, 0, has_year_zero=True)
+       cftime.Datetime360Day(2051, 4, 14, 7, 30, 0, 0, has_year_zero=True)
+       cftime.Datetime360Day(2051, 4, 14, 10, 30, 0, 0, has_year_zero=True)
+       cftime.Datetime360Day(2051, 4, 14, 13, 30, 0, 0, has_year_zero=True)
+       cftime.Datetime360Day(2051, 4, 14, 16, 30, 0, 0, has_year_zero=True)
+       cftime.Datetime360Day(2051, 4, 14, 19, 30, 0, 0, has_year_zero=True)
+       cftime.Datetime360Day(2051, 4, 14, 22, 30, 0, 0, has_year_zero=True)]
+
+5. Create a new instance of the `cf.dt` class with a specified year, month, day, hour, minute, second and microsecond. Then store the result in the variable test:
+
+   .. code-block:: python
+
+      >>> test = cf.dt(2051, 4, 14, 1, 30, 0, 0)
+      >>> print(test)
+      2051-04-14 01:30:00
+
+6. Plot the wind gust by creating a (`~cf.Field.subspace`) for the specified variable 'test' using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `cfplot.mapset <http://ajheaps.github.io/cf-plot/mapset.html>`_ is used to set the mapping parameters like setting the map resolution to 50m:
+
+   .. code-block:: python
+
+      >>> cfp.mapset(resolution='50m')
+      >>> cfp.con(gust.subspace(T=test), lines=False)
+   .. figure:: images/windgust.png
+
+7. To see the rotated pole data on the native grid, the above steps are repeated and projection is set to rotated in `cfplot.mapset <http://ajheaps.github.io/cf-plot/mapset.html>`_:
+
+   .. code-block:: python
+
+      >>> cfp.mapset(resolution='50m', proj='rotated')
+      >>> cfp.con(gust.subspace(T=test), lines=False)
+   .. figure:: images/windgust_rotated.png
+
+8. Create dimension coordinates for the destination grid with the latitude and longitude values for Europe using `~cf.DimensionCoordinate` class. `np.linspace <https://numpy.org/doc/stable/reference/generated/numpy.linspace.html>`_ generates evenly spaced values between the specified latitude and longitude range. Bounds of the target longitude and target latitude are created using `~cf.DimensionCoordinate.create_bounds` method. Spherical regridding is then performed on the gust variable by calling `~cf.Field.regrids` method and passing the target latitude and target longitude as arguments. The method also takes an argument 'linear' which specifies the type of regridding method to use. The desciption of the regridded_data is finally printed using the `~cf.Field.dump` method to show properties of all its constructs:
+
+   .. code-block:: python
+
+      >>> target_latitude = cf.DimensionCoordinate(data=cf.Data(np.linspace(34, 72, num=30), 'degrees_north'))
+      >>> target_longitude = cf.DimensionCoordinate(data=cf.Data(np.linspace(-25, 45, num=30), 'degrees_east'))
+
+      >>> lon_bounds = target_longitude.create_bounds()
+      >>> lat_bounds = target_latitude.create_bounds()
+
+      >>> target_longitude.set_bounds(lon_bounds)
+      >>> target_latitude.set_bounds(lat_bounds)
+
+      >>> regridded_data = gust.regrids((target_latitude, target_longitude), 'linear')
+      >>> regridded_data.dump()
+      -----------------------------------------------------------
+      Field: id%UM_m01s03i463_vn1006 (ncvar%UM_m01s03i463_vn1006)
+      -----------------------------------------------------------
+      Conventions = 'CF-1.10'
+      _FillValue = -1073741824.0
+      history = 'Converted from UM/PP by cf-python v3.14.0'
+      lbproc = '8192'
+      lbtim = '122'
+      long_name = 'WIND GUST'
+      runid = 'aaaaa'
+      source = 'UM vn1006'
+      stash_code = '3463'
+      submodel = '1'
+      um_stash_source = 'm01s03i463'
+
+      Data(time(8), latitude(30), longitude(30)) = [[[--, ..., 6.108851101534697]]]
+
+      Cell Method: time(8): maximum
+
+      Domain Axis: height(1)
+      Domain Axis: latitude(30)
+      Domain Axis: longitude(30)
+      Domain Axis: time(8)
+
+      Dimension coordinate: time
+          axis = 'T'
+          calendar = '360_day'
+          standard_name = 'time'
+          units = 'days since 2051-1-1'
+          Data(time(8)) = [2051-04-14 01:30:00, ..., 2051-04-14 22:30:00] 360_day
+          Bounds:calendar = '360_day'
+          Bounds:units = 'days since 2051-1-1'
+          Bounds:Data(time(8), 2) = [[2051-04-14 00:00:00, ..., 2051-04-15 00:00:00]] 360_day
+
+      Dimension coordinate: height
+          axis = 'Z'
+          positive = 'up'
+          standard_name = 'height'
+          units = 'm'
+          Data(height(1)) = [-1.0] m
+
+      Dimension coordinate: latitude
+          standard_name = 'latitude'
+          units = 'degrees_north'
+          Data(latitude(30)) = [34.0, ..., 72.0] degrees_north
+          Bounds:units = 'degrees_north'
+          Bounds:Data(latitude(30), 2) = [[33.3448275862069, ..., 72.65517241379311]] degrees_north
+
+      Dimension coordinate: longitude
+          standard_name = 'longitude'
+          units = 'degrees_east'
+          Data(longitude(30)) = [-25.0, ..., 45.0] degrees_east
+          Bounds:units = 'degrees_east'
+          Bounds:Data(longitude(30), 2) = [[-26.20689655172414, ..., 46.20689655172414]] degrees_east
+
+9. Step 6 is similarly repeated for the regridded_data to plot the wind gust on a regular latitude-longitude domain:
+
+   .. code-block:: python
+
+      >>> cfp.mapset(resolution='50m')
+      >>> cfp.con(regridded_data.subspace(T=test), lines=False)
+   .. figure:: images/windgust_regridded.png
