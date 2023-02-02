@@ -3,12 +3,12 @@ name: Linting
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     # default (from docs) is just on [opened, synchronize, reopened]
     types: [opened, reopened, ready_for_review, edited]
     branches:
-      - master
+      - main
 
 # Note: only running this on Ubuntu (latest) and Python 3.8 as representative,
 # since the linting output should be machine dependent and not vary much if
