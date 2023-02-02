@@ -59,7 +59,7 @@ Clone your fork locally and create a branch:
 	  
     $ git clone git@github.com:<YOUR GITHUB USERNAME>/cf-python.git
     $ cd cf-python
-    $ git checkout -b <your-bugfix-feature-branch-name master>
+    $ git checkout -b <your-bugfix-feature-branch-name main>
 
 Break your edits up into reasonably-sized commits, each representing
 a single logical change:
@@ -88,7 +88,7 @@ Add your name to the list of contributors list at
 
 Finally, make sure all commits have been pushed to the remote copy of
 your fork and submit the pull request via the GitHub website, to the
-``master`` branch of the ``NCAS-CMS/cf-python`` repository. Make sure
+``main`` branch of the ``NCAS-CMS/cf-python`` repository. Make sure
 to reference the original issue in the pull request's description.
 
 Note that you can create the pull request while you're working on
