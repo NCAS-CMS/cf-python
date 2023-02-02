@@ -35,7 +35,7 @@ the directory that contains the zip file and its unpacked contents,
 and no other files.
    
 The tutorial files may be also found in the `downloads directory
-<https://github.com/NCAS-CMS/cf-python/tree/master/docs/_downloads>`_
+<https://github.com/NCAS-CMS/cf-python/tree/main/docs/_downloads>`_
 of the on-line code repository.
 
 ----

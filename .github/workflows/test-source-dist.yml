@@ -1,14 +1,14 @@
 # A GitHub Action to test a source distribution created from the repo state.
 name: Test source distribution
 
-# Triggers the workflow on PR events for the master branch (only)
+# Triggers the workflow on PR events for the main branch (only)
 on:
   pull_request:
     # 'reopened' enables manual retrigger via close & re-open. Disable for all
     # edits to manage limited resource (PRs often change before merge-ready).
     types: [opened, reopened, ready_for_review]
     branches:
-      - master
+      - main
 
 jobs:
   source-dist-test:
