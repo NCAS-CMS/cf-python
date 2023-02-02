@@ -53,6 +53,12 @@ Pull requests should follow on from a discussion in the issue tracker
 Fork the cf-python GitHub repository
 (https://github.com/NCAS-CMS/cf-python).
 
+..  note::
+    The cf-python GitHub repository uses ``main`` as the name of its
+    default branch, so you must refer to ``main`` when you need to
+    reference the default branch. It is useful to use this as the
+    name of the default branch on your fork, if you use one, too.
+
 Clone your fork locally and create a branch:
 
 .. code-block:: console
