@@ -541,7 +541,7 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
       >>> print(test)
       2051-04-14 01:30:00
 
-6. Plot the wind gust by creating a (`~cf.Field.subspace`) for the specified variable 'test' using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `cfplot.mapset <http://ajheaps.github.io/cf-plot/mapset.html>`_ is used to set the mapping parameters like setting the map resolution to 50m:
+6. Plot the wind gust by creating a `~cf.Field.subspace` for the specified variable ``test`` using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `cfplot.mapset <http://ajheaps.github.io/cf-plot/mapset.html>`_ is used to set the mapping parameters like setting the map resolution to 50m:
 
    .. code-block:: python
 
