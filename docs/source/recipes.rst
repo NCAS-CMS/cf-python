@@ -519,7 +519,7 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
           Auxiliary Coordinate: latitude
 
 
-4. Access the time coordinate of the gust field using `~cf.Field.coordinate` method, retrieve the datetime values of the time coordinate using `~cf.DimensionCoordinate.datetime_array` and print the resulting datetime array:
+4. Access the time coordinate of the gust field using `~cf.Field.coordinate` method and retrieve the datetime values of the time coordinate using `~cf.DimensionCoordinate.datetime_array`:
 
    .. code-block:: python
 
