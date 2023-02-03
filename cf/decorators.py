@@ -46,7 +46,6 @@ def _deprecated_kwarg_check(*depr_kwargs, version=None, removed_at=None):
 
         @wraps(operation_method)
         def precede_with_kwarg_deprecation_check(self, *args, **kwargs):
-
             # If there is only one input deprecated kwarg, form a list so the
             # following loop does not iterate over characters. This means we
             # do not have to write 'dkwarg,' instead of 'dkwarg' each time.

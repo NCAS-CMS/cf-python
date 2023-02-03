@@ -958,7 +958,6 @@ class DataTest(unittest.TestCase):
             np.arange(120).reshape(3, 2, 20),
             np.ma.arange(120).reshape(3, 2, 20),
         ]:
-
             if np.ma.isMA(a):
                 a[0, 1, [2, 5, 6, 7, 8]] = np.ma.masked
                 a[2, 0, [12, 14, 17]] = np.ma.masked

@@ -136,7 +136,6 @@ class FieldTest(unittest.TestCase):
         for method in methods:
             message = "method=" + method
             for f in cf.read(getattr(self, method)):
-
                 self.assertTrue(bool(f.data.get_compression_type()), message)
 
                 u = f.uncompress()

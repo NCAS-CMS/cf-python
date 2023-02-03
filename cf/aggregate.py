@@ -358,7 +358,6 @@ class _Meta:
             self.coordrefs = list(refs.values())
 
         for axis, domain_axis in f.domain_axes(todict=True).items():
-
             # List some information about each 1-d coordinate which
             # spans this axis. The order of elements is arbitrary, as
             # ultimately it will get sorted by each element's 'name'
@@ -1954,7 +1953,6 @@ def aggregate(
         unaggregatable = False
 
         for axis in aggregating_axes:
-
             number_of_fields = len(meta)
             if number_of_fields == 1:
                 break
@@ -1993,7 +1991,6 @@ def aggregate(
             # Within each group, aggregate as many fields as possible.
             # --------------------------------------------------------
             for m in grouped_meta:
-
                 if len(m) == 1:
                     continue
 
@@ -2606,7 +2603,6 @@ def _get_hfl(
                 # Compare arrays, overriding hash value
                 found_close = False
                 for hash_value0, array0 in hfl_cache.hash_to_array.items():
-
                     if array0.shape != array.shape:
                         continue
 
@@ -2681,7 +2677,6 @@ def _group_fields(meta, axis):
     hash0 = m0.hash_values
 
     for m0, m1 in zip(meta[:-1], meta[1:]):
-
         # -------------------------------------------------------------
         # Count the number of axes which are different between the two
         # fields
@@ -2733,7 +2728,6 @@ def _group_fields(meta, axis):
                     msr0[units]["hash_values"],
                     m1.msr[units]["hash_values"],
                 ):
-
                     if a_identity not in axes and hash_value0 != hash_value1:
                         # There is a matching pair of cell measures
                         # with these units which does not span the

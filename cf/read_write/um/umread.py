@@ -812,7 +812,6 @@ class UMField:
                 cf_info,
                 um_condition,
             ) in stash_records:
-
                 # Check that conditions are met
                 if not self.test_um_version(valid_from, valid_to, um_version):
                     continue
