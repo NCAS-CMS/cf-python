@@ -77,7 +77,7 @@ jobs:
       run: |
         conda install -c ncas -c conda-forge cf-plot udunits2=2.2.25
         conda install -c conda-forge mpich esmpy
-        conda install scipy matplotlib
+        conda install scipy matplotlib dask
         pip install pycodestyle
 
     # Install cfunits and cfdm (from development main branch) separately,
