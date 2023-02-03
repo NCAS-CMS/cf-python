@@ -110,7 +110,6 @@ def ESMF_regrid_Nd(coord_sys, method, src, dst, **kwargs):
 
 
 class RegridTest(unittest.TestCase):
-
     # Get the test source and destination fields
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "regrid.nc"

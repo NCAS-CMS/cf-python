@@ -691,7 +691,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         #        auxiliary_coordinates = self.auxiliary_coordinates(view=True)
 
         for axis in self.domain_axes(todict=True):
-
             #            dims = self.constructs.chain(
             #                "filter_by_type",
             #                ("dimension_coordinate",), "filter_by_axis", (axis,)
@@ -1057,7 +1056,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         # Check that the two fields are combinable
         for i, (identity, y) in enumerate(tuple(out1.items())):
-
             if isinstance(identity, int):
                 if y.size == 1:
                     del out1[identity]
@@ -7548,7 +7546,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         for method, axes, within, over, axes_in in zip(
             all_methods, all_axes, all_within, all_over, input_axes
         ):
-
             method2 = _collapse_methods.get(method, None)
             if method2 is None:
                 raise ValueError(f"Unknown collapse method: {method!r}")
