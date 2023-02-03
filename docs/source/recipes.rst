@@ -627,7 +627,7 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
           Bounds:units = 'degrees_east'
           Bounds:Data(longitude(30), 2) = [[-26.20689655172414, ..., 46.20689655172414]] degrees_east
 
-9. Step 6 is similarly repeated for the regridded_data to plot the wind gust on a regular latitude-longitude domain:
+9. Step 6 is similarly repeated for the ``regridded_data`` to plot the wind gust on a regular latitude-longitude domain:
 
    .. code-block:: python
 
