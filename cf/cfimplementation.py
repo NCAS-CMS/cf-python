@@ -90,6 +90,7 @@ class CFImplementation(cfdm.CFDMImplementation):
         units=False,
         calendar=False,
         instructions=None,
+        term=None,
     ):
         """Return a `CFANetCDFArray` instance.
 
@@ -111,6 +112,8 @@ class CFImplementation(cfdm.CFDMImplementation):
 
             instructions: `str`, optional
 
+            term: `str`, optional
+
         :Returns:
 
             `CFANetCDFArray`
@@ -126,6 +129,7 @@ class CFImplementation(cfdm.CFDMImplementation):
             units=units,
             calendar=calendar,
             instructions=instructions,
+            term=term,
         )
 
 

@@ -1,20 +1,11 @@
 import cfdm
 import numpy as np
+from packaging.version import Version
 
 """
 TODOCFA: remove aggregation_* properties from constructs
 
 TODOCFA: Create auxiliary coordinates from non-standardised terms
-
-TODOCFA: Reference instruction variables (and/or set as
-         "do_not_create_field")
-
-TODOCFA: Create auxiliary coordinates from non-standardised terms
-
-TODOCFA: Consider scanning for cfa variables to the top (e.g. where
-         scanning for geometry varables is). This will probably need a
-         change in cfdm so that a customizable hook can be overlaoded
-         (like `_customize_read_vars` does).
 
 TODOCFA: What about groups/netcdf_flattener?
 
@@ -144,7 +135,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 parent_ncvar=parent_ncvar,
             )
 
-        # Still here? Then we have a CFA variable.
+        # ------------------------------------------------------------
+        # Still here? Then we have a CFA-netCDF variable.
+        # ------------------------------------------------------------
         g = self.read_vars
 
         ncdimensions = g["variable_attributes"][ncvar][
@@ -168,6 +161,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         uncompress_override=None,
         parent_ncvar=None,
         coord_ncvar=None,
+        cfa_term=None,
     ):
         """Create data for a netCDF or CFA-netCDF variable.
 
@@ -176,7 +170,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         :Parameters:
 
             ncvar: `str`
-                The name of the netCDF variable that contains the data.
+                The name of the netCDF variable that contains the
+                data. See the *cfa_term* parameter.
 
             construct: optional
 
@@ -188,14 +183,20 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             coord_ncvar: `str`, optional
 
-                .. versionadded:: TODO
+            cfa_term: `str`, optional
+                The name of a non-standard aggregation instruction
+                term from which to create the data. If set then
+                *ncvar* must be the value of the term in the
+                ``aggregation_data`` attribute.
+
+                .. versionadded:: TODOCFAVER
 
         :Returns:
 
             `Data`
 
         """
-        if not self._is_cfa_variable(ncvar):
+        if cfa_term is None and not self._is_cfa_variable(ncvar):
             # Create data for a normal netCDF variable
             return super()._create_data(
                 ncvar=ncvar,
@@ -207,15 +208,21 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             )
 
         # ------------------------------------------------------------
-        # Still here? Then create data for a CFA-netCDF variable
+        # Still here? Create data for a CFA variable
         # ------------------------------------------------------------
+        # Remove the aggregation attributes from the construct
+        # properties
+        if construct is not None:
+            for attr in ("aggregation_dimensions", "aggregation_data"):
+                self.implementation.del_property(construct, attr, None)
+
         cfa_array, kwargs = self._create_cfanetcdfarray(
             ncvar,
             unpacked_dtype=unpacked_dtype,
             coord_ncvar=coord_ncvar,
+            term=cfa_term,
         )
 
-        # Return the data
         return self._create_Data(
             cfa_array,
             ncvar,
@@ -244,35 +251,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if not g["cfa"] or ncvar in g["external_variables"]:
             return False
 
-        attributes = g["variable_attributes"][ncvar]
-
-        # TODOCFA: test on the version of CFA given by g["cfa"]. See
-        #          also `_customize_read_vars`.
-        cfa = "aggregated_dimensions" in attributes
-        if cfa:
-            # TODOCFA: Modify this message for v4.0.0
-            raise ValueError(
-                "The reading of CFA files has been temporarily disabled, "
-                "but will return for CFA-0.6 files at version 4.0.0. "
-                "CFA-0.4 functionality is still available at version 3.13.1."
-            )
-
-            # TODOCFA: The 'return' remains when the exception is
-            #          removed at v4.0.0.
-            return True
-
-        cfa_04 = attributes.get("cf_role") == "cfa_variable"
-        if cfa_04:
-            # TODOCFA: Modify this message for v4.0.0.
-            raise ValueError(
-                "The reading of CFA-0.4 files was permanently disabled at "
-                "version 3.14.0. However, CFA-0.4 functionality is "
-                "still available at version 3.13.1. "
-                "The reading and writing of CFA-0.6 files will become "
-                "available at version 4.0.0."
-            )
-
-        return False
+        return "aggregated_dimensions" in g["variable_attributes"][ncvar]
 
     def _create_Data(
         self,
@@ -298,9 +277,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             ncdimensions: sequence of `str`, optional
                 The netCDF dimensions spanned by the array.
 
-                .. versionadded:: 3.14.0
-
-            units: `str`, optional
+                .. versionadded:: 3.14.fill_value:
                 The units of *array*. By default, or if `None`, it is
                 assumed that there are no units.
 
@@ -337,6 +314,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         )
         self._cache_data_elements(data, ncvar)
 
+        # Set the CFA write status to `True`
+        data._set_cfa_write(True)
+
         return data
 
     def _customize_read_vars(self):
@@ -345,41 +325,66 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         .. versionadded:: 3.0.0
 
         """
+        from re import split
+
         super()._customize_read_vars()
 
         g = self.read_vars
 
-        # ------------------------------------------------------------
-        # Find out if this is a CFA file
-        # ------------------------------------------------------------
-        g["cfa"] = "CFA" in g["global_attributes"].get("Conventions", ())
+        # Check the 'Conventions' for CFA
+        Conventions = g["global_attributes"].get("Conventions", "")
 
+        all_conventions = split(",\s*", Conventions)
+        if all_conventions[0] == Conventions:
+            all_conventions = Conventions.split()
+
+        CFA_version = None
+        for c in all_conventions:
+            if c.startswith("CFA-"):
+                CFA_version = c.replace("CFA-", "", 1)
+                break
+
+            if c == "CFA":
+                # Versions <= 3.13.1 wrote CFA-0.4 files with a plain
+                # 'CFA' in the Conventions string
+                CFA_version = "0.4"
+                break
+
+        g["cfa"] = CFA_version is not None
         if g["cfa"]:
-            attributes = g["variable_attributes"]
+            # --------------------------------------------------------
+            # This is a CFA-netCDF file, so check the CFA version and
+            # process the variables aggregated dimensions.
+            # --------------------------------------------------------
+            g["CFA_version"] = Version(CFA_version)
+            if g["CFA_version"] < Version("0.6.2"):
+                raise ValueError(
+                    f"Can not read file {g['filename']} that uses "
+                    f"CFA-{CFA_version}. Only CFA-0.6.2 or newer files "
+                    "are handled. Use version 3.13.1 to read and write "
+                    f"CFA-0.4 files."
+                )
+
             dimensions = g["variable_dimensions"]
-
-            # Do not create fields from CFA private
-            # variables. TODOCFA: get private variables from
-            # CFANetCDFArray instances
-            for ncvar in g["variables"]:
-                if attributes[ncvar].get("cf_role", None) == "cfa_private":
-                    g["do_not_create_field"].add(ncvar)
-
-            for ncvar, ncdims in tuple(dimensions.items()):
-                if ncdims != ():
+            attributes = g["variable_attributes"]
+            for ncvar, attributes in attributes.items():
+                if "aggregate_dimensions" not in attributes:
+                    # This is not an aggregated variable
                     continue
 
-                if not (
-                    ncvar not in g["external_variables"]
-                    and "aggregated_dimensions" in attributes[ncvar]
-                ):
-                    continue
+                # Set the aggregated variable's dimensions as its
+                # aggregated dimensions
+                ncdimensions = attributes["aggregated_dimensions"].split()
+                dimensions[ncvar] = tuple(map(str, ncdimensions))
 
-                ncdimensions = attributes[ncvar][
-                    "aggregated_dimensions"
-                ].split()
-                if ncdimensions:
-                    dimensions[ncvar] = tuple(map(str, ncdimensions))
+                # Do not create fields/domains from the aggregation
+                # instruction variables
+                parsed_aggregated_data = self._parse_aggregated_data(
+                    ncvar, attributes.get("aggregated_data")
+                )
+                for x in parsed_aggregated_data:
+                    variable = tuple(x.items())[0][1]
+                    g["do_not_create_field"].add(variable)
 
     def _cache_data_elements(self, data, ncvar):
         """Cache selected element values.
@@ -467,10 +472,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         ncvar,
         unpacked_dtype=False,
         coord_ncvar=None,
+        term=None,
     ):
         """Create a CFA-netCDF variable array.
 
-        .. versionadded:: (cfdm) 1.10.0.1
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -479,6 +485,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             unpacked_dtype: `False` or `numpy.dtype`, optional
 
             coord_ncvar: `str`, optional
+
+            term: `str`, optional
 
         :Returns:
 
@@ -498,6 +506,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         # Get rid of the incorrect shape
         kwargs.pop("shape", None)
+
+        # Specify a non-standardised term from which to create the
+        # data
+        kwargs["term"] = term
 
         # Add the aggregated_data attribute (that can be used by
         # dask.base.tokenize).
@@ -575,3 +587,120 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             chunks = chunks2
 
         return chunks
+
+    def _parse_aggregated_data(self, ncvar, aggregated_data):
+        """Parse a CFA-netCDF aggregated_data attribute.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            ncvar: `str`
+                The netCDF variable name.
+
+            aggregated_data: `str` or `None`
+                The CFA-netCDF ``aggregated_data`` attribute.
+
+        :Returns:
+
+            `list`
+
+        """
+        if not aggregated_data:
+            return []
+
+        return self._parse_x(
+            ncvar,
+            aggregated_data,
+            keys_are_variables=True,
+            keys_are_dimensions=False,
+        )
+
+    def _customize_auxiliary_coordinates(self, parent_ncvar, f):
+        """Create auxiliary coordinate constructs from CFA terms.
+
+        This method is primarily aimed at providing a customisation
+        entry point for subclasses.
+
+        This method currently creates:
+
+        * Auxiliary coordinate constructs derived from
+          non-standardised terms in CFA aggregation instructions. Each
+          auxiliary coordinate construct spans the same domain axes as
+          the parent field construct. No auxiliary coordinate
+          constructs are ever created for `Domain` instances.
+
+        .. versionadded:: TODODASKCFA
+
+        :Parameters:
+
+            parent_ncvar: `str`
+                The netCDF variable name of the parent variable.
+
+            f: `Field` or `Domain`
+                The parent field or domain construct.
+
+        :Returns:
+
+            `dict`
+                A mapping of netCDF variable names to newly-created
+                auxiliary coordinate construct identifiers.
+
+        **Examples**
+
+        >>> _customize_auxiliary_coordinates('tas', f)
+        {}
+
+        >>> _customize_auxiliary_coordinates('pr', f)
+        {'tracking_id': 'auxiliarycoordinate2'}
+
+        """
+        if self.implementation.is_domain(f) or not self._is_cfa_variable(
+            parent_ncvar
+        ):
+            return {}
+
+        # ------------------------------------------------------------
+        # Still here? Then we have a CFA-netCDF variable.
+        # ------------------------------------------------------------
+        g = self.read_vars
+
+        out = {}
+
+        attributes = g["variable_attributes"]["parent_ncvar"]
+        parsed_aggregated_data = self._parse_aggregated_data(
+            parent_ncvar, attributes.get("aggregated_data")
+        )
+        standardised_terms = ("location", "file", "address", "format")
+        for x in parsed_aggregated_data:
+            term, ncvar = tuple(x.items())[0]
+            if term in standardised_terms:
+                # Ignore standardised aggregation terms
+                continue
+
+            # Still here? Then we have a non-standardised aggregation
+            # term that we want to convert to an auxiliary coordinate
+            # construct that spans the same domain axes as the parent
+            # field.
+            coord = self.implementation.initialise_AuxiliaryCoordinate()
+
+            properties = g["variable_attributes"][ncvar].copy()
+            properties.setdefault("long_name", term)
+            self.implementation.set_properties(coord, properties)
+
+            data = self._create_data(
+                ncvar, coord, parent_ncvar=parent_ncvar, cfa_term=term
+            )
+            self.implementation.set_data(coord, data, copy=False)
+
+            self.implementation.nc_set_variable(coord, ncvar)
+
+            key = self.implementation.set_auxiliary_coordinate(
+                f,
+                coord,
+                axes=self.implementation.get_field_data_axes(f),
+                copy=False,
+            )
+            out[ncvar] = key
+
+        return out

@@ -3,6 +3,7 @@ from itertools import accumulate, product
 
 from ...functions import abspath
 from ..fragment import (
+    FullFragmentArray,
     MissingFragmentArray,
     NetCDFFragmentArray,
     UMFragmentArray,
@@ -27,6 +28,7 @@ class CFANetCDFArray(NetCDFArray):
         instance._FragmentArray = {
             "nc": NetCDFFragmentArray,
             "um": UMFragmentArray,
+            "full": FullFragmentArray,
             None: MissingFragmentArray,
         }
         return instance
@@ -42,6 +44,7 @@ class CFANetCDFArray(NetCDFArray):
         units=False,
         calendar=False,
         instructions=None,
+        term=None,
         source=None,
         copy=True,
     ):
@@ -104,14 +107,17 @@ class CFANetCDFArray(NetCDFArray):
                 The calendar of the aggregated data. Set to `None` to
                 indicate the CF default calendar, if applicable.
 
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
             instructions: `str`, optional
                 The ``aggregated_data`` attribute value found on the
                 CFA netCDF variable. If set then this will be used by
                 `__dask_tokenize__` to improve performance.
+
+            term: `str`, optional
+                TODOCFADOCS
+
+            {{init source: optional}}
+
+            {{init copy: `bool`, optional}}
 
         """
         if source is not None:
@@ -131,6 +137,12 @@ class CFANetCDFArray(NetCDFArray):
                 aggregated_data = source.get_aggregated_data(copy=False)
             except AttributeError:
                 aggregated_data = {}
+
+            try:
+                term = source.get_term()
+            except AttributeError:
+                term = None
+
         elif filename is not None:
             from CFAPython import CFAFileFormat
             from CFAPython.CFADataset import CFADataset
@@ -173,7 +185,9 @@ class CFANetCDFArray(NetCDFArray):
             set_fragment = self._set_fragment
             compute(
                 *[
-                    delayed(set_fragment(var, loc, aggregated_data, filename))
+                    delayed(
+                        set_fragment(var, loc, aggregated_data, filename, term)
+                    )
                     for loc in product(*[range(i) for i in fragment_shape])
                 ]
             )
@@ -195,10 +209,12 @@ class CFANetCDFArray(NetCDFArray):
             fragment_shape = None
             aggregated_data = None
             instructions = None
+            term = None
 
         self._set_component("fragment_shape", fragment_shape, copy=False)
         self._set_component("aggregated_data", aggregated_data, copy=False)
         self._set_component("instructions", instructions, copy=False)
+        self._set_component("term", term, copy=False)
 
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
@@ -222,7 +238,9 @@ class CFANetCDFArray(NetCDFArray):
         """x.__getitem__(indices) <==> x[indices]"""
         return NotImplemented  # pragma: no cover
 
-    def _set_fragment(self, var, frag_loc, aggregated_data, cfa_filename):
+    def _set_fragment(
+        self, var, frag_loc, aggregated_data, cfa_filename, term
+    ):
         """Create a new key/value pair in the *aggregated_data*
         dictionary.
 
@@ -244,34 +262,169 @@ class CFANetCDFArray(NetCDFArray):
             aggregated_data: `dict`
                 The aggregated data dictionary to be updated in-place.
 
+            cfa_filename: `str`
+                TODOCFADOCS
+
+            term: `str` or `None`
+                TODOCFADOCS
+
         :Returns:
 
             `None`
 
         """
         fragment = var.getFrag(frag_loc=frag_loc)
+        location = fragment.location
 
+        if term is not None:
+            aggregated_data[frag_loc] = {
+                "file": cfa_filename,
+                "address": self.get_ncvar(),
+                "format": "full",
+                "location": location,
+                "fill_value": getattr(fragment, term),
+            }
+            return
+
+        # Still here?
         filename = fragment.file
         fmt = fragment.format
         address = fragment.address
 
         if address is not None:
             if filename is None:
-                # This fragment is in the CFA-netCDF file
+                # This fragment is contained in the CFA-netCDF
+                # file
                 filename = cfa_filename
                 fmt = "nc"
-            else:
-                # This fragment is in its own file
-                filename = abspath(fragment.file)
 
         aggregated_data[frag_loc] = {
             "file": filename,
             "address": address,
             "format": fmt,
-            "location": fragment.location,
+            "location": location,
         }
 
-    def _subarray_shapes(self, shapes):
+    def get_aggregated_data(self, copy=True):
+        """Get the aggregation data dictionary.
+
+        The aggregation data dictionary contains the definitions of
+        the fragments and the instructions on how to aggregate them.
+        The keys are indices of the CFA fragment dimensions,
+        e.g. ``(1, 0, 0 ,0)``.
+
+        .. versionadded:: 3.14.0
+
+        :Parameters:
+
+            copy: `bool`, optional
+                Whether or not to return a copy of the aggregation
+                dictionary. By default a deep copy is returned.
+
+                .. warning:: If False then changing the returned
+                             dictionary in-place will change the
+                             aggregation dictionary stored in the
+                             {{class}} instance, **as well as in any
+                             copies of it**.
+
+        :Returns:
+
+            `dict`
+                The aggregation data dictionary.
+
+        **Examples**
+
+        >>> a.shape
+        (12, 1, 73, 144)
+        >>> a.get_fragment_shape()
+        (2, 1, 1, 1)
+        >>> a.get_aggregated_data()
+        {(0, 0, 0, 0): {'file': 'January-June.nc',
+          'address': 'temp',
+          'format': 'nc',
+          'location': [(0, 6), (0, 1), (0, 73), (0, 144)]},
+         (1, 0, 0, 0): {'file': 'July-December.nc',
+          'address': 'temp',
+          'format': 'nc',
+          'location': [(6, 12), (0, 1), (0, 73), (0, 144)]}}
+
+        """
+        aggregated_data = self._get_component("aggregated_data")
+        if copy:
+            aggregated_data = deepcopy(aggregated_data)
+
+        return aggregated_data
+
+    def get_FragmentArray(self, fragment_format):
+        """Return a Fragment class.
+
+        .. versionadded:: 3.14.0
+
+        :Parameters:
+
+            fragment_format: `str`
+                The dataset format of the fragment. Either ``'nc'``,
+                ``'um'``, or `None`.
+
+        :Returns:
+
+            `FragmentArray`
+                The class for representing a fragment array of the
+                given format.
+
+        """
+        try:
+            return self._FragmentArray[fragment_format]
+        except KeyError:
+            raise ValueError(
+                "Can't get FragmentArray class for unknown "
+                f"fragment dataset format: {fragment_format!r}"
+            )
+
+    def get_fragmented_dimensions(self):
+        """Get the positions dimension that have two or more fragments.
+
+        .. versionadded:: 3.14.0
+
+        :Returns:
+
+            `list`
+                The dimension positions.
+
+        **Examples**
+
+        >>> a.get_fragment_shape()
+        (20, 1, 40, 1)
+        >>> a.get_fragmented_dimensions()
+        [0, 2]
+
+        >>> a.get_fragment_shape()
+        (1, 1, 1)
+        >>> a.get_fragmented_dimensions()
+        []
+
+        """
+        return [
+            i for i, size in enumerate(self.get_fragment_shape()) if size > 1
+        ]
+
+    def get_fragment_shape(self):
+        """Get the sizes of the fragment dimensions.
+
+        The fragment dimension sizes are given in the same order as
+        the aggregated dimension sizes given by `shape`
+
+        .. versionadded:: 3.14.0
+
+        :Returns:
+
+            `tuple`
+                The shape of the fragment dimensions.
+
+        """
+        return self._get_component("fragment_shape")
+
+    def subarray_shapes(self, shapes):
         """Create the subarray shapes.
 
         .. versionadded:: 3.14.0
@@ -374,7 +527,7 @@ class CFANetCDFArray(NetCDFArray):
 
         return normalize_chunks(chunks, shape=shape, dtype=self.dtype)
 
-    def _subarrays(self, subarray_shapes):
+    def subarrays(self, subarray_shapes):
         """Return descriptors for every subarray.
 
         .. versionadded:: 3.14.0
@@ -522,125 +675,6 @@ class CFANetCDFArray(NetCDFArray):
             product(*f_shapes),
         )
 
-    def get_aggregated_data(self, copy=True):
-        """Get the aggregation data dictionary.
-
-        The aggregation data dictionary contains the definitions of
-        the fragments and the instructions on how to aggregate them.
-        The keys are indices of the CFA fragment dimensions,
-        e.g. ``(1, 0, 0 ,0)``.
-
-        .. versionadded:: 3.14.0
-
-        :Parameters:
-
-            copy: `bool`, optional
-                Whether or not to return a copy of the aggregation
-                dictionary. By default a deep copy is returned.
-
-                .. warning:: If False then changing the returned
-                             dictionary in-place will change the
-                             aggregation dictionary stored in the
-                             {{class}} instance, **as well as in any
-                             copies of it**.
-
-        :Returns:
-
-            `dict`
-                The aggregation data dictionary.
-
-        **Examples**
-
-        >>> a.shape
-        (12, 1, 73, 144)
-        >>> a.get_fragment_shape()
-        (2, 1, 1, 1)
-        >>> a.get_aggregated_data()
-        {(0, 0, 0, 0): {'file': 'January-June.nc',
-          'address': 'temp',
-          'format': 'nc',
-          'location': [(0, 6), (0, 1), (0, 73), (0, 144)]},
-         (1, 0, 0, 0): {'file': 'July-December.nc',
-          'address': 'temp',
-          'format': 'nc',
-          'location': [(6, 12), (0, 1), (0, 73), (0, 144)]}}
-
-        """
-        aggregated_data = self._get_component("aggregated_data")
-        if copy:
-            aggregated_data = deepcopy(aggregated_data)
-
-        return aggregated_data
-
-    def get_FragmentArray(self, fragment_format):
-        """Return a Fragment class.
-
-        .. versionadded:: 3.14.0
-
-        :Parameters:
-
-            fragment_format: `str`
-                The dataset format of the fragment. Either ``'nc'``,
-                ``'um'``, or `None`.
-
-        :Returns:
-
-            `FragmentArray`
-                The class for representing a fragment array of the
-                given format.
-
-        """
-        try:
-            return self._FragmentArray[fragment_format]
-        except KeyError:
-            raise ValueError(
-                "Can't get FragmentArray class for unknown "
-                f"fragment dataset format: {fragment_format!r}"
-            )
-
-    def get_fragmented_dimensions(self):
-        """Get the positions dimension that have two or more fragments.
-
-        .. versionadded:: 3.14.0
-
-        :Returns:
-
-            `list`
-                The dimension positions.
-
-        **Examples**
-
-        >>> a.get_fragment_shape()
-        (20, 1, 40, 1)
-        >>> a.get_fragmented_dimensions()
-        [0, 2]
-
-        >>> a.get_fragment_shape()
-        (1, 1, 1)
-        >>> a.get_fragmented_dimensions()
-        []
-
-        """
-        return [
-            i for i, size in enumerate(self.get_fragment_shape()) if size > 1
-        ]
-
-    def get_fragment_shape(self):
-        """Get the sizes of the fragment dimensions.
-
-        The fragment dimension sizes are given in the same order as
-        the aggregated dimension sizes given by `shape`
-
-        .. versionadded:: 3.14.0
-
-        :Returns:
-
-            `tuple`
-                The shape of the fragment dimensions.
-
-        """
-        return self._get_component("fragment_shape")
-
     def to_dask_array(self, chunks="auto"):
         """Create a dask array with `FragmentArray` chunks.
 
@@ -675,7 +709,7 @@ class CFANetCDFArray(NetCDFArray):
         aggregated_data = self.get_aggregated_data(copy=False)
 
         # Set the chunk sizes for the dask array
-        chunks = self._subarray_shapes(chunks)
+        chunks = self.subarray_shapes(chunks)
 
         # Create a FragmentArray for each chunk
         get_FragmentArray = self.get_FragmentArray
@@ -688,18 +722,18 @@ class CFANetCDFArray(NetCDFArray):
             chunk_location,
             fragment_location,
             fragment_shape,
-        ) in zip(*self._subarrays(chunks)):
-            d = aggregated_data[fragment_location]
+        ) in zip(*self.subarrays(chunks)):
+            kwargs = aggregated_data[fragment_location].copy()
+            kwargs.pop("location", None)
 
-            FragmentArray = get_FragmentArray(d["format"])
+            FragmentArray = get_FragmentArray(kwargs.pop("format", None))
 
             fragment_array = FragmentArray(
-                filename=d["file"],
-                address=d["address"],
                 dtype=dtype,
                 shape=fragment_shape,
                 aggregated_units=units,
                 aggregated_calendar=calendar,
+                **kwargs,
             )
 
             key = f"{fragment_array.__class__.__name__}-{tokenize(fragment_array)}"

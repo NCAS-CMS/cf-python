@@ -1257,13 +1257,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self._del_Array(None)
         self._del_cached_elements()
 
-    def _set_dask(self, array, copy=False, conform=True):
+    def _set_dask(self, array, copy=False, conform=True, clear_cfa=True):
         """Set the dask array.
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
-                     `_del_dask`
+        .. seealso:: `get_cfa_write`, `to_dask_array`,
+                     `_conform_after_dask_update`, `_del_dask`
 
         :Parameters:
 
@@ -1278,6 +1278,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If True, the default, then remove elements made
                 invalid by updating the `dask` array. See
                 `_conform_after_dask_update` for details.
+
+            clear_cfa: `bool`, optional
+                If True, the default, then set the CFA write status to
+                `False`. If False then the CFA write status is
+                unchanged.
+
+                If and only if the CFA write status is `True` (as
+                determined by `get_cfa_write`), then this `Data`
+                instance has the potential to be written to a
+                CFA-netCDF file as aggregated data.
+
+                .. versionadded:: TODOCFAVER
 
         :Returns:
 
@@ -1312,6 +1324,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # Remove elements made invalid by updating the `dask`
             # array
             self._conform_after_dask_update()
+
+        if clear_cfa:
+            # Set the CFA write status to `False`
+            self._set_cfa_write(False)
 
     def _del_dask(self, default=ValueError(), conform=True):
         """Remove the dask array.
@@ -1427,6 +1443,20 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         self._custom.update(elements)
+
+    def _set_cfa_write(self, status):
+        """Set the CFA write status of the data.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `get_cfa_write`
+
+        :Returns:
+
+            `None`
+
+        """
+        self._custom["cfa_write"] = bool(status)
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -4274,7 +4304,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             partial(cf_units, from_units=old_units, to_units=value),
             dtype=dtype,
         )
-        self._set_dask(dx)
+
+        # Changing the units does not affect the CFA write status
+        self._set_dask(dx, clear_cfa=False)
 
         self._Units = value
 
@@ -5781,6 +5813,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
+    def get_cfa_write(self):
+        """The CFA write status of the data.
+
+        If and only if the CFA write status is `True`, then this
+        `Data` instance has the potential to be written to a
+        CFA-netCDF file as aggregated data.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `bool`
+
+        **Examples**
+
+        A sufficient, but not necessary, condition for the CFA write
+        status to be `False` is if any chunk of the data is specified
+        by an array in memory, rather than by an array in a file.
+
+        >>> d = cf.Data([1, 2])
+        >>> d.get_cfa_write()
+        False
+
+        """
+        return self._custom.get("cfa_write", False)
+
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
@@ -5788,7 +5846,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Returns:
 
-                `Data`
+            `Data`
 
         """
         return self
@@ -7558,7 +7616,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.reshape(shape)
-        d._set_dask(dx)
+
+        # Inserting a dimension does not affect the CFA write status
+        d._set_dask(dx, clear_cfa=False)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
