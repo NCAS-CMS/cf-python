@@ -1,18 +1,18 @@
-# A GitHub Action to run the cf-python test suite after events on master.
+# A GitHub Action to run the cf-python test suite after events on main.
 name: Run test suite
 
-# Triggers the workflow on push or PR events for the master branch (only)
+# Triggers the workflow on push or PR events for the main branch (only)
 on:
   # For now, at least, do not enable on push to save on limited usage resource
   #push:
   #  branches:
-  #    - master
+  #    - main
   pull_request:
     # 'reopened' enables manual retrigger via close & re-open. Disable for all
     # edits to manage limited resource (PRs often change before merge-ready).
     types: [opened, reopened, ready_for_review]
     branches:
-      - master
+      - main
 
 # Note a workflow can have 1+ jobs that can run sequentially or in parallel.
 jobs:
@@ -84,7 +84,7 @@ jobs:
       run: |
         conda install -c ncas -c conda-forge cf-plot udunits2=2.2.25
         conda install -c conda-forge mpich esmpy
-        conda install scipy matplotlib
+        conda install scipy matplotlib dask
         pip install pycodestyle
 
     # Install cfunits and cfdm (from development main branch) separately,

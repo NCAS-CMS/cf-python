@@ -446,7 +446,6 @@ link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
 
 
 def linkcode_resolve(domain, info):
-
     # =================================================================
     # Must delete all .doctrees directories in build for changes to be
     # picked up. E.g.:
