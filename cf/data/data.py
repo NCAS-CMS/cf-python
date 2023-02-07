@@ -1259,7 +1259,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self._del_Array(None)
         self._del_cached_elements()
 
-    def _set_dask(self, array, copy=False, conform=True, cfa_clear=True):
+    #    def _set_dask(self, array, copy=False, conform=True, cfa_clear=True):
+    def _set_dask(self, array, copy=False, conform=True):
         """Set the dask array.
 
         .. versionadded:: 3.14.0
@@ -1322,14 +1323,29 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         self._custom["dask"] = array
 
-        if conform:
-            # Remove elements made invalid by updating the `dask`
-            # array
-            self._conform_after_dask_update()
-
-        if cfa_clear:
-            # Set the CFA write status to False
+        if conform is True:
             self._set_cfa_write(False)
+            self._del_Array(None)
+            self._del_cached_elements()
+            return
+
+        if conform & _CFA:
+            self._set_cfa_write(False)
+
+        if conform & _ARRAY:
+            self._del_Array(None)
+
+        if conform & _CACHE:
+            self._del_cached_elements()
+
+    #        if conform:
+    #            # Remove elements made invalid by updating the `dask`
+    #            # array
+    #            self._conform_after_dask_update()
+    #
+    #        if cfa_clear:
+    #            # Set the CFA write status to False
+    #            self._set_cfa_write(False)
 
     def _del_dask(self, default=ValueError(), conform=True):
         """Remove the dask array.
