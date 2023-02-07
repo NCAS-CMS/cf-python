@@ -372,11 +372,13 @@ def write(
             Key                Value
             =================  =======================================
 
-            ``???`` ---------- The types of construct to be CFA-ed. By
+            ``???`` ---------- The types of construct to be written as
+                               CFA-netCDF aggregated variables. By
                                default field data and the data Nd
                                metadata constructs. What about UGRID,
                                for which the 1-d coords are, combined,
-                               muchlarger than the data ....
+                               muchlarger than the data .... What
+                               about DSG and compression in general?
 
             ``properties``---- A (sequence of) `str` defining one or
                                more field or domain properties whose
@@ -402,6 +404,8 @@ def write(
 
             ``'base'``         Deprecated at version 3.14.0.
             =================  =======================================
+
+            The *cfa_options* default to ``{'???': ['field', 'N-d']}``
 
             *Parameter example:*
               ``cfa_options={'properties': 'tracking_id'}``
