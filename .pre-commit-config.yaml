@@ -10,7 +10,7 @@ repos:
   # Use specific format-enforcing pre-commit hooks from the core library
   # with the default configuration (see pre-commit.com for documentation)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v4.4.0
     hooks:
       - id: check-ast
       - id: debug-statements
@@ -23,32 +23,37 @@ repos:
   # (see https://black.readthedocs.io/en/stable/ for documentation and see
   # the cf-python pyproject.toml file for our custom black configuration)
   - repo: https://github.com/ambv/black
-    rev: 22.3.0
+    rev: 23.1.0
     hooks:
       - id: black
         language_version: python3
 
+  # NOTE: docformatter inclusion has been halted by commenting out this
+  # block, since at the moment it is too strict and has too many bugs
+  # relating to Sphinx admonition usage to be practically helpful.
+  # TODO revisit its usage in future.
+  #
   # Also format docstrings in a consistent way, on top of 'black' requirements
   # with the aim to auto-correct towards the Google docstring format (see
   # https://google.github.io/styleguide/pyguide.html#381-docstrings) as much
   # as possible (see https://github.com/myint/docformatter for docs, with
   # configuration as below)
-  - repo: https://github.com/myint/docformatter
-    rev: v1.4
-    hooks:
-      - id: docformatter
-        # These arguments act as the configuration for docformatter. They:
-        # * make docformatter auto-format in-place if not compliant;
-        # * ensure there is a blank line after the final non-empty line;
-        # * wraps both summary and description at 72 characters (the latter
-        #   by default).
-        args: [--in-place, --blank, --wrap-summaries=72]
+  # - repo: https://github.com/myint/docformatter
+  #  rev: v1.6.0.rc1
+  #  hooks:
+  #    - id: docformatter
+  #      # These arguments act as the configuration for docformatter. They:
+  #      # * make docformatter auto-format in-place if not compliant;
+  #      # * ensure there is a blank line after the final non-empty line;
+  #      # * wraps both summary and description at 79 characters (the latter
+  #      #   by default).
+  #      args: [--in-place, --blank, --wrap-summaries=60]
 
   # Additionally validate againt flake8 for other Python style enforcement
   # (see https://flake8.pycqa.org/en/latest/ for documentation and see
   # the cf-python .flake8 file for our custom flake8 configuration)
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.2
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
     hooks:
       - id: flake8
 
@@ -57,7 +62,7 @@ repos:
   # compatible with 'black' with the lines set to ensure so in the repo's
   # pyproject.toml. Other than that and the below, no extra config is required.
   - repo: https://github.com/pycqa/isort
-    rev: 5.10.1
+    rev: 5.12.0
     hooks:
       - id: isort
         name: isort (python)
