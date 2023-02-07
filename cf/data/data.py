@@ -352,7 +352,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(array, copy=copy, conform=False)
+                    self._set_dask(
+                        array, copy=copy, conform=False, clear_cfa=False
+                    )
             else:
                 self._del_dask(None)
 
@@ -458,7 +460,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, conform=False)
+        self._set_dask(array, conform=False, clear_cfa=False)
 
         # Override the data type
         if dtype is not None:

@@ -365,8 +365,8 @@ def write(
             no such constructs.
 
         cfa_options: `dict`, optional
-            A dictionary giving parameters for configuring the output
-            CFA-netCDF file:
+            A dictionary defining parameters for configuring the
+            output CFA-netCDF file:
 
             =================  =======================================
             Key                Value
@@ -384,10 +384,10 @@ def write(
                                more field or domain properties whose
                                values are to be written to the output
                                CFA-netCDF file as non-standardised
-                               aggregation instructions. When the the
-                               output file is read in with `cf.read`
-                               these terms are converted to auxiliary
-                               coordinate constructs.
+                               aggregation instruction variables. When
+                               the output file is read in with
+                               `cf.read` these variables are converted
+                               to auxiliary coordinate constructs.
 
             ``substitutions``- A dictionary whose key/value pairs
                                define text substitutions to be applied
@@ -411,7 +411,7 @@ def write(
               ``cfa_options={'properties': 'tracking_id'}``
 
             *Parameter example:*
-              ``cfa_options={'substitutions': {'${base}': '/home/data/'}``
+              ``cfa_options={'substitutions': {'${base}': '/home/data/'}}``
 
         endian: `str`, optional
             The endian-ness of the output file. Valid values are
