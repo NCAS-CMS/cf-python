@@ -8,6 +8,8 @@ class FullArray(Array):
 
     The array may be empty or all missing values.
 
+    .. versionadded:: 3.14.0
+
     """
 
     def __init__(
@@ -194,14 +196,43 @@ class FullArray(Array):
         """Tuple of array dimension sizes."""
         return self._get_component("shape")
 
-    def get_fill_value(self):
+    def get_fill_value(self, default=ValueError()):
         """Return the data array fill value.
 
         .. versionadded:: 3.14.0
+
+        .. seealso:: `set_fill_value`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                fill value has not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
                 The fill value.
 
         """
-        return self._get_component("fill_value", None)
+        return self._get_component("fill_value", default=default)
+
+    def set_fill_value(self, fill_value):
+        """Set the data array fill value.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `get_fill_value`
+
+        :Parameters:
+
+            fill_value : scalar, optional
+                The fill value for the array. May be set to
+                `cf.masked` or `np.ma.masked`.
+
+        :Returns:
+
+            `None`
+
+        """
+        self._set_component("fill_value", fill_value, copy=False)

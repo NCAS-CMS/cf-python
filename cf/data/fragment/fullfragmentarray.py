@@ -3,7 +3,7 @@ from .abstract import FragmentArray
 
 
 class FullFragmentArray(FragmentArray):
-    """A CFA fragment array TODOCFADOCS.
+    """A CFA fragment array that is filled with a value.
 
     .. versionadded:: TODOCFAVER
 
@@ -18,8 +18,8 @@ class FullFragmentArray(FragmentArray):
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        units=None,
-        calendar=None,
+        units=False,
+        calendar=False,
         source=None,
         copy=True,
     ):
@@ -27,8 +27,8 @@ class FullFragmentArray(FragmentArray):
 
         :Parameters:
 
-            fill_value:
-                TODOCFADOCS
+            fill_value: scalar
+                The fill value.
 
             filename: `str` or `None`
                 The name of the netCDF fragment file containing the
@@ -53,11 +53,15 @@ class FullFragmentArray(FragmentArray):
 
             units: `str` or `None`, optional
                 The units of the fragment data. Set to `None` to
-                indicate that there are no units.
+                indicate that there are no units. If unset then the
+                units will be set to `None` during the first
+                `__getitem__` call.
 
             calendar: `str` or `None`, optional
                 The calendar of the fragment data. Set to `None` to
-                indicate the CF default calendar, if applicable.
+                indicate the CF default calendar, if applicable. If
+                unset then the calendar will be set to `None` during
+                the first `__getitem__` call.
 
             {{aggregated_units: `str` or `None`, optional}}
 
@@ -76,8 +80,8 @@ class FullFragmentArray(FragmentArray):
             fill_value=fill_value,
             dtype=dtype,
             shape=shape,
-            units=None,
-            calendar=None,
+            units=units,
+            calendar=calendar,
             copy=False,
         )
 
@@ -91,3 +95,15 @@ class FullFragmentArray(FragmentArray):
             array=array,
             copy=False,
         )
+
+    def get_fill_value(self, default=ValueError()):
+        """The fragment array fill value.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+                The array fill value.
+
+        """
+        return self._get_component("fill_value", default=default)

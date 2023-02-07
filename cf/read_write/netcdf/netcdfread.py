@@ -228,6 +228,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             ncvar,
             units=kwargs["units"],
             calendar=kwargs["calendar"],
+            cfa_write=cfa_term is None,
         )
 
     def _is_cfa_variable(self, ncvar):
@@ -260,6 +261,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         units=None,
         calendar=None,
         ncdimensions=(),
+        cfa_write=True,
         **kwargs,
     ):
         """Create a Data object from a netCDF variable.
@@ -284,6 +286,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar: `str`, optional
                 The calendar of *array*. By default, or if `None`, it is
                 assumed that there is no calendar.
+
+            cfa_write: `bool`, optional
+                The CFA write status.
+
+                .. versionadded:: TODOCFAVER
 
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
@@ -314,8 +321,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         )
         self._cache_data_elements(data, ncvar)
 
-        # Set the CFA write status to `True`
-        data._set_cfa_write(True)
+        # Set the CFA write status
+        data._set_cfa_write(cfa_write)
 
         return data
 
@@ -627,8 +634,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         * Auxiliary coordinate constructs derived from
           non-standardised terms in CFA aggregation instructions. Each
           auxiliary coordinate construct spans the same domain axes as
-          the parent field construct. No auxiliary coordinate
-          constructs are ever created for `Domain` instances.
+          the parent field construct. Auxiliary coordinate constructs
+          are never created for `Domain` instances.
 
         .. versionadded:: TODODASKCFA
 
@@ -648,10 +655,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         **Examples**
 
-        >>> _customize_auxiliary_coordinates('tas', f)
+        >>> n._customize_auxiliary_coordinates('tas', f)
         {}
 
-        >>> _customize_auxiliary_coordinates('pr', f)
+        >>> n._customize_auxiliary_coordinates('pr', f)
         {'tracking_id': 'auxiliarycoordinate2'}
 
         """
@@ -661,7 +668,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             return {}
 
         # ------------------------------------------------------------
-        # Still here? Then we have a CFA-netCDF variable.
+        # Still here? Then we have a CFA-netCDF variable: Loop round
+        # the aggregation instruction terms and convert each
+        # non-standard term into an auxiliary coordinate construct
+        # that spans the same domain axes as the parent field.
         # ------------------------------------------------------------
         g = self.read_vars
 
@@ -678,10 +688,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 # Ignore standardised aggregation terms
                 continue
 
-            # Still here? Then we have a non-standardised aggregation
-            # term that we want to convert to an auxiliary coordinate
-            # construct that spans the same domain axes as the parent
-            # field.
+            # Still here? Then it's a non-standard aggregation term
             coord = self.implementation.initialise_AuxiliaryCoordinate()
 
             properties = g["variable_attributes"][ncvar].copy()

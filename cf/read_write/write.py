@@ -368,26 +368,46 @@ def write(
             A dictionary giving parameters for configuring the output
             CFA-netCDF file:
 
-            ==========  ===============================================
-            Key         Value
-            ==========  ===============================================
-            ``'base'``  * If ``None`` (the default) then file names
-                          within CFA-netCDF files are stored with
-                          absolute paths.
+            =================  =======================================
+            Key                Value
+            =================  =======================================
 
-                        * If set to an empty string then file names
-                          within CFA-netCDF files are given relative to
-                          the directory or URL base containing the
-                          output CFA-netCDF file.
+            ``???`` ---------- The types of construct to be CFA-ed. By
+                               default field data and the data Nd
+                               metadata constructs. What about UGRID,
+                               for which the 1-d coords are, combined,
+                               muchlarger than the data ....
 
-                        * If set to a string then file names within
-                          CFA-netCDF files are given relative to the
-                          directory or URL base described by the
-                          value. For example: ``'../archive'``.
-            ==========  ===============================================
+            ``properties``---- A (sequence of) `str` defining one or
+                               more field or domain properties whose
+                               values are to be written to the output
+                               CFA-netCDF file as non-standardised
+                               aggregation instructions. When the the
+                               output file is read in with `cf.read`
+                               these terms are converted to auxiliary
+                               coordinate constructs.
 
-            By default no parameters are specified.
+            ``substitutions``- A dictionary whose key/value pairs
+                               define text substitutions to be applied
+                               to the fragment file URIs when the
+                               output CFA-netCDF file is subsequently
+                               read. Each key must be of the form
+                               ``'${...}'``, where ``...`` represents
+                               one or more letters, digits, and
+                               underscores. The substitutions are
+                               stored in the output file in the
+                               ``substitutions`` attribute of the
+                               ``file`` aggregation instruction
+                               variable.
 
+            ``'base'``         Deprecated at version 3.14.0.
+            =================  =======================================
+
+            *Parameter example:*
+              ``cfa_options={'properties': 'tracking_id'}``
+
+            *Parameter example:*
+              ``cfa_options={'substitutions': {'${base}': '/home/data/'}``
 
         endian: `str`, optional
             The endian-ness of the output file. Valid values are

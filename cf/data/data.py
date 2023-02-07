@@ -1257,7 +1257,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self._del_Array(None)
         self._del_cached_elements()
 
-    def _set_dask(self, array, copy=False, conform=True, clear_cfa=True):
+    def _set_dask(self, array, copy=False, conform=True, cfa_clear=True):
         """Set the dask array.
 
         .. versionadded:: 3.14.0
@@ -1279,7 +1279,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 invalid by updating the `dask` array. See
                 `_conform_after_dask_update` for details.
 
-            clear_cfa: `bool`, optional
+            cfa_clear: `bool`, optional
                 If True, the default, then set the CFA write status to
                 `False`. If False then the CFA write status is
                 unchanged.
@@ -1325,8 +1325,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # array
             self._conform_after_dask_update()
 
-        if clear_cfa:
-            # Set the CFA write status to `False`
+        if cfa_clear:
+            # Set the CFA write status to False
             self._set_cfa_write(False)
 
     def _del_dask(self, default=ValueError(), conform=True):
@@ -1336,7 +1336,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
                      `_set_dask`
-
 
         :Parameters:
 
@@ -1450,6 +1449,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         .. versionadded:: TODOCFAVER
 
         .. seealso:: `get_cfa_write`
+
+        :Parameters:
+
+            status: `bool`
+                The new CFA write status.
 
         :Returns:
 
@@ -3662,14 +3666,38 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Get data as dask arrays and apply concatenation operation
         dxs = [d.to_dask_array() for d in processed_data]
-        data0._set_dask(da.concatenate(dxs, axis=axis))
+        dx = da.concatenate(dxs, axis=axis)
+
+        # Set the CFA write status
+        cfa_clear = False
+        for d in processed_data:
+            if not d.get_cfa_write():
+                # Set the CFA write status to False when any of the
+                # input data instances have False status
+                cfa_clear = True
+                break
+
+        if not cfa_clear:
+            non_concat_axis_chunks0 = list(processed_data[0].chunks)
+            non_concat_axis_chunks0.pop(axis)
+            for d in processed_data[1:]:
+                non_concat_axis_chunks = list(d.chunks)
+                non_concat_axis_chunks.pop(axis)
+                if non_concat_axis_chunks != non_concat_axis_chunks0:
+                    # Set the CFA write status to False when input
+                    # data instances have different chunk patterns for
+                    # the non-concatenation axes
+                    cfa_clear = True
+                    break
+
+        data0._set_dask(dx, cfa_clear=cfa_clear)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
         axis = data0._parse_axes(axis)[0]
         if axis in data0.cyclic():
             logger.warning(
                 f"Concatenating along a cyclic axis ({axis}) therefore the "
-                f"axis has been set as non-cyclic in the output."
+                "axis has been set as non-cyclic in the output."
             )
             data0.cyclic(axes=axis, iscyclic=False)
 
@@ -4306,7 +4334,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
         # Changing the units does not affect the CFA write status
-        self._set_dask(dx, clear_cfa=False)
+        self._set_dask(dx, cfa_clear=False)
 
         self._Units = value
 
@@ -5818,9 +5846,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         If and only if the CFA write status is `True`, then this
         `Data` instance has the potential to be written to a
-        CFA-netCDF file as aggregated data.
+        CFA-netCDF file as aggregated data. In this case it is the
+        choice of parameters to `cf.write` that determines if the data
+        is actually written as aggregated data.
 
         .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cf.write`
 
         :Returns:
 
@@ -7618,7 +7650,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = dx.reshape(shape)
 
         # Inserting a dimension does not affect the CFA write status
-        d._set_dask(dx, clear_cfa=False)
+        d._set_dask(dx, cfa_clear=False)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -10591,29 +10623,30 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         shape = d.shape
 
         if axes is None:
-            axes = [i for i, n in enumerate(shape) if n == 1]
+            iaxes = tuple([i for i, n in enumerate(shape) if n == 1])
         else:
-            axes = d._parse_axes(axes)
+            iaxes = d._parse_axes(axes)
 
             # Check the squeeze axes
-            for i in axes:
+            for i in iaxes:
                 if shape[i] > 1:
                     raise ValueError(
                         f"Can't squeeze {d.__class__.__name__}: "
                         f"Can't remove axis of size {shape[i]}"
                     )
 
-        if not axes:
+        if not iaxes:
+            # Short circuit if the squeeze is a null operation
             return d
 
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
         dx = d.to_dask_array()
-        dx = dx.squeeze(axis=tuple(axes))
+        dx = dx.squeeze(axis=iaxes)
         d._set_dask(dx)
 
         # Remove the squeezed axes names
-        d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
+        d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
 
         return d
 
@@ -10766,15 +10799,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         ndim = d.ndim
         if axes is None:
-            if ndim <= 1:
-                return d
             iaxes = tuple(range(ndim - 1, -1, -1))
         else:
             iaxes = d._parse_axes(axes)
 
-        # Note: _axes attribute is still important/utilised post-Daskification
-        # because e.g. axes labelled as cyclic by the _cyclic attribute use it
-        # to determine their position (see #discussion_r694096462 on PR #247).
+        if iaxes == tuple(range(ndim)):
+            # Short circuit if the transpose is a null operation
+            return d
+
+        # Note: The _axes attribute is important because e.g. axes
+        #       labelled as cyclic by the _cyclic attribute use it to
+        #       determine their position (see #discussion_r694096462
+        #       on PR #247).
         data_axes = d._axes
         d._axes = [data_axes[i] for i in iaxes]
 
@@ -10785,6 +10821,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             raise ValueError(
                 f"Can't transpose: Axes don't match array: {axes}"
             )
+
         d._set_dask(dx)
 
         return d
