@@ -324,6 +324,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # Set the CFA write status
         data._set_cfa_write(cfa_write)
 
+        # Set the active storage status  # ACTIVE
+        data._set_active_storage(True)  # ACTIVE
+
         return data
 
     def _customize_read_vars(self):
@@ -367,9 +370,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if g["CFA_version"] < Version("0.6.2"):
                 raise ValueError(
                     f"Can not read file {g['filename']} that uses "
-                    f"CFA-{CFA_version}. Only CFA-0.6.2 or newer files "
-                    "are handled. Use version 3.13.1 to read and write "
-                    f"CFA-0.4 files."
+                    f"CFA conventions version CFA-{CFA_version}. "
+                    "Only CFA-0.6.2 or newer files are allowed. Version "
+                    "3.13.1 can be used to read and write CFA-0.4 files."
                 )
 
             dimensions = g["variable_dimensions"]
@@ -384,7 +387,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 ncdimensions = attributes["aggregated_dimensions"].split()
                 dimensions[ncvar] = tuple(map(str, ncdimensions))
 
-                # Do not create fields/domains from the aggregation
+                # Do not create fields/domains from aggregation
                 # instruction variables
                 parsed_aggregated_data = self._parse_aggregated_data(
                     ncvar, attributes.get("aggregated_data")

@@ -86,6 +86,13 @@ _dtype_bool = np.dtype(bool)
 _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
+# 
+_NONE = 0
+_ARRAY = 1
+_CACHE = 2
+_CFA = 4
+_ACTIVE = 8  # ACTIVE
+_ALL = _ARRAY | _CACHE | _CFA | _ACTIVE  # ACTIVE
 
 class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
@@ -352,9 +359,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(
-                        array, copy=copy, conform=False, clear_cfa=False
-                    )
+                    self._set_dask(array, copy=copy, conform=_NONE)
             else:
                 self._del_dask(None)
 
@@ -460,7 +465,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, conform=False, clear_cfa=False)
+        self._set_dask(array, conform=_NONE)
 
         # Override the data type
         if dtype is not None:
@@ -1240,33 +1245,65 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    def _conform_after_dask_update(self):
-        """Remove elements made invalid by updating the `dask` array.
+    def _conform_after_dask_update(self, conform=_ALL):
+        """Remove components invalidated by updating the `dask` array.
 
         Removes or modifies components that can't be guaranteed to be
-        consistent with an updated `dask` array`:
-
-        * Deletes a source array.
-        * Deletes cached element values.
+        consistent with an updated `dask` array`. See the *conform*
+        parameter for details.
 
         .. versionadded:: 3.14.0
+
+        .. seealso:: `_del_Array`, `_del_cached_elements`,
+                     `_del_dask`, `_set_cfa_write`, `_set_dask`
+
+        :Parameters:
+
+            conform: `int`, optional
+                Specify which components should be removed. The value
+                of *conform* is sequentially combined with the
+                ``_ARRAY``, ``_CACHE`` and ``_CFA`` contants, using
+                the bitwise AND operator, to determine which
+                components should be removed:
+
+                * If ``conform & _ARRAY`` is True then delete a source
+                  array.
+                
+                * If ``conform & _CACHE`` is True then delete cached
+                  element values.
+                
+                * If ``conform & _CFA`` is True then set the CFA write
+                  status to `False`.
+                
+                By default *conform* is the ``_ALL`` contstant, which
+                results in all components being removed.
+
+                .. versionadded:: TODOCFAVER
 
         :Returns:
 
             `None`
 
         """
-        self._del_Array(None)
-        self._del_cached_elements()
+        if conform & _ARRAY:
+            # Delete a source array
+            self._del_Array(None)
 
-    #    def _set_dask(self, array, copy=False, conform=True, cfa_clear=True):
-    def _set_dask(self, array, copy=False, conform=True):
+        if conform & _CACHE:
+            # Delete cached element values
+            self._del_cached_elements()
+
+        if conform & _CFA:
+            # Set the CFA write status to False
+            self._set_cfa_write(False)
+
+    def _set_dask(self, array, copy=False, conform=_ALL):
         """Set the dask array.
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `get_cfa_write`, `to_dask_array`,
-                     `_conform_after_dask_update`, `_del_dask`
+        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+                     `_del_dask`
 
         :Parameters:
 
@@ -1277,22 +1314,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If True then copy *array* before setting it. By
                 default it is not copied.
 
-            conform: `bool`, optional
-                If True, the default, then remove elements made
-                invalid by updating the `dask` array. See
-                `_conform_after_dask_update` for details.
+            conform: `int`, optional
+                Specify which components should be removed. By default
+                *conform* is the ``_ALL`` contstant, which results in
+                all components being removed.
 
-            cfa_clear: `bool`, optional
-                If True, the default, then set the CFA write status to
-                `False`. If False then the CFA write status is
-                unchanged.
-
-                If and only if the CFA write status is `True` (as
-                determined by `get_cfa_write`), then this `Data`
-                instance has the potential to be written to a
-                CFA-netCDF file as aggregated data.
-
-                .. versionadded:: TODOCFAVER
+                See `_conform_after_dask_update` for further details.
 
         :Returns:
 
@@ -1322,32 +1349,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             array = array.copy()
 
         self._custom["dask"] = array
-
-        if conform is True:
-            self._set_cfa_write(False)
-            self._del_Array(None)
-            self._del_cached_elements()
-            return
-
-        if conform & _CFA:
-            self._set_cfa_write(False)
-
-        if conform & _ARRAY:
-            self._del_Array(None)
-
-        if conform & _CACHE:
-            self._del_cached_elements()
-
-    #        if conform:
-    #            # Remove elements made invalid by updating the `dask`
-    #            # array
-    #            self._conform_after_dask_update()
-    #
-    #        if cfa_clear:
-    #            # Set the CFA write status to False
-    #            self._set_cfa_write(False)
-
-    def _del_dask(self, default=ValueError(), conform=True):
+        self._conform_after_dask_update(conform)
+  
+    def _del_dask(self, default=ValueError(), conform=_ALL):
         """Remove the dask array.
 
         .. versionadded:: 3.14.0
@@ -1363,10 +1367,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 {{default Exception}}
 
-            conform: `bool`, optional
-                If True, the default, then remove elements made
-                invalid by updating the `dask` array. See
-                `_conform_after_dask_update` for details.
+            conform: `int`, optional
+                Specify which components should be removed. By default
+                *conform* is the ``_ALL`` contstant, which results in
+                all components being removed.
+
+                See `_conform_after_dask_update` for further details.
 
         :Returns:
 
@@ -1396,11 +1402,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 default, f"{self.__class__.__name__!r} has no dask array"
             )
 
-        if conform:
-            # Remove elements made invalid by deleting the `dask`
-            # array
-            self._conform_after_dask_update()
-
+        self._conform_after_dask_update(conform)
         return out
 
     def _del_cached_elements(self):
@@ -1463,6 +1465,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
     def _set_cfa_write(self, status):
         """Set the CFA write status of the data.
+
+        This should only be set to `True` if it is known that the dask
+        array is compatible with the requirements of a CFA-netCDF
+        aggregation variable's aggregated data. Conversely, it should
+        be set to `False` if it that compaibility can not be
+        guaranteed.
+
+        If unset then the CFA write status defaults to `False`.
 
         .. versionadded:: TODOCFAVER
 
@@ -2339,7 +2349,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = self.to_dask_array()
         dx = dx.persist()
-        d._set_dask(dx, conform=False)
+        d._set_dask(dx, conform=_ALL ^ _ARRAY ^ _CACHE)
 
         return d
 
@@ -2790,7 +2800,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, conform=False)
+        d._set_dask(dx, conform=_ALL ^ _ARRAY ^ _CACHE)
 
         return d
 
@@ -3687,15 +3697,15 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = da.concatenate(dxs, axis=axis)
 
         # Set the CFA write status
-        cfa_clear = False
+        cfa = _NONE
         for d in processed_data:
             if not d.get_cfa_write():
                 # Set the CFA write status to False when any of the
                 # input data instances have False status
-                cfa_clear = True
+                cfa = _CFA
                 break
 
-        if not cfa_clear:
+        if not cfa:
             non_concat_axis_chunks0 = list(processed_data[0].chunks)
             non_concat_axis_chunks0.pop(axis)
             for d in processed_data[1:]:
@@ -3705,10 +3715,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     # Set the CFA write status to False when input
                     # data instances have different chunk patterns for
                     # the non-concatenation axes
-                    cfa_clear = True
+                    cfa = _CFA
                     break
 
-        data0._set_dask(dx, cfa_clear=cfa_clear)
+        data0._set_dask(dx, conform=_ALL ^ cfa)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
         axis = data0._parse_axes(axis)[0]
@@ -4352,7 +4362,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
         # Changing the units does not affect the CFA write status
-        self._set_dask(dx, cfa_clear=False)
+        self._set_dask(dx, conform=_ALL ^ _CFA)
 
         self._Units = value
 
@@ -5865,8 +5875,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         If and only if the CFA write status is `True`, then this
         `Data` instance has the potential to be written to a
         CFA-netCDF file as aggregated data. In this case it is the
-        choice of parameters to `cf.write` that determines if the data
-        is actually written as aggregated data.
+        choice of parameters to the `cf.write` function that
+        determines if the data is actually written as aggregated data.
 
         .. versionadded:: TODOCFAVER
 
@@ -7667,8 +7677,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = d.to_dask_array()
         dx = dx.reshape(shape)
 
-        # Inserting a dimension does not affect the CFA write status
-        d._set_dask(dx, cfa_clear=False)
+        # Inserting a dimension does not affect the cached elements
+        # nor the CFA write status
+        d._set_dask(dx, conform=_ALL ^ _CACHE ^ CFA)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -8054,7 +8065,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
-        self._set_dask(dx, conform=False)
+        self._set_dask(dx, conform=_NONE)
         self.hardmask = True
 
     def has_calendar(self):
@@ -8151,7 +8162,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
-        self._set_dask(dx, conform=False)
+        self._set_dask(dx, conform=_NONE)
         self.hardmask = False
 
     @_inplace_enabled(default=False)
@@ -10464,7 +10475,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = self.to_dask_array()
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx, conform=False)
+        self._set_dask(dx, conform=_NONE)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -10661,7 +10672,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # one size 1 axis needs squeezing.
         dx = d.to_dask_array()
         dx = dx.squeeze(axis=iaxes)
-        d._set_dask(dx)
+
+        # Squeezing a dimension does not affect the cached elements
+        d._set_dask(dx, conform=_ALL ^ _CACHE)
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
