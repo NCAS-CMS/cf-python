@@ -1,8 +1,9 @@
 from ..array.umarray import UMArray
 from .abstract import FragmentArray
+from .mixin import FragmentFileArrayMixin
 
 
-class UMFragmentArray(FragmentArray):
+class UMFragmentArray(FragmentFileArrayMixin, FragmentArray):
     """A CFA fragment array stored in a UM or PP file.
 
     .. versionadded:: 3.14.0
@@ -80,8 +81,6 @@ class UMFragmentArray(FragmentArray):
         )
 
         super().__init__(
-            filename=filename,
-            address=address,
             dtype=dtype,
             shape=shape,
             aggregated_units=aggregated_units,

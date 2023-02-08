@@ -1,4 +1,4 @@
-from .fragment import FullFragmentArray
+from .fullfragmentarray import FullFragmentArray
 
 
 class MissingFragmentArray(FullFragmentArray):
@@ -10,8 +10,6 @@ class MissingFragmentArray(FullFragmentArray):
 
     def __init__(
         self,
-        filename=None,
-        address=None,
         dtype=None,
         shape=None,
         aggregated_units=False,
@@ -24,14 +22,6 @@ class MissingFragmentArray(FullFragmentArray):
         """**Initialisation**
 
         :Parameters:
-
-            filename: `str` or `None`
-                The name of the netCDF fragment file containing the
-                array.
-
-            address: `str`, optional
-                The name of the netCDF variable containing the
-                fragment array. Required unless *varid* is set.
 
             dtype: `numpy.dtype`
                 The data type of the aggregated array. May be `None`
@@ -67,8 +57,6 @@ class MissingFragmentArray(FullFragmentArray):
 
         super().__init__(
             fill_value=np.ma.masked,
-            filename=filename,
-            address=address,
             dtype=dtype,
             shape=shape,
             aggregated_units=aggregated_units,

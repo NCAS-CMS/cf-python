@@ -1,11 +1,10 @@
 from numbers import Integral
 
 from ....units import Units
-from ...array.abstract import FileArray
 
 
-class FragmentArray(FileArray):
-    """A CFA fragment array.
+class FragmentArray:
+    """Abstract base class for a CFA fragment array.
 
     .. versionadded:: 3.14.0
 
@@ -13,8 +12,6 @@ class FragmentArray(FileArray):
 
     def __init__(
         self,
-        filename=None,
-        address=None,
         dtype=None,
         shape=None,
         aggregated_units=False,
@@ -26,14 +23,6 @@ class FragmentArray(FileArray):
         """**Initialisation**
 
         :Parameters:
-
-            filename: `str`
-                The name of the netCDF fragment file containing the
-                array.
-
-            address: `str`, optional
-                The name of the netCDF variable containing the
-                fragment array. Required unless *varid* is set.
 
             dtype: `numpy.dtype`
                 The data type of the aggregated array. May be `None`
@@ -67,16 +56,6 @@ class FragmentArray(FileArray):
 
         if source is not None:
             try:
-                filename = source._get_component("filename", None)
-            except AttributeError:
-                filename = None
-
-            try:
-                address = source._get_component("address", None)
-            except AttributeError:
-                address = None
-
-            try:
                 dtype = source._get_component("dtype", None)
             except AttributeError:
                 dtype = None
@@ -105,8 +84,6 @@ class FragmentArray(FileArray):
             except AttributeError:
                 array = None
 
-        self._set_component("filename", filename, copy=False)
-        self._set_component("address", address, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("shape", shape, copy=False)
         self._set_component("aggregated_units", aggregated_units, copy=False)
@@ -263,23 +240,6 @@ class FragmentArray(FileArray):
             self.get_aggregated_units(), self.get_aggregated_calendar(None)
         )
 
-    def close(self):
-        """Close the dataset containing the data."""
-        return NotImplemented  # pragma: no cover
-
-    def get_address(self):
-        """The address of the fragment in the file.
-
-        .. versionadded:: 3.14.0
-
-        :Returns:
-
-                The file address of the fragment, or `None` if there
-                isn't one.
-
-        """
-        return self._get_component("address", None)
-
     def get_aggregated_calendar(self, default=ValueError()):
         """The calendar of the aggregated array.
 
@@ -351,13 +311,13 @@ class FragmentArray(FileArray):
         return units
 
     def get_array(self):
-        """The fragment array stored in a file.
+        """The fragment array.
 
         .. versionadded:: 3.14.0
 
         :Returns:
 
-            `Array`
+            Subclass of `Array`
                 The object defining the fragment array.
 
         """
@@ -384,7 +344,3 @@ class FragmentArray(FileArray):
 
         """
         return self.get_array().get_units(default)
-
-    def open(self):
-        """Returns an open dataset containing the data array."""
-        return NotImplemented  # pragma: no cover

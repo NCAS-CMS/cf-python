@@ -58,7 +58,7 @@ class FullArray(Array):
 
         if source is not None:
             try:
-                fill_value = source._get_component("fill_value", None)
+                fill_value = source._get_component("full_value", None)
             except AttributeError:
                 fill_value = None
 
@@ -82,7 +82,7 @@ class FullArray(Array):
             except AttributeError:
                 calendar = None
 
-        self._set_component("fill_value", fill_value, copy=False)
+        self._set_component("full_value", fill_value, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("shape", shape, copy=False)
         self._set_component("units", units, copy=False)
@@ -119,7 +119,7 @@ class FullArray(Array):
                 apply_indices = True
                 array_shape = self.shape
 
-        fill_value = self.get_fill_value()
+        fill_value = self.get_full_value()
         if fill_value is np.ma.masked:
             array = np.ma.masked_all(array_shape, dtype=self.dtype)
         elif fill_value is not None:
@@ -150,7 +150,7 @@ class FullArray(Array):
         x.__str__() <==> str(x)
 
         """
-        fill_value = self.get_fill_value()
+        fill_value = self.get_full_value()
         if fill_value is None:
             return "Uninitialised"
 
@@ -196,12 +196,12 @@ class FullArray(Array):
         """Tuple of array dimension sizes."""
         return self._get_component("shape")
 
-    def get_fill_value(self, default=ValueError()):
+    def get_full_value(self, default=AttributeError()):
         """Return the data array fill value.
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `set_fill_value`
+        .. seealso:: `set_full_value`
 
         :Parameters:
 
@@ -215,14 +215,14 @@ class FullArray(Array):
                 The fill value.
 
         """
-        return self._get_component("fill_value", default=default)
+        return self._get_component("full_value", default=default)
 
-    def set_fill_value(self, fill_value):
+    def set_full_value(self, fill_value):
         """Set the data array fill value.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.14.0
 
-        .. seealso:: `get_fill_value`
+        .. seealso:: `get_full_value`
 
         :Parameters:
 
@@ -235,4 +235,4 @@ class FullArray(Array):
             `None`
 
         """
-        self._set_component("fill_value", fill_value, copy=False)
+        self._set_component("full_value", fill_value, copy=False)

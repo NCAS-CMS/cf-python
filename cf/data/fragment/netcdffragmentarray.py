@@ -1,8 +1,9 @@
 from ..array.netcdfarray import NetCDFArray
 from .abstract import FragmentArray
+from .mixin import FragmentFileArrayMixin
 
 
-class NetCDFFragmentArray(FragmentArray):
+class NetCDFFragmentArray(FragmentFileArrayMixin, FragmentArray):
     """A CFA fragment array stored in a netCDF file.
 
     .. versionadded:: 3.14.0
@@ -95,8 +96,6 @@ class NetCDFFragmentArray(FragmentArray):
         )
 
         super().__init__(
-            filename=filename,
-            address=address,
             dtype=dtype,
             shape=shape,
             aggregated_units=aggregated_units,

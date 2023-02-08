@@ -198,7 +198,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         """
         if cfa_term is None and not self._is_cfa_variable(ncvar):
             # Create data for a normal netCDF variable
-            return super()._create_data(
+            data = super()._create_data(
                 ncvar=ncvar,
                 construct=construct,
                 unpacked_dtype=unpacked_dtype,
@@ -207,12 +207,21 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 coord_ncvar=coord_ncvar,
             )
 
+            self._cache_data_elements(data, ncvar)
+
+            if data.npartitions == 1:
+                # Set the CFA write status to True when there is
+                # exactly one dask chunk
+                data._set_cfa_write(True)
+
+            return data
+
         # ------------------------------------------------------------
         # Still here? Create data for a CFA variable
         # ------------------------------------------------------------
-        # Remove the aggregation attributes from the construct
-        # properties
         if construct is not None:
+            # Remove the aggregation attributes from the construct
+            # properties
             for attr in ("aggregation_dimensions", "aggregation_data"):
                 self.implementation.del_property(construct, attr, None)
 
@@ -223,16 +232,23 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             term=cfa_term,
         )
 
-        return self._create_Data(
+        data = self._create_Data(
             cfa_array,
             ncvar,
             units=kwargs["units"],
             calendar=kwargs["calendar"],
-            cfa_write=cfa_term is None,
         )
 
+        if cfa_term is not None:
+            self._cache_data_elements(data, ncvar)
+
+        # Set the CFA write status to True
+        data._set_cfa_write(True)
+
+        return data
+
     def _is_cfa_variable(self, ncvar):
-        """Return True if *ncvar* is a CFA variable.
+        """Return True if *ncvar* is a CFA aggregated variable.
 
         .. versionadded:: 3.14.0
 
@@ -248,7 +264,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         """
         g = self.read_vars
-
         if not g["cfa"] or ncvar in g["external_variables"]:
             return False
 
@@ -261,7 +276,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         units=None,
         calendar=None,
         ncdimensions=(),
-        cfa_write=True,
         **kwargs,
     ):
         """Create a Data object from a netCDF variable.
@@ -286,11 +300,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar: `str`, optional
                 The calendar of *array*. By default, or if `None`, it is
                 assumed that there is no calendar.
-
-            cfa_write: `bool`, optional
-                The CFA write status.
-
-                .. versionadded:: TODOCFAVER
 
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
@@ -319,13 +328,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             chunks=chunks,
             **kwargs,
         )
-        self._cache_data_elements(data, ncvar)
-
-        # Set the CFA write status
-        data._set_cfa_write(cfa_write)
-
-        # Set the active storage status  # ACTIVE
-        data._set_active_storage(True)  # ACTIVE
 
         return data
 
@@ -369,10 +371,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             g["CFA_version"] = Version(CFA_version)
             if g["CFA_version"] < Version("0.6.2"):
                 raise ValueError(
-                    f"Can not read file {g['filename']} that uses "
+                    f"Can't read file {g['filename']} that uses obselete "
                     f"CFA conventions version CFA-{CFA_version}. "
-                    "Only CFA-0.6.2 or newer files are allowed. Version "
-                    "3.13.1 can be used to read and write CFA-0.4 files."
+                    "(Note that version 3.13.1 can be used to read and "
+                    "write CFA-0.4 files.)"
                 )
 
             dimensions = g["variable_dimensions"]
@@ -491,12 +493,20 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         :Parameters:
 
             ncvar: `str`
+                The name of the CFA-netCDF aggregated variable. See
+                the *term* parameter.
 
             unpacked_dtype: `False` or `numpy.dtype`, optional
 
             coord_ncvar: `str`, optional
 
             term: `str`, optional
+                The name of a non-standard aggregation instruction
+                term from which to create the array. If set then
+                *ncvar* must be the value of the term in the
+                ``aggregation_data`` attribute.
+
+                .. versionadded:: TODOCFAVER
 
         :Returns:
 

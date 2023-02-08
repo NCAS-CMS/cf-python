@@ -86,13 +86,15 @@ _dtype_bool = np.dtype(bool)
 _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
-# 
+# Contstants used to specify which components should be removed when
+# the dask array is updated. See `Data._conform_after_dask_update` for
+# details.
 _NONE = 0
 _ARRAY = 1
 _CACHE = 2
 _CFA = 4
-_ACTIVE = 8  # ACTIVE
-_ALL = _ARRAY | _CACHE | _CFA | _ACTIVE  # ACTIVE
+_ALL = _ARRAY | _CACHE | _CFA
+
 
 class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
@@ -1262,21 +1264,25 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             conform: `int`, optional
                 Specify which components should be removed. The value
                 of *conform* is sequentially combined with the
-                ``_ARRAY``, ``_CACHE`` and ``_CFA`` contants, using
-                the bitwise AND operator, to determine which
-                components should be removed:
+                ``_ARRAY``, ``_CACHE`` and ``_CFA`` integer-valued
+                contants, using the bitwise AND operator, to determine
+                which components should be removed:
 
                 * If ``conform & _ARRAY`` is True then delete a source
                   array.
-                
+
                 * If ``conform & _CACHE`` is True then delete cached
                   element values.
-                
+
                 * If ``conform & _CFA`` is True then set the CFA write
                   status to `False`.
-                
-                By default *conform* is the ``_ALL`` contstant, which
-                results in all components being removed.
+
+                By default *conform* is the ``_ALL`` integer-valued
+                constant, which results in all components being
+                removed.
+
+                If *conform* is the ``_NONE`` integer-valued constant
+                then no components are removed.
 
                 .. versionadded:: TODOCFAVER
 
@@ -1316,8 +1322,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             conform: `int`, optional
                 Specify which components should be removed. By default
-                *conform* is the ``_ALL`` contstant, which results in
-                all components being removed.
+                *conform* is the ``_ALL`` integer-valued constant,
+                which results in all components being removed.
 
                 See `_conform_after_dask_update` for further details.
 
@@ -1350,7 +1356,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         self._custom["dask"] = array
         self._conform_after_dask_update(conform)
-  
+
     def _del_dask(self, default=ValueError(), conform=_ALL):
         """Remove the dask array.
 
@@ -1369,8 +1375,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             conform: `int`, optional
                 Specify which components should be removed. By default
-                *conform* is the ``_ALL`` contstant, which results in
-                all components being removed.
+                *conform* is the ``_ALL`` integer-valued constant,
+                which results in all components being removed.
 
                 See `_conform_after_dask_update` for further details.
 
@@ -1476,7 +1482,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `get_cfa_write`
+        .. seealso:: `cfa_write`
 
         :Parameters:
 
@@ -3699,9 +3705,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Set the CFA write status
         cfa = _NONE
         for d in processed_data:
-            if not d.get_cfa_write():
-                # Set the CFA write status to False when any of the
-                # input data instances have False status
+            if not d.cfa_write:
+                # Set the CFA write status to False when any input
+                # data instance has False status
                 cfa = _CFA
                 break
 
@@ -4372,6 +4378,37 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "Can't delete the Units attribute. "
             "Consider using the override_units method instead."
         )
+
+    @property
+    def cfa_write(self):
+        """The CFA write status of the data.
+
+        If and only if the CFA write status is `True`, then this
+        `Data` instance has the potential to be written to a
+        CFA-netCDF file as aggregated data. In this case it is the
+        choice of parameters to the `cf.write` function that
+        determines if the data is actually written as aggregated data.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cf.write`
+
+        :Returns:
+
+            `bool`
+
+        **Examples**
+
+        A sufficient, but not necessary, condition for the CFA write
+        status to be `False` is if any chunk of the data is specified
+        by an array in memory, rather than by an array in a file.
+
+        >>> d = cf.Data([1, 2])
+        >>> d.cfa_write
+        False
+
+        """
+        return self._custom.get("cfa_write", False)
 
     @property
     def data(self):
@@ -5868,36 +5905,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.override_units(units, inplace=True)
 
         return d
-
-    def get_cfa_write(self):
-        """The CFA write status of the data.
-
-        If and only if the CFA write status is `True`, then this
-        `Data` instance has the potential to be written to a
-        CFA-netCDF file as aggregated data. In this case it is the
-        choice of parameters to the `cf.write` function that
-        determines if the data is actually written as aggregated data.
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `cf.write`
-
-        :Returns:
-
-            `bool`
-
-        **Examples**
-
-        A sufficient, but not necessary, condition for the CFA write
-        status to be `False` is if any chunk of the data is specified
-        by an array in memory, rather than by an array in a file.
-
-        >>> d = cf.Data([1, 2])
-        >>> d.get_cfa_write()
-        False
-
-        """
-        return self._custom.get("cfa_write", False)
 
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
@@ -7679,7 +7686,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Inserting a dimension does not affect the cached elements
         # nor the CFA write status
-        d._set_dask(dx, conform=_ALL ^ _CACHE ^ CFA)
+        d._set_dask(dx, conform=_ALL ^ _CACHE ^ _CFA)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)

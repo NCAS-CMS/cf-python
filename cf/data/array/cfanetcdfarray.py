@@ -44,7 +44,7 @@ class CFANetCDFArray(NetCDFArray):
         units=False,
         calendar=False,
         instructions=None,
-        term=None,
+        non_standard_term=None,
         source=None,
         copy=True,
     ):
@@ -108,12 +108,24 @@ class CFANetCDFArray(NetCDFArray):
                 indicate the CF default calendar, if applicable.
 
             instructions: `str`, optional
-                The ``aggregated_data`` attribute value found on the
-                CFA netCDF variable. If set then this will be used by
-                `__dask_tokenize__` to improve performance.
+                The ``aggregated_data`` attribute value as found on
+                the CFA netCDF variable. If set then this will be used
+                to improve the performance of `__dask_tokenize__`.
 
-            term: `str`, optional
-                TODOCFADOCS
+            non_standard_term: `str`, optional
+                The name of a non-standard aggregation instruction
+                term from which the array is to be created, instead of
+                the creating the aggregated data in the usual
+                manner. If set then *ncvar* must be the name of the
+                term's CFA-netCDF aggregation instruction variable,
+                which must be defined on the fragment dimensions and
+                no others. Each value of the aggregation instruction
+                variable will be broadcast across the shape of the
+                corresponding fragment.
+
+                *Parameter example:*
+                  ``non_standard_term='tracking_id',
+                  ncvar='aggregation_id'``
 
             {{init source: optional}}
 
@@ -139,9 +151,9 @@ class CFANetCDFArray(NetCDFArray):
                 aggregated_data = {}
 
             try:
-                term = source.get_term()
+                non_standard_term = source.get_non_standard_term()
             except AttributeError:
-                term = None
+                non_standard_term = None
 
         elif filename is not None:
             from CFAPython import CFAFileFormat
@@ -186,7 +198,13 @@ class CFANetCDFArray(NetCDFArray):
             compute(
                 *[
                     delayed(
-                        set_fragment(var, loc, aggregated_data, filename, term)
+                        set_fragment(
+                            var,
+                            loc,
+                            aggregated_data,
+                            filename,
+                            non_standard_term,
+                        )
                     )
                     for loc in product(*[range(i) for i in fragment_shape])
                 ]
@@ -209,12 +227,12 @@ class CFANetCDFArray(NetCDFArray):
             fragment_shape = None
             aggregated_data = None
             instructions = None
-            term = None
+            non_standard_term = None
 
         self._set_component("fragment_shape", fragment_shape, copy=False)
         self._set_component("aggregated_data", aggregated_data, copy=False)
         self._set_component("instructions", instructions, copy=False)
-        self._set_component("term", term, copy=False)
+        self._set_component("non_standard_term", non_standard_term, copy=False)
 
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
@@ -239,7 +257,7 @@ class CFANetCDFArray(NetCDFArray):
         return NotImplemented  # pragma: no cover
 
     def _set_fragment(
-        self, var, frag_loc, aggregated_data, cfa_filename, term
+        self, var, frag_loc, aggregated_data, cfa_filename, non_standard_term
     ):
         """Create a new key/value pair in the *aggregated_data*
         dictionary.
@@ -265,8 +283,15 @@ class CFANetCDFArray(NetCDFArray):
             cfa_filename: `str`
                 TODOCFADOCS
 
-            term: `str` or `None`
-                TODOCFADOCS
+            non_standard_term: `str` or `None`
+                The name of a non-standard aggregation instruction
+                term from which the array is to be created, instead of
+                the creating the aggregated data in the usual
+                manner. Each value of the aggregation instruction
+                variable will be broadcast across the shape of the
+                corresponding fragment.
+
+                .. versionadded:: TODOCFAVER
 
         :Returns:
 
@@ -276,13 +301,12 @@ class CFANetCDFArray(NetCDFArray):
         fragment = var.getFrag(frag_loc=frag_loc)
         location = fragment.location
 
-        if term is not None:
+        if non_standard_term is not None:
+            # This fragment contains a constant value
             aggregated_data[frag_loc] = {
-                "file": cfa_filename,
-                "address": self.get_ncvar(),
                 "format": "full",
                 "location": location,
-                "fill_value": getattr(fragment, term),
+                "full_value": getattr(fragment, non_standard_term),
             }
             return
 
@@ -292,19 +316,25 @@ class CFANetCDFArray(NetCDFArray):
         address = fragment.address
 
         if address is not None:
+            # This fragment is contained in a file
             if filename is None:
-                # This fragment is contained in the CFA-netCDF
-                # file
+                # This fragment is contained in the CFA-netCDF file
                 filename = cfa_filename
                 fmt = "nc"
 
-        aggregated_data[frag_loc] = {
-            "file": filename,
-            "address": address,
-            "format": fmt,
-            "location": location,
-        }
-
+            aggregated_data[frag_loc] = {
+                "file": filename,
+                "address": address,
+                "format": fmt,
+                "location": location,
+            }
+        elif filename is None:
+            # This fragment contains wholly missing values
+            aggregated_data[frag_loc] = {
+                "format": None,
+                "location": location,
+            }
+                        
     def get_aggregated_data(self, copy=True):
         """Get the aggregation data dictionary.
 
@@ -423,6 +453,22 @@ class CFANetCDFArray(NetCDFArray):
 
         """
         return self._get_component("fragment_shape")
+
+    def get_non_standard_term(self, default=ValueError()):
+        """Get the sizes of the fragment dimensions.
+
+        The fragment dimension sizes are given in the same order as
+        the aggregated dimension sizes given by `shape`
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `tuple`
+                The shape of the fragment dimensions.
+
+        """
+        return self._get_component("non_standard_term", default=default)
 
     def subarray_shapes(self, shapes):
         """Create the subarray shapes.

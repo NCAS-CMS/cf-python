@@ -12,8 +12,6 @@ class FullFragmentArray(FragmentArray):
     def __init__(
         self,
         fill_value=None,
-        filename=None,
-        address=None,
         dtype=None,
         shape=None,
         aggregated_units=False,
@@ -29,14 +27,6 @@ class FullFragmentArray(FragmentArray):
 
             fill_value: scalar
                 The fill value.
-
-            filename: `str` or `None`
-                The name of the netCDF fragment file containing the
-                array.
-
-            address: `str`, optional
-                The name of the netCDF variable containing the
-                fragment array.
 
             dtype: `numpy.dtype`
                 The data type of the aggregated array. May be `None`
@@ -86,8 +76,6 @@ class FullFragmentArray(FragmentArray):
         )
 
         super().__init__(
-            filename=filename,
-            address=address,
             dtype=dtype,
             shape=shape,
             aggregated_units=aggregated_units,
@@ -96,14 +84,21 @@ class FullFragmentArray(FragmentArray):
             copy=False,
         )
 
-    def get_fill_value(self, default=ValueError()):
+    def get_full_value(self, default=AttributeError()):
         """The fragment array fill value.
 
         .. versionadded:: TODOCFAVER
 
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                fill value has not been set. If set to an `Exception`
+                instance then it will be raised instead.
+
         :Returns:
 
-                The array fill value.
+                The fill value.
 
         """
-        return self._get_component("fill_value", default=default)
+        return self.get_array().get_full_value(default=default)

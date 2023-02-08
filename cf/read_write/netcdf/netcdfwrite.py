@@ -231,8 +231,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 The updated list of netCDF auxiliary coordinate names.
 
         """
-        # Unsafe to set mutable '{}' as default in the func signature.
-        if extra is None:  # distinguish from falsy '{}'
+        if extra is None:
             extra = {}
 
         coord_1d = self._change_reference_datetime(coord_1d)
