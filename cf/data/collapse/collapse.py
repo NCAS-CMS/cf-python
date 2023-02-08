@@ -20,14 +20,15 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     * The collapse method's `active_storage` parameter is True.
     * The method's identity is recognised by the `Active` class.
-    * The `Active` class recognioses the storage location as one that
+    * The `Active` class recognises the storage location as one that
       supports active storage operations.
 
-    However, if all of these conditions are passed but the dask array
-    being collapsed is, on inspection, not deemed suitable, then the
-    collapse operation will be executed without active storage.
+    However, when all of these conditions are passed, the collapse
+    operation will *not* be executed with active storage if the
+    dask array is deemed, on inspection to be unsuitable. See the
+    `actify` function for details.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
@@ -40,7 +41,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         See `_docstring_substitutions` for details.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `_docstring_substitutions`
 
@@ -58,7 +59,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         See `_docstring_package_depth` for details.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         return 0
@@ -83,7 +84,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -149,7 +150,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -204,7 +205,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -274,7 +275,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -332,7 +333,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -401,7 +402,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -467,7 +468,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -521,7 +522,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -591,7 +592,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -659,7 +660,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -729,7 +730,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -801,7 +802,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -874,7 +875,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -932,7 +933,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
     ):
         """Return unique elements of the data.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -1000,7 +1001,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
         https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
         for mathematical definitions.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 

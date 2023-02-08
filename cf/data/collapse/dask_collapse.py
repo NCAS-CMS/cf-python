@@ -20,7 +20,7 @@ from .collapse_utils import double_precision_dtype
 def mask_small_sample_size(x, N, axis, mtol, original_shape):
     """Mask elements where the sample size is below a threshold.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -78,7 +78,7 @@ def mask_small_sample_size(x, N, axis, mtol, original_shape):
 def sum_weights_chunk(x, weights=None, square=False, N=None, **kwargs):
     """Sum the weights.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -140,7 +140,7 @@ def combine_arrays(
 
     See `dask.array.reductions.mean_combine` for an example.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Returns:
 
@@ -159,7 +159,7 @@ def combine_arrays(
 def sum_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     """Alias of `combine_arrays` with ``func=chunk.sum``.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
     return combine_arrays(
@@ -170,7 +170,7 @@ def sum_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
 def max_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     """Alias of `combine_arrays` with ``func=chunk.max``.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
     return combine_arrays(
@@ -181,7 +181,7 @@ def max_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
 def min_arrays(pairs, key, axis, dtype, computing_meta=False, **kwargs):
     """Alias of `combine_arrays` with ``func=chunk.min``.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
     return combine_arrays(
@@ -193,7 +193,7 @@ def sum_sample_sizes(pairs, axis, computing_meta=False, **kwargs):
     """Alias of `combine_arrays` with ``key="N", func=chunk.sum,
     dtype="i8"``.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
     return combine_arrays(
@@ -216,7 +216,7 @@ def cf_mean_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
      This function is passed to `dask.array.reduction` as its *chunk*
      parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -254,7 +254,7 @@ def cf_mean_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -298,7 +298,7 @@ def cf_mean_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -337,7 +337,7 @@ def cf_max_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -367,7 +367,7 @@ def cf_max_combine(pairs, axis=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -401,7 +401,7 @@ def cf_max_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -448,7 +448,7 @@ def cf_mid_range_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -488,7 +488,7 @@ def cf_min_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -518,7 +518,7 @@ def cf_min_combine(pairs, axis=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -552,7 +552,7 @@ def cf_min_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -591,7 +591,7 @@ def cf_range_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -625,7 +625,7 @@ def cf_range_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -661,7 +661,7 @@ def cf_range_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -701,7 +701,7 @@ def cf_rms_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -738,7 +738,7 @@ def cf_rms_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -777,7 +777,7 @@ def cf_sample_size_chunk(x, dtype="i8", computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -813,7 +813,7 @@ def cf_sample_size_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -848,7 +848,7 @@ def cf_sample_size_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -887,7 +887,7 @@ def cf_sum_chunk(x, weights=None, dtype="f8", computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -921,7 +921,7 @@ def cf_sum_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -956,7 +956,7 @@ def cf_sum_agg(
     This function is passed to `dask.array.reduction` as its
     *aggregate* parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -1038,7 +1038,7 @@ def cf_unique_chunk(x, dtype=None, computing_meta=False, **kwargs):
     This function is passed to `dask.array.reduction` as its *chunk*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -1066,7 +1066,7 @@ def cf_unique_agg(pairs, axis=None, computing_meta=False, **kwargs):
 
     It is assumed that the arrays are one-dimensional.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -1105,7 +1105,7 @@ def cf_var_chunk(
     https://en.wikipedia.org/wiki/Pooled_variance#Sample-based_statistics
     for details.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -1177,7 +1177,7 @@ def cf_var_combine(
     This function is passed to `dask.array.reduction` as its *combine*
     parameter.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -1236,7 +1236,7 @@ def cf_var_agg(
     https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights
     for details.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 

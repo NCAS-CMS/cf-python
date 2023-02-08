@@ -89,6 +89,14 @@ _dtype_bool = np.dtype(bool)
 _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
+#
+_NONE = 0
+_ARRAY = 1
+_CACHE = 2
+_CFA = 4
+_ACTIVE = 8
+_ALL = _ARRAY | _CACHE | _CFA | _ACTIVE
+
 
 class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
@@ -635,13 +643,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _is_file_array(self, array):
         """Whether or not an array is stored on disk.
 
+        .. versionaddedd: TODOACTIVEVER
+        
         :Parameters:
 
             array:
+                TODOACTIVEDOCS
 
         :Returns:
 
             `bool`
+                TODOACTIVEDOCS
 
         """
         return isinstance(array, FileArrayMixin)
@@ -1259,7 +1271,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. versionadded:: TODOACTIVEVER
 
-        .. seealso:: `_set_active_storage`
+        .. seealso:: `active_storage`, `_set_active_storage`
 
         :Returns:
 
@@ -1278,14 +1290,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         False
 
         """
-        self._custom.pop("active_storage", None)
+        self._custom.pop("active_storage", False)
 
     def _set_active_storage(self, value):
         """TODOACTIVEDOCS.
 
         .. versionadded:: TODOACTIVEVER
 
-        .. seealso:: `_del_active_storage`
+        .. seealso:: `active_storage`, `_del_active_storage`
 
         :Returns:
 
@@ -3649,11 +3661,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             processed_data.append(data1)
 
         # Get data as dask arrays and apply concatenation operation
-        dxs = []
-        for data1 in processed_data:
-            dxs.append(data1.to_dask_array())
+        dxs = [d.to_dask_array() for d in processed_data]
+        dx = da.concatenate(dxs, axis=axis)
+        
+        # Set the active storage status
+        active = _NONE
+        for d in processed_data:
+            if not d.active_storage():
+                # Set the output active storage status to False when any
+                # input data instance has False status
+                active = _ACTIVE
+                break
 
-        data0._set_dask(da.concatenate(dxs, axis=axis))
+        data0._set_dask(dx, conform=_ALL ^ active)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
         axis = data0._parse_axes(axis)[0]

@@ -1,9 +1,4 @@
 from functools import wraps
-from numbers import Integral
-
-import dask.array as da
-from dask.array.utils import validate_axis
-from dask.base import collections_to_dsk
 
 
 def actify(a, method, axis=None):
@@ -28,6 +23,12 @@ def actify(a, method, axis=None):
             TODOACTIVEDOCS
 
     """
+    from numbers import Integral
+    
+    import dask.array as da
+    from dask.base import collections_to_dsk
+    from dask.array.utils import validate_axis
+
     if method not in Active.methods():
         # The given method is not recognised by `Active`, so return
         # the input data unchanged.
@@ -36,7 +37,7 @@ def actify(a, method, axis=None):
     # Parse axis
     if axis is None:
         axis = tuple(range(a.ndim))
-    else:
+    else
         if isinstance(axis, Integral):
             axis = (axis,)
 
@@ -56,18 +57,17 @@ def actify(a, method, axis=None):
     # so that the data defintions come out first, allowing for a
     # faster short circuit when using active storage is not possible.
     #
-    # It is assumed that this `actify` has only been called if has
-    # been deterimined externally that it is sensible to do so.
-
+    # It is assumed that `actify` has only been called if has been
+    # deterimined externally that it is sensible to do so. This will
+    # be the case if an only if the parent `Data` instance's
+    # `active_storage` attribute is `True`.
     dsk = collections_to_dsk((a,), optimize_graph=True)
     for key, value in reversed(dsk.items()):
         try:
             filenames.add(value.get_filename())
         except AttributeError:
-            # This value is not a data definition.
-            #
-            # Note: It is assumed that all data definitions point to
-            #       files
+            # This value is not a data definition. Note: It is assumed
+            # that all data definitions point to files.
             continue
 
         try:
@@ -129,7 +129,6 @@ def active_storage(method):
             TODOACTIVEDOCS
 
     """
-
     def decorator(collapse_method):
         @wraps(collapse_method)
         def wrapper(self, *args, **kwargs):

@@ -2,7 +2,7 @@
 def double_precision_dtype(a, default=None, bool_type="i"):
     """Returns the corresponding double precision data type of an array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -59,7 +59,7 @@ def check_input_dtype(a, allowed="fib"):
     The collapse method is assumed to be defined by the calling
     function.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
