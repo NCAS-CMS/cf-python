@@ -1,4 +1,6 @@
-"""TODOACTIVEDOCS"""
+"""TODOACTIVEDOCS."""
+
+
 def double_precision_dtype(a, default=None, bool_type="i"):
     """Returns the corresponding double precision data type of an array.
 

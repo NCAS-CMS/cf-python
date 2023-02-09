@@ -24,10 +24,10 @@ def actify(a, method, axis=None):
 
     """
     from numbers import Integral
-    
+
     import dask.array as da
-    from dask.base import collections_to_dsk
     from dask.array.utils import validate_axis
+    from dask.base import collections_to_dsk
 
     if method not in Active.methods():
         # The given method is not recognised by `Active`, so return
@@ -37,7 +37,7 @@ def actify(a, method, axis=None):
     # Parse axis
     if axis is None:
         axis = tuple(range(a.ndim))
-    else
+    else:
         if isinstance(axis, Integral):
             axis = (axis,)
 
@@ -129,6 +129,7 @@ def active_storage(method):
             TODOACTIVEDOCS
 
     """
+
     def decorator(collapse_method):
         @wraps(collapse_method)
         def wrapper(self, *args, **kwargs):

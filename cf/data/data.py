@@ -644,7 +644,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """Whether or not an array is stored on disk.
 
         .. versionaddedd: TODOACTIVEVER
-        
+
         :Parameters:
 
             array:
@@ -2348,8 +2348,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = self.to_dask_array()
         dx = dx.persist()
-        d._set_dask(dx, conform=False)
-        d._del_active_storage()
+        d._set_dask(dx, conform=False)  # TODOACTIVE
+        d._del_active_storage()  # TODOACTIVE
 
         return d
 
@@ -2919,8 +2919,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, conform=False)
-        d._del_active_storage()
+        d._set_dask(dx, conform=False)  # TODOACTIVE
+        d._del_active_storage()  # TODOACTIVE
 
         return d
 
@@ -3663,14 +3663,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Get data as dask arrays and apply concatenation operation
         dxs = [d.to_dask_array() for d in processed_data]
         dx = da.concatenate(dxs, axis=axis)
-        
+
         # Set the active storage status
-        active = _NONE
+        active = _ACTIVE
         for d in processed_data:
             if not d.active_storage():
                 # Set the output active storage status to False when any
                 # input data instance has False status
-                active = _ACTIVE
+                active = _NONE
                 break
 
         data0._set_dask(dx, conform=_ALL ^ active)
