@@ -103,19 +103,89 @@ class FragmentArray:
         differences:
 
           * A dimension's index can't be rank-reducing, i.e. it can't
-            be an integer, nor a scalar `numpy` or `dask` array.
+            be an integer, a scalar `numpy` array, nor a scalar `dask`
+            array.
 
           * When two or more dimension's indices are sequences of
             integers then these indices work independently along each
             dimension (similar to the way vector subscripts work in
             Fortran).
 
+        **Performance**
+
+        If the fragment variable has fewer than `ndim` dimensions then
+        the entire array is realised in memory before the requested
+        subspace of it is returned.
+
         .. versionadded:: 3.14.0
 
         """
-        array = self.get_array()
+        return self._getitem( self.get_array(), indices)
+    
+#        indices = self._parse_indices(indices)
+#        array = self.get_array()
+#
+#        try:
+#            array = array[indices]
+#        except ValueError:
+#            # A value error is raised if indices has at least ndim
+#            # elements but the fragment variable has fewer than ndim
+#            # dimensions. In this case we get the entire fragment
+#            # array, insert the missing size 1 dimensions, and then
+#            # apply the requested slice. See the CFA conventions for
+#            # details.
+#            array = array[Ellipsis]
+#            if array.ndim < self.ndim:
+#                array = array.reshape(self.shape)
+#
+#            array = array[indices]
+#
+#        array = self._conform_units(array)
+#        return array
+
+    def _getitem(self, array, indices):
+        """Returns a subspace of the fragment as a numpy array.
+
+        x.__getitem__(indices) <==> x[indices]
+
+        Indexing is similar to numpy indexing, with the following
+        differences:
+
+          * A dimension's index can't be rank-reducing, i.e. it can't
+            be an integer, a scalar `numpy` array, nor a scalar `dask`
+            array.
+
+          * When two or more dimension's indices are sequences of
+            integers then these indices work independently along each
+            dimension (similar to the way vector subscripts work in
+            Fortran).
+
+        **Performance**
+
+        If the fragment variable has fewer than `ndim` dimensions then
+        the entire array is realised in memory before the requested
+        subspace of it is returned.
+
+        .. versionadded:: 3.14.0
+
+        """
         indices = self._parse_indices(indices)
-        array = array[indices]
+
+        try:
+            array = array[indices]
+        except ValueError:
+            # A value error is raised if indices has at least ndim
+            # elements but the fragment variable has fewer than ndim
+            # dimensions. In this case we get the entire fragment
+            # array, insert the missing size 1 dimensions, and then
+            # apply the requested slice. See the CFA conventions for
+            # details.
+            array = array[Ellipsis]
+            if array.ndim < self.ndim:
+                array = array.reshape(self.shape)
+
+            array = array[indices]
+
         array = self._conform_units(array)
         return array
 
@@ -196,16 +266,20 @@ class FragmentArray:
 
         :Parameters:
 
-            array: `numpy.ndarray`
-                The array to be conformed.
+            array: `numpy.ndarray` or `dict`
+                The array to be conformed. If *array* is a `dict` with
+                `numpy` array values then each value is conformed.
 
         :Returns:
 
-            `numpy.ndarray`
+            `numpy.ndarray` or `dict`
                 The conformed array. The returned array may or may not
                 be the input array updated in-place, depending on its
                 data type and the nature of its units and the
                 aggregated units.
+
+                If *array* is a `dict` then a dictionary of conformed
+                arrays is returned.
 
         """
         units = self.Units
@@ -218,9 +292,19 @@ class FragmentArray:
                 )
 
             if units != aggregated_units:
-                array = Units.conform(
-                    array, units, aggregated_units, inplace=True
-                )
+                if isinstance(array, dict):
+                    # 'array' is a dictionary
+                    array = {
+                        key: Units.conform(
+                            value, units, aggregated_units, inplace=True
+                        )
+                        for key, value in array.items()
+                    }
+                else:
+                    # 'array' is a numpy array
+                    array = Units.conform(
+                        array, units, aggregated_units, inplace=True
+                    )
 
         return array
 
