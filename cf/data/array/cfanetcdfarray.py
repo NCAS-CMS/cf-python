@@ -334,7 +334,7 @@ class CFANetCDFArray(NetCDFArray):
                 "format": None,
                 "location": location,
             }
-                        
+
     def get_aggregated_data(self, copy=True):
         """Get the aggregation data dictionary.
 
