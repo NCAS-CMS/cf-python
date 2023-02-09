@@ -314,6 +314,11 @@ _docstring_substitution_definitions = {
                 value. A default can also be set globally with the
                 ``split_every`` key in `dask.config`. See
                 `dask.array.reduction` for details.""",
+    # Collapse chunk_function
+    "{{chunk_function: callable, optional}}": """{{chunk_function: callable, optional}}
+                Provides the ``chunk`` parameter to
+                `dask.array.reduction`. If unset then an approriate
+                default function will be used.""",
     # Collapse weights
     "{{Collapse weights: data_like or `None`, optional}}": """weights: data_like or `None`, optional
                 Weights associated with values of the array. By
