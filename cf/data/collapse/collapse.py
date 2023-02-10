@@ -6,7 +6,6 @@ from cfdm.core import DocstringRewriteMeta
 from dask.array.reductions import reduction
 
 from ...docstring import _docstring_substitution_definitions
-
 from .collapse_active import active_storage
 from .collapse_utils import check_input_dtype, double_precision_dtype
 
@@ -397,7 +396,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        active_storage=False,
         mtol=None,
         split_every=None,
         chunk_function=None,
@@ -954,7 +952,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     @active_storage("unique")
     def unique(
-            self, a, split_every=None, chunk_function=None, active_storage=False
+        self, a, split_every=None, chunk_function=None, active_storage=False
     ):
         """Return unique elements of the data.
 

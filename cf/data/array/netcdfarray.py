@@ -4,12 +4,13 @@ from dask.utils import SerializableLock
 from ...mixin_container import Container
 from .mixin import ActiveStorageMixin, FileArrayMixin
 
-
 # Global lock for netCDF file access
 _lock = SerializableLock()
 
 
-class NetCDFArray(ActiveStorageMixin, FileArrayMixin, Container, cfdm.NetCDFArray):
+class NetCDFArray(
+    ActiveStorageMixin, FileArrayMixin, Container, cfdm.NetCDFArray
+):
     """An array stored in a netCDF file.
 
     TODOACTIVEDOCS

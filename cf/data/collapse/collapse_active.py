@@ -197,12 +197,12 @@ def actify(a, method, axis=None):
     for key, value in reversed(dsk.items()):
         try:
             filenames.add(value.get_filename())
-         except AttributeError:
-             if hasattr(value, "get_full_value"):
+        except AttributeError:
+            if hasattr(value, "get_full_value"):
                 # This value is a constant fragment (such as might
                 # arise from CFA aggregated data), which precludes the
                 # use of active stoarge.
-#                chunk_functions = ()
+                #                chunk_functions = ()
                 ok_to_actify = False
                 break
 
@@ -214,18 +214,18 @@ def actify(a, method, axis=None):
         except AttributeError:
             # This file fragment does not support active storage
             # reductions
-#            chunk_functions = ()
+            #            chunk_functions = ()
             ok_to_actify = False
             break
 
-#        try:
+        #        try:
         # Get the active storage chunk function
         chunk_functions.add(_active_chunk_functions[method])
-#        except AttributeError:
-#            # This data definition value does not support active
-#            # storage reductions
-#            chunk_functions = ()
-#            break
+        #        except AttributeError:
+        #            # This data definition value does not support active
+        #            # storage reductions
+        #            chunk_functions = ()
+        #            break
 
         # Still here? Then update the dask graph dictionary with the
         # actified data definition value.
@@ -241,13 +241,15 @@ def actify(a, method, axis=None):
             return a, None
 
     # Still here?
-    if ok_to_actify: #len(chunk_functions) == 1:
+    if ok_to_actify:  # len(chunk_functions) == 1:
         # All data definitions in the dask graph support active
         # storage reductions => redefine the array from the actified
         # dask graph, and define the active storage reduction chunk
         # function.
         a = da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
-        chunk_function = _active_chunk_functions[method] #chunk_functions.pop()
+        chunk_function = _active_chunk_functions[
+            method
+        ]  # chunk_functions.pop()
     else:
         chunk_function = None
 
