@@ -38,7 +38,7 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import generate_axis_identifiers, to_dask
+from .creation import generate_axis_identifiers, to_dask, is_file_array, is_abstract_Array_subclass
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -411,28 +411,29 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Still here? Then create a dask array and store it.
 
-        # Find out if the input data is compressed by convention
         try:
             compressed = array.get_compression_type()
         except AttributeError:
-            compressed = ""
-
-        if compressed:
+            pass
+        else:
+            # The input data is compressed by convention
             if init_options.get("from_array"):
                 raise ValueError(
                     "Can't define 'from_array' initialisation options "
                     "for compressed input arrays"
                 )
 
-            # Bring the compressed data into memory without
-            # decompressing it
+        if is_file_array(array):
             if to_memory:
                 try:
                     array = array.to_memory()
                 except AttributeError:
                     pass
+            else:
+                # Allow the possibilty of CFA writing
+                self._set_cfa_write(True)
 
-        if self._is_abstract_Array_subclass(array):
+        if is_abstract_Array_subclass(array):
             # Save the input array in case it's useful later. For
             # compressed input arrays this will contain extra information,
             # such as a count or index variable.
@@ -621,20 +622,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _rtol(self):
         """Return the current value of the `cf.rtol` function."""
         return rtol().value
-
-    def _is_abstract_Array_subclass(self, array):
-        """Whether or not an array is a type of abstract Array.
-
-        :Parameters:
-
-            array:
-
-        :Returns:
-
-            `bool`
-
-        """
-        return isinstance(array, cfdm.Array)
 
     def __data__(self):
         """Returns a new reference to self."""
@@ -1302,7 +1289,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         if clear & _CFA:
             # Set the CFA write status to False
-            self._set_cfa_write(False)
+            self._del_cfa_write()
 
     def _set_dask(self, array, copy=False, clear=_ALL):
         """Set the dask array.
@@ -1441,6 +1428,21 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         for element in ("first_element", "second_element", "last_element"):
             custom.pop(element, None)
 
+    def _del_cfa_write(self, status):
+        """Set the CFA write status of the data to `False`.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_write`, `_set_cfa_write`
+
+        :Returns:
+
+            `bool`
+                The CFA status prior to deletion.
+
+        """
+        return self._custom.pop("cfa_write", False)
+
     def _set_cached_elements(self, elements):
         """Cache selected element values.
 
@@ -1486,7 +1488,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `cfa_write`, `cf.read`, `cf.write`
+        .. seealso:: `cfa_write`, `cf.read`, `cf.write`,
+                     `_del_cfa_write`
 
         :Parameters:
 
