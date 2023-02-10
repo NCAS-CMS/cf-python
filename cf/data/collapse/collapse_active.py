@@ -4,8 +4,8 @@ from functools import wraps
 def active_min(a, **kwargs):
     """Chunk calculations for the minimum.
 
-    TODO Assumes that the calculations have already been done, i.e. that
-    *a* is already the minimum.
+    TODO Assumes that the calculations have already been done,
+    i.e. that *a* is already the minimum.
 
     This function is intended to be passed to `dask.array.reduction`
     as the ``chunk`` parameter. Its return signature must be the same
@@ -85,8 +85,8 @@ def active_mean(a, **kwargs):
             Dictionary with the keys:
 
             * N: The sample size.
-            * V1: The sum of ``weights``. Equal to ``N`` because
-                  weights have not been set.
+            * V1: The sum of ``weights``. Always equal to ``N``
+                  because weights have not been set.
             * sum: The weighted sum of ``a``.
             * weighted: True if weights have been set. Always
                         False.
@@ -135,6 +135,8 @@ _active_chunk_functions = {
 def actify(a, method, axis=None):
     """TODOACTIVEDOCS.
 
+    TODO: Describe the necessary conditions here.
+
     .. versionadded:: TODOACTIVEVER
 
     :Parameters:
@@ -150,7 +152,7 @@ def actify(a, method, axis=None):
 
     :Returns:
 
-        `dask.array.Array`, function
+        (`dask.array.Array`, function) or (`dask.array.Array`, `None`)
             TODOACTIVEDOCS
 
     """
@@ -160,9 +162,9 @@ def actify(a, method, axis=None):
     from dask.array.utils import validate_axis
     from dask.base import collections_to_dsk
 
-    if not (method in _active_chunk_functions or method in Active.methods()):
-        # The given method is not recognised by `Active`, so return
-        # the input data unchanged.
+    if not (method in _active_chunk_functions and method in Active.methods()):
+        # The given method is not supported, so return the input data
+        # unchanged.
         return a, None
 
     # Parse axis
@@ -190,8 +192,9 @@ def actify(a, method, axis=None):
     #
     # It is assumed that `actify` has only been called if has been
     # deterimined externally that it is sensible to do so. A
-    # necessary, but not sufficient, condition for this will is the
-    # parent `Data` instance's `active_storage` attribute being `True`.
+    # necessary, but not sufficient, condition for this being the case
+    # will is the parent `Data` instance's `active_storage` attribute
+    # being `True`.
     ok_to_actify = True
     dsk = collections_to_dsk((a,), optimize_graph=True)
     for key, value in reversed(dsk.items()):
@@ -202,30 +205,22 @@ def actify(a, method, axis=None):
                 # This value is a constant fragment (such as might
                 # arise from CFA aggregated data), which precludes the
                 # use of active stoarge.
-                #                chunk_functions = ()
                 ok_to_actify = False
                 break
 
             continue
 
-        # Still here? Then this value is a file fragment, so try to actify it.
+        # Still here? Then this value is a file fragment, so try to
+        # actify it.
         try:
             value = value.actify(method, axis)
         except AttributeError:
             # This file fragment does not support active storage
             # reductions
-            #            chunk_functions = ()
             ok_to_actify = False
             break
 
-        #        try:
-        # Get the active storage chunk function
         chunk_functions.add(_active_chunk_functions[method])
-        #        except AttributeError:
-        #            # This data definition value does not support active
-        #            # storage reductions
-        #            chunk_functions = ()
-        #            break
 
         # Still here? Then update the dask graph dictionary with the
         # actified data definition value.
@@ -241,15 +236,13 @@ def actify(a, method, axis=None):
             return a, None
 
     # Still here?
-    if ok_to_actify:  # len(chunk_functions) == 1:
+    if ok_to_actify:
         # All data definitions in the dask graph support active
         # storage reductions => redefine the array from the actified
         # dask graph, and define the active storage reduction chunk
         # function.
         a = da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
-        chunk_function = _active_chunk_functions[
-            method
-        ]  # chunk_functions.pop()
+        chunk_function = _active_chunk_functions[method]
     else:
         chunk_function = None
 
@@ -261,6 +254,8 @@ def active_storage(method):
     operations, when the conditions are right.
 
     .. versionadded:: TODOACTIVEVER
+
+    .. seealso `cf.data.collapse.Collapse`
 
     :Parameters:
 
