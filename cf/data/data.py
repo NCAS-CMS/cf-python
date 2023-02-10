@@ -437,14 +437,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except AttributeError:
                     pass
             elif hasattr(array, "actify"):
-                # Allow the possibilty of active storage operations on
-                # data that is wholly on disk
+                # Allow the possibilty of active storage operations
                 self._set_active_storage(True)
 
         if self._is_abstract_Array_subclass(array):
             # Save the input array in case it's useful later. For
-            # compressed input arrays this will contain extra information,
-            # such as a count or index variable.
+            # compressed input arrays this will contain extra
+            # information, such as a count or index variable.
             self._set_Array(array)
 
         # Cast the input data as a dask array
