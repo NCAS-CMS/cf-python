@@ -2,7 +2,8 @@ import logging
 
 import numpy as np
 
-from ..data.data import Data
+from ..data import Data
+from ..data.data import _DEFAULT_CHUNKS
 from ..decorators import (
     _deprecated_kwarg_check,
     _inplace_enabled,
@@ -18,6 +19,7 @@ from ..functions import (
 from ..functions import equivalent as cf_equivalent
 from ..functions import inspect as cf_inspect
 from ..functions import parse_indices
+from ..functions import size as cf_size
 from ..query import Query
 from ..units import Units
 from . import PropertiesData
@@ -547,7 +549,7 @@ class PropertiesDataBounds(PropertiesData):
             # Only self has bounds, so combine the self bounds with
             # the other values.
             # --------------------------------------------------------
-            if np.size(other) > 1:
+            if cf_size(other) > 1:
                 for i in range(self.bounds.ndim - self.ndim):
                     try:
                         other = other.insert_dimension(-1)
@@ -1183,6 +1185,9 @@ class PropertiesDataBounds(PropertiesData):
     def chunk(self, chunksize=None):
         """Partition the data array.
 
+        Deprecated at version 3.14.0. Use the `rechunk` method
+        instead.
+
         :Parameters:
 
             chunksize: `int`, optional
@@ -1199,17 +1204,13 @@ class PropertiesDataBounds(PropertiesData):
         >>> c.chunksize(1e8)
 
         """
-        super().chunk(chunksize)
-
-        # Chunk the bounds, if they exist.
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.chunk(chunksize)
-
-        # Chunk the interior ring, if it exists.
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.chunk(chunksize)
+        _DEPRECATION_ERROR_METHOD(
+            self,
+            "chunk",
+            "Use the 'rechunk' method instead.",
+            version="3.14.0",
+            removed_at="5.0.0",
+        )  # pragma: no cover
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -1272,7 +1273,7 @@ class PropertiesDataBounds(PropertiesData):
     def close(self):
         """Close all files referenced by the construct.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         Note that a closed file will be automatically re-opened if its
@@ -1293,19 +1294,23 @@ class PropertiesDataBounds(PropertiesData):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, _preserve=True):
+    def concatenate(cls, variables, axis=0, cull_graph=True):
         """Join a sequence of variables together.
+
+        .. seealso:: `Data.cull_graph`
 
         :Parameters:
 
             variables: sequence of constructs
 
             axis: `int`, optional
+
+            {{cull_graph: `bool`, optional}}
 
         :Returns:
 
@@ -1317,14 +1322,14 @@ class PropertiesDataBounds(PropertiesData):
         if len(variables) == 1:
             return variable0.copy()
 
-        out = super().concatenate(variables, axis=axis, _preserve=_preserve)
+        out = super().concatenate(variables, axis=axis, cull_graph=cull_graph)
 
         bounds = variable0.get_bounds(None)
         if bounds is not None:
             bounds = bounds.concatenate(
                 [v.get_bounds() for v in variables],
                 axis=axis,
-                _preserve=_preserve,
+                cull_graph=cull_graph,
             )
             out.set_bounds(bounds, copy=False)
 
@@ -1333,7 +1338,7 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring = interior_ring.concatenate(
                 [v.get_interior_ring() for v in variables],
                 axis=axis,
-                _preserve=_preserve,
+                cull_graph=cull_graph,
             )
             out.set_interior_ring(interior_ring, copy=False)
 
@@ -1740,15 +1745,6 @@ class PropertiesDataBounds(PropertiesData):
         were intended but encoded as "months", which have special
         definition. See the note and examples below for more details.
 
-        For conversions which do not require a change in the
-        date-times implied by the data values, this method will be
-        considerably slower than a simple reassignment of the
-        units. For example, if the original units are ``'days since
-        2000-12-1'`` then ``c.Units = cf.Units('days since
-        1901-1-1')`` will give the same result and be considerably
-        faster than ``c.convert_reference_time(cf.Units('days since
-        1901-1-1'))``.
-
         .. note:: It is recommended that the units "year" and "month"
                   be used with caution, as explained in the following
                   excerpt from the CF conventions: "The Udunits
@@ -1761,6 +1757,17 @@ class PropertiesDataBounds(PropertiesData):
                   and a Gregorian_year is 365.2425 days. For similar
                   reasons the unit ``month``, which is defined to be
                   exactly year/12, should also be used with caution.
+
+        **Performance**
+
+        For conversions which do not require a change in the
+        date-times implied by the data values, this method will be
+        considerably slower than a simple reassignment of the
+        units. For example, if the original units are ``'days since
+        2000-12-1'`` then ``c.Units = cf.Units('days since
+        1901-1-1')`` will give the same result and be considerably
+        faster than ``c.convert_reference_time(cf.Units('days since
+        1901-1-1'))``.
 
         :Parameters:
 
@@ -1797,36 +1804,37 @@ class PropertiesDataBounds(PropertiesData):
 
             `{{class}}` or `None`
                 The construct with converted reference time data
-                values.
+                values, or `None` if the operation was in-place.
 
         **Examples**
 
         >>> print(f.array)
-        [1  2  3  4]
+        [0 1 2 3]
         >>> f.Units
-        <Units: months since 2000-1-1>
+        <Units: months since 2004-1-1>
         >>> print(f.datetime_array)
-        [datetime.datetime(2000, 1, 31, 10, 29, 3, 831197) TODO
-         datetime.datetime(2000, 3, 1, 20, 58, 7, 662441)
-         datetime.datetime(2000, 4, 1, 7, 27, 11, 493645)
-         datetime.datetime(2000, 5, 1, 17, 56, 15, 324889)]
-        >>> f.convert_reference_time(calendar_months=True, inplace=True)
-        >>> print(f.datetime_array)
-        [datetime.datetime(2000, 2, 1, 0, 0) TODOx
-         datetime.datetime(2000, 3, 1, 0, 0)
-         datetime.datetime(2000, 4, 1, 0, 0)
-         datetime.datetime(2000, 5, 1, 0, 0)]
-        >>> print(f.array)
-        [  31.   60.   91.  121.]
-        >>> f.Units
-        <Units: days since 2000-1-1>
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2003, 12, 31, 10, 29, 3, 831223, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 30, 20, 58, 7, 662446, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 7, 27, 11, 493670, has_year_zero=False)]
+        >>> g = f.convert_reference_time(calendar_months=True)
+        >>> g.Units
+        <Units: days since 2004-1-1>
+        >>> print(g.datetime_array)
+        [cftime.DatetimeGregorian(2003, 12, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 1, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 2, 1, 0, 0, 0, 0, has_year_zero=False)
+         cftime.DatetimeGregorian(2004, 3, 1, 0, 0, 0, 0, has_year_zero=False)]
+        >>> print(g.array)
+        [ 0 31 62 91]
 
         """
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self),
             "convert_reference_time",
             inplace=inplace,
-            i=i,
+            bounds=True,
+            interior_ring=False,
             units=units,
             calendar_months=calendar_months,
             calendar_years=calendar_years,
@@ -2030,7 +2038,7 @@ class PropertiesDataBounds(PropertiesData):
     def mask_invalid(self, inplace=False, i=False):
         """Mask the array where invalid values occur.
 
-        Deprecated at version TODODASKVER. Use the method
+        Deprecated at version 3.14.0. Use the method
         `masked_invalid` instead.
 
         Note that:
@@ -2095,7 +2103,7 @@ class PropertiesDataBounds(PropertiesData):
             self,
             "mask_invalid",
             message="Use the method 'masked_invalid' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -2432,7 +2440,7 @@ class PropertiesDataBounds(PropertiesData):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            size: deprecated at version TODODASKVER
+            size: deprecated at version 3.14.0
                 Use the *depth* parameter instead.
 
         :Returns:
@@ -2452,7 +2460,7 @@ class PropertiesDataBounds(PropertiesData):
                 "halo",
                 {"size": None},
                 message="Use the 'depth' parameter instead.",
-                version="TODODASKVER",
+                version="3.14.0",
                 removed_at="5.0.0",
             )  # pragma: no cover
 
@@ -3708,6 +3716,117 @@ class PropertiesDataBounds(PropertiesData):
 
         return bounds.period(*value, **config)
 
+    @_inplace_enabled(default=False)
+    def persist(self, bounds=True, inplace=False):
+        """Persist the underlying dask array into memory.
+
+        This turns an underlying lazy dask array into a equivalent
+        chunked dask array, but now with the results fully computed.
+
+        `persist` is particularly useful when using distributed
+        systems, because the results will be kept in distributed
+        memory, rather than returned to the local process.
+
+        **Performance**
+
+        `persist` causes all delayed operations to be computed.
+
+        .. versionadded:: 3.14.0
+
+        .. seealso:: `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            bounds: `bool`, optional
+                If False then do not persist any bounds data. By
+                default any bound data are also persisted.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        **Examples**
+
+        >>> g = f.persist()
+
+        """
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "persist",
+            bounds=bounds,
+            interior_ring=True,
+            inplace=inplace,
+        )
+
+    @_inplace_enabled(default=False)
+    def rechunk(
+        self,
+        chunks=_DEFAULT_CHUNKS,
+        threshold=None,
+        block_size_limit=None,
+        balance=False,
+        bounds=True,
+        interior_ring=True,
+        inplace=False,
+    ):
+        """Change the chunk structure of the data.
+
+        .. versionadded:: 3.14.0
+
+        .. seealso:: `cf.Data.rechunk`
+
+        :Parameters:
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+            {{threshold: `int`, optional}}
+
+            {{block_size_limit: `int`, optional}}
+
+            {{balance: `bool`, optional}}
+
+            bounds: `bool`, optional
+                If True (the default) then rechunk the bounds, if
+                they exist.
+
+            interior_ring: `bool`, optional
+                If True (the default) then rechunk an interior ring
+                array, if one exists.
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with rechunked data, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        See `cf.Data.rechunk` for examples.
+
+        """
+        if (bounds or interior_ring) and isinstance(chunks, dict):
+            from dask.array.utils import validate_axis
+
+            ndim = self.ndim
+            chunks = {validate_axis(c, ndim): v for c, v in chunks.items()}
+
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "rechunk",
+            bounds=bounds,
+            interior_ring=interior_ring,
+            inplace=inplace,
+            chunks=chunks,
+            threshold=threshold,
+            block_size_limit=block_size_limit,
+            balance=balance,
+        )
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def rint(self, bounds=True, inplace=False, i=False):
@@ -3856,14 +3975,22 @@ class PropertiesDataBounds(PropertiesData):
         """Deprecated at version 3.0.0, use method `has_bounds`
         instead."""
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "hasbounds", "Use method 'has_bounds' instead."
+            self,
+            "hasbounds",
+            "Use method 'has_bounds' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         """Deprecated at version 3.0.0, use method `insert_dimension`
         instead."""
         _DEPRECATION_ERROR_METHOD(
-            self, "expand_dims", "Use method 'insert_dimension' instead."
+            self,
+            "expand_dims",
+            "Use method 'insert_dimension' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def files(self):

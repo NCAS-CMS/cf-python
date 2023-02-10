@@ -20,19 +20,6 @@ scripts (:download:`download <../source/tutorial.py>`, 28kB,
 
 .. http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table
   
-.. important:: **This version of cf is for Python 3 only** and there are
-          :ref:`incompatible differences between versions 2.x and 3.x
-          <two-to-three-changes>` of cf.
-
-	  Scripts written for version 2.x but running under version
-          3.x should either work as expected, or provide informative
-          error messages on the new API usage. However, it is advised
-          that the outputs of older scripts are checked when running
-          with Python 3 versions of the cf library.
-
-	  For version 2.x documentation, see the :ref:`releases
-	  <Releases>` page.
-
 .. contents::
    :local:
    :backlinks: entry
@@ -535,10 +522,10 @@ files <External-variables-with-cfa>`.
 
 ----
 
-**Visualization**
+**Visualisation**
 -----------------
 
-Powerful, flexible, and very simple to produce visualizations of field
+Powerful, flexible, and very simple to produce visualisations of field
 constructs are available with the `cfplot` package (that needs to be
 installed separately to cf, see http://ajheaps.github.io/cf-plot for
 details).
@@ -933,14 +920,22 @@ is accessed with the `~Field.data` attribute of the field construct.
 
 The `cf.Data` instance provides access to the full array of values, as
 well as attributes to describe the array and methods for describing
-any :ref:`data compression <Compression>`. However, the field
-construct (and any other construct that contains data) also provides
-attributes for direct access.
+any :ref:`data compression <Compression>`. The field construct also
+has a `~Field.get_data` method as an alternative means of retrieving
+the data instance, which allows for a default to be returned if no
+data have been set; as well as a `~Field.del_data` method for removing
+the data.
+
+The field construct (and any other construct that contains data) also
+provides attributes for direct access.
 
 .. code-block:: python
    :caption: *Retrieve a numpy array of the data.*
       
-   >>> print(t.array)
+   >>> a = t.array
+   >>> type(a)
+   numpy.ma.core.MaskedArray
+   >>> print(a)
    [[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
      [269.7 279.1 273.4 274.2 279.6 270.2 280.  272.5 263.7]
@@ -965,10 +960,20 @@ attributes for direct access.
    >>> t.size
    90
 
-The field construct also has a `~Field.get_data` method as an
-alternative means of retrieving the data instance, which allows for a
-default to be returned if no data have been set; as well as a
-`~Field.del_data` method for removing the data.
+The array is stored internally as a :ref:`Dask array <Performance>`,
+which can be retrieved with the `~Field.to_dask_array()` method of the
+field construct:
+   
+.. code-block:: python
+   :caption: *Retrieve the dask array of the data.*
+      
+   >>> d = t.to_dask_array()
+   >>> d
+   dask.array<array, shape=(1, 10, 9), dtype=float64, chunksize=(1, 10, 9), chunktype=numpy.ndarray>
+
+Note that changes to the returned Dask array in-place will also be
+seen in the field construct.
+
 
 All of the methods and attributes related to the data are listed
 :ref:`here <Field-Data>`.
@@ -3111,7 +3116,7 @@ Subspaces based on time dimensions may be defined with as
 date-time objects.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Create subspaces in different ways based on the time dimension by selecting a particular date and using date-time and date-time queries.*
 
    >>> a = cf.read('timeseries.nc')[0]
    >>> print (a)     
@@ -3177,7 +3182,7 @@ type of subspace:
   are removed to create the returned subspace:
 
   .. code-block:: python
-     :caption: *Create TODO*
+     :caption: *Create a subspace by compressing the domain spanning the 2nd, 3rd, 5th and 7th elements of the 'X' axis, with the other domain axes remaining unchanged.*
 
      >>> print(q.array)
      [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
@@ -3213,7 +3218,7 @@ type of subspace:
   unselected locations within the envelope.
 
   .. code-block:: python
-     :caption: *Create TODO*
+     :caption: *Create a subspace by selecting the 2nd, 3rd, 5th and 7th elements of the 'X' axis by creating an envelope of these elements with missing data within the envelope wherever needed.*
 
      >>> q2 = q.subspace('envelope', X=[1, 2, 4, 6])
      >>> print(q2)
@@ -3238,7 +3243,7 @@ type of subspace:
   locations.
 
   .. code-block:: python
-     :caption: *Create TODO*
+     :caption: *Create a subspace by selecting the 2nd, 3rd, 5th and 7th elements of the 'X' axis with domain encompassing that of the original field construct with missing data within the domain wherever needed.*
 
      >>> q2 = q.subspace('full', X=[1, 2, 4, 6])
      >>> print(q2)
@@ -3272,7 +3277,7 @@ Conditions may also be applied to multi-dimensional metadata
 constructs
 
 .. code-block:: python
-   :caption: *Create TODO*
+   :caption: *Create a subspace whose domain spans latitudes within the range of 51 to 53 degrees north, with the other domain axes remaining unchanged.*
 
    >>> print(t)
    Field: air_temperature (ncvar%ta)
@@ -3305,6 +3310,12 @@ constructs
     [50.441 50.484 50.522 50.556 50.586 50.612 50.634 50.652 50.665]
     [50.003 50.045 50.083 50.117 50.147 50.173 50.194 50.212 50.225]]
    >>> t2 = t.subspace(latitude=cf.wi(51, 53))
+   >>> print(t2.construct('latitude').array)
+   [[52.629 52.674 52.714 52.75  52.782 52.809 52.832 52.85  52.864]
+    [52.192 52.236 52.276 52.311 52.343 52.37  52.392 52.41  52.424]
+    [51.754 51.798 51.837 51.873 51.904 51.93  51.953 51.971 51.984]
+    [51.316 51.36  51.399 51.434 51.465 51.491 51.513 51.531 51.545]
+    [50.879 50.922 50.96  50.995 51.025 51.052 51.074 51.091 51.105]]
    >>> print(t2.array)
    [[[261.7 260.6 270.8 260.3 265.6 279.4 276.9 267.6 260.6]
      [264.2 275.9 262.5 264.9 264.7 270.2 270.4 268.6 275.3]
@@ -3336,7 +3347,7 @@ Assignment by metadata makes use of the `~Field.indices` method of the
 field construct to select metadata constructs and specify conditions
 on their data. Indices for subspacing are then automatically inferred
 from where the conditions are met. The tuple of indices returned by
-the `~Field.indices` may the be used in normal :ref:`assignment by
+the `~Field.indices` may then be used in normal :ref:`assignment by
 index <Assignment-by-index>`.
 
 The `~Field.indices` method takes exactly the same arguments as the
@@ -3344,7 +3355,7 @@ The `~Field.indices` method takes exactly the same arguments as the
 :ref:`Subspacing-by-metadata` for details.
 
 .. code-block:: python
-   :caption: *Create TODO*
+   :caption: *Assign air temperature values to the indices within certain longitude and latitude ranges.*
 
    >>> q, t = cf.read('file.nc')
    >>> print(t)
@@ -3563,7 +3574,7 @@ or the Python equality (`==`) operator, the condition is evaluated in
 the context of that object.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *An example evaluating a strictly less than 3 query condition.*
 
    >>> c = cf.Query('lt', 3)
    >>> c
@@ -3606,7 +3617,7 @@ Multiple conditions may be combined with the Python bitwise "and"
 object.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *An example evaluating a compound query operation involving a greater than or equal to 3 condition and a strictly less than 5 condition.*
 
    >>> ge3 = cf.Query('ge', 3)
    >>> lt5 = cf.Query('lt', 5)
@@ -4235,7 +4246,7 @@ been generated with dummy values using `numpy.arange`):
    import numpy
    import cf
    
-   # Initialize the field construct
+   # Initialise the field construct
    tas = cf.Field(
        properties={'project': 'research',
                    'standard_name': 'air_temperature',
@@ -4514,12 +4525,12 @@ instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The `cf.read`
 function creates data in this manner. A pointer to an array in a
 netCDF file can be stored in a `cf.NetCDFArray` instance, which is is
-used to initialize a `cf.Data` instance.
+used to initialise a `cf.Data` instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
              and use it to create a NetCDFArray instance with which to
-             initialize a Data instance.*
+             initialise a Data instance.*
 		
    >>> import netCDF4
    >>> nc = netCDF4.Dataset('file.nc', 'r')
@@ -4541,7 +4552,7 @@ used to initialize a `cf.Data` instance.
    True
 
 Note that data type, number of dimensions, dimension sizes and number
-of elements of the array on disk that are used to initialize the
+of elements of the array on disk that are used to initialise the
 `cf.NetCDFArray` instance are those expected by the CF data model,
 which may be different to those of the netCDF variable in the file
 (although they are the same in the above example). For example, a
@@ -6471,7 +6482,7 @@ data array elements are modified:
    ''
    
 A construct with an underlying gathered array is created by
-initializing a `cf.Data` instance with a gathered array that is stored
+initialising a `cf.Data` instance with a gathered array that is stored
 in the special `cf.GatheredArray` array object. The following code
 creates a simple field construct with an underlying gathered array:
 
@@ -6484,7 +6495,7 @@ creates a simple field construct with an underlying gathered array:
    import cf
 
    # Define the gathered values
-   gathered_array = cf.Data([[2, 1, 3], [4, 0, 5]])
+   gathered_array = cf.Data([[2.0, 1, 3], [4, 0, 5]])
 
    # Define the list array values
    list_array = [1, 4, 5]
@@ -6492,13 +6503,15 @@ creates a simple field construct with an underlying gathered array:
    # Create the list variable
    list_variable = cf.List(data=cf.Data(list_array))
 
-   # Create the gathered array object, specifying the uncompressed
-   # shape
+   # Create the gathered array object, specifying the mapping between
+   # compressed and uncompressed dimensions, and the uncompressed
+   # shape.
    array = cf.GatheredArray(
                     compressed_array=gathered_array,
-		    compressed_dimension=1,
+		    compressed_dimensions={1: [1, 2]},
                     shape=(2, 3, 2), size=12, ndim=3,
-                    list_variable=list_variable)
+                    list_variable=list_variable
+	   )
 
    # Create the field construct with the domain axes and the gathered
    # array
@@ -6605,7 +6618,7 @@ fields files of any endian-ness can be read. In nearly all cases the
 file format is auto-detectable from the first 64 bits in the file, but
 for the few occasions when this is not possible [#um]_, the *um*
 keyword of `cf.read` allows the format to be specified. The the UM
-version (if not inferable from the PP or lookup header information)
+version (if not inferrable from the PP or lookup header information)
 and the height of the upper bound of the top model level may also be
 set with the *um* keyword.
 

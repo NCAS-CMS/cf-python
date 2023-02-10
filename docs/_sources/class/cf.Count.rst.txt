@@ -125,7 +125,7 @@ Data
    :template: attribute.rst
 
    ~cf.Count.array
-   ~cf.Count.Data
+   ~cf.Count.to_dask_array
    ~cf.Count.data
    ~cf.Count.datetime_array
    ~cf.Count.datum
@@ -171,7 +171,11 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Count.apply_masking
+   ~cf.Count.count
+   ~cf.Count.count_masked
    ~cf.Count.fill_value
+   ~cf.Count.masked_invalid
 
 .. autosummary::
    :nosignatures:
@@ -179,12 +183,8 @@ Data
    :template: attribute.rst
 
    ~cf.Count.binary_mask
-   ~cf.Count.count
-   ~cf.Count.count_masked
    ~cf.Count.hardmask
    ~cf.Count.mask
-   ~cf.Count.mask_invalid
-   ~cf.Count.apply_masking
 
 .. autosummary::
    :nosignatures:
@@ -199,7 +199,7 @@ Data
    :template: method.rst
 
    ~cf.Count.__setitem__
-   ~cf.Count.mask_invalid
+   ~cf.Count.masked_invalid
    ~cf.Count.subspace
    ~cf.Count.where
 
@@ -211,15 +211,16 @@ Data
    :template: method.rst
 	      
 
-   ~cf.Count.chunk
+   ~cf.Count.rechunk
    ~cf.Count.close
    ~cf.Count.convert_reference_time
    ~cf.Count.cyclic
    ~cf.Count.period
    ~cf.Count.iscyclic
    ~cf.Count.isperiodic
-   ~cf.Count.get_filenames
+   ~cf.Count.get_original_filenames
    ~cf.Count.has_bounds
+   ~cf.Count.persist
 
 Miscellaneous
 -------------
@@ -235,6 +236,7 @@ Miscellaneous
    ~cf.Count.copy
    ~cf.Count.creation_commands
    ~cf.Count.equals
+   ~cf.Count.to_memory
    ~cf.Count.uncompress
 
 .. rubric:: Attributes
@@ -586,9 +588,6 @@ Special
    ~cf.Count.__str__
    ~cf.Count.__array__
    ~cf.Count.__data__
-   ~cf.Count.__query_set__
-   ~cf.Count.__query_wi__
-   ~cf.Count.__query_wo__
    
 Deprecated
 ----------
@@ -603,9 +602,12 @@ Deprecated
    ~cf.Count.asdatetime
    ~cf.Count.asreftime
    ~cf.Count.attributes
+   ~cf.Count.chunk
+   ~cf.Count.Data
    ~cf.Count.delprop
    ~cf.Count.dtvarray
    ~cf.Count.expand_dims
+   ~cf.Count.get_filenames
    ~cf.Count.getprop
    ~cf.Count.halo
    ~cf.Count.hasbounds
@@ -617,6 +619,7 @@ Deprecated
    ~cf.Count.isdomainancillary
    ~cf.Count.isfieldancillary
    ~cf.Count.ismeasure
+   ~cf.Count.mask_invalid
    ~cf.Count.name
    ~cf.Count.remove_data
    ~cf.Count.select

@@ -20,10 +20,10 @@ from .dask_utils import cf_YMDhms
 _units_None = Units(None)
 
 
-def _is_numeric_dtype(array):
+def is_numeric_dtype(array):
     """True if the given array is of a numeric or boolean data type.
 
-    .. versionadded:: 4.0.0
+    .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -37,29 +37,27 @@ def _is_numeric_dtype(array):
     **Examples**
 
     >>> a = np.array([0, 1, 2])
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.array([False, True, True])
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.array(["a", "b", "c"], dtype="S1")
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     False
     >>> a = np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0])
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.array(10)
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.empty(1, dtype=object)
-    >>> cf.data.utils._is_numeric_dtype(a)
+    >>> cf.data.utils.is_numeric_dtype(a)
     False
 
     """
-    # TODODASK: do we need to make any specific checks relating to ways of
-    # encoding datetimes, which could be encoded as strings, e.g. as in
-    # "2000-12-3 12:00", yet could be considered, or encoded as, numeric?
     dtype = array.dtype
+
     # This checks if the dtype is either a standard "numeric" type (i.e.
     # int types, floating point types or complex floating point types)
     # or Boolean, which are effectively a restricted int type (0 or 1).
@@ -73,7 +71,7 @@ def _is_numeric_dtype(array):
 def convert_to_datetime(a, units):
     """Convert a dask array of numbers to one of date-time objects.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso `convert_to_reftime`
 
@@ -111,7 +109,7 @@ def convert_to_reftime(a, units=None, first_value=None):
     """Convert a dask array of string or object date-times to floating
     point reference times.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso `convert_to_datetime`
 
@@ -163,7 +161,10 @@ def convert_to_reftime(a, units=None, first_value=None):
             else:
                 YMD = "1970-01-01"
 
-            units = Units("days since " + YMD, default_calendar)
+            units = Units(
+                "days since " + YMD,
+                getattr(units, "calendar", default_calendar),
+            )
 
         a = a.map_blocks(
             partial(st2rt, units_in=units, units_out=units), dtype=float
@@ -214,7 +215,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 def first_non_missing_value(a, cached=None, method="index"):
     """Return the first non-missing value of a dask array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -319,7 +320,7 @@ def first_non_missing_value(a, cached=None, method="index"):
 def unique_calendars(a):
     """Find the unique calendars from a dask array of date-time objects.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -364,7 +365,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 
     The name is arbitrary and has no semantic meaning.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -420,7 +421,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `chunk_shapes`
 
@@ -450,7 +451,7 @@ def chunk_positions(chunks):
 def chunk_shapes(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `chunk_positions`
 
@@ -477,42 +478,10 @@ def chunk_shapes(chunks):
     return product(*chunks)
 
 
-def is_small(array, threshold=None):
-    """We adjust the size of the data here for the potiential of a mask.
-
-    Returns False if size is unknown
-
-    .. versionadded:: 4.0.0
-
-    """
-    # TODODASKAPI - need to define what 'small' is, and consider the API
-    # in general
-
-    if threshold is None:
-        threshold = 2**90  # TODODASK - True for now!
-
-    return array.size * (array.dtype.itemsize + 1) < threshold
-
-
-def is_very_small(array, threshold=None):
-    """TODODASKDOCS.
-
-    .. versionadded:: 4.0.0
-
-    """
-    # TODODASKAPI - need to define what 'very small' is, and consider the
-    # API in general
-
-    if threshold is None:
-        threshold = 0.125 * 2**90  # TODODASK - True for now!
-
-    return is_small(array, threshold)
-
-
 def scalar_masked_array(dtype=float):
     """Return a scalar masked array.
 
-     .. versionadded:: TODODASKVER
+     .. versionadded:: 3.14.0
 
      :Parmaeters:
 
@@ -570,7 +539,7 @@ def conform_units(value, units, message=None):
 
     In all other cases *value* is returned unchanged.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     :Parameters:
 
@@ -638,7 +607,7 @@ def YMDhms(d, attr):
     Only applicable for data with reference time units. The returned
     `Data` will have the same mask hardness as the original array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
                  `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
@@ -686,7 +655,7 @@ def where_broadcastable(data, x, name):
     *x* are ignored, thereby also ensuring that the shape of the
     result is identical to the shape of *data*.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.Data.where`
 
@@ -758,7 +727,7 @@ def collapse(
 ):
     """Collapse data in-place using a given funcion.
 
-     .. versionadded:: TODODASKVER
+     .. versionadded:: 3.14.0
 
      .. seealso:: `parse_weights`
 
@@ -871,7 +840,7 @@ def collapse(
 def parse_weights(d, weights, axis=None):
     """Parse the weights input to `collapse`.
 
-     .. versionadded:: TODODASKVER
+     .. versionadded:: 3.14.0
 
      .. seealso:: `collapse`
 
@@ -911,25 +880,29 @@ def parse_weights(d, weights, axis=None):
 
     >>> d = cf.Data(np.arange(12)).reshape(4, 3)
 
-    >>> parse_weights(d, [1, 2, 1], (0, 1))
+    >>> cf.data.utils.parse_weights(d, [1, 2, 1], (0, 1))
     <CF Data(3): [1, 2, 1]>
 
-    >>> parse_weights(d, [[1, 2, 1]], (0, 1))
+    >>> cf.data.utils.parse_weights(d, [[1, 2, 1]], (0, 1))
     <CF Data(1, 3): [[1, 2, 1]]>
 
-    >>> parse_weights(d, {1: [1, 2, 1]}, (0, 1))
+    >>> cf.data.utils.parse_weights(d, {1: [1, 2, 1]}, (0, 1))
     <CF Data(1, 3): [[1, 2, 1]]>
 
-    >>> print(parse_weights(d, {0: [1, 2, 3, 4], 1: [1, 2, 1]}, (0, 1)))
+    >>> print(
+    ...     cf.data.utils.parse_weights(
+    ...         d, {0: [1, 2, 3, 4], 1: [1, 2, 1]}, (0, 1)
+    ...     )
+    ... )
     [[1 2 1]
      [2 4 2]
      [3 6 3]
      [4 8 4]]
 
-    >>> print(cf.data.data.parse_weights(d, {}, (0, 1)))
+    >>> print(cf.data.utils.parse_weights(d, {}, (0, 1)))
     None
 
-    >>> print(cf.data.data.parse_weights(d, {1: [1, 2, 1]}, 0))
+    >>> print(cf.data.utils.parse_weights(d, {1: [1, 2, 1]}, 0))
     None
 
     """
@@ -969,25 +942,16 @@ def parse_weights(d, weights, axis=None):
     # For each component, add missing dimensions as size 1.
     w = []
     shape = d.shape
+    axes = d._axes
     Data = type(d)
     for key, value in weights.items():
         value = Data.asdata(value)
 
         # Make sure axes are in ascending order
-        skey = tuple(sorted(key))
-        if key != skey:
-            value = value.transpose(skey)
-            key = skey
-
-        if not all(
-            True if i in (j, 1) else False
-            for i, j in zip(value.shape, [shape[i] for i in key])
-        ):
-            raise ValueError(
-                f"Weights component for axes {tuple(key)} with shape "
-                f"{value.shape} is not broadcastable to data with "
-                f"shape {shape}"
-            )
+        if key != tuple(sorted(key)):
+            key1 = [axes[i] for i in key]
+            new_order = [key1.index(axis) for axis in axes if axis in key1]
+            value = value.transpose(new_order)
 
         new_shape = [n if i in key else 1 for i, n in enumerate(shape)]
         w.append(value.reshape(new_shape))

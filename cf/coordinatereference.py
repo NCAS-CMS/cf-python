@@ -278,7 +278,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         """Close all files referenced by coordinate conversion term
         values.
 
-        Deprecated at version TODODASKVER. All files are now
+        Deprecated at version 3.14.0. All files are now
         automatically closed when not being accessed.
 
         :Returns:
@@ -294,7 +294,7 @@ class CoordinateReference(cfdm.CoordinateReference):
             self,
             "close",
             "All files are now automatically closed when not being accessed.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -783,6 +783,8 @@ class CoordinateReference(cfdm.CoordinateReference):
             "Use method 'datum.del_parameter', "
             "'coordinate_conversion.del_parameter' or "
             "'coordinate_conversion.del_domain_ancillary' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -796,6 +798,8 @@ class CoordinateReference(cfdm.CoordinateReference):
             self,
             "conversion",
             "Use attribute 'coordinate_conversion' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -806,7 +810,11 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         """
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, "hasbounds", "Use method 'has_bounds' instead."
+            self,
+            "hasbounds",
+            "Use method 'has_bounds' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -822,6 +830,8 @@ class CoordinateReference(cfdm.CoordinateReference):
             "ancillaries",
             "Use the 'coordinate_conversion.domain_ancillaries' method "
             "instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     @property
@@ -837,6 +847,8 @@ class CoordinateReference(cfdm.CoordinateReference):
             "parameters",
             "Use methods 'coordinate_conversion.parameters' and "
             "'datum.parameters' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def clear(self, coordinates=True, parameters=True, ancillaries=True):
@@ -851,6 +863,8 @@ class CoordinateReference(cfdm.CoordinateReference):
             "parameters",
             "Use methods 'coordinate_conversion.parameters' and "
             "'datum.parameters' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def name(self, default=None, identity=False, ncvar=False):
@@ -860,12 +874,18 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "name", "Use the 'identity' method instead."
+            self,
+            "name",
+            "Use the 'identity' method instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def all_identifiers(self):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_METHOD(self, "all_identifiers")  # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, "all_identifiers", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
     def set_term(self, term_type, term, value):
         """Deprecated at version 3.0.0.
@@ -881,4 +901,6 @@ class CoordinateReference(cfdm.CoordinateReference):
             "Use method 'datum.set_parameter', "
             "'coordinate_conversion.set_parameter' or "
             "'coordinate_conversion.set_domain_ancillary' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover

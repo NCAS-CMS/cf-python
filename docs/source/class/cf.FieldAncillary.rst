@@ -146,6 +146,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.FieldAncillary.to_dask_array
    ~cf.FieldAncillary.__getitem__
    ~cf.FieldAncillary.del_data
    ~cf.FieldAncillary.get_data
@@ -215,7 +216,7 @@ Data
    :template: method.rst
 	      
 
-   ~cf.FieldAncillary.chunk
+   ~cf.FieldAncillary.rechunk
    ~cf.FieldAncillary.close
    ~cf.FieldAncillary.convert_reference_time
    ~cf.FieldAncillary.cyclic
@@ -224,6 +225,7 @@ Data
    ~cf.FieldAncillary.isperiodic
    ~cf.FieldAncillary.get_original_filenames
    ~cf.FieldAncillary.has_bounds
+   ~cf.FieldAncillary.persist
 
 Miscellaneous
 -------------
@@ -239,6 +241,7 @@ Miscellaneous
    ~cf.FieldAncillary.copy
    ~cf.FieldAncillary.creation_commands
    ~cf.FieldAncillary.equals
+   ~cf.FieldAncillary.to_memory
    ~cf.FieldAncillary.uncompress
 
 .. rubric:: Attributes
@@ -577,9 +580,6 @@ Special
    ~cf.FieldAncillary.__str__
    ~cf.FieldAncillary.__array__
    ~cf.FieldAncillary.__data__
-   ~cf.FieldAncillary.__query_set__
-   ~cf.FieldAncillary.__query_wi__
-   ~cf.FieldAncillary.__query_wo__
 
 Deprecated
 ----------
@@ -594,6 +594,7 @@ Deprecated
    ~cf.FieldAncillary.asdatetime
    ~cf.FieldAncillary.asreftime
    ~cf.FieldAncillary.attributes
+   ~cf.FieldAncillary.chunk
    ~cf.FieldAncillary.delprop
    ~cf.FieldAncillary.dtvarray
    ~cf.FieldAncillary.expand_dims
@@ -608,6 +609,7 @@ Deprecated
    ~cf.FieldAncillary.isdomainancillary
    ~cf.FieldAncillary.isfieldancillary
    ~cf.FieldAncillary.ismeasure
+   ~cf.FieldAncillary.mask_invalid
    ~cf.FieldAncillary.name
    ~cf.FieldAncillary.remove_data
    ~cf.FieldAncillary.select

@@ -441,7 +441,6 @@ if __name__ == "__main__":
 
     # also read a record using saved metadata
     if f.vars:
-
         fmt = f.fmt
         byte_ordering = f.byte_ordering
         word_size = f.word_size

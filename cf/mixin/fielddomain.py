@@ -250,7 +250,7 @@ class FieldDomain:
 
         domain_axes = self.domain_axes(todict=True)
 
-        # Initialize the index for each axis
+        # Initialise the index for each axis
         indices = {axis: slice(None) for axis in domain_axes}
 
         parsed = {}
@@ -369,7 +369,7 @@ class FieldDomain:
 
                     if envelope or full:
                         size = domain_axes[axis].get_size()
-                        # TODODASK - consider using dask.arange here
+                        # TODODASK: consider using dask.arange here
                         d = np.arange(size)  # self._Data(range(size))
                         ind = (d[value],)  # .array,)
                         index = slice(None)
@@ -443,7 +443,7 @@ class FieldDomain:
                     # 1-d CASE 3: All other 1-d cases
                     logger.debug("  1-d CASE 3:")  # pragma: no cover
 
-                    index = value == item
+                    index = item == value
                     index = index.data.to_dask_array()
 
                     if envelope or full:
@@ -500,7 +500,7 @@ class FieldDomain:
 
                 # Find where each construct matches its value
                 item_matches = [
-                    (value == construct).data
+                    (construct == value).data
                     for value, construct in zip(points, transposed_constructs)
                 ]
 
@@ -735,8 +735,8 @@ class FieldDomain:
                 # This construct does not span the roll axes
                 continue
 
-            # TODODASK - remove these two lines when multiaxis rolls
-            #            are allowed at v4.0.0
+            # TODODASK: Consider removing these two lines, now that
+            #           multiaxis rolls are allowed on Data objects.
             c_axes = c_axes[0]
             c_shifts = c_shifts[0]
 
@@ -1077,7 +1077,7 @@ class FieldDomain:
             {{verbose: `int` or `str` or `None`, optional}}
 
             config: `dict`
-                Additional parameters for optimizing the
+                Additional parameters for optimising the
                 operation. See the code for details.
 
                 .. versionadded:: 3.9.0
@@ -1540,7 +1540,7 @@ class FieldDomain:
                 units as the dimension coordinates.
 
             config: `dict`
-                Additional parameters for optimizing the
+                Additional parameters for optimising the
                 operation. See the code for details.
 
                 .. versionadded:: 3.9.0
@@ -2037,6 +2037,7 @@ class FieldDomain:
         set_axes=True,
         copy=True,
         autocyclic={},
+        conform=True,
     ):
         """Set a metadata construct.
 
@@ -2106,11 +2107,24 @@ class FieldDomain:
                 construct is copied.
 
             autocyclic: `dict`, optional
-                Additional parameters for optimizing the operation,
+                Additional parameters for optimising the operation,
                 relating to coordinate periodicity and cyclicity. See
                 the code for details.
 
                 .. versionadded:: 3.9.0
+
+            conform: `bool`, optional
+                If True (the default), then attempt to replace
+                placeholder identities in *construct* with existing
+                construct identifiers. Specifically, cell method
+                construct axis specifiers (such as ``'T'``) are mapped
+                to domain axis construct identifiers, and coordinate
+                reference construct coordinate specifiers (such as
+                ``'latitude'``) are mapped to their corresponding
+                dimension or auxiliary coordinate construct
+                identifiers.
+
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -2167,27 +2181,35 @@ class FieldDomain:
 
         if construct_type == "dimension_coordinate":
             construct.autoperiod(inplace=True, config=autocyclic)
-            self._conform_coordinate_references(out)
+            if conform:
+                self._conform_coordinate_references(out)
+
             self.autocyclic(key=out, coord=construct, config=autocyclic)
-            try:
-                self._conform_cell_methods()
-            except AttributeError:
-                pass
+            if conform:
+                try:
+                    self._conform_cell_methods()
+                except AttributeError:
+                    pass
 
         elif construct_type == "auxiliary_coordinate":
             construct.autoperiod(inplace=True, config=autocyclic)
-            self._conform_coordinate_references(out)
-            try:
-                self._conform_cell_methods()
-            except AttributeError:
-                pass
+            if conform:
+                self._conform_coordinate_references(out)
+                try:
+                    self._conform_cell_methods()
+                except AttributeError:
+                    pass
 
         elif construct_type == "cell_method":
-            self._conform_cell_methods()
+            if conform:
+                self._conform_cell_methods()
 
         elif construct_type == "coordinate_reference":
-            for ckey in self.coordinates(todict=True):
-                self._conform_coordinate_references(ckey, coordref=construct)
+            if conform:
+                for ckey in self.coordinates(todict=True):
+                    self._conform_coordinate_references(
+                        ckey, coordref=construct
+                    )
 
         # Return the construct key
         return out

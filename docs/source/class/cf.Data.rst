@@ -58,6 +58,32 @@ Units
 
    ~cf.Data.Units 
 
+Dask
+----
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.cull_graph
+   ~cf.Data.dask_compressed_array
+   ~cf.Data.rechunk
+   ~cf.Data.to_dask_array
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.compute
+   ~cf.Data.chunks
+   ~cf.Data.npartitions
+   ~cf.Data.numblocks
+   
 Data creation routines
 ----------------------
 
@@ -99,6 +125,7 @@ Changing data shape
    :template: method.rst
 
    ~cf.Data.flatten
+   ~cf.Data.reshape
 
 Transpose-like operations
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -119,6 +146,7 @@ Changing number of dimensions
    :template: method.rst
 
    ~cf.Data.insert_dimension
+   ~cf.Data.reshape
    ~cf.Data.squeeze
     
 Joining data
@@ -181,6 +209,8 @@ Date-time support
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cf.Data.change_calendar
+   ~cf.Data.convert_reference_time
    ~cf.Data.datetime_array
    ~cf.Data.datetime_as_string
    ~cf.Data.day
@@ -288,11 +318,13 @@ Mask support
    ~cf.Data.count_masked
    ~cf.Data.compressed
    ~cf.Data.filled
+   ~cf.Data.harden_mask
    ~cf.Data.masked_invalid
    ~cf.Data.del_fill_value
    ~cf.Data.get_fill_value
    ~cf.Data.has_fill_value
    ~cf.Data.set_fill_value
+   ~cf.Data.soften_mask
    
 .. rubric:: Attributes
 
@@ -303,7 +335,7 @@ Mask support
 
    ~cf.Data.binary_mask
    ~cf.Data.hardmask
-   ~cf.Data.ismasked
+   ~cf.Data.is_masked
    ~cf.Data.mask
    ~cf.Data.fill_value
 
@@ -355,8 +387,8 @@ Rounding
    ~cf.Data.round
    ~cf.Data.trunc
 
-Sums, products, differences
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Sums, products, differences, powers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autosummary::
    :nosignatures:
@@ -365,6 +397,8 @@ Sums, products, differences
 
    ~cf.Data.cumsum
    ~cf.Data.diff
+   ~cf.Data.square
+   ~cf.Data.sqrt
    ~cf.Data.sum
 
 .. rubric:: Convolution filters
@@ -472,6 +506,7 @@ Averages and variances
    ~cf.Data.standard_deviation
    ~cf.Data.variance
    ~cf.Data.sd
+   ~cf.Data.std
    ~cf.Data.var
 
 Sums
@@ -534,6 +569,9 @@ Compression by convention
    ~cf.Data.get_count
    ~cf.Data.get_index
    ~cf.Data.get_list
+   ~cf.Data.get_dependent_tie_points
+   ~cf.Data.get_interpolation_parameters
+   ~cf.Data.get_tie_point_indices
    ~cf.Data.uncompress
 
 .. rubric:: Attributes
@@ -579,8 +617,11 @@ Performance
    ~cf.Data.nc_clear_hdf5_chunksizes
    ~cf.Data.nc_hdf5_chunksizes
    ~cf.Data.nc_set_hdf5_chunksizes
+   ~cf.Data.rechunk
    ~cf.Data.close
-   ~cf.Data.chunk
+   ~cf.Data.chunks
+   ~cf.Data.rechunk
+   ~cf.Data.cull
    ~cf.Data.add_partitions
    ~cf.Data.partition_boundaries
    ~cf.Data.partition_configuration
@@ -590,10 +631,19 @@ Performance
    ~cf.Data.to_memory
    ~cf.Data.in_memory
    ~cf.Data.fits_in_memory
-   ~cf.Data.fits_in_one_chunk_in_memory
    ~cf.Data.section
-   ~cf.Data.reconstruct_sectioned_data
-   ~cf.Data.HDF_chunks
+   ~cf.Data.persist
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.chunks
+   ~cf.Data.npartitions
+   ~cf.Data.numblocks
 
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------
@@ -751,9 +801,6 @@ Special
    ~cf.Data.__repr__
    ~cf.Data.__setitem__ 
    ~cf.Data.__str__
-   ~cf.Data.__query_set__
-   ~cf.Data.__query_wi__
-   ~cf.Data.__query_wo__
 
 Deprecated
 ----------
@@ -765,13 +812,34 @@ Deprecated
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Data.chunk
    ~cf.Data.Data
    ~cf.Data.dtvarray
+   ~cf.Data.dumpd
+   ~cf.Data.dumps
    ~cf.Data.expand_dims
    ~cf.Data.files
-   ~cf.Data.get_filenames
+   ~cf.Data.fits_in_one_chunk_in_memory
+   ~cf.Data.HDF_chunks
+   ~cf.Data.in_memory
+   ~cf.Data.ismasked
    ~cf.Data.mask_fpe
    ~cf.Data.mask_invalid
+   ~cf.Data.partition_boundaries
+   ~cf.Data.partition_configuration
+   ~cf.Data.partitions
+   ~cf.Data.reconstruct_sectioned_data
    ~cf.Data.save_to_disk
    ~cf.Data.seterr
+   ~cf.Data.to_disk
+   ~cf.Data.to_memory
    ~cf.Data.unsafe_array
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.ispartitioned

@@ -231,6 +231,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.AuxiliaryCoordinate.to_dask_array
    ~cf.AuxiliaryCoordinate.__getitem__
    ~cf.AuxiliaryCoordinate.del_data
    ~cf.AuxiliaryCoordinate.get_data
@@ -330,12 +331,13 @@ Cyclicity
    :template: method.rst
 	      
 
-   ~cf.AuxiliaryCoordinate.chunk
+   ~cf.AuxiliaryCoordinate.rechunk
    ~cf.AuxiliaryCoordinate.close
    ~cf.AuxiliaryCoordinate.convert_reference_time
    ~cf.AuxiliaryCoordinate.cyclic
    ~cf.AuxiliaryCoordinate.period
    ~cf.AuxiliaryCoordinate.get_original_filenames
+   ~cf.AuxiliaryCoordinate.persist
 
 Miscellaneous
 -------------
@@ -352,6 +354,7 @@ Miscellaneous
    ~cf.AuxiliaryCoordinate.creation_commands
    ~cf.AuxiliaryCoordinate.equals
    ~cf.AuxiliaryCoordinate.inspect
+   ~cf.AuxiliaryCoordinate.to_memory
    ~cf.AuxiliaryCoordinate.uncompress
    
 Mathematical operations
@@ -675,9 +678,6 @@ Special
    ~cf.AuxiliaryCoordinate.__str__
    ~cf.AuxiliaryCoordinate.__array__
    ~cf.AuxiliaryCoordinate.__data__
-   ~cf.AuxiliaryCoordinate.__query_set__
-   ~cf.AuxiliaryCoordinate.__query_wi__
-   ~cf.AuxiliaryCoordinate.__query_wo__
 
 Deprecated
 ----------
@@ -691,6 +691,7 @@ Deprecated
 
    ~cf.AuxiliaryCoordinate.asdatetime
    ~cf.AuxiliaryCoordinate.asreftime
+   ~cf.AuxiliaryCoordinate.chunk
    ~cf.AuxiliaryCoordinate.delprop
    ~cf.AuxiliaryCoordinate.expand_dims
    ~cf.AuxiliaryCoordinate.files
@@ -698,6 +699,7 @@ Deprecated
    ~cf.AuxiliaryCoordinate.getprop
    ~cf.AuxiliaryCoordinate.hasprop
    ~cf.AuxiliaryCoordinate.insert_data
+   ~cf.AuxiliaryCoordinate.mask_invalid
    ~cf.AuxiliaryCoordinate.name
    ~cf.AuxiliaryCoordinate.remove_data
    ~cf.AuxiliaryCoordinate.select

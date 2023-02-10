@@ -7,7 +7,7 @@ from ...array.abstract import FileArray
 class FragmentArray(FileArray):
     """A CFA fragment array.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
@@ -133,7 +133,7 @@ class FragmentArray(FileArray):
             dimension (similar to the way vector subscripts work in
             Fortran).
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         array = self.get_array()
@@ -149,7 +149,7 @@ class FragmentArray(FileArray):
         instances, and rank-reducing indices (such as an integer or
         scalar array) are disallowed.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -184,7 +184,7 @@ class FragmentArray(FileArray):
                 continue
 
             if isinstance(i, Integral) or not getattr(i, "ndim", True):
-                # TODODASK: what about [] or np.array([])?
+                # TODOCFA: what about [] or np.array([])?
 
                 # 'i' is an integer or a scalar numpy/dask array
                 raise ValueError(
@@ -215,7 +215,7 @@ class FragmentArray(FileArray):
     def _conform_units(self, array):
         """Conform the array to have the aggregated units.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -251,7 +251,7 @@ class FragmentArray(FileArray):
     def aggregated_Units(self):
         """The units of the aggregated data.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -270,7 +270,7 @@ class FragmentArray(FileArray):
     def get_address(self):
         """The address of the fragment in the file.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -286,7 +286,7 @@ class FragmentArray(FileArray):
         If the calendar is `None` then the CF default calendar is
         assumed, if applicable.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -320,7 +320,7 @@ class FragmentArray(FileArray):
         If the units are `None` then the aggregated array has no
         defined units.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `get_aggregated_calendar`
 
@@ -353,7 +353,7 @@ class FragmentArray(FileArray):
     def get_array(self):
         """The fragment array stored in a file.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 

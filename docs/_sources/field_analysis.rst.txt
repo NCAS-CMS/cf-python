@@ -125,90 +125,123 @@ Collapse methods
 ^^^^^^^^^^^^^^^^
 
 The following collapse methods are available, over any subset of the
-domain axes. The "Cell method" column in the table gives the method of
-the new cell method construct (if one is created).
+domain axes. The "Cell method" column in the table gives the method
+name, defined by the CF conventions, of the new cell method construct
+(if one is created).
 
 ============================  ========================================  ==========================
 Method                        Description                               Cell method
 ============================  ========================================  ==========================
-``'maximum'``                 The maximum of the values.                ``maximum``
-                          
-``'minimum'``                 The minimum of the values.                ``minimum``
-                                   
-``'maximum_absolute_value'``  The maximum of the absolute values.       ``maximum_absolute_value``
-                          
-``'minimum_absolute_value'``  The minimum of the absolute values.       ``minimum_absolute_value``
-                          
-``'mid_range'``               The average of the maximum and the        ``mid_range``
-                              minimum of the values.
-                              
-``'range'``                   The absolute difference between the       ``range``
-                              maximum and the minimum of the values.
-			      
-``'median'``                  The median of the values.                 ``median`` 
-
-``'sample_size'``             The sample size, :math:`N`, as would be   ``point``
-                              used for other calculations, i.e. the
+``'sample_size'``             The sample size, :math:`N`, equal to the  ``point``
 			      number of non-missing values.
                               
-``'sum_of_weights'``          The sum of :math:`N` weights              ``sum``
-                              :math:`w_i`, as would be used for other
-                              calculations, is
+``'maximum'``                 The maximum of the non-missing values.    ``maximum``
+
+                              .. math:: m_x=\max\{x_0, \ldots, x_N\}
+                          
+``'minimum'``                 The minimum of the non-missing values.    ``minimum``
+
+                              .. math::  m_n=\min\{x_0, \ldots, x_N\}
+                                   
+``'maximum_absolute_value'``  The maximum of the non-missing absolute   ``maximum_absolute_value``
+                              values.
+
+                              .. math:: \max\{|x_0|, \ldots, |x_N|\}
+                          
+``'minimum_absolute_value'``  The minimum of the non-missing absolute   ``minimum_absolute_value``
+                              values.
+
+                              .. math:: \min\{|x_0|, \ldots, |x_N|\}
+                          
+``'mid_range'``               The average of the maximum and the        ``mid_range``
+                              minimum of the non-missing values.
+
+                              .. math:: \frac{m_x + m_n}{2}    
+                              
+``'range'``                   The absolute difference between the       ``range``
+                              maximum and the minimum of the
+			      non-missing values.
+
+                              .. math:: m_x - m_n
+			      
+``'median'``                  The median of the :math:`N` non-missing   ``median``
+                              values.
+
+``'sum_of_weights'``          The sum of the :math:`N` weights          ``sum``
+                              :math:`w_i` that correspond to
+			      non-missing values.
 
 			      .. math:: V_{1}=\sum_{i=1}^{N} w_i
 			      
-``'sum_of_weights2'``         The sum of the squares of :math:`N`       ``sum``
-                              weights :math:`w_i`, as would be used
-                              for other calculations, is
+``'sum_of_weights2'``         The sum of the squares of the :math:`N`   ``sum``
+                              weights :math:`w_i` that correspond to
+      		              non-missing values.
 
-			      .. math:: V_{2}=\sum_{i=1}^{N}  w_i^{2}
+			      .. math:: V_{2}=\sum_{i=1}^{N} w_i^{2}
 
-``'sum'``                     The unweighted sum of :math:`N` values    ``sum``
-                              :math:`x_i` is
+``'sum'``                     The unweighted sum of the :math:`N`       ``sum``
+                              non-missing values :math:`x_i` is
 			      
                               .. math:: t=\sum_{i=1}^{N} x_i
 
-``'sum_of_squares'``          The unweighted sum of the squares of      ``sum_of_squares``
-                              :math:`N` values :math:`x_i` is
+			      The weighted sum of the :math:`N`
+                              non-missing values :math:`x_i` with
+                              corresponding weights :math:`w_i` is
+			      
+                              .. math:: \hat{t}=\sum_{i=1}^{N} w_i x_i
+
+``'sum_of_squares'``          The unweighted sum of the squares of the  ``sum_of_squares``
+                              :math:`N` non-missing values :math:`x_i`
+   			      is
 			      
                               .. math:: t_2=\sum_{i=1}^{N} x_{i}^{2}
                               
-``'integral'``                The integral of :math:`N` values          ``sum``
-                              :math:`x_i` with corresponding cell       
-                              measures :math:`m_i` is
+			      The weighted sum of the squares of the
+			      :math:`N` non-missing values :math:`x_i`
+			      with corresponding weights :math:`w_i`
+			      is
+			      
+                              .. math:: \hat{t}_2=\sum_{i=1}^{N}
+				                  w_i x_{i}^{2}
+
+``'integral'``                The :ref:`weighted <Collapse-weights>`    ``sum``
+                              sum of the :math:`N` non-missing values
+			      :math:`x_i` with corresponding cell 
+		              measures :math:`m_i`.
 			      
                               .. math:: i=\sum_{i=1}^{N} m_i x_i
 
-			      Note that the integral differs from a
-			      weighted sum in that the units of the
-			      cell measures are incorporated into the
-			      result.
+			      .. note:: The integral differs from a
+                      		        weighted sum in that the units
+                      		        of the measures are
+                      		        incorporated into the result.
 			      
-``'mean'``                    The unweighted mean of :math:`N` values   ``mean``
-                              :math:`x_i` is
+``'mean'``                    The unweighted mean of the :math:`N`      ``mean``
+                              non-missing values :math:`x_i` is
                               
                               .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N}
 					               x_i
                               
                               The :ref:`weighted <Collapse-weights>`
-                              mean of :math:`N` values :math:`x_i`
-                              with corresponding weights :math:`w_i`
-                              is
+                              mean of the :math:`N` non-missing values
+                              :math:`x_i` with corresponding weights
+                              :math:`w_i`. is
 			      
                               .. math:: \hat{\mu}=\frac{1}{V_{1}}
                                                     \sum_{i=1}^{N}
-                                         w_i x_i
+                                                    w_i x_i
 					
-``'mean_absolute_value'``     The unweighted mean of :math:`N`          ``mean_absolute_value``
-                              values :math:`x_i` absoluted is 
+``'mean_absolute_value'``     The unweighted mean of the :math:`N`      ``mean_absolute_value``
+                              non-missing absolute values :math:`x_i`
+			      is
                               
                               .. math:: \mu_{abs}=\frac{1}{N}
 				       \sum_{i=1}^{N}|x_i|
                               
                               The :ref:`weighted <Collapse-weights>`
-                              mean of :math:`N` values :math:`x_i`
-                              absoluted with corresponding weights
-                              :math:`w_i` is
+                              mean of the :math:`N` non-missing
+			      absolute values :math:`x_i` with
+			      corresponding weights :math:`w_i` is
 			      
                               .. math:: \hat{\mu}_{abs}=
                                              \frac{1}{V_{1}}
@@ -218,8 +251,8 @@ Method                        Description                               Cell met
                               upper group of data values defined by
                               the upper tenth of their distribution
 
-``'variance'``                The unweighted variance of :math:`N`      ``variance``
-                              values :math:`x_i` and with 
+``'variance'``                The unweighted variance of the :math:`N`  ``variance``
+                              non-missing values :math:`x_i` and with 
                               :math:`N-ddof` degrees of freedom
    			      (:math:`ddof\ge0`) is
 			      
@@ -236,9 +269,10 @@ Method                        Description                               Cell met
                               :math:`ddof=1`.
 			      
                               The :ref:`weighted <Collapse-weights>`
-                              biased estimate of the variance of
-                              :math:`N` values :math:`x_i` with
-                              corresponding weights :math:`w_i` is
+                              biased estimate of the variance of the
+                              :math:`N` non-missing values :math:`x_i`
+                              with corresponding weights :math:`w_i`
+                              is
 			      
                               .. math:: \hat{s}_{N}^{2}=
 					\frac{1}{V_{1}}
@@ -246,9 +280,11 @@ Method                        Description                               Cell met
                                         w_i(x_i -
                                         \hat{\mu})^{2}
                                    
-                              The corresponding :ref:`weighted
-                              <Collapse-weights>` unbiased estimate of
-                              the variance is
+                              The :ref:`weighted <Collapse-weights>`
+                              unbiased estimate of the variance of the
+                              :math:`N` non-missing values :math:`x_i`
+                              with corresponding weights :math:`w_i`
+                              is
                               
                               .. math:: \hat{s}^{2}=\frac{1}{V_{1} -
                                                     (V_{1}/V_{2})}
@@ -256,28 +292,31 @@ Method                        Description                               Cell met
                                                     w_i(x_i -
                                                     \hat{\mu})^{2}
 			      
-                              In both cases, the weights are assumed
-                              to be non-random reliability weights, as
-                              opposed to frequency weights.
+                              .. note:: The weights used in the
+                                        variance calculations are
+                                        assumed to be non-random
+                                        reliability weights, as
+                                        opposed to frequency weights.
                                   
 ``'standard_deviation'``      The standard deviation is the square      ``standard_deviation``
                               root of the unweighted or
 			      :ref:`weighted <Collapse-weights>`
-		              variance, as defined in this table.
+		              variance.
 			       
-``'root_mean_square'``        The unweighted root mean square of        ``root_mean_square`` 
-                              :math:`N` values :math:`x_i` is
+``'root_mean_square'``        The unweighted root mean square of the    ``root_mean_square`` 
+                              :math:`N` non-missing values
+			      :math:`x_i` is
 			      
-                              .. math:: RMS=\sqrt{\frac{1}{N}
+                              .. math:: r=\sqrt{\frac{1}{N}
 				                   \sum_{i=1}^{N}
 				                   x_{i}^2}
 			      
                               The :ref:`weighted <Collapse-weights>`
-                              root mean square of :math:`N` values
-                              :math:`x_i` with corresponding weights
-                              :math:`w_i` is
+                              root mean square of the :math:`N`
+                              non-missing values :math:`x_i` with
+                              corresponding weights :math:`w_i` is
 			      
-                              .. math:: \hat{RMS}=\sqrt{
+                              .. math:: \hat{r}=\sqrt{
 				              \frac{1}{V_{1}}
 				              \sum_{i=1}^{N} w_i
 				              x_{i}^2}			      
@@ -1361,7 +1400,7 @@ regridding method to use:
                    : latitude(64) = [-87.86380004882812, ..., 87.86380004882812] degrees_north
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
-   >>> c = a.regrids(b, 'conservative')
+   >>> c = a.regrids(b, method='conservative')
    >>> print(c)
    Field: air_temperature (ncvar%tas)
    ----------------------------------
@@ -1391,7 +1430,7 @@ coordinate constructs.
    >>> import numpy
    >>> lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
    >>> lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-   >>> c = a.regrids({'latitude': lat, 'longitude': lon}, 'linear')
+   >>> c = a.regrids([lat, lon], method='linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(2), latitude(73), longitude(72)) K
@@ -1453,7 +1492,7 @@ will produce similar results to using using spherical regridding.
    ...                       units='days since 1860-01-01', calendar='360_day'))
    >>> time
    <CF DimensionCoordinate: time(60) days since 1860-01-01 360_day>
-   >>> c = a.regridc({'T': time}, axes='T', method='linear')
+   >>> c = a.regridc([time], axes='T', method='linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(60), latitude(73), longitude(96)) K
@@ -1472,11 +1511,11 @@ non-overlapping bounds on the destination domain:
              (to first order) onto the grid specified in the dimension
              coordinate time.*
 
-   >>> c = a.regridc({'T': time}, axes='T', method='conservative')  # Raises Exception
+   >>> c = a.regridc([time], axes='T', method='conservative')  # Raises Exception
    ValueError: Destination coordinates must have contiguous, non-overlapping bounds for conservative regridding.
    >>> bounds = time.create_bounds()
    >>> time.set_bounds(bounds)
-   >>> c = a.regridc({'T': time}, axes='T', method='conservative')
+   >>> c = a.regridc([time], axes='T', method='conservative')
    >>> print(c)
    Field: air_temperature (ncvar%tas)
    ----------------------------------
@@ -1552,7 +1591,7 @@ pressure coordinates after the regridding operation.
    >>> new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
    >>> new_z_ln_p = new_z_p.log()
    >>> new_z_ln_p.axis = 'Z'
-   >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='linear')
+   >>> new_v = v.regridc([new_z_ln_p], axes='Z', method='linear')
    >>> new_v.replace_construct('Z', new=new_z_p)
    >>> print(new_v)
    Field: eastward_wind (ncvar%ua)
@@ -2125,7 +2164,7 @@ and therefore may return
 `"invalid" values <https://docs.scipy.org/doc/numpy/reference/constants.html>`_
 (`nan` or `inf`). When applying these methods to constructs with masked
 data, you may prefer to output masked values instead of invalid ones. In
-this case, you can use `mask_invalid` to do the conversion afterwards:
+this case, you can use `masked_invalid` to do the conversion afterwards:
 
 .. code-block:: python
    :caption: *Take the `arctanh` of some masked data and then transform
@@ -2135,7 +2174,7 @@ this case, you can use `mask_invalid` to do the conversion afterwards:
    >>> e = d.arctanh()
    >>> print(e.array)
    [-- nan inf 0.5493061443340548 --]
-   >>> e.mask_invalid(inplace=True)
+   >>> e.masked_invalid(inplace=True)
    >>> print(e.array)
    [-- -- -- 0.5493061443340548 --]
 

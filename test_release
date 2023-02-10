@@ -23,7 +23,7 @@ export PATH=$dir/bin:$PATH
 
 cd $dir/cf/test
 
-python run_tests.py
+./individual_tests.sh
 test_result_status=$?
 
 set -x

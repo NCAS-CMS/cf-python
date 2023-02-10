@@ -4,26 +4,20 @@ import numpy as np
 class FileArrayMixin:
     """Mixin class for an array stored in a file.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
     @property
-    def _dask_lock(self):
-        """TODODASKDOCS.
-
-        Concurrent reads are assumed to be not supported.
-
-        .. versionadded:: TODODASKVER
-
-        """
-        return True
-
-    @property
     def _dask_meta(self):
-        """TODODASKDOCS.
+        """The metadata for the containing dask array.
 
-        .. versionadded:: TODODASKVER
+        This is the kind of array that will result from slicing the
+        file array.
+
+        .. versionadded:: 3.14.0
+
+        .. seealso:: `dask.array.from_array`
 
         """
         return np.array((), dtype=self.dtype)

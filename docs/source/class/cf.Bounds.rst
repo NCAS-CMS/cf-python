@@ -147,6 +147,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Bounds.to_dask_array
    ~cf.Bounds.__getitem__
    ~cf.Bounds.del_data
    ~cf.Bounds.get_data
@@ -216,7 +217,7 @@ Data
    :template: method.rst
 	      
    ~cf.Bounds.autoperiod
-   ~cf.Bounds.chunk
+   ~cf.Bounds.rechunk
    ~cf.Bounds.close
    ~cf.Bounds.convert_reference_time
    ~cf.Bounds.cyclic
@@ -225,6 +226,7 @@ Data
    ~cf.Bounds.isperiodic
    ~cf.Bounds.get_original_filenames
    ~cf.Bounds.has_bounds
+   ~cf.Bounds.persist
 
 Miscellaneous
 -------------
@@ -240,6 +242,7 @@ Miscellaneous
    ~cf.Bounds.copy
    ~cf.Bounds.creation_commands
    ~cf.Bounds.equals
+   ~cf.Bounds.to_memory
    ~cf.Bounds.uncompress
 
 .. rubric:: Attributes
@@ -586,9 +589,6 @@ Special
    ~cf.Bounds.__str__
    ~cf.Bounds.__array__
    ~cf.Bounds.__data__
-   ~cf.Bounds.__query_set__
-   ~cf.Bounds.__query_wi__
-   ~cf.Bounds.__query_wo__
 
 Deprecated
 ----------
@@ -603,6 +603,7 @@ Deprecated
    ~cf.Bounds.asdatetime
    ~cf.Bounds.asreftime
    ~cf.Bounds.attributes
+   ~cf.Bounds.chunk
    ~cf.Bounds.delprop
    ~cf.Bounds.dtvarray
    ~cf.Bounds.expand_dims
@@ -617,6 +618,7 @@ Deprecated
    ~cf.Bounds.isfieldancillary
    ~cf.Bounds.ismeasure
    ~cf.Bounds.isauxiliary
+   ~cf.Bounds.mask_invalid
    ~cf.Bounds.name
    ~cf.Bounds.remove_data
    ~cf.Bounds.select

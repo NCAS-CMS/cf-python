@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>cf.Data.rechunk &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Data.to_dask_array" href="cf.Data.to_dask_array.html" />
+    <link rel="prev" title="cf.Data.dask_compressed_array" href="cf.Data.dask_compressed_array.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../class/cf.Data.html">cf.Data</a><ul>
+      <li>Previous: <a href="cf.Data.dask_compressed_array.html" title="previous chapter">cf.Data.dask_compressed_array</a></li>
+      <li>Next: <a href="cf.Data.to_dask_array.html" title="next chapter">cf.Data.to_dask_array</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cf development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/247220">Seachange</a>
+and
+<a href="https://cordis.europa.eu/project/id/786427">Couplet</a>; by
+the <a href="https://ec.europa.eu/programmes/horizon2020/">EC Horizon
+2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="cf-data-rechunk">
+<h1>cf.Data.rechunk<a class="headerlink" href="#cf-data-rechunk" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Data.rechunk">
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">rechunk</code><span class="sig-paren">(</span><em class="sig-param">chunks='auto'</em>, <em class="sig-param">threshold=None</em>, <em class="sig-param">block_size_limit=None</em>, <em class="sig-param">balance=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/data/data.py#L2668-L2743"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.rechunk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the chunk structure of the data.</p>
+<p><strong>Performance</strong></p>
+<p>Rechunking can sometimes be expensive and incur a lot of
+communication overheads.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.14.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Data.chunks.html#cf.Data.chunks" title="cf.Data.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a>, <a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.array.rechunk.html#dask.array.rechunk" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.rechunk</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify the chunking of the underlying dask array.</p>
+<p>Any value accepted by the <em>chunks</em> parameter of the
+<a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.array.from_array.html#dask.array.from_array" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.from_array</span></code></a> function is allowed.</p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> is used to specify the array
+chunking, which uses a chunk size in bytes defined by
+the <a class="reference internal" href="../function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> function, preferring square-like
+chunk shapes.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>A blocksize like <code class="docutils literal notranslate"><span class="pre">1000</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>A blockshape like <code class="docutils literal notranslate"><span class="pre">(1000,</span> <span class="pre">1000)</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>Explicit sizes of all blocks along all dimensions
+like <code class="docutils literal notranslate"><span class="pre">((1000,</span> <span class="pre">1000,</span> <span class="pre">500),</span> <span class="pre">(400,</span> <span class="pre">400))</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>A size in bytes, like <code class="docutils literal notranslate"><span class="pre">&quot;100MiB&quot;</span></code> which will choose
+a uniform block-like shape, preferring square-like
+chunk shapes.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>A blocksize of <code class="docutils literal notranslate"><span class="pre">-1</span></code> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> in a tuple or
+dictionary indicates the size of the corresponding
+dimension.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>Blocksizes of some or all dimensions mapped to
+dimension positions, like <code class="docutils literal notranslate"><span class="pre">{1:</span> <span class="pre">200}</span></code>, or <code class="docutils literal notranslate"><span class="pre">{0:</span> <span class="pre">-1,</span>
+<span class="pre">1:</span> <span class="pre">(400,</span> <span class="pre">400)}</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>threshold: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The graph growth factor under which we don’t bother
+introducing an intermediate step. See
+<a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.array.rechunk.html#dask.array.rechunk" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.array.rechunk</span></code></a> for details.</p>
+</dd>
+<dt>block_size_limit: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The maximum block size (in bytes) we want to produce,
+as defined by the <a class="reference internal" href="../function/cf.chunksize.html#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.chunksize</span></code></a> function.</p>
+</dd>
+<dt>balance: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True, try to make each chunk the same size. By
+default this is not attempted.</p>
+<p>This means <code class="docutils literal notranslate"><span class="pre">balance=True</span></code> will remove any small
+leftover chunks, so using <code class="docutils literal notranslate"><span class="pre">d.rechunk(chunks=len(d)</span> <span class="pre">//</span>
+<span class="pre">N,</span> <span class="pre">balance=True)</span></code> will almost certainly result in
+<code class="docutils literal notranslate"><span class="pre">N</span></code> chunks.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../class/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>The rechunked data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was
+in-place.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Specify uniform chunk sizes with a tuple</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">rechunk</span><span class="p">((</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Or chunk only specific dimensions with a dictionary</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">rechunk</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="mi">1000</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Use the value <code class="docutils literal notranslate"><span class="pre">-1</span></code> to specify that you want a single chunk
+along a dimension or the value <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> to specify that dask
+can freely rechunk a dimension to attain blocks of a uniform
+block size.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">rechunk</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">},</span> <span class="n">block_size_limit</span><span class="o">=</span><span class="mf">1e8</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If a chunk size does not divide the dimension then rechunk
+will leave any unevenness to the last chunk.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">rechunk</span><span class="p">(</span><span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">chunks</span>
+<span class="go">((400, 400, 200), (1000,))</span>
+</pre></div>
+</div>
+<p>However if you want more balanced chunks, and don’t mind
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> choosing a different chunksize for you then you can use
+the <code class="docutils literal notranslate"><span class="pre">balance=True</span></code> option.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">rechunk</span><span class="p">(</span><span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">balance</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">chunks</span>
+<span class="go">((500, 500), (1000,))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, NCAS | Page built on 2023-01-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

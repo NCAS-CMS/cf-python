@@ -125,7 +125,6 @@ Data
    :template: attribute.rst
 
    ~cf.List.array
-   ~cf.List.Data
    ~cf.List.data
    ~cf.List.datetime_array
    ~cf.List.datum
@@ -143,6 +142,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.List.to_dask_array
    ~cf.List.__getitem__
    ~cf.List.del_data
    ~cf.List.get_data
@@ -212,7 +212,7 @@ Data
    :template: method.rst
 	      
 
-   ~cf.List.chunk
+   ~cf.List.rechunk
    ~cf.List.close
    ~cf.List.convert_reference_time
    ~cf.List.cyclic
@@ -221,6 +221,7 @@ Data
    ~cf.List.isperiodic
    ~cf.List.get_original_filenames
    ~cf.List.has_bounds
+   ~cf.List.persist
 
 Miscellaneous
 -------------
@@ -236,6 +237,7 @@ Miscellaneous
    ~cf.List.copy
    ~cf.List.creation_commands
    ~cf.List.equals
+   ~cf.List.to_memory
    ~cf.List.uncompress
 
 .. rubric:: Attributes
@@ -574,9 +576,6 @@ Special
    ~cf.List.__str__
    ~cf.List.__array__
    ~cf.List.__data__
-   ~cf.List.__query_set__
-   ~cf.List.__query_wi__
-   ~cf.List.__query_wo__
 
 Deprecated
 ----------
@@ -591,6 +590,8 @@ Deprecated
    ~cf.List.asdatetime
    ~cf.List.asreftime
    ~cf.List.attributes
+   ~cf.List.chunk
+   ~cf.List.Data
    ~cf.List.delprop
    ~cf.List.dtvarray
    ~cf.List.expand_dims
@@ -605,6 +606,7 @@ Deprecated
    ~cf.List.isdomainancillary
    ~cf.List.isfieldancillary
    ~cf.List.ismeasure
+   ~cf.List.mask_invalid
    ~cf.List.name
    ~cf.List.remove_data
    ~cf.List.select

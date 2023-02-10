@@ -1,9 +1,12 @@
 import cfdm
 
-from .mixin import ArrayMixin
+from ...mixin_container import Container
+from .mixin import ArrayMixin, CompressedArrayMixin
 
 
-class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
+class SubsampledArray(
+    CompressedArrayMixin, ArrayMixin, Container, cfdm.SubsampledArray
+):
     """An underlying subsampled array.
 
     For some structured coordinate data (e.g. coordinates describing
@@ -65,7 +68,7 @@ class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
      [305.0 333.75]
      [333.75 360.0]]
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
@@ -80,9 +83,9 @@ class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
         return super().__repr__().replace("<", "<CF ", 1)
 
     def to_dask_array(self, chunks="auto"):
-        """Create a dask array TODODASKDOCS.
+        """Convert the data to a `dask` array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -93,12 +96,13 @@ class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
                 `dask.array.from_array` function is allowed.
 
                 The chunk sizes implied by *chunks* for a dimension that
-                has been fragemented are ignored and replaced with values
+                has been fragmented are ignored and replaced with values
                 that are implied by that dimensions fragment sizes.
 
         :Returns:
 
             `dask.array.Array`
+                The `dask` array representation.
 
         """
         from functools import partial
@@ -120,8 +124,25 @@ class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
         parameters = conformed_data["parameters"]
         dependent_tie_points = conformed_data["dependent_tie_points"]
 
+        # If possible, convert the compressed data, parameters and
+        # dependent tie points to dask arrays that don't support
+        # concurrent reads. This prevents "compute called by compute"
+        # failures problems at compute time.
+        #
+        # TODO: This won't be necessary if this is refactored so that
+        #       arrays are part of the same dask graph as the
+        #       compressed subarrays.
+        compressed_data = self._lock_file_read(compressed_data)
+        parameters = {
+            k: self._lock_file_read(v) for k, v in parameters.items()
+        }
+        dependent_tie_points = {
+            k: self._lock_file_read(v) for k, v in dependent_tie_points.items()
+        }
+
         # Get the (cfdm) subarray class
         Subarray = self.get_Subarray()
+        subarray_name = Subarray().__class__.__name__
 
         # Set the chunk sizes for the dask array
         #
@@ -169,9 +190,12 @@ class SubsampledArray(ArrayMixin, cfdm.SubsampledArray):
                 context_manager=context,
             )
 
+            key = f"{subarray_name}-{tokenize(subarray)}"
+            dsk[key] = subarray
+
             dsk[name + chunk_location] = (
                 getter,
-                subarray,
+                key,
                 Ellipsis,
                 False,
                 False,

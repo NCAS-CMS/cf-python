@@ -151,15 +151,27 @@ class DataTest(unittest.TestCase):
 
     def test_Data__init__basic(self):
         """Test basic `__init__` cases for Data."""
-        # Most __init__ parameters are covered by the various other tests,
-        # so this is mainly to check trivial cases and especially the edge
-        # case of 'default' Data i.e. if no parameters are specified.
+        # Most __init__ parameters are covered by the various other
+        # tests, so this is mainly to check trivial cases.
         cf.Data(0, "s")
         cf.Data(array=np.arange(5))
         cf.Data(source=self.filename)
 
+        d = cf.Data()
         with self.assertRaises(ValueError):
-            cf.Data()
+            d.ndim
+
+        with self.assertRaises(ValueError):
+            d.get_filenames()
+
+    def test_Data__init__no_args(self):
+        """Test `__init__` with no arg."""
+        # Most __init__ parameters are covered by the various other
+        # tests, so this is mainly to check trivial cases.
+        cf.Data()
+        cf.Data(0, "s")
+        cf.Data(array=np.arange(5))
+        cf.Data(source=self.filename)
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""
@@ -176,7 +188,7 @@ class DataTest(unittest.TestCase):
         # for strict equality, including equality of data type.
         d2 = cf.Data(a.astype(np.float32), "m", chunks=chunksize)
         self.assertTrue(d2.equals(d2.copy()))
-        with self.assertLogs(level=30) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(d2.equals(d, verbose=2))
             self.assertTrue(
                 any(
@@ -187,7 +199,7 @@ class DataTest(unittest.TestCase):
 
         e = cf.Data(a, "s", chunks=chunksize)  # different units to d
         self.assertTrue(e.equals(e.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(e.equals(d, verbose=2))
             self.assertTrue(
                 any(
@@ -198,7 +210,7 @@ class DataTest(unittest.TestCase):
 
         f = cf.Data(np.arange(12), "m", chunks=(6,))  # different shape to d
         self.assertTrue(f.equals(f.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(f.equals(d, verbose=2))
             self.assertTrue(
                 any(
@@ -211,7 +223,7 @@ class DataTest(unittest.TestCase):
             np.ones(shape, dtype="int64"), "m", chunks=chunksize
         )  # different values
         self.assertTrue(g.equals(g.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(g.equals(d, verbose=2))
             self.assertTrue(
                 any(
@@ -225,7 +237,7 @@ class DataTest(unittest.TestCase):
         h = cf.Data(np.full(shape, np.nan), "m", chunks=chunksize)
         # TODODASK: implement and test equal_nan kwarg to configure NaN eq.
         self.assertFalse(h.equals(h.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
             self.assertFalse(h.equals(d3, verbose=2))
             self.assertTrue(
@@ -238,7 +250,7 @@ class DataTest(unittest.TestCase):
         # Test inf values
         i = cf.Data(np.full(shape, np.inf), "m", chunks=chunksize)
         self.assertTrue(i.equals(i.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             # np.inf is also of dtype float64 (see comment on NaN tests above)
             self.assertFalse(i.equals(d3, verbose=2))
             self.assertTrue(
@@ -247,7 +259,7 @@ class DataTest(unittest.TestCase):
                     for log_msg in catch.output
                 )
             )
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(h.equals(i, verbose=2))
             self.assertTrue(
                 any(
@@ -271,7 +283,7 @@ class DataTest(unittest.TestCase):
             chunks=mask_test_chunksize,
         )
         self.assertTrue(j2.equals(j2.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(j1.equals(j2, verbose=2))
             self.assertTrue(
                 any(
@@ -286,7 +298,7 @@ class DataTest(unittest.TestCase):
             chunks=mask_test_chunksize,
         )
         self.assertTrue(j3.equals(j3.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(j1.equals(j3, verbose=2))
             self.assertTrue(
                 any(
@@ -300,7 +312,7 @@ class DataTest(unittest.TestCase):
             np.ma.masked_all(shape, dtype="int"), "m", chunks=chunksize
         )
         self.assertTrue(j4.equals(j4.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(j4.equals(d, verbose=2))
             self.assertTrue(
                 any(
@@ -345,7 +357,7 @@ class DataTest(unittest.TestCase):
         sa3_data = sa2_data.astype("S5")
         sa3 = cf.Data(sa3_data, "m", chunks=mask_test_chunksize)
         self.assertTrue(sa3.equals(sa3.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(sa1.equals(sa3, verbose=2))
             self.assertTrue(
                 any(
@@ -366,7 +378,7 @@ class DataTest(unittest.TestCase):
             chunks=mask_test_chunksize,
         )
         self.assertTrue(sa5.equals(sa5.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(sa4.equals(sa5, verbose=2))
             self.assertTrue(
                 any(
@@ -384,7 +396,7 @@ class DataTest(unittest.TestCase):
         s3 = cf.Data("a_string", chunks=scalar_test_chunksize)
         self.assertTrue(s3.equals(s3.copy()))
         # 1. both are scalars
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(s1.equals(s2, verbose=2))
             self.assertTrue(
                 any(
@@ -392,7 +404,7 @@ class DataTest(unittest.TestCase):
                     for log_msg in catch.output
                 )
             )
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(s1.equals(s3, verbose=2))
             self.assertTrue(
                 any(
@@ -401,7 +413,7 @@ class DataTest(unittest.TestCase):
                 )
             )
         # 2. only one is a scalar
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(s1.equals(d, verbose=2))
             self.assertTrue(
                 any(
@@ -417,7 +429,7 @@ class DataTest(unittest.TestCase):
         k2 = cf.Data(np.array([10.01, 20.01]), chunks=tol_check_chunksize)
         self.assertTrue(k2.equals(k2.copy()))
         # Only one log check is sufficient here
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(k1.equals(k2, atol=0.005, rtol=0, verbose=2))
             self.assertTrue(
                 any(
@@ -435,7 +447,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(m1.equals(m1.copy()))
         m2 = cf.Data(1, fill_value=2000, chunks=scalar_test_chunksize)
         self.assertTrue(m2.equals(m2.copy()))
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             self.assertFalse(m1.equals(m2, verbose=2))
             self.assertTrue(
                 any(
@@ -448,7 +460,7 @@ class DataTest(unittest.TestCase):
         # Test verbose parameter: 1/'INFO' level is behaviour change boundary
         for checks in [(1, False), (2, True)]:
             verbosity_level, expect_to_see_msg = checks
-            with self.assertLogs(level=cf.log_level().value) as catch:
+            with self.assertLogs(level=-1) as catch:
                 # Logging note: want to assert in the former case (verbosity=1)
                 # that nothing is logged, but need to use workaround to prevent
                 # AssertionError on fact that nothing is logged here. When at
@@ -854,12 +866,14 @@ class DataTest(unittest.TestCase):
                 "sample_size": 1,
             },
         )
+
         # NaN values aren't 'equal' to e/o, so check call works and that some
         # representative values are as expected, in this case
         s5 = cf.Data([[-2, -1, 0], [1, 2, 3]]).stats(all=True, weights=0)
+
         self.assertEqual(len(s5), 16)
         self.assertEqual(s5["minimum"], -2)
-        self.assertEqual(s5["sum"], 3)
+        self.assertEqual(s5["sum"], 0)
         self.assertEqual(s5["sample_size"], 6)
         self.assertTrue(np.isnan(s5["mean"]))
         self.assertTrue(np.isnan(s5["variance"]))  # needs all=True to show up
@@ -944,7 +958,6 @@ class DataTest(unittest.TestCase):
             np.arange(120).reshape(3, 2, 20),
             np.ma.arange(120).reshape(3, 2, 20),
         ]:
-
             if np.ma.isMA(a):
                 a[0, 1, [2, 5, 6, 7, 8]] = np.ma.masked
                 a[2, 0, [12, 14, 17]] = np.ma.masked
@@ -1130,7 +1143,7 @@ class DataTest(unittest.TestCase):
 
         # ...when joining along axis=0 (the default)
         self.assertEqual(d.cyclic(), {0, 1})
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             f = cf.Data.concatenate([d, e])
             self.assertTrue(
                 any(
@@ -1147,7 +1160,7 @@ class DataTest(unittest.TestCase):
         f_np = np.concatenate((d_np, e_np), axis=1)
 
         self.assertEqual(d.cyclic(), {0, 1})
-        with self.assertLogs(level=cf.log_level().value) as catch:
+        with self.assertLogs(level=-1) as catch:
             f = cf.Data.concatenate([d, e], axis=1)
             self.assertTrue(
                 any(
@@ -1518,6 +1531,17 @@ class DataTest(unittest.TestCase):
         d[[2, 4, 6, 8], 0, [1, 2, 3, 4]] = value
         self.assertEqual(np.count_nonzero(d.where(d < 0, 1, 0)), value.size)
 
+        # Test ancillary masked assignment
+        a = np.ma.arange(90).reshape(9, 10)
+        d = cf.Data(a.copy())
+
+        mask = cf.Data.full((3, 4), False)
+        mask[-1, [0, 1]] = True
+        n_set = int(mask.size - mask.sum())
+
+        d[("mask", (mask,), slice(1, 4), slice(2, 6))] = -99
+        self.assertEqual(np.count_nonzero(d.where(d < 0, 1, 0)), n_set)
+
     def test_Data_outerproduct(self):
         """Test the `outerproduct` Data method."""
         a = np.arange(12).reshape(4, 3)
@@ -1647,12 +1671,6 @@ class DataTest(unittest.TestCase):
         e = d.clip(0.003, 0.009, "km")
         self.assertTrue((e.array == b).all())
 
-    @unittest.skipIf(
-        True,
-        "Failing due to 'has_year_zero' differences in actual and expected "
-        "outputs: relates to github.com/Unidata/cftime/issues/233, see also "
-        "NCAS-CMS/cfunits/commit/ca15e7f6db76fe613db740993b4e45115341d865.",
-    )
     def test_Data_months_years(self):
         """Test Data with 'months/years since' units specifications."""
         calendar = "360_day"
@@ -1668,9 +1686,7 @@ class DataTest(unittest.TestCase):
             ]
         )
 
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         calendar = "standard"
         d = cf.Data(
@@ -1684,9 +1700,7 @@ class DataTest(unittest.TestCase):
                 cf.dt(2000, 3, 1, 20, 58, 7, 662446, calendar=calendar),
             ]
         )
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         calendar = "360_day"
         d = cf.Data(
@@ -1699,9 +1713,7 @@ class DataTest(unittest.TestCase):
                 cf.dt(2002, 1, 11, 11, 37, 31, 949357, calendar=calendar),
             ]
         )
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         calendar = "standard"
         d = cf.Data(
@@ -1714,9 +1726,7 @@ class DataTest(unittest.TestCase):
                 cf.dt(2001, 12, 31, 11, 37, 31, 949357, calendar=calendar),
             ]
         )
-        self.assertTrue(
-            (d.datetime_array == a).all(), "{}, {}".format(d.datetime_array, a)
-        )
+        self.assertTrue((d.datetime_array == a).all())
 
         d = cf.Data(
             [1.0, 2],
@@ -2143,7 +2153,6 @@ class DataTest(unittest.TestCase):
                 else:
                     message = "Failed in {!r}**{!r}".format(d, x)
                     self.assertTrue((d**x).all(), message)
-        # --- End: for
 
         for a0 in arrays:
             d = cf.Data(a0, "metre")
@@ -2347,6 +2356,10 @@ class DataTest(unittest.TestCase):
                     )
                 )
 
+            d = cf.Data([1, 2])
+            with self.assertRaises(TypeError):
+                d + ("foo",)
+
     def test_Data_BROADCASTING(self):
         """Test broadcasting of arrays in binary Data operations."""
         A = [
@@ -2435,7 +2448,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.argmax().array, 1)
 
         # Bad axis
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValueError):
             d.argmax(axis=d.ndim)
 
     def test_Data_percentile_median(self):
@@ -3130,10 +3143,15 @@ class DataTest(unittest.TestCase):
         d = cf.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
-        # Scalar numeric array
         d = cf.Data([1, 2, 3.0, 4], "km", mask=[0, 1, 0, 0], chunks=2)
+        self.assertGreater(len(d.to_dask_array().dask.layers), 1)
+
         e = d.persist()
         self.assertIsInstance(e, cf.Data)
+        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
+        self.assertEqual(
+            e.to_dask_array().npartitions, d.to_dask_array().npartitions
+        )
         self.assertTrue(e.equals(d))
 
     def test_Data_cyclic(self):
@@ -4444,6 +4462,44 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.active_storage)
         d = cf.Data(n, to_memory=True)
         self.assertFalse(d.active_storage)
+
+    def test_Data_cull_graph(self):
+        """Test `Data.cull`"""
+        d = cf.Data([1, 2, 3, 4, 5], chunks=3)
+        d = d[:2]
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 3)
+
+        # Check that there are fewer keys after culling
+        d.cull_graph()
+        self.assertEqual(len(dict(d.to_dask_array().dask)), 2)
+
+    def test_Data_npartitions(self):
+        """Test the `npartitions` Data property."""
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        self.assertEqual(d.npartitions, 4)
+
+    def test_Data_numblocks(self):
+        """Test the `numblocks` Data property."""
+        d = cf.Data.ones((4, 5), chunks=(2, 4))
+        self.assertEqual(d.numblocks, (2, 2))
+
+    def test_Data_convert_reference_time(self):
+        """Test `Data.convert_reference_time`"""
+        d = cf.Data([2, 1, 0, -1], units="months since 2003-12-01")
+        e = d.convert_reference_time(calendar_months=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.assertTrue((e.array == [62, 31, 0, -30]).all())
+
+        d = cf.Data([2, 1, 0, -1], units="years since 2003-12-01")
+        e = d.convert_reference_time(calendar_years=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.assertTrue((e.array == [731, 366, 0, -365]).all())
+
+        d = cf.Data([2, 1, 0, -1], units="days since 2003-12-01")
+        units = cf.Units("hours since 2003-11-30")
+        e = d.convert_reference_time(units)
+        self.assertEqual(e.Units, units)
+        self.assertTrue((e.array == [72, 48, 24, 0]).all())
 
 
 if __name__ == "__main__":

@@ -3,7 +3,8 @@
 # this configuration, simply execute 'flake8' under the root of the repo.
 
 [flake8]
-# Ignores should include listing of pycodestyle ignores as in test_style.py
+# Ignores should include listing of pycodestyle ignores as in test_style.py.
+# Note W503 is incompatible with PEP8 which we want to abide by
 ignore =
     W605,
     E272,
@@ -12,7 +13,7 @@ ignore =
     E712,
     E731,
     E203,
-    W503  # Incompatible with PEP8 which we want to abide by
+    W503
 # Exclude these directories/files, otherwise check all *.py files
 exclude =
     .git,

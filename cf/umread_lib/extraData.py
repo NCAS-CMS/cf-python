@@ -94,7 +94,6 @@ class ExtraData(dict):
 
 
 class ExtraDataUnpacker:
-
     _int_types = {4: np.int32, 8: np.int64}
     _float_types = {4: np.float32, 8: np.float64}
 

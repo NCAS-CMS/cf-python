@@ -144,7 +144,7 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
-    # 'netCDF4': ('https://unidata.github.io/netcdf4-python', None),
+    #   'netCDF4': ("https://unidata.github.io/netcdf4-python", None),
     "cftime": ("https://unidata.github.io/cftime", None),
     "cfunits": ("https://ncas-cms.github.io/cfunits", None),
     "cfdm": ("https://ncas-cms.github.io/cfdm", None),
@@ -446,7 +446,6 @@ link_release = re.search("(\d+\.\d+\.\d+)", release).groups()[0]
 
 
 def linkcode_resolve(domain, info):
-
     # =================================================================
     # Must delete all .doctrees directories in build for changes to be
     # picked up. E.g.:

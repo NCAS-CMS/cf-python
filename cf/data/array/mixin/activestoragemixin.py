@@ -27,15 +27,14 @@ class ActiveStorageMixin:
 
         """
         method = self.get_active_method()
-        if not method:
+        if method is None:
             # Normal read by local client. Returns a numpy array.
             return super().__getitem__(indices)
 
-        # Active storage read by server. Returns a dictionary.
+        # Active storage read. Returns a dictionary.
         active = Active(self.filename, self.ncvar)
         active.method = method
         active.components = True
-
         return active[indices]
 
 #    def _active_chunk_functions(self):

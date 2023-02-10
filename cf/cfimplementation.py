@@ -43,6 +43,43 @@ class CFImplementation(cfdm.CFDMImplementation):
 
     """
 
+    def set_construct(self, parent, construct, axes=None, copy=True, **kwargs):
+        """Insert a construct into a field or domain.
+
+        Does not attempt to conform cell method nor coordinate
+        reference constructs, as that has been handled by `cfdm`.
+
+        .. versionadded:: 3.14.0
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+               On what to set the construct
+
+            construct:
+                The construct to set.
+
+            axes: `tuple` or `None`, optional
+                The construct domain axes, if applicable.
+
+            copy: `bool`, optional
+                Whether or not to set a copy of *construct*.
+
+            kwargs: optional
+                Additional parameters to the `set_construct` method of
+                *parent*.
+
+        :Returns:
+
+            `str`
+                The construct identifier.
+
+        """
+        kwargs.setdefault("conform", False)
+        return super().set_construct(
+            parent, construct, axes=axes, copy=copy, **kwargs
+        )
+
     def initialise_CFANetCDFArray(
         self,
         filename=None,

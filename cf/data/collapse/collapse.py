@@ -1,4 +1,4 @@
-"""TODOACTIVEDOCS used for `Data` object collapses."""
+"""TODODOCS Functions used during `Data` object collapses."""
 from functools import partial
 
 import numpy as np
@@ -6,6 +6,7 @@ from cfdm.core import DocstringRewriteMeta
 from dask.array.reductions import reduction
 
 from ...docstring import _docstring_substitution_definitions
+
 from .collapse_active import active_storage
 from .collapse_utils import check_input_dtype, double_precision_dtype
 
@@ -70,10 +71,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return maximum values of an array.
 
@@ -99,9 +100,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -116,7 +119,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         check_input_dtype(a)
         dtype = a.dtype
-
         return reduction(
             a,
             chunk_function,
@@ -138,8 +140,8 @@ class Collapse(metaclass=DocstringRewriteMeta):
         keepdims=False,
         mtol=1,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return maximum absolute values of an array.
 
@@ -165,9 +167,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -191,10 +195,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return mean values of an array.
 
@@ -222,9 +226,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -239,7 +245,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         check_input_dtype(a)
         dtype = "f8"
-
         return reduction(
             a,
             chunk_function,
@@ -261,10 +266,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         weights=None,
         axis=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return mean absolute values of an array.
 
@@ -292,9 +297,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -319,10 +326,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         dtype=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return mid-range values of an array.
 
@@ -348,9 +355,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -388,10 +397,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=1,
-        split_every=None,
         active_storage=False,
+        mtol=None,
+        split_every=None,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return minimum values of an array.
 
@@ -417,9 +427,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -434,7 +446,6 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
         check_input_dtype(a)
         dtype = a.dtype
-
         return reduction(
             a,
             chunk_function,
@@ -454,10 +465,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return minimum absolute values of an array.
 
@@ -483,9 +494,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -508,10 +521,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return range values of an array.
 
@@ -537,9 +550,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -578,10 +593,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return root mean square (RMS) values of an array.
 
@@ -609,9 +624,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -646,10 +663,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         a,
         axis=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return sample size values of an array.
 
@@ -675,9 +692,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -716,10 +735,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return sum values of an array.
 
@@ -747,9 +766,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -788,10 +809,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return sum of weights values for an array.
 
@@ -819,9 +840,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -861,10 +884,10 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return sum of squares of weights values for an array.
 
@@ -892,9 +915,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -929,7 +954,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
     @active_storage("unique")
     def unique(
-        self, a, split_every=None, active_storage=False, chunk_function=None
+            self, a, split_every=None, chunk_function=None, active_storage=False
     ):
         """Return unique elements of the data.
 
@@ -942,9 +967,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 
@@ -986,11 +1013,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
         axis=None,
         weights=None,
         keepdims=False,
-        mtol=1,
+        mtol=None,
         ddof=None,
         split_every=None,
-        active_storage=False,
         chunk_function=None,
+        active_storage=False,
     ):
         """Return variances of an array.
 
@@ -1020,9 +1047,11 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{split_every: `int` or `dict`, optional}}
 
+            {{chunk_function: callable, optional}}
+
             {{active_storage: `bool`, optional}}
 
-            {{chunk_function: callable, optional}}
+                .. versionadded:: TODOACTIVEVER
 
         :Returns:
 

@@ -216,6 +216,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DomainAncillary.to_dask_array
    ~cf.DomainAncillary.__getitem__
    ~cf.DomainAncillary.del_data
    ~cf.DomainAncillary.get_data
@@ -284,7 +285,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.DomainAncillary.chunk
+   ~cf.DomainAncillary.rechunk
    ~cf.DomainAncillary.close
    ~cf.DomainAncillary.convert_reference_time
    ~cf.DomainAncillary.cyclic
@@ -292,6 +293,7 @@ Data
    ~cf.DomainAncillary.iscyclic
    ~cf.DomainAncillary.isperiodic
    ~cf.DomainAncillary.get_original_filenames
+   ~cf.DomainAncillary.persist
 
 Miscellaneous
 -------------
@@ -308,6 +310,7 @@ Miscellaneous
    ~cf.DomainAncillary.creation_commands
    ~cf.DomainAncillary.equals
    ~cf.DomainAncillary.inspect
+   ~cf.DomainAncillary.to_memory
    ~cf.DomainAncillary.uncompress
    
 Mathematical operations
@@ -631,9 +634,6 @@ Special
    ~cf.DomainAncillary.__str__
    ~cf.DomainAncillary.__array__
    ~cf.DomainAncillary.__data__
-   ~cf.DomainAncillary.__query_set__
-   ~cf.DomainAncillary.__query_wi__
-   ~cf.DomainAncillary.__query_wo__
 
 Deprecated
 ----------
@@ -648,6 +648,7 @@ Deprecated
    ~cf.DomainAncillary.asdatetime
    ~cf.DomainAncillary.asreftime
    ~cf.DomainAncillary.attributes
+   ~cf.DomainAncillary.chunk
    ~cf.DomainAncillary.delprop
    ~cf.DomainAncillary.dtvarray
    ~cf.DomainAncillary.expand_dims
@@ -662,6 +663,7 @@ Deprecated
    ~cf.DomainAncillary.isdomainancillary
    ~cf.DomainAncillary.isfieldancillary
    ~cf.DomainAncillary.ismeasure
+   ~cf.DomainAncillary.mask_invalid
    ~cf.DomainAncillary.name
    ~cf.DomainAncillary.remove_data
    ~cf.DomainAncillary.select

@@ -1400,7 +1400,7 @@ regridding method to use:
                    : latitude(64) = [-87.86380004882812, ..., 87.86380004882812] degrees_north
                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
                    : height(1) = [2.0] m
-   >>> c = a.regrids(b, 'conservative')
+   >>> c = a.regrids(b, method='conservative')
    >>> print(c)
    Field: air_temperature (ncvar%tas)
    ----------------------------------
@@ -1430,7 +1430,7 @@ coordinate constructs.
    >>> import numpy
    >>> lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
    >>> lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-   >>> c = a.regrids({'latitude': lat, 'longitude': lon}, 'linear')
+   >>> c = a.regrids([lat, lon], method='linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(2), latitude(73), longitude(72)) K
@@ -1492,7 +1492,7 @@ will produce similar results to using using spherical regridding.
    ...                       units='days since 1860-01-01', calendar='360_day'))
    >>> time
    <CF DimensionCoordinate: time(60) days since 1860-01-01 360_day>
-   >>> c = a.regridc({'T': time}, axes='T', method='linear')
+   >>> c = a.regridc([time], axes='T', method='linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(60), latitude(73), longitude(96)) K
@@ -1511,11 +1511,11 @@ non-overlapping bounds on the destination domain:
              (to first order) onto the grid specified in the dimension
              coordinate time.*
 
-   >>> c = a.regridc({'T': time}, axes='T', method='conservative')  # Raises Exception
+   >>> c = a.regridc([time], axes='T', method='conservative')  # Raises Exception
    ValueError: Destination coordinates must have contiguous, non-overlapping bounds for conservative regridding.
    >>> bounds = time.create_bounds()
    >>> time.set_bounds(bounds)
-   >>> c = a.regridc({'T': time}, axes='T', method='conservative')
+   >>> c = a.regridc([time], axes='T', method='conservative')
    >>> print(c)
    Field: air_temperature (ncvar%tas)
    ----------------------------------
@@ -1591,7 +1591,7 @@ pressure coordinates after the regridding operation.
    >>> new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
    >>> new_z_ln_p = new_z_p.log()
    >>> new_z_ln_p.axis = 'Z'
-   >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='linear')
+   >>> new_v = v.regridc([new_z_ln_p], axes='Z', method='linear')
    >>> new_v.replace_construct('Z', new=new_z_p)
    >>> print(new_v)
    Field: eastward_wind (ncvar%ua)
@@ -2164,7 +2164,7 @@ and therefore may return
 `"invalid" values <https://docs.scipy.org/doc/numpy/reference/constants.html>`_
 (`nan` or `inf`). When applying these methods to constructs with masked
 data, you may prefer to output masked values instead of invalid ones. In
-this case, you can use `mask_invalid` to do the conversion afterwards:
+this case, you can use `masked_invalid` to do the conversion afterwards:
 
 .. code-block:: python
    :caption: *Take the `arctanh` of some masked data and then transform
@@ -2174,7 +2174,7 @@ this case, you can use `mask_invalid` to do the conversion afterwards:
    >>> e = d.arctanh()
    >>> print(e.array)
    [-- nan inf 0.5493061443340548 --]
-   >>> e.mask_invalid(inplace=True)
+   >>> e.masked_invalid(inplace=True)
    >>> print(e.array)
    [-- -- -- 0.5493061443340548 --]
 

@@ -15,7 +15,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
     """
 
     def __init__(self, fields=None):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -25,7 +25,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
         """
         super().__init__(constructs=fields)
 
-    def concatenate(self, axis=0, _preserve=True):
+    def concatenate(self, axis=0, cull_graph=True):
         """Join the sequence of fields within the field list together.
 
         This is different to `cf.aggregate` because it does not
@@ -34,7 +34,8 @@ class FieldList(mixin.FieldDomainList, ConstructList):
 
         .. versionadded:: 1.0
 
-        .. seealso:: `cf.aggregate`, `Data.concatenate`
+        .. seealso:: `cf.aggregate`, `Field.concatenate`,
+                     `Data.concatenate`
 
         :Parameters:
 
@@ -43,6 +44,8 @@ class FieldList(mixin.FieldDomainList, ConstructList):
                 default is 0. Note that scalar arrays are treated as
                 if they were one dimensional.
 
+            {{cull_graph: `bool`, optional}}
+
         :Returns:
 
             `Field`
@@ -50,7 +53,7 @@ class FieldList(mixin.FieldDomainList, ConstructList):
                 the fields contained in the input field list.
 
         """
-        return self[0].concatenate(self, axis=axis, _preserve=_preserve)
+        return self[0].concatenate(self, axis=axis, cull_graph=cull_graph)
 
     def select_by_naxes(self, *naxes):
         """Select field constructs by property.
@@ -237,12 +240,14 @@ class FieldList(mixin.FieldDomainList, ConstructList):
     # ----------------------------------------------------------------
     def _parameters(self, d):
         """Deprecated at version 3.0.0."""
-        _DEPRECATION_ERROR_METHOD(self, "_parameters")  # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, "_parameters", version="3.0.0", removed_at="4.0.0"
+        )  # pragma: no cover
 
     def _deprecated_method(self, name):
         """Deprecated at version 3.0.0."""
         _DEPRECATION_ERROR_METHOD(
-            self, "_deprecated_method"
+            self, "_deprecated_method", version="3.0.0", removed_at="4.0.0"
         )  # pragma: no cover
 
     def set_equals(
@@ -266,6 +271,8 @@ class FieldList(mixin.FieldDomainList, ConstructList):
             self,
             "set_equals",
             "Use method 'equals' with unordered=True instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     def select1(self, *args, **kwargs):
@@ -275,5 +282,9 @@ class FieldList(mixin.FieldDomainList, ConstructList):
 
         """
         _DEPRECATION_ERROR_METHOD(
-            self, "select1", "Use method 'fl.select_field' instead."
+            self,
+            "select1",
+            "Use method 'fl.select_field' instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover

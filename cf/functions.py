@@ -25,7 +25,7 @@ from os.path import relpath as _os_path_relpath
 import cfdm
 import netCDF4
 import numpy as np
-from dask import config
+from dask import config as _config
 from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from psutil import virtual_memory
@@ -231,11 +231,9 @@ def configuration(
 
             The default is to not change the directory.
 
-
         chunksize: `float` or `Constant`, optional
             The new chunksize in bytes. The default is to not change
             the current behaviour.
-
 
         bounds_combination_mode: `str` or `Constant`, optional
             Determine how to deal with cell bounds in binary
@@ -264,15 +262,15 @@ def configuration(
             current value.
 
         of_fraction: `float` or `Constant`, optional
-            Deprecated at version TODODASKVER and is no longer
+            Deprecated at version 3.14.0 and is no longer
             available.
 
         collapse_parallel_mode: `int` or `Constant`, optional
-            Deprecated at version TODODASKVER and is no longer
+            Deprecated at version 3.14.0 and is no longer
             available.
 
         free_memory_factor: `float` or `Constant`, optional
-            Deprecated at version TODODASKVER and is no longer
+            Deprecated at version 3.14.0 and is no longer
             available.
 
     :Returns:
@@ -593,7 +591,7 @@ class collapse_parallel_mode(ConstantAccess):
     """Which mode to use when collapse is run in parallel. There are
     three possible modes:
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     0.  This attempts to maximise parallelism, possibly at the expense
         of extra communication. This is the default mode.
@@ -637,7 +635,7 @@ class collapse_parallel_mode(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        Deprecated at version TODODASKVER and is no longer available.
+        Deprecated at version 3.14.0 and is no longer available.
 
         .. versionaddedd:: 3.8.0
 
@@ -657,7 +655,7 @@ class collapse_parallel_mode(ConstantAccess):
         """
         # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION(
-            "collapse_parallel_mode", version="TODODASKVER", removed_at="5.0.0"
+            "collapse_parallel_mode", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
 
@@ -726,27 +724,33 @@ class chunksize(ConstantAccess):
     If called without any arguments then the existing chunksize is
     returned.
 
-    .. note:: Setting the chunksize will change the `dask` global
-              configuration value ``'array.chunk-size'``. If
+    .. note:: Setting the chunk size will also change the `dask`
+              global configuration value ``'array.chunk-size'``. If
               `chunksize` is used in a context manager then the `dask`
               configuration value is only altered within that context.
+              Setting the chunk size directly from the `dask`
+              configuration API will affect susbsequent data creation,
+              but will *not* change the value of `chunksize`.
 
     :Parameters:
 
         arg: number or `str` or `Constant`, optional
             The chunksize in bytes. Any size accepted by
-            `dask.utils.parse_bytes` is accepted.
+            `dask.utils.parse_bytes` is accepted, for instance
+            ``100``, ``'100'``, ``'1e6'``, ``'100 MB'``, ``'100M'``,
+            ``'5kB'``, ``'5.4 kB'``, ``'1kiB'``, ``'1e6 kB'``, and
+            ``'MB'`` are all valid sizes.
 
             Note that if *arg* is a `float`, or a string that implies
             a non-integral amount of bytes, then the integer part
             (rounded down) will be used.
 
             *Parameter example:*
-               A chunksize of 2 MiB may be specified as ``2097152`` or
-               ``'2 MiB'``
+               A chunksize of 2 MiB may be specified as ``'2097152'``
+               or ``'2 MiB'``
 
             *Parameter example:*
-               Chunksizes of ``2678.9`` and ``'2.6789 KB'``are both
+               Chunksizes of ``'2678.9'`` and ``'2.6789 KB'`` are both
                equvalent to ``2678``.
 
     :Returns:
@@ -778,7 +782,7 @@ class chunksize(ConstantAccess):
                 into the `CONSTANTS` dictionary.
 
         """
-        config.set({"array.chunk-size": arg})
+        _config.set({"array.chunk-size": arg})
         return parse_bytes(arg)
 
 
@@ -854,7 +858,7 @@ class of_fraction(ConstantAccess):
     """The amount of concurrently open files above which files
     containing data arrays may be automatically closed.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     The amount is expressed as a fraction of the maximum possible
     number of concurrently open files.
@@ -904,7 +908,7 @@ class of_fraction(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        Deprecated at version TODODASKVER and is no longer available.
+        Deprecated at version 3.14.0 and is no longer available.
 
         .. versionaddedd:: 3.8.0
 
@@ -924,14 +928,14 @@ class of_fraction(ConstantAccess):
         """
         # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION(
-            "of_fraction", version="TODODASKVER", removed_at="5.0.0"
+            "of_fraction", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
 
 class free_memory_factor(ConstantAccess):
     """Set the fraction of memory kept free as a temporary workspace.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     Users should set the free memory factor through cf.set_performance
     so that the upper limit to the chunksize is recalculated
@@ -957,7 +961,7 @@ class free_memory_factor(ConstantAccess):
     def _parse(cls, arg):
         """Parse a new constant value.
 
-        Deprecated at version TODODASKVER and is no longer available.
+        Deprecated at version 3.14.0 and is no longer available.
 
         .. versionaddedd:: 3.8.0
 
@@ -977,7 +981,7 @@ class free_memory_factor(ConstantAccess):
         """
         # TODODASKAPI
         _DEPRECATION_ERROR_FUNCTION(
-            "free_memory_factor", version="TODODASKVER", removed_at="5.0.0"
+            "free_memory_factor", version="3.14.0", removed_at="5.0.0"
         )  # pragma: no cover
 
 
@@ -1168,7 +1172,7 @@ def fm_threshold():
     """The amount of memory which is kept free as a temporary work
     space.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     :Returns:
 
@@ -1183,14 +1187,14 @@ def fm_threshold():
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "fm_threshold", version="TODODASKVER", removed_at="5.0.0"
+        "fm_threshold", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
 def set_performance(chunksize=None, free_memory_factor=None):
     """Tune performance of parallelisation.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     Sets the chunksize and free memory factor. By just providing the
     chunksize it can be changed to a smaller value than an upper
@@ -1224,19 +1228,19 @@ def set_performance(chunksize=None, free_memory_factor=None):
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "set_performance", version="TODODASKVER", removed_at="5.0.0"
+        "set_performance", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
 def min_total_memory():
     """The minimum total memory across nodes.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "min_total_memory", version="TODODASKVER", removed_at="5.0.0"
+        "min_total_memory", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1261,12 +1265,12 @@ def RTOL(*new_rtol):
 def FREE_MEMORY_FACTOR(*new_free_memory_factor):
     """Alias for `cf.free_memory_factor`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "FREE_MEMORY_FACTOR", version="TODODASKVER", removed_at="5.0.0"
+        "FREE_MEMORY_FACTOR", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1283,24 +1287,24 @@ def CHUNKSIZE(*new_chunksize):
 def SET_PERFORMANCE(*new_set_performance):
     """Alias for `cf.set_performance`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "SET_PERFORMANCE", version="TODODASKVER", removed_at="5.0.0"
+        "SET_PERFORMANCE", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
 def OF_FRACTION(*new_of_fraction):
     """Alias for `cf.of_fraction`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "OF_FRACTION", version="TODODASKVER", removed_at="5.0.0"
+        "OF_FRACTION", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1312,12 +1316,12 @@ def REGRID_LOGGING(*new_regrid_logging):
 def COLLAPSE_PARALLEL_MODE(*new_collapse_parallel_mode):
     """Alias for `cf.collapse_parallel_mode`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "COLLAPSE_PARALLEL_MODE", version="TODODASKVER", removed_at="5.0.0"
+        "COLLAPSE_PARALLEL_MODE", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1329,12 +1333,12 @@ def RELAXED_IDENTITIES(*new_relaxed_identities):
 def MIN_TOTAL_MEMORY(*new_min_total_memory):
     """Alias for `cf.min_total_memory`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "MIN_TOTAL_MEMORY", version="TODODASKVER", removed_at="5.0.0"
+        "MIN_TOTAL_MEMORY", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1351,12 +1355,12 @@ def TOTAL_MEMORY(*new_total_memory):
 def FM_THRESHOLD(*new_fm_threshold):
     """Alias for `cf.fm_threshold`.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "FM_THRESHOLD", version="TODODASKVER", removed_at="5.0.0"
+        "FM_THRESHOLD", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1440,7 +1444,7 @@ def open_files_threshold_exceeded():
     """Return True if the total number of open files is greater than the
     current threshold.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     The threshold is defined as a fraction of the maximum possible number
     of concurrently open files (an operating system dependent amount). The
@@ -1472,7 +1476,7 @@ def open_files_threshold_exceeded():
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
         "open_files_threshold_exceeded",
-        version="TODODASKVER",
+        version="3.14.0",
         removed_at="5.0.0",
     )  # pragma: no cover
 
@@ -1480,7 +1484,7 @@ def open_files_threshold_exceeded():
 def close_files(file_format=None):
     """Close open files containing sub-arrays of data arrays.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     By default all such files are closed, but this may be restricted
     to files of a particular format.
@@ -1513,7 +1517,7 @@ def close_files(file_format=None):
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "close_files", version="TODODASKVER", removed_at="5.0.0"
+        "close_files", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1521,7 +1525,7 @@ def close_one_file(file_format=None):
     """Close an arbitrary open file containing a sub-array of a data
     array.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     By default a file of arbitrary format is closed, but the choice
     may be restricted to files of a particular format.
@@ -1563,7 +1567,7 @@ def close_one_file(file_format=None):
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "close_one_file", version="TODODASKVER", removed_at="5.0.0"
+        "close_one_file", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1571,7 +1575,7 @@ def open_files(file_format=None):
     """Return the open files containing sub-arrays of master data
     arrays.
 
-    Deprecated at version TODODASKVER and is no longer available.
+    Deprecated at version 3.14.0 and is no longer available.
 
     By default all such files are returned, but the selection may be
     restricted to files of a particular format.
@@ -1608,7 +1612,7 @@ def open_files(file_format=None):
     """
     # TODODASKAPI
     _DEPRECATION_ERROR_FUNCTION(
-        "open_files", version="TODODASKVER", removed_at="5.0.0"
+        "open_files", version="3.14.0", removed_at="5.0.0"
     )  # pragma: no cover
 
 
@@ -1739,7 +1743,7 @@ def indices_shape(indices, full_shape, keepdims=True):
     Boolean `dask` arrays will be computed, and `dask` arrays with
     unknown size will have their chunk sizes computed.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     .. seealso:: `cf.parse_indices`
 
@@ -1899,7 +1903,7 @@ def parse_indices(shape, indices, cyclic=False, keepdims=True):
     if not isinstance(indices, tuple):
         indices = (indices,)
 
-    # Initialize the list of parsed indices as the input indices with any
+    # Initialise the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
     length = len(indices)
     n = len(shape)
@@ -2614,7 +2618,7 @@ def hash_array(array, algorithm=hashlib.sha1):
             Constructor function for the desired hash algorithm,
             e.g. `hashlib.md5`, `hashlib.sha256`, etc.
 
-            .. versionadded:: TODODASKVER
+            .. versionadded:: 3.14.0
 
     :Returns:
 
@@ -2862,13 +2866,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
             passed. By default it is False.
 
         stop: `int`, optional
-            Deprecated at version TODODASKVER.
+            Deprecated at version 3.14.0.
 
             Stop after taking this number of sections and return. If
             stop is None all sections are taken.
 
         chunks: `bool`, optional
-            Deprecated at version TODODASKVER. Consider using
+            Deprecated at version 3.14.0. Consider using
             `cf.Data.rechunk` instead.
 
             If True return sections that are of the maximum possible
@@ -2903,13 +2907,13 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     if stop is not None:
         raise DeprecationError(
             "The 'stop' keyword of cf._section() was deprecated at "
-            "version TODODASKVER and is no longer available"
+            "version 3.14.0 and is no longer available"
         )
 
     if chunks:
         raise DeprecationError(
             "The 'chunks' keyword of cf._section() was deprecated at "
-            "version TODODASKVER and is no longer available. Consider using "
+            "version 3.14.0 and is no longer available. Consider using "
             "cf.Data.rechunk instead."
         )
 
@@ -2921,10 +2925,10 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     ndim = x.ndim
     shape = x.shape
 
-    # TODODASK: For v4.0.0, redefine axes by removing the next
-    #           line. I.e. the specified axes would be those that you
-    #           want to be chopped, not those that you want to remain
-    #           whole.
+    # TODODASK: For v4.0.0, consider redefining the axes by removing
+    #           the next line. I.e. the specified axes would be those
+    #           that you want to be chopped, not those that you want
+    #           to remain whole.
     axes = [i for i in range(ndim) if i not in axes]
 
     indices = [
@@ -2984,56 +2988,71 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> cf.environment()
-    Platform: Linux-5.4.0-58-generic-x86_64-with-debian-bullseye-sid
-    HDF5 library: 1.10.5
-    netcdf library: 4.6.3
-    udunits2 library: libudunits2.so.0
-    python: 3.7.0 /home/space/anaconda3/bin/python
-    netCDF4: 1.5.4 /home/space/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.3.0 /home/space/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
-    numpy: 1.18.4 /home/space/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    psutil: 5.4.7 /home/space/anaconda3/lib/python3.7/site-packages/psutil/__init__.py
-    scipy: 1.1.1 /home/space/anaconda3/lib/python3.7/site-packages/scipy/__init__.py
-    matplotlib: 3.1.1 /home/space/anaconda3/lib/python3.7/site-packages/matplotlib/__init__.py
-    ESMF: 8.0.0 /home/space/anaconda3/lib/python3.7/site-packages/ESMF/__init__.py
-    cfdm: 1.8.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cfdm/__init__.py
-    cfunits: 3.3.1 /home/space/anaconda3/lib/python3.7/site-packages/cfunits/__init__.py
-    cfplot: 3.0.0 /home/space/anaconda3/lib/python3.7/site-packages/cfplot/__init__.py
-    cf: 3.8.0 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py
+    Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10
+    HDF5 library: 1.10.6
+    netcdf library: 4.8.0
+    udunits2 library: /home/username/anaconda3/envs/cf-env/lib/libudunits2.so.0
+    ESMF: 8.1.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/ESMF/__init__.py
+    Python: 3.8.10 /home/username/anaconda3/envs/cf-env/bin/python
+    dask: 2022.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/dask/__init__.py
+    netCDF4: 1.5.6 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/netCDF4/__init__.py
+    psutil: 5.9.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/psutil/__init__.py
+    packaging: 21.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/packaging/__init__.py
+    numpy: 1.22.2 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/numpy/__init__.py
+    scipy: 1.8.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py
+    matplotlib: 3.4.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/matplotlib/__init__.py
+    cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py
+    cfunits: 3.3.5 /home/username/cfunits/cfunits/__init__.py
+    cfplot: 3.1.18 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfplot/__init__.py
+    cfdm: 1.10.0.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
+    cf: 3.14.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cf/__init__.py
+
     >>> cf.environment(paths=False)
-    HDF5 library: 1.10.5
-    netcdf library: 4.6.3
+    Platform: Linux-4.15.0-54-generic-x86_64-with-glibc2.10
+    HDF5 library: 1.10.6
+    netcdf library: 4.8.0
     udunits2 library: libudunits2.so.0
-    Python: 3.7.0
-    netCDF4: 1.5.4
-    cftime: 1.3.0
-    numpy: 1.18.4
-    psutil: 5.4.7
-    scipy: 1.1.0
-    matplotlib: 2.2.3
-    ESMF: 8.0.0
-    cfdm: 1.8.8.0
-    cfunits: 3.3.1
-    cfplot: 3.0.38
-    cf: 3.8.0
+    ESMF: 8.1.1
+    Python: 3.8.10
+    dask: 2022.6.0
+    netCDF4: 1.5.6
+    psutil: 5.9.0
+    packaging: 21.3
+    numpy: 1.22.2
+    scipy: 1.8.0
+    matplotlib: 3.4.3
+    cftime: 1.6.0
+    cfunits: 3.3.5
+    cfplot: 3.1.18
+    cfdm: 1.10.0.1
+    cf: 3.14.0
 
     """
     dependency_version_paths_mapping = {
+        # Platform first, then use an ordering to group libraries as follows...
         "Platform": (platform.platform(), ""),
+        # Underlying C and Fortran based libraries first
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
         "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
+        "ESMF": _get_module_info("ESMF", try_except=True),
+        # Now Python itself
         "Python": (platform.python_version(), sys.executable),
+        # Then Dask (cover first from below as it's important under-the-hood)
+        "dask": _get_module_info("dask"),
+        # Then Python libraries not related to CF
         "netCDF4": _get_module_info("netCDF4"),
-        "cftime": _get_module_info("cftime"),
-        "numpy": _get_module_info("numpy"),
         "psutil": _get_module_info("psutil"),
+        "packaging": _get_module_info("packaging"),
+        "numpy": _get_module_info("numpy"),
         "scipy": _get_module_info("scipy", try_except=True),
         "matplotlib": _get_module_info("matplotlib", try_except=True),
-        "ESMF": _get_module_info("ESMF", try_except=True),
-        "cfdm": _get_module_info("cfdm"),
+        # Finally the CF related Python libraries, with the cf version last
+        # as it is the most relevant (cfdm penultimate for similar reason)
+        "cftime": _get_module_info("cftime"),
         "cfunits": _get_module_info("cfunits"),
         "cfplot": _get_module_info("cfplot", try_except=True),
+        "cfdm": _get_module_info("cfdm"),
         "cf": (__version__, _os_path_abspath(__file__)),
     }
     string = "{0}: {1!s}"
@@ -3081,6 +3100,43 @@ def default_netCDF_fillvals():
     return netCDF4.default_fillvals
 
 
+def size(a):
+    """Return the number of elements.
+
+    :Parameters:
+
+        a: array_like
+            Input data.
+
+    :Returns:
+
+        `int`
+            The number of elements.
+
+    **Examples**
+
+    >>> cf.size(9)
+    1
+    >>> cf.size("foo")
+    1
+    >>> cf.size([9])
+    1
+    >>> cf.size((8, 9))
+    2
+    >>> import numpy as np
+    >>> cf.size(np.arange(9))
+    9
+    >>> import dask.array as da
+    >>> cf.size(da.arange(9))
+    9
+
+    """
+    try:
+        return a.size
+    except AttributeError:
+        return np.asanyarray(a).size
+
+
 def unique_constructs(constructs, copy=True):
     return cfdm.unique_constructs(constructs, copy=copy)
 
@@ -3096,8 +3152,13 @@ unique_constructs.__doc__ = unique_constructs.__doc__.replace(
 )
 
 
-def _DEPRECATION_ERROR(message="", version="3.0.0"):
-    raise DeprecationError(f"{message}")
+def _DEPRECATION_ERROR(message="", version="3.0.0", removed_at="4.0.0"):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"{message}. Deprecated at version {version}{removed_at}."
+    )
 
 
 def _DEPRECATION_ERROR_ARG(
@@ -3265,7 +3326,7 @@ def _DEPRECATION_WARNING_METHOD(
 
 def _DEPRECATION_ERROR_DICT(message="", version="3.0.0", removed_at="4.0.0"):
     if removed_at:
-        removed_at = f" and will be removed at version {removed_at}"
+        removed_at = f"and will be removed at version {removed_at}"
 
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated at "
@@ -3275,6 +3336,9 @@ def _DEPRECATION_ERROR_DICT(message="", version="3.0.0", removed_at="4.0.0"):
 
 
 def _DEPRECATION_ERROR_SEQUENCE(instance, version="3.0.0", removed_at="4.0.0"):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
     raise DeprecationError(
         f"Use of a {instance.__class__.__name__!r} to identify constructs "
         f"has been deprecated at version {version} and is no longer available"

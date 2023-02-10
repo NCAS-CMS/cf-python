@@ -5,6 +5,7 @@ import cftime
 import numpy as np
 
 from .functions import _DEPRECATION_ERROR_CLASS
+from .functions import size as cf_size
 
 default_calendar = "gregorian"
 
@@ -60,10 +61,12 @@ class Datetime(cftime.datetime):
         dayofyr=1,
         calendar=None,
     ):
-        """**Initialization**"""
+        """**Initialisation**"""
         _DEPRECATION_ERROR_CLASS(
             "Datetime",
             "Use function 'cf.dt' to create date-time objects instead.",
+            version="3.0.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
 
@@ -239,7 +242,7 @@ def dt_vector(
         )
 
     sizes = set(
-        map(np.size, (arg, month, day, hour, minute, second, microsecond))
+        map(cf_size, (arg, month, day, hour, minute, second, microsecond))
     )
 
     if len(sizes) == 1 and 1 in sizes:

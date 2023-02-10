@@ -53,13 +53,19 @@ Pull requests should follow on from a discussion in the issue tracker
 Fork the cf-python GitHub repository
 (https://github.com/NCAS-CMS/cf-python).
 
+..  note::
+    The cf-python GitHub repository uses ``main`` as the name of its
+    default branch, so you must refer to ``main`` when you need to
+    reference the default branch. It is useful to use this as the
+    name of the default branch on your fork, if you use one, too.
+
 Clone your fork locally and create a branch:
 
 .. code-block:: console
 	  
     $ git clone git@github.com:<YOUR GITHUB USERNAME>/cf-python.git
     $ cd cf-python
-    $ git checkout -b <your-bugfix-feature-branch-name master>
+    $ git checkout -b <your-bugfix-feature-branch-name main>
 
 Break your edits up into reasonably-sized commits, each representing
 a single logical change:
@@ -88,7 +94,7 @@ Add your name to the list of contributors list at
 
 Finally, make sure all commits have been pushed to the remote copy of
 your fork and submit the pull request via the GitHub website, to the
-``master`` branch of the ``NCAS-CMS/cf-python`` repository. Make sure
+``main`` branch of the ``NCAS-CMS/cf-python`` repository. Make sure
 to reference the original issue in the pull request's description.
 
 Note that you can create the pull request while you're working on
@@ -105,6 +111,7 @@ ideas, code, and documentation to the cf library:
 
 * A James Phillips
 * Alan Iwi
+* Ankit Bhandekar
 * Bruno P. Kinoshita
 * Bryan Lawrence
 * Charles Roberts

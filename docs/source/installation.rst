@@ -34,8 +34,6 @@ Windows Subsystem for Linux (WSL)
 
 The cf package is only for Python 3.7 or newer.
 
-Versions 2.x of cf work only for Python 2.7.
-
 ----
 
 .. _pip:
@@ -110,12 +108,10 @@ visualisation package <http://ajheaps.github.io/cf-plot>`_, run
    :caption: *Install with conda.*
 
    $ conda install -c conda-forge cf-python cf-plot udunits2
-   $ conda install -c conda-forge mpich esmpy
+   $ conda install -c conda-forge esmpy
 
 The second of the two ``conda`` commands is required for
-:ref:`regridding <Regridding>` to work. (Note, however, that the
-installation of ``esmpy`` does not work for Anaconda version
-``2019.10``.)
+:ref:`regridding <Regridding>` to work.
 
 Note that :ref:`some environment variables might also need setting
 <UNIDATA-UDUNITS-2-library>` in order for the Udunits library to work
@@ -133,7 +129,7 @@ To install from source (without any dependencies):
 1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.13.1``):
+   you want to install, e.g. ``3.14.0``):
 
    .. code-block:: console
 
@@ -196,14 +192,16 @@ Required
 
 * `Python <https://www.python.org/>`_, 3.7 or newer.
 
-* `numpy <https://pypi.org/project/numpy/>`_, 1.15 or newer.
+* `numpy <https://pypi.org/project/numpy/>`_, 1.22 or newer.
+
+* `dask <https://pypi.org/project/dask/>`_, 2022.12.1 or newer.
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, 1.5.4 or newer.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.0 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.0.0 or up to,
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.0.2 or up to,
   but not including, 1.10.1.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.4 or newer.
@@ -250,7 +248,7 @@ environments for which these features are not required.
 
   .. code-block:: console
 
-     $ conda install -c conda-forge mpich esmpy
+     $ conda install -c conda-forge esmpy
 
   or may be installed from source.
 
@@ -263,10 +261,6 @@ environments for which these features are not required.
 
 * `matplotlib <https://pypi.org/project/matplotlib>`_, version 3.0.0
   or newer.
-
-.. rubric:: Parallel processing
-
-* `mpi4py <https://pypi.org/project/mpi4py>`_
 
 ----
 
@@ -290,12 +284,3 @@ Tests are run from within the ``cf/test`` directory:
 
 The complete source code and issue tracker is available at
 https://github.com/NCAS-CMS/cf-python
-
-----
-
-.. .. rubric:: Footnotes
-
-   .. [#installfiles] The ``requirements.txt`` file contains
-
-     .. include:: ../../requirements.txt
-        :literal:

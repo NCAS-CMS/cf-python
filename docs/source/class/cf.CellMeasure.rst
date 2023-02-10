@@ -170,6 +170,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.CellMeasure.to_dask_array
    ~cf.CellMeasure.__getitem__
    ~cf.CellMeasure.del_data
    ~cf.CellMeasure.get_data
@@ -239,7 +240,7 @@ Data
    :template: method.rst
 	      
 
-   ~cf.CellMeasure.chunk
+   ~cf.CellMeasure.rechunk
    ~cf.CellMeasure.close
    ~cf.CellMeasure.convert_reference_time
    ~cf.CellMeasure.cyclic
@@ -248,6 +249,7 @@ Data
    ~cf.CellMeasure.isperiodic
    ~cf.CellMeasure.get_original_filenames
    ~cf.CellMeasure.has_bounds
+   ~cf.CellMeasure.persist
 
 Miscellaneous
 -------------
@@ -263,6 +265,7 @@ Miscellaneous
    ~cf.CellMeasure.copy
    ~cf.CellMeasure.creation_commands
    ~cf.CellMeasure.equals
+   ~cf.CellMeasure.to_memory
    ~cf.CellMeasure.uncompress
 
 .. rubric:: Attributes
@@ -603,9 +606,6 @@ Special
    ~cf.CellMeasure.__str__
    ~cf.CellMeasure.__array__
    ~cf.CellMeasure.__data__
-   ~cf.CellMeasure.__query_set__
-   ~cf.CellMeasure.__query_wi__
-   ~cf.CellMeasure.__query_wo__
    
 Deprecated
 ----------
@@ -620,6 +620,7 @@ Deprecated
    ~cf.CellMeasure.asdatetime
    ~cf.CellMeasure.asreftime
    ~cf.CellMeasure.attributes
+   ~cf.CellMeasure.chunk
    ~cf.CellMeasure.delprop
    ~cf.CellMeasure.dtvarray
    ~cf.CellMeasure.expand_dims
@@ -634,6 +635,7 @@ Deprecated
    ~cf.CellMeasure.isdomainancillary
    ~cf.CellMeasure.isfieldancillary
    ~cf.CellMeasure.ismeasure
+   ~cf.CellMeasure.mask_invalid
    ~cf.CellMeasure.name
    ~cf.CellMeasure.remove_data
    ~cf.CellMeasure.select

@@ -32,7 +32,7 @@ class UMArray(FileArray):
         source=None,
         copy=True,
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -70,13 +70,13 @@ class UMArray(FileArray):
                 ``'little_endian'`` or ``'big_endian'``
 
             size: `int`
-                Deprecated at version TODODASKVER. If set will be
+                Deprecated at version 3.14.0. If set will be
                 ignored.
 
                 Number of elements in the uncompressed array.
 
             ndim: `int`
-                Deprecated at version TODODASKVER. If set will be
+                Deprecated at version 3.14.0. If set will be
                 ignored.
 
                 The number of uncompressed array dimensions.
@@ -92,12 +92,9 @@ class UMArray(FileArray):
                 unset then the calendar will be set during the first
                 `__getitem__` call.
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         super().__init__(source=source, copy=copy)
@@ -260,7 +257,7 @@ class UMArray(FileArray):
 
         This includes the lookup header and file offsets.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `close`, `open`
 
@@ -298,7 +295,7 @@ class UMArray(FileArray):
         if they have already not been defined, either during {{class}}
         instantiation or by a previous call to `_set_units`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -355,18 +352,22 @@ class UMArray(FileArray):
         return units, calendar
 
     def _test_condition(self, condition, int_hdr):
-        """Return `True` if a field satisfies the condition specified
-        for a STASH code to standard name conversion.
+        """Return `True` if a field satisfies a condition for a STASH
+        code to standard name conversion.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
             condition: `str`
-                TODODASKDOCS
+                The condition. If False then the condition is always
+                passed, otherwise the condition is specified as
+                ``'true_latitude_longitude'`` or
+                ``'rotated_latitude_longitude'``.
 
             int_hdr: `numpy.ndarray`
-                TODODASKDOCS
+                The integer lookup header used to evaluate the
+                condition.
 
         :Returns:
 
@@ -404,21 +405,20 @@ class UMArray(FileArray):
         stored in the metadata object. Otherwise it is taken from the
         *version* parameter.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
             valid_from: number or `None`
-                TODODASKDOCS
+                The lower bound of the version range, e.g. ``4.5``,
+                ``606.1``, etc.
 
             valid_to: number or `None`
-                TODODASKDOCS
+                The upper bound of the version range, e.g. ``4.5``,
+                ``606.1``, etc.
 
             version: number
-                TODODASKDOCS
-
-            int_hdr: `numpy.ndarray`
-                TODODASKDOCS
+                The version of field, e.g. ``4.5``, ``606.1``, etc.
 
         :Returns:
 
@@ -445,7 +445,7 @@ class UMArray(FileArray):
     def file_address(self):
         """The file name and address.
 
-        Deprecated at version TODODASKVER. Use methods `get_filename`
+        Deprecated at version 3.14.0. Use methods `get_filename`
         and `get_address` instead.
 
         :Returns:
@@ -463,7 +463,7 @@ class UMArray(FileArray):
             self,
             "file_address",
             "Use methods 'get_filename' and 'get_address' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -504,7 +504,7 @@ class UMArray(FileArray):
     def fmt(self):
         """The file format of the UM file containing the array.
 
-        Deprecated at version TODODASKVER. Use method `get_fmt`
+        Deprecated at version 3.14.0. Use method `get_fmt`
         instead.
 
         :Returns:
@@ -517,7 +517,7 @@ class UMArray(FileArray):
             self,
             "fmt",
             "Use method 'get_fmt' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -525,7 +525,7 @@ class UMArray(FileArray):
     def byte_ordering(self):
         """The endianness of the data.
 
-        Deprecated at version TODODASKVER. Use method
+        Deprecated at version 3.14.0. Use method
         `get_byte_ordering` instead.
 
         :Returns:
@@ -538,7 +538,7 @@ class UMArray(FileArray):
             self,
             "byte_ordering",
             "Use method 'get_byte_ordering' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -546,7 +546,7 @@ class UMArray(FileArray):
     def word_size(self):
         """Word size in bytes.
 
-        Deprecated at version TODODASKVER. Use method `get_word_size`
+        Deprecated at version 3.14.0. Use method `get_word_size`
         instead.
 
         :Returns:
@@ -559,7 +559,7 @@ class UMArray(FileArray):
             self,
             "word_size",
             "Use method 'get_word_size' instead.",
-            version="TODODASKVER",
+            version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -571,7 +571,7 @@ class UMArray(FileArray):
             f: `umfile_lib.File`
                 The UM or PP dataset to be be closed.
 
-                .. versionadded:: TODODASKVER
+                .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -586,7 +586,7 @@ class UMArray(FileArray):
 
         The address is the word offset of the lookup header.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -599,7 +599,7 @@ class UMArray(FileArray):
     def get_byte_ordering(self):
         """The endianness of the data.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `open`
 
@@ -618,7 +618,7 @@ class UMArray(FileArray):
     def get_fmt(self):
         """The file format of the UM file containing the array.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `open`
 
@@ -636,7 +636,7 @@ class UMArray(FileArray):
     def get_word_size(self):
         """Word size in bytes.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `open`
 

@@ -469,7 +469,7 @@ _rotated_latitude_longitude_lbcodes = set((101, 102, 111))
 #          'area': None,
 #      }
 
-_axis = {"area": None}
+_axis = {"area": "area"}
 
 _autocyclic_false = {"no-op": True, "X": False, "cyclic": False}
 
@@ -491,7 +491,7 @@ class UMField:
         select=None,
         **kwargs,
     ):
-        """**Initialization**
+        """**Initialisation**
 
         :Parameters:
 
@@ -812,7 +812,6 @@ class UMField:
                 cf_info,
                 um_condition,
             ) in stash_records:
-
                 # Check that conditions are met
                 if not self.test_um_version(valid_from, valid_to, um_version):
                     continue
@@ -987,9 +986,11 @@ class UMField:
                 # Create UNROTATED, 2-D LATITUDE and LONGITUDE
                 # auxiliary coordinates
                 # ----------------------------------------------------
-                self.latitude_longitude_2d_aux_coordinates(
-                    yc, xc
-                )  # , rotated_pole)
+                aux_keys = self.latitude_longitude_2d_aux_coordinates(yc, xc)
+
+                self.implementation.set_coordinate_reference_coordinates(
+                    ref, [ykey, xkey] + aux_keys
+                )
 
             # --------------------------------------------------------
             # Create a RADIATION WAVELENGTH dimension coordinate
@@ -1845,7 +1846,7 @@ class UMField:
         recs = self.recs
 
         um_Units = self.um_Units
-        units = um_Units.units
+        units = getattr(um_Units, "units", None)
         calendar = getattr(um_Units, "calendar", None)
 
         data_type_in_file = self.data_type_in_file
@@ -2168,7 +2169,8 @@ class UMField:
 
         :Returns:
 
-            `None`
+            `list`
+                The keys of the auxiliary coordinates.
 
         """
         BDX = self.bdx
@@ -2232,6 +2234,7 @@ class UMField:
 
         axes = [_axis["y"], _axis["x"]]
 
+        keys = []
         for axiscode, array, bounds in zip(
             (10, 11), (lat, lon), (lat_bounds, lon_bounds)
         ):
@@ -2245,9 +2248,12 @@ class UMField:
             )
             ac = self.coord_names(ac, axiscode)
 
-            self.implementation.set_auxiliary_coordinate(
+            key = self.implementation.set_auxiliary_coordinate(
                 self.field, ac, axes=axes, copy=False
             )
+            keys.append(key)
+
+        return keys
 
     def model_level_number_coordinate(self, aux=False):
         """model_level_number dimension or auxiliary coordinate.
@@ -2803,13 +2809,13 @@ class UMField:
     #                ppfile.seek(file_position, os.SEEK_SET)
     #                data = None
     #                # dch also test in bmdi?:
-    #                if numpy_any(bounds[..., 1] == _pp_rmdi):
+    #                if np.any(bounds[..., 1] == _pp_rmdi):
     #                    # dch also test in bmdi?:
-    #                    if not numpy_any(bounds[..., 0] == _pp_rmdi):
+    #                    if not np.any(bounds[..., 0] == _pp_rmdi):
     #                        data = bounds[..., 0]
     #                    bounds = None
     #                else:
-    #                    data = numpy_mean(bounds, axis=1)
+    #                    data = np.mean(bounds, axis=1)
     #
     #                if (data, bounds) != (None, None):
     #                    aux = "aux%(auxN)d" % locals()
@@ -2838,7 +2844,7 @@ class UMField:
     #                    # Reset the file pointer after reading the
     #                    # extra data into a numpy array
     #                    ppfile.seek(file_position, os.SEEK_SET)
-    #                    if not numpy_any(data == _pp_rmdi):  # dch + test in bmdi
+    #                    if not np.any(data == _pp_rmdi):  # dch + test in bmdi
     #                        aux = "aux%(auxN)d" % locals()
     #                        auxN += 1  # Increment auxiliary number
     #                        coord = _create_Coordinate(

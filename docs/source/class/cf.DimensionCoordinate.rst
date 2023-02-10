@@ -237,6 +237,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.to_dask_array
    ~cf.DimensionCoordinate.__getitem__
    ~cf.DimensionCoordinate.del_data
    ~cf.DimensionCoordinate.get_data
@@ -337,12 +338,13 @@ Cyclicity
    :template: method.rst
 	      
 
-   ~cf.DimensionCoordinate.chunk
+   ~cf.DimensionCoordinate.rechunk
    ~cf.DimensionCoordinate.close
    ~cf.DimensionCoordinate.convert_reference_time
    ~cf.DimensionCoordinate.cyclic
    ~cf.DimensionCoordinate.get_original_filenames
    ~cf.DimensionCoordinate.period
+   ~cf.DimensionCoordinate.persist
 
 Miscellaneous
 -------------
@@ -359,6 +361,7 @@ Miscellaneous
    ~cf.DimensionCoordinate.creation_commands
    ~cf.DimensionCoordinate.equals
    ~cf.DimensionCoordinate.inspect
+   ~cf.DimensionCoordinate.to_memory
    ~cf.DimensionCoordinate.uncompress
    
 Mathematical operations
@@ -683,9 +686,6 @@ Special
    ~cf.DimensionCoordinate.__str__
    ~cf.DimensionCoordinate.__array__
    ~cf.DimensionCoordinate.__data__
-   ~cf.DimensionCoordinate.__query_set__
-   ~cf.DimensionCoordinate.__query_wi__
-   ~cf.DimensionCoordinate.__query_wo__
 
 Deprecated
 ----------
@@ -699,6 +699,7 @@ Deprecated
 
    ~cf.DimensionCoordinate.asdatetime
    ~cf.DimensionCoordinate.asreftime
+   ~cf.DimensionCoordinate.chunk
    ~cf.DimensionCoordinate.delprop
    ~cf.DimensionCoordinate.expand_dims
    ~cf.DimensionCoordinate.files
@@ -706,6 +707,7 @@ Deprecated
    ~cf.DimensionCoordinate.getprop
    ~cf.DimensionCoordinate.hasprop
    ~cf.DimensionCoordinate.insert_data
+   ~cf.DimensionCoordinate.mask_invalid
    ~cf.DimensionCoordinate.name
    ~cf.DimensionCoordinate.remove_data
    ~cf.DimensionCoordinate.select
@@ -729,36 +731,4 @@ Deprecated
    ~cf.DimensionCoordinate.isfieldancillary
    ~cf.DimensionCoordinate.ismeasure
    ~cf.DimensionCoordinate.role
-   ~cf.DimensionCoordinate.unsafe_array
-
-Deprecated
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.DimensionCoordinate.asdatetime
-   ~cf.DimensionCoordinate.asreftime
-   ~cf.DimensionCoordinate.attributes
-   ~cf.DimensionCoordinate.delprop
-   ~cf.DimensionCoordinate.dtvarray
-   ~cf.DimensionCoordinate.expand_dims
-   ~cf.DimensionCoordinate.getprop
-   ~cf.DimensionCoordinate.hasbounds
-   ~cf.DimensionCoordinate.hasdata
-   ~cf.DimensionCoordinate.hasprop
-   ~cf.DimensionCoordinate.insert_data
-   ~cf.DimensionCoordinate.isauxiliary
-   ~cf.DimensionCoordinate.isdimension
-   ~cf.DimensionCoordinate.isdomainancillary
-   ~cf.DimensionCoordinate.isfieldancillary
-   ~cf.DimensionCoordinate.ismeasure
-   ~cf.DimensionCoordinate.name
-   ~cf.DimensionCoordinate.remove_data
-   ~cf.DimensionCoordinate.select
-   ~cf.DimensionCoordinate.setprop
    ~cf.DimensionCoordinate.unsafe_array

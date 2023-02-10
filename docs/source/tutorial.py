@@ -67,11 +67,15 @@ t.constructs
 print(t.constructs)
 q, t = cf.read('file.nc')
 t.data
-print(t.array)
+a = t.array
+type(a)
+print(a)
 t.dtype
 t.ndim
 t.shape
 t.size
+d = t.to_dask_array()
+d
 print(t.domain_axes)
 t
 t.data.shape
@@ -409,6 +413,7 @@ print(q2.array)
 print(t)
 print(t.construct('latitude').array)
 t2 = t.subspace(latitude=cf.wi(51, 53))
+print(t2.construct('latitude').array)
 print(t2.array)
 q, t = cf.read('file.nc')
 print(t)
@@ -595,7 +600,7 @@ Q.dump()
 import numpy
 import cf
 
-# Initialize the field construct
+# Initialise the field construct
 tas = cf.Field(
 properties={'project': 'research',
 'standard_name': 'air_temperature',
@@ -1008,7 +1013,7 @@ import numpy
 import cf
 
 # Define the gathered values
-gathered_array = cf.Data([[2, 1, 3], [4, 0, 5]])
+gathered_array = cf.Data([[2.0, 1, 3], [4, 0, 5]])
 
 # Define the list array values
 list_array = [1, 4, 5]
@@ -1016,13 +1021,15 @@ list_array = [1, 4, 5]
 # Create the list variable
 list_variable = cf.List(data=cf.Data(list_array))
 
-# Create the gathered array object, specifying the uncompressed
-# shape
+# Create the gathered array object, specifying the mapping between
+# compressed and uncompressed dimensions, and the uncompressed
+# shape.
 array = cf.GatheredArray(
 compressed_array=gathered_array,
-compressed_dimension=1,
+compressed_dimensions={1: [1, 2]},
 shape=(2, 3, 2), size=12, ndim=3,
-list_variable=list_variable)
+list_variable=list_variable
+)
 
 # Create the field construct with the domain axes and the gathered
 # array

@@ -15,7 +15,6 @@ class QueryTest(unittest.TestCase):
     f = cf.example_field(1)
 
     def test_Query_contains(self):
-
         c = self.f.dim("X")
         self.assertTrue(
             (

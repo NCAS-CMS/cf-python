@@ -13,14 +13,14 @@ from .netcdfarray import NetCDFArray
 class CFANetCDFArray(NetCDFArray):
     """A CFA aggregated array stored in a netCDF file.
 
-    .. versionadded:: TODODASKVER
+    .. versionadded:: 3.14.0
 
     """
 
     def __new__(cls, *args, **kwargs):
         """Store fragment array classes.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         instance = super().__new__(cls)
@@ -104,12 +104,9 @@ class CFANetCDFArray(NetCDFArray):
                 The calendar of the aggregated data. Set to `None` to
                 indicate the CF default calendar, if applicable.
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
             instructions: `str`, optional
                 The ``aggregated_data`` attribute value found on the
@@ -134,7 +131,7 @@ class CFANetCDFArray(NetCDFArray):
                 aggregated_data = source.get_aggregated_data(copy=False)
             except AttributeError:
                 aggregated_data = {}
-        else:
+        elif filename is not None:
             from CFAPython import CFAFileFormat
             from CFAPython.CFADataset import CFADataset
             from CFAPython.CFAExceptions import CFAException
@@ -182,6 +179,22 @@ class CFANetCDFArray(NetCDFArray):
             )
 
             del cfa
+        else:
+            super().__init__(
+                filename=filename,
+                ncvar=ncvar,
+                varid=varid,
+                group=group,
+                dtype=dtype,
+                mask=mask,
+                units=units,
+                calendar=calendar,
+                copy=copy,
+            )
+
+            fragment_shape = None
+            aggregated_data = None
+            instructions = None
 
         self._set_component("fragment_shape", fragment_shape, copy=False)
         self._set_component("aggregated_data", aggregated_data, copy=False)
@@ -190,7 +203,7 @@ class CFANetCDFArray(NetCDFArray):
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         """
         aggregated_data = self._get_component("instructions", None)
@@ -206,6 +219,7 @@ class CFANetCDFArray(NetCDFArray):
         )
 
     def __getitem__(self, indices):
+        """x.__getitem__(indices) <==> x[indices]"""
         return NotImplemented  # pragma: no cover
 
     def _set_fragment(self, var, frag_loc, aggregated_data, cfa_filename):
@@ -216,7 +230,7 @@ class CFANetCDFArray(NetCDFArray):
         the fragments and the instructions on how to aggregate them,
         and is updated in-place.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -260,27 +274,34 @@ class CFANetCDFArray(NetCDFArray):
     def _subarray_shapes(self, shapes):
         """Create the subarray shapes.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `subarrays`
 
         :Parameters:
 
-            shapes:
-                TODODASKDOCS
+           shapes: `int`, sequence, `dict` or `str`, optional
+                Define the subarray shapes.
+
+                Any value accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is allowed.
+
+                The subarray sizes implied by *chunks* for a dimension
+                that has been fragmented are ignored, so their
+                specification is arbitrary.
 
         :Returns:
 
-            `list`
-                The subarray sizes along each uncompressed dimension.
+            `tuple`
+                The subarray sizes along each dimension.
 
         **Examples**
 
         >>> a.shape
         (12, 1, 73, 144)
-        >>> a.get_fragement_shape()
+        >>> a.get_fragment_shape()
         (2, 1, 1, 1)
-        >>> a.fragemented_dimensions()
+        >>> a.fragmented_dimensions()
         [0]
         >>> a.subarray_shapes(-1)
         ((6, 6), (1,), (73,), (144,))
@@ -356,7 +377,7 @@ class CFANetCDFArray(NetCDFArray):
     def _subarrays(self, subarray_shapes):
         """Return descriptors for every subarray.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         .. seealso:: `subarray_shapes`
 
@@ -395,9 +416,9 @@ class CFANetCDFArray(NetCDFArray):
 
         >>> a.shape
         (12, 73, 144)
-        >>> a.get_fragement_shape()
+        >>> a.get_fragment_shape()
         (2, 1, 1)
-        >>> a.fragemented_dimensions()
+        >>> a.fragmented_dimensions()
         [0]
         >>> subarray_shapes = a.subarray_shapes({1: 40})
         >>> print(subarray_shapes)
@@ -470,9 +491,9 @@ class CFANetCDFArray(NetCDFArray):
             u_shapes.append(c)
 
             if dim in f_dims:
-                # no fragmentation along this dimension
                 f_locations.append(tuple(range(nc)))
             else:
+                # No fragmentation along this dimension
                 f_locations.append((0,) * nc)
 
             c = tuple(accumulate((0,) + c))
@@ -509,7 +530,7 @@ class CFANetCDFArray(NetCDFArray):
         The keys are indices of the CFA fragment dimensions,
         e.g. ``(1, 0, 0 ,0)``.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -554,7 +575,7 @@ class CFANetCDFArray(NetCDFArray):
     def get_FragmentArray(self, fragment_format):
         """Return a Fragment class.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -580,7 +601,7 @@ class CFANetCDFArray(NetCDFArray):
     def get_fragmented_dimensions(self):
         """Get the positions dimension that have two or more fragments.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -610,7 +631,7 @@ class CFANetCDFArray(NetCDFArray):
         The fragment dimension sizes are given in the same order as
         the aggregated dimension sizes given by `shape`
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Returns:
 
@@ -623,7 +644,7 @@ class CFANetCDFArray(NetCDFArray):
     def to_dask_array(self, chunks="auto"):
         """Create a dask array with `FragmentArray` chunks.
 
-        .. versionadded:: TODODASKVER
+        .. versionadded:: 3.14.0
 
         :Parameters:
 
@@ -634,7 +655,7 @@ class CFANetCDFArray(NetCDFArray):
                 `dask.array.from_array` function is allowed.
 
                 The chunk sizes implied by *chunks* for a dimension that
-                has been fragemented are ignored and replaced with values
+                has been fragmented are ignored and replaced with values
                 that are implied by that dimensions fragment sizes.
 
         :Returns:
@@ -681,9 +702,12 @@ class CFANetCDFArray(NetCDFArray):
                 aggregated_calendar=calendar,
             )
 
+            key = f"{fragment_array.__class__.__name__}-{tokenize(fragment_array)}"
+            dsk[key] = fragment_array
+
             dsk[name + chunk_location] = (
                 getter,
-                fragment_array,
+                key,
                 f_indices,
                 False,
                 False,

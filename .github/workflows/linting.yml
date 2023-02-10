@@ -3,12 +3,12 @@ name: Linting
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     # default (from docs) is just on [opened, synchronize, reopened]
     types: [opened, reopened, ready_for_review, edited]
     branches:
-      - master
+      - main
 
 # Note: only running this on Ubuntu (latest) and Python 3.8 as representative,
 # since the linting output should be machine dependent and not vary much if
@@ -25,6 +25,6 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-    - uses: pre-commit/action@v2.0.0
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+    - uses: pre-commit/action@v3.0.0
