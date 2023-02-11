@@ -294,12 +294,11 @@ class FragmentArray:
             if units != aggregated_units:
                 if isinstance(array, dict):
                     # 'array' is a dictionary
-                    array = {
-                        key: Units.conform(
-                            value, units, aggregated_units, inplace=True
-                        )
-                        for key, value in array.items()
-                    }
+                    for key, value in array.items():
+                        if key in _active_chunk_methds:
+                            array[key] = Units.conform(
+                                value, units, aggregated_units, inplace=True
+                            )
                 else:
                     # 'array' is a numpy array
                     array = Units.conform(
