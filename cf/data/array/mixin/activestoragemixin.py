@@ -75,7 +75,7 @@ class ActiveStorageMixin:
 
         :Returns:
 
-            {{class}}
+            `{{class}}`
                 TODOACTIVEDOCS
 
         """
@@ -211,6 +211,20 @@ class ActiveStorageMixin:
     #        """
     #        return {"N": a["n"], "sum": a["sum"]}
 
+    def get_active_axis(self):
+        """TODOACTIVEDOC.
+
+        .. versionadded:: TODOACTIVEVER
+
+        .. seealso:: `set_active_axis`
+
+        :Returns:
+
+            TODOACTIVEDOC
+
+        """
+        return self._custom.get("active_axis")
+
     def get_active_method(self):
         """TODOACTIVEDOC.
 
@@ -227,20 +241,6 @@ class ActiveStorageMixin:
         """
         return self._custom.get("active_method")
 
-    def get_active_axis(self):
-        """TODOACTIVEDOC.
-
-        .. versionadded:: TODOACTIVEVER
-
-        .. seealso:: `set_active_axis`
-
-        :Returns:
-
-            TODOACTIVEDOC
-
-        """
-        return self._custom.get("active_axis")
-
     #    def get_active_chunk_function(self):
     #        """TODOACTIVEDOC.
     #
@@ -255,24 +255,6 @@ class ActiveStorageMixin:
     #            return self._active_chunk_functions()[self.get_active_method()]
     #        except KeyError:
     #            raise ValueError("no active storage operation has been set")
-
-    def set_active_method(self, value):
-        """TODOACTIVEDOC.
-
-        .. versionadded:: TODOACTIVEVER
-
-        .. seealso:: `get_active_method`
-
-        :Parameters:
-
-            TODOACTIVEDOCS
-
-        :Returns:
-
-            `None`
-
-        """
-        self._custom["active_method"] = value
 
     def set_active_axis(self, value):
         """TODOACTIVEDOC.
@@ -291,3 +273,21 @@ class ActiveStorageMixin:
 
         """
         self._custom["active_axis"] = value
+
+    def set_active_method(self, value):
+        """TODOACTIVEDOC.
+
+        .. versionadded:: TODOACTIVEVER
+
+        .. seealso:: `get_active_method`
+
+        :Parameters:
+
+            TODOACTIVEDOCS
+
+        :Returns:
+
+            `None`
+
+        """
+        self._custom["active_method"] = value
