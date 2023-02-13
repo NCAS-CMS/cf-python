@@ -221,14 +221,19 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             for attr in ("aggregation_dimensions", "aggregation_data"):
                 self.implementation.del_property(construct, attr, None)
 
-        # get shape from parent_ncvar
-                
-        cfa_array, kwargs = self._create_cfanetcdfarray(
-            ncvar,
-            unpacked_dtype=unpacked_dtype,
-            coord_ncvar=coord_ncvar,
-            term=cfa_term,
-        )
+        if cfa_term is None:                          
+            cfa_array, kwargs = self._create_cfanetcdfarray(
+                ncvar,
+                unpacked_dtype=unpacked_dtype,
+                coord_ncvar=coord_ncvar,
+            )
+        else:
+            cfa_array, kwargs = self._create_cfanetcdfarray(
+                parent_ncvar,
+                unpacked_dtype=unpacked_dtype,
+                coord_ncvar=coord_ncvar,
+                term=cfa_term
+            )
 
         data = self._create_Data(
             cfa_array,
@@ -237,6 +242,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=kwargs["calendar"],
         )
 
+        # Note: We don't cache elements from aggregated data
+        
         # if cfa_term is not None or (data.numblocks == 1 for each non-aggreged dimension):
         #      data._set_cfa_write(True)
 
@@ -479,6 +486,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         ncvar,
         unpacked_dtype=False,
         coord_ncvar=None,
+        parent_ncvar=None,
         non_standard_term=None,
     ):
         """Create a CFA-netCDF variable array.
@@ -494,6 +502,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             unpacked_dtype: `False` or `numpy.dtype`, optional
 
             coord_ncvar: `str`, optional
+
+            parent_shape: `tuple`, optional
+                TODOCFADOCS.
+
+                .. versionadded:: TODOCFAVER
 
             non_standard_term: `str`, optional
                 The name of a non-standard aggregation instruction
@@ -519,13 +532,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             return_kwargs_only=True,
         )
 
-        # Get rid of the incorrect shape
-        kwargs.pop("shape", None)
-
+        
         # Specify a non-standardised term from which to create the
-        # data
-        kwargs["term"] = non_standard_term
-
+        # data, which will have the shape of the parent variable. 
+        if non_standard_term is not None:
+            kwargs["term"] = non_standard_term
+            kwargs['shape'] = parent_shape
+        else:            
+            # Get rid of the incorrect shape
+            kwargs.pop("shape", None)
+        
         # Add the aggregated_data attribute (that can be used by
         # dask.base.tokenize).
         kwargs["instructions"] = self.read_vars["variable_attributes"][
@@ -719,3 +735,24 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             out[ncvar] = key
 
         return out
+
+    def _cfa(self, ncvar, f):
+        """TODOCFADOCS.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            ncvar: `str`
+                The netCDF variable name.
+
+            f: `Field` or `Domain`
+                TODOCFADOCS.
+
+        :Returns:
+
+            TODOCFADOCS.
+
+        """
+        x = self._parse_x( ncvar, aggregated_data,
+                           keys_are_variables=True)

@@ -169,6 +169,7 @@ class CFANetCDFArray(NetCDFArray):
                     f"CFA variable {ncvar} not found in file {filename}"
                 )
 
+#            if term is None:
             shape = tuple([d.len for d in var.getDims()])
 
             super().__init__(

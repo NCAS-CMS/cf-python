@@ -1,6 +1,4 @@
 from ..array.netcdfarray import NetCDFArray
-
-# from .abstract import FragmentArray
 from .mixin import FragmentArrayMixin
 
 
@@ -69,21 +67,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             {{init copy: `bool`, optional}}
 
         """
-        if source is not None:
-            super().__init__(source=source, copy=copy)
-            return
-
-        if isinstance(address, int):
-            ncvar = None
-            varid = address
-        else:
-            ncvar = address
-            varid = None
-
-        # TODOCFA set groups from ncvar
-        group = None
-
-        array = NetCDFArray(
+        super().__init__(
             filename=filename,
             ncvar=ncvar,
             varid=varid,
@@ -93,79 +77,28 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             mask=True,
             units=units,
             calendar=calendar,
+            source=source, 
             copy=False,
         )
 
-        super().__init__(
-            dtype=dtype,
-            shape=shape,
-            aggregated_units=aggregated_units,
-            aggregated_calendar=aggregated_calendar,
-            array=array,
-            source=source,
-            copy=False,
+        if source is not None:
+            try:
+                aggregated_units = source._get_component(
+                    "aggregated_units", False
+                )
+            except AttributeError:
+                aggregated_units = False
+
+            try:
+                aggregated_calendar = source._get_component(
+                    "aggregated_calendar", False
+                )
+            except AttributeError:
+                aggregated_calendar = False
+
+
+        self._set_component("aggregated_units", aggregated_units, copy=False)
+        self._set_component(
+            "aggregated_calendar", aggregated_calendar, copy=False
         )
 
-
-#    def __getitem__(self, indices):
-#        """Returns a subspace of the fragment as a numpy array.
-#
-#        x.__getitem__(indices) <==> x[indices]
-#
-#        Indexing is similar to numpy indexing, with the following
-#        differences:
-#
-#          * A dimension's index can't be rank-reducing, i.e. it can't
-#            be an integer, nor a scalar `numpy` or `dask` array.
-#
-#          * When two or more dimension's indices are sequences of
-#            integers then these indices work independently along each
-#            dimension (similar to the way vector subscripts work in
-#            Fortran).
-#
-#        **Performance**
-#
-#        If the netCDF fragment variable has fewer than `ndim`
-#        dimensions then the entire array is read into memory before
-#        the requested subspace of it is returned.
-#
-#        .. versionadded:: 3.14.0
-#
-#        """
-#        try:
-#            return super().__getitem__(indices)
-#        except ValueError:
-#            # A value error is raised if indices has at least ndim
-#            # elements but the netCDF fragment variable has fewer than
-#            # ndim dimensions. In this case we get the entire fragment
-#            # array, insert the missing size 1 dimensions, and then
-#            # apply the requested slice.
-#            indices = self._parse_indices(indices)
-#            array = self.get_array()
-#            array = array[Ellipsis]
-#            if array.ndim < self.ndim:
-#                array = array.reshape(self.shape)
-#
-#            array = array[indices]
-#            array = self._conform_units(array)
-#            return array
-#
-#        indices = self._parse_indices(indices)
-#        array = self.get_array()
-#
-#        try:
-#            array = array[indices]
-#        except ValueError:
-#            # A value error is raised if indices has at least ndim
-#            # elements but the netCDF fragment variable has fewer than
-#            # ndim dimensions. In this case we get the entire fragment
-#            # array, insert the missing size 1 dimensions, and then
-#            # apply the requested slice.
-#            array = array[Ellipsis]
-#            if array.ndim < self.ndim:
-#                array = array.reshape(self.shape)
-#
-#            array = array[indices]
-#
-#        array = self._conform_units(array)
-#        return array

@@ -86,6 +86,7 @@ class CFImplementation(cfdm.CFDMImplementation):
         ncvar=None,
         group=None,
         dtype=None,
+        shape=None,
         mask=True,
         units=False,
         calendar=False,
@@ -103,6 +104,8 @@ class CFImplementation(cfdm.CFDMImplementation):
             group: `None` or sequence of str`
 
             dytpe: `numpy.dtype`
+
+            shape: `tuple`
 
             mask: `bool`, optional
 
@@ -125,6 +128,7 @@ class CFImplementation(cfdm.CFDMImplementation):
             ncvar=ncvar,
             group=group,
             dtype=dtype,
+            shape=shape,
             mask=mask,
             units=units,
             calendar=calendar,
