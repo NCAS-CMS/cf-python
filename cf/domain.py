@@ -14,6 +14,9 @@ from .functions import (
     parse_indices,
 )
 
+from .auxiliarycoordinate import    AuxiliaryCoordinate
+from .dimensioncoordinate import    DimensionCoordinate
+
 _empty_set = set()
 
 
@@ -78,6 +81,8 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         instance._Constructs = Constructs
         instance._Data = Data
         instance._DomainAxis = DomainAxis
+        instance._DimensionCoordinate = DimensionCoordinate
+        instance._AuxiliaryCoordinate = AuxiliaryCoordinate
         return instance
 
     def __repr__(self):

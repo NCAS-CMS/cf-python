@@ -1177,6 +1177,76 @@ class FieldDomain:
 
         return True
 
+    @_inplace_enabled(default=False)
+    def auxiliary_to_dimension(self, *identity, inplace=False, **filter_kwargs):
+        """Promote auxiliary coordinate to a dimension coordinate.
+
+            .. versionadded:: 3.14.1?
+
+            .. seealso:: `dimension_to_auxiliary`
+
+        :Parameters:
+
+            key: `*identity`
+                Identity of the auxiliary coordinate construct to be promoted.
+
+        :Returns:
+
+            A field where the auxiliary coordinate has been converted to a dimension coordinate. 
+
+        **Examples**
+        >>> f = cf.example_field(0)
+        >>> f.equals(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g = f.dimension_to_auxiliary('latitude')
+        >>> print(g)
+        print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        Auxiliary coords: latitude(latitude(5)) = [-75.0, ..., 75.0] degrees_north
+        >>> h = g.auxiliary_to_dimension('latitude')
+        >>> print(h)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> h.equals(f)
+        True
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        filter_kwargs['filter_by_naxes'] = (1,)
+
+        key, aux = f.auxiliary_coordinate(*identity, item=True, **filter_kwargs)
+
+        if aux.dtype.kind in "SU":
+            raise TypeError(
+                f"Can't perform the operation with {aux.dtype}."
+                f"Only numerical auxiliary coordinates can be promoted.")
+            
+        if aux.has_geometry() == True:
+            raise ValueError("Can't promote auxiliary coordinates with geometry to dimension coordinates.")
+            
+        axis = f.get_data_axes(key)
+        f.del_construct(key)
+        dim = f._DimensionCoordinate(source=aux)
+        f.set_construct(dim, axes=axis)
+        return f
+
     def del_coordinate_reference(
         self, identity=None, construct=None, default=ValueError()
     ):
@@ -1626,6 +1696,67 @@ class FieldDomain:
             old = cyclic.copy()
 
         return old
+
+    @_inplace_enabled(default=False)
+    def dimension_to_auxiliary(self, *identity, inplace=False):
+        """Convert dimension coordinate to an auxiliary coordinate.
+
+            .. versionadded:: 3.14.1?
+
+            .. seealso:: `auxiliary_to_dimension`
+
+        :Parameters:
+
+            key: `*identity`
+                Identity of the dimension coordinate construct to be converted.
+
+        :Returns:
+
+            A field where the dimension coordinate has been converted to am auxiliary coordinate. 
+
+        **Examples**
+
+        >>> f = cf.example_field(0)
+        >>> f.equals(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g = f.dimension_to_auxiliary('latitude')
+        >>> print(g)
+        print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        Auxiliary coords: latitude(latitude(5)) = [-75.0, ..., 75.0] degrees_north
+        >>> h = g.auxiliary_to_dimension('latitude')
+        >>> print(h)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> h.equals(f)
+        True
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        key, aux = f.dimension_coordinate(*identity, item=True)
+
+        axis = f.get_data_axes(key)
+        f.del_construct(key)
+        dim = f._AuxiliaryCoordinate(source=aux)
+        f.set_construct(dim, axes=axis)
+        return f
 
     @_deprecated_kwarg_check("axes", version="3.0.0", removed_at="4.0.0")
     def direction(self, identity, axes=None, **kwargs):
