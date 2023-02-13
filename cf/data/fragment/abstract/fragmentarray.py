@@ -120,79 +120,81 @@ class FragmentArray:
         .. versionadded:: 3.14.0
 
         """
-        return self._getitem( self.get_array(), indices)
-    
-#        indices = self._parse_indices(indices)
-#        array = self.get_array()
-#
-#        try:
-#            array = array[indices]
-#        except ValueError:
-#            # A value error is raised if indices has at least ndim
-#            # elements but the fragment variable has fewer than ndim
-#            # dimensions. In this case we get the entire fragment
-#            # array, insert the missing size 1 dimensions, and then
-#            # apply the requested slice. See the CFA conventions for
-#            # details.
-#            array = array[Ellipsis]
-#            if array.ndim < self.ndim:
-#                array = array.reshape(self.shape)
-#
-#            array = array[indices]
-#
-#        array = self._conform_units(array)
-#        return array
-
-    def _getitem(self, array, indices):
-        """Returns a subspace of the fragment as a numpy array.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        Indexing is similar to numpy indexing, with the following
-        differences:
-
-          * A dimension's index can't be rank-reducing, i.e. it can't
-            be an integer, a scalar `numpy` array, nor a scalar `dask`
-            array.
-
-          * When two or more dimension's indices are sequences of
-            integers then these indices work independently along each
-            dimension (similar to the way vector subscripts work in
-            Fortran).
-
-        **Performance**
-
-        If the fragment variable has fewer than `ndim` dimensions then
-        the entire array is realised in memory before the requested
-        subspace of it is returned.
-
-        .. versionadded:: 3.14.0
-
-        """
         indices = self._parse_indices(indices)
 
         try:
-            array = array[indices]
+            array = super().__getitem__[indices]
         except ValueError:
-            # A value error is raised if indices has at least ndim
-            # elements but the fragment variable has fewer than ndim
-            # dimensions. In this case we get the entire fragment
-            # array, insert the missing size 1 dimensions, and then
-            # apply the requested slice. See the CFA conventions for
-            # details.
-            array = array[Ellipsis]
-            if array.ndim < self.ndim:
-                array = array.reshape(self.shape)
+            # A ValueError is raised if 'indices' has ndim elements
+            # but the fragment variable has fewer than ndim
+            # dimensions. See the CFA conventions for details.
+            iaxis = self._missing_size_1_axis(indices)
+            if iaxis is not None:
+                # There is a unique size 1 index: Remove it from the
+                # indices; get the fragment array with the new
+                # indices; and then insert the missing size one
+                # dimension.
+                indices = list(indices)
+                indices.pop(iaxis)
+                array = super().__getitem__[tuple(indices)]
+                array = np.expand_dims(array, iaxis)
+            else:
+                # There are multiple size 1 indices: Get the full
+                # fragment array; and then reshape it to the shape of
+                # the storage chunk.
+                array = super().__getitem__[Ellipsis]
+                if array.size != self.size:
+                    raise ValueError(
+                        "Can't get CFA fragment data from "
+                        f"{self.get_filename()} ({self.get_address()}) when "
+                        "the fragment has two or more missing size 1 "
+                        "dimensions and spans two or more storage chunks"
+                        "\n\n"
+                        "Consider recreating the data with one storage chunk "
+                        "per fragment."
+                    )
 
-            array = array[indices]
+                array = array.reshape(self.shape)
 
         array = self._conform_units(array)
         return array
 
+    def _missing_size_1_axis(self, indices):
+        """TODOCFADOCS.
+
+        .. versionadded:: TODOCFAVER
+        
+        """
+        iaxis = None
+        
+        n = 0
+        for i, index in enumerate(indices):
+            try:
+                if index.stop - index.start == 1:
+                    # Index is a slice
+                    n += 1
+                    iaxis = i
+            except AttributeError:
+                try:
+                    if index.size == 1:
+                        # Index is a numpy or dask array
+                        n += 1
+                        iaxis = i
+                except AttributeError:
+                     if len(index) == 1:
+                         # Index is a list
+                        n += 1
+                        iaxis = i
+                    
+        if n > 1:
+            iaxis = None
+        
+        return iaxis
+
     def _parse_indices(self, indices):
         """Parse the indices that retrieve the fragment data.
 
-        Ellipses are replaced with the approriate number `slice(None)`
+        Ellipses are replaced with the approriate number `slice`
         instances, and rank-reducing indices (such as an integer or
         scalar array) are disallowed.
 
@@ -213,39 +215,43 @@ class FragmentArray:
         >>> a.shape
         (12, 1, 73, 144)
         >>> a._parse_indices(([2, 4, 5], Ellipsis, slice(45, 67))
-        ([2, 4, 5], slice(None), slice(None), slice(45, 67))
+        ([2, 4, 5], slice(0, 1), slice(0, 73), slice(45, 67))
 
         """
-        ndim = self.ndim
-        if indices is Ellipsis:
-            return (slice(None),) * ndim
+       shape = self.shape
+       if indices is Ellipsis:
+            return tuple([slice(0, n) for n in shape])
 
         # Check indices
         has_ellipsis = False
-        for i in indices:
-            if isinstance(i, slice):
+        indices = list(indices)
+        for i, (index, n) in enumerate(zip(indices, shape)):
+            if isinstance(index, slice):
+                if index == slice(None):
+                    indices[i] = slice(0, n)
+                    
                 continue
 
-            if i is Ellipsis:
+            if index is Ellipsis:
                 has_ellipsis = True
                 continue
 
-            if isinstance(i, Integral) or not getattr(i, "ndim", True):
+            if isinstance(index, Integral) or not getattr(index, "ndim", True):
                 # TODOCFA: what about [] or np.array([])?
 
-                # 'i' is an integer or a scalar numpy/dask array
+                # 'index' is an integer or a scalar numpy/dask array
                 raise ValueError(
                     f"Can't subspace {self.__class__.__name__} with a "
-                    f"rank-reducing index: {i!r}"
+                    f"rank-reducing index: {index!r}"
                 )
 
         if has_ellipsis:
-            # Replace Ellipsis with one or more slice(None)
+            # Replace Ellipsis with one or more slices
             indices2 = []
             length = len(indices)
-            n = ndim
-            for i in indices:
-                if i is Ellipsis:
+            n = self.ndim
+            for index in indices:
+                if index is Ellipsis:
                     m = n - length + 1
                     indices2.extend([slice(None)] * m)
                     n -= m
@@ -255,9 +261,13 @@ class FragmentArray:
 
                 length -= 1
 
-            indices = tuple(indices2)
-
-        return indices
+            indices = indices2
+            
+            for i, (index, n) in enumerate(zip(indices, shape)):
+                if index == slice(None):
+                    indices[i] = slice(0, n)
+                    
+        return tuple(indices)
 
     def _conform_units(self, array):
         """Conform the array to have the aggregated units.
@@ -393,37 +403,37 @@ class FragmentArray:
 
         return units
 
-    def get_array(self):
-        """The fragment array.
-
-        .. versionadded:: 3.14.0
-
-        :Returns:
-
-            Subclass of `Array`
-                The object defining the fragment array.
-
-        """
-        return self._get_component("array")
-
-    def get_units(self, default=ValueError()):
-        """The units of the netCDF variable.
-
-        .. versionadded:: (cfdm) 1.10.0.1
-
-        .. seealso:: `get_calendar`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                units have not been set. If set to an `Exception`
-                instance then it will be raised instead.
-
-        :Returns:
-
-            `str` or `None`
-                The units value.
-
-        """
-        return self.get_array().get_units(default)
+#    def get_array(self):
+#        """The fragment array.
+#
+#        .. versionadded:: 3.14.0
+#
+#        :Returns:
+#
+#            Subclass of `Array`
+#                The object defining the fragment array.
+#
+#        """
+#        return self._get_component("array")
+#
+#    def get_units(self, default=ValueError()):
+#        """The units of the netCDF variable.
+#
+#        .. versionadded:: (cfdm) 1.10.0.1
+#
+#        .. seealso:: `get_calendar`
+#
+#        :Parameters:
+#
+#            default: optional
+#                Return the value of the *default* parameter if the
+#                units have not been set. If set to an `Exception`
+#                instance then it will be raised instead.
+#
+#        :Returns:
+#
+#            `str` or `None`
+#                The units value.
+#
+#        """
+#        return self.get_array().get_units(default)
