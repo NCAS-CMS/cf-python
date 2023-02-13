@@ -3,7 +3,6 @@ from functools import lru_cache
 
 import dask.array as da
 import numpy as np
-
 from cfdm import Array
 from dask.base import is_dask_collection
 
@@ -124,11 +123,11 @@ def generate_axis_identifiers(n):
 
 def is_file_array(array):
     """Whether or not an array is stored on disk.
-    
+
     .. versionaddedd: TODOCFAVER
-    
+
     :Parameters:
-    
+
         array:
             TODOCFADOCS
 
@@ -145,9 +144,9 @@ def is_abstract_Array_subclass(array):
     """Whether or not an array is a type of abstract Array.
 
     .. versionaddedd: TODOCFAVER
-    
+
     :Parameters:
-    
+
         array:
             TODOCFADOCS
 

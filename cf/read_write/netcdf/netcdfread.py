@@ -3,10 +3,6 @@ import numpy as np
 from packaging.version import Version
 
 """
-TODOCFA: remove aggregation_* properties from constructs
-
-TODOCFA: Create auxiliary coordinates from non-standardised terms
-
 TODOCFA: What about groups/netcdf_flattener?
 
 """
@@ -207,12 +203,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 coord_ncvar=coord_ncvar,
             )
 
-            self._cache_data_elements(data, ncvar)
-
             if data.npartitions == 1:
                 # Set the CFA write status to True when there is
                 # exactly one dask chunk
                 data._set_cfa_write(True)
+
+            self._cache_data_elements(data, ncvar)
 
             return data
 
@@ -225,6 +221,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             for attr in ("aggregation_dimensions", "aggregation_data"):
                 self.implementation.del_property(construct, attr, None)
 
+        # get shape from parent_ncvar
+                
         cfa_array, kwargs = self._create_cfanetcdfarray(
             ncvar,
             unpacked_dtype=unpacked_dtype,
@@ -239,11 +237,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=kwargs["calendar"],
         )
 
-        if cfa_term is not None:
-            self._cache_data_elements(data, ncvar)
-
-        # Set the CFA write status to True
-        data._set_cfa_write(True)
+        # if cfa_term is not None or (data.numblocks == 1 for each non-aggreged dimension):
+        #      data._set_cfa_write(True)
 
         return data
 
@@ -484,7 +479,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         ncvar,
         unpacked_dtype=False,
         coord_ncvar=None,
-        term=None,
+        non_standard_term=None,
     ):
         """Create a CFA-netCDF variable array.
 
@@ -500,7 +495,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             coord_ncvar: `str`, optional
 
-            term: `str`, optional
+            non_standard_term: `str`, optional
                 The name of a non-standard aggregation instruction
                 term from which to create the array. If set then
                 *ncvar* must be the value of the term in the
@@ -529,7 +524,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         # Specify a non-standardised term from which to create the
         # data
-        kwargs["term"] = term
+        kwargs["term"] = non_standard_term
 
         # Add the aggregated_data attribute (that can be used by
         # dask.base.tokenize).
