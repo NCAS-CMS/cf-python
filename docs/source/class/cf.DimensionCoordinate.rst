@@ -158,6 +158,7 @@ Properties
    ~cf.DimensionCoordinate.set_property
    ~cf.DimensionCoordinate.properties
    ~cf.DimensionCoordinate.clear_properties
+   ~cf.DimensionCoordinate.del_properties
    ~cf.DimensionCoordinate.set_properties
 
 .. rubric:: Attributes

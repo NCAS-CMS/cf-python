@@ -67,6 +67,7 @@ Properties
    ~cf.Bounds.set_property
    ~cf.Bounds.properties
    ~cf.Bounds.clear_properties
+   ~cf.Bounds.del_properties
    ~cf.Bounds.set_properties
    ~cf.Bounds.inherited_properties
 

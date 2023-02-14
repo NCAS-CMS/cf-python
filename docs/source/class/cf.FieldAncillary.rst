@@ -69,6 +69,7 @@ Properties
    ~cf.FieldAncillary.set_property
    ~cf.FieldAncillary.properties
    ~cf.FieldAncillary.clear_properties
+   ~cf.FieldAncillary.del_properties
    ~cf.FieldAncillary.set_properties
 
 .. rubric:: Attributes
