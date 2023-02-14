@@ -62,43 +62,34 @@ class FullFragmentArray(FragmentArray):
             {{init copy: `bool`, optional}}
 
         """
-        if source is not None:
-            super().__init__(source=source, copy=copy)
-            return
-
-        array = FullArray(
+        super().__init__(
             fill_value=fill_value,
             dtype=dtype,
             shape=shape,
             units=units,
             calendar=calendar,
+            source=source,
             copy=False,
         )
+       
+        if source is not None:
+            try:
+                aggregated_units = source._get_component(
+                    "aggregated_units", False
+                )
+            except AttributeError:
+                aggregated_units = False
 
-        super().__init__(
-            dtype=dtype,
-            shape=shape,
-            aggregated_units=aggregated_units,
-            aggregated_calendar=aggregated_calendar,
-            array=array,
-            copy=False,
+            try:
+                aggregated_calendar = source._get_component(
+                    "aggregated_calendar", False
+                )
+            except AttributeError:
+                aggregated_calendar = False
+
+
+        self._set_component("aggregated_units", aggregated_units, copy=False)
+        self._set_component(
+            "aggregated_calendar", aggregated_calendar, copy=False
         )
 
-    def get_full_value(self, default=AttributeError()):
-        """The fragment array fill value.
-
-        .. versionadded:: TODOCFAVER
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                fill value has not been set. If set to an `Exception`
-                instance then it will be raised instead.
-
-        :Returns:
-
-                The fill value.
-
-        """
-        return self.get_array().get_full_value(default=default)

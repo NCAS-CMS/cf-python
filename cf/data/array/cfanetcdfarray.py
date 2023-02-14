@@ -4,7 +4,7 @@ from itertools import accumulate, product
 from ...functions import abspath
 from ..fragment import (
     FullFragmentArray,
-    MissingFragmentArray,
+#    MissingFragmentArray,
     NetCDFFragmentArray,
     UMFragmentArray,
 )
@@ -29,7 +29,7 @@ class CFANetCDFArray(NetCDFArray):
             "nc": NetCDFFragmentArray,
             "um": UMFragmentArray,
             "full": FullFragmentArray,
-            None: MissingFragmentArray,
+#            None: MissingFragmentArray,
         }
         return instance
 
@@ -324,16 +324,17 @@ class CFANetCDFArray(NetCDFArray):
                 fmt = "nc"
 
             aggregated_data[frag_loc] = {
+                "format": fmt,
                 "file": filename,
                 "address": address,
-                "format": fmt,
                 "location": location,
             }
         elif filename is None:
             # This fragment contains wholly missing values
             aggregated_data[frag_loc] = {
-                "format": None,
+                "format": "full",
                 "location": location,
+                "full_value": np.ma.masked,
             }
 
     def get_aggregated_data(self, copy=True):

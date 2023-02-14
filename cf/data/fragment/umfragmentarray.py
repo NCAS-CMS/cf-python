@@ -65,26 +65,35 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
             {{init copy: `bool`, optional}}
 
         """
-        if source is not None:
-            super().__init__(source=source, copy=copy)
-            return
-
-        array = UMArray(
+        super().__init__(
             filename=filename,
             header_offset=address,
             dtype=dtype,
             shape=shape,
             units=units,
             calendar=calendar,
+            source=source, 
             copy=False,
         )
 
-        super().__init__(
-            dtype=dtype,
-            shape=shape,
-            aggregated_units=aggregated_units,
-            aggregated_calendar=aggregated_calendar,
-            array=array,
-            source=source,
-            copy=False,
+        if source is not None:
+            try:
+                aggregated_units = source._get_component(
+                    "aggregated_units", False
+                )
+            except AttributeError:
+                aggregated_units = False
+
+            try:
+                aggregated_calendar = source._get_component(
+                    "aggregated_calendar", False
+                )
+            except AttributeError:
+                aggregated_calendar = False
+
+
+        self._set_component("aggregated_units", aggregated_units, copy=False)
+        self._set_component(
+            "aggregated_calendar", aggregated_calendar, copy=False
         )
+

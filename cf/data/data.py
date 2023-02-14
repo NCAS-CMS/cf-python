@@ -1246,17 +1246,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `_del_Array`, `_del_cached_elements`,
-                     `_del_dask`, `_set_cfa_write`, `_set_dask`
+        .. seealso:: `_del_Array`, `_set_dask`
 
         :Parameters:
 
             clear: `int`, optional
-                Specify which components should be removed. The value
-                of *clear* is sequentially combined with the
-                ``_ARRAY``, ``_CACHE`` and ``_CFA`` integer-valued
-                contants, using the bitwise AND operator, to determine
-                which components should be removed:
+
+                Specify which components should be removed. Which
+                components are removed is determined by sequentially
+                combining *clear* with the ``_ARRAY``, ``_CACHE`` and
+                ``_CFA`` integer-valued contants, using the bitwise
+                AND operator:
 
                 * If ``clear & _ARRAY`` is True then delete a source
                   array.
@@ -1273,6 +1273,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 If *clear* is the ``_NONE`` integer-valued constant
                 then no components are removed.
+        
+                To retain a component and remove all others, use
+                ``_ALL`` with the bitwise OR operator. For instance,
+                if *clear* is ``_ALL ^ _CACHE`` then the cached
+                element values will be kept but all other components
+                removed.
 
                 .. versionadded:: TODOCFAVER
 
@@ -1313,9 +1319,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             clear: `int`, optional
                 Specify which components should be removed. By default
                 *clear* is the ``_ALL`` integer-valued constant, which
-                results in all components being removed.
-
-                See `_clear_after_dask_update` for further details.
+                results in all components being removed. See
+                `_clear_after_dask_update` for details.
 
         :Returns:
 
@@ -1359,16 +1364,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             default: optional
                 Return the value of the *default* parameter if the
-                dask array axes has not been set.
-
-                {{default Exception}}
+                dask array axes has not been set. If set to an
+                `Exception` instance then it will be raised instead.
 
             clear: `int`, optional
                 Specify which components should be removed. By default
                 *clear* is the ``_ALL`` integer-valued constant, which
-                results in all components being removed.
+                results in all components being removed. See
+                `_clear_after_dask_update` for details.
 
-                See `_clear_after_dask_update` for further details.
+                If there is no dask array then no components are
+                removed, regardless of the value of *clear*.
 
         :Returns:
 
@@ -3712,15 +3718,15 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = da.concatenate(dxs, axis=axis)
 
         # Set the CFA write status
-        cfa = _CFA
+        CFA = _CFA
         for d in processed_data:
             if not d.cfa_write:
                 # Set the CFA write status to False when any input
                 # data instance has False status
-                cfa = _NONE
+                CFA = _NONE
                 break
 
-        if not cfa:
+        if not CFA:
             non_concat_axis_chunks0 = list(processed_data[0].chunks)
             non_concat_axis_chunks0.pop(axis)
             for d in processed_data[1:]:
@@ -3729,11 +3735,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 if non_concat_axis_chunks != non_concat_axis_chunks0:
                     # Set the CFA write status to False when input
                     # data instances have different chunk patterns for
-                    # the non-concatenation axes
-                    cfa = _NONE
+                    # the non-concatenated axes
+                    CFA = _NONE
                     break
 
-        data0._set_dask(dx, clear=_ALL ^ cfa)
+        # Set the new dask array
+        data0._set_dask(dx, clear=_ALL ^ CFA)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
         axis = data0._parse_axes(axis)[0]
@@ -4376,7 +4383,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             dtype=dtype,
         )
 
-        # Changing the units does not affect the CFA write status
+        # Setting equivalent units doesn't affect the CFA write status
         self._set_dask(dx, clear=_ALL ^ _CFA)
 
         self._Units = value
@@ -7689,8 +7696,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = d.to_dask_array()
         dx = dx.reshape(shape)
 
-        # Inserting a dimension does not affect the cached elements
-        # nor the CFA write status
+        # Inserting a dimension doesn't affect the cached elements nor
+        # the CFA write status
         d._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
 
         # Expand _axes
@@ -9058,9 +9065,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             default: optional
                 Return the value of the *default* parameter if the
-                calendar has not been set.
-
-                {{default Exception}}
+                calendar has not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
@@ -9107,10 +9113,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the units
-                has not been set.
-
-                {{default Exception}}
+                Return the value of the *default* parameter if the
+                units has not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
@@ -10685,7 +10690,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = d.to_dask_array()
         dx = dx.squeeze(axis=iaxes)
 
-        # Squeezing a dimension does not affect the cached elements
+        # Squeezing a dimension doesn't affect the cached elements
         d._set_dask(dx, clear=_ALL ^ _CACHE)
 
         # Remove the squeezed axes names
