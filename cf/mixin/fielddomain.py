@@ -1713,25 +1713,29 @@ class FieldDomain:
 
     @_inplace_enabled(default=False)
     def dimension_to_auxiliary(self, *identity, inplace=False):
-        """Convert dimension coordinate to an auxiliary coordinate.
+        """Move dimension coordinates to an auxiliary coordinate construct.
 
-            .. versionadded:: 3.14.1?
+            .. versionadded:: 3.14.1
 
             .. seealso:: `auxiliary_to_dimension`
 
         :Parameters:
 
-            key: `*identity`
-                Identity of the dimension coordinate construct to be converted.
+           identity
+               Select the unique dimension coordinate construct
+               returned by ``f.dimension_coordinate(*identity)``.
+               See `dimension_construct` for details.
 
         :Returns:
 
-            A field where the dimension coordinate has been converted to am auxiliary coordinate. 
+            `Field` or `None`
+                The field with the new auxiliary coordinate construct,
+                or `None` if the operation was in-place.
 
         **Examples**
 
         >>> f = cf.example_field(0)
-        >>> f.equals(f)
+        >>> print(f)
         Field: specific_humidity (ncvar%q)
         ----------------------------------
         Data            : specific_humidity(latitude(5), longitude(8)) 1
@@ -1741,7 +1745,6 @@ class FieldDomain:
                         : time(1) = [2019-01-01 00:00:00]
         >>> g = f.dimension_to_auxiliary('latitude')
         >>> print(g)
-        print(g)
         Field: specific_humidity (ncvar%q)
         ----------------------------------
         Data            : specific_humidity(latitude(5), longitude(8)) 1
@@ -1767,9 +1770,9 @@ class FieldDomain:
         key, aux = f.dimension_coordinate(*identity, item=True)
 
         axis = f.get_data_axes(key)
-        f.del_construct(key)
         dim = f._AuxiliaryCoordinate(source=aux)
         f.set_construct(dim, axes=axis)
+        f.del_construct(key)
         return f
 
     @_deprecated_kwarg_check("axes", version="3.0.0", removed_at="4.0.0")
