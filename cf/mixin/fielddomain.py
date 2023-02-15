@@ -1250,7 +1250,10 @@ class FieldDomain:
             )
             
         if aux.has_geometry():
-            raise ValueError("Can't promote auxiliary coordinates with geometry to dimension coordinates.")
+            raise ValueError(
+                f"Can't create a dimension coordinate construct from {aux!r} "
+                "with geometry cells"
+            )        
             
         axis = f.get_data_axes(key)
         f.del_construct(key)
