@@ -1243,7 +1243,7 @@ class FieldDomain:
         key, aux = f.auxiliary_coordinate(*identity, item=True, **filter_kwargs)
 
         if aux.dtype.kind in "SU":
-            raise TypeError(
+            raise ValueError(
                 f"Can't perform the operation with {aux.dtype}."
                 f"Only numerical auxiliary coordinates can be promoted.")
             
