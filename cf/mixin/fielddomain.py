@@ -1206,7 +1206,7 @@ class FieldDomain:
         **Examples**
 
         >>> f = cf.example_field(0)
-        >>> f.equals(f)
+        >>> print(f)
         Field: specific_humidity (ncvar%q)
         ----------------------------------
         Data            : specific_humidity(latitude(5), longitude(8)) 1
