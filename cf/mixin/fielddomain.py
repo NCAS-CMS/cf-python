@@ -1258,6 +1258,7 @@ class FieldDomain:
         axis = f.get_data_axes(key)
         dim = f._DimensionCoordinate(source=aux)
         f.set_construct(dim, axes=axis)
+        f.del_construct(key)
         return f
 
     def del_coordinate_reference(
