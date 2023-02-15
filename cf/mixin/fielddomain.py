@@ -1249,7 +1249,7 @@ class FieldDomain:
                 "coordinate constructs can be converted."
             )
             
-        if aux.has_geometry() == True:
+        if aux.has_geometry():
             raise ValueError("Can't promote auxiliary coordinates with geometry to dimension coordinates.")
             
         axis = f.get_data_axes(key)
