@@ -1216,7 +1216,6 @@ class FieldDomain:
                         : time(1) = [2019-01-01 00:00:00]
         >>> g = f.dimension_to_auxiliary('latitude')
         >>> print(g)
-        print(g)
         Field: specific_humidity (ncvar%q)
         ----------------------------------
         Data            : specific_humidity(latitude(5), longitude(8)) 1
