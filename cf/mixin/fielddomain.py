@@ -1179,7 +1179,11 @@ class FieldDomain:
 
     @_inplace_enabled(default=False)
     def auxiliary_to_dimension(self, *identity, inplace=False, **filter_kwargs):
-        """Promote auxiliary coordinate to a dimension coordinate.
+        """Move auxiliary coordinates to a dimension coordinate construct.
+        
+        A new dimension coordinate coordinate construct is derived
+        from the selected auxiliary coordinate construct, and the
+        auxiliary coordinate construct is removed.
 
             .. versionadded:: 3.14.1?
 
