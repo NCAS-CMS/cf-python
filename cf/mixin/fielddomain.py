@@ -1248,7 +1248,6 @@ class FieldDomain:
                 f"with datatype {aux.dtype}. Only numerical auxiliary "
                 "coordinate constructs can be converted."
             )
-                f"Only numerical auxiliary coordinates can be promoted.")
             
         if aux.has_geometry() == True:
             raise ValueError("Can't promote auxiliary coordinates with geometry to dimension coordinates.")
