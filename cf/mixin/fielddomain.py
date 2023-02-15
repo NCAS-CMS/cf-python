@@ -1199,7 +1199,9 @@ class FieldDomain:
 
         :Returns:
 
-            A field where the auxiliary coordinate has been converted to a dimension coordinate. 
+            `Field` or `None`
+                The field with the new dimension coordinate construct,
+                or `None` if the operation was in-place.
 
         **Examples**
         >>> f = cf.example_field(0)
