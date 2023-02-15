@@ -1196,7 +1196,6 @@ class FieldDomain:
                 returned by ``f.auxiliary_coordinate(*identity,
                 filter_by_naxes=(1,), **filter_kwargs)``. See
                 `auxiliary_construct` for details.                
-                Identity of the auxiliary coordinate construct to be promoted.
 
         :Returns:
 
