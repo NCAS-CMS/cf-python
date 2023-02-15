@@ -1204,6 +1204,7 @@ class FieldDomain:
                 or `None` if the operation was in-place.
 
         **Examples**
+
         >>> f = cf.example_field(0)
         >>> f.equals(f)
         Field: specific_humidity (ncvar%q)
