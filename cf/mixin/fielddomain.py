@@ -1244,7 +1244,10 @@ class FieldDomain:
 
         if aux.dtype.kind in "SU":
             raise ValueError(
-                f"Can't perform the operation with {aux.dtype}."
+                f"Can't create a dimension coordinate construct from {aux!r} "
+                f"with datatype {aux.dtype}. Only numerical auxiliary "
+                "coordinate constructs can be converted."
+            )
                 f"Only numerical auxiliary coordinates can be promoted.")
             
         if aux.has_geometry() == True:
