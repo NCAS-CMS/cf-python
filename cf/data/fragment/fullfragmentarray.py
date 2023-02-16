@@ -1,8 +1,8 @@
 from ..array.fullarray import FullArray
-from .abstract import FragmentArray
+from .mixin import FragmentArrayMixin
 
 
-class FullFragmentArray(FragmentArray):
+class FullFragmentArray(FragmentArrayMixin, FullArray):
     """A CFA fragment array that is filled with a value.
 
     .. versionadded:: TODOCFAVER

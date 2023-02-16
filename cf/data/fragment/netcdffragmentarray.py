@@ -67,10 +67,11 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             {{init copy: `bool`, optional}}
 
         """
+        group = None  # TODO ???
+
         super().__init__(
             filename=filename,
-            ncvar=ncvar,
-            varid=varid,
+            ncvar=address,
             group=group,
             dtype=dtype,
             shape=shape,

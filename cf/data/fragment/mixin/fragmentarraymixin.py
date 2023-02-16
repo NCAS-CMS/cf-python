@@ -1,5 +1,7 @@
 from numbers import Integral
 
+import numpy as np
+
 from ....units import Units
 
 
@@ -249,6 +251,10 @@ class FragmentArrayMixin:
             if units != aggregated_units:
                 if isinstance(array, dict):
                     # 'array' is a dictionary
+
+                    # TODOACTIVE: '_active_chunk_methds = {}' is a
+                    #             placeholder for the real thing
+                    _active_chunk_methds = {}
                     for key, value in array.items():
                         if key in _active_chunk_methds:
                             array[key] = Units.conform(

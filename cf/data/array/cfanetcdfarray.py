@@ -1,12 +1,10 @@
 from copy import deepcopy
 from itertools import accumulate, product
 
+import numpy as np
+
 from ...functions import abspath
-from ..fragment import (  # MissingFragmentArray,
-    FullFragmentArray,
-    NetCDFFragmentArray,
-    UMFragmentArray,
-)
+from ..fragment import FullFragmentArray, NetCDFFragmentArray, UMFragmentArray
 from .netcdfarray import NetCDFArray
 
 
@@ -28,7 +26,6 @@ class CFANetCDFArray(NetCDFArray):
             "nc": NetCDFFragmentArray,
             "um": UMFragmentArray,
             "full": FullFragmentArray,
-            #            None: MissingFragmentArray,
         }
         return instance
 
@@ -168,7 +165,6 @@ class CFANetCDFArray(NetCDFArray):
                     f"CFA variable {ncvar} not found in file {filename}"
                 )
 
-            #            if term is None:
             shape = tuple([d.len for d in var.getDims()])
 
             super().__init__(
@@ -336,9 +332,6 @@ class CFANetCDFArray(NetCDFArray):
                 "full_value": np.ma.masked,
             }
 
-    def aggregated_dimensions(self):
-        """;kklknk;l"""
-
     def get_aggregated_data(self, copy=True):
         """Get the aggregation data dictionary.
 
@@ -390,7 +383,7 @@ class CFANetCDFArray(NetCDFArray):
         return aggregated_data
 
     def get_FragmentArray(self, fragment_format):
-        """Return a Fragment class.
+        """Return a fragment array class.
 
         .. versionadded:: 3.14.0
 
@@ -398,11 +391,10 @@ class CFANetCDFArray(NetCDFArray):
 
             fragment_format: `str`
                 The dataset format of the fragment. Either ``'nc'``,
-                ``'um'``, or `None`.
+                ``'um'``, or ``'full'``.
 
         :Returns:
 
-            `FragmentArray`
                 The class for representing a fragment array of the
                 given format.
 
@@ -459,17 +451,14 @@ class CFANetCDFArray(NetCDFArray):
         return self._get_component("fragment_shape")
 
     def get_non_standard_term(self, default=ValueError()):
-        """Get the sizes of the fragment dimensions.
-
-        The fragment dimension sizes are given in the same order as
-        the aggregated dimension sizes given by `shape`
+        """TODOCFADOCS.
 
         .. versionadded:: TODOCFAVER
 
         :Returns:
 
-            `tuple`
-                The shape of the fragment dimensions.
+            `str`
+                TODOCFADOCS.
 
         """
         return self._get_component("non_standard_term", default=default)
