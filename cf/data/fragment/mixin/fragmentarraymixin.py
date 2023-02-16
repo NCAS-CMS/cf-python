@@ -167,7 +167,7 @@ class FragmentArrayMixin:
             return [slice(0, n) for n in shape]
 
         indices = list(indices)
-        
+
         # Check indices
         has_ellipsis = False
         for i, (index, n) in enumerate(zip(indices, shape)):
@@ -347,4 +347,3 @@ class FragmentArrayMixin:
             )
 
         return units
-

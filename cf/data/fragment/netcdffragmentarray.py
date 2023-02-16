@@ -77,7 +77,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             mask=True,
             units=units,
             calendar=calendar,
-            source=source, 
+            source=source,
             copy=False,
         )
 
@@ -96,9 +96,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             except AttributeError:
                 aggregated_calendar = False
 
-
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
-

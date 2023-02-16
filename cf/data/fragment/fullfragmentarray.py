@@ -71,7 +71,7 @@ class FullFragmentArray(FragmentArray):
             source=source,
             copy=False,
         )
-       
+
         if source is not None:
             try:
                 aggregated_units = source._get_component(
@@ -87,9 +87,7 @@ class FullFragmentArray(FragmentArray):
             except AttributeError:
                 aggregated_calendar = False
 
-
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
-

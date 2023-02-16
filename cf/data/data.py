@@ -38,10 +38,9 @@ from ..functions import (
 from ..mixin_container import Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import (
+from .creation import (  # is_file_array,
     generate_axis_identifiers,
     is_abstract_Array_subclass,
-    is_file_array,
     to_dask,
 )
 from .dask_utils import (
@@ -428,12 +427,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "for compressed input arrays"
             )
 
-        if is_file_array(array):
-            if to_memory:
-                try:
-                    array = array.to_memory()
-                except AttributeError:
-                    pass
+        if to_memory:  # and is_file_array(array):
+            try:
+                array = array.to_memory()
+            except AttributeError:
+                pass
 
         if is_abstract_Array_subclass(array):
             # Save the input array in case it's useful later. For
@@ -1273,7 +1271,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
                 If *clear* is the ``_NONE`` integer-valued constant
                 then no components are removed.
-        
+
                 To retain a component and remove all others, use
                 ``_ALL`` with the bitwise OR operator. For instance,
                 if *clear* is ``_ALL ^ _CACHE`` then the cached

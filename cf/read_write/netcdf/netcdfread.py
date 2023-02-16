@@ -15,6 +15,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
     """
 
+    def cfa_standard_terms(self):
+        """Standardised CFA aggregation instruction terms.
+
+        These are found in the ``aggregation_data`` attributes.
+
+        .. versionadded:: TODOCFAVER
+
+        """
+        return ("location", "file", "address", "format")
+
     def _ncdimensions(self, ncvar, ncdimensions=None, parent_ncvar=None):
         """Return a list of the netCDF dimensions corresponding to a
         netCDF variable.
@@ -221,7 +231,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             for attr in ("aggregation_dimensions", "aggregation_data"):
                 self.implementation.del_property(construct, attr, None)
 
-        if cfa_term is None:                          
+        if cfa_term is None:
             cfa_array, kwargs = self._create_cfanetcdfarray(
                 ncvar,
                 unpacked_dtype=unpacked_dtype,
@@ -232,7 +242,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 parent_ncvar,
                 unpacked_dtype=unpacked_dtype,
                 coord_ncvar=coord_ncvar,
-                term=cfa_term
+                term=cfa_term,
             )
 
         data = self._create_Data(
@@ -242,10 +252,19 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=kwargs["calendar"],
         )
 
+        if cfa_term is None:
+            cfa_write = True
+            for n, numblocks in zip(
+                cfa_array.get_fragment_shape(), data.numblocks
+            ):
+                if n == 1 and numblocks > 1:
+                    # Each fragment spans multiple compute chunks
+                    cfa_write = False
+                    break
+
+            data._set_cfa_write(cfa_write)
+
         # Note: We don't cache elements from aggregated data
-        
-        # if cfa_term is not None or (data.numblocks == 1 for each non-aggreged dimension):
-        #      data._set_cfa_write(True)
 
         return data
 
@@ -348,6 +367,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # Check the 'Conventions' for CFA
         Conventions = g["global_attributes"].get("Conventions", "")
 
+        # If the string contains any commas, it is assumed to be a
+        # comma-separated list.
         all_conventions = split(",\s*", Conventions)
         if all_conventions[0] == Conventions:
             all_conventions = Conventions.split()
@@ -532,16 +553,15 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             return_kwargs_only=True,
         )
 
-        
         # Specify a non-standardised term from which to create the
-        # data, which will have the shape of the parent variable. 
+        # data, which will have the shape of the parent variable.
         if non_standard_term is not None:
             kwargs["term"] = non_standard_term
-            kwargs['shape'] = parent_shape
-        else:            
+            kwargs["shape"] = parent_shape
+        else:
             # Get rid of the incorrect shape
             kwargs.pop("shape", None)
-        
+
         # Add the aggregated_data attribute (that can be used by
         # dask.base.tokenize).
         kwargs["instructions"] = self.read_vars["variable_attributes"][
@@ -647,365 +667,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             keys_are_dimensions=False,
         )
 
-    def _customize_auxiliary_coordinates(self, parent_ncvar, f):
-        """Create auxiliary coordinate constructs from CFA terms.
-
-        This method is primarily aimed at providing a customisation
-        entry point for subclasses.
-
-        This method currently creates:
-
-        * Auxiliary coordinate constructs derived from
-          non-standardised terms in CFA aggregation instructions. Each
-          auxiliary coordinate construct spans the same domain axes as
-          the parent field construct. Auxiliary coordinate constructs
-          are never created for `Domain` instances.
-
-        .. versionadded:: TODODASKCFA
-
-        :Parameters:
-
-            parent_ncvar: `str`
-                The netCDF variable name of the parent variable.
-
-            f: `Field` or `Domain`
-                The parent field or domain construct.
-
-        :Returns:
-
-            `dict`
-                A mapping of netCDF variable names to newly-created
-                auxiliary coordinate construct identifiers.
-
-        **Examples**
-
-        >>> n._customize_auxiliary_coordinates('tas', f)
-        {}
-
-        >>> n._customize_auxiliary_coordinates('pr', f)
-        {'tracking_id': 'auxiliarycoordinate2'}
-
-        """
-        if self.implementation.is_domain(f) or not self._is_cfa_variable(
-            parent_ncvar
-        ):
-            return {}
-
-        # ------------------------------------------------------------
-        # Still here? Then we have a CFA-netCDF variable: Loop round
-        # the aggregation instruction terms and convert each
-        # non-standard term into an auxiliary coordinate construct
-        # that spans the same domain axes as the parent field.
-        # ------------------------------------------------------------
-        g = self.read_vars
-
-        out = {}
-
-        attributes = g["variable_attributes"]["parent_ncvar"]
-        parsed_aggregated_data = self._parse_aggregated_data(
-            parent_ncvar, attributes.get("aggregated_data")
-        )
-        standardised_terms = ("location", "file", "address", "format")
-        for x in parsed_aggregated_data:
-            term, ncvar = tuple(x.items())[0]
-            if term in standardised_terms:
-                # Ignore standardised aggregation terms
-                continue
-
-            # Still here? Then it's a non-standard aggregation term
-            coord = self.implementation.initialise_AuxiliaryCoordinate()
-
-            properties = g["variable_attributes"][ncvar].copy()
-            properties.setdefault("long_name", term)
-            self.implementation.set_properties(coord, properties)
-
-            data = self._create_data(
-                ncvar, coord, parent_ncvar=parent_ncvar, cfa_term=term
-            )
-            self.implementation.set_data(coord, data, copy=False)
-
-            self.implementation.nc_set_variable(coord, ncvar)
-
-            key = self.implementation.set_auxiliary_coordinate(
-                f,
-                coord,
-                axes=self.implementation.get_field_data_axes(f),
-                copy=False,
-            )
-            out[ncvar] = key
-
-        return out
-
-
-    def _customize_auxiliary_coordinates(self, parent_ncvar, f):
-        """Create auxiliary coordinate constructs from CFA terms.
-
-        This method is primarily aimed at providing a customisation
-        entry point for subclasses.
-
-        This method currently creates:
-
-        * Auxiliary coordinate constructs derived from
-          non-standardised terms in CFA aggregation instructions. Each
-          auxiliary coordinate construct spans the same domain axes as
-          the parent field construct. Auxiliary coordinate constructs
-          are never created for `Domain` instances.
-
-        .. versionadded:: TODODASKCFA
-
-        :Parameters:
-
-            parent_ncvar: `str`
-                The netCDF variable name of the parent variable.
-
-            f: `Field` or `Domain`
-                The parent field or domain construct.
-
-        :Returns:
-
-            `dict`
-                A mapping of netCDF variable names to newly-created
-                auxiliary coordinate construct identifiers.
-
-        **Examples**
-
-        >>> n._customize_auxiliary_coordinates('tas', f)
-        {}
-
-        >>> n._customize_auxiliary_coordinates('pr', f)
-        {'tracking_id': 'auxiliarycoordinate2'}
-
-        """
-        if self.implementation.is_domain(f) or not self._is_cfa_variable(
-            parent_ncvar
-        ):
-            return {}
-
-        # ------------------------------------------------------------
-        # Still here? Then we have a CFA-netCDF variable: Loop round
-        # the aggregation instruction terms and convert each
-        # non-standard term into an auxiliary coordinate construct
-        # that spans the same domain axes as the parent field.
-        # ------------------------------------------------------------
-        g = self.read_vars
-
-        out = {}
-
-        attributes = g["variable_attributes"]["parent_ncvar"]
-        parsed_aggregated_data = self._parse_aggregated_data(
-            parent_ncvar, attributes.get("aggregated_data")
-        )
-        standardised_terms = ("location", "file", "address", "format")
-        for x in parsed_aggregated_data:
-            term, ncvar = tuple(x.items())[0]
-            if term in standardised_terms:
-                # Ignore standardised aggregation terms
-                continue
-
-            # Still here? Then it's a non-standard aggregation term
-            coord = self.implementation.initialise_AuxiliaryCoordinate()
-
-            properties = g["variable_attributes"][ncvar].copy()
-            properties.setdefault("long_name", term)
-            self.implementation.set_properties(coord, properties)
-
-            data = self._create_data(
-                ncvar, coord, parent_ncvar=parent_ncvar, cfa_term=term
-            )
-            self.implementation.set_data(coord, data, copy=False)
-
-            self.implementation.nc_set_variable(coord, ncvar)
-
-            key = self.implementation.set_auxiliary_coordinate(
-                f,
-                coord,
-                axes=self.implementation.get_field_data_axes(f),
-                copy=False,
-            )
-            out[ncvar] = key
-
-        return out
-
-
-    def _customize_auxiliary_coordinates(self, parent_ncvar, f):
-        """Create auxiliary coordinate constructs from CFA terms.
-
-        This method is primarily aimed at providing a customisation
-        entry point for subclasses.
-
-        This method currently creates:
-
-        * Auxiliary coordinate constructs derived from
-          non-standardised terms in CFA aggregation instructions. Each
-          auxiliary coordinate construct spans the same domain axes as
-          the parent field construct. Auxiliary coordinate constructs
-          are never created for `Domain` instances.
-
-        .. versionadded:: TODODASKCFA
-
-        :Parameters:
-
-            parent_ncvar: `str`
-                The netCDF variable name of the parent variable.
-
-            f: `Field` or `Domain`
-                The parent field or domain construct.
-
-        :Returns:
-
-            `dict`
-                A mapping of netCDF variable names to newly-created
-                auxiliary coordinate construct identifiers.
-
-        **Examples**
-
-        >>> n._customize_auxiliary_coordinates('tas', f)
-        {}
-
-        >>> n._customize_auxiliary_coordinates('pr', f)
-        {'tracking_id': 'auxiliarycoordinate2'}
-
-        """
-        if self.implementation.is_domain(f) or not self._is_cfa_variable(
-            parent_ncvar
-        ):
-            return {}
-
-        # ------------------------------------------------------------
-        # Still here? Then we have a CFA-netCDF variable: Loop round
-        # the aggregation instruction terms and convert each
-        # non-standard term into an auxiliary coordinate construct
-        # that spans the same domain axes as the parent field.
-        # ------------------------------------------------------------
-        g = self.read_vars
-
-        out = {}
-
-        attributes = g["variable_attributes"]["parent_ncvar"]
-        parsed_aggregated_data = self._parse_aggregated_data(
-            parent_ncvar, attributes.get("aggregated_data")
-        )
-        standardised_terms = ("location", "file", "address", "format")
-        for x in parsed_aggregated_data:
-            term, ncvar = tuple(x.items())[0]
-            if term in standardised_terms:
-                # Ignore standardised aggregation terms
-                continue
-
-            # Still here? Then it's a non-standard aggregation term
-            coord = self.implementation.initialise_AuxiliaryCoordinate()
-
-            properties = g["variable_attributes"][ncvar].copy()
-            properties.setdefault("long_name", term)
-            self.implementation.set_properties(coord, properties)
-
-            data = self._create_data(
-                ncvar, coord, parent_ncvar=parent_ncvar, cfa_term=term
-            )
-            self.implementation.set_data(coord, data, copy=False)
-
-            self.implementation.nc_set_variable(coord, ncvar)
-
-            key = self.implementation.set_auxiliary_coordinate(
-                f,
-                coord,
-                axes=self.implementation.get_field_data_axes(f),
-                copy=False,
-            )
-            out[ncvar] = key
-
-        return out
-
-
-    def _customize_auxiliary_coordinates(self, parent_ncvar, f):
-        """Create auxiliary coordinate constructs from CFA terms.
-
-        This method is primarily aimed at providing a customisation
-        entry point for subclasses.
-
-        This method currently creates:
-
-        * Auxiliary coordinate constructs derived from
-          non-standardised terms in CFA aggregation instructions. Each
-          construct spans the same domain axes as the parent field
-          construct. Constructs are never created for `Domain`
-          instances.
-
-        .. versionadded:: TODODASKCFA
-
-        :Parameters:
-
-            parent_ncvar: `str`
-                The netCDF variable name of the parent variable.
-
-            f: `Field` or `Domain`
-                The parent field or domain construct.
-
-        :Returns:
-
-            `dict`
-                A mapping of netCDF variable names to newly-created
-                auxiliary coordinate construct identifiers.
-
-        **Examples**
-
-        >>> n._customize_auxiliary_coordinates('tas', f)
-        {}
-
-        >>> n._customize_auxiliary_coordinates('pr', f)
-        {'tracking_id': 'auxiliarycoordinate2'}
-
-        """
-        if self.implementation.is_domain(f) or not self._is_cfa_variable(
-            parent_ncvar
-        ):
-            return {}
-
-        # ------------------------------------------------------------
-        # Still here? Then we have a CFA-netCDF variable: Loop round
-        # the aggregation instruction terms and convert each
-        # non-standard term into an auxiliary coordinate construct
-        # that spans the same domain axes as the parent field.
-        # ------------------------------------------------------------
-        g = self.read_vars
-
-        out = {}
-
-        attributes = g["variable_attributes"]["parent_ncvar"]
-        parsed_aggregated_data = self._parse_aggregated_data(
-            parent_ncvar, attributes.get("aggregated_data")
-        )
-        standardised_terms = ("location", "file", "address", "format")
-        for x in parsed_aggregated_data:
-            term, ncvar = tuple(x.items())[0]
-            if term in standardised_terms:
-                # Ignore standardised aggregation terms
-                continue
-
-            # Still here? Then it's a non-standard aggregation term
-            coord = self.implementation.initialise_AuxiliaryCoordinate()
-
-            properties = g["variable_attributes"][ncvar].copy()
-            properties.setdefault("long_name", term)
-            self.implementation.set_properties(coord, properties)
-
-            data = self._create_data(
-                ncvar, coord, parent_ncvar=parent_ncvar, cfa_term=term
-            )
-            self.implementation.set_data(coord, data, copy=False)
-
-            self.implementation.nc_set_variable(coord, ncvar)
-
-            key = self.implementation.set_auxiliary_coordinate(
-                f,
-                coord,
-                axes=self.implementation.get_field_data_axes(f),
-                copy=False,
-            )
-            out[ncvar] = key
-
-        return out
-
     def _customize_field_ancillaries(self, parent_ncvar, f):
         """Create field ancillary constructs from CFA terms.
 
@@ -1061,18 +722,19 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         parsed_aggregated_data = self._parse_aggregated_data(
             parent_ncvar, attributes.get("aggregated_data")
         )
-        standardised_terms = ("location", "file", "address", "format")
+        standardised_terms = self.cfa_standard_terms()
         for x in parsed_aggregated_data:
             term, ncvar = tuple(x.items())[0]
             if term in standardised_terms:
-                # Ignore standardised aggregation terms
                 continue
 
-            # Still here? Then it's a non-standard aggregation term
+            # Still here? Then we've got a non-standard aggregation
+            #             term from which we can create a field
+            #             ancillary construct.
             anc = self.implementation.initialise_FieldAncillary()
 
             properties = g["variable_attributes"][ncvar].copy()
-            properties.setdefault("long_name", term)
+            properties["long_name"] = term
             self.implementation.set_properties(anc, properties)
 
             data = self._create_data(
@@ -1091,7 +753,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             out[ncvar] = key
 
         return out
-    
+
     def _cfa(self, ncvar, f):
         """TODOCFADOCS.
 
@@ -1110,5 +772,4 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             TODOCFADOCS.
 
         """
-        x = self._parse_x( ncvar, aggregated_data,
-                           keys_are_variables=True)
+        x = self._parse_x(ncvar, aggregated_data, keys_are_variables=True)

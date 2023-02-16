@@ -2,9 +2,8 @@ from copy import deepcopy
 from itertools import accumulate, product
 
 from ...functions import abspath
-from ..fragment import (
+from ..fragment import (  # MissingFragmentArray,
     FullFragmentArray,
-#    MissingFragmentArray,
     NetCDFFragmentArray,
     UMFragmentArray,
 )
@@ -29,7 +28,7 @@ class CFANetCDFArray(NetCDFArray):
             "nc": NetCDFFragmentArray,
             "um": UMFragmentArray,
             "full": FullFragmentArray,
-#            None: MissingFragmentArray,
+            #            None: MissingFragmentArray,
         }
         return instance
 
@@ -169,7 +168,7 @@ class CFANetCDFArray(NetCDFArray):
                     f"CFA variable {ncvar} not found in file {filename}"
                 )
 
-#            if term is None:
+            #            if term is None:
             shape = tuple([d.len for d in var.getDims()])
 
             super().__init__(
@@ -336,6 +335,9 @@ class CFANetCDFArray(NetCDFArray):
                 "location": location,
                 "full_value": np.ma.masked,
             }
+
+    def aggregated_dimensions(self):
+        """;kklknk;l"""
 
     def get_aggregated_data(self, copy=True):
         """Get the aggregation data dictionary.
