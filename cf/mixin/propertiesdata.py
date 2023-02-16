@@ -3006,7 +3006,15 @@ class PropertiesData(Properties):
         except AttributeError:
             pass
 
-        ignore_properties = tuple(ignore_properties) + self._special_properties
+        if not ignore_properties:
+            ignore_properties = self._special_properties
+        else:
+            if isinstance(ignore_properties, str):
+                ignore_properties = (ignore_properties,)
+
+            ignore_properties = (
+                tuple(ignore_properties) + self._special_properties
+            )
 
         return super().equals(
             other,
