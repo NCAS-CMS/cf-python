@@ -30,7 +30,7 @@ from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from psutil import virtual_memory
 
-from . import __file__, __version__
+from . import __cfa_version__, __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
@@ -1148,6 +1148,33 @@ def CF():
 
 
 CF.__doc__ = cfdm.CF.__doc__.replace("cfdm.", "cf.")
+
+
+def CFA():
+    """The version of the CFA conventions.
+
+    This indicates which version of the CFA conventions are
+    represented by this release of the cf package, and therefore the
+    version can not be changed.
+
+    .. versionadded:: TODOCFAVER
+
+    .. seealso:: `cf.CF`
+
+    :Returns:
+
+        `str`
+            The version of the CFA conventions represented by this
+            release of the cf package.
+
+    **Examples**
+
+    >>> cf.CFA()
+    '0.6.2'
+
+    """
+    return __cfa_version__
+
 
 # Module-level alias to avoid name clashes with function keyword
 # arguments (corresponding to 'import atol as cf_atol' etc. in other

@@ -52,9 +52,10 @@ class FragmentArrayMixin:
                 array = np.expand_dims(array, axis)
             else:
                 # There are multiple size 1 indices, so we don't know
-                # how many missing dimensions there are nor their
-                # positions => Get the full fragment array; and then
-                # reshape it to the shape of the storage chunk.
+                # how many missing dimensions the fragment has, nor
+                # their positions => Get the full fragment array and
+                # then reshape it to the shape of the storage chunk,
+                # assuming that it has teh correct size.
                 array = super().__getitem__(Ellipsis)
                 if array.size != self.size:
                     raise ValueError(
@@ -65,7 +66,8 @@ class FragmentArrayMixin:
                         "storage chunks."
                         "\n\n"
                         "Consider recreating the data with exactly one"
-                        "storage chunk per fragment."
+                        "storage chunk per fragment (e.g. set the "
+                        "parameter 'chunks=None' to cf.read)."
                     )
 
                 array = array.reshape(self.shape)
@@ -78,7 +80,7 @@ class FragmentArrayMixin:
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `_parse_indices`
+        .. seealso:: `_parse_indices`, `__getitem__`
 
         :Parameters:
 
@@ -90,7 +92,7 @@ class FragmentArrayMixin:
 
             `int` or `None`
                 The position of the unique size 1 index, or `None` if
-                there isn't one.
+                there are zero or at least two of them.
 
         **Examples**
 
@@ -110,26 +112,27 @@ class FragmentArrayMixin:
         """
         axis = None  # Position of unique size 1 index
 
-        n = 0  # Number of size 1 indices
-        for i, index in enumerate(indices):
+        n_size_1 = 0  # Number of size 1 indices
+        for i, (index, n) in enumerate(zip(indices, self.shape)):
             try:
-                if index.stop - index.start == 1:
+                x = index.indices(n)
+                if abs(x[1] - x[0]) == 1:
                     # Index is a size 1 slice
-                    n += 1
+                    n_size_1 += 1
                     axis = i
             except AttributeError:
                 try:
                     if index.size == 1:
                         # Index is a size 1 numpy or dask array
-                        n += 1
+                        n_size_1 += 1
                         axis = i
                 except AttributeError:
                     if len(index) == 1:
                         # Index is a size 1 list
-                        n += 1
+                        n_size_1 += 1
                         axis = i
 
-        if n > 1:
+        if n_size_1 > 1:
             # There are two or more size 1 indices
             axis = None
 
@@ -203,7 +206,7 @@ class FragmentArrayMixin:
                     indices2.extend([slice(None)] * m)
                     n -= m
                 else:
-                    indices2.append(i)
+                    indices2.append(index)
                     n -= 1
 
                 length -= 1

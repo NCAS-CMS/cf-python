@@ -165,6 +165,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         construct=None,
         unpacked_dtype=False,
         uncompress_override=None,
+        parent_ncvar=None,
         coord_ncvar=None,
         cfa_term=None,
     ):
@@ -206,12 +207,13 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 construct=construct,
                 unpacked_dtype=unpacked_dtype,
                 uncompress_override=uncompress_override,
+                parent_ncvar=parent_ncvar,
                 coord_ncvar=coord_ncvar,
             )
 
+            # Set the CFA write status to True when there is exactly
+            # one dask chunk
             if data.npartitions == 1:
-                # Set the CFA write status to True when there is
-                # exactly one dask chunk
                 data._set_cfa_write(True)
 
             self._cache_data_elements(data, ncvar)
@@ -235,7 +237,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             )
         else:
             cfa_array, kwargs = self._create_cfanetcdfarray(
-                parent_ncvar,
+                ncvar,
                 unpacked_dtype=unpacked_dtype,
                 coord_ncvar=coord_ncvar,
                 term=cfa_term,
@@ -248,8 +250,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=kwargs["calendar"],
         )
 
+        # Set the CFA write status
         if cfa_term is None:
-            # Set the CFA write status
             cfa_write = True
             for n, numblocks in zip(
                 cfa_array.get_fragment_shape(), data.numblocks
@@ -729,6 +731,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             self.implementation.set_properties(anc, properties)
 
             data = self._create_data(parent_ncvar, anc, non_standard_term=term)
+            data._custom["cfa_term"] = True
             self.implementation.set_data(anc, data, copy=False)
 
             self.implementation.nc_set_variable(anc, ncvar)

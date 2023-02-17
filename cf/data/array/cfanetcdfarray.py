@@ -190,11 +190,10 @@ class CFANetCDFArray(NetCDFArray):
             #       parallelisation overheads won't be noticeable for
             #       small aggregations (e.g. O(10) fragments).
             aggregated_data = {}
-            set_fragment = self._set_fragment
             compute(
                 *[
                     delayed(
-                        set_fragment(
+                        self.set_fragment(
                             var,
                             loc,
                             aggregated_data,
@@ -762,7 +761,7 @@ class CFANetCDFArray(NetCDFArray):
             fragment_location,
             fragment_shape,
         ) in zip(*self.subarrays(chunks)):
-            kwargs = aggregated_data[fragment_location].copy()
+            kwargs = aggregated_data[chunk_location].copy()
             kwargs.pop("location", None)
 
             FragmentArray = get_FragmentArray(kwargs.pop("format", None))

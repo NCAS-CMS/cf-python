@@ -1,3 +1,15 @@
+version ?????
+-------------
+
+**2023-??-??**
+
+* New function: `cf.CFA`
+* New method: `cf.Data.get_cfa_write`
+* New method: `cf.Data.set_cfa_write`
+* Changed dependency: ``?????<=cfdm<?????``
+
+----
+  
 version 3.14.0
 --------------
 

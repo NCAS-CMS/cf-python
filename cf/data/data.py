@@ -1434,12 +1434,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         for element in ("first_element", "second_element", "last_element"):
             custom.pop(element, None)
 
-    def _del_cfa_write(self, status):
+    def _del_cfa_write(self):
         """Set the CFA write status of the data to `False`.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `cfa_write`, `_set_cfa_write`
+        .. seealso:: `get_cfa_write`, `_set_cfa_write`
 
         :Returns:
 
@@ -1494,8 +1494,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `cfa_write`, `cf.read`, `cf.write`,
-                     `_del_cfa_write`
+        .. seealso:: `get_cfa_write`, `set_cfa_write`,
+                     `_del_cfa_write`, `cf.read`, `cf.write`,
 
         :Parameters:
 
@@ -3718,7 +3718,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Set the CFA write status
         CFA = _CFA
         for d in processed_data:
-            if not d.cfa_write:
+            if not d.get_cfa_write():
                 # Set the CFA write status to False when any input
                 # data instance has False status
                 CFA = _NONE
@@ -4392,33 +4392,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             "Can't delete the Units attribute. "
             "Consider using the override_units method instead."
         )
-
-    @property
-    def cfa_write(self):
-        """The CFA write status of the data.
-
-        If and only if the CFA write status is `True`, then this
-        `Data` instance has the potential to be written to a
-        CFA-netCDF file as aggregated data. In this case it is the
-        choice of parameters to the `cf.write` function that
-        determines if the data is actually written as aggregated data.
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `cf.write`
-
-        :Returns:
-
-            `bool`
-
-        **Examples**
-
-        >>> d = cf.Data([1, 2])
-        >>> d.cfa_write
-        False
-
-        """
-        return self._custom.get("cfa_write", False)
 
     @property
     def data(self):
@@ -5916,6 +5889,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
+    def get_cfa_write(self):
+        """The CFA write status of the data.
+
+        If and only if the CFA write status is `True`, then this
+        `Data` instance has the potential to be written to a
+        CFA-netCDF file as aggregated data. In this case it is the
+        choice of parameters to the `cf.write` function that
+        determines if the data is actually written as aggregated data.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `set_cfa_write`, `cf.read`, `cf.write`
+
+        :Returns:
+
+            `bool`
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2])
+        >>> d.get_cfa_write()
+        False
+
+        """
+        return self._custom.get("cfa_write", False)
+
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
@@ -5928,7 +5927,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self
 
-    def get_filenames(self):
+    def get_filenames(self, address=False):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that are required to deliver
@@ -5944,11 +5943,20 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         object has a callable `get_filename` method, the output of
         which is added to the returned `set`.
 
+        :Parameters:
+
+            address: `bool`, optional
+                TODOCFADOCS
+
+                 .. versionadded:: TODOCFAVER
+
         :Returns:
 
             `set`
                 The file names. If no files are required to compute
                 the data then an empty `set` is returned.
+
+                TODOCFADOCS
 
         **Examples**
 
@@ -5986,6 +5994,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d[2, 3].get_filenames()
         {'file_A.nc'}
 
+        TODOCFADOCS: address example
+
         """
         from dask.base import collections_to_dsk
 
@@ -5993,9 +6003,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
         for a in dsk.values():
             try:
-                out.add(a.get_filename())
+                filename = a.get_filename()
             except AttributeError:
                 pass
+            else:
+                if address:
+                    out.add((filename, a.get_address()))
+                else:
+                    out.add(filename)
 
         return out
 
@@ -6093,6 +6108,33 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         self.Units = Units(self.get_units(default=None), calendar)
+
+    def set_cfa_write(self, status):
+        """Set the CFA write status of the data.
+
+        TODOCFADOCS.ppp
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `get_cfa_write`, `cf.read`, `cf.write`
+
+        :Parameters:
+
+            status: `bool`
+                The new CFA write status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if status:
+            raise ValueError(
+                "'set_cfa_write' only allows the CFA write status to be "
+                "set to False"
+            )
+
+        self._del_cfa_write()
 
     def set_units(self, value):
         """Set the units.
@@ -11928,6 +11970,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             d.override_units(units**2, inplace=True)
 
         return d
+
+    def ggg(self):
+        """
+
+        f = cf.example_field(0)
+        cf.write(f, "file_A.nc")
+        cf.write(f, "file_B.nc")
+
+        a = cf.read("file_A.nc", chunks=4)[0].data
+        b = cf.read("file_B.nc", chunks=4)[0].data
+        c = cf.Data(b.array, units=b.Units, chunks=4)
+        d = cf.Data.concatenate([a, a.copy(), b, c], axis=1)
+
+
+        """
+        from .utils import chunk_indices, chunk_locations, chunk_positions
+
+        chunks = self.chunks
+        for position, location, indices in zip(
+            chunk_positions(chunks),
+            chunk_locations(chunks),
+            chunk_indices(chunks),
+        ):
+            print(
+                position, location, self[indices].get_filenames(address=True)
+            )
 
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"

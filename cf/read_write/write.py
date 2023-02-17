@@ -4,7 +4,7 @@ import numpy
 
 from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
-from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
+from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, CFA, flat
 from .netcdf import NetCDFWrite
 
 # from . import mpi_on
@@ -723,9 +723,7 @@ def write(
                 raise ValueError("Can't set datatype and double")
 
         if single is not None and double is not None:
-            raise ValueError(
-                "Can't set both the single and double " "parameters"
-            )
+            raise ValueError("Can't set both the single and double parameters")
 
         if single is not None and not single:
             double = True
@@ -745,32 +743,58 @@ def write(
                 numpy.dtype("int32"): numpy.dtype(int),
             }
 
-        extra_write_vars = {
-            "cfa": False,
-            "cfa_options": {},
-            "reference_datetime": reference_datetime,
-        }
+        # Extra write variables
+        extra_write_vars = {"reference_datetime": reference_datetime}
 
-        # CFA options
+        # ------------------------------------------------------------
+        # CFA
+        # ------------------------------------------------------------
         if fmt in ("CFA", "CFA4"):
-            extra_write_vars["cfa"] = True
+            cfa = True
             fmt = "NETCDF4"
-            if cfa_options:
-                extra_write_vars["cfa_options"] = cfa_options
         elif fmt == "CFA3":
-            extra_write_vars["cfa"] = True
+            cfa = True
             fmt = "NETCDF3_CLASSIC"
-            if cfa_options:
-                extra_write_vars["cfa_options"] = cfa_options
+        else:
+            cfa = False
 
-        if extra_write_vars["cfa"]:
-            if Conventions:
-                if isinstance(Conventions, str):
-                    Conventions = (Conventions,)
-
-                Conventions = tuple(Conventions) + ("CFA",)
+        if cfa:
+            # Add CFA to the Conventions
+            if not Conventions:
+                Conventions = CFA()
+            elif isinstance(Conventions, str):
+                Conventions = (Conventions, CFA())
             else:
-                Conventions = "CFA"
+                Conventions = tuple(Conventions) + (CFA(),)
+
+            # Parse the 'cfa_options' parameter
+            if not cfa_options:
+                cfa_options = {}
+            else:
+                cfa_options = cfa_options.copy()
+                keys = ("paths", "metadata", "group")
+                if not set(cfa_options).issubset(keys):
+                    raise ValueError(
+                        "Invalid dictionary key to the 'cfa_options' "
+                        f"parameter. Valid keys are {keys}. "
+                        f"Got: {tuple(cfa_options)}"
+                    )
+
+            if "metadata" not in cfa_options:
+                cfa_options["metadata"] = (("all", None),)
+            else:
+                metadata = cfa_options["metadata"]
+                if isinstance(metadata, str):
+                    cfa_options["metadata"] = ((metadata, None),)
+                elif isinstance(metadata[0], str):
+                    cfa_options["metadata"] = (metadata,)
+
+            cfa_options.setdefault("paths", "relative")
+        else:
+            cfa_options = {}
+
+        extra_write_vars["cfa"] = cfa
+        extra_write_vars["cfa_options"] = cfa_options
 
         netcdf.write(
             fields,

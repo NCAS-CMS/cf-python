@@ -97,6 +97,7 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
 __cf_version__ = cfdm.core.__cf_version__
+__cfa_version__ = "0.6.2"
 
 from packaging.version import Version
 import importlib.util
@@ -262,7 +263,7 @@ from .data.array import (
 )
 
 from .data.fragment import (
-    MissingFragmentArray,
+    FullFragmentArray,
     NetCDFFragmentArray,
     UMFragmentArray,
 )

@@ -1,18 +1,8 @@
-import random
-from string import hexdigits
-
 import cfdm
 import dask.array as da
 import numpy as np
 
-from ... import Bounds, Coordinate, DomainAncillary
 from .netcdfread import NetCDFRead
-
-_cfa_message = (
-    "Writing CFA files has been temporarily disabled, "
-    "and will return at version 4.0.0. "
-    "CFA-0.4 functionality is still available at version 3.13.x."
-)
 
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
@@ -30,31 +20,53 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         instance._NetCDFRead = NetCDFRead
         return instance
 
-    def _write_as_cfa(self, cfvar):
-        """True if the variable should be written as a CFA variable.
+    def _use_cfa(self, cfvar, construct_type):
+        """Whether or not to write as a CFA variable.
 
         .. versionadded:: 3.0.0
 
+        :Parameters:
+
+            cfvar: cf instance that contains data
+
+            construct_type: `str`
+                The construct type of the *cfvar*, or its parent if
+                *cfvar* is not a construct.
+
+        :Returns:
+
+            `bool`
+                True if the variable is to be should be written as a
+                CFA variable.
+
         """
-        if not self.write_vars["cfa"]:
+        g = self.write_vars
+        if not g["cfa"]:
             return False
 
         data = self.implementation.get_data(cfvar, None)
         if data is None:
             return False
 
+        if not data.get_cfa_write():
+            return False
+
         if data.size == 1:
             return False
 
-        if isinstance(cfvar, (Coordinate, DomainAncillary)):
-            return cfvar.ndim > 1
+        if construct_type == "field":
+            return True
 
-        if isinstance(cfvar, Bounds):
-            return cfvar.ndim > 2
+        for ctype, ndim in g["cfa_options"]["metadata"]:
+            if ctype in ("all", construct_type):
+                if ndim is None:
+                    return True
 
-        return True
+                return ndim == data.ndim
 
-    def _customize_createVariable(self, cfvar, kwargs):
+        return False
+
+    def _customize_createVariable(self, cfvar, construct_type, kwargs):
         """Customise keyword arguments for
         `netCDF4.Dataset.createVariable`.
 
@@ -73,11 +85,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 `netCDF4.Dataset.createVariable`.
 
         """
-        kwargs = super()._customize_createVariable(cfvar, kwargs)
+        kwargs = super()._customize_createVariable(
+            cfvar, construct_type, kwargs
+        )
 
-        if self._write_as_cfa(cfvar):
-            raise ValueError(_cfa_message)
-
+        if self._use_cfa(cfvar, construct_type):
             kwargs["dimensions"] = ()
             kwargs["chunksizes"] = None
 
@@ -92,6 +104,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         unset_values=(),
         compressed=False,
         attributes={},
+        construct_type=None,
     ):
         """Write a Data object.
 
@@ -109,12 +122,24 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             unset_values: sequence of numbers
 
+            attributes: `dict`, optional
+                The netCDF attributes for the constructs that have been
+                written to the file.
+
+            construct_type: `str`, optional
+                TODOCFADOCS
+
+                .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `None`
+
         """
         g = self.write_vars
 
-        if self._write_as_cfa(cfvar):
-            raise ValueError(_cfa_message)
-
+        if self._use_cfa(cfvar, construct_type):
+            # Write the data as CFA aggregated data
             self._write_cfa_data(ncvar, ncdimensions, data, cfvar)
             return
 
@@ -326,33 +351,33 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             `None`
 
         """
-        raise ValueError(_cfa_message)
+        raise ValueError("_cfa_message")
 
-    def _random_hex_string(self, size=10):
-        """Return a random hexadecimal string with the given number of
-        characters.
-
-        .. versionadded:: 3.0.0
-
-        :Parameters:
-
-            size: `int`, optional
-                The number of characters in the generated string.
-
-        :Returns:
-
-            `str`
-                The hexadecimal string.
-
-        **Examples:**
-
-        >>> _random_hex_string()
-        'C3eECbBBcf'
-        >>> _random_hex_string(6)
-        '7a4acc'
-
-        """
-        return "".join(random.choice(hexdigits) for i in range(size))
+    #    def _random_hex_string(self, size=10):
+    #        """Return a random hexadecimal string with the given number of
+    #        characters.
+    #
+    #        .. versionadded:: 3.0.0
+    #
+    #        :Parameters:
+    #
+    #            size: `int`, optional
+    #                The number of characters in the generated string.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                The hexadecimal string.
+    #
+    #        **Examples:**
+    #
+    #        >>> _random_hex_string()
+    #        'C3eECbBBcf'
+    #        >>> _random_hex_string(6)
+    #        '7a4acc'
+    #
+    #        """
+    #        return "".join(random.choice(hexdigits) for i in range(size))
 
     def _convert_to_builtin_type(self, x):
         """Convert a non-JSON-encodable object to a JSON-encodable
