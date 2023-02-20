@@ -186,7 +186,7 @@ class CFANetCDFArray(NetCDFArray):
             #       the 'aggregated_data' dictionary for massive
             #       aggretations (e.g. with O(10e6) fragments) will be
             #       slow, hence the parallelisation of the process
-            #       with delayed + compute, and that the
+            #       with delayed + compute; and that the
             #       parallelisation overheads won't be noticeable for
             #       small aggregations (e.g. O(10) fragments).
             aggregated_data = {}

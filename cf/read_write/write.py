@@ -372,22 +372,24 @@ def write(
             Key                Value
             =================  =======================================
 
-            ``???`` ---------- The types of construct to be written as
-                               CFA-netCDF aggregated variables. By
-                               default field data and the data Nd
-                               metadata constructs. What about UGRID,
-                               for which the 1-d coords are, combined,
-                               muchlarger than the data .... What
-                               about DSG and compression in general?
+            ``paths`` -------- How to write fragment file names. Set
+                               to ``'relative'`` for them to be
+                               written as relative to the CF_netCDF
+                               file being created, or else set to
+                               ``'absolute'`` for them to be written
+                               as file URIs. Note that in either case,
+                               fragment file names defined by fully
+                               qualified URLs will always be written
+                               as such.
 
-            ``properties``---- A (sequence of) `str` defining one or
-                               more field or domain properties whose
-                               values are to be written to the output
-                               CFA-netCDF file as non-standardised
-                               aggregation instruction variables. When
-                               the output file is read in with
-                               `cf.read` these variables are converted
-                               to auxiliary coordinate constructs.
+            ``metadata`` ----- The types of construct to be written as
+                               CFA-netCDF aggregated variables. By
+                               default all metadata constructs field
+                               data and the data Nd metadata
+                               constructs. What about UGRID, for which
+                               the 1-d coords are, combined,
+                               muchlarger than the data .... TODO What
+                               about DSG and compression in general?
 
             ``substitutions``- A dictionary whose key/value pairs
                                define text substitutions to be applied
@@ -397,21 +399,35 @@ def write(
                                ``'${...}'``, where ``...`` represents
                                one or more letters, digits, and
                                underscores. The substitutions are
-                               stored in the output file in the
+                               stored in the output file by the
                                ``substitutions`` attribute of the
                                ``file`` aggregation instruction
                                variable.
 
-            ``'base'``         Deprecated at version 3.14.0.
+            ``properties``---- A (sequence of) `str` defining one or
+                               more properties of the fields
+                               represented by each file frgament. For
+                               each property specified, the fragment
+                               values are written to the output
+                               CFA-netCDF file as non-standardised
+                               aggregation instruction variables whose
+                               term name is the same as the property
+                               name. When the output file is read in
+                               with `cf.read` these variables are
+                               converted to field ancillary
+                               constructs.
+
+            ``'base'``         Deprecated at version 3.14.0 and no
+                               longer available.
             =================  =======================================
 
-            The *cfa_options* default to ``{'???': ['field', 'N-d']}``
-
-            *Parameter example:*
-              ``cfa_options={'properties': 'tracking_id'}``
+            The default of *cfa_options* is ``{'paths': 'relative'}``.
 
             *Parameter example:*
               ``cfa_options={'substitutions': {'${base}': '/home/data/'}}``
+
+            *Parameter example:*
+              ``cfa_options={'properties': 'tracking_id'}``
 
         endian: `str`, optional
             The endian-ness of the output file. Valid values are
@@ -772,7 +788,7 @@ def write(
                 cfa_options = {}
             else:
                 cfa_options = cfa_options.copy()
-                keys = ("paths", "metadata", "group")
+                keys = ("paths", "metadata", "group", "substitutions")
                 if not set(cfa_options).issubset(keys):
                     raise ValueError(
                         "Invalid dictionary key to the 'cfa_options' "
@@ -781,7 +797,7 @@ def write(
                     )
 
             if "metadata" not in cfa_options:
-                cfa_options["metadata"] = (("all", None),)
+                cfa_options["metadata"] = ((None, None),)
             else:
                 metadata = cfa_options["metadata"]
                 if isinstance(metadata, str):

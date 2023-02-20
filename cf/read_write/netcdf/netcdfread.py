@@ -730,11 +730,18 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             properties["long_name"] = term
             self.implementation.set_properties(anc, properties)
 
+            # Store the term name as the 'id' attribute. This will be
+            # used as the term name if the field field ancillary is
+            # written to disk as a non-standard CFA term.
+            anc.id = term
+
             data = self._create_data(parent_ncvar, anc, non_standard_term=term)
-            data._custom["cfa_term"] = True
             self.implementation.set_data(anc, data, copy=False)
 
             self.implementation.nc_set_variable(anc, ncvar)
+
+            # Set the CFA term status
+            anc._custom["cfa_term"] = True
 
             key = self.implementation.set_field_ancillary(
                 f,

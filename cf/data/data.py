@@ -94,11 +94,11 @@ _DEFAULT_HARDMASK = True
 # Contstants used to specify which `Data` components should be cleared
 # when the dask array is updated. See `Data._clear_after_dask_update`
 # for details.
-_NONE = 0  # = 0b000
-_ARRAY = 1  # = 0b001
-_CACHE = 2  # = 0b010
-_CFA = 4  # = 0b100
-_ALL = _ARRAY | _CACHE | _CFA
+_NONE = 0  # =  0b000000
+_ARRAY = 1  # = 0b000001
+_CACHE = 2  # = 0b000010
+_CFA = 4  # =   0b000100
+_ALL = 63  # =  0b111111
 
 
 class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
@@ -1116,7 +1116,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             self[indices] = reset
 
-        # Remove elements made invalid by updating the `dask` array
+        # Remove componenets made invalid by updating the `dask` array
+        # in-place
         self._clear_after_dask_update(_ALL)
 
         return
@@ -1244,26 +1245,29 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `_del_Array`, `_set_dask`
+        .. seealso:: `_del_Array`, `_del_cached_elements`,
+                     `_del_cfa_write`, `_set_dask`
 
         :Parameters:
 
             clear: `int`, optional
-
                 Specify which components should be removed. Which
                 components are removed is determined by sequentially
                 combining *clear* with the ``_ARRAY``, ``_CACHE`` and
                 ``_CFA`` integer-valued contants, using the bitwise
                 AND operator:
 
-                * If ``clear & _ARRAY`` is True then delete a source
-                  array.
+                * If ``clear & _ARRAY`` is non-zero then a source
+                  array is deleted.
 
-                * If ``clear & _CACHE`` is True then delete cached
-                  element values.
+                * If ``clear & _CACHE`` is non-zero then cached
+                  element values are deleted.
 
-                * If ``clear & _CFA`` is True then set the CFA write
-                  status to `False`.
+                * If ``clear & _CFA`` is non-zero then the CFA write
+                  status is set to `False`.
+
+                * If ``clear`` is non-zero then the CFA term status is
+                  set to False.
 
                 By default *clear* is the ``_ALL`` integer-valued
                 constant, which results in all components being
@@ -1276,7 +1280,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 ``_ALL`` with the bitwise OR operator. For instance,
                 if *clear* is ``_ALL ^ _CACHE`` then the cached
                 element values will be kept but all other components
-                removed.
+                will be removed.
 
                 .. versionadded:: TODOCFAVER
 
@@ -1285,6 +1289,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             `None`
 
         """
+        if not clear:
+            return
+
         if clear & _ARRAY:
             # Delete a source array
             self._del_Array(None)
@@ -1296,6 +1303,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if clear & _CFA:
             # Set the CFA write status to False
             self._del_cfa_write()
+
+        # Always set the CFA term status to False
+        if "cfa_term" in self._custom:
+            del self._custom["cfa_term"]
 
     def _set_dask(self, array, copy=False, clear=_ALL):
         """Set the dask array.
@@ -5915,19 +5926,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return self._custom.get("cfa_write", False)
 
-    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
-        """Returns the data.
-
-        .. versionadded:: 3.0.0
-
-        :Returns:
-
-            `Data`
-
-        """
+        #    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
+        #        """Returns the data.##
+        #
+        #        .. versionadded:: 3.0.0#
+        #
+        #        :Returns:##
+        #
+        #            `Data`##
+        #
+        #        """
         return self
 
-    def get_filenames(self, address=False):
+    def get_filenames(self, address_format=False):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that are required to deliver
@@ -5994,7 +6005,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d[2, 3].get_filenames()
         {'file_A.nc'}
 
-        TODOCFADOCS: address example
+        TODOCFADOCS: address_format example
 
         """
         from dask.base import collections_to_dsk
@@ -6003,14 +6014,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
         for a in dsk.values():
             try:
-                filename = a.get_filename()
+                f = a.get_filename()
+                if address_format:
+                    f = ((f, a.get_address(), a.get_format()),)
             except AttributeError:
                 pass
             else:
-                if address:
-                    out.add((filename, a.get_address()))
-                else:
-                    out.add(filename)
+                out.add(f)
 
         return out
 
@@ -11971,7 +11981,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def ggg(self):
+    def url_or_file_uri(x):
+        from urllib.parse import urlparse
+
+        result = urlparse(x)
+        return all([result.scheme in ("file", "http", "https"), result.netloc])
+
+    def is_file_uri(x):
+        from urllib.parse import urlparse
+
+        result = urlparse(x)
+        return all([result.scheme in ("file"), result.netloc])
+
+    def ggg(self, substitions=None):
         """
 
         f = cf.example_field(0)
@@ -11985,17 +12007,76 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
 
         """
-        from .utils import chunk_indices, chunk_locations, chunk_positions
+        from .os.path import abspath
+        from .utils import chunk_indices, chunk_positions
+
+        if substitutions:
+            substitions = tuple(substitions.items())[::-1]
 
         chunks = self.chunks
-        for position, location, indices in zip(
-            chunk_positions(chunks),
-            chunk_locations(chunks),
-            chunk_indices(chunks),
+        shape = self.numblocks
+
+        faf = []
+        max_file = 0
+        max_address = 0
+        max_format = 0
+        for indices in chunk_indices(chunks):
+            a = self[indices].get_filenames(address_format=True)
+            if len(a) != 1:
+                raise ValueError("TODOCFADOCS")
+
+            filename, address, fmt = a.pop()
+
+            if relative is not None:
+                pass
+            # To what ? The path given by 'relaitve? or the path of the original CFA file, if there was one ...?
+
+            if not url_or_file_uri(filename):
+                filename = PurePath(
+                    abspath(filename)
+                ).as_uri()  ## ?? see above
+
+            if substitions:
+                for base, sub in substitions:
+                    filename = filename.replace(sub, base)
+
+            faf.append((filename, address, fmt))
+
+            max_file = max(max_file, len(filename))
+            max_address = max(max_address, len(address))
+            max_format = max(max_format, len(fmt))
+
+        aggregation_file = np.empty(shape, dtype=f"U{max_file}")
+        aggregation_address = np.empty(shape, dtype=f"U{max_address}")
+        aggregation_format = np.empty(shape, dtype=f"U{max_format}")
+
+        for position, (filename, address, fmt) in zip(
+            chunk_positions(chunks), faf
         ):
-            print(
-                position, location, self[indices].get_filenames(address=True)
-            )
+            aggregation_file[position] = filename
+            aggregation_address[position] = address
+            aggregation_format[position] = fmt
+
+        # Location
+        dtype = np.dtype(np.int32)
+        if max(self.to_dask_array().chunksize) > np.iinfo(dtype).max:
+            dtype = np.dtype(np.int64)
+
+        aggregation_location = np.ma.masked_all(
+            (self.ndim, max(shape)), dtype=dtype
+        )
+
+        for j, c in enumerate(chunks):
+            aggregation_location[j, : len(c)] = c
+
+        # Return Data objects
+        data = partial(type(self), chunks=-1)
+        return {
+            "aggregation_location": data(aggregation_location),
+            "aggregation_file": data(aggregation_file),
+            "aggregation_format": data(aggregation_format),
+            "aggregation_address": data(aggregation_address),
+        }
 
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"

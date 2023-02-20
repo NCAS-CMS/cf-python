@@ -33,6 +33,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 The construct type of the *cfvar*, or its parent if
                 *cfvar* is not a construct.
 
+                .. versionadded:: TODOCFAVER
+
         :Returns:
 
             `bool`
@@ -58,7 +60,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             return True
 
         for ctype, ndim in g["cfa_options"]["metadata"]:
+            # Write as CFA if it has an appropriate construct type ...
             if ctype in ("all", construct_type):
+                # ... and then only if it satisfies the number of
+                # dimenions criterion
                 if ndim is None:
                     return True
 
@@ -127,7 +132,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 written to the file.
 
             construct_type: `str`, optional
-                TODOCFADOCS
+                The construct type of the *cfvar*, or its parent if
+                *cfvar* is not a construct.
 
                 .. versionadded:: TODOCFAVER
 
@@ -139,15 +145,17 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         g = self.write_vars
 
         if self._use_cfa(cfvar, construct_type):
+            # --------------------------------------------------------
             # Write the data as CFA aggregated data
+            # --------------------------------------------------------
             self._write_cfa_data(ncvar, ncdimensions, data, cfvar)
             return
 
-        # Still here?
+        # ------------------------------------------------------------
+        # Still here? The write a normal (non-CFA) variable
+        # ------------------------------------------------------------
         if compressed:
-            # --------------------------------------------------------
             # Write data in its compressed form
-            # --------------------------------------------------------
             data = data.source().source()
 
         # Get the dask array
@@ -351,33 +359,59 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             `None`
 
         """
-        raise ValueError("_cfa_message")
+        ggg = data.ggg()
 
-    #    def _random_hex_string(self, size=10):
-    #        """Return a random hexadecimal string with the given number of
-    #        characters.
-    #
-    #        .. versionadded:: 3.0.0
-    #
-    #        :Parameters:
-    #
-    #            size: `int`, optional
-    #                The number of characters in the generated string.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                The hexadecimal string.
-    #
-    #        **Examples:**
-    #
-    #        >>> _random_hex_string()
-    #        'C3eECbBBcf'
-    #        >>> _random_hex_string(6)
-    #        '7a4acc'
-    #
-    #        """
-    #        return "".join(random.choice(hexdigits) for i in range(size))
+        location = ggg["location"]
+        location_ncdimensions = [
+            self._netcdf_name(f"cfa{size}", dimsize=size, role="cfa_location")
+            for size in location.shape
+        ]
+
+        address = ggg["address"]
+        fragment_ncdimensions = [
+            self._netcdf_name(f"f_{ncdim}", dimsize=size, role="cfa_fragment")
+            for ncdim, size in zip(ncdimensions, address.shape)
+        ]
+
+        aggregated_data = []
+        for term, d in ggg.items():
+            if term == "location":
+                dimensions = location_ncdimensions
+            else:
+                dimensions = fragment_ncdimensions
+                if term == "format":
+                    u = d.unique().persist()
+                    if u.size == 1:
+                        # Collapse fragment formats to a common scalar
+                        d = u.squeeze()
+                        dimensions = ()
+
+            term_ncvar = self._cfa_write_term_variable(
+                d,
+                f"cfa_{term}",
+                dimensions,
+            )
+
+            aggregated_data.append(f"{term}: {term_ncvar}")
+
+        # Look for non-standard CFA terms stored as field ancillaries
+        # on a field
+        if self.implementation.is_field(cfvar):
+            aggregated_data.extend(
+                self._cfa_write_non_standard_terms(
+                    cfvar, fragment_ncdimensions
+                )
+            )
+
+        # Add the CFA aggreation variable attributes
+        self._write_attributes(
+            None,
+            ncvar,
+            extra={
+                "aggregated_dimensions": " ".join(ncdimensions),
+                "aggregated_data": " ".join(aggregated_data),
+            },
+        )
 
     def _convert_to_builtin_type(self, x):
         """Convert a non-JSON-encodable object to a JSON-encodable
@@ -479,25 +513,116 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return array
 
+    def _write_field_ancillary(self, f, key, anc):
+        """Write a field ancillary to the netCDF file.
 
-#    def _convert_dtype(self, array, new_dtype=None):
-#        """Convert the data type of a numpy array.
-#
-#        .. versionadded:: 3.14.0
-#
-#        :Parameters:
-#
-#            array: `numpy.ndarray`
-#                The `numpy` array
-#
-#            new_dtype: data-type
-#                The new data type.
-#
-#        :Returns:
-#
-#            `numpy.ndarray`
-#                The array with converted data type.
-#
-#        """
-#        return array.astype(new_dtype)
-#
+        If an equal field ancillary has already been written to the file
+        then it is not re-written.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            f : `Field`
+
+            key : `str`
+
+            anc : `FieldAncillary`
+
+        :Returns:
+
+            `str`
+                The netCDF variable name of the field ancillary
+                object. If no ancillary variable was written then an
+                empty string is returned.
+
+        **Examples**
+
+        >>> ncvar = _write_field_ancillary(f, 'fieldancillary2', anc)
+
+        """
+        if anc._custom.get("cfa_term", False):
+            # This field ancillary construct is to be written as a
+            # non-standard CFA term belonging to the parent field, or
+            # not at all.
+            return ""
+
+        return super()._write_field_ancillary(f, key, anc)
+
+    def _cfa_write_term_variable(self, data, ncvar, ncdimensions):
+        """TODOCFADOCS."""
+        create = not self._already_in_file(data, ncdimensions)
+
+        if not create:
+            ncvar = self.write_vars["seen"][id(data)]["ncvar"]
+        else:
+            ncvar = self._netcdf_name(ncvar)
+
+            # Create a new CFA term variable
+            self._write_netcdf_variable(ncvar, ncdimensions, data)
+
+        return ncvar
+
+    def _cfa_write_non_standard_terms(self, cfvar, fragment_ncdimensions):
+        """TODOCFADOCS"""
+        # Look for non-standard CFA terms stored as field ancillaries
+        from dask.array import blockwise
+
+        aggregated_data = []
+        non_standard_terms = []
+        for key, field_anc in self.implementation.get_field_ancillaries(
+            cfvar
+        ).items():
+            if not field_anc._custom.get("cfa_term", False):
+                continue
+
+            data = self.implementation.get_data(field_anc)
+            if not data.get_cfa_write():
+                continue
+
+            if cfvar.get_data_axes(key) != cfvar.get_data_axes():
+                continue
+
+            # Still here? Then convert the data to span the fragment
+            # dimensions, with one value per fragment, and then write
+            # it to disk.
+            dx = data.to_dask_array()
+            dx_ind = tuple(range(dx.ndim))
+            out_ind = dx_ind
+            dx = blockwise(
+                self._cfa_unique,
+                out_ind,
+                dx,
+                dx_ind,
+                adjust_chunks={i: 1 for i in out_ind},
+                dtype=dx.dtype,
+            )
+            field_anc.set_data(dx)
+
+            # Get the non-standard term name from the field
+            # ancillary's 'id' attribute
+            term = getattr(field_anc, "id", "term")
+            term = term.replace(" ", "_")
+            base = term
+            n = 0
+            while term in non_standard_terms:
+                n += 1
+                term = f"{base}_{n}"
+
+            term_ncvar = self._cfa_write_term_variable(
+                field_anc.data, f"cfa_{term}", fragment_ncdimensions
+            )
+
+            aggregated_data.append(f"{term}: {term_ncvar}")
+
+        return aggregated_data
+
+    @classmethod
+    def _cfa_unique(cls, a):
+        """TODOCFADOCS."""
+        out_shape = (1,) * a.ndim
+        a = np.unique(a)
+        if a.size == 1:
+            return a.reshape(out_shape)
+
+        return np.ma.masked_all(out_shape, dtype=a.dtype)
