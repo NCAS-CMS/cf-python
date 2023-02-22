@@ -11981,107 +11981,136 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return d
 
-    def url_or_file_uri(x):
-        from urllib.parse import urlparse
+    #    def url_or_file_uri(x):
+    #        from urllib.parse import urlparse
+    #
+    #        result = urlparse(x)
+    #        return all([result.scheme in ("file", "http", "https"), result.netloc])
+    #
+    #    def is_url(x):
+    #        from urllib.parse import urlparse
+    #
+    #        result = urlparse(x)
+    #        return all([result.scheme in ("http", "https"), result.netloc])
+    #
+    #    def is_file_uri(x):
+    #        from urllib.parse import urlparse
+    #
+    #        result = urlparse(x)
+    #        return all([result.scheme in ("file"), result.netloc])
 
-        result = urlparse(x)
-        return all([result.scheme in ("file", "http", "https"), result.netloc])
-
-    def is_file_uri(x):
-        from urllib.parse import urlparse
-
-        result = urlparse(x)
-        return all([result.scheme in ("file"), result.netloc])
-
-    def ggg(self, substitions=None):
-        """
-
-        f = cf.example_field(0)
-        cf.write(f, "file_A.nc")
-        cf.write(f, "file_B.nc")
-
-        a = cf.read("file_A.nc", chunks=4)[0].data
-        b = cf.read("file_B.nc", chunks=4)[0].data
-        c = cf.Data(b.array, units=b.Units, chunks=4)
-        d = cf.Data.concatenate([a, a.copy(), b, c], axis=1)
-
-
-        """
-        from .os.path import abspath
-        from .utils import chunk_indices, chunk_positions
-
-        if substitutions:
-            substitions = tuple(substitions.items())[::-1]
-
-        chunks = self.chunks
-        shape = self.numblocks
-
-        faf = []
-        max_file = 0
-        max_address = 0
-        max_format = 0
-
-        filenames = []
-        
-        for indices in chunk_indices(chunks):
-            a = self[indices].get_filenames(address_format=True)
-            if len(a) != 1:
-                raise ValueError("TODOCFADOCS")
-
-            filename, address, fmt = a.pop()
-
-            filenames.append(filename)
-            
-            if relative is not None:
-                pass
-            # To what ? The path given by 'relaitve? or the path of the original CFA file, if there was one ...?
-
-            if not url_or_file_uri(filename):
-                filename = PurePath(
-                    abspath(filename)
-                ).as_uri()  ## ?? see above
-
-            if substitions:
-                for base, sub in substitions:
-                    filename = filename.replace(sub, base)
-
-            faf.append((filename, address, fmt))
-
-#            max_file = max(max_file, len(filename))
-            max_address = max(max_address, len(address))
-            max_format = max(max_format, len(fmt))
-
-        aggregation_file = np.array(filenames).reshape(shape)
-        aggregation_address = np.empty(shape, dtype=f"U{max_address}")
-        aggregation_format = np.empty(shape, dtype=f"U{max_format}")
-
-        for position, (filename, address, fmt) in zip(
-            chunk_positions(chunks), faf
-        ):
-            aggregation_file[position] = filename
-            aggregation_address[position] = address
-            aggregation_format[position] = fmt
-
-        # Location
-        dtype = np.dtype(np.int32)
-        if max(self.to_dask_array().chunksize) > np.iinfo(dtype).max:
-            dtype = np.dtype(np.int64)
-
-        aggregation_location = np.ma.masked_all(
-            (self.ndim, max(shape)), dtype=dtype
-        )
-
-        for j, c in enumerate(chunks):
-            aggregation_location[j, : len(c)] = c
-
-        # Return Data objects
-        data = partial(type(self), chunks=-1)
-        return {
-            "aggregation_location": data(aggregation_location),
-            "aggregation_file": data(aggregation_file),
-            "aggregation_format": data(aggregation_format),
-            "aggregation_address": data(aggregation_address),
-        }
+    #    def ggg(
+    #        self,
+    #        absolute=False,
+    #        relative=True,
+    #        cfa_filename=None,
+    #        substitions=None,
+    #    ):
+    #        """
+    #
+    #        f = cf.example_field(0)
+    #        cf.write(f, "file_A.nc")
+    #        cf.write(f, "file_B.nc")
+    #
+    #        a = cf.read("file_A.nc", chunks=4)[0].data
+    #        b = cf.read("file_B.nc", chunks=4)[0].data
+    #        c = cf.Data(b.array, units=b.Units, chunks=4)
+    #        d = cf.Data.concatenate([a, a.copy(), b, c], axis=1)
+    #
+    #
+    #        """
+    #        from os.path import abspath, relpath
+    #        from pathlib import PurePath
+    #        from urllib.parse import urlparse
+    #
+    #        from .utils import chunk_indices  # , chunk_positions
+    #
+    #        if substitutions:
+    #            substitions = tuple(substitutions.items())[::-1]
+    #
+    #        if relative:
+    #            cfa_dir = PurePath(abspath(cfa_filename)).parent
+    #
+    #        chunks = self.chunks
+    #
+    #        #        faf = []
+    #        #        max_file = 0
+    #        #        max_address = 0
+    #        #        max_format = 0
+    #
+    #        filenames = []
+    #        address = []
+    #        formats = []
+    #
+    #        for indices in chunk_indices(chunks):
+    #            a = self[indices].get_filenames(address_format=True)
+    #            if len(a) != 1:
+    #                raise ValueError("TODOCFADOCS")
+    #
+    #            filename, address, fmt = a.pop()
+    #
+    #            parsed_filename = urlparse(filename)
+    #            scheme = parsed_filename.scheme
+    #            if scheme not in ("http", "https"):
+    #                path = parsed_filename.path
+    #                if absolute:
+    #                    filename = PurePath(abspath(path)).as_uri()
+    #                elif relative or scheme != "file":
+    #                    filename = relpath(abspath(path), start=cfa_dir)
+    #
+    #            if substitutions:
+    #                for base, sub in substitutions:
+    #                    filename = filename.replace(sub, base)
+    #
+    #            filenames.append(filename)
+    #            addresses.append(address)
+    #            formats.append(fmt)
+    #
+    #        #            faf.append((filename, address, fmt))
+    #        #
+    #        #            max_file = max(max_file, len(filename))
+    #        #            max_address = max(max_address, len(address))
+    #        #            max_format = max(max_format, len(fmt))
+    #
+    #        aggregation_file = np.array(filenames).reshape(shape)
+    #        aggregation_address = np.array(addresses).reshape(
+    #            shape
+    #        )  # , dtype=f"U{max_address}")
+    #        aggregation_format = np.array(formats).reshape(
+    #            shape
+    #        )  # , dtype=f"U{max_format}")
+    #        del filenames
+    #        del address
+    #        del formats
+    #
+    #        #        for position, (filename, address, fmt) in zip(
+    #        #            chunk_positions(chunks), faf
+    #        #        ):
+    #        #            aggregation_file[position] = filename
+    #        #            aggregation_address[position] = address
+    #        #            aggregation_format[position] = fmt
+    #
+    #        # Location
+    #        dtype = np.dtype(np.int32)
+    #        if max(self.to_dask_array().chunksize) > np.iinfo(dtype).max:
+    #            dtype = np.dtype(np.int64)
+    #
+    #        aggregation_location = np.ma.masked_all(
+    #            (self.ndim, max(shape)), dtype=dtype
+    #        )
+    #
+    #        for j, c in enumerate(chunks):
+    #            aggregation_location[j, : len(c)] = c
+    #
+    #        # Return Data objects
+    #        #        data = partial(type(self), chunks=-1)
+    #        data = type(self)
+    #        return {
+    #            "aggregation_location": data(aggregation_location),
+    #            "aggregation_file": data(aggregation_file),
+    #            "aggregation_format": data(aggregation_format),
+    #            "aggregation_address": data(aggregation_address),
+    #        }
 
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"

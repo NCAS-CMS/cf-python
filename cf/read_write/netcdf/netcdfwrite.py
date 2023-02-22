@@ -359,19 +359,31 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             `None`
 
         """
-        ggg = data.ggg()
+        ggg = self._ggg(data)
 
-        location = ggg["location"]
-        location_ncdimensions = [
-            self._netcdf_name(f"cfa{size}", dimsize=size, role="cfa_location")
-            for size in location.shape
-        ]
+        # Get the location netCDF dimensions
+        location_ncdimensions = []
+        for size in ggg["location"].shape:
+            l_ncdim = self._netcdf_name(
+                f"cfa_{size}", dimsize=size, role="cfa_location"
+            )
+            if l_ncdim not in g["dimensions"]:
+                # Create a new location dimension
+                self._write_dimension(l_ncdim, None, size=size)
 
-        address = ggg["address"]
-        fragment_ncdimensions = [
-            self._netcdf_name(f"f_{ncdim}", dimsize=size, role="cfa_fragment")
-            for ncdim, size in zip(ncdimensions, address.shape)
-        ]
+            location_ncdimensions.append(l_ncdim)
+
+        # Get the fragment netCDF dimensions
+        fragment_ncdimensions = []
+        for ncdim, size in zip(ncdimensions, ggg["address"].shape):
+            f_ncdim = self._netcdf_name(
+                f"f_{ncdim}", dimsize=size, role="cfa_fragment"
+            )
+            if f_ncdim not in g["dimensions"]:
+                # Create a new fragement dimension
+                self._write_dimension(f_ncdim, None, size=size)
+
+            fragment_ncdimensions.append(f_ncdim)
 
         aggregated_data = []
         for term, d in ggg.items():
@@ -382,7 +394,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 if term == "format":
                     u = d.unique().persist()
                     if u.size == 1:
-                        # Collapse fragment formats to a common scalar
+                        # Collapse formats to a common scalar
                         d = u.squeeze()
                         dimensions = ()
 
@@ -403,7 +415,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 )
             )
 
-        # Add the CFA aggreation variable attributes
+        # Add the CFA aggregation variable attributes
         self._write_attributes(
             None,
             ncvar,
@@ -550,7 +562,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return super()._write_field_ancillary(f, key, anc)
 
     def _cfa_write_term_variable(self, data, ncvar, ncdimensions):
-        """TODOCFADOCS."""
+        """TODOCFADOCS.
+
+        .. versionadded:: TODOCFAVER
+        """
         create = not self._already_in_file(data, ncdimensions)
 
         if not create:
@@ -564,10 +579,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return ncvar
 
     def _cfa_write_non_standard_terms(self, cfvar, fragment_ncdimensions):
-        """TODOCFADOCS"""
-        # Look for non-standard CFA terms stored as field ancillaries
-        from dask.array import blockwise
+        """TODOCFADOCS
 
+        .. versionadded:: TODOCFAVER
+        """
+        # Look for non-standard CFA terms stored as field ancillaries
         aggregated_data = []
         non_standard_terms = []
         for key, field_anc in self.implementation.get_field_ancillaries(
@@ -589,7 +605,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             dx = data.to_dask_array()
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind
-            dx = blockwise(
+            dx = da.blockwise(
                 self._cfa_unique,
                 out_ind,
                 dx,
@@ -619,10 +635,117 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
     @classmethod
     def _cfa_unique(cls, a):
-        """TODOCFADOCS."""
+        """TODOCFADOCS.
+
+        .. versionadded:: TODOCFAVER
+        """
         out_shape = (1,) * a.ndim
         a = np.unique(a)
         if a.size == 1:
             return a.reshape(out_shape)
 
         return np.ma.masked_all(out_shape, dtype=a.dtype)
+
+    def _ggg(self, data):
+        """
+
+        f = cf.example_field(0)
+        cf.write(f, "file_A.nc")
+        cf.write(f, "file_B.nc")
+
+        a = cf.read("file_A.nc", chunks=4)[0].data
+        b = cf.read("file_B.nc", chunks=4)[0].data
+        c = cf.Data(b.array, units=b.Units, chunks=4)
+        d = cf.Data.concatenate([a, a.copy(), b, c], axis=1)
+
+
+        """
+        from os.path import abspath, relpath
+        from pathlib import PurePath
+        from urllib.parse import urlparse
+
+        g = self.write_vars
+
+        substitutions = g["cfa_options"].get("substitutions")
+        if substitutions:
+            # TODO move this to global once
+            substitutions = tuple(substitutions.items())[::-1]
+
+        relative = g["cfa_options"].get("relative", None)        
+        if relative:
+            absolute = False
+            cfa_dir = PurePath(abspath(g["filename"])).parent
+        elif relative is not None:
+            absolute = True
+        else:
+            absolute =None
+            
+        aggregation_file = []
+        aggregation_address = []
+        aggregation_format = []
+        for indices in data.chunk_indices():
+            a = self[indices].get_filenames(address_format=True)
+            if len(a) != 1:
+                raise ValueError("TODOCFADOCS")
+
+            filename, address, fmt = a.pop()
+
+            parsed_filename = urlparse(filename)
+            scheme = parsed_filename.scheme
+            if scheme not in ("http", "https"):
+                path = parsed_filename.path
+                if absolute:
+                    filename = PurePath(abspath(path)).as_uri()
+                elif relative or scheme != "file":
+                    filename = relpath(abspath(path), start=cfa_dir)
+
+            if substitutions:
+                for base, sub in substitutions:
+                    filename = filename.replace(sub, base)
+
+            aggregation_file.append(filename)
+            aggregation_address.append(address)
+            aggregation_format.append(fmt)
+
+        shape = data.numblocks
+        aggregation_file = np.array(aggregation_file).reshape(shape)
+        aggregation_address = np.array(aggregation_address).reshape(shape)
+        aggregation_format = np.array(aggregation_format).reshape(shape)
+
+        # Location
+        dtype = np.dtype(np.int32)
+        if max(data.to_dask_array().chunksize) > np.iinfo(dtype).max:
+            dtype = np.dtype(np.int64)
+
+        aggregation_location = np.ma.masked_all(
+            (self.ndim, max(shape)), dtype=dtype
+        )
+
+        for i, c in enumerate(data.chunks):
+            aggregation_location[i, : len(c)] = c
+
+        # Return Data objects
+        data = type(data)
+        return {
+            "aggregation_location": data(aggregation_location),
+            "aggregation_file": data(aggregation_file),
+            "aggregation_format": data(aggregation_format),
+            "aggregation_address": data(aggregation_address),
+        }
+
+    def _customize_write_vars(self):
+        """Customise the write parameters.
+
+        .. versionadded:: TODOCFAVER
+
+        """  
+        g = self.write_vars
+        
+        if g.get('cfa'):
+            from os.path import abspath
+            from pathlib import PurePath
+            
+            g['cfa_dir'] = PurePath(abspath(g["filename"])).parent
+
+
+            Need to know about this on read, too.
