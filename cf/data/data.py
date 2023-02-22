@@ -12020,6 +12020,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         max_file = 0
         max_address = 0
         max_format = 0
+
+        filenames = []
+        
         for indices in chunk_indices(chunks):
             a = self[indices].get_filenames(address_format=True)
             if len(a) != 1:
@@ -12027,6 +12030,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             filename, address, fmt = a.pop()
 
+            filenames.append(filename)
+            
             if relative is not None:
                 pass
             # To what ? The path given by 'relaitve? or the path of the original CFA file, if there was one ...?
@@ -12042,11 +12047,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             faf.append((filename, address, fmt))
 
-            max_file = max(max_file, len(filename))
+#            max_file = max(max_file, len(filename))
             max_address = max(max_address, len(address))
             max_format = max(max_format, len(fmt))
 
-        aggregation_file = np.empty(shape, dtype=f"U{max_file}")
+        aggregation_file = np.array(filenames).reshape(shape)
         aggregation_address = np.empty(shape, dtype=f"U{max_address}")
         aggregation_format = np.empty(shape, dtype=f"U{max_format}")
 
