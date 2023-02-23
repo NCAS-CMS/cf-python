@@ -1,12 +1,9 @@
-from os.path import abspath
-
 import numpy
 
 from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
 from .netcdf import NetCDFWrite
-
 
 netcdf = NetCDFWrite(implementation())
 

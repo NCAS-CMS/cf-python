@@ -46,6 +46,7 @@ from .functions import (
     _DEPRECATION_ERROR_METHOD,
     DeprecationError,
     _section,
+    flat,
     parse_indices,
 )
 from .functions import relaxed_identities as cf_relaxed_identities
@@ -5966,6 +5967,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         radius="earth",
         great_circle=False,
         verbose=None,
+        remove_vertical_crs=True,
         _create_zero_size_cell_bounds=False,
         _update_cell_methods=True,
         i=False,
@@ -7394,6 +7396,22 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                   1990), cf.year(cf.wi(2001, 2005)]`` (see `cf.year` and
                   `cf.wi`).
 
+            remove_vertical_crs: `bool`, optional
+                If True, the default, then remove a vertical
+                coordinate reference construct and all of its domain
+                ancillary constructs if any of its coordinate
+                constructs or domain ancillary constructs span any
+                collapse axes.
+
+                If False then only the vertical coordinate reference
+                construct's domain ancillary constructs that span any
+                collapse axes removed, but the vertical coordinate
+                reference construct remains. This could result in
+                `compute_vertical_coordinates` returning incorrect
+                non-parameteric vertical coordinate values.
+
+                .. versionadded:: 3.14.1
+
             {{inplace: `bool`, optional}}
 
             {{i: deprecated at version 3.0.0}}
@@ -7816,6 +7834,41 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 f"    f.dtype = {f.dtype}\n"
                 f"collapse_axes = {collapse_axes}"
             )  # pragma: no cover
+
+            # --------------------------------------------------------
+            # Delete vertical coordinate references whose coordinates
+            # and domain ancillaries span any of the collapse
+            # axes. Also delete the corresponding domain ancillaries.
+            #
+            # This is because missing domain ancillaries in a
+            # coordinate refernce are assumed to have the value zero,
+            # which is most likely inapproriate.
+            # --------------------------------------------------------
+            if remove_vertical_crs:
+                for ref_key, ref in f.coordinate_references(
+                    todict=True
+                ).items():
+                    if (
+                        "standard_name"
+                        not in ref.coordinate_conversion.parameters()
+                    ):
+                        # This is not a vertical CRS
+                        continue
+
+                    ref_axes = []
+                    axes = f.constructs.data_axes()
+                    for c_key in ref.coordinates():
+                        ref_axes.extend(axes[c_key])
+
+                    for (
+                        da_key
+                    ) in (
+                        ref.coordinate_conversion.domain_ancillaries().values()
+                    ):
+                        ref_axes.extend(axes.get(da_key, ()))
+
+                    if set(ref_axes).intersection(flat(all_axes)):
+                        f.del_coordinate_reference(ref_key)
 
             # ---------------------------------------------------------
             # Update dimension coordinates, auxiliary coordinates,
