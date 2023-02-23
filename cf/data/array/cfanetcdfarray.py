@@ -1,5 +1,7 @@
 from copy import deepcopy
 from itertools import accumulate, product
+from os.path import join as os_join
+from urllib.parse import urlparse
 
 import numpy as np
 
@@ -40,6 +42,7 @@ class CFANetCDFArray(NetCDFArray):
         units=False,
         calendar=False,
         instructions=None,
+        substitutions=None,
         non_standard_term=None,
         source=None,
         copy=True,
@@ -108,6 +111,11 @@ class CFANetCDFArray(NetCDFArray):
                 the CFA netCDF variable. If set then this will be used
                 to improve the performance of `__dask_tokenize__`.
 
+            substitutions: `dict`, optional
+                TODOCFADOCS
+
+                .. versionadded:: TODOCFAVER
+
             non_standard_term: `str`, optional
                 The name of a non-standard aggregation instruction
                 term from which the array is to be created, instead of
@@ -122,6 +130,8 @@ class CFANetCDFArray(NetCDFArray):
                 *Parameter example:*
                   ``non_standard_term='tracking_id',
                   ncvar='aggregation_id'``
+
+                .. versionadded:: TODOCFAVER
 
             {{init source: optional}}
 
@@ -147,11 +157,18 @@ class CFANetCDFArray(NetCDFArray):
                 aggregated_data = {}
 
             try:
+                substitutions = source.get_substitutions()
+            except AttributeError:
+                substitutions = None
+
+            try:
                 non_standard_term = source.get_non_standard_term()
             except AttributeError:
                 non_standard_term = None
 
         elif filename is not None:
+            from pathlib import PurePath
+
             from CFAPython import CFAFileFormat
             from CFAPython.CFADataset import CFADataset
             from CFAPython.CFAExceptions import CFAException
@@ -182,6 +199,12 @@ class CFANetCDFArray(NetCDFArray):
 
             fragment_shape = tuple(var.getFragDef())
 
+            parsed_filename = urlparse(filename)
+            if parsed_filename.scheme in ("file", "http", "https"):
+                directory = str(PurePath(filename).parent)
+            else:
+                directory = PurePath(abspath(parsed_filename).path).parent
+
             # Note: It is an as-yet-untested hypothesis that creating
             #       the 'aggregated_data' dictionary for massive
             #       aggretations (e.g. with O(10e6) fragments) will be
@@ -198,6 +221,8 @@ class CFANetCDFArray(NetCDFArray):
                             loc,
                             aggregated_data,
                             filename,
+                            directory,
+                            substitutions,
                             non_standard_term,
                         )
                     )
@@ -229,6 +254,11 @@ class CFANetCDFArray(NetCDFArray):
         self._set_component("instructions", instructions, copy=False)
         self._set_component("non_standard_term", non_standard_term, copy=False)
 
+        if substitutions is not None:
+            self._set_component(
+                "substitutions", substitutions.copy(), copy=False
+            )
+
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
 
@@ -252,7 +282,14 @@ class CFANetCDFArray(NetCDFArray):
         return NotImplemented  # pragma: no cover
 
     def _set_fragment(
-        self, var, frag_loc, aggregated_data, cfa_filename, non_standard_term
+        self,
+        var,
+        frag_loc,
+        aggregated_data,
+        cfa_filename,
+        directory,
+        substitutions,
+        non_standard_term,
     ):
         """Create a new key/value pair in the *aggregated_data*
         dictionary.
@@ -278,6 +315,16 @@ class CFANetCDFArray(NetCDFArray):
             cfa_filename: `str`
                 TODOCFADOCS
 
+            directory: `str`
+                TODOCFADOCS
+
+                .. versionadded:: TODOCFAVER
+
+            substitutions: `dict`
+                TODOCFADOCS
+
+                .. versionadded:: TODOCFAVER
+
             non_standard_term: `str` or `None`
                 The name of a non-standard aggregation instruction
                 term from which the array is to be created, instead of
@@ -301,11 +348,10 @@ class CFANetCDFArray(NetCDFArray):
             aggregated_data[frag_loc] = {
                 "format": "full",
                 "location": location,
-                "full_value": getattr(fragment, non_standard_term),
+                "full_value": fragment.non_standard_term(non_standard_term),
             }
             return
 
-        # Still here?
         filename = fragment.file
         fmt = fragment.format
         address = fragment.address
@@ -316,6 +362,18 @@ class CFANetCDFArray(NetCDFArray):
                 # This fragment is contained in the CFA-netCDF file
                 filename = cfa_filename
                 fmt = "nc"
+            else:
+                if substitutions:
+                    # Apply string substitutions to the fragment
+                    # filename
+                    for base, sub in substitutions.items():
+                        filename = filename.replace(base, sub)
+
+                parsed_filename = urlparse(filename)
+                if parsed_filename.scheme not in ("file", "http", "https"):
+                    # Find the full path of a relative fragment
+                    # filename
+                    filename = os_join(directory, parsed_filename.path)
 
             aggregated_data[frag_loc] = {
                 "format": fmt,

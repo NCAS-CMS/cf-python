@@ -354,6 +354,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def _customize_read_vars(self):
         """Customize the read parameters.
 
+        Take the opportunity to apply CFA updates to
+        `read_vars['variable_dimensions']` and
+        `read_vars['do_not_create_field']`.
+
         .. versionadded:: 3.0.0
 
         """
@@ -387,9 +391,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         g["cfa"] = CFA_version is not None
         if g["cfa"]:
             # --------------------------------------------------------
-            # This is a CFA-netCDF file, so check the CFA version and
-            # process the variables aggregated dimensions.
+            # This is a CFA-netCDF file
             # --------------------------------------------------------
+
+            # Check the CFA version
             g["CFA_version"] = Version(CFA_version)
             if g["CFA_version"] < Version("0.6.2"):
                 raise ValueError(
@@ -399,6 +404,15 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     "write CFA-0.4 files.)"
                 )
 
+            # Get the pdirectory path of the CFA-netCDF file being
+            # read
+            from os.path import abspath
+            from pathlib import PurePath
+
+            g["cfa_dir"] = PurePath(abspath(g["filename"])).parent
+
+            # Process the aggregation instruction variables, and the
+            # aggregated dimensions.
             dimensions = g["variable_dimensions"]
             attributes = g["variable_attributes"]
             for ncvar, attributes in attributes.items():
@@ -506,6 +520,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         ncvar,
         unpacked_dtype=False,
         coord_ncvar=None,
+        substitutions=None,
         non_standard_term=None,
     ):
         """Create a CFA-netCDF variable array.
@@ -522,6 +537,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             coord_ncvar: `str`, optional
 
+            substitutions: `dict`, optional
+                TODOCFADOCS
+
+                .. versionadded:: TODOCFAVER
+
             non_standard_term: `str`, optional
                 The name of a non-standard aggregation instruction
                 term from which to create the array. If set then
@@ -537,6 +557,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 kwargs used to create it.
 
         """
+        g = self.read_vars
+
         # Get the kwargs needed to instantiate a general NetCDFArray
         # instance
         kwargs = self._create_netcdfarray(
@@ -560,6 +582,36 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         kwargs["instructions"] = self.read_vars["variable_attributes"][
             ncvar
         ].get("aggregated_data")
+
+        # Find URI substitutions
+        parsed_aggregated_data = self._parse_aggregated_data(
+            ncvar, g["variable_attributes"][ncvar].get("aggregated_data")
+        )
+        subs = {}
+        for x in parsed_aggregated_data:
+            term, term_ncvar = tuple(x.items())[0]
+            if term != "file":
+                continue
+
+            subs = g["variable_attributes"][term_ncvar].get("substitutions")
+            if subs is None:
+                subs = {}
+            else:
+                # Convert, e.g., "${BASE}: a" to {"${BASE}": "a"}
+                subs = self.parse_x(term_ncvar, subs)
+                subs = {
+                    key: value[0] for d in subs for key, value in d.items()
+                }
+
+            break
+
+        if substitutions:
+            # Include user-defined substitutions, which will overwrite
+            # any defined in the file with the same base name.
+            subs = subs.update(substitutions)
+
+        if subs:
+            kwargs["substitutions"] = subs
 
         # Use the kwargs to create a specialised CFANetCDFArray
         # instance
@@ -657,7 +709,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             ncvar,
             aggregated_data,
             keys_are_variables=True,
-            keys_are_dimensions=False,
         )
 
     def _customize_field_ancillaries(self, parent_ncvar, f):
@@ -711,7 +762,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         out = {}
 
-        attributes = g["variable_attributes"]["parent_ncvar"]
+        attributes = g["variable_attributes"][parent_ncvar]
         parsed_aggregated_data = self._parse_aggregated_data(
             parent_ncvar, attributes.get("aggregated_data")
         )

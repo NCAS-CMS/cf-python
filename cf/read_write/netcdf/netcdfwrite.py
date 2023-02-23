@@ -671,15 +671,15 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # TODO move this to global once
             substitutions = tuple(substitutions.items())[::-1]
 
-        relative = g["cfa_options"].get("relative", None)        
+        relative = g["cfa_options"].get("relative", None)
         if relative:
             absolute = False
             cfa_dir = PurePath(abspath(g["filename"])).parent
         elif relative is not None:
             absolute = True
         else:
-            absolute =None
-            
+            absolute = None
+
         aggregation_file = []
         aggregation_address = []
         aggregation_format = []
@@ -738,14 +738,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         .. versionadded:: TODOCFAVER
 
-        """  
+        """
         g = self.write_vars
-        
-        if g.get('cfa'):
+
+        if g.get("cfa"):
             from os.path import abspath
             from pathlib import PurePath
-            
-            g['cfa_dir'] = PurePath(abspath(g["filename"])).parent
 
-
-            Need to know about this on read, too.
+            g["cfa_dir"] = PurePath(abspath(g["filename"])).parent
