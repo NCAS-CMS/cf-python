@@ -1,5 +1,7 @@
 from urllib.parse import urlparse
 
+import netCDF4
+
 from ..array.netcdfarray import NetCDFArray
 from .mixin import FragmentArrayMixin
 
@@ -13,7 +15,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
     def __init__(
         self,
-        filename=None,
+        filenames=None,
         address=None,
         dtype=None,
         shape=None,
@@ -86,6 +88,12 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
         if source is not None:
             try:
+                address = source._get_component(                 "address", False
+                )
+            except AttributeError:
+                address = None
+
+            try:
                 aggregated_units = source._get_component(
                     "aggregated_units", False
                 )
@@ -99,6 +107,9 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             except AttributeError:
                 aggregated_calendar = False
 
+        if address is not None:
+            self._set_component("address", address, copy=False)
+            
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
@@ -134,7 +145,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
             self._set_component("ncvar", address, copy=False)
             return nc
-            
+
         raise FileNotFoundError(
             f"No such netCDF fragment files: {tuple(filenames)}"
         )

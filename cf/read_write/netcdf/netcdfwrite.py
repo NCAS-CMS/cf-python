@@ -359,6 +359,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             `None`
 
         """
+        g = self.write_vars
+
         ggg = self._ggg(data)
 
         # Get the location netCDF dimensions
@@ -374,8 +376,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             location_ncdimensions.append(l_ncdim)
 
         # Get the fragment netCDF dimensions
+        aggregation_address = ggg["aggregation_address"]
         fragment_ncdimensions = []
-        for ncdim, size in zip(ncdimensions, ggg["address"].shape):
+        for ncdim, size in zip(ncdimensions, aggregation_address.shape):
             f_ncdim = self._netcdf_name(
                 f"f_{ncdim}", dimsize=size, role="cfa_fragment"
             )
@@ -385,37 +388,56 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             fragment_ncdimensions.append(f_ncdim)
 
+        ndim = aggregation_address.ndim
+        if ndim == len(ncdimensions) + 1:
+            # Include an extra trailing dimension for the aggregation
+            # instruction variables
+            size = aggregation_address.shape[-1]
+            f_ncdim = self._netcdf_name(
+                "f_extra", dimsize=size, role="cfa_fragment"
+            )
+            self._write_dimension(f_ncdim, None, size=size)
+            fragment_ncdimensions.append(f_ncdim)
+
+        # ------------------------------------------------------------
+        # Write the standardised aggregation instruction variables to
+        # the CFA-netCDF file
+        # ------------------------------------------------------------
         aggregated_data = []
-        for term, d in ggg.items():
+        for term, data in ggg.items():
             if term == "location":
                 dimensions = location_ncdimensions
             else:
                 dimensions = fragment_ncdimensions
+
+                # Attempt to reduce formats to a common scalar value
                 if term == "format":
-                    u = d.unique().persist()
+                    u = data.unique().compressed().persist()
                     if u.size == 1:
-                        # Collapse formats to a common scalar
-                        d = u.squeeze()
+                        data = u.squeeze()
                         dimensions = ()
 
             term_ncvar = self._cfa_write_term_variable(
-                d,
+                data,
                 f"cfa_{term}",
                 dimensions,
             )
 
             aggregated_data.append(f"{term}: {term_ncvar}")
 
+        # ------------------------------------------------------------
         # Look for non-standard CFA terms stored as field ancillaries
-        # on a field
+        # on a field and write them to the CFA-netCDF file
+        # ------------------------------------------------------------
         if self.implementation.is_field(cfvar):
-            aggregated_data.extend(
-                self._cfa_write_non_standard_terms(
-                    cfvar, fragment_ncdimensions
-                )
+            non_standard_terms = self._cfa_write_non_standard_terms(
+                cfvar, fragment_ncdimensions[:ndim]
             )
+            aggregated_data.extend(non_standard_terms)
 
+        # ------------------------------------------------------------
         # Add the CFA aggregation variable attributes
+        # ------------------------------------------------------------
         self._write_attributes(
             None,
             ncvar,
@@ -565,6 +587,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         """TODOCFADOCS.
 
         .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `list`
+
         """
         create = not self._already_in_file(data, ncdimensions)
 
@@ -581,9 +608,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _cfa_write_non_standard_terms(self, cfvar, fragment_ncdimensions):
         """TODOCFADOCS
 
+        Look for non-standard CFA terms stored as field ancillaries
+
         .. versionadded:: TODOCFAVER
+
         """
-        # Look for non-standard CFA terms stored as field ancillaries
         aggregated_data = []
         non_standard_terms = []
         for key, field_anc in self.implementation.get_field_ancillaries(
@@ -596,12 +625,18 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             if not data.get_cfa_write():
                 continue
 
+            # Check that the field ancillary has the same axes as the
+            # parent field, and in the same order.
             if cfvar.get_data_axes(key) != cfvar.get_data_axes():
                 continue
 
-            # Still here? Then convert the data to span the fragment
-            # dimensions, with one value per fragment, and then write
-            # it to disk.
+            # Still here? Then this field ancillary represent a
+            #             non-standard aggregation term.
+
+            # Then transform the data so that it spans the fragment
+            # dimensions, with one value per fragment. If a chunk has
+            # more than one unique value then the fragment's value is
+            # missing data.
             dx = data.to_dask_array()
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind
@@ -613,7 +648,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 adjust_chunks={i: 1 for i in out_ind},
                 dtype=dx.dtype,
             )
-            field_anc.set_data(dx)
+            array = dx.compute()
 
             # Get the non-standard term name from the field
             # ancillary's 'id' attribute
@@ -625,8 +660,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 n += 1
                 term = f"{base}_{n}"
 
+            # Create the new CFA term variable
             term_ncvar = self._cfa_write_term_variable(
-                field_anc.data, f"cfa_{term}", fragment_ncdimensions
+                type(data)(array), f"cfa_{term}", fragment_ncdimensions
             )
 
             aggregated_data.append(f"{term}: {term_ncvar}")
@@ -638,9 +674,25 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         """TODOCFADOCS.
 
         .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+             a: `numpy.ndarray`
+                The array.
+
+        :Returns:
+
+            `numpy.ndarray`
+                 A size 1 array containg the unique value, or missing
+                data if there is not a unique unique value.
+
         """
         out_shape = (1,) * a.ndim
         a = np.unique(a)
+        if np.ma.isMA(a):
+            # Remove a masked element
+            a = a.compressed()
+
         if a.size == 1:
             return a.reshape(out_shape)
 
@@ -648,6 +700,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
     def _ggg(self, data):
         """
+
+        .. versionadded:: TODOCFAVER
 
         f = cf.example_field(0)
         cf.write(f, "file_A.nc")
@@ -720,7 +774,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         shape = data.numblocks
 
-        padded = False
+        pad = None
         if max_files > 1:
             # Pad the ...
             for i, (filenames, addresses, formats) in enumerate(
@@ -730,11 +784,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 if n:
                     pad = ("",) * n
                     aggregation_file[i] = filenames + pad
-                    aggregation_address[i] = (
-                        addresses + pad
-                    )  # worry about pad datatype
                     aggregation_format[i] = formats + pad
-                    padded = True
+                    if isinstance(addresses[0], int):
+                        pad = (-1,) * n
+
+                    aggregation_address[i] = addresses + pad
 
             shape += (max_files,)
 
@@ -742,7 +796,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         aggregation_address = np.array(aggregation_address).reshape(shape)
         aggregation_format = np.array(aggregation_format).reshape(shape)
 
-        if padded:
+        if pad:
             # Mask padded elements
             aggregation_file = np.ma.where(
                 aggregation_file == "", np.ma.masked, aggregation_file

@@ -3641,6 +3641,37 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return w
 
+    @_inplace_enabled(default=False)
+    def cfa_add_fragment_location(self, location, inplace=False):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_add_fragment_location('/data/model')
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        super().add_fragment_location(location, inplace=True)
+
+        for c in f.constructs.filter_by_data(todict=True).values():
+            c.add_fragment_location(location, inplace=True)
+
+        return f
+
     def radius(self, default=None):
         """Return the radius of a latitude-longitude plane defined in
         spherical polar coordinates.

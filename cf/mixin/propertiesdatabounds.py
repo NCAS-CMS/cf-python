@@ -1182,6 +1182,37 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
+    @_inplace_enabled(default=False)
+    def cfa_add_fragment_location(self, location, inplace=False):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> c.cfa_add_fragment_location('/data/model')
+
+        """
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "cfa_add_fragment_location",
+            (location,),
+            bounds=True,
+            interior_ring=True,
+            inplace=inplace,
+        )
+
     def chunk(self, chunksize=None):
         """Partition the data array.
 

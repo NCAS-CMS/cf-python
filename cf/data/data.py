@@ -29,6 +29,7 @@ from ..decorators import (
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _section,
+    abspath,
     atol,
     default_netCDF_fillvals,
     free_memory,
@@ -2421,40 +2422,47 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(da.ceil(dx))
         return d
 
-    def cfa_add_fragment_locations(self, location):
-        """TODOCFADOCS
+    def cfa_add_fragment_location(self, location):
+        """TODOCFADOCS in-place.
+
+        .. versionadded:: TODOCFAVER
 
         :Parameters:
 
             location: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.cfa_add_fragment_location('/data/model')
 
         """
-        if not self.get_cfa_write():
-            raise ValueError("TODOCFA")
-
         from dask.base import collections_to_dsk
+
+        location = abspath(location)
 
         dx = self.to_dask_array()
 
-        dsk = collections_to_dsk((dx,), optimize_graph=True)        
+        updated = False
+        dsk = collections_to_dsk((dx,), optimize_graph=True)
         for key, a in dsk.items():
             try:
-                f = a.get_filenames()
+                a.get_filenames()
             except AttributeError:
+                # This chunk doesn't contain a CFA fragment file
                 continue
+            else:
+                # This chunk contains a CFA fragment file
+                dsk[key] = a.add_fragment_location(location, inplace=False)
+                updated = True
 
-            # Switch out directory for new location in appended file
-
-            # If multiple basenames exits, add one new lcoation for
-            # each
-            dsk[key] = a.add_fragment_lcoations(location,
-                                                inplace=False)
-
-            # TODOCFA - don't do this inplace - see active storage
-            # for creating new dask array
-
-        dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-        self._set_dask(dx, clear=_NONE)
+        if updated:
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=_NONE)
 
     def compute(self):  # noqa: F811
         """A numpy view the data.
