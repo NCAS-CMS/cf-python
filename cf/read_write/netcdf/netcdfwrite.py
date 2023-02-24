@@ -683,34 +683,73 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         aggregation_file = []
         aggregation_address = []
         aggregation_format = []
+
+        # Maximum number of files defined on a fragments
+        max_files = 0
+
         for indices in data.chunk_indices():
             a = self[indices].get_filenames(address_format=True)
             if len(a) != 1:
                 raise ValueError("TODOCFADOCS")
 
-            filename, address, fmt = a.pop()
+            filenames, addresses, formats = a.pop()
 
-            parsed_filename = urlparse(filename)
-            scheme = parsed_filename.scheme
-            if scheme not in ("http", "https"):
-                path = parsed_filename.path
-                if absolute:
-                    filename = PurePath(abspath(path)).as_uri()
-                elif relative or scheme != "file":
-                    filename = relpath(abspath(path), start=cfa_dir)
+            if len(filenames) > max_files:
+                max_files = len(filenames)
 
-            if substitutions:
-                for base, sub in substitutions:
-                    filename = filename.replace(sub, base)
+            filenames2 = []
+            for filename in filenames:
+                parsed_filename = urlparse(filename)
+                scheme = parsed_filename.scheme
+                if scheme not in ("http", "https"):
+                    path = parsed_filename.path
+                    if absolute:
+                        filename = PurePath(abspath(path)).as_uri()
+                    elif relative or scheme != "file":
+                        filename = relpath(abspath(path), start=cfa_dir)
 
-            aggregation_file.append(filename)
-            aggregation_address.append(address)
-            aggregation_format.append(fmt)
+                if substitutions:
+                    for base, sub in substitutions:
+                        filename = filename.replace(sub, base)
+
+                filenames2.append(filename)
+
+            aggregation_file.append(tuple(filenames2))
+            aggregation_address.append(addresses)
+            aggregation_format.append(formats)
 
         shape = data.numblocks
+
+        padded = False
+        if max_files > 1:
+            # Pad the ...
+            for i, (filenames, addresses, formats) in enumerate(
+                zip(aggregation_file, aggregation_address, aggregation_format)
+            ):
+                n = max_files - len(filenames)
+                if n:
+                    pad = ("",) * n
+                    aggregation_file[i] = filenames + pad
+                    aggregation_address[i] = (
+                        addresses + pad
+                    )  # worry about pad datatype
+                    aggregation_format[i] = formats + pad
+                    padded = True
+
+            shape += (max_files,)
+
         aggregation_file = np.array(aggregation_file).reshape(shape)
         aggregation_address = np.array(aggregation_address).reshape(shape)
         aggregation_format = np.array(aggregation_format).reshape(shape)
+
+        if padded:
+            # Mask padded elements
+            aggregation_file = np.ma.where(
+                aggregation_file == "", np.ma.masked, aggregation_file
+            )
+            mask = aggregation_file.mask
+            aggregation_address = np.ma.array(aggregation_address, mask=mask)
+            aggregation_format = np.ma.array(aggregation_format, mask=mask)
 
         # Location
         dtype = np.dtype(np.int32)

@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from ..array.netcdfarray import NetCDFArray
 from .mixin import FragmentArrayMixin
 
@@ -26,8 +28,8 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
         :Parameters:
 
-            filename: `str`
-                The name of the netCDF fragment file containing the
+            filenames: `tuple`
+                The names of the netCDF fragment files containing the
                 array.
 
             address: `str`, optional
@@ -70,7 +72,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
         group = None  # TODO ???
 
         super().__init__(
-            filename=filename,
+            filename=filenames,
             ncvar=address,
             group=group,
             dtype=dtype,
@@ -100,4 +102,39 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
+        )
+
+    def open(self):
+        """Returns an open dataset containing the data array.
+
+        When multiple fragment files have been provided an attempt is
+        made to open each one, in arbitrary order, and the
+        `netCDF4.Dataset` is returned from the first success.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `netCDF4.Dataset`
+
+        """
+        filenames = self.get_filenames()
+        for filename, address in zip(filenames, self.get_addresses()):
+            url = urlparse(filename)
+            if url.scheme == "file":
+                # Convert file URI into an absolute path
+                filename = url.path
+
+            try:
+                nc = netCDF4.Dataset(filename, "r")
+            except FileNotFoundError:
+                continue
+            except RuntimeError as error:
+                raise RuntimeError(f"{error}: {filename}")
+
+            self._set_component("ncvar", address, copy=False)
+            return nc
+            
+        raise FileNotFoundError(
+            f"No such netCDF fragment files: {tuple(filenames)}"
         )
