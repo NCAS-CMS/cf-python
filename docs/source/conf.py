@@ -101,6 +101,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_toggleprompt",
     "sphinxcontrib.spelling",
+    "sphinx_gallery.gen_gallery",
 ]
 
 
@@ -124,7 +125,7 @@ autoclass_content = "both"
 
 # This value selects how automatically documented members are sorted
 # (http://sphinx-doc.org/latest/ext/autodoc.html)
-autodoc_member_order = "groupwise"
+autodoc_member_order = "bysource"
 
 # This value is a list of autodoc directive flags that should be
 # automatically applied to all autodoc
@@ -373,6 +374,16 @@ html_show_sourcelink = False
 # Output file base name for HTML help builder.
 htmlhelp_basename = "cfdoc"
 
+# sphinx-gallery configuration
+sphinx_gallery_conf = {
+    "examples_dirs": "../examples",  # path to your example scripts
+    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
+    "run_stale_examples": True,
+    "inspect_global_variables": True,
+    "reference_url": {"cf": None},
+    "backreferences_dir": "generated",
+    "doc_module": "cf",
+}
 
 # -- Options for LaTeX output -------------------------------------------------
 

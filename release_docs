@@ -11,8 +11,8 @@ fi
 version=`python -c "import cf; print(cf.__version__)"`
 
 sphinx_version=`python -c "import sphinx; print(sphinx.__version__)"`
-if [[ $sphinx_version != "2.4.5"  ]] ; then
-  echo "ERROR: Must use sphinx version 2.4.5. Got $version"
+if [[ $sphinx_version != "5.3.0"  ]] ; then
+  echo "ERROR: Must use sphinx version 5.3.0. Got $version"
   exit 3
 fi
 
