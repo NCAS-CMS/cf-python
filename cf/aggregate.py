@@ -883,9 +883,7 @@ class _Meta:
                 # Still here?
                 _canonical_units[identity].append(var_units)
         else:
-            if var_units:
-                _canonical_units[identity] = [var_units]
-            elif relaxed_units and not var_units.isvalid:
+            if var_units or (relaxed_units and not var_units.isvalid):
                 _canonical_units[identity] = [var_units]
             elif relaxed_units or variable.dtype.kind in ("S", "U"):
                 return _no_units
