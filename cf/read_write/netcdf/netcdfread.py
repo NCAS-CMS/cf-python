@@ -20,7 +20,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def cfa_standard_terms(self):
         """Standardised CFA aggregation instruction terms.
 
-        These are found in the ``aggregation_data`` attributes.
+        These are found in the ``aggregation_data`` attribute.
 
         .. versionadded:: TODOCFAVER
 
@@ -227,9 +227,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # ------------------------------------------------------------
         if construct is not None:
             # Remove the aggregation attributes from the construct
-            # properties
-            #            for attr in ("aggregation_dimensions", "aggregation_data"):
-            #                self.implementation.del_property(construct, attr, None)
             self.implementation.del_property(
                 construct, "aggregation_dimensions", None
             )
@@ -282,7 +279,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if aggregation_data:
                 ad = split("\s+", aggregation_data)
                 aggregation_data = {
-                    k[:-1]: v for k, v in zip(ad[::2], ad[1::2])
+                    term[:-1]: var for term, var in zip(ad[::2], ad[1::2])
                 }
                 data.nc_set_cfa_aggregation_data(aggregation_data)
 

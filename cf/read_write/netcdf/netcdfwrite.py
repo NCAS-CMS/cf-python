@@ -363,7 +363,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         ggg = self._ggg(data)
 
-        # Get the location netCDF dimensions
+        # ------------------------------------------------------------
+        # Get the location netCDF dimensions. These always start with
+        # "cfa_".
+        # ------------------------------------------------------------
         location_ncdimensions = []
         for size in ggg["location"].shape:
             l_ncdim = self._netcdf_name(
@@ -375,7 +378,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             location_ncdimensions.append(l_ncdim)
 
-        # Get the fragment netCDF dimensions
+        # ------------------------------------------------------------
+        # Get the fragment netCDF dimensions. These always start with
+        # "f_".
+        # ------------------------------------------------------------
         aggregation_address = ggg["aggregation_address"]
         fragment_ncdimensions = []
         for ncdim, size in zip(ncdimensions, aggregation_address.shape):
@@ -405,9 +411,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Write the standardised aggregation instruction variables to
         # the CFA-netCDF file
         # ------------------------------------------------------------
-        aggregation_data = data.nc_get_cfa_aggregation_data(default={})
+        aggregated_data = data.nc_get_cfa_aggregated_data(default={})
 
-        aggregated_data = []
+        aggregated_data_attr = []
         for term, data in ggg.items():
             if term == "location":
                 dimensions = location_ncdimensions
@@ -423,11 +429,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             term_ncvar = self._cfa_write_term_variable(
                 data,
-                aggregation_data.get(term, f"cfa_{term}"),
+                aggregated_data.get(term, f"cfa_{term}"),
                 dimensions,
             )
 
-            aggregated_data.append(f"{term}: {term_ncvar}")
+            aggregated_data_attr.append(f"{term}: {term_ncvar}")
 
         # ------------------------------------------------------------
         # Look for non-standard CFA terms stored as field ancillaries
@@ -435,9 +441,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # ------------------------------------------------------------
         if self.implementation.is_field(cfvar):
             non_standard_terms = self._cfa_write_non_standard_terms(
-                cfvar, fragment_ncdimensions[:ndim], aggregation_data
+                cfvar, fragment_ncdimensions[:ndim], aggregated_data
             )
-            aggregated_data.extend(non_standard_terms)
+            aggregated_data_attr.extend(non_standard_terms)
 
         # ------------------------------------------------------------
         # Add the CFA aggregation variable attributes
@@ -447,7 +453,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             ncvar,
             extra={
                 "aggregated_dimensions": " ".join(ncdimensions),
-                "aggregated_data": " ".join(aggregated_data),
+                "aggregated_data": " ".join(aggregated_data_attr),
             },
         )
 
@@ -717,19 +723,19 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return np.ma.masked_all(out_shape, dtype=a.dtype)
 
     def _ggg(self, data):
-        """
+        """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
 
-        f = cf.example_field(0)
-        cf.write(f, "file_A.nc")
-        cf.write(f, "file_B.nc")
+        :Parameters:
 
-        a = cf.read("file_A.nc", chunks=4)[0].data
-        b = cf.read("file_B.nc", chunks=4)[0].data
-        c = cf.Data(b.array, units=b.Units, chunks=4)
-        d = cf.Data.concatenate([a, a.copy(), b, c], axis=1)
+            data: `Data`
+                TODOCFADOCS
 
+        :Returns:
+
+            `dict`
+                TODOCFADOCS
 
         """
         from os.path import abspath, relpath
@@ -756,13 +762,16 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         aggregation_address = []
         aggregation_format = []
 
-        # Maximum number of files defined on a fragments
+        # Maximum number of files defined for any one fragment
         max_files = 0
 
         for indices in data.chunk_indices():
             a = self[indices].get_filenames(address_format=True)
             if len(a) != 1:
-                raise ValueError("TODOCFADOCS")
+                raise ValueError(
+                    "Can't write CFA variable when a dask storage chunk "
+                    "spans two or more fragment files"
+                )
 
             filenames, addresses, formats = a.pop()
 

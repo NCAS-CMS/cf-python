@@ -3772,31 +3772,47 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.concatenate(dxs, axis=axis)
 
         # Set the CFA write status
-        CFA = _CFA
+        #
+        # Assume at first that all input data instance have True
+        # status, but ...
+        cfa = _CFA
         for d in processed_data:
             if not d.get_cfa_write():
-                # Set the CFA write status to False when any input
+                # ... the CFA write status is False when any input
                 # data instance has False status
-                CFA = _NONE
+                cfa = _NONE
                 break
 
-        if not CFA:
+        if cfa != _NONE:
             non_concat_axis_chunks0 = list(processed_data[0].chunks)
             non_concat_axis_chunks0.pop(axis)
             for d in processed_data[1:]:
                 non_concat_axis_chunks = list(d.chunks)
                 non_concat_axis_chunks.pop(axis)
                 if non_concat_axis_chunks != non_concat_axis_chunks0:
-                    # Set the CFA write status to False when input
-                    # data instances have different chunk patterns for
-                    # the non-concatenated axes
-                    CFA = _NONE
+                    # ... the CFA write status is False when any two
+                    # input data instances have different chunk
+                    # patterns for the non-concatenated axes
+                    cfa = _NONE
                     break
 
         # Set the new dask array
-        data0._set_dask(dx, clear=_ALL ^ CFA)
+        data0._set_dask(dx, clear=_ALL ^ cfa)
 
-        # Manage cyclicity of axes: if join axis was cyclic, it is no longer
+        # Set the CFA-netCDF aggregated_data instructions, giving
+        # precedence to those towards the left hand side of the input
+        # list.
+        if data0.get_cfa_write():
+            aggregated_data = {}
+            for d in processed_data[::-1]:
+                if d.get_cfa_write():
+                    aggregated_data.update(d.nc_get_cfa_aggregated_data({}))
+
+            if aggregated_data:
+                data0.nc_set_cfa_aggregated_data(aggregated_data)
+
+        # Manage cyclicity of axes: if join axis was cyclic, it is no
+        # longer.
         axis = data0._parse_axes(axis)[0]
         if axis in data0.cyclic():
             logger.warning(
@@ -5970,18 +5986,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         return self._custom.get("cfa_write", False)
-
-        #    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
-        #        """Returns the data.##
-        #
-        #        .. versionadded:: 3.0.0#
-        #
-        #        :Returns:##
-        #
-        #            `Data`##
-        #
-        #        """
-        return self
 
     def get_filenames(self, address_format=False):
         """The names of files containing parts of the data array.
