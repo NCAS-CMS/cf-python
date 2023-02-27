@@ -396,13 +396,17 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             f_ncdim = self._netcdf_name(
                 "f_extra", dimsize=size, role="cfa_fragment"
             )
-            self._write_dimension(f_ncdim, None, size=size)
+            if f_ncdim not in g["dimensions"]:
+                self._write_dimension(f_ncdim, None, size=size)
+
             fragment_ncdimensions.append(f_ncdim)
 
         # ------------------------------------------------------------
         # Write the standardised aggregation instruction variables to
         # the CFA-netCDF file
         # ------------------------------------------------------------
+        aggregation_data = data.nc_get_cfa_aggregation_data(default={})
+
         aggregated_data = []
         for term, data in ggg.items():
             if term == "location":
@@ -419,7 +423,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             term_ncvar = self._cfa_write_term_variable(
                 data,
-                f"cfa_{term}",
+                aggregation_data.get(term, f"cfa_{term}"),
                 dimensions,
             )
 
@@ -431,7 +435,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # ------------------------------------------------------------
         if self.implementation.is_field(cfvar):
             non_standard_terms = self._cfa_write_non_standard_terms(
-                cfvar, fragment_ncdimensions[:ndim]
+                cfvar, fragment_ncdimensions[:ndim], aggregation_data
             )
             aggregated_data.extend(non_standard_terms)
 
@@ -605,18 +609,28 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return ncvar
 
-    def _cfa_write_non_standard_terms(self, cfvar, fragment_ncdimensions):
+    def _cfa_write_non_standard_terms(
+        self, field, fragment_ncdimensions, aggregation_data
+    ):
         """TODOCFADOCS
 
         Look for non-standard CFA terms stored as field ancillaries
 
         .. versionadded:: TODOCFAVER
 
+        :Parameters:
+
+            field: `Field`
+
+            fragment_ncdimensions: `list` of `str`
+
+            aggregation_data: `dict`
+
         """
         aggregated_data = []
-        non_standard_terms = []
+        terms = ["location", "file", "address", "format"]
         for key, field_anc in self.implementation.get_field_ancillaries(
-            cfvar
+            field
         ).items():
             if not field_anc._custom.get("cfa_term", False):
                 continue
@@ -627,7 +641,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             # Check that the field ancillary has the same axes as the
             # parent field, and in the same order.
-            if cfvar.get_data_axes(key) != cfvar.get_data_axes():
+            if field.get_data_axes(key) != field.get_data_axes():
                 continue
 
             # Still here? Then this field ancillary represent a
@@ -656,13 +670,17 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             term = term.replace(" ", "_")
             base = term
             n = 0
-            while term in non_standard_terms:
+            while term in terms:
                 n += 1
                 term = f"{base}_{n}"
 
+            terms.append(term)
+
             # Create the new CFA term variable
             term_ncvar = self._cfa_write_term_variable(
-                type(data)(array), f"cfa_{term}", fragment_ncdimensions
+                type(data)(array),
+                aggregation_data.get(term, f"cfa_{term}"),
+                fragment_ncdimensions,
             )
 
             aggregated_data.append(f"{term}: {term_ncvar}")

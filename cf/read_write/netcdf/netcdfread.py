@@ -1,3 +1,5 @@
+from re import split
+
 import cfdm
 import numpy as np
 from packaging.version import Version
@@ -226,8 +228,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if construct is not None:
             # Remove the aggregation attributes from the construct
             # properties
-            for attr in ("aggregation_dimensions", "aggregation_data"):
-                self.implementation.del_property(construct, attr, None)
+            #            for attr in ("aggregation_dimensions", "aggregation_data"):
+            #                self.implementation.del_property(construct, attr, None)
+            self.implementation.del_property(
+                construct, "aggregation_dimensions", None
+            )
+            aggregation_data = self.implementation.del_property(
+                construct, "aggregation_data", None
+            )
 
         if not cfa_term:
             cfa_array, kwargs = self._create_cfanetcdfarray(
@@ -257,11 +265,26 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 cfa_array.get_fragment_shape(), data.numblocks
             ):
                 if n == 1 and numblocks > 1:
-                    # Each fragment spans multiple compute chunks
+                    # Each fragment spans multiple compute
+                    # chunks.
+                    #
+                    # Note: We test on 'n == 1' because we're assuming
+                    #       that each fragment already spans one chunk
+                    #       along those axes for whioch 'n > 1'. See
+                    #       `CFANetCDFArray.to_dask_array` for
+                    #       details.
                     cfa_write = False
                     break
 
             data._set_cfa_write(cfa_write)
+
+            # Store the 'aggregation_data' attribute
+            if aggregation_data:
+                ad = split("\s+", aggregation_data)
+                aggregation_data = {
+                    k[:-1]: v for k, v in zip(ad[::2], ad[1::2])
+                }
+                data.nc_set_cfa_aggregation_data(aggregation_data)
 
         # Note: We don't cache elements from aggregated data
 
@@ -767,8 +790,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             parent_ncvar, attributes.get("aggregated_data")
         )
         standardised_terms = self.cfa_standard_terms()
+        #        cfa_terms = {}
         for x in parsed_aggregated_data:
             term, ncvar = tuple(x.items())[0]
+            #            cfa_terms[term] = ncvar
             if term in standardised_terms:
                 continue
 

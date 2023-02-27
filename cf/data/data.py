@@ -36,7 +36,9 @@ from ..functions import (
     parse_indices,
     rtol,
 )
-from ..mixin_container import Container
+
+# from ..mixin_container import Container
+from ..mixin2 import CFANetCDF, Container
 from ..units import Units
 from .collapse import Collapse
 from .creation import (  # is_file_array,
@@ -99,10 +101,10 @@ _NONE = 0  # =  0b000000
 _ARRAY = 1  # = 0b000001
 _CACHE = 2  # = 0b000010
 _CFA = 4  # =   0b000100
-_ALL = 63  # =  0b111111
+_ALL = 7  # =   0b000111
 
 
-class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
+class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with

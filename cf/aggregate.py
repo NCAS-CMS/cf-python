@@ -398,7 +398,6 @@ class _Meta:
                         "coordrefs": self.find_coordrefs(axis),
                     }
                 )
-            #                     'size'     : None})
 
             # Find the 1-d auxiliary coordinates which span this axis
             aux_coords = {

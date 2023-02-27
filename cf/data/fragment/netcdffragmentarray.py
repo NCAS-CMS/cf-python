@@ -88,8 +88,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
         if source is not None:
             try:
-                address = source._get_component(                 "address", False
-                )
+                address = source._get_component("address", False)
             except AttributeError:
                 address = None
 
@@ -109,7 +108,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
         if address is not None:
             self._set_component("address", address, copy=False)
-            
+
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
