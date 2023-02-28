@@ -808,8 +808,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             aggregation_address.append(addresses)
             aggregation_format.append(formats)
 
-        # Pad each aggregation instruction array value so that it has
-        # 'n_trailing' elements
+        # Pad each value of the aggregation instruction arrays so that
+        # it has 'n_trailing' elements
         a_shape = data.numblocks
         pad = None
         if n_trailing > 1:
@@ -829,8 +829,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
                     aggregation_address[i] = addresses + pad
 
-        # Reshape the 1-d arrays to span the data dimensions, plus the
-        # extra trailing dimension if there is one.
+        # Reshape the 1-d aggregation instruction arrays to span the
+        # data dimensions, plus the extra trailing dimension if there
+        # is one.
         aggregation_file = np.array(aggregation_file).reshape(a_shape)
         aggregation_address = np.array(aggregation_address).reshape(a_shape)
         aggregation_format = np.array(aggregation_format).reshape(a_shape)
