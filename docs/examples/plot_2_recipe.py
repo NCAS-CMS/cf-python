@@ -9,11 +9,10 @@ In this recipe we will calculate and plot the global average temperature anomali
 # 1. Import cf-python and cf-plot:
 
 import cfplot as cfp
-
 import cf
 
 # %%
-# 2. Read the field constructs using read function:
+# 2. Read the field constructs:
 
 f = cf.read("/home/ankit/recipes/cru_ts4.06.1901.2021.tmp.dat.nc")
 print(f)
@@ -25,18 +24,18 @@ temp = f[1]
 print(temp)
 
 # %%
-# 4. Select latitude and longitude dimensions by identities, with two different techniques, using the coordinate method:
+# 4. Select latitude and longitude dimensions by identities, with two different techniques:
 
 lon = temp.coordinate("long_name=longitude")
 lat = temp.coordinate("Y")
 
 # %%
-# 5. Print the desciption of near surface temperature using the dump method to show properties of all constructs:
+# 5. Print the desciption of near surface temperature to show properties of all constructs:
 
 temp.dump()
 
 # %%
-# 6. Latitude and longitude dimension coordinate cell bounds are absent, but they can be created using create_bounds and set using set_bounds:
+# 6. Latitude and longitude dimension coordinate cell bounds are absent, which are created and set:
 
 a = lat.create_bounds()
 lat.set_bounds(a)
@@ -66,16 +65,14 @@ time.dump()
 global_avg = temp.collapse("area: mean", weights=True)
 
 # %%
-# 9. Calculate the annual global mean surface temperature using cfplot.lineplot:
+# 9. Calculate the annual global mean surface temperature:
 
 annual_global_avg = global_avg.collapse("T: mean", group=cf.Y())
 
 # %%
-# 10. The temperature values are averaged for the climatological period of 1961-1990 by defining a subspace within these years using cf.wi query instance over subspace and doing a statistical collapse with the collapse method:
+# 10. The temperature values are averaged for the climatological period of 1961-1990 by defining a subspace within these years using `cf.wi` query instance over subspace and doing a statistical collapse with the collapse method:
 
-annual_global_avg_61_90 = annual_global_avg.subspace(
-    T=cf.year(cf.wi(1961, 1990))
-)
+annual_global_avg_61_90 = annual_global_avg.subspace(T=cf.year(cf.wi(1961, 1990)))
 print(annual_global_avg_61_90)
 
 # %%
@@ -84,7 +81,7 @@ temp_clim = annual_global_avg_61_90.collapse("T: mean")
 print(temp_clim)
 
 # %%
-# 11. The temperature anomaly is then calculated by subtracting these climatological temperature values from the annual global average temperatures and plotting them using lineplot:
+# 11. The temperature anomaly is then calculated by subtracting these climatological temperature values from the annual global average temperatures and plotted:
 
 temp_anomaly = annual_global_avg - temp_clim
 cfp.lineplot(

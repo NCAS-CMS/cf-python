@@ -9,11 +9,10 @@ In this recipe, we will plot the global mean temperature spatially.
 # 1. Import cf-python and cf-plot:
 
 import cfplot as cfp
-
 import cf
 
 # %%
-# 2. Read the field constructs using read function:
+# 2. Read the field constructs:
 
 f = cf.read("/home/ankit/recipes/cru_ts4.06.1901.2021.tmp.dat.nc")
 print(f)
@@ -30,6 +29,6 @@ print(temp)
 global_avg = temp.collapse("mean", axes="long_name=time")
 
 # %%
-# 5. Plot the global mean surface temperatures using using cfplot.con:
+# 5. Plot the global mean surface temperatures:
 
 cfp.con(global_avg, lines=False, title="Global mean surface temperature")

@@ -9,11 +9,10 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 # 1. Import cf-python and cf-plot:
 
 import cfplot as cfp
-
 import cf
 
 # %%
-# 2. Read the field constructs using `cf.read` function:
+# 2. Read the field constructs:
 
 f = cf.read("/home/ankit/recipes/cru_ts4.06.1901.2021.tmp.dat.nc")
 print(f)
@@ -25,7 +24,7 @@ temp = f[1]
 print(temp)
 
 # %%
-# 4. Select latitude and longitude dimensions by identities, with two different techniques, using the `~cf.Field.coordinate` method:
+# 4. Select latitude and longitude dimensions by identities, with two different techniques:
 
 lon = temp.coordinate("long_name=longitude")
 lat = temp.coordinate("Y")
@@ -36,7 +35,7 @@ lat = temp.coordinate("Y")
 temp.dump()
 
 # %%
-# 6. Latitude and longitude dimension coordinate cell bounds are absent, but they can be created using create_bounds and set using set_bounds:
+# 6. Latitude and longitude dimension coordinate cell bounds are absent, which are created and set:
 
 a = lat.create_bounds()
 lat.set_bounds(a)
@@ -61,13 +60,13 @@ time.set_bounds(c)
 time.dump()
 
 # %%
-# 8. Calculate and plot the area weighted mean surface temperature for each time using the collapse method:
+# 8. Calculate and plot the area weighted mean surface temperature for each time:
 
 global_avg = temp.collapse("area: mean", weights=True)
 cfp.lineplot(global_avg, color="red", title="Global mean surface temperature")
 
 # %%
-# 9. Calculate and plot the annual global mean surface temperature using cfplot.lineplot:
+# 9. Calculate and plot the annual global mean surface temperature:
 
 annual_global_avg = global_avg.collapse("T: mean", group=cf.Y())
 cfp.lineplot(

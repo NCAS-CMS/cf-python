@@ -9,11 +9,10 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 # 1. Import cf-python and cf-plot:
 
 import cfplot as cfp
-
 import cf
 
 # %%
-# 2. Read the field constructs using read function:
+# 2. Read the field constructs:
 
 f1 = cf.read("/home/ankit/recipes/northward.nc")
 print(f1)
@@ -44,7 +43,7 @@ pre = f3[0]
 print(pre)
 
 # %%
-# 4. Plot the wind vectors on top of precipitation data for June 1995 by creating a subspace with a date-time object (cf.dt) and using cfplot.con. Here cfplot.gopen is used to define the parts of the plot area, which is closed by cfplot.gclose; cfplot.cscale is used to choose one of the colour maps amongst many available; cfplot.levs is used to set the contour levels for precipitation data; and cfplot.vect is used to plot the wind vectors for June 1995:
+# 4. Plot the wind vectors on top of precipitation data for June 1995 by creating a subspace with a date-time object and using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to define the parts of the plot area, which is closed by `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_; `cfplot.cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to choose one of the colour maps amongst many available; `cfplot.levs <http://ajheaps.github.io/cf-plot/levs.html>`_ is used to set the contour levels for precipitation data; and `cfplot.vect <http://ajheaps.github.io/cf-plot/vect.html>`_ is used to plot the wind vectors for June 1995:
 june_95 = cf.year(1995) & cf.month(6)
 cfp.gopen()
 cfp.cscale("precip4_11lev")
