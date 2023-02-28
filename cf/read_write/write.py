@@ -364,71 +364,6 @@ def write(
             external to the named external file. Ignored if there are
             no such constructs.
 
-        cfa_options: `dict`, optional
-            A dictionary defining parameters for configuring the
-            output CFA-netCDF file:
-
-            =================  =======================================
-            Key                Value
-            =================  =======================================
-
-            ``paths`` -------- How to write fragment file names. Set
-                               to ``'relative'`` for them to be
-                               written as relative to the CF_netCDF
-                               file being created, or else set to
-                               ``'absolute'`` for them to be written
-                               as file URIs. Note that in either case,
-                               fragment file names defined by fully
-                               qualified URLs will always be written
-                               as such.
-
-            ``metadata`` ----- The types of construct to be written as
-                               CFA-netCDF aggregated variables. By
-                               default all metadata constructs field
-                               data and the data Nd metadata
-                               constructs. What about UGRID, for which
-                               the 1-d coords are, combined,
-                               muchlarger than the data .... TODO What
-                               about DSG and compression in general?
-
-            ``substitutions``- A dictionary whose key/value pairs
-                               define text substitutions to be applied
-                               to the fragment file URIs when the
-                               output CFA-netCDF file is subsequently
-                               read. Each key must be of the form
-                               ``'${...}'``, where ``...`` represents
-                               one or more letters, digits, and
-                               underscores. The substitutions are
-                               stored in the output file by the
-                               ``substitutions`` attribute of the
-                               ``file`` aggregation instruction
-                               variable.
-
-            ``properties``---- A (sequence of) `str` defining one or
-                               more properties of the fields
-                               represented by each file frgament. For
-                               each property specified, the fragment
-                               values are written to the output
-                               CFA-netCDF file as non-standardised
-                               aggregation instruction variables whose
-                               term name is the same as the property
-                               name. When the output file is read in
-                               with `cf.read` these variables are
-                               converted to field ancillary
-                               constructs.
-
-            ``'base'``         Deprecated at version 3.14.0 and no
-                               longer available.
-            =================  =======================================
-
-            The default of *cfa_options* is ``{'paths': 'relative'}``.
-
-            *Parameter example:*
-              ``cfa_options={'substitutions': {'${base}': '/home/data/'}}``
-
-            *Parameter example:*
-              ``cfa_options={'properties': 'tracking_id'}``
-
         endian: `str`, optional
             The endian-ness of the output file. Valid values are
             ``'little'``, ``'big'`` or ``'native'``. By default the
@@ -657,6 +592,124 @@ def write(
 
             .. versionadded:: 3.14.0
 
+        cfa_options: `dict`, optional
+            A dictionary defining parameters for configuring the
+            output CFA-netCDF file:
+
+            ===================  =====================================
+            Key                  Value
+            ===================  =====================================
+
+            ``'paths'`` -------- How to write fragment file names. Set
+                                 to ``'relative'`` (the default) for
+                                 them to be written as relative to the
+                                 CFA-netCDF file being created, or
+                                 else set to ``'absolute'`` for them
+                                 to be written as file URIs. Note that
+                                 in both cases, fragment file names
+                                 defined by fully qualified URLs will
+                                 always be written as such.
+
+            ``'constructs'`` --- The types of construct to be written
+                                 as CFA-netCDF aggregated
+                                 variables. By default only field
+                                 constructs are written as CFA-netCDF
+                                 aggregated variables.
+                              
+                                 The types are given as a (sequence
+                                 of) `str`, which may take the same
+                                 values as allowed by the *omit_data*
+                                 parameter.
+                                 
+                                 Alternatively, the types may be given
+                                 as keys to a `dict`, whose values
+                                 specify the number of dimensions that
+                                 the construct must also have if it is
+                                 to be written as CFA-netCDF
+                                 aggregated variable. A value of
+                                 `None` means no restriction on the
+                                 number of dimensions, which is
+                                 equivalent to a value of
+                                 ``cf.ge(0)``.
+                                 
+                                 Note that size 1 data arrays are
+                                 never written as CFA-netCDF
+                                 aggregated variables, regardless of
+                                 the whether or not this has been
+                                 requested.
+
+            ``'substitutions'``- A dictionary whose key/value pairs
+                                 define text substitutions to be
+                                 applied to the fragment file URIs
+                                 when the output CFA-netCDF file is
+                                 subsequently read. Each key must be a
+                                 string of one or more letters,
+                                 digits, and underscores. These
+                                 substitutions take precendence over
+                                 any that are also defined on
+                                 individual constructs.
+
+                                 Substitutions are stored in the
+                                 output file by the ``substitutions``
+                                 attribute of the ``file`` aggregation
+                                 instruction variable.
+
+            ``'properties'``---- For fragments that define a field
+                                 construct's data, a (sequence of)
+                                 `str` defining one or more properties
+                                 of the file fragments. For each
+                                 property specified, the value of that
+                                 property from each fragment is
+                                 written to the output CFA-netCDF file
+                                 in a non-standardised aggregation
+                                 instruction variable whose term name
+                                 is the same as the property name.
+
+                                 When the output file is read in with
+                                 `cf.read` these variables are
+                                 converted to field ancillary
+                                 constructs.
+
+            ``'base'``           Deprecated at version 3.14.0 and no
+                                 longer available.
+            ===================  =====================================
+
+            The default of *cfa_options* is ``{'path': 'relative',
+            'construct': 'field'}``.
+
+            *Parameter example:*
+              ``cfa_options={'substitution': {'base': '/home/data/'}}``
+
+            *Parameter example:*
+              ``cfa_options={'property': 'tracking_id'}``
+
+            *Parameter example:*
+              Equivalent ways to only write cell measure constructs as
+              CFA-netCDF variables: ``cfa_options={'constructs':
+              'cell_measure'}`` and ``cfa_options={'constructs':
+              ['cell_measure']}`` and ``cfa_options={'constructs':
+              {'cell_measure': None}}``
+
+            *Parameter example:*
+              Equivalent ways to only write field and auxiliary
+              coordinate constructs as CFA-netCDF variables:
+              ``cfa_options={'constructs': ['field',
+              'auxiliary_coordinate']}`` and
+              ``cfa_options={'constructs': {'field': None,
+              'auxiliary_coordinate': None}}``
+
+            *Parameter example:* 
+              Only write two dimensional auxiliary coordinate
+              constructs as CFA-netCDF variables:
+              ``cfa_options={'constructs': {'auxiliary_coordinate':
+              2}}``
+
+            *Parameter example:*
+              Only write auxiliary coordinate constructs with two or
+              more dimensions as CFA-netCDF variables:
+              ``cfa_options={'constructs': {'auxiliary_coordinate':
+              cf.ge(2)}}``
+
         HDF_chunksizes: deprecated at version 3.0.0
             HDF chunk sizes may be set for individual constructs prior
             to writing, instead. See `cf.Data.nc_set_hdf5_chunksizes`.
@@ -774,7 +827,9 @@ def write(
         else:
             cfa = False
 
-        if cfa:
+        if not cfa:
+            cfa_options = {}
+        else:
             # Add CFA to the Conventions
             if not Conventions:
                 Conventions = CFA()
@@ -788,7 +843,7 @@ def write(
                 cfa_options = {}
             else:
                 cfa_options = cfa_options.copy()
-                keys = ("paths", "metadata", "group", "substitutions")
+                keys = ("paths", "constructs", "substitutions", "properties")
                 if not set(cfa_options).issubset(keys):
                     raise ValueError(
                         "Invalid dictionary key to the 'cfa_options' "
@@ -796,19 +851,33 @@ def write(
                         f"Got: {tuple(cfa_options)}"
                     )
 
-            if "metadata" not in cfa_options:
-                cfa_options["metadata"] = ((None, None),)
-            else:
-                metadata = cfa_options["metadata"]
-                if isinstance(metadata, str):
-                    cfa_options["metadata"] = ((metadata, None),)
-                elif isinstance(metadata[0], str):
-                    cfa_options["metadata"] = (metadata,)
-
             cfa_options.setdefault("paths", "relative")
-        else:
-            cfa_options = {}
+            cfa_options.setdefault("constructs", "field")
+            cfa_options.setdefault("substitutions", {})
+            cfa_options.setdefault("properties", ())
+            
+            constructs = cfa_options["constructs"]
+            if isinstance(constructs, dict):
+                cfa_options["constructs"] = constructs.copy()
+            else:
+                if isinstance(constructs, str):
+                    constructs = (constructs,)
+                    
+                cfa_options["constructs"] = {c: None for c in constructs}
 
+            substitutions = cfa_options["substitutions"].copy()
+            for base, sub in substitutions.items():
+                if base.startswith("${") and base.endswith("}"):
+                    substitutions[base[2:-1]] = substitutions.pop(base)
+                    
+            cfa_options["substitutions"] = substitutions
+
+            properties = cfa_options["properties"]
+            if isinstance(properties, str):
+                properties = (properties,)
+
+            cfa_options["properties"] =  tuple(properties)
+            
         extra_write_vars["cfa"] = cfa
         extra_write_vars["cfa_options"] = cfa_options
 

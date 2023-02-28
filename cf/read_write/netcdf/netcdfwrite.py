@@ -38,8 +38,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         :Returns:
 
             `bool`
-                True if the variable is to be should be written as a
-                CFA variable.
+                True if the variable is to be written as a CFA
+                variable.
 
         """
         g = self.write_vars
@@ -56,10 +56,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         if data.size == 1:
             return False
 
-        if construct_type == "field":
-            return True
-
-        for ctype, ndim in g["cfa_options"]["metadata"]:
+        for ctype, ndim in g["cfa_options"]["constructs"]:
             # Write as CFA if it has an appropriate construct type ...
             if ctype in ("all", construct_type):
                 # ... and then only if it satisfies the number of
@@ -748,7 +745,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         g = self.write_vars
 
-        # Define the CFA file susbstitutions
+        # Define the CFA file susbstitutions, giving precedence over
+        # those set on the Data object to those provided by the CFA
+        # options.
         substitutions  = data.cfa_get_file_substitutions()
         substitutions.update(g["cfa_options"].get("substitutions"))
         

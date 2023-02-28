@@ -1,2 +1,2 @@
-from .netcdf import CFANetCDF
+from .cfanetcdf import CFANetCDF
 from .container import Container
