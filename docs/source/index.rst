@@ -23,7 +23,7 @@
    cf_data_model
    installation
    contributing
-   recipes
+   auto_gallery/index
    tutorial
    analysis
    api_reference
