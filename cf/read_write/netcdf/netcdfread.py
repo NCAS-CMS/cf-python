@@ -281,7 +281,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 aggregation_data = {
                     term[:-1]: var for term, var in zip(ad[::2], ad[1::2])
                 }
-                data.nc_set_cfa_aggregation_data(aggregation_data)
+                data.cfa_set_aggregation_data(aggregation_data)
+
+            # Store the file substitutions
+            data.cfa_set_file_substitutions(kwargs.get("substitutions"))
 
         # Note: We don't cache elements from aggregated data
 
@@ -617,7 +620,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if subs is None:
                 subs = {}
             else:
-                # Convert, e.g., "${BASE}: a" to {"${BASE}": "a"}
+                # Convert "${base}: value" to {"${base}": "value"}
                 subs = self.parse_x(term_ncvar, subs)
                 subs = {
                     key: value[0] for d in subs for key, value in d.items()

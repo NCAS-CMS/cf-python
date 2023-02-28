@@ -2473,8 +2473,110 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
+    def cfa_set_file_substitutions(self, value):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`
+                TODOCFADOCS
+
+            sub: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_set_file_substitution('base', '/data/model')
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            data.cfa_set_file_substitutions(value)
+
     @_inplace_enabled(default=False)
-    def cfa_add_fragment_location(self, location, inplace=False):
+    def cfa_clear_file_substitutions(self, inplace=False):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `dict`
+
+        **Examples**
+
+        >>> f.cfa_clear_file_substitutions()
+        {}
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return {}
+
+        return data.cfa_clear_file_substitutions({})
+
+    def cfa_del_file_substitution(
+        self,
+        base,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_del_file_substitution('base')
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            data.cfa_del_file_substitutions(base)
+
+    def cfa_get_file_substitutions(
+        self,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+
+        **Examples**
+
+        >>> g = f.cfa_get_file_substitutions()
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return {}
+
+        return data.cfa_get_file_substitutions({})
+
+    def cfa_add_fragment_location(
+        self,
+        location,
+    ):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
@@ -2483,8 +2585,6 @@ class PropertiesData(Properties):
 
             location: `str`
                 TODOCFADOCS
-
-            {{inplace: `bool`, optional}}
 
         :Returns:
 
@@ -2495,13 +2595,9 @@ class PropertiesData(Properties):
         >>> f.cfa_add_fragment_location('/data/model')
 
         """
-        f = _inplace_enabled_define_and_cleanup(self)
-
-        data = f.get_data(None)
+        data = self.get_data(None, _fill_value=False, _units=False)
         if data is not None:
-            data.add_fragment_location(location, inplace=True)
-
-        return f
+            data.cfa_add_fragment_location(location)
 
     def chunk(self, chunksize=None):
         """Partition the data array.

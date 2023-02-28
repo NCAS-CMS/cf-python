@@ -3,10 +3,12 @@ from urllib.parse import urlparse
 import netCDF4
 
 from ..array.netcdfarray import NetCDFArray
-from .mixin import FragmentArrayMixin
+from .mixin import FragmentArrayMixin, FragmentFileArrayMixin
 
 
-class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
+class NetCDFFragmentArray(
+    FragmentFileArrayMixin, FragmentArrayMixin, NetCDFArray
+):
     """A CFA fragment array stored in a netCDF file.
 
     .. versionadded:: 3.14.0
@@ -16,7 +18,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
     def __init__(
         self,
         filenames=None,
-        address=None,
+        addresses=None,
         dtype=None,
         shape=None,
         aggregated_units=False,
@@ -30,22 +32,22 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
         :Parameters:
 
-            filenames: `tuple`
+            filenames: sequence of `str`, optional
                 The names of the netCDF fragment files containing the
                 array.
 
-            address: `str`, optional
+            addresses: sequence of `str`, optional
                 The name of the netCDF variable containing the
                 fragment array. Required unless *varid* is set.
 
-            dtype: `numpy.dtype`
+            dtype: `numpy.dtype`, optional
                 The data type of the aggregated array. May be `None`
                 if the numpy data-type is not known (which can be the
                 case for netCDF string types, for example). This may
                 differ from the data type of the netCDF fragment
                 variable.
 
-            shape: `tuple`
+            shape: `tuple`, optional
                 The shape of the fragment within the aggregated
                 array. This may differ from the shape of the netCDF
                 fragment variable in that the latter may have fewer
@@ -74,23 +76,25 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
         group = None  # TODO ???
 
         super().__init__(
-            filename=filenames,
-            ncvar=address,
-            group=group,
             dtype=dtype,
             shape=shape,
             mask=True,
             units=units,
             calendar=calendar,
             source=source,
-            copy=False,
+            copy=copy,
         )
 
         if source is not None:
             try:
-                address = source._get_component("address", False)
+                filenames = source._get_component("filenames", None)
             except AttributeError:
-                address = None
+                filenames = None
+
+            try:
+                addresses = source._get_component("addresses ", None)
+            except AttributeError:
+                addresses = None
 
             try:
                 aggregated_units = source._get_component(
@@ -106,8 +110,11 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             except AttributeError:
                 aggregated_calendar = False
 
-        if address is not None:
-            self._set_component("address", address, copy=False)
+        if filenames:
+            self._set_component("filenames", tuple(filenames), copy=False)
+
+        if addresses:
+            self._set_component("addresses ", tuple(addresses), copy=False)
 
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
@@ -128,6 +135,8 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             `netCDF4.Dataset`
 
         """
+        # Loop round the files, returning as soon as we find one that
+        # works.
         filenames = self.get_filenames()
         for filename, address in zip(filenames, self.get_addresses()):
             url = urlparse(filename)
@@ -145,6 +154,4 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             self._set_component("ncvar", address, copy=False)
             return nc
 
-        raise FileNotFoundError(
-            f"No such netCDF fragment files: {tuple(filenames)}"
-        )
+        raise FileNotFoundError(f"No such netCDF fragment files: {filenames}")

@@ -361,16 +361,18 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         """
         g = self.write_vars
 
-        ggg = self._ggg(data)
+        ndim = data.ndim
+
+        ggg = self._ggg(data, cfvar)
 
         # ------------------------------------------------------------
         # Get the location netCDF dimensions. These always start with
-        # "cfa_".
+        # "f_loc_".
         # ------------------------------------------------------------
         location_ncdimensions = []
         for size in ggg["location"].shape:
             l_ncdim = self._netcdf_name(
-                f"cfa_{size}", dimsize=size, role="cfa_location"
+                f"f_loc_{size}", dimsize=size, role="cfa_location"
             )
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
@@ -378,13 +380,18 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             location_ncdimensions.append(l_ncdim)
 
+        location_ncdimensions = tuple(location_ncdimensions)
+
         # ------------------------------------------------------------
         # Get the fragment netCDF dimensions. These always start with
         # "f_".
         # ------------------------------------------------------------
         aggregation_address = ggg["aggregation_address"]
         fragment_ncdimensions = []
-        for ncdim, size in zip(ncdimensions, aggregation_address.shape):
+        for ncdim, size in zip(
+            ncdimensions + ("extra",) * (aggregation_address.ndim - ndim),
+            aggregation_address.shape,
+        ):
             f_ncdim = self._netcdf_name(
                 f"f_{ncdim}", dimsize=size, role="cfa_fragment"
             )
@@ -394,18 +401,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             fragment_ncdimensions.append(f_ncdim)
 
-        ndim = aggregation_address.ndim
-        if ndim == len(ncdimensions) + 1:
-            # Include an extra trailing dimension for the aggregation
-            # instruction variables
-            size = aggregation_address.shape[-1]
-            f_ncdim = self._netcdf_name(
-                "f_extra", dimsize=size, role="cfa_fragment"
-            )
-            if f_ncdim not in g["dimensions"]:
-                self._write_dimension(f_ncdim, None, size=size)
-
-            fragment_ncdimensions.append(f_ncdim)
+        fragment_ncdimensions = tuple(fragment_ncdimensions)
 
         # ------------------------------------------------------------
         # Write the standardised aggregation instruction variables to
@@ -567,11 +563,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         :Parameters:
 
-            f : `Field`
+            f: `Field`
 
-            key : `str`
+            key: `str`
 
-            anc : `FieldAncillary`
+            anc: `FieldAncillary`
 
         :Returns:
 
@@ -579,10 +575,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 The netCDF variable name of the field ancillary
                 object. If no ancillary variable was written then an
                 empty string is returned.
-
-        **Examples**
-
-        >>> ncvar = _write_field_ancillary(f, 'fieldancillary2', anc)
 
         """
         if anc._custom.get("cfa_term", False):
@@ -598,20 +590,30 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         .. versionadded:: TODOCFAVER
 
+        :Parameters:
+
+            data `Data`
+
+            ncvar: `str`
+
+            ncdimensions: `tuple` of `str`
+
         :Returns:
 
-            `list`
+            `str`
+                The netCDF variable name of the CFA term variable.
 
         """
         create = not self._already_in_file(data, ncdimensions)
 
-        if not create:
-            ncvar = self.write_vars["seen"][id(data)]["ncvar"]
-        else:
+        if create:
+            # Create a new CFA term variable in the file
             ncvar = self._netcdf_name(ncvar)
-
-            # Create a new CFA term variable
             self._write_netcdf_variable(ncvar, ncdimensions, data)
+        else:
+            # This CFA term variable has already been written to the
+            # file
+            ncvar = self.write_vars["seen"][id(data)]["ncvar"]
 
         return ncvar
 
@@ -722,7 +724,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return np.ma.masked_all(out_shape, dtype=a.dtype)
 
-    def _ggg(self, data):
+    def _ggg(self, data, cfvar):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
@@ -735,7 +737,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         :Returns:
 
             `dict`
-                TODOCFADOCS
+                A dictionary whose keys are the sandardised CFA
+                aggregation instruction terms, keyed by `Data`
+                instances containing the corresponding variables.
 
         """
         from os.path import abspath, relpath
@@ -744,11 +748,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         g = self.write_vars
 
-        substitutions = g["cfa_options"].get("substitutions")
-        if substitutions:
-            # TODO move this to global once
-            substitutions = tuple(substitutions.items())[::-1]
-
+        # Define the CFA file susbstitutions
+        substitutions  = data.cfa_get_file_substitutions()
+        substitutions.update(g["cfa_options"].get("substitutions"))
+        
         relative = g["cfa_options"].get("relative", None)
         if relative:
             absolute = False
@@ -758,25 +761,30 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         else:
             absolute = None
 
+        # Size of the trailing dimension
+        n_trailing = 0
+
         aggregation_file = []
         aggregation_address = []
         aggregation_format = []
-
-        # Maximum number of files defined for any one fragment
-        max_files = 0
-
         for indices in data.chunk_indices():
             a = self[indices].get_filenames(address_format=True)
             if len(a) != 1:
+                if a:
+                    raise ValueError(
+                        f"Can't write CFA variable from {cfvar!r} when a "
+                        "dask storage chunk spans two or more fragment files"
+                    )
+
                 raise ValueError(
-                    "Can't write CFA variable when a dask storage chunk "
-                    "spans two or more fragment files"
+                    f"Can't write CFA variable from {cfvar!r} when a "
+                    "dask storage chunk spans zero fragment files"
                 )
 
             filenames, addresses, formats = a.pop()
 
-            if len(filenames) > max_files:
-                max_files = len(filenames)
+            if len(filenames) > n_trailing:
+                n_trailing = len(filenames)
 
             filenames2 = []
             for filename in filenames:
@@ -790,7 +798,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                         filename = relpath(abspath(path), start=cfa_dir)
 
                 if substitutions:
-                    for base, sub in substitutions:
+                    # Apply the CFA file susbstitutions
+                    for base, sub in substitutions.items():
                         filename = filename.replace(sub, base)
 
                 filenames2.append(filename)
@@ -799,15 +808,18 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             aggregation_address.append(addresses)
             aggregation_format.append(formats)
 
-        shape = data.numblocks
-
+        # Pad each aggregation instruction array value so that it has
+        # 'n_trailing' elements
+        a_shape = data.numblocks
         pad = None
-        if max_files > 1:
+        if n_trailing > 1:
+            a_shape += (n_trailing,)
+
             # Pad the ...
             for i, (filenames, addresses, formats) in enumerate(
                 zip(aggregation_file, aggregation_address, aggregation_format)
             ):
-                n = max_files - len(filenames)
+                n = n_trailing - len(filenames)
                 if n:
                     pad = ("",) * n
                     aggregation_file[i] = filenames + pad
@@ -817,14 +829,14 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
                     aggregation_address[i] = addresses + pad
 
-            shape += (max_files,)
+        # Reshape the 1-d arrays to span the data dimensions, plus the
+        # extra trailing dimension if there is one.
+        aggregation_file = np.array(aggregation_file).reshape(a_shape)
+        aggregation_address = np.array(aggregation_address).reshape(a_shape)
+        aggregation_format = np.array(aggregation_format).reshape(a_shape)
 
-        aggregation_file = np.array(aggregation_file).reshape(shape)
-        aggregation_address = np.array(aggregation_address).reshape(shape)
-        aggregation_format = np.array(aggregation_format).reshape(shape)
-
+        # Mask any padded elements
         if pad:
-            # Mask padded elements
             aggregation_file = np.ma.where(
                 aggregation_file == "", np.ma.masked, aggregation_file
             )
@@ -832,7 +844,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             aggregation_address = np.ma.array(aggregation_address, mask=mask)
             aggregation_format = np.ma.array(aggregation_format, mask=mask)
 
-        # Location
+        # ------------------------------------------------------------
+        # Create the location array
+        # ------------------------------------------------------------
         dtype = np.dtype(np.int32)
         if max(data.to_dask_array().chunksize) > np.iinfo(dtype).max:
             dtype = np.dtype(np.int64)
@@ -844,7 +858,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         for i, c in enumerate(data.chunks):
             aggregation_location[i, : len(c)] = c
 
+        # ------------------------------------------------------------
         # Return Data objects
+        # ------------------------------------------------------------
         data = type(data)
         return {
             "aggregation_location": data(aggregation_location),

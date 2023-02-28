@@ -1,7 +1,9 @@
 import numpy as np
 
+# import cfdm
 
-class FileArrayMixin:
+
+class FileArrayMixin:  # (cfdm.FileArrayMixin):
     """Mixin class for an array stored in a file.
 
     .. versionadded:: 3.14.0

@@ -1249,7 +1249,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         .. versionadded:: 3.14.0
 
         .. seealso:: `_del_Array`, `_del_cached_elements`,
-                     `_del_cfa_write`, `_set_dask`
+                     `_cfa_del_write`, `_set_dask`
 
         :Parameters:
 
@@ -1305,7 +1305,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         if clear & _CFA:
             # Set the CFA write status to False
-            self._del_cfa_write()
+            self._cfa_del_write()
 
         # Always set the CFA term status to False
         if "cfa_term" in self._custom:
@@ -1448,12 +1448,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         for element in ("first_element", "second_element", "last_element"):
             custom.pop(element, None)
 
-    def _del_cfa_write(self):
+    def _cfa_del_write(self):
         """Set the CFA write status of the data to `False`.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `get_cfa_write`, `_set_cfa_write`
+        .. seealso:: `cfa_get_write`, `_cfa_set_write`
 
         :Returns:
 
@@ -1508,8 +1508,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `get_cfa_write`, `set_cfa_write`,
-                     `_del_cfa_write`, `cf.read`, `cf.write`,
+        .. seealso:: `cfa_get_write`, `cfa_set_write`,
+                     `_cfa_del_write`, `cf.read`, `cf.write`,
 
         :Parameters:
 
@@ -2424,8 +2424,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d._set_dask(da.ceil(dx))
         return d
 
-    def cfa_add_fragment_location(self, location):
-        """TODOCFADOCS in-place.
+    @_inplace_enabled(default=False)
+    def cfa_add_fragment_location(self, location, inplace=False):
+        """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
 
@@ -2434,37 +2435,136 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             location: `str`
                 TODOCFADOCS
 
+            {{inplace: `bool`, optional}}
+
         :Returns:
 
-            `None`
+            `Data` or `None`
+                TODOCFADOCS
 
         **Examples**
 
-        >>> d.cfa_add_fragment_location('/data/model')
+        >>> e = d.cfa_add_fragment_location('/data/model')
 
         """
         from dask.base import collections_to_dsk
 
+        d = _inplace_enabled_define_and_cleanup(self)
+
         location = abspath(location)
 
-        dx = self.to_dask_array()
+        dx = d.to_dask_array()
 
         updated = False
         dsk = collections_to_dsk((dx,), optimize_graph=True)
         for key, a in dsk.items():
             try:
-                a.get_filenames()
+                dsk[key] = a.add_fragment_location(location)
             except AttributeError:
-                # This chunk doesn't contain a CFA fragment file
+                # This chunk doesn't contain CFA fragment
                 continue
             else:
-                # This chunk contains a CFA fragment file
-                dsk[key] = a.add_fragment_location(location, inplace=False)
+                # This chunk contains a CFA fragment
                 updated = True
 
         if updated:
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=_NONE)
+            d._set_dask(dx, clear=_NONE)
+
+        return d
+
+    @_inplace_enabled(default=False)
+    def cfa_add_file_substitution(self, base, location, inplace=False):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`, optional
+                TODOCFADOCS
+
+            location: `str`
+                TODOCFADOCS
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                TODOCFADOCS
+
+        **Examples**
+
+        >>> e = d.cfa_add_fragment_location('/data/model')
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        base = f"${{base}}"
+        subs = d.cfa_get_file_substitutions({})
+        if base in subs and subs[base] != location:
+            raise ValueError(
+                "Can't overwrite existing CFA file name substitution "
+                f"{base}: {subs[base]!r}"
+            )
+
+        d.cfa_set_file_substitutions({base: location})
+
+        return d
+
+    def cfa_get_write(self):
+        """The CFA write status of the data.
+
+        If and only if the CFA write status is `True`, then this
+        `Data` instance has the potential to be written to a
+        CFA-netCDF file as aggregated data. In this case it is the
+        choice of parameters to the `cf.write` function that
+        determines if the data is actually written as aggregated data.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_set_write`, `cf.read`, `cf.write`
+
+        :Returns:
+
+            `bool`
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2])
+        >>> d.cfa_get_write()
+        False
+
+        """
+        return self._custom.get("cfa_write", False)
+
+    def cfa_set_write(self, status):
+        """Set the CFA write status of the data.
+
+        TODOCFADOCS.ppp
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_get_write`, `cf.read`, `cf.write`
+
+        :Parameters:
+
+            status: `bool`
+                The new CFA write status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if status:
+            raise ValueError(
+                "'cfa_set_write' only allows the CFA write status to be "
+                "set to False"
+            )
+
+        self._cfa_del_write()
 
     def compute(self):  # noqa: F811
         """A numpy view the data.
@@ -3777,9 +3877,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # status, but ...
         cfa = _CFA
         for d in processed_data:
-            if not d.get_cfa_write():
+            if not d.cfa_get_write():
                 # ... the CFA write status is False when any input
-                # data instance has False status
+                # data instance has False status ...
                 cfa = _NONE
                 break
 
@@ -3790,26 +3890,31 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 non_concat_axis_chunks = list(d.chunks)
                 non_concat_axis_chunks.pop(axis)
                 if non_concat_axis_chunks != non_concat_axis_chunks0:
-                    # ... the CFA write status is False when any two
-                    # input data instances have different chunk
-                    # patterns for the non-concatenated axes
+                    # ... or the CFA write status is False when any
+                    # two input data instances have different chunk
+                    # patterns for the non-concatenated axes.
                     cfa = _NONE
                     break
 
-        # Set the new dask array
-        data0._set_dask(dx, clear=_ALL ^ cfa)
+        # Set the new dask array, retaining the cached elements ...
+        data0._set_dask(dx, clear=_ALL ^ _CACHE ^ cfa)
 
-        # Set the CFA-netCDF aggregated_data instructions, giving
-        # precedence to those towards the left hand side of the input
-        # list.
-        if data0.get_cfa_write():
+        # ... now delete the cached second element, which might now be
+        # incorrect.
+        data0._custom.pop("second_element", None)
+
+        # Set the CFA-netCDF aggregated_data instructions and
+        # substitutions, giving precedence to those towards the left
+        # hand side of the input list.
+        if data0.cfa_get_write():
             aggregated_data = {}
+            substitutions = {}
             for d in processed_data[::-1]:
-                if d.get_cfa_write():
-                    aggregated_data.update(d.nc_get_cfa_aggregated_data({}))
+                aggregated_data.update(d.cfa_get_aggregated_data({}))
+                substitutions.update(d.cfa_get_file_substitutions({}))
 
-            if aggregated_data:
-                data0.nc_set_cfa_aggregated_data(aggregated_data)
+            data0.cfa_set_aggregated_data(aggregated_data)
+            data0.cfa_set_file_substitutions(substitutions)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no
         # longer.
@@ -5961,32 +6066,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
-    def get_cfa_write(self):
-        """The CFA write status of the data.
-
-        If and only if the CFA write status is `True`, then this
-        `Data` instance has the potential to be written to a
-        CFA-netCDF file as aggregated data. In this case it is the
-        choice of parameters to the `cf.write` function that
-        determines if the data is actually written as aggregated data.
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `set_cfa_write`, `cf.read`, `cf.write`
-
-        :Returns:
-
-            `bool`
-
-        **Examples**
-
-        >>> d = cf.Data([1, 2])
-        >>> d.get_cfa_write()
-        False
-
-        """
-        return self._custom.get("cfa_write", False)
-
     def get_filenames(self, address_format=False):
         """The names of files containing parts of the data array.
 
@@ -6067,9 +6146,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 if address_format:
                     f = ((f, a.get_addresses(), a.get_formats()),)
             except AttributeError:
-                pass
-            else:
-                out.update(f)
+                continue
+
+            out.update(f)
 
         return out
 
@@ -6167,33 +6246,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         self.Units = Units(self.get_units(default=None), calendar)
-
-    def set_cfa_write(self, status):
-        """Set the CFA write status of the data.
-
-        TODOCFADOCS.ppp
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `get_cfa_write`, `cf.read`, `cf.write`
-
-        :Parameters:
-
-            status: `bool`
-                The new CFA write status.
-
-        :Returns:
-
-            `None`
-
-        """
-        if status:
-            raise ValueError(
-                "'set_cfa_write' only allows the CFA write status to be "
-                "set to False"
-            )
-
-        self._del_cfa_write()
 
     def set_units(self, value):
         """Set the units.

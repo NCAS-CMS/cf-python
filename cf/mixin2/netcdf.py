@@ -4,23 +4,26 @@ themsleves import cf.Data, which would lead to a circular import
 situation.
 
 """
+from cfdm.mixin import NetCDFMixin
 
 
-class CFANetCDF:
+class CFANetCDF(NetCDFMixin):
     """Mixin class for accessing CFA-netCDF aggregation instruction terms.
+
+    Must be used in conjunction with `NetCDF`
 
     .. versionadded:: TODOCFAVER
 
     """
 
-    def nc_del_cfa_aggregated_data(self, default=ValueError()):
+    def cfa_del_aggregated_data(self, default=ValueError()):
         """Remove the CFA-netCDF aggregation instruction terms.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `nc_get_cfa_aggregated_data`,
-                     `nc_has_cfa_aggregated_data`,
-                     `nc_set_cfa_aggregated_data`
+        .. seealso:: `cfa_get_aggregated_data`,
+                     `cfa_has_aggregated_data`,
+                     `cfa_set_aggregated_data`
 
         :Parameters:
 
@@ -37,45 +40,44 @@ class CFANetCDF:
 
         **Examples**
 
-        >>> f.nc_set_cfa_aggregated_data(
+        >>> f.cfa_set_aggregated_data(
         ...     {'location': 'cfa_location',
         ...      'file': 'cfa_file',
         ...      'address': 'cfa_address',
         ...      'format': 'cfa_format',
         ...      'tracking_id': 'tracking_id'}
         ... )
-        >>> f.nc_has_cfa_aggregated_data()
+        >>> f.cfa_has_aggregated_data()
         True
-        >>> f.nc_get_cfa_aggregated_data()
+        >>> f.cfa_get_aggregated_data()
+        {'location': 'cfa_location',
+         'file': 'cfa_file',
+         'address': 'cfa_address',
+         'format': 'c ',
+         'tracking_id': 'tracking_id'}
+        >>> f.cfa_del_aggregated_data()
         {'location': 'cfa_location',
          'file': 'cfa_file',
          'address': 'cfa_address',
          'format': 'cfa_format',
          'tracking_id': 'tracking_id'}
-        >>> f.nc_del_cfa_aggregated_data()
-        {'location': 'cfa_location',
-         'file': 'cfa_file',
-         'address': 'cfa_address',
-         'format': 'cfa_format',
-         'tracking_id': 'tracking_id'}
-        >>> f.nc_has_cfa_aggregated_data()
+        >>> f.cfa_has_aggregated_data()
         False
-        >>> print(f.nc_get_cfa_aggregated_data(None))
+        >>> print(f.cfa_get_aggregated_data(None))
         None
-        >>> print(f.nc_del_cfa_aggregated_data(None))
         None
 
         """
         return self._nc_del("cfa_aggregated_data", default=default)
 
-    def nc_get_cfa_aggregated_data(self, default=ValueError()):
+    def cfa_get_aggregated_data(self, default=ValueError()):
         """Return the CFA-netCDF aggregation instruction terms.
 
-        .. versionadded:: TODOCFAVER
+        .. versifragement onadsded:: TODOCFAVER
 
-        .. seealso:: `nc_del_cfa_aggregated_data`,
-                     `nc_has_cfa_aggregated_data`,
-                     `nc_set_cfa_aggregated_data`
+        .. seealso:: `scfa_del_aggregated_data`,
+                     `cfa_has_aggregated_data`,
+                     `cfa_set_aggregated_data`
 
         :Parameters:
 
@@ -88,37 +90,37 @@ class CFANetCDF:
         :Returns:
 
             `dict`
-                The aggregation instruction terms and their
+         he aggregation instruction terms and their
                 corresponding netCDF variable names.
 
         **Examples**
 
-        >>> f.nc_set_cfa_aggregated_data(
+        >>> f.cfa_set_aggregated_data(
         ...     {'location': 'cfa_location',
         ...      'file': 'cfa_file',
         ...      'address': 'cfa_address',
         ...      'format': 'cfa_format',
         ...      'tracking_id': 'tracking_id'}
         ... )
-        >>> f.nc_has_cfa_aggregated_data()
+        >>> f.cfa_has_aggregated_data()
         True
-        >>> f.nc_get_cfa_aggregated_data()
+        >>> f.cfa_get_aggregated_data()
         {'location': 'cfa_location',
          'file': 'cfa_file',
          'address': 'cfa_address',
          'format': 'cfa_format',
          'tracking_id': 'tracking_id'}
-        >>> f.nc_del_cfa_aggregated_data()
+        >>> f.cfa_del_aggregated_data()
         {'location': 'cfa_location',
          'file': 'cfa_file',
          'address': 'cfa_address',
          'format': 'cfa_format',
          'tracking_id': 'tracking_id'}
-        >>> f.nc_has_cfa_aggregated_data()
+        >>> f.cfa_has_aggregated_data()
         False
-        >>> print(f.nc_get_cfa_aggregated_data(None))
+        >>> print(f.cfa_get_aggregated_data(None))
         None
-        >>> print(f.nc_del_cfa_aggregated_data(None))
+        >>> print(f.cfa_del_aggregated_data(None))
         None
 
         """
@@ -134,14 +136,14 @@ class CFANetCDF:
             f"{self.__class__.__name__} has no CFA-netCDF aggregation terms",
         )
 
-    def nc_has_cfa_aggregated_data(self):
+    def cfa_has_aggregated_data(self):
         """Whether any CFA-netCDF aggregation instruction terms have been set.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `nc_del_cfa_aggregated_data`,
-                     `nc_get_cfa_aggregated_data`,
-                     `nc_set_cfa_aggregated_data`
+        .. seealso:: `cfa_del_aggregated_data`,
+                     `cfa_get_aggregated_data`,
+                     `cfa_set_aggregated_data`
 
         :Returns:
 
@@ -151,38 +153,38 @@ class CFANetCDF:
 
         **Examples**
 
-        >>> f.nc_set_cfa_aggregated_data(
+        >>> f.cfa_set_aggregated_data(
         ...     {'location': 'cfa_location',
         ...      'file': 'cfa_file',
         ...      'address': 'cfa_address',
         ...      'format': 'cfa_format',
         ...      'tracking_id': 'tracking_id'}
         ... )
-        >>> f.nc_has_cfa_aggregated_data()
+        >>> f.cfa_has_aggregated_data()
         True
-        >>> f.nc_get_cfa_aggregated_data()
+        >>> f.cfa_get_aggregated_data()
         {'location': 'cfa_location',
          'file': 'cfa_file',
          'address': 'cfa_address',
          'format': 'cfa_format',
          'tracking_id': 'tracking_id'}
-        >>> f.nc_del_cfa_aggregated_data()
+        >>> f.cfa_del_aggregated_data()
         {'location': 'cfa_location',
          'file': 'cfa_file',
          'address': 'cfa_address',
          'format': 'cfa_format',
          'tracking_id': 'tracking_id'}
-        >>> f.nc_has_cfa_aggregated_data()
+        >>> f.cfa_has_aggregated_data()
         False
-        >>> print(f.nc_get_cfa_aggregated_data(None))
+        >>> print(f.cfa_get_aggregated_data(None))
         None
-        >>> print(f.nc_del_cfa_aggregated_data(None))
+        >>> print(f.cfa_del_aggregated_data(None))
         None
 
         """
         return self._nc_has("cfa_aggregated_data")
 
-    def nc_set_cfa_aggregated_data(self, value):
+    def cfa_set_aggregated_data(self, value):
         """Set the CFA-netCDF aggregation instruction terms.
 
         If there are any ``/`` (slash) characters in the netCDF
@@ -193,9 +195,9 @@ class CFANetCDF:
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `nc_del_cfa_aggregated_data`,
-                     `nc_get_cfa_aggregated_data`,
-                     `nc_has_cfa_aggregated_data`
+        .. seealso:: `cfa_del_aggregated_data`,
+                     `cfa_get_aggregated_data`,
+                     `cfa_has_aggregated_data`
 
         :Parameters:
 
@@ -209,45 +211,46 @@ class CFANetCDF:
 
         **Examples**
 
-        >>> f.nc_set_cfa_aggregated_data(
+        >>> f.cfa_set_aggregated_data(
         ...     {'location': 'cfa_location',
         ...      'file': 'cfa_file',
         ...      'address': 'cfa_address',
         ...      'format': 'cfa_format',
         ...      'tracking_id': 'tracking_id'}
         ... )
-        >>> f.nc_has_cfa_aggregated_data()
+        >>> f.cfa_has_aggregated_data()
         True
-        >>> f.nc_get_cfa_aggregated_data()
+        >>> f.cfa_get_aggregated_data()
         {'location': 'cfa_location',
          'file': 'cfa_file',
          'address': 'cfa_address',
          'format': 'cfa_format',
          'tracking_id': 'tracking_id'}
-        >>> f.nc_del_cfa_aggregated_data()
+        >>> f.cfa_del_aggregated_data()
         {'location': 'cfa_location',
          'file': 'cfa_file',
          'address': 'cfa_address',
          'format': 'cfa_format',
          'tracking_id': 'tracking_id'}
-        >>> f.nc_has_cfa_aggregated_data()
+        >>> f.cfa_has_aggregated_data()
         False
-        >>> print(f.nc_get_cfa_aggregated_data(None))
+        >>> print(f.cfa_get_aggregated_data(None))
         None
-        >>> print(f.nc_del_cfa_aggregated_data(None))
+        >>> print(f.cfa_del_aggregated_data(None))
         None
 
         """
-        return self._nc_set("cfa_aggregated_data", value.copy())
+        if value:
+            self._nc_set("cfa_aggregated_data", value.copy())
 
-    def nc_del_cfa_file_substitutions(self, value, default=ValueError()):
+    def cfa_clear_file_substitutions(self):
         """Remove the CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `nc_get_cfa_file_substitutions`,
-                     `nc_has_cfa_file_substitutions`,
-                     `nc_set_cfa_file_substitutions`
+        .. seealso:: `cfa_get_file_substitutions`,
+                     `cfa_has_file_substitutions`,
+                     `cfa_set_file_substitutions`
 
         :Parameters:
 
@@ -264,31 +267,92 @@ class CFANetCDF:
 
         **Examples**
 
-        >>> f.nc_set_cfa_file_substitutions({'${base}': 'file:///data/'})
-        >>> f.nc_has_cfa_file_substitutions()
+        >>> f.cfa_set_file_substitutions({'${base}': 'file:///data/'})
+        >>> f.cfa_has_file_substitutions()
         True
-        >>> f.nc_get_cfa_file_substitutions()
+        >>> f.cfa_get_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_del_cfa_file_substitutions()
+        >>> f.cfa_del_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_has_cfa_file_substitutions()
+        >>> f.cfa_has_file_substitutions()
         False
-        >>> print(f.nc_get_cfa_file_substitutions(None))
+        >>> print(f.cfa_get_file_substitutions(None))
         None
-        >>> print(f.nc_del_cfa_file_substitutions(None))
+        >>> print(f.cfa_del_file_substitutions(None))
         None
 
         """
-        return self._nc_del("cfa_file_substitutions", default=default)
+        return self._nc_del("cfa_file_substitutions", {}).copy()
 
-    def nc_get_cfa_file_substitutions(self, default=ValueError()):
+    def cfa_del_file_substitution(self, base, default=ValueError()):
+        """Remove the CFA-netCDF file name substitutions.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_get_file_substitutions`,
+                     `cfa_has_file_substitutions`,
+                     `cfa_set_file_substitutions`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if
+                CFA-netCDF file name substitutions have not been
+                set. If set to an `Exception` instance then it will be
+                raised instead.
+
+        :Returns:
+
+            `dict`
+                The removed CFA-netCDF file name substitutions.
+
+        **Examples**
+
+        >>> f.cfa_set_file_substitutions({'${base}': 'file:///data/'})
+        >>> f.cfa_has_file_substitutions()
+        True
+        >>> f.cfa_get_file_substitutions()
+        {'base': 'file:///data/'}
+        >>> f.cfa_del_file_substitutions()
+        {'base': 'file:///data/'}
+        >>> f.cfa_has_file_substitutions()
+        False
+        >>> print(f.cfa_get_file_substitutions(None))
+        None
+        >>> print(f.cfa_del_file_substitutions(None))
+        None
+
+        """
+        if base.startswith("${") and base.endswith("}"):
+            base = base[2:-1]
+
+        subs = self.cfa_file_substitutions({})
+        if base not in subs:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} has no netCDF {base!r} "
+                "CFA file substitution",
+            )
+
+        out = {base: subs.pop(base)}
+        if subs:
+            self._nc_set("cfa_file_substitutions", subs)
+        else:
+            self._nc_del("cfa_file_substitutions", None)
+
+        return out
+
+    def cfa_get_file_substitutions(self):
         """Return the CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `nc_del_cfa_file_substitutions`,
-                     `nc_get_cfa_file_substitutions`,
-                     `nc_set_cfa_file_substitutions`
+        .. seealso:: `cfa_del_file_substitutions`,
+                     `cfa_get_file_substitutions`,
+                     `cfa_set_file_substitutions`
 
         :Parameters:
 
@@ -305,18 +369,18 @@ class CFANetCDF:
 
         **Examples**
 
-        >>> f.nc_set_cfa_file_substitutions({'${base}': 'file:///data/'})
-        >>> f.nc_has_cfa_file_substitutions()
+        >>> f.cfa_set_file_substitutions({'${base}': 'file:///data/'})
+        >>> f.cfa_has_file_substitutions()
         True
-        >>> f.nc_get_cfa_file_substitutions()
+        >>> f.cfa_get_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_del_cfa_file_substitutions()
+        >>> f.cfa_del_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_has_cfa_file_substitutions()
+        >>> f.cfa_has_file_substitutions()
         False
-        >>> print(f.nc_get_cfa_file_substitutions(None))
+        >>> print(f.cfa_get_file_substitutions(None))
         None
-        >>> print(f.nc_del_cfa_file_substitutions(None))
+        >>> print(f.cfa_del_file_substitutions(None))
         None
 
         """
@@ -324,22 +388,16 @@ class CFANetCDF:
         if out is not None:
             return out.copy()
 
-        if default is None:
-            return default
+        return {}
 
-        return self._default(
-            default,
-            f"{self.__class__.__name__} has no CFA-netCDF file name substitutions",
-        )
-
-    def nc_has_cfa_file_substitutions(self):
+    def cfa_has_file_substitutions(self):
         """Whether any CFA-netCDF file name substitutions have been set.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `nc_del_cfa_file_substitutions`,
-                     `nc_get_cfa_file_substitutions`,
-                     `nc_set_cfa_file_substitutions`
+        .. seealso:: `cfa_del_file_substitutions`,
+                     `cfa_get_file_substitutions`,
+                     `cfa_set_file_substitutions`
 
         :Returns:
 
@@ -349,36 +407,77 @@ class CFANetCDF:
 
         **Examples**
 
-        >>> f.nc_set_cfa_file_substitutions({'${base}': 'file:///data/'})
-        >>> f.nc_has_cfa_file_substitutions()
+        >>> f.cfa_set_file_substitutions({'${base}': 'file:///data/'})
+        >>> f.cfa_has_file_substitutions()
         True
-        >>> f.nc_get_cfa_file_substitutions()
+        >>> f.cfa_get_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_del_cfa_file_substitutions()
+        >>> f.cfa_del_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_has_cfa_file_substitutions()
+        >>> f.cfa_has_file_substitutions()
         False
-        >>> print(f.nc_get_cfa_file_substitutions(None))
+        >>> print(f.cfa_get_file_substitutions(None))
         None
-        >>> print(f.nc_del_cfa_file_substitutions(None))
+        >>> print(f.cfa_del_file_substitutions(None))
         None
 
         """
         return self._nc_has("cfa_file_substitutions")
 
-    def nc_set_cfa_file_substitutions(self, value):
+    #    def cfa_set_file_substitution(self, base, value):
+    #        """Set the CFA-netCDF file name substitutions.
+    #
+    #        .. versionadded:: TODOCFAVER
+    #
+    #        .. seealso:: `cfa_del_file_substitutions`,
+    #                     `cfa_get_file_substitutions`,
+    #                     `cfa_has_file_substitutions`
+    #
+    #        :Parameters:
+    #
+    #            value: `dict`
+    #                The new CFA-netCDF file name substitutions.
+    #
+    #        :Returns:
+    #
+    #            `None`
+    #
+    #        **Examples**
+    #
+    #        >>> f.cfa_set_file_substitutions({'${base}': 'file:///data/'})
+    #        >>> f.cfa_has_file_substitutions()
+    #        True
+    #        >>> f.cfa_get_file_substitutions()
+    #        {'${base}': 'file:///data/'}
+    #        >>> f.cfa_del_file_substitutions()
+    #        {'${base}': 'file:///data/'}
+    #        >>> f.cfa_has_file_substitutions()
+    #        False
+    #        >>> print(f.cfa_get_file_substitutions(None))
+    #        None
+    #        >>> print(f.cfa_del_file_substitutions(None))
+    #        None
+    #
+    #        """
+    #        if base.startswith("${") and base.endswith("}"):
+    #            base = base [2:-1]
+    #
+    #        subs  = self._nc_get("cfa_file_substitutions", {})
+    #        subs.update({base: value}))
+
+    def cfa_set_file_substitutions(self, value):
         """Set the CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `nc_del_cfa_file_substitutions`,
-                     `nc_get_cfa_file_substitutions`,
-                     `nc_has_cfa_file_substitutions`
+        .. seealso:: `cfa_del_file_substitutions`,
+                     `cfa_get_file_substitutions`,
+                     `cfa_has_file_substitutions`
 
         :Parameters:
 
             value: `dict`
-                The CFA-netCDF file name substitutions.
+                The new CFA-netCDF file name substitutions.
 
         :Returns:
 
@@ -386,19 +485,28 @@ class CFANetCDF:
 
         **Examples**
 
-        >>> f.nc_set_cfa_file_substitutions({'${base}': 'file:///data/'})
-        >>> f.nc_has_cfa_file_substitutions()
+        >>> f.cfa_set_file_substitutions({'${base}': 'file:///data/'})
+        >>> f.cfa_has_file_substitutions()
         True
-        >>> f.nc_get_cfa_file_substitutions()
+        >>> f.cfa_get_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_del_cfa_file_substitutions()
+        >>> f.cfa_del_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_has_cfa_file_substitutions()
+        >>> f.cfa_has_file_substitutions()
         False
-        >>> print(f.nc_get_cfa_file_substitutions(None))
+        >>> print(f.cfa_get_file_substitutions(None))
         None
-        >>> print(f.nc_del_cfa_file_substitutions(None))
+        >>> print(f.cfa_del_file_substitutions(None))
         None
 
         """
-        return self._nc_set("cfa_file_substitutions", value.copy())
+        if not value:
+            return
+
+        for base, sub in value.items():
+            if base.startswith("${") and base.endswith("}"):
+                value[base[2:-1]] = value.pop(base)
+
+        subs = self.cfa_get_file_substitutions)
+        subs.update(value)
+        self._nc_set("cfa_file_substitutions", subs)

@@ -1182,8 +1182,124 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    @_inplace_enabled(default=False)
-    def cfa_add_fragment_location(self, location, inplace=False):
+    def cfa_set_file_substitutions(self, value):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`
+                TODOCFADOCS
+
+            sub: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> c.cfa_add_file_substitution('base', '/data/model')
+
+        """
+        super().cfa_set_file_substitutions(value)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.cfa_set_file_substitutions(value)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.cfa_set_file_substitutions(value)
+
+    def cfa_clear_file_substitutions(
+        self,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+
+        **Examples**
+
+        >>> f.cfa_clear_file_substitutions()
+        {}
+
+        """
+        out = super().cfa_clear_file_substitutions()
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds.cfa_clear_file_substitutions())
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring.cfa_clear_file_substitutions())
+
+        return out
+
+    def cfa_del_file_substitution(self, base):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> c.cfa_del_file_substitution('base')
+
+        """
+        super().cfa_del_file_substitution(base)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.cfa_del_file_substitution(base)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.cfa_del_file_substitution(base)
+
+    def cfa_get_file_substitutions(self):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+
+        **Examples**
+
+        >>> c.cfa_get_file_substitutions()
+        {}
+
+        """
+        out = super().cfa_get_file_substitutions()
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds.cfa_get_file_substitutions({}))
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring.cfa_get_file_substitutions({}))
+
+        return out
+
+    def cfa_add_fragment_location(self, location):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
@@ -1192,8 +1308,6 @@ class PropertiesDataBounds(PropertiesData):
 
             location: `str`
                 TODOCFADOCS
-
-            {{inplace: `bool`, optional}}
 
         :Returns:
 
@@ -1204,14 +1318,15 @@ class PropertiesDataBounds(PropertiesData):
         >>> c.cfa_add_fragment_location('/data/model')
 
         """
-        return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self),
-            "cfa_add_fragment_location",
-            (location,),
-            bounds=True,
-            interior_ring=True,
-            inplace=inplace,
-        )
+        super().cfa_add_fragment_location(location)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.cfa_add_fragment_location(location)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.cfa_add_fragment_location(location)
 
     def chunk(self, chunksize=None):
         """Partition the data array.

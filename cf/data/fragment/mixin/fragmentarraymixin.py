@@ -38,8 +38,9 @@ class FragmentArrayMixin:
             array = super().__getitem__(tuple(indices))
         except ValueError:
             # A ValueError is expected to be raised when the fragment
-            # variable has fewer than 'self.ndim' dimensions (given
-            # that 'indices' now has 'self.ndim' elements).
+            # variable has fewer than 'self.ndim' dimensions (we know
+            # this becuase because 'indices' has 'self.ndim'
+            # elements).
             axis = self._size_1_axis(indices)
             if axis is not None:
                 # There is a unique size 1 index, that must correspond
@@ -285,6 +286,26 @@ class FragmentArrayMixin:
         """
         return Units(
             self.get_aggregated_units(), self.get_aggregated_calendar(None)
+        )
+
+    def add_fragment_location(self, location, inplace=False):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            TODOCFADOCS
+
+        """
+        raise ValueError(
+            "Can't add a file location to fragment represented by a "
+            f"{self.__class__.__name__} instance"
         )
 
     def get_aggregated_calendar(self, default=ValueError()):

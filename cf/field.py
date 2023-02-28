@@ -3641,8 +3641,11 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return w
 
-    @_inplace_enabled(default=False)
-    def cfa_add_fragment_location(self, location, inplace=False):
+    def cfa_add_fragment_location(
+        self,
+        location,
+        constructs=True,
+    ):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
@@ -3651,8 +3654,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             location: `str`
                 TODOCFADOCS
-
-            {{inplace: `bool`, optional}}
 
         :Returns:
 
@@ -3663,14 +3664,113 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f.cfa_add_fragment_location('/data/model')
 
         """
-        f = _inplace_enabled_define_and_cleanup(self)
+        super().add_fragment_location(
+            location,
+        )
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.add_fragment_location(
+                    location,
+                )
 
-        super().add_fragment_location(location, inplace=True)
+    def cfa_get_file_substitutions(self, constructs=True):
+        """TODOCFADOCS
 
-        for c in f.constructs.filter_by_data(todict=True).values():
-            c.add_fragment_location(location, inplace=True)
+        .. versionadded:: TODOCFAVER
 
-        return f
+        :Returns:
+
+            `dict`
+
+        **Examples**
+
+        >>> f.cfa_get_file_substitutions()
+        {}
+
+        """
+        out = super().cfa_get_file_substitutions()
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                out.update(c.cfa_set_file_substitution())
+
+        return out
+
+    def cfa_del_file_substitution(
+        self,
+        base,
+        constructs=True,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`
+                TODOCFADOCS
+
+            constructs: `bool`
+                If True, the default, then metadata constructs are
+                also transposed so that their axes are in the same
+                relative order as in the transposed data array of the
+                field. By default metadata constructs are not
+                altered. TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_del_file_substitution('base', '/data/model')
+
+        """
+        super().cfa_del_file_substitution(
+            base,
+        )
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.cfa_del_file_substitution(
+                    base,
+                )
+
+    def cfa_set_file_substitutions(
+        self,
+        value,
+        constructs=True,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`
+                TODOCFADOCS
+
+            sub: `str`
+                TODOCFADOCS
+
+            constructs: `bool`
+                If True, the default, then metadata constructs are
+                also transposed so that their axes are in the same
+                relative order as in the transposed data array of the
+                field. By default metadata constructs are not
+                altered. TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_set_file_substitution({'base': '/data/model'})
+
+        """
+        super().cfa_set_file_substitutions(value)
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.cfa_set_file_substitutions(value)
 
     def radius(self, default=None):
         """Return the radius of a latitude-longitude plane defined in

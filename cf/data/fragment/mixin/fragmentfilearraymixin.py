@@ -1,9 +1,3 @@
-from ....decorators import (
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-)
-
-
 class FragmentFileArrayMixin:
     """Mixin class for a fragment array stored in a file.
 
@@ -11,14 +5,28 @@ class FragmentFileArrayMixin:
 
     """
 
-    @_inplace_enabled(default=False)
-    def add_fragment_location(self, location, inplace=False):
-        """TODOCFADOCS"""
+    def add_fragment_location(self, location):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `{{class}}`
+                TODOCFADOCS
+
+        """
         from os.path import basename, dirname, join
 
-        a = _inplace_enabled_define_and_cleanup(self)
+        a = self.copy()
 
-        # Note - it is assumed that all filenames are absolute paths
+        # Note: It is assumed that each existing file name is either
+        #       an absolute path or a file URI.
         filenames = a.get_filenames()
         addresses = a.get_addresses()
 
@@ -30,16 +38,16 @@ class FragmentFileArrayMixin:
             ]
         )
 
-        a._set_component("filename", filenames + new_filenames, copy=False)
+        a._set_component("filenames", filenames + new_filenames, copy=False)
         a._set_component(
-            "address",
+            "addresses",
             addresses + addresses[-1] * len(new_filenames),
             copy=False,
         )
 
         return a
 
-    def get_addresses(self):
+    def get_addresses(self, default=AttributeError()):
         """TODOCFADOCS Return the names of any files containing the data array.
 
         .. versionadded:: TODOCFAVER
@@ -51,12 +59,9 @@ class FragmentFileArrayMixin:
                 form. TODOCFADOCS then an empty `set` is returned.
 
         """
-        try:
-            return self._get_component("address")
-        except ValueError:
-            return ()
+        return self._get_component("addresses", default)
 
-    def get_filenames(self):
+    def get_filenames(self, default=AttributeError()):
         """TODOCFADOCS Return the names of any files containing the data array.
 
         .. versionadded:: TODOCFAVER
@@ -68,21 +73,29 @@ class FragmentFileArrayMixin:
                 form. TODOCFADOCS then an empty `set` is returned.
 
         """
-        try:
-            return self._get_component("filename")
-        except ValueError:
-            return ()
+        filenames = self._get_component("filenames", None)
+        if filenames is None:
+            if default is None:
+                return
 
-    def get_formats(self):
+            return self._default(
+                default, f"{self.__class__.__name__} has no fragement files"
+            )
+
+        return filenames
+
+    def get_formats(self, default=AttributeError()):
         """TODOCFADOCS Return the names of any files containing the data array.
 
         .. versionadded:: TODOCFAVER
 
+        .. seealso:: `get_filenames`, `get_addresses`
+
         :Returns:
 
-            `set`
+            `tuple`
                 The file names in normalised, absolute
                 form. TODOCFADOCS then an empty `set` is returned.
 
         """
-        raise NotImplementedError
+        return (self.get_format(),) * len(self.get_filenames(default))

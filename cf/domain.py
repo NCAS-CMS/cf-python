@@ -126,6 +126,132 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             [domain_axis.get_size(0) for domain_axis in domain_axes.values()]
         )
 
+    def cfa_add_fragment_location(
+        self,
+        location,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_add_fragment_location('/data/model')
+
+        """
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.cfa_add_fragment_location(
+                location,
+            )
+
+    def cfa_clear_file_substitutions(
+        self,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+
+        **Examples**
+
+        >>> f.cfa_clear_file_substitutions()
+        {}
+
+        """
+        out = {}
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.cfa_clear_file_substitutions())
+
+        return out
+
+    def cfa_get_file_substitutions(self):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+
+        **Examples**
+
+        >>> f.cfa_get_file_substitutions()
+        {}
+
+        """
+        out = {}
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.cfa_get_file_substitutions())
+
+        return out
+
+    def cfa_del_file_substitution(
+        self,
+        base,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_del_file_substitution('base', '/data/model')
+
+        """
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.cfa_del_file_substitution(
+                base,
+            )
+
+    def cfa_set_file_substitutions(
+        self,
+        value,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`
+                TODOCFADOCS
+
+            sub: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_set_file_substitution({'base': '/data/model'})
+
+        """
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.cfa_set_file_substitutions(value)
+
     def close(self):
         """Close all files referenced by the domain construct.
 
