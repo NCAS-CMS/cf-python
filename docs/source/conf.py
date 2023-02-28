@@ -376,13 +376,13 @@ htmlhelp_basename = "cfdoc"
 
 # sphinx-gallery configuration
 sphinx_gallery_conf = {
-    "examples_dirs": "../examples",  # path to your example scripts
-    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
+    "examples_dirs": "../recipes",  # path to recipe files
+    "gallery_dirs": "auto_gallery",  # path to save gallery generated output
     "run_stale_examples": True,
-    "inspect_global_variables": True,
     "reference_url": {"cf": None},
-    "backreferences_dir": "generated",
-    "doc_module": "cf",
+    "backreferences_dir": "gen_modules/backreferences",
+    "doc_module": ("cf"),
+    "inspect_global_variables": True,
 }
 
 # -- Options for LaTeX output -------------------------------------------------
