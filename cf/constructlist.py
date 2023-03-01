@@ -457,11 +457,7 @@ class ConstructList(list, Container, cfdm.Container):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            ignore_properties: (sequence of `str`), optional
-                The names of properties of the field construct (not
-                the TODO metadata constructs) to omit from the
-                comparison. Note that the "Conventions" property is
-                always omitted by default.
+            {{ignore_properties: (sequence of) `str`, optional}}
 
             {{ignore_data_type: `bool`, optional}}
 
