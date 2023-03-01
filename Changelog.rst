@@ -3,6 +3,8 @@ version 3.14.1
 
 **2023-??-??**
 
+* Allow `cf.aggregate` and to retain external cell meausures
+  (https://github.com/NCAS-CMS/cf-python/issues/605)
 * Fixed bug in `cf.Field.collapse` that always retained invalid
   vertical coordinate reference systems
   (https://github.com/NCAS-CMS/cf-python/issues/599)
