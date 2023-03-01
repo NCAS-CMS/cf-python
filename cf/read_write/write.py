@@ -1,17 +1,9 @@
-from os.path import abspath
-
 import numpy
 
 from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
 from .netcdf import NetCDFWrite
-
-# from . import mpi_on
-mpi_on = False
-if mpi_on:
-    from . import mpi_comm, mpi_rank, mpi_size
-
 
 netcdf = NetCDFWrite(implementation())
 
@@ -669,27 +661,6 @@ def write(
 
     # Flatten the sequence of intput fields
     fields = tuple(flat(fields))
-
-    mpi_on = False
-    if mpi_on:
-        path = abspath(filename)
-        paths = mpi_comm.allgather(path)
-        unique_paths = set(paths)
-        n_unique_paths = len(unique_paths)
-        if n_unique_paths == 1:
-            write_only_on_pe0 = True
-        elif n_unique_paths == mpi_size:
-            write_only_on_pe0 = False
-        else:
-            raise RuntimeError(
-                "write expects either one unique filename or as many as "
-                "there are PEs"
-            )
-
-        if write_only_on_pe0 and not mpi_rank == 0:
-            mpi_comm.Barrier()
-            return
-
     if fields:
         # double and single
         if datatype:

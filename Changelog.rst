@@ -1,4 +1,4 @@
-Version 3.14.1
+version 3.14.1
 --------------
 
 **2023-??-??**
@@ -8,6 +8,9 @@ Version 3.14.1
 * New keyword parameter to `cf.unique_constructs`:
   ``ignore_properties``
   (https://github.com/NCAS-CMS/cf-python/issues/597)
+* Fixed bug in `cf.Field.collapse` that always retained invalid
+  vertical coordinate reference systems
+  (https://github.com/NCAS-CMS/cf-python/issues/599)
 * Changed dependency: ``1.10.0.3<=cfdm<1.10.1.0``
 
 ----
