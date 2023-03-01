@@ -139,6 +139,7 @@ Properties
    ~cf.DomainAncillary.set_property
    ~cf.DomainAncillary.properties
    ~cf.DomainAncillary.clear_properties
+   ~cf.DomainAncillary.del_properties
    ~cf.DomainAncillary.set_properties
 
 .. rubric:: Attributes

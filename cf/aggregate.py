@@ -662,34 +662,14 @@ class _Meta:
         # ------------------------------------------------------------
         self.msr = {}
         info_msr = {}
-        copied_field = False
         for key, msr in f.cell_measures(todict=True).items():
-            # If the measure is an external variable, remove it because
-            # the dimensions are not known so there is no way to tell if the
-            # aggregation should have changed it. (This is sufficiently
-            # sensible behaviour for now, but will be reviewed in future.)
-            # Note: for CF <=1.8 only cell measures can be external variables.
-            if msr.nc_get_external():
-                # Only create one copy of field if there is >1 external measure
-                if not copied_field:
-                    self.field = self.field.copy()  # copy as will delete msr
-                    f = self.field
-                    copied_field = True
+            if not self.cell_measure_has_measure(msr):
+                return
 
-                f.del_construct(key)
-
-                if is_log_level_info(logger):
-                    logger.info(
-                        f"Removed {msr.identity()!r} construct from a copy "
-                        f"of input field {f.identity()!r} pre-aggregation "
-                        "because it is an external variable so it "
-                        "is not possible to determine the influence the "
-                        "aggregation process should have on it."
-                    )
-
-                continue
-
-            if not self.cell_measure_has_data_and_units(msr):
+            if (
+                not msr.nc_get_external()
+                and not self.cell_measure_has_data_and_units(msr)
+            ):
                 return
 
             # Find the canonical units for this cell measure
@@ -715,15 +695,30 @@ class _Meta:
             else:
                 info_msr[units] = []
 
-            info_msr[units].append({"key": key, "axes": axes})
+            # Store the external status
+            if msr.nc_get_external():
+                external = msr.nc_get_variable(None)
+            else:
+                external = None
+
+            info_msr[units].append(
+                {
+                    "measure": msr.get_measure(),
+                    "key": key,
+                    "axes": axes,
+                    "external": external,
+                }
+            )
 
         # For each cell measure's canonical units, sort the
         # information by axis identities.
         for units, value in info_msr.items():
             value.sort(key=itemgetter("axes"))
             self.msr[units] = {
+                "measure": tuple([v["measure"] for v in value]),
                 "keys": tuple([v["key"] for v in value]),
                 "axes": tuple([v["axes"] for v in value]),
+                "external": tuple([v["external"] for v in value]),
             }
 
         # ------------------------------------------------------------
@@ -957,11 +952,29 @@ class _Meta:
         """
         if not msr.Units:
             self.message = f"{msr.identity()!r} cell measure has no units"
-            return
+            return False
 
         if not msr.has_data():
             self.message = f"{msr.identity()!r} cell measure has no data"
-            return
+            return False
+
+        return True
+
+    def cell_measure_has_measure(self, msr):
+        """True only if a cell measure has a measure.
+
+        :Parameters:
+
+            msr: `CellMeasure`
+
+        :Returns:
+
+            `bool`
+
+        """
+        if not msr.get_measure(False):
+            self.message = f"{msr.identity()!r} cell measure has no measure"
+            return False
 
         return True
 
@@ -1287,8 +1300,10 @@ class _Meta:
         msr = self.msr
         x = [
             (
+                ("measure", msr[units]["measure"]),
                 ("units", units.formatted(definition=True)),
                 ("axes", msr[units]["axes"]),
+                ("external", msr[units]["external"]),
             )
             for units in sorted(msr)
         ]
