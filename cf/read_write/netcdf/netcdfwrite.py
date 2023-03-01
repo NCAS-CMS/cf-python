@@ -42,6 +42,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 variable.
 
         """
+        if construct_type is None:
+            # This prrevents recursion whilst writing CFA-netCDF term
+            # variables.
+            return False
+        
         g = self.write_vars
         if not g["cfa"]:
             return False
@@ -51,12 +56,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             return False
 
         if not data.get_cfa_write():
-            return False
-
-        if construct_type is None:
-            return False
-
-        if data.size == 1:
             return False
 
         for ctype, ndim in g["cfa_options"]["constructs"]:
@@ -814,7 +813,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         aggregation_address = []
         aggregation_format = []
         for indices in data.chunk_indices():
-            a = self[indices].get_filenames(address_format=True)
+            a = self._cfa_get_filenames(data[indices])
             if len(a) != 1:
                 if a:
                     raise ValueError(
@@ -930,3 +929,42 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             from pathlib import PurePath
 
             g["cfa_dir"] = PurePath(abspath(g["filename"])).parent
+
+    def _cfa_get_filenames(self, data):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+             data: `Data`
+                The array.
+
+        :Returns:
+
+            `set`
+                The file names. If no files are required to compute
+                the data then an empty `set` is returned.
+        
+        """
+        from dask.base import collections_to_dsk
+
+        out = set()
+        dsk = collections_to_dsk((data.to_dask_array(),), optimize_graph=True)
+        for a in dsk.values():
+            try:
+                f = a.get_filenames()
+            except AttributeError:
+                continue
+
+            try:
+                f = ((f, a.get_addresses(), a.get_formats()),)
+            except AttributeError:
+                 try:
+                     f = ((f, (a.get_address(),), (a.get_format(),)),)
+                 except AttributeError:
+                     continue
+                 
+            out.update(f)
+
+        return out

@@ -36,9 +36,6 @@ def write(
     group=True,
     coordinates=False,
     omit_data=None,
-    HDF_chunksizes=None,
-    no_shuffle=None,
-    unlimited=None,
 ):
     """Write field constructs to a netCDF file.
 
@@ -163,9 +160,6 @@ def write(
             ==========================  ================================
 
             By default the format is ``'NETCDF4'``.
-
-            All formats support large files (i.e. those greater than
-            2GB) except ``'NETCDF3_CLASSIC'``.
 
             ``'NETCDF3_64BIT_DATA'`` is a format that requires version
             4.4.0 or newer of the C library (use `cf.environment` to
@@ -415,9 +409,6 @@ def write(
             <http://unidata.github.io/netcdf4-python>`_ for more
             details.
 
-            This parameter replaces the deprecated *no_shuffle*
-            parameter.
-
         datatype: `dict`, optional
             Specify data type conversions to be applied prior to
             writing data to disk. This may be useful as a means of
@@ -585,132 +576,106 @@ def write(
             .. versionadded:: 3.14.0
 
         cfa_options: `dict`, optional
-            A dictionary defining parameters for configuring the
-            output CFA-netCDF file:
+            Parameters for configuring the output CFA-netCDF file. By
+            default *cfa_options* is ``{'paths': 'relative',
+            'constructs': 'field'}`` and may have any subset of the
+            following keys (and value types):
 
-            ===================  =====================================
-            Key                  Value
-            ===================  =====================================
+            * ``'paths'`` (`str`)
 
-            ``'paths'`` -------- How to write fragment file names. Set
-                                 to ``'relative'`` (the default) for
-                                 them to be written as relative to the
-                                 CFA-netCDF file being created, or
-                                 else set to ``'absolute'`` for them
-                                 to be written as file URIs. Note that
-                                 in both cases, fragment file names
-                                 defined by fully qualified URLs will
-                                 always be written as such.
+              How to write fragment file names. Set to ``'relative'``
+              (the default) for them to be written as relative to the
+              CFA-netCDF file being created, or else set to
+              ``'absolute'`` for them to be written as file URIs. Note
+              that in both cases, fragment file defined by fully
+              qualified URLs will always be written as such.
 
-            ``'constructs'`` --- The types of construct to be written
-                                 as CFA-netCDF aggregated
-                                 variables. By default only field
-                                 constructs are written as CFA-netCDF
-                                 aggregated variables.
+            * ``'constructs'`` (`dict` or (sequence of) `str`)
 
-                                 The types are given as a (sequence
-                                 of) `str`, which may take the same
-                                 values as allowed by the *omit_data*
-                                 parameter.
+              The types of construct to be written as CFA-netCDF
+              aggregated variables. By default only field constructs
+              are written in this way. The types are given as a
+              (sequence of) `str`, which may take any of the values
+              allowed by the *omit_data* parameter. Alternatively, the
+              same types may be given as keys to a `dict`, whose
+              values specify the number of dimensions that the
+              construct must also have if it is to be written as
+              CFA-netCDF aggregated variable. A value of `None` means
+              no restriction on the number of dimensions, which is
+              equivalent to a value of ``cf.ge(0)``.
 
-                                 Alternatively, the types may be given
-                                 as keys to a `dict`, whose values
-                                 specify the number of dimensions that
-                                 the construct must also have if it is
-                                 to be written as CFA-netCDF
-                                 aggregated variable. A value of
-                                 `None` means no restriction on the
-                                 number of dimensions, which is
-                                 equivalent to a value of
-                                 ``cf.ge(0)``.
+              Note that size 1 data arrays are never written as
+              CFA-netCDF aggregated variables, regardless of the
+              whether or not this has been requested.
 
-                                 Note that size 1 data arrays are
-                                 never written as CFA-netCDF
-                                 aggregated variables, regardless of
-                                 the whether or not this has been
-                                 requested.
+              *Parameter example:*
+                Equivalent ways to only write cell measure constructs
+                as CFA-netCDF variables: ``'cell_measure``,
+                ``['cell_measure']``, and ``{'cell_measure': None}``.
+              
+              *Parameter example:*
+                Equivalent ways to only write field and auxiliary
+                coordinate constructs as CFA-netCDF variables:
+                ``('field', 'auxiliary_coordinate')`` and ``{'field':
+                None, 'auxiliary_coordinate': None}``.
+              
+              *Parameter example:*
+                Only write two dimensional auxiliary coordinate
+                constructs as CFA-netCDF variables:
+                ``{'auxiliary_coordinate': 2}}``.
+              
+              *Parameter example:*
+                Only write field constructs, and auxiliary coordinate
+                constructs with two or more dimensions as CFA-netCDF
+                variables: ``{'field': None, 'auxiliary_coordinate':
+                cf.ge(2)}}``.
 
-            ``'substitutions'``- A dictionary whose key/value pairs
-                                 define text substitutions to be
-                                 applied to the fragment file URIs
-                                 when the output CFA-netCDF file is
-                                 subsequently read. Each key must be a
-                                 string of one or more letters,
-                                 digits, and underscores. These
-                                 substitutions take precendence over
-                                 any that are also defined on
-                                 individual constructs.
+            * ``'substitutions'`` (`dict`)
 
-                                 Substitutions are stored in the
-                                 output file by the ``substitutions``
-                                 attribute of the ``file`` aggregation
-                                 instruction variable.
+              A dictionary whose key/value pairs define text
+              substitutions to be applied to the fragment file
+              URIs. Each key must be a string of one or more letters,
+              digits, and underscores. These substitutions take
+              precendence over any that are also defined on individual
+              constructs.
 
-            ``'properties'``---- For fragments that define a field
-                                 construct's data, a (sequence of)
-                                 `str` defining one or more properties
-                                 of the file fragments. For each
-                                 property specified, the value of that
-                                 property from each fragment is
-                                 written to the output CFA-netCDF file
-                                 in a non-standardised aggregation
-                                 instruction variable whose term name
-                                 is the same as the property name.
+              Substitutions are stored in the output file by the
+              ``substitutions`` attribute of the ``file`` aggregation
+              instruction variable.
 
-                                 When the output file is read in with
-                                 `cf.read` these variables are
-                                 converted to field ancillary
-                                 constructs.
+              *Parameter example:*
+                ``{'base': 'file:///data/'}}``
 
-            ``'base'``           Deprecated at version 3.14.0 and no
-                                 longer available.
-            ===================  =====================================
+            * ``'properties'`` ((sequence of) `str`)
 
-            The default of *cfa_options* is ``{'path': 'relative',
-            'construct': 'field'}``.
+              For fragments of a field construct's data, a (sequence
+              of) `str` defining one or more properties of the file
+              fragments. For each property specified, the value of
+              that property from each fragment is written to the
+              output CFA-netCDF file in a non-standardised aggregation
+              instruction variable whose term name is the same as the
+              property name.
 
-            *Parameter example:*
-              ``cfa_options={'substitution': {'base': '/home/data/'}}``
+              When the output file is read in with `cf.read` these
+              variables are converted to field ancillary constructs.
 
-            *Parameter example:*
-              ``cfa_options={'property': 'tracking_id'}``
+              *Parameter example:*
+                ``'tracking_id'``
 
-            *Parameter example:*
-              Equivalent ways to only write cell measure constructs as
-              CFA-netCDF variables: ``cfa_options={'constructs':
-              'cell_measure'}`` and ``cfa_options={'constructs':
-              ['cell_measure']}`` and ``cfa_options={'constructs':
-              {'cell_measure': None}}``
+              *Parameter example:*
+                ``('tracking_id', 'model_name')``
 
-            *Parameter example:*
-              Equivalent ways to only write field and auxiliary
-              coordinate constructs as CFA-netCDF variables:
-              ``cfa_options={'constructs': ['field',
-              'auxiliary_coordinate']}`` and
-              ``cfa_options={'constructs': {'field': None,
-              'auxiliary_coordinate': None}}``
+            * ``'strict'`` (`bool`)
 
-            *Parameter example:*
-              Only write two dimensional auxiliary coordinate
-              constructs as CFA-netCDF variables:
-              ``cfa_options={'constructs': {'auxiliary_coordinate':
-              2}}``
+              A `bool` that determines whether or not to raise an
+              `Exception` if it is not possible to write as a CFA
+              aggregated variable a identified by the ``'constructs'``
+              key If True, the default, then an `Exception` an
+              exception is raised, otherwise a warning is logged.
 
-            *Parameter example:*
-              Only write auxiliary coordinate constructs with two or
-              more dimensions as CFA-netCDF variables:
-              ``cfa_options={'constructs': {'auxiliary_coordinate':
-              cf.ge(2)}}``
+            * ``'base'``
 
-        HDF_chunksizes: deprecated at version 3.0.0
-            HDF chunk sizes may be set for individual constructs prior
-            to writing, instead. See `cf.Data.nc_set_hdf5_chunksizes`.
-
-        no_shuffle: deprecated at version 3.0.0
-            Use keyword *shuffle* instead.
-
-        unlimited: deprecated at version 3.0.0
-            Use method `DomainAxis.nc_set_unlimited` instead.
+              Deprecated at version 3.14.0 and no longer available.
 
     :Returns:
 
@@ -730,28 +695,6 @@ def write(
     >>> cf.write(f, 'file.nc', Conventions='CMIP-6.2')
 
     """
-    if unlimited is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            "cf.write",
-            {"unlimited": unlimited},
-            "Use method 'DomainAxis.nc_set_unlimited' instead.",
-        )  # pragma: no cover
-
-    if no_shuffle is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            "cf.write",
-            {"no_shuffle": no_shuffle},
-            "Use keyword 'shuffle' instead.",
-        )  # pragma: no cover
-
-    if HDF_chunksizes is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            "cf.write",
-            {"HDF_chunksizes": HDF_chunksizes},
-            "HDF chunk sizes may be set for individual field constructs "
-            "prior to writing, instead.",
-        )  # pragma: no cover
-
     # Flatten the sequence of intput fields
     fields = tuple(flat(fields))
     if fields:

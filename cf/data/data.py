@@ -6050,7 +6050,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
-    def get_filenames(self, address_format=False):
+    def get_filenames(self):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that are required to deliver
@@ -6066,20 +6066,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         object has a callable `get_filename` method, the output of
         which is added to the returned `set`.
 
-        :Parameters:
-
-            address: `bool`, optional
-                TODOCFADOCS
-
-                 .. versionadded:: TODOCFAVER
-
         :Returns:
 
             `set`
                 The file names. If no files are required to compute
                 the data then an empty `set` is returned.
-
-                TODOCFADOCS
 
         **Examples**
 
@@ -6117,8 +6108,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         >>> d[2, 3].get_filenames()
         {'file_A.nc'}
 
-        TODOCFADOCS: address_format example
-
         """
         from dask.base import collections_to_dsk
 
@@ -6127,8 +6116,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         for a in dsk.values():
             try:
                 f = a.get_filenames()
-                if address_format:
-                    f = ((f, a.get_addresses(), a.get_formats()),)
             except AttributeError:
                 continue
 

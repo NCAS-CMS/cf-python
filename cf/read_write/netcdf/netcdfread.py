@@ -597,7 +597,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         # Apply user-defined substitutions, which take precedence over
         # those defined in the file.
-        subs = subs.update(g["cfa_options"]["substitutions"])
+        subs = subs.update(g["cfa_substitutions"])
         if subs:
             kwargs["substitutions"] = subs
 

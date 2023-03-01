@@ -59,6 +59,7 @@ def read(
     warn_valid=False,
     chunks="auto",
     domain=False,
+        cfa_substitutions=None,
 ):
     """Read field constructs from netCDF, CDL, PP or UM fields datasets.
 
