@@ -521,6 +521,34 @@ class FieldTest(unittest.TestCase):
                         a.equals(b, rtol=1e-05, atol=1e-08, verbose=2),
                     )
 
+        # Test the remove_vertical_crs keyword
+        f = cf.example_field(1)
+        self.assertTrue(
+            f.has_construct(
+                "standard_name:atmosphere_hybrid_height_coordinate"
+            )
+        )
+        self.assertEqual(len(f.coordinate_references()), 2)
+        self.assertEqual(len(f.domain_ancillaries()), 3)
+
+        u = f.collapse("X: mean")
+        self.assertFalse(
+            u.has_construct(
+                "standard_name:atmosphere_hybrid_height_coordinate"
+            )
+        )
+        self.assertEqual(len(u.coordinate_references()), 1)
+        self.assertEqual(len(u.domain_ancillaries()), 0)
+
+        u = f.collapse("X: mean", remove_vertical_crs=False)
+        self.assertTrue(
+            u.has_construct(
+                "standard_name:atmosphere_hybrid_height_coordinate"
+            )
+        )
+        self.assertEqual(len(u.coordinate_references()), 2)
+        self.assertEqual(len(u.domain_ancillaries()), 2)
+
     def test_Field_all(self):
         f = self.f.copy()
 

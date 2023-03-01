@@ -1,3 +1,14 @@
+version 3.14.1
+--------------
+
+**2023-??-??**
+
+* Fixed bug in `cf.Field.collapse` that always retained invalid
+  vertical coordinate reference systems
+  (https://github.com/NCAS-CMS/cf-python/issues/599)
+
+----
+
 version 3.14.0
 --------------
 
