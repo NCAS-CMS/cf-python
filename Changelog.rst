@@ -5,6 +5,9 @@ version 3.14.1
 
 * New keyword parameter to `cf.Data.concatenate`: ``relaxed_units``
   (https://github.com/NCAS-CMS/cf-python/issues/602)
+* Fixed bug in `cf.Field.collapse` that always retained invalid
+  vertical coordinate reference systems
+  (https://github.com/NCAS-CMS/cf-python/issues/599)
 
 ----
 
