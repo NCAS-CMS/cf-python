@@ -14,17 +14,17 @@ import cf
 # %%
 # 2. Read the field constructs:
 
-f1 = cf.read("/home/ankit/recipes/northward.nc")
+f1 = cf.read("~/recipes/northward.nc")
 print(f1)
 
 # %%
 
-f2 = cf.read("/home/ankit/recipes/eastward.nc")
+f2 = cf.read("~/recipes/eastward.nc")
 print(f2)
 
 # %%
 
-f3 = cf.read("/home/ankit/recipes/monthly_precipitation.nc")
+f3 = cf.read("~/recipes/monthly_precipitation.nc")
 print(f3)
 
 # %%

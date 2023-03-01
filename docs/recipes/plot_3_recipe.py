@@ -14,7 +14,7 @@ import cf
 # %%
 # 2. Read the field constructs:
 
-f = cf.read("/home/ankit/recipes/cru_ts4.06.1901.2021.tmp.dat.nc")
+f = cf.read("~/recipes/cru_ts4.06.1901.2021.tmp.dat.nc")
 print(f)
 
 # %%

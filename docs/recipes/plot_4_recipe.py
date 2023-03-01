@@ -13,12 +13,12 @@ import cf
 # %%
 # 2. Read the field constructs:
 
-obs = cf.read("/home/ankit/recipes/cru_ts4.06.1901.2021.tmp.dat.nc", chunks=None)
+obs = cf.read("~/recipes/cru_ts4.06.1901.2021.tmp.dat.nc", chunks=None)
 print(obs)
 
 # %%
 
-model = cf.read("/home/ankit/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc")
+model = cf.read("~/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc")
 print(model)
 
 # %%

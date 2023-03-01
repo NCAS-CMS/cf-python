@@ -125,7 +125,7 @@ autoclass_content = "both"
 
 # This value selects how automatically documented members are sorted
 # (http://sphinx-doc.org/latest/ext/autodoc.html)
-autodoc_member_order = "bysource"
+autodoc_member_order = "groupwise"
 
 # This value is a list of autodoc directive flags that should be
 # automatically applied to all autodoc
