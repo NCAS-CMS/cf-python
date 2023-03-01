@@ -69,7 +69,8 @@ class FileArray(FileArrayMixin, Array):
 
         """
         raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}.get_address"
+            f"Must implement {self.__class__.__name__}.get_address "
+            "in subclasses"
         )  # pragma: no cover
 
     #    def get_filename(self):

@@ -8,10 +8,11 @@ from ...functions import (
     parse_indices,
 )
 from ...umread_lib.umfile import File, Rec
-from .abstract import FileArray
+from .mixin import FileArrayMixin
+from .abstract import Array
 
 
-class UMArray(FileArray):
+class UMArray(FileArrrayMixin, Array):
     """A sub-array stored in a PP or UM fields file."""
 
     def __init__(
@@ -473,10 +474,11 @@ class UMArray(FileArray):
 
         :Returns:
 
-            `int`
+            `int` or `None`
+                The address, or `None` if there isn't one.
 
         """
-        return self._get_component("header_offset")
+        return self._get_component("header_offset", None)
 
     @property
     def data_offset(self):
@@ -590,7 +592,7 @@ class UMArray(FileArray):
 
         :Returns:
 
-            `str` or `None`
+            `int` or `None`
                 The address, or `None` if there isn't one.
 
         """
@@ -632,6 +634,26 @@ class UMArray(FileArray):
 
         """
         return self._get_component("fmt", None)
+
+    def get_format(self):
+        """TODOCFADOCS
+
+        .. versionadded:: (cfdm) TODOCFAVER
+
+        .. seealso:: `get_filename`, `get_address`
+
+        :Returns:
+
+            `str`
+                The file format. Always ``'um'``, signifying PP/UM.
+
+        **Examples**
+
+        >>> a.get_format()
+        'um'
+
+        """
+        return "um"
 
     def get_word_size(self):
         """Word size in bytes.
