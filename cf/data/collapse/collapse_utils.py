@@ -1,4 +1,4 @@
-"""TODODOCS."""
+"""General functions useful for `Collapse` functionality."""
 
 
 def double_precision_dtype(a, default=None, bool_type="i"):

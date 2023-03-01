@@ -656,9 +656,9 @@ and `~Field.set_property` methods:
    'air_temperature'
 
 A collection of properties may be set at the same time with the
-`~Field.set_properties` method of the field construct, and all
-properties may be completely removed with the
-`~Field.clear_properties` method.
+`~Field.set_properties` method of the field construct, and all or some
+properties may be removed with the `~Field.clear_properties` and
+`~Field.del_properties` methods respectively.
 
 .. code-block:: python
    :caption: *Update the properties with a collection, delete all of

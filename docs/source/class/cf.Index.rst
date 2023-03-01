@@ -66,6 +66,7 @@ Properties
    ~cf.Index.set_property
    ~cf.Index.properties
    ~cf.Index.clear_properties
+   ~cf.Index.del_properties
    ~cf.Index.set_properties
 
 .. rubric:: Attributes

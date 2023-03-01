@@ -322,6 +322,18 @@ class aggregateTest(unittest.TestCase):
         g = cf.aggregate([a, b, c, d], exist_all=True)
         self.assertEqual(len(g), 2)
 
+    def test_aggregate_relaxed_units(self):
+        f = cf.example_field(0)
+        bad_units = cf.Units("bad-units")
+        f.override_units(bad_units, inplace=True)
+        g = f[:2]
+        h = f[2:]
+        i = cf.aggregate([g, h], relaxed_units=True)
+        self.assertEqual(len(i), 1)
+        i = i[0]
+        self.assertEqual(i.Units.__dict__, bad_units.__dict__)
+        self.assertTrue((i.array == f.array).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

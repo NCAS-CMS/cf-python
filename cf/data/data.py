@@ -3721,7 +3721,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return d
 
     @classmethod
-    def concatenate(cls, data, axis=0, cull_graph=True):
+    def concatenate(cls, data, axis=0, cull_graph=True, relaxed_units=False):
         """Join a sequence of data arrays together.
 
         .. seealso:: `cull_graph`
@@ -3744,6 +3744,27 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                           non-cyclic in the output.
 
             {{cull_graph: `bool`, optional}}
+
+            relaxed_units: `bool`, optional
+                If True then allow the concatenation of data arrays
+                with invalid but otherwise equal units. By default, if
+                any data array has invalid units then the
+                concatenation will fail.
+
+                A `Units` object is considered to be invalid if its
+                `!isvalid` attribute is `False`:
+
+                >>> d = cf.Data(9, 'metre')
+                >>> d.Units.isvalid
+                True
+                >>> d = cf.Data(9)
+                >>> d.Units.isvalid
+                True
+                >>> d = cf.Data(9, 'bad-units')
+                >>> d.Units.isvalid
+                False
+
+                .. versionadded:: 3.14.1
 
         :Returns:
 
@@ -3807,12 +3828,21 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 data1.insert_dimension(inplace=True)
 
             # Check and conform, if necessary, the units of all inputs
-            if not units0.equivalent(data1.Units):
+            units1 = data1.Units
+            if (
+                relaxed_units
+                and not units0.isvalid
+                and not units1.isvalid
+                and units0.__dict__ == units1.__dict__
+            ):
+                # Allow identical invalid units to be equal
+                pass
+            elif not units0.equivalent(units1):
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have "
                     "equivalent units"
                 )
-            elif not units0.equals(data1.Units):  # conform for consistency
+            elif not units0.equals(units1):
                 if not copied:
                     data1 = data1.copy()
 
@@ -10563,7 +10593,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         **Performance**
 
         An unnecessary task is one which does not contribute to the
-        computed result. Such tasks will be automatically removed
+        computed result. Such tasks are always automatically removed
         (culled) at compute time, but removing them beforehand might
         improve performance by reducing the amount of work done in
         later steps.

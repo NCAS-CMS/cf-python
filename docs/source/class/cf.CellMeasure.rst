@@ -93,6 +93,7 @@ Properties
    ~cf.CellMeasure.set_property
    ~cf.CellMeasure.properties
    ~cf.CellMeasure.clear_properties
+   ~cf.CellMeasure.del_properties
    ~cf.CellMeasure.set_properties
 
 .. rubric:: Attributes

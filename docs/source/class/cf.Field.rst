@@ -76,6 +76,7 @@ Properties
    ~cf.Field.set_property
    ~cf.Field.properties
    ~cf.Field.clear_properties
+   ~cf.Field.del_properties
    ~cf.Field.set_properties
 
 .. rubric:: Attributes
