@@ -2,7 +2,7 @@ import numpy
 
 from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
-from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, CFA, flat
+from ..functions import CFA, flat
 from .netcdf import NetCDFWrite
 
 netcdf = NetCDFWrite(implementation())
@@ -612,18 +612,18 @@ def write(
                 Equivalent ways to only write cell measure constructs
                 as CFA-netCDF variables: ``'cell_measure``,
                 ``['cell_measure']``, and ``{'cell_measure': None}``.
-              
+
               *Parameter example:*
                 Equivalent ways to only write field and auxiliary
                 coordinate constructs as CFA-netCDF variables:
                 ``('field', 'auxiliary_coordinate')`` and ``{'field':
                 None, 'auxiliary_coordinate': None}``.
-              
+
               *Parameter example:*
                 Only write two dimensional auxiliary coordinate
                 constructs as CFA-netCDF variables:
                 ``{'auxiliary_coordinate': 2}}``.
-              
+
               *Parameter example:*
                 Only write field constructs, and auxiliary coordinate
                 constructs with two or more dimensions as CFA-netCDF

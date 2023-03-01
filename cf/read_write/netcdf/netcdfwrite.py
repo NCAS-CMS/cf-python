@@ -46,7 +46,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # This prrevents recursion whilst writing CFA-netCDF term
             # variables.
             return False
-        
+
         g = self.write_vars
         if not g["cfa"]:
             return False
@@ -945,7 +945,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             `set`
                 The file names. If no files are required to compute
                 the data then an empty `set` is returned.
-        
+
         """
         from dask.base import collections_to_dsk
 
@@ -960,11 +960,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             try:
                 f = ((f, a.get_addresses(), a.get_formats()),)
             except AttributeError:
-                 try:
-                     f = ((f, (a.get_address(),), (a.get_format(),)),)
-                 except AttributeError:
-                     continue
-                 
+                try:
+                    f = ((f, (a.get_address(),), (a.get_format(),)),)
+                except AttributeError:
+                    continue
+
             out.update(f)
 
         return out
