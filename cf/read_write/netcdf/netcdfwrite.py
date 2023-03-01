@@ -53,6 +53,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         if not data.get_cfa_write():
             return False
 
+        if construct_type is None:
+            return False
+
         if data.size == 1:
             return False
 
@@ -404,29 +407,65 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Write the standardised aggregation instruction variables to
         # the CFA-netCDF file
         # ------------------------------------------------------------
-        aggregated_data = data.nc_get_cfa_aggregated_data(default={})
+        aggregated_data = data.cfa_get_aggregated_data(default={})
+        substitutions = data.cfa_get_file_substitutions()
 
         aggregated_data_attr = []
-        for term, data in ggg.items():
-            if term == "location":
-                dimensions = location_ncdimensions
-            else:
-                dimensions = fragment_ncdimensions
 
-                # Attempt to reduce formats to a common scalar value
-                if term == "format":
-                    u = data.unique().compressed().persist()
-                    if u.size == 1:
-                        data = u.squeeze()
-                        dimensions = ()
+        # Location
+        term = "location"
+        term_ncvar = self._cfa_write_term_variable(
+            ggg[term],
+            aggregated_data.get(term, f"cfa_{term}"),
+            location_ncdimensions,
+        )
+        aggregated_data_attr.append(f"{term}: {term_ncvar}")
 
-            term_ncvar = self._cfa_write_term_variable(
-                data,
-                aggregated_data.get(term, f"cfa_{term}"),
-                dimensions,
-            )
+        # File
+        term = "file"
+        if substitutions:
+            subs = []
+            for base, sub in substitutions.items():
+                subs.append(f"${{base}}: {sub}")
 
-            aggregated_data_attr.append(f"{term}: {term_ncvar}")
+            attributes = {"substitutions": " ".join(substitutions)}
+        else:
+            attributes = None
+
+        term_ncvar = self._cfa_write_term_variable(
+            ggg[term],
+            aggregated_data.get(term, f"cfa_{term}"),
+            fragment_ncdimensions,
+            attributes=attributes,
+        )
+        aggregated_data_attr.append(f"{term}: {term_ncvar}")
+
+        # Address
+        term = "address"
+        term_ncvar = self._cfa_write_term_variable(
+            ggg[term],
+            aggregated_data.get(term, f"cfa_{term}"),
+            fragment_ncdimensions,
+        )
+        aggregated_data_attr.append(f"{term}: {term_ncvar}")
+
+        # Format
+        term = "format"
+        dimensions = fragment_ncdimensions
+
+        # Attempt to reduce formats to a common scalar value
+        if term == "format":
+            u = ggg[term].unique().compressed().persist()
+            if u.size == 1:
+                ggg[term] = u.squeeze()
+                dimensions = ()
+
+        term_ncvar = self._cfa_write_term_variable(
+            ggg[term],
+            aggregated_data.get(term, f"cfa_{term}"),
+            dimensions,
+        )
+        aggregated_data_attr.append(f"{term}: {term_ncvar}")
 
         # ------------------------------------------------------------
         # Look for non-standard CFA terms stored as field ancillaries
@@ -577,12 +616,14 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         if anc._custom.get("cfa_term", False):
             # This field ancillary construct is to be written as a
             # non-standard CFA term belonging to the parent field, or
-            # not at all.
+            # else not at all.
             return ""
 
         return super()._write_field_ancillary(f, key, anc)
 
-    def _cfa_write_term_variable(self, data, ncvar, ncdimensions):
+    def _cfa_write_term_variable(
+        self, data, ncvar, ncdimensions, attributes=None
+    ):
         """TODOCFADOCS.
 
         .. versionadded:: TODOCFAVER
@@ -595,6 +636,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             ncdimensions: `tuple` of `str`
 
+            attributes: `dict`, optional
+
         :Returns:
 
             `str`
@@ -606,7 +649,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         if create:
             # Create a new CFA term variable in the file
             ncvar = self._netcdf_name(ncvar)
-            self._write_netcdf_variable(ncvar, ncdimensions, data)
+            self._write_netcdf_variable(
+                ncvar, ncdimensions, cfvar=data, extra=attributes
+            )
         else:
             # This CFA term variable has already been written to the
             # file
@@ -615,7 +660,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return ncvar
 
     def _cfa_write_non_standard_terms(
-        self, field, fragment_ncdimensions, aggregation_data
+        self, field, fragment_ncdimensions, aggregated_data
     ):
         """TODOCFADOCS
 
@@ -629,10 +674,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             fragment_ncdimensions: `list` of `str`
 
-            aggregation_data: `dict`
+            aggregated_data: `dict`
 
         """
-        aggregated_data = []
+        aggregated_data_attr = []
         terms = ["location", "file", "address", "format"]
         for key, field_anc in self.implementation.get_field_ancillaries(
             field
@@ -640,17 +685,17 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             if not field_anc._custom.get("cfa_term", False):
                 continue
 
-            data = self.implementation.get_data(field_anc)
-            if not data.get_cfa_write():
+            data = self.implementation.get_data(field_anc, None)
+            if data is None:
                 continue
 
-            # Check that the field ancillary has the same axes as the
+            # Check that the field ancillary has the same axes as its
             # parent field, and in the same order.
             if field.get_data_axes(key) != field.get_data_axes():
                 continue
 
-            # Still here? Then this field ancillary represent a
-            #             non-standard aggregation term.
+            # Still here? Then this field ancillary can be represented
+            #             by a non-standard aggregation term.
 
             # Then transform the data so that it spans the fragment
             # dimensions, with one value per fragment. If a chunk has
@@ -667,7 +712,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 adjust_chunks={i: 1 for i in out_ind},
                 dtype=dx.dtype,
             )
-            array = dx.compute()
 
             # Get the non-standard term name from the field
             # ancillary's 'id' attribute
@@ -683,14 +727,14 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             # Create the new CFA term variable
             term_ncvar = self._cfa_write_term_variable(
-                type(data)(array),
-                aggregation_data.get(term, f"cfa_{term}"),
-                fragment_ncdimensions,
+                data=type(data)(dx),
+                ncvar=aggregated_data.get(term, f"cfa_{term}"),
+                ncdimensions=fragment_ncdimensions,
             )
 
-            aggregated_data.append(f"{term}: {term_ncvar}")
+            aggregated_data_attr.append(f"{term}: {term_ncvar}")
 
-        return aggregated_data
+        return aggregated_data_attr
 
     @classmethod
     def _cfa_unique(cls, a):
@@ -731,6 +775,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             data: `Data`
                 TODOCFADOCS
 
+            cfvar: construct
+                TODOCFADOCS
+
         :Returns:
 
             `dict`
@@ -748,9 +795,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Define the CFA file susbstitutions, giving precedence over
         # those set on the Data object to those provided by the CFA
         # options.
-        substitutions  = data.cfa_get_file_substitutions()
-        substitutions.update(g["cfa_options"].get("substitutions"))
-        
+        data.cfa_set_file_substitutions(g["cfa_options"]["substitutions"])
+        substitutions = data.cfa_get_file_substitutions()
+
         relative = g["cfa_options"].get("relative", None)
         if relative:
             absolute = False
@@ -851,12 +898,13 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         if max(data.to_dask_array().chunksize) > np.iinfo(dtype).max:
             dtype = np.dtype(np.int64)
 
+        ndim = data.ndim
         aggregation_location = np.ma.masked_all(
-            (self.ndim, max(shape)), dtype=dtype
+            (ndim, max(a_shape[:ndim])), dtype=dtype
         )
 
-        for i, c in enumerate(data.chunks):
-            aggregation_location[i, : len(c)] = c
+        for i, chunks in enumerate(data.chunks):
+            aggregation_location[i, : len(chunks)] = chunks
 
         # ------------------------------------------------------------
         # Return Data objects

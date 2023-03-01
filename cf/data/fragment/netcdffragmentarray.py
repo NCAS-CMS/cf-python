@@ -73,8 +73,6 @@ class NetCDFFragmentArray(
             {{init copy: `bool`, optional}}
 
         """
-        group = None  # TODO ???
-
         super().__init__(
             dtype=dtype,
             shape=shape,

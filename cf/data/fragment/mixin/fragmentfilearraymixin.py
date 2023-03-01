@@ -37,6 +37,7 @@ class FragmentFileArrayMixin:
                 if dirname(f) != location
             ]
         )
+        # TODOCFA - how does this work out with URLs and file URIs?
 
         a._set_component("filenames", filenames + new_filenames, copy=False)
         a._set_component(
@@ -55,8 +56,7 @@ class FragmentFileArrayMixin:
         :Returns:
 
             `tuple`
-                The file names in normalised, absolute
-                form. TODOCFADOCS then an empty `set` is returned.
+                TODOCFADOCS
 
         """
         return self._get_component("addresses", default)
@@ -69,8 +69,7 @@ class FragmentFileArrayMixin:
         :Returns:
 
             `tuple`
-                The file names in normalised, absolute
-                form. TODOCFADOCS then an empty `set` is returned.
+                The fragment file names.
 
         """
         filenames = self._get_component("filenames", None)
@@ -85,7 +84,7 @@ class FragmentFileArrayMixin:
         return filenames
 
     def get_formats(self, default=AttributeError()):
-        """TODOCFADOCS Return the names of any files containing the data array.
+        """Return the format of each fragment file.
 
         .. versionadded:: TODOCFAVER
 
@@ -94,8 +93,7 @@ class FragmentFileArrayMixin:
         :Returns:
 
             `tuple`
-                The file names in normalised, absolute
-                form. TODOCFADOCS then an empty `set` is returned.
+                The fragment file formats.
 
         """
         return (self.get_format(),) * len(self.get_filenames(default))

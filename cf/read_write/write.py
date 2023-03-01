@@ -615,12 +615,12 @@ def write(
                                  variables. By default only field
                                  constructs are written as CFA-netCDF
                                  aggregated variables.
-                              
+
                                  The types are given as a (sequence
                                  of) `str`, which may take the same
                                  values as allowed by the *omit_data*
                                  parameter.
-                                 
+
                                  Alternatively, the types may be given
                                  as keys to a `dict`, whose values
                                  specify the number of dimensions that
@@ -631,7 +631,7 @@ def write(
                                  number of dimensions, which is
                                  equivalent to a value of
                                  ``cf.ge(0)``.
-                                 
+
                                  Note that size 1 data arrays are
                                  never written as CFA-netCDF
                                  aggregated variables, regardless of
@@ -698,7 +698,7 @@ def write(
               ``cfa_options={'constructs': {'field': None,
               'auxiliary_coordinate': None}}``
 
-            *Parameter example:* 
+            *Parameter example:*
               Only write two dimensional auxiliary coordinate
               constructs as CFA-netCDF variables:
               ``cfa_options={'constructs': {'auxiliary_coordinate':
@@ -855,29 +855,29 @@ def write(
             cfa_options.setdefault("constructs", "field")
             cfa_options.setdefault("substitutions", {})
             cfa_options.setdefault("properties", ())
-            
+
             constructs = cfa_options["constructs"]
             if isinstance(constructs, dict):
                 cfa_options["constructs"] = constructs.copy()
             else:
                 if isinstance(constructs, str):
                     constructs = (constructs,)
-                    
+
                 cfa_options["constructs"] = {c: None for c in constructs}
 
             substitutions = cfa_options["substitutions"].copy()
             for base, sub in substitutions.items():
                 if base.startswith("${") and base.endswith("}"):
                     substitutions[base[2:-1]] = substitutions.pop(base)
-                    
+
             cfa_options["substitutions"] = substitutions
 
             properties = cfa_options["properties"]
             if isinstance(properties, str):
                 properties = (properties,)
 
-            cfa_options["properties"] =  tuple(properties)
-            
+            cfa_options["properties"] = tuple(properties)
+
         extra_write_vars["cfa"] = cfa
         extra_write_vars["cfa_options"] = cfa_options
 

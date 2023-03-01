@@ -323,8 +323,8 @@ class CFANetCDF(NetCDFMixin):
         None
 
         """
-        if base.startswith("${") and base.endswith("}"):
-            base = base[2:-1]
+        if not (base.startswith("${") and base.endswith("}")):
+            base = f"${{{base}}}"
 
         subs = self.cfa_file_substitutions({})
         if base not in subs:
@@ -424,47 +424,6 @@ class CFANetCDF(NetCDFMixin):
         """
         return self._nc_has("cfa_file_substitutions")
 
-    #    def cfa_set_file_substitution(self, base, value):
-    #        """Set the CFA-netCDF file name substitutions.
-    #
-    #        .. versionadded:: TODOCFAVER
-    #
-    #        .. seealso:: `cfa_del_file_substitutions`,
-    #                     `cfa_get_file_substitutions`,
-    #                     `cfa_has_file_substitutions`
-    #
-    #        :Parameters:
-    #
-    #            value: `dict`
-    #                The new CFA-netCDF file name substitutions.
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        **Examples**
-    #
-    #        >>> f.cfa_set_file_substitutions({'${base}': 'file:///data/'})
-    #        >>> f.cfa_has_file_substitutions()
-    #        True
-    #        >>> f.cfa_get_file_substitutions()
-    #        {'${base}': 'file:///data/'}
-    #        >>> f.cfa_del_file_substitutions()
-    #        {'${base}': 'file:///data/'}
-    #        >>> f.cfa_has_file_substitutions()
-    #        False
-    #        >>> print(f.cfa_get_file_substitutions(None))
-    #        None
-    #        >>> print(f.cfa_del_file_substitutions(None))
-    #        None
-    #
-    #        """
-    #        if base.startswith("${") and base.endswith("}"):
-    #            base = base [2:-1]
-    #
-    #        subs  = self._nc_get("cfa_file_substitutions", {})
-    #        subs.update({base: value}))
-
     def cfa_set_file_substitutions(self, value):
         """Set the CFA-netCDF file name substitutions.
 
@@ -485,7 +444,7 @@ class CFANetCDF(NetCDFMixin):
 
         **Examples**
 
-        >>> f.cfa_set_file_substitutions({'${base}': 'file:///data/'})
+        >>> f.cfa_set_file_substitutions({'base': 'file:///data/'})
         >>> f.cfa_has_file_substitutions()
         True
         >>> f.cfa_get_file_substitutions()
@@ -503,10 +462,11 @@ class CFANetCDF(NetCDFMixin):
         if not value:
             return
 
+        value = value.copy()
         for base, sub in value.items():
-            if base.startswith("${") and base.endswith("}"):
-                value[base[2:-1]] = value.pop(base)
+            if not (base.startswith("${") and base.endswith("}")):
+                value[f"${{{base}}}"] = value.pop(base)
 
-        subs = self.cfa_get_file_substitutions)
+        subs = self.cfa_get_file_substitutions()
         subs.update(value)
         self._nc_set("cfa_file_substitutions", subs)

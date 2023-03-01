@@ -1,3 +1,6 @@
+from urllib.parse import urlparse
+
+from ...umread_lib.umfile import File
 from ..array.umarray import UMArray
 from .mixin import FragmentArrayMixin, FragmentFileArrayMixin
 

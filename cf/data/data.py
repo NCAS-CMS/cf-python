@@ -2424,8 +2424,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d._set_dask(da.ceil(dx))
         return d
 
-    @_inplace_enabled(default=False)
-    def cfa_add_fragment_location(self, location, inplace=False):
+    def cfa_add_fragment_location(self, location):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
@@ -2435,25 +2434,21 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             location: `str`
                 TODOCFADOCS
 
-            {{inplace: `bool`, optional}}
-
         :Returns:
 
-            `Data` or `None`
+            `None`
                 TODOCFADOCS
 
         **Examples**
 
-        >>> e = d.cfa_add_fragment_location('/data/model')
+        >>> d.cfa_add_fragment_location('/data/model')
 
         """
         from dask.base import collections_to_dsk
 
-        d = _inplace_enabled_define_and_cleanup(self)
-
         location = abspath(location)
 
-        dx = d.to_dask_array()
+        dx = self.to_dask_array()
 
         updated = False
         dsk = collections_to_dsk((dx,), optimize_graph=True)
@@ -2469,49 +2464,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         if updated:
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            d._set_dask(dx, clear=_NONE)
-
-        return d
-
-    @_inplace_enabled(default=False)
-    def cfa_add_file_substitution(self, base, location, inplace=False):
-        """TODOCFADOCS
-
-        .. versionadded:: TODOCFAVER
-
-        :Parameters:
-
-            base: `str`, optional
-                TODOCFADOCS
-
-            location: `str`
-                TODOCFADOCS
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `Data` or `None`
-                TODOCFADOCS
-
-        **Examples**
-
-        >>> e = d.cfa_add_fragment_location('/data/model')
-
-        """
-        d = _inplace_enabled_define_and_cleanup(self)
-
-        base = f"${{base}}"
-        subs = d.cfa_get_file_substitutions({})
-        if base in subs and subs[base] != location:
-            raise ValueError(
-                "Can't overwrite existing CFA file name substitution "
-                f"{base}: {subs[base]!r}"
-            )
-
-        d.cfa_set_file_substitutions({base: location})
-
-        return d
+            self._set_dask(dx, clear=_NONE)
 
     def cfa_get_write(self):
         """The CFA write status of the data.
@@ -2542,7 +2495,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def cfa_set_write(self, status):
         """Set the CFA write status of the data.
 
-        TODOCFADOCS.ppp
+        TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
 
@@ -3903,15 +3856,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # incorrect.
         data0._custom.pop("second_element", None)
 
-        # Set the CFA-netCDF aggregated_data instructions and
-        # substitutions, giving precedence to those towards the left
-        # hand side of the input list.
+        # Set the CFA-netCDF aggregated_data instructions
+        # substitutions by combining them from all of the input data
+        # instances, giving precedence to those towards the left hand
+        # side of the input list.
         if data0.cfa_get_write():
             aggregated_data = {}
             substitutions = {}
             for d in processed_data[::-1]:
                 aggregated_data.update(d.cfa_get_aggregated_data({}))
-                substitutions.update(d.cfa_get_file_substitutions({}))
+                substitutions.update(d.cfa_get_file_substitutions())
 
             data0.cfa_set_aggregated_data(aggregated_data)
             data0.cfa_set_file_substitutions(substitutions)
