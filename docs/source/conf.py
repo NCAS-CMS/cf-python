@@ -376,7 +376,7 @@ htmlhelp_basename = "cfdoc"
 
 # sphinx-gallery configuration
 sphinx_gallery_conf = {
-    "examples_dirs": "../recipes",  # path to recipe files
+    "examples_dirs": "recipes",  # path to recipe files
     "gallery_dirs": "auto_gallery",  # path to save gallery generated output
     "run_stale_examples": True,
     "reference_url": {"cf": None},
