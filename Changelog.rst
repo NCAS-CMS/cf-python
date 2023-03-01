@@ -3,6 +3,8 @@ version 3.14.1
 
 **2023-??-??**
 
+* New keyword parameter to `cf.Data.concatenate`: ``relaxed_units``
+  (https://github.com/NCAS-CMS/cf-python/issues/602)
 * New method: `cf.Field.del_properties`
   (https://github.com/NCAS-CMS/cf-python/issues/598)
 * New keyword parameter to `cf.unique_constructs`:

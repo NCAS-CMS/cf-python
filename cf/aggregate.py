@@ -177,9 +177,10 @@ class _Meta:
             relaxed_units: `bool`, optional
                 If True then assume that field and metadata constructs
                 with the same identity but missing units actually have
-                equivalent (but unspecified) units, so that aggregation
-                may occur. By default such field constructs are not
-                aggregatable.
+                equivalent (but unspecified) units, so that
+                aggregation may occur. Also assumes that invalid but
+                otherwise equal units are equal. By default such field
+                constructs are not aggregatable.
 
             allow_no_identity: `bool`, optional
                 If True then assume that field and metadata constructs
@@ -237,6 +238,7 @@ class _Meta:
         )
 
         self.relaxed_identities = relaxed_identities
+        self.relaxed_units = relaxed_units
         self.strict_identities = strict_identities
         self.field_identity = field_identity
         self.ncvar_identities = ncvar_identities
@@ -854,21 +856,32 @@ class _Meta:
         _canonical_units = self._canonical_units
 
         if identity in _canonical_units:
-            if var_units:
+            if var_units.isvalid:
+                if var_units:
+                    for u in _canonical_units[identity]:
+                        if var_units.equivalent(u):
+                            return u
+
+                    # Still here?
+                    _canonical_units[identity].append(var_units)
+                elif relaxed_units or variable.dtype.kind in ("S", "U"):
+                    return _no_units
+
+            elif relaxed_units:
                 for u in _canonical_units[identity]:
-                    if var_units.equivalent(u):
+                    if u.isvalid:
+                        continue
+
+                    if var_units.__dict__ == u.__dict__:
                         return u
 
                 # Still here?
                 _canonical_units[identity].append(var_units)
-
-            elif relaxed_units or variable.dtype.kind in ("S", "U"):
-                var_units = _no_units
         else:
-            if var_units:
+            if var_units or (relaxed_units and not var_units.isvalid):
                 _canonical_units[identity] = [var_units]
             elif relaxed_units or variable.dtype.kind in ("S", "U"):
-                var_units = _no_units
+                return _no_units
 
         # Still here?
         return var_units
@@ -1196,7 +1209,11 @@ class _Meta:
         # * whether or not there is a data array
         Type = f.construct_type
         Identity = self.identity
-        Units = self.units.formatted(definition=True)
+        if self.units.isvalid:
+            Units = self.units.formatted(definition=True)
+        else:
+            Units = self.units.units
+
         Cell_methods = self.cell_methods
         Data = self.has_data
         #        signature_append = signature.append
@@ -1501,7 +1518,8 @@ def aggregate(
             If True then assume that field and metadata constructs
             with the same identity but missing units actually have
             equivalent (but unspecified) units, so that aggregation
-            may occur. By default such field constructs are not
+            may occur. Also assumes that invalid but otherwise equal
+            units are equal. By default such field constructs are not
             aggregatable.
 
         allow_no_identity: `bool`, optional
@@ -1883,7 +1901,7 @@ def aggregate(
 
             continue
 
-        if not meta[0].units.isvalid:
+        if not relaxed_units and not meta[0].units.isvalid:
             if is_log_level_info(logger):
                 x = ", ".join(set(repr(m.units) for m in meta))
                 logger.info(
@@ -2046,6 +2064,7 @@ def aggregate(
                         atol=atol,
                         verbose=verbose,
                         concatenate=concatenate,
+                        relaxed_units=relaxed_units,
                         copy=(copy or not exclude),
                     )
 
@@ -2945,7 +2964,14 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
 
 @_manage_log_level_via_verbosity
 def _aggregate_2_fields(
-    m0, m1, rtol=None, atol=None, verbose=None, concatenate=True, copy=True
+    m0,
+    m1,
+    rtol=None,
+    atol=None,
+    verbose=None,
+    concatenate=True,
+    relaxed_units=False,
+    copy=True,
 ):
     """Aggregate two fields, returning the _Meta object of the
     aggregated field.
@@ -3132,6 +3158,7 @@ def _aggregate_2_fields(
             data = Data.concatenate(
                 (construct0.get_data(), construct1.get_data()),
                 axis,
+                relaxed_units=relaxed_units,
             )
             construct0.set_data(data, copy=False)
             if construct0.has_bounds():
@@ -3141,6 +3168,7 @@ def _aggregate_2_fields(
                         construct1.bounds.get_data(_fill_value=False),
                     ),
                     axis,
+                    relaxed_units=relaxed_units,
                 )
                 construct0.bounds.set_data(data, copy=False)
         else:
@@ -3151,6 +3179,7 @@ def _aggregate_2_fields(
                     construct0.get_data(_fill_value=False),
                 ),
                 axis,
+                relaxed_units=relaxed_units,
             )
             construct0.set_data(data)
             if construct0.has_bounds():
@@ -3160,6 +3189,7 @@ def _aggregate_2_fields(
                         construct0.bounds.get_data(_fill_value=False),
                     ),
                     axis,
+                    relaxed_units=relaxed_units,
                 )
                 construct0.bounds.set_data(data)
 
@@ -3210,12 +3240,16 @@ def _aggregate_2_fields(
         if direction0:
             # The fields are increasing along the aggregating axis
             data = Data.concatenate(
-                (parent0.get_data(), parent1.get_data()), axis
+                (parent0.get_data(), parent1.get_data()),
+                axis,
+                relaxed_units=relaxed_units,
             )
         else:
             # The fields are decreasing along the aggregating axis
             data = Data.concatenate(
-                (parent1.get_data(), parent0.get_data()), axis
+                (parent1.get_data(), parent0.get_data()),
+                axis,
+                relaxed_units=relaxed_units,
             )
 
         # Update the size of the aggregating axis in parent0
