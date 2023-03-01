@@ -55,6 +55,7 @@ Properties
    ~cf.Domain.set_property
    ~cf.Domain.properties
    ~cf.Domain.clear_properties
+   ~cf.Domain.del_properties
    ~cf.Domain.set_properties
 
 .. rubric:: Attributes

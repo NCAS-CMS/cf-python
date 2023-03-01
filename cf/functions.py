@@ -3137,8 +3137,10 @@ def size(a):
         return np.asanyarray(a).size
 
 
-def unique_constructs(constructs, copy=True):
-    return cfdm.unique_constructs(constructs, copy=copy)
+def unique_constructs(constructs, ignore_properties=None, copy=True):
+    return cfdm.unique_constructs(
+        constructs, ignore_properties=ignore_properties, copy=copy
+    )
 
 
 unique_constructs.__doc__ = cfdm.unique_constructs.__doc__.replace(
