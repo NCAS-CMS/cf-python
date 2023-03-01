@@ -2964,7 +2964,7 @@ class PropertiesData(Properties):
 
             {{ignore_fill_value: `bool`, optional}}
 
-            {{ignore_properties: (sequence of `str`), optional}}
+            {{ignore_properties: (sequence of) `str`, optional}}
 
             {{ignore_compression: `bool`, optional}}
 
