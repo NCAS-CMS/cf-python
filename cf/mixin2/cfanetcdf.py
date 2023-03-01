@@ -4,6 +4,8 @@ themsleves import cf.Data, which would lead to a circular import
 situation.
 
 """
+from re import split
+
 from cfdm.mixin import NetCDFMixin
 
 
@@ -90,8 +92,11 @@ class CFANetCDF(NetCDFMixin):
         :Returns:
 
             `dict`
-         he aggregation instruction terms and their
-                corresponding netCDF variable names.
+                The aggregation instruction terms and their
+                corresponding netCDF variable names in a dictionary
+                whose key/value pairs are the aggregation instruction
+                terms and their corresponding variable names.
+
 
         **Examples**
 
@@ -201,9 +206,13 @@ class CFANetCDF(NetCDFMixin):
 
         :Parameters:
 
-            value: `dict`
+            value: `str` or `dict`
                 The aggregation instruction terms and their
-                corresponding netCDF variable names.
+                corresponding netCDF variable names. Either a
+                CFA-netCDF-compliant string value of an
+                ``aggregated_data`` attribute, or a dictionary whose
+                key/value pairs are the aggregation instruction terms
+                and their corresponding variable names.
 
         :Returns:
 
@@ -241,7 +250,14 @@ class CFANetCDF(NetCDFMixin):
 
         """
         if value:
-            self._nc_set("cfa_aggregated_data", value.copy())
+            if isinstance(value, str):
+                v = split("\s+", value)
+                value = {term[:-1]: var for term, var in zip(v[::2], v[1::2])}
+            else:
+                # 'value' is a dictionary
+                value = value.copy()
+
+            self._nc_set("cfa_aggregated_data", value)
 
     def cfa_clear_file_substitutions(self):
         """Remove the CFA-netCDF file name substitutions.
@@ -435,8 +451,15 @@ class CFANetCDF(NetCDFMixin):
 
         :Parameters:
 
-            value: `dict`
-                The new CFA-netCDF file name substitutions.
+            value: `str` or `dict`
+                The substition definitions in a dictionary whose
+                key/value pairs are the file URI parts to be
+                substituted and their corresponding substitution text.
+
+                The file URI parts to be substituted may be specified
+                with or without the ``${...}`` syntax. For instance,
+                the following are equivalent: ``{'base': 'sub'}``,
+                ``{'${base}': 'sub'}``.
 
         :Returns:
 

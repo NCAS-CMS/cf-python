@@ -867,8 +867,8 @@ def write(
 
             substitutions = cfa_options["substitutions"].copy()
             for base, sub in substitutions.items():
-                if base.startswith("${") and base.endswith("}"):
-                    substitutions[base[2:-1]] = substitutions.pop(base)
+                if not (base.startswith("${") and base.endswith("}")):
+                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
 
             cfa_options["substitutions"] = substitutions
 

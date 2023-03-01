@@ -1,6 +1,6 @@
 from copy import deepcopy
 from itertools import accumulate, product
-from os.path import join as os_join
+from os.path import join
 from urllib.parse import urlparse
 
 import numpy as np
@@ -344,7 +344,9 @@ class CFANetCDFArray(NetCDFArray):
         location = fragment.location
 
         if non_standard_term is not None:
+            # --------------------------------------------------------
             # This fragment contains a constant value
+            # --------------------------------------------------------
             aggregated_data[frag_loc] = {
                 "format": "full",
                 "location": location,
@@ -357,15 +359,16 @@ class CFANetCDFArray(NetCDFArray):
         address = fragment.address
 
         if address is not None:
+            # --------------------------------------------------------
             # This fragment is contained in a file
+            # --------------------------------------------------------
             if filename is None:
                 # This fragment is contained in the CFA-netCDF file
                 filename = cfa_filename
                 fmt = "nc"
             else:
+                # Apply string substitutions to the fragment filename
                 if substitutions:
-                    # Apply string substitutions to the fragment
-                    # filename
                     for base, sub in substitutions.items():
                         filename = filename.replace(base, sub)
 
@@ -373,7 +376,7 @@ class CFANetCDFArray(NetCDFArray):
                 if parsed_filename.scheme not in ("file", "http", "https"):
                     # Find the full path of a relative fragment
                     # filename
-                    filename = os_join(directory, parsed_filename.path)
+                    filename = join(directory, parsed_filename.path)
 
             aggregated_data[frag_loc] = {
                 "format": fmt,
@@ -382,7 +385,9 @@ class CFANetCDFArray(NetCDFArray):
                 "location": location,
             }
         elif filename is None:
+            # --------------------------------------------------------
             # This fragment contains wholly missing values
+            # --------------------------------------------------------
             aggregated_data[frag_loc] = {
                 "format": "full",
                 "location": location,
