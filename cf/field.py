@@ -7405,7 +7405,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
                 If False then only the vertical coordinate reference
                 construct's domain ancillary constructs that span any
-                collapse axes removed, but the vertical coordinate
+                collapse axes are removed, but the vertical coordinate
                 reference construct remains. This could result in
                 `compute_vertical_coordinates` returning incorrect
                 non-parameteric vertical coordinate values.
