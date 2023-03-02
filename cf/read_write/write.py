@@ -577,18 +577,18 @@ def write(
 
         cfa_options: `dict`, optional
             Parameters for configuring the output CFA-netCDF file. By
-            default *cfa_options* is ``{'paths': 'relative',
+            default *cfa_options* is ``{'paths': 'absolute',
             'constructs': 'field'}`` and may have any subset of the
             following keys (and value types):
 
             * ``'paths'`` (`str`)
 
-              How to write fragment file names. Set to ``'relative'``
-              (the default) for them to be written as relative to the
-              CFA-netCDF file being created, or else set to
-              ``'absolute'`` for them to be written as file URIs. Note
-              that in both cases, fragment file defined by fully
-              qualified URLs will always be written as such.
+              How to write fragment file names. Set to ``'absolute'``
+              (the default) for them to be written as fully qualified
+              URIs, or else set to ``'relative'`` for them to be
+              relative as paths relative to the CFA-netCDF file being
+              created. Note that in both cases, fragment file defined
+              by fully qualified URLs will always be written as such.
 
             * ``'constructs'`` (`dict` or (sequence of) `str`)
 
@@ -762,14 +762,21 @@ def write(
                     raise ValueError(
                         "Invalid dictionary key to the 'cfa_options' "
                         f"parameter. Valid keys are {keys}. "
-                        f"Got: {tuple(cfa_options)}"
+                        f"Got: {cfa_options}"
                     )
 
-            cfa_options.setdefault("paths", "relative")
+            cfa_options.setdefault("paths", "absolute")
             cfa_options.setdefault("constructs", "field")
             cfa_options.setdefault("substitutions", {})
-            cfa_options.setdefault("properties", ())
+#            cfa_options.setdefault("properties", ())
 
+            paths =  ("relative", "absolute")
+            if cfa_options['paths'] not in paths:
+                raise  ValueError(
+                    "Invalid value of 'paths' CFA option. Valid paths "
+                    f"are {paths}. Got: {cfa_options['paths']!r}"
+                )
+                
             constructs = cfa_options["constructs"]
             if isinstance(constructs, dict):
                 cfa_options["constructs"] = constructs.copy()
@@ -782,16 +789,17 @@ def write(
             substitutions = cfa_options["substitutions"].copy()
             for base, sub in substitutions.items():
                 if not (base.startswith("${") and base.endswith("}")):
+                    # Add missing ${...}
                     substitutions[f"${{{base}}}"] = substitutions.pop(base)
 
             cfa_options["substitutions"] = substitutions
 
-            properties = cfa_options["properties"]
-            if isinstance(properties, str):
-                properties = (properties,)
-
-            cfa_options["properties"] = tuple(properties)
-
+            #           properties = cfa_options["properties"]
+            #           if isinstance(properties, str):
+            #               properties = (properties,)
+            #
+            #            cfa_options["properties"] = tuple(properties)
+            
         extra_write_vars["cfa"] = cfa
         extra_write_vars["cfa_options"] = cfa_options
 

@@ -59,12 +59,16 @@ def read(
     warn_valid=False,
     chunks="auto",
     domain=False,
-    cfa_substitutions=None,
+    cfa_options=None,
 ):
-    """Read field constructs from netCDF, CDL, PP or UM fields datasets.
+    """Read field or domain constructs from files.
 
-    Input datasets are mapped to field constructs in memory which are
-    returned as elements of a `FieldList`.
+    The following file formats are supported: CF-netCDF, CFA-netCDF,
+    CDL, PP and UM fields datasets.
+
+    Input datasets are mapped to constructs in memory which are
+    returned as elements of a `FieldList` or if the *domain* parameter
+    is True, a `DomainList`.
 
     NetCDF files may be on disk or on an OPeNDAP server.
 
@@ -769,6 +773,28 @@ def read(
             f"when recursive={recursive!r}"
         )
 
+    # Parse the 'cfa_options' parameter
+    if not cfa_options:
+        cfa_options = {}
+    else:
+        cfa_options = cfa_options.copy()
+        keys = ("substitutions",)
+        if not set(cfa_options).issubset(keys):
+            raise ValueError(
+                "Invalid dictionary key to the 'cfa_options' "
+                f"parameter. Valid keys are {keys}. Got: {cfa_options}"
+            )
+
+    cfa_options.setdefault("substitutions", {})
+    
+    substitutions = cfa_options["substitutions"].copy()
+    for base, sub in substitutions.items():
+        if not (base.startswith("${") and base.endswith("}")):
+            # Add missing ${...}
+            substitutions[f"${{{base}}}"] = substitutions.pop(base)
+            
+    cfa_options["substitutions"] = substitutions
+
     # Initialise the output list of fields/domains
     if domain:
         out = DomainList()
@@ -898,6 +924,7 @@ def read(
                 warn_valid=warn_valid,
                 select=select,
                 domain=domain,
+                cfa_options=cfa_options,
             )
 
             # --------------------------------------------------------
@@ -1009,6 +1036,7 @@ def _read_a_file(
     chunks="auto",
     select=None,
     domain=False,
+    cfa_options=None,
 ):
     """Read the contents of a single file into a field list.
 
@@ -1037,6 +1065,9 @@ def _read_a_file(
             For `read. Ignored for a netCDF file.
 
         domain: `bool`, optional
+            See `cf.read` for details.
+
+        cfa_options: `dict`, optional
             See `cf.read` for details.
 
     :Returns:
@@ -1072,11 +1103,7 @@ def _read_a_file(
         "chunks": chunks,
         "fmt": selected_fmt,
         "ignore_read_error": ignore_read_error,
-        # 'cfa' defaults to False. If the file has
-        # "CFA" in its Conventions global attribute
-        # then 'cfa' will be changed to True in
-        # netcdf.read
-        "cfa": False,
+        "cfa_options": cfa_options,
     }
 
     # ----------------------------------------------------------------

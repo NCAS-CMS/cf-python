@@ -91,7 +91,9 @@ class CFImplementation(cfdm.CFDMImplementation):
         units=False,
         calendar=False,
         instructions=None,
+        substitutions=None,
         term=None,
+        **kwargs,
     ):
         """Return a `CFANetCDFArray` instance.
 
@@ -115,7 +117,12 @@ class CFImplementation(cfdm.CFDMImplementation):
 
             instructions: `str`, optional
 
+            substitutions: `dict`, optional
+
             term: `str`, optional
+
+            kwargs: optional
+                Ignored.
 
         :Returns:
 
@@ -133,6 +140,7 @@ class CFImplementation(cfdm.CFDMImplementation):
             units=units,
             calendar=calendar,
             instructions=instructions,
+            substitutions=substitutions,
             term=term,
         )
 

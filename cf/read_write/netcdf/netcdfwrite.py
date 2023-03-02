@@ -58,7 +58,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         if not data.get_cfa_write():
             return False
 
-        for ctype, ndim in g["cfa_options"]["constructs"]:
+        for ctype, ndim in g["cfa_options"].get("constructs", {}):
             # Write as CFA if it has an appropriate construct type ...
             if ctype in ("all", construct_type):
                 # ... and then only if it satisfies the number of
@@ -785,7 +785,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 instances containing the corresponding variables.
 
         """
-        from os.path import abspath, relpath
+        from os.path import abspath, join, relpath
         from pathlib import PurePath
         from urllib.parse import urlparse
 
@@ -794,18 +794,18 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Define the CFA file susbstitutions, giving precedence over
         # those set on the Data object to those provided by the CFA
         # options.
-        data.cfa_set_file_substitutions(g["cfa_options"]["substitutions"])
+        data.cfa_set_file_substitutions(
+            g["cfa_options"].get("substitutions", {})
+        )
         substitutions = data.cfa_get_file_substitutions()
 
-        relative = g["cfa_options"].get("relative", None)
-        if relative:
-            absolute = False
-            cfa_dir = PurePath(abspath(g["filename"])).parent
-        elif relative is not None:
-            absolute = True
-        else:
-            absolute = None
 
+        # TODOCFA - review this!
+        paths = g["cfa_options"].get("paths")
+        relative = paths == "relative"
+
+        cfa_dir = g['cfa_dir']
+        
         # Size of the trailing dimension
         n_trailing = 0
 
@@ -833,14 +833,16 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             filenames2 = []
             for filename in filenames:
-                parsed_filename = urlparse(filename)
-                scheme = parsed_filename.scheme
-                if scheme not in ("http", "https"):
-                    path = parsed_filename.path
-                    if absolute:
-                        filename = PurePath(abspath(path)).as_uri()
-                    elif relative or scheme != "file":
-                        filename = relpath(abspath(path), start=cfa_dir)
+                uri = urlparse(filename)
+                uri_scheme = uri.scheme
+                if not uri_scheme:
+                    filename = abspath(join(cfa_dir, filename))
+                    if relative:
+                        filename = relpath(filename, start=cfa_dir)
+                    else:
+                        filename = PurePath(filename).as_uri()
+                elif relative and uri_scheme == "file":
+                    filename = relpath(furi.path, start=cfa_dir)
 
                 if substitutions:
                     # Apply the CFA file susbstitutions
