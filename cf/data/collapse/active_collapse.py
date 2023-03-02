@@ -1,6 +1,9 @@
 from functools import wraps
 
 
+# --------------------------------------------------------------------
+# Define the active functions
+# --------------------------------------------------------------------
 def active_min(a, **kwargs):
     """Chunk calculations for the minimum.
 
@@ -123,7 +126,9 @@ def active_sum(a, **kwargs):
     """
     return {"N": a["n"], "sum": a["sum"]}
 
+# --------------------------------------------------------------------
 # Create a lookup of the active functions
+# --------------------------------------------------------------------
 _active_chunk_functions = {
     "min": active_min,
     "max": active_max,
@@ -181,9 +186,6 @@ def actify(a, method, axis=None):
 
         axis = validate_axis(axis, a.ndim)
 
-    filenames = set()
-    chunk_functions = set()
-
     # Loop round elements of the dask graph, looking for data
     # definitions that point to a file and which support active
     # storage operations. The elements are traversed in reverse order
@@ -191,62 +193,43 @@ def actify(a, method, axis=None):
     # faster short circuit when using active storage is not possible.
     #
     # It is assumed that `actify` has only been called if has been
-    # deterimined externally that it is sensible to do so. A
+    # already been deterimined that it is sensible to do so. A
     # necessary, but not sufficient, condition for this being the case
     # will is the parent `Data` instance's `active_storage` attribute
     # being `True`.
-    ok_to_actify = True
+    ok_to_actify = False
     dsk = collections_to_dsk((a,), optimize_graph=True)
     for key, value in reversed(dsk.items()):
         try:
-            filenames.add(value.get_filename())
+            value.get_filename()
         except AttributeError:
-            if hasattr(value, "get_full_value"):
-                # This value is a constant fragment (such as might
-                # arise from CFA aggregated data), which precludes the
-                # use of active stoarge.
-                ok_to_actify = False
-                break
-
             continue
-
-        # Still here? Then this value is a file fragment, so try to
-        # actify it.
+            
+        # Still here? Then this chunk is a data definition that points
+        # to a file, so try to insert an actified copy into the dask
+        # graph.
         try:
-            value = value.actify(method, axis)
+            dsk[key] = value.actify(method, axis)
         except AttributeError:
-            # This file fragment does not support active storage
+            # This data definition doesn't support active storage
             # reductions
-            ok_to_actify = False
             break
+        else:
+            ok_to_actify = True
 
-        chunk_functions.add(_active_chunk_functions[method])
-
-        # Still here? Then update the dask graph dictionary with the
-        # actified data definition value.
-        dsk[key] = value
-
-    for filename in filenames:
-        # TODOACTIVE: Check that Active(filename) supports active
-        #             storage. I don't really know how this will work
-        #             ...
-        if not OK:
-            # This file location does not support active storage, so
-            # return the input data unchanged.
-            return a, None
-
-    # Still here?
-    if ok_to_actify:
-        # All data definitions in the dask graph support active
-        # storage reductions => redefine the array from the actified
-        # dask graph, and define the active storage reduction chunk
-        # function.
-        a = da.Array(dsk, a.name, a.chunks, a.dtype, a._meta)
-        chunk_function = _active_chunk_functions[method]
-    else:
-        chunk_function = None
-
-    return a, chunk_function
+    if not ok_to_actify:
+        # The dask graph is not suitable for active storage
+        # reductions, so return the input data unchanged.
+        return a, None
+        
+    # Still here? Then all data definitions in the dask graph support
+    # active storage reductions => redefine the array from the
+    # actified dask graph, and define the active storage reduction
+    # chunk function.
+    return (
+        da.Array(dsk, a.name, a.chunks, a.dtype, a._meta),
+        _active_chunk_functions[method]
+    )
 
 
 def active_storage(method):
@@ -269,6 +252,7 @@ def active_storage(method):
         def wrapper(self, *args, **kwargs):
             if (
                 kwargs.get("active_storage")
+                and method in _active_chunk_functions 
                 and kwargs.get("weights") is None
                 and kwargs.get("chunk_function") is None
             ):

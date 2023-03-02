@@ -34,30 +34,12 @@ class ActiveStorageMixin:
             # Normal read by local client. Returns a numpy array.
             return super().__getitem__(indices)
 
-        # Active storage read. Returns a dictionary.
-        active = Active(self.filename, self.ncvar)
+        # Active storage read and reduction. Returns a dictionary.
+        active = Active(self.get_filename(), self.get_ncvar())
         active.method = method
         active.components = True
         active.lock = netcdf_lock
         return active[indices]
-
-    #    def _active_chunk_functions(self):
-    #        """Mapping of method names to active chunk functions.
-    #
-    #        .. versionadded:: TODOACTIVEVER
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                The mapping.
-    #
-    #        """
-    #        return {
-    #            "min": self.active_min,
-    #            "max": self.active_max,
-    #            "mean": self.active_mean,
-    #            "sum": self.active_sum,
-    #        }
 
     def actify(self, method, axis=None):
         """Return a new actified `{{class}}` instance.
@@ -83,137 +65,10 @@ class ActiveStorageMixin:
                 TODOACTIVEDOCS
 
         """
-        #        if method not in self._active_chunk_functions():
-        #            raise ValueError(f"Invalid active storage operation: {method!r}")
-
         a = self.copy()
         a.set_active_method(method)
         a.set_active_axis(axis)
         return a
-
-    #    @staticmethod
-    #    def active_min(a, **kwargs):
-    #        """Chunk calculations for the minimum.
-    #
-    #        Assumes that the calculations have already been done,
-    #        i.e. that *a* is already the minimum.
-    #
-    #        This function is intended to be passed to
-    #        `dask.array.reduction` as the ``chunk`` parameter. Its return
-    #        signature must be the same as the non-active chunk function
-    #        that it is replacing.
-    #
-    #        .. versionadded:: TODOACTIVEVER
-    #
-    #        :Parameters:
-    #
-    #            a: `dict`
-    #                TODOACTIVEDOCS
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                Dictionary with the keys:
-    #
-    #                * N: The sample size.
-    #                * min: The minimum of `a``.
-    #
-    #        """
-    #        return {"N": a["n"], "min": a["min"]}
-    #
-    #    @staticmethod
-    #    def active_max(a, **kwargs):
-    #        """Chunk calculations for the maximum.
-    #
-    #        Assumes that the calculations have already been done,
-    #        i.e. that *a* is already the maximum.
-    #
-    #        This function is intended to be passed to
-    #        `dask.array.reduction` as the ``chunk`` parameter. Its return
-    #        signature must be the same as the non-active chunk function
-    #        that it is replacing.
-    #
-    #        .. versionadded:: TODOACTIVEVER
-    #
-    #        :Parameters:
-    #
-    #            a: `dict`
-    #                TODOACTIVEDOCS
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                Dictionary with the keys:
-    #
-    #                * N: The sample size.
-    #                * max: The maximum of `a``.
-    #
-    #        """
-    #        return {"N": a["n"], "max": a["max"]}
-    #
-    #    @staticmethod
-    #    def active_mean(a, **kwargs):
-    #        """Chunk calculations for the unweighted mean.
-    #
-    #        Assumes that the calculations have already been done,
-    #        i.e. that *a* is already the uweighted mean.
-    #
-    #        This function is intended to be passed to
-    #        `dask.array.reduction` as the ``chunk`` parameter. Its return
-    #        signature must be the same as the non-active chunk function
-    #        that it is replacing.
-    #
-    #        .. versionadded:: TODOACTIVEVER
-    #
-    #        :Parameters:
-    #
-    #            a: `dict`
-    #                TODOACTIVEDOCS
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                Dictionary with the keys:
-    #
-    #                * N: The sample size.
-    #                * V1: The sum of ``weights``. Equal to ``N`` because
-    #                      weights have not been set.
-    #                * sum: The weighted sum of ``a``.
-    #                * weighted: True if weights have been set. Always
-    #                            False.
-    #
-    #        """
-    #        return {"N": a["n"], "V1": a["n"], "sum": a["sum"], "weighted": False}
-    #
-    #    @staticmethod
-    #    def active_sum(a, **kwargs):
-    #        """Chunk calculations for the unweighted sum.
-    #
-    #        Assumes that the calculations have already been done,
-    #        i.e. that *a* is already the uweighted sum.
-    #
-    #        This function is intended to be passed to
-    #        `dask.array.reduction` as the ``chunk`` parameter. Its return
-    #        signature must be the same as the non-active chunk function
-    #        that it is replacing.
-    #
-    #        .. versionadded:: TODOACTIVEVER
-    #
-    #        :Parameters:
-    #
-    #            a: `dict`
-    #                TODOACTIVEDOCS
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                Dictionary with the keys:
-    #
-    #                * N: The sample size.
-    #                * sum: The weighted sum of ``a``
-    #
-    #        """
-    #        return {"N": a["n"], "sum": a["sum"]}
 
     def get_active_axis(self):
         """TODOACTIVEDOC.
@@ -244,21 +99,6 @@ class ActiveStorageMixin:
 
         """
         return self._custom.get("active_method")
-
-    #    def get_active_chunk_function(self):
-    #        """TODOACTIVEDOC.
-    #
-    #        .. versionadded:: TODOACTIVEVER
-    #
-    #        :Returns:
-    #
-    #            TODOACTIVEDOC
-    #
-    #        """
-    #        try:
-    #            return self._active_chunk_functions()[self.get_active_method()]
-    #        except KeyError:
-    #            raise ValueError("no active storage operation has been set")
 
     def set_active_axis(self, value):
         """TODOACTIVEDOC.
