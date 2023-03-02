@@ -361,7 +361,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(array, copy=copy,  clear=_NONE)
+                    self._set_dask(array, copy=copy, clear=_NONE)
             else:
                 self._del_dask(None)
 
