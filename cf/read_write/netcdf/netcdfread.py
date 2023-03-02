@@ -362,73 +362,48 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         super()._customize_read_vars()
 
         g = self.read_vars
+        if not g["cfa"]:
+            return
 
-        # Check the 'Conventions' for CFA
-        Conventions = g["global_attributes"].get("Conventions", "")
+        # ------------------------------------------------------------
+        # Still here? Then this is a CFA-netCDF file
+        # ------------------------------------------------------------
+        if g["CFA_version"] < Version("0.6.2"):
+            raise ValueError(
+                f"Can't read file {g['filename']} that uses obselete "
+                f"CFA conventions version CFA-{g['CFA_version']}. "
+                "(Note that version 3.13.1 can be used to read and "
+                "write CFA-0.4 files.)"
+            )
 
-        # If the string contains any commas, it is assumed to be a
-        # comma-separated list.
-        all_conventions = split(",\s*", Conventions)
-        if all_conventions[0] == Conventions:
-            all_conventions = Conventions.split()
+        # Get the directory of the CFA-netCDF file being read
+        from os.path import abspath
+        from pathlib import PurePath
 
-        CFA_version = None
-        for c in all_conventions:
-            if c.startswith("CFA-"):
-                CFA_version = c.replace("CFA-", "", 1)
-                break
+        g["cfa_dir"] = PurePath(abspath(g["filename"])).parent
 
-            if c == "CFA":
-                # Versions <= 3.13.1 wrote CFA-0.4 files with a plain
-                # 'CFA' in the Conventions string
-                CFA_version = "0.4"
-                break
+        # Process the aggregation instruction variables, and the
+        # aggregated dimensions.
+        dimensions = g["variable_dimensions"]
+        attributes = g["variable_attributes"]
+        for ncvar, attributes in attributes.items():
+            if "aggregate_dimensions" not in attributes:
+                # This is not an aggregated variable
+                continue
 
-        g["cfa"] = CFA_version is not None
-        if g["cfa"]:
-            # --------------------------------------------------------
-            # This is a CFA-netCDF file
-            # --------------------------------------------------------
+            # Set the aggregated variable's dimensions as its
+            # aggregated dimensions
+            ncdimensions = attributes["aggregated_dimensions"].split()
+            dimensions[ncvar] = tuple(map(str, ncdimensions))
 
-            # Check the CFA version
-            g["CFA_version"] = Version(CFA_version)
-            if g["CFA_version"] < Version("0.6.2"):
-                raise ValueError(
-                    f"Can't read file {g['filename']} that uses obselete "
-                    f"CFA conventions version CFA-{CFA_version}. "
-                    "(Note that version 3.13.1 can be used to read and "
-                    "write CFA-0.4 files.)"
-                )
-
-            # Get the pdirectory path of the CFA-netCDF file being
-            # read
-            from os.path import abspath
-            from pathlib import PurePath
-
-            g["cfa_dir"] = PurePath(abspath(g["filename"])).parent
-
-            # Process the aggregation instruction variables, and the
-            # aggregated dimensions.
-            dimensions = g["variable_dimensions"]
-            attributes = g["variable_attributes"]
-            for ncvar, attributes in attributes.items():
-                if "aggregate_dimensions" not in attributes:
-                    # This is not an aggregated variable
-                    continue
-
-                # Set the aggregated variable's dimensions as its
-                # aggregated dimensions
-                ncdimensions = attributes["aggregated_dimensions"].split()
-                dimensions[ncvar] = tuple(map(str, ncdimensions))
-
-                # Do not create fields/domains from aggregation
-                # instruction variables
-                parsed_aggregated_data = self._parse_aggregated_data(
-                    ncvar, attributes.get("aggregated_data")
-                )
-                for x in parsed_aggregated_data:
-                    variable = tuple(x.items())[0][1]
-                    g["do_not_create_field"].add(variable)
+            # Do not create fields/domains from aggregation
+            # instruction variables
+            parsed_aggregated_data = self._parse_aggregated_data(
+                ncvar, attributes.get("aggregated_data")
+            )
+            for x in parsed_aggregated_data:
+                term_ncvar = tuple(x.items())[0][1]
+                g["do_not_create_field"].add(term_ncvar)
 
     def _cache_data_elements(self, data, ncvar):
         """Cache selected element values.

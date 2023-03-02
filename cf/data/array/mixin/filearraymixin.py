@@ -22,18 +22,6 @@ class FileArrayMixin:
         """
         return np.array((), dtype=self.dtype)
 
-    def __getitem__(self, indices):
-        """Return a subspace of the array.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        Returns a subspace of the array as an independent numpy array.
-
-        """
-        raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}.__getitem__"
-        )  # pragma: no cover
-
     def __repr__(self):
         """x.__repr__() <==> repr(x)"""
         return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
@@ -66,38 +54,3 @@ class FileArrayMixin:
     def shape(self):
         """Shape of the array."""
         return self._get_component("shape")
-
-    def close(self):
-        """Close the dataset containing the data.
-
-        .. versionadded:: TODOCFAVER
-
-        """
-        raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}.close"
-        )  # pragma: no cover
-
-    def get_address(self):
-        """The address in the file of the variable.
-
-        .. versionadded:: 3.14.0
-
-        :Returns:
-
-            `str` or `None`
-                The address, or `None` if there isn't one.
-
-        """
-        raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}.get_address"
-        )  # pragma: no cover
-
-    def open(self):
-        """Returns an open dataset containing the data array.
-
-        .. versionadded:: TODOCFAVER
-
-        """
-        raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}.open"
-        )  # pragma: no cover

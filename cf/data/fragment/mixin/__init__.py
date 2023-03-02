@@ -1,1 +1,2 @@
 from .fragmentarraymixin import FragmentArrayMixin
+from .fragmentfilearraymixin import FragmentFileArrayMixin

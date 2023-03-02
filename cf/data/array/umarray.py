@@ -8,11 +8,11 @@ from ...functions import (
     parse_indices,
 )
 from ...umread_lib.umfile import File, Rec
-from .mixin import FileArrayMixin
 from .abstract import Array
+from .mixin import FileArrayMixin
 
 
-class UMArray(FileArrrayMixin, Array):
+class UMArray(FileArrayMixin, Array):
     """A sub-array stored in a PP or UM fields file."""
 
     def __init__(

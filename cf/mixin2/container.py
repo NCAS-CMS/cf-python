@@ -4,7 +4,7 @@ themsleves import cf.Data, which would lead to a circular import
 situation.
 
 """
-from .docstring import _docstring_substitution_definitions
+from ..docstring import _docstring_substitution_definitions
 
 
 class Container:
