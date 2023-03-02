@@ -1,3 +1,6 @@
+from ...utils import netcdf_lock
+
+
 class ActiveStorageMixin:
     """TODOACTIVEDOCS.
 
@@ -35,6 +38,7 @@ class ActiveStorageMixin:
         active = Active(self.filename, self.ncvar)
         active.method = method
         active.components = True
+        active.lock = netcdf_lock
         return active[indices]
 
     #    def _active_chunk_functions(self):

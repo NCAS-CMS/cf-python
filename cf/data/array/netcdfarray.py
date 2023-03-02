@@ -5,7 +5,7 @@ from ...mixin_container import Container
 from .mixin import ActiveStorageMixin, FileArrayMixin
 
 # Global lock for netCDF file access
-_lock = SerializableLock()
+from ..utils import netcdf_lock
 
 
 class NetCDFArray(
@@ -42,4 +42,4 @@ class NetCDFArray(
         if filename is None:
             return False
 
-        return _lock
+        return netcdf_lock

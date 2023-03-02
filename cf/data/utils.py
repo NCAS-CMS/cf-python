@@ -3,8 +3,10 @@ from functools import lru_cache, partial, reduce
 from itertools import product
 from operator import mul
 
-import dask.array as da
 import numpy as np
+
+import dask.array as da
+from dask.utils import SerializableLock
 
 from ..cfdatetime import (
     canonical_calendar,
@@ -959,3 +961,7 @@ def parse_weights(d, weights, axis=None):
     # Return the product of the weights components, which will be
     # broadcastable to d
     return reduce(mul, w)
+
+
+# Global lock for netCDF file access
+netcdf_lock = SerializableLock()

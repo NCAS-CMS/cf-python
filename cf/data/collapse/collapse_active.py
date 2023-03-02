@@ -123,7 +123,7 @@ def active_sum(a, **kwargs):
     """
     return {"N": a["n"], "sum": a["sum"]}
 
-
+# Create a lookup of the active functions
 _active_chunk_functions = {
     "min": active_min,
     "max": active_max,
