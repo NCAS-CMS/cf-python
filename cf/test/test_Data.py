@@ -1173,6 +1173,35 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, f_np.shape)
         self.assertTrue((f.array == f_np).all())
 
+        # Check concatenation with one invalid units
+        d.override_units(cf.Units("foo"), inplace=1)
+        with self.assertRaises(ValueError):
+            f = cf.Data.concatenate([d, e], axis=1, relaxed_units=True)
+
+        with self.assertRaises(ValueError):
+            f = cf.Data.concatenate([d, e], axis=1)
+
+        # Check concatenation with both invalid units
+        d.override_units(cf.Units("foo"), inplace=1)
+        e.override_units(cf.Units("foo"), inplace=1)
+        f = cf.Data.concatenate([d, e], axis=1, relaxed_units=True)
+        with self.assertRaises(ValueError):
+            f = cf.Data.concatenate([d, e], axis=1)
+
+        e.override_units(cf.Units("foobar"), inplace=1)
+        with self.assertRaises(ValueError):
+            f = cf.Data.concatenate([d, e], axis=1, relaxed_units=True)
+
+        with self.assertRaises(ValueError):
+            f = cf.Data.concatenate([d, e], axis=1)
+
+        e.override_units(cf.Units("metre"), inplace=1)
+        with self.assertRaises(ValueError):
+            f = cf.Data.concatenate([d, e], axis=1, relaxed_units=True)
+
+        with self.assertRaises(ValueError):
+            f = cf.Data.concatenate([d, e], axis=1)
+
     def test_Data__contains__(self):
         """Test containment checking against Data."""
         d = cf.Data([[0, 1, 2], [3, 4, 5]], units="m", chunks=2)

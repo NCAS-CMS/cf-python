@@ -1,4 +1,3 @@
-"""TODODOCS Functions used during `Data` object collapses."""
 from functools import partial
 
 import numpy as np

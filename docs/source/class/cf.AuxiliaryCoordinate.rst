@@ -154,6 +154,7 @@ Properties
    ~cf.AuxiliaryCoordinate.set_property
    ~cf.AuxiliaryCoordinate.properties
    ~cf.AuxiliaryCoordinate.clear_properties
+   ~cf.AuxiliaryCoordinate.del_properties
    ~cf.AuxiliaryCoordinate.set_properties
 
 .. rubric:: Attributes

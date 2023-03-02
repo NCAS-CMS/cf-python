@@ -33,7 +33,7 @@ class NetCDFArray(
         not currently supported by the netCDF-C library. The lock
         object will be the same for all `NetCDFArray` instances,
         regardless of the dataset they access, which means that all
-        files access coordinates around the same lock.
+        netCDF file access coordinates around the same lock.
 
         .. versionadded:: 3.14.0
 
