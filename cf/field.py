@@ -3642,38 +3642,6 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return w
 
-    def cfa_add_fragment_location(
-        self,
-        location,
-        constructs=True,
-    ):
-        """TODOCFADOCS
-
-        .. versionadded:: TODOCFAVER
-
-        :Parameters:
-
-            location: `str`
-                TODOCFADOCS
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> f.cfa_add_fragment_location('/data/model')
-
-        """
-        super().add_fragment_location(
-            location,
-        )
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.add_fragment_location(
-                    location,
-                )
-
     def cfa_get_file_substitutions(self, constructs=True):
         """TODOCFADOCS
 
@@ -3690,6 +3658,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         out = super().cfa_get_file_substitutions()
+
         if constructs:
             for c in self.constructs.filter_by_data(todict=True).values():
                 out.update(c.cfa_set_file_substitution())
@@ -3726,14 +3695,40 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         >>> f.cfa_del_file_substitution('base', '/data/model')
 
         """
-        super().cfa_del_file_substitution(
-            base,
-        )
+        super().cfa_del_file_substitution(base)
+
         if constructs:
             for c in self.constructs.filter_by_data(todict=True).values():
-                c.cfa_del_file_substitution(
-                    base,
-                )
+                c.cfa_del_file_substitution(base)
+
+    def cfa_del_fragment_location(
+        self,
+        location,
+        constructs=True,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_set_fragment_location('/data/model')
+
+        """
+        super().cfa_del_fragment_location(location)
+
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.cfa_del_fragment_location(location)
 
     def cfa_set_file_substitutions(
         self,
@@ -3769,9 +3764,39 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         super().cfa_set_file_substitutions(value)
+
         if constructs:
             for c in self.constructs.filter_by_data(todict=True).values():
                 c.cfa_set_file_substitutions(value)
+
+    def cfa_set_fragment_location(
+        self,
+        location,
+        constructs=True,
+    ):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_set_fragment_location('/data/model')
+
+        """
+        super().cfa_set_fragment_location(location)
+
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.cfa_set_fragment_location(location)
 
     def radius(self, default=None):
         """Return the radius of a latitude-longitude plane defined in

@@ -29,7 +29,6 @@ from ..decorators import (
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _section,
-    abspath,
     atol,
     default_netCDF_fillvals,
     free_memory,
@@ -2424,10 +2423,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d._set_dask(da.ceil(dx))
         return d
 
-    def cfa_add_fragment_location(self, location):
+    def cfa_del_fragment_location(self, location):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_add_fragment_location`,
+                     `cfa_fragment_locations`
 
         :Parameters:
 
@@ -2437,16 +2439,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         :Returns:
 
             `None`
-                TODOCFADOCS
 
         **Examples**
 
-        >>> d.cfa_add_fragment_location('/data/model')
+        >>> d.cfa_del_fragment_location('/data/model')
 
         """
         from dask.base import collections_to_dsk
-
-        location = abspath(location)
 
         dx = self.to_dask_array()
 
@@ -2454,9 +2453,83 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dsk = collections_to_dsk((dx,), optimize_graph=True)
         for key, a in dsk.items():
             try:
-                dsk[key] = a.add_fragment_location(location)
+                dsk[key] = a.del_fragment_location(location)
             except AttributeError:
-                # This chunk doesn't contain CFA fragment
+                # This chunk doesn't contain a CFA fragment
+                continue
+            else:
+                # This chunk contains a CFA fragment
+                updated = True
+
+        if updated:
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=_NONE)
+
+    def cfa_fragment_locations(self, location):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_del_fragment_location`,
+                     `cfa_set_fragment_location`
+
+        :Returns:
+
+            `set`
+
+        **Examples**
+
+        >>> d.cfa_fragment_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        from dask.base import collections_to_dsk
+
+        out = set()
+
+        dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
+        for key, a in dsk.items():
+            try:
+                out.update(a.fragment_locations())
+            except AttributeError:
+                # This chunk doesn't contain a CFA fragment
+                pass
+
+        return out
+
+    def cfa_set_fragment_location(self, location):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_del_fragment_location`,
+                     `cfa_fragment_locations`
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.cfa_set_fragment_location('/data/model')
+
+        """
+        from dask.base import collections_to_dsk
+
+        dx = self.to_dask_array()
+
+        updated = False
+        dsk = collections_to_dsk((dx,), optimize_graph=True)
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.set_fragment_location(location)
+            except AttributeError:
+                # This chunk doesn't contain a CFA fragment
                 continue
             else:
                 # This chunk contains a CFA fragment

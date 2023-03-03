@@ -357,8 +357,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         .. versionadded:: 3.0.0
 
         """
-        from re import split
-
         super()._customize_read_vars()
 
         g = self.read_vars

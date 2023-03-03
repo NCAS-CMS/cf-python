@@ -2,6 +2,8 @@ import numpy as np
 
 from .abstract import Array
 
+_FULLARRAY_HANDLED_FUNCTIONS = {}
+
 
 class FullArray(Array):
     """A array filled with a given value.
@@ -88,6 +90,17 @@ class FullArray(Array):
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
 
+    def __array_function__(self, func, types, args, kwargs):
+        if func not in _FULLARRAY_HANDLED_FUNCTIONS:
+            return NotImplemented
+
+        # Note: this allows subclasses that don't override
+        # __array_function__ to handle MyArray objects
+        if not all(issubclass(t, self.__class__) for t in types):
+            return NotImplemented
+
+        return _FULLARRAY_HANDLED_FUNCTIONS[func](*args, **kwargs)
+
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]
 
@@ -104,7 +117,7 @@ class FullArray(Array):
             array_shape = self.shape
         else:
             array_shape = []
-            for i, size, i in zip(indices, self.shape):
+            for i, size in zip(indices, self.shape):
                 if not isinstance(i, slice):
                     continue
 
@@ -236,3 +249,45 @@ class FullArray(Array):
 
         """
         self._set_component("full_value", fill_value, copy=False)
+
+
+def fullarray_implements(numpy_function):
+    """Register an __array_function__ implementation for FullArray objects.
+
+    .. versionadded:: TODOCFAVER
+
+    """
+
+    def decorator(func):
+        _FULLARRAY_HANDLED_FUNCTIONS[numpy_function] = func
+        return func
+
+    return decorator
+
+
+@fullarray_implements(np.unique)
+def unique(
+    a, return_index=False, return_inverse=False, return_counts=False, axis=None
+):
+    """Version of `np.unique` that is optimised for `FullArray` objects.
+
+    .. versionadded:: TODOCFAVER
+
+    """
+    if return_index or return_inverse or return_counts or axis is not None:
+        # Fall back to the slow unique. (I'm sure we could probably do
+        # something more clever here, but there is no use case at
+        # present.)
+        return np.unique(
+            a[...],
+            return_index=return_index,
+            return_inverse=return_inverse,
+            return_counts=return_counts,
+            axis=axis,
+        )
+
+    x = a.get_full_value()
+    if x is np.ma.masked:
+        return np.ma.masked_all((1,), dtype=a.dtype)
+
+    return np.array([x], dtype=a.dtype)

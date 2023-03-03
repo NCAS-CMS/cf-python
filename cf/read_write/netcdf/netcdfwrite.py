@@ -799,13 +799,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         )
         substitutions = data.cfa_get_file_substitutions()
 
+        relative = g["cfa_options"].get("relative_paths")
+        cfa_dir = g["cfa_dir"]
 
-        # TODOCFA - review this!
-        paths = g["cfa_options"].get("paths")
-        relative = paths == "relative"
-
-        cfa_dir = g['cfa_dir']
-        
         # Size of the trailing dimension
         n_trailing = 0
 
@@ -842,7 +838,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     else:
                         filename = PurePath(filename).as_uri()
                 elif relative and uri_scheme == "file":
-                    filename = relpath(furi.path, start=cfa_dir)
+                    filename = relpath(uri.path, start=cfa_dir)
 
                 if substitutions:
                     # Apply the CFA file susbstitutions

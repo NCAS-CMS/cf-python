@@ -778,7 +778,7 @@ def read(
         cfa_options = {}
     else:
         cfa_options = cfa_options.copy()
-        keys = ("substitutions",)
+        keys = ("substitutions", "field_ancillaries")
         if not set(cfa_options).issubset(keys):
             raise ValueError(
                 "Invalid dictionary key to the 'cfa_options' "
@@ -786,15 +786,22 @@ def read(
             )
 
     cfa_options.setdefault("substitutions", {})
-    
+
     substitutions = cfa_options["substitutions"].copy()
     for base, sub in substitutions.items():
         if not (base.startswith("${") and base.endswith("}")):
             # Add missing ${...}
             substitutions[f"${{{base}}}"] = substitutions.pop(base)
-            
+
     cfa_options["substitutions"] = substitutions
 
+    field_ancillaries = cfa_options.pop("field_ancillaries", None)
+    if field_ancillaries:
+        if "field_ancillaries" in aggregate_options:
+            raise ValueError("TODOCFA")
+
+        aggregate_options["field_ancillaries"] = field_ancillaries
+    
     # Initialise the output list of fields/domains
     if domain:
         out = DomainList()
@@ -1069,6 +1076,8 @@ def _read_a_file(
 
         cfa_options: `dict`, optional
             See `cf.read` for details.
+
+            .. versionadded:: TODOCFAVER
 
     :Returns:
 

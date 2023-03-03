@@ -2,19 +2,19 @@ import logging
 from collections import namedtuple
 from operator import itemgetter
 
+import numpy as np
 from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
-from numpy import argsort as numpy_argsort
-from numpy import dtype as numpy_dtype
-from numpy import sort as numpy_sort
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
-from .data.data import Data
+from .data import Data
+from .data.array import FullArray
 from .decorators import (
     _manage_log_level_via_verbose_attr,
     _manage_log_level_via_verbosity,
     _reset_log_emergence_level,
 )
 from .domainaxis import DomainAxis
+from .fieldancillary import FieldAncillary
 from .fieldlist import FieldList
 from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, _numpy_allclose
 from .functions import atol as cf_atol
@@ -26,7 +26,7 @@ from .units import Units
 logger = logging.getLogger(__name__)
 
 
-_dtype_float = numpy_dtype(float)
+_dtype_float = np.dtype(float)
 
 # # --------------------------------------------------------------------
 # # Global properties, as defined in Appendix A of the CF conventions.
@@ -138,6 +138,7 @@ class _Meta:
         relaxed_identities=False,
         ncvar_identities=False,
         field_identity=None,
+        field_ancillaries=(),
         copy=True,
     ):
         """**initialisation**
@@ -322,8 +323,25 @@ class _Meta:
 
             f.del_property(prop)
 
-        if dimension:
-            construct_axes = f.constructs.data_axes()
+        # ------------------------------------------------------------
+        # Create field ancillaries from properties
+        # ------------------------------------------------------------
+        for prop in field_ancillaries:
+            print (99999, prop)
+            value = f.get_property(prop, None)
+            if value is None:
+                continue
+
+            data = FullArray(value, shape=f.shape, dtype=np.array(value).dtype)
+
+            field_anc = FieldAncillary(
+                data=Data(data), properties={"long_name": prop}
+            )
+            field_anc.id = prop
+            print (field_anc.dump(), Data(data).array)
+            f.set_construct(field_anc, axes=f.get_data_axes(), copy=False)
+
+        construct_axes = f.constructs.data_axes()
 
         self.units = self.canonical_units(
             f, self.identity, relaxed_units=relaxed_units
@@ -545,10 +563,10 @@ class _Meta:
         # Field ancillaries
         # ------------------------------------------------------------
         self.field_anc = {}
-        field_ancillaries = f.constructs.filter_by_type(
+        field_ancs = f.constructs.filter_by_type(
             "field_ancillary", todict=True
         )
-        for key, field_anc in field_ancillaries.items():
+        for key, field_anc in field_ancs.items():
             # Find this field ancillary's identity
             identity = self.field_ancillary_has_identity_and_data(field_anc)
             if identity is None:
@@ -1422,6 +1440,7 @@ def aggregate(
     no_overlap=False,
     shared_nc_domain=False,
     field_identity=None,
+    field_ancillaries=(),
     info=False,
 ):
     """Aggregate field constructs into as few field constructs as
@@ -1806,7 +1825,7 @@ def aggregate(
             relaxed_identities=relaxed_identities,
             ncvar_identities=ncvar_identities,
             field_identity=field_identity,
-            respect_valid=respect_valid,
+            respect_valid=respect_valid,field_ancillaries=field_ancillaries,
             copy=copy,
         )
 
@@ -2219,7 +2238,7 @@ def _create_hash_and_first_values(
                 # ... or which doesn't have a dimension coordinate but
                 # does have one or more 1-d auxiliary coordinates
                 aux = m_axis_identity["keys"][0]
-                sort_indices = numpy_argsort(field.constructs[aux].array)
+                sort_indices = np.argsort(field.constructs[aux].array)
                 m_sort_keys[axis] = aux
                 null_sort = False
 
@@ -2661,8 +2680,8 @@ def _get_hfl(
 
         if create_flb:
             # Record the bounds of the first and last (sorted) cells
-            first = numpy_sort(array[0, ...])
-            last = numpy_sort(array[-1, ...])
+            first = np.sort(array[0, ...])
+            last = np.sort(array[-1, ...])
             hfl_cache.flb[key] = (first, last)
 
     if first_and_last_values or first_and_last_bounds:

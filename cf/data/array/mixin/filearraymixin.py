@@ -1,5 +1,7 @@
 import numpy as np
 
+from ....functions import _DEPRECATION_ERROR_ATTRIBUTE
+
 
 class FileArrayMixin:
     """Mixin class for an array stored in a file.

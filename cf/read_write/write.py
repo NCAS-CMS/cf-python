@@ -768,15 +768,17 @@ def write(
             cfa_options.setdefault("paths", "absolute")
             cfa_options.setdefault("constructs", "field")
             cfa_options.setdefault("substitutions", {})
-#            cfa_options.setdefault("properties", ())
+            #            cfa_options.setdefault("properties", ())
 
-            paths =  ("relative", "absolute")
-            if cfa_options['paths'] not in paths:
-                raise  ValueError(
+            paths = cfa_options.pop("paths")
+            if paths not in ("relative", "absolute"):
+                raise ValueError(
                     "Invalid value of 'paths' CFA option. Valid paths "
-                    f"are {paths}. Got: {cfa_options['paths']!r}"
+                    f"are 'relative' and 'absolute'. Got: {paths!r}"
                 )
-                
+
+            cfa_options["relative_paths"] = paths == "relative"
+
             constructs = cfa_options["constructs"]
             if isinstance(constructs, dict):
                 cfa_options["constructs"] = constructs.copy()
@@ -799,7 +801,7 @@ def write(
             #               properties = (properties,)
             #
             #            cfa_options["properties"] = tuple(properties)
-            
+
         extra_write_vars["cfa"] = cfa
         extra_write_vars["cfa_options"] = cfa_options
 
