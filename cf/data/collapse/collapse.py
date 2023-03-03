@@ -5,7 +5,7 @@ from cfdm.core import DocstringRewriteMeta
 from dask.array.reductions import reduction
 
 from ...docstring import _docstring_substitution_definitions
-from .active_collapse import active_storage
+from .collapse_active import active_storage
 from .collapse_utils import check_input_dtype, double_precision_dtype
 
 
@@ -15,17 +15,18 @@ class Collapse(metaclass=DocstringRewriteMeta):
     **Active storage**
 
     A collapse method (such as `max`, `max_abs`, etc.) will attempt to
-    make use use of active storage if:
+    make use of active storage if:
 
-    * The collapse method's `active_storage` parameter is True.
-    * The method's identity is recognised by the `Active` class.
-    * The `Active` class recognises the storage location as one that
-      supports active storage operations.
+    * The collapse method's *active_storage* parameter is True.
 
-    However, when all of these conditions are passed, the collapse
-    operation will *not* be executed with active storage if the
-    dask array is deemed, on inspection to be unsuitable. See the
-    `actify` function for details.
+    * The method has a corresponding active function defined in
+      `collapse_active`.
+
+    When these conditions are passed, the graph of the `dask` array is
+    inspected to confirm that making use of active storage is
+    possible, and if so the `dask` graph is modified to expect the
+    per-chunk reductions to be carried out externally. See
+    `collapse_active.actify` for details.
 
     .. versionadded:: 3.14.0
 
