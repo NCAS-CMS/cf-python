@@ -1,3 +1,8 @@
+try:
+    from activestorage import Active
+except ModuleNotFoundError:
+    Active = None
+
 # Global lock for netCDF file access
 from ...utils import netcdf_lock
 
@@ -31,18 +36,21 @@ class ActiveStorageMixin:
 
         """
         method = self.get_active_method()
-        if method is None:
+        if method is None or Active is None:
             # Normal read by local client. Returns a numpy array.
             return super().__getitem__(indices)
 
         # Active storage read and reduction. Returns a dictionary.
         try:
-            missing_data_indicators = self.get_missing_data_indicators()
+            missing_values = self.get_missing_values()
         except AttributeError:
-            missing_data_indicators = {}
+            missing_values = {}
+        else:
+            if missing_values is None:
+                missing_values = {}
 
         active = Active(
-            self.get_filename(), self.get_ncvar(), **missing_data_indicators
+            self.get_filename(), self.get_ncvar(), **missing_values
         )
         active.method = method
         active.components = True
