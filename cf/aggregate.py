@@ -327,7 +327,7 @@ class _Meta:
         # Create field ancillaries from properties
         # ------------------------------------------------------------
         for prop in field_ancillaries:
-            print (99999, prop)
+            print(99999, prop)
             value = f.get_property(prop, None)
             if value is None:
                 continue
@@ -338,7 +338,7 @@ class _Meta:
                 data=Data(data), properties={"long_name": prop}
             )
             field_anc.id = prop
-            print (field_anc.dump(), Data(data).array)
+            print(field_anc.dump(), Data(data).array)
             f.set_construct(field_anc, axes=f.get_data_axes(), copy=False)
 
         construct_axes = f.constructs.data_axes()
@@ -1825,7 +1825,8 @@ def aggregate(
             relaxed_identities=relaxed_identities,
             ncvar_identities=ncvar_identities,
             field_identity=field_identity,
-            respect_valid=respect_valid,field_ancillaries=field_ancillaries,
+            respect_valid=respect_valid,
+            field_ancillaries=field_ancillaries,
             copy=copy,
         )
 

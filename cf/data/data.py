@@ -1306,9 +1306,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # Set the CFA write status to False
             self._cfa_del_write()
 
-        # Always set the CFA term status to False
-        if "cfa_term" in self._custom:
-            del self._custom["cfa_term"]
+    #        # Always set the CFA term status to False
+    #        if "cfa_term" in self._custom:
+    #            del self._custom["cfa_term"]
 
     def _set_dask(self, array, copy=False, clear=_ALL):
         """Set the dask array.

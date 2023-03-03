@@ -801,7 +801,7 @@ def read(
             raise ValueError("TODOCFA")
 
         aggregate_options["field_ancillaries"] = field_ancillaries
-    
+
     # Initialise the output list of fields/domains
     if domain:
         out = DomainList()
