@@ -102,7 +102,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -169,7 +169,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -228,7 +228,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -299,7 +299,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -357,7 +357,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -428,7 +428,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -495,7 +495,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -551,7 +551,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -625,7 +625,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -693,7 +693,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -767,7 +767,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -841,7 +841,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -916,7 +916,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -968,7 +968,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 
@@ -1048,7 +1048,7 @@ class Collapse(metaclass=DocstringRewriteMeta):
 
             {{active_storage: `bool`, optional}}
 
-                .. versionadded:: TODOACTIVEVER
+                .. versionadded:: ACTIVEVERSION
 
         :Returns:
 

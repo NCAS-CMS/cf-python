@@ -3,9 +3,8 @@ from functools import lru_cache, partial, reduce
 from itertools import product
 from operator import mul
 
-import numpy as np
-
 import dask.array as da
+import numpy as np
 from dask.utils import SerializableLock
 
 from ..cfdatetime import (
@@ -16,10 +15,16 @@ from ..cfdatetime import (
     rt2dt,
     st2rt,
 )
+from ..functions import active_storage
 from ..units import Units
 from .dask_utils import cf_YMDhms
 
 _units_None = Units(None)
+
+# --------------------------------------------------------------------
+# Global lock for netCDF file access
+# --------------------------------------------------------------------
+netcdf_lock = SerializableLock()
 
 
 def is_numeric_dtype(array):
@@ -822,7 +827,7 @@ def collapse(
         "keepdims": keepdims,
         "split_every": split_every,
         "mtol": mtol,
-        "active_storage": d.active_storage,
+        "active_storage": d.active_storage and active_storage(),
     }
 
     weights = parse_weights(d, weights, axis)
@@ -961,7 +966,3 @@ def parse_weights(d, weights, axis=None):
     # Return the product of the weights components, which will be
     # broadcastable to d
     return reduce(mul, w)
-
-
-# Global lock for netCDF file access
-netcdf_lock = SerializableLock()

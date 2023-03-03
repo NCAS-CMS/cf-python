@@ -14,7 +14,7 @@ def active_min(a, **kwargs):
     as the ``chunk`` parameter. Its return signature must be the same
     as the non-active chunk function that it is replacing.
 
-    .. versionadded:: TODOACTIVEVER
+    .. versionadded:: ACTIVEVERSION
 
     :Parameters:
 
@@ -46,11 +46,14 @@ def active_max(a, **kwargs):
     as the ``chunk`` parameter. Its return signature must be the same
     as the non-active chunk function that it is replacing.
 
-    .. versionadded:: TODOACTIVEVER
+    .. versionadded:: ACTIVEVERSION
 
     :Parameters:
 
         a: `dict`
+            TODOACTIVEDOCS
+
+        kwargs: optional
             TODOACTIVEDOCS
 
     :Returns:
@@ -75,11 +78,14 @@ def active_mean(a, **kwargs):
     as the ``chunk`` parameter. Its return signature must be the same
     as the non-active chunk function that it is replacing.
 
-    .. versionadded:: TODOACTIVEVER
+    .. versionadded:: ACTIVEVERSION
 
     :Parameters:
 
         a: `dict`
+            TODOACTIVEDOCS
+
+        kwargs: optional
             TODOACTIVEDOCS
 
     :Returns:
@@ -90,7 +96,7 @@ def active_mean(a, **kwargs):
             * N: The sample size.
             * V1: The sum of ``weights``. Always equal to ``N``
                   because weights have not been set.
-            * sum: The weighted sum of ``a``.
+            * sum: The un-weighted sum of ``a``.
             * weighted: True if weights have been set. Always
                         False.
 
@@ -108,11 +114,14 @@ def active_sum(a, **kwargs):
     as the ``chunk`` parameter. Its return signature must be the same
     as the non-active chunk function that it is replacing.
 
-    .. versionadded:: TODOACTIVEVER
+    .. versionadded:: ACTIVEVERSION
 
     :Parameters:
 
         a: `dict`
+            TODOACTIVEDOCS
+
+        kwargs: optional
             TODOACTIVEDOCS
 
     :Returns:
@@ -121,10 +130,11 @@ def active_sum(a, **kwargs):
             Dictionary with the keys:
 
             * N: The sample size.
-            * sum: The weighted sum of ``a``
+            * sum: The un-weighted sum of ``a``
 
     """
     return {"N": a["n"], "sum": a["sum"]}
+
 
 # --------------------------------------------------------------------
 # Create a lookup of the active functions
@@ -140,9 +150,15 @@ _active_chunk_functions = {
 def actify(a, method, axis=None):
     """TODOACTIVEDOCS.
 
-    TODO: Describe the necessary conditions here.
+    It is assumed that:
 
-    .. versionadded:: TODOACTIVEVER
+    * The *method* has an entry in the `_active_chunk_functions`
+      dictionary
+
+    * The `!active_storage` attribute of the `Data` object that
+      provided the dask array *a* is `True`.
+
+    .. versionadded:: ACTIVEVERSION
 
     :Parameters:
 
@@ -167,11 +183,6 @@ def actify(a, method, axis=None):
     from dask.array.utils import validate_axis
     from dask.base import collections_to_dsk
 
-    if not (method in _active_chunk_functions and method in Active.methods()):
-        # The given method is not supported, so return the input data
-        # unchanged.
-        return a, None
-
     # Parse axis
     if axis is None:
         axis = tuple(range(a.ndim))
@@ -189,14 +200,9 @@ def actify(a, method, axis=None):
     # Loop round elements of the dask graph, looking for data
     # definitions that point to a file and which support active
     # storage operations. The elements are traversed in reverse order
-    # so that the data defintions come out first, allowing for a
-    # faster short circuit when using active storage is not possible.
-    #
-    # It is assumed that `actify` has only been called if has been
-    # already been deterimined that it is sensible to do so. A
-    # necessary, but not sufficient, condition for this being the case
-    # will is the parent `Data` instance's `active_storage` attribute
-    # being `True`.
+    # so that the data defintions come out first, allowing for the
+    # potential of a faster short circuit when using active storage is
+    # not possible.
     ok_to_actify = False
     dsk = collections_to_dsk((a,), optimize_graph=True)
     for key, value in reversed(dsk.items()):
@@ -204,7 +210,7 @@ def actify(a, method, axis=None):
             value.get_filename()
         except AttributeError:
             continue
-            
+
         # Still here? Then this chunk is a data definition that points
         # to a file, so try to insert an actified copy into the dask
         # graph.
@@ -221,14 +227,14 @@ def actify(a, method, axis=None):
         # The dask graph is not suitable for active storage
         # reductions, so return the input data unchanged.
         return a, None
-        
+
     # Still here? Then all data definitions in the dask graph support
     # active storage reductions => redefine the array from the
     # actified dask graph, and define the active storage reduction
     # chunk function.
     return (
         da.Array(dsk, a.name, a.chunks, a.dtype, a._meta),
-        _active_chunk_functions[method]
+        _active_chunk_functions[method],
     )
 
 
@@ -236,7 +242,7 @@ def active_storage(method):
     """A decorator for `Collapse` methods that enables active storage
     operations, when the conditions are right.
 
-    .. versionadded:: TODOACTIVEVER
+    .. versionadded:: ACTIVEVERSION
 
     .. seealso `cf.data.collapse.Collapse`
 
@@ -252,7 +258,7 @@ def active_storage(method):
         def wrapper(self, *args, **kwargs):
             if (
                 kwargs.get("active_storage")
-                and method in _active_chunk_functions 
+                and method in _active_chunk_functions
                 and kwargs.get("weights") is None
                 and kwargs.get("chunk_function") is None
             ):

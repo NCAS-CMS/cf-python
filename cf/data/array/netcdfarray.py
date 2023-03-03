@@ -1,11 +1,10 @@
 import cfdm
-from dask.utils import SerializableLock
 
 from ...mixin_container import Container
-from .mixin import ActiveStorageMixin, FileArrayMixin
 
 # Global lock for netCDF file access
 from ..utils import netcdf_lock
+from .mixin import ActiveStorageMixin, FileArrayMixin
 
 
 class NetCDFArray(

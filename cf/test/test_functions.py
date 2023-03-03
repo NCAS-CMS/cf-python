@@ -64,6 +64,7 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org["bounds_combination_mode"], str)
         self.assertIsInstance(org["regrid_logging"], bool)
         self.assertIsInstance(org["tempdir"], str)
+        self.assertIsInstance(org["active_storage"], bool)
         # Log level may be input as an int but always given as
         # equiv. string
         self.assertIsInstance(org["log_level"], str)
@@ -83,6 +84,7 @@ class functionTest(unittest.TestCase):
             "bounds_combination_mode": "XOR",
             "log_level": "INFO",
             "chunksize": 8e9,
+            "active_storage": True,
         }
 
         # Test the setting of each lone item.

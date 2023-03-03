@@ -173,6 +173,7 @@ def configuration(
     regrid_logging=None,
     relaxed_identities=None,
     bounds_combination_mode=None,
+    active_storage=None,
     of_fraction=None,
     collapse_parallel_mode=None,
     free_memory_factor=None,
@@ -260,6 +261,12 @@ def configuration(
             The new value; if True, use "relaxed" mode when getting a
             construct identity. The default is to not change the
             current value.
+
+        active_storage: `bool` or `Constant`, optional
+            TODOACTIVEDOCS
+
+            .. versionaddedd:: ACTIVEVERSION
+
 
         of_fraction: `float` or `Constant`, optional
             Deprecated at version 3.14.0 and is no longer
@@ -376,6 +383,7 @@ def configuration(
         new_regrid_logging=regrid_logging,
         new_relaxed_identities=relaxed_identities,
         bounds_combination_mode=bounds_combination_mode,
+        active_storage=active_storage,
     )
 
 
@@ -425,6 +433,7 @@ def _configuration(_Configuration, **kwargs):
         "new_regrid_logging": regrid_logging,
         "new_relaxed_identities": relaxed_identities,
         "bounds_combination_mode": bounds_combination_mode,
+        "active_storage": active_storage,
     }
 
     old_values = {}
@@ -1134,6 +1143,55 @@ class bounds_combination_mode(ConstantAccess):
             )
 
         return arg
+
+
+class active_storage(ConstantAccess):
+    """TODOACTIVEDOCS
+
+    .. versionadded:: ACTIVEVERSION
+
+    .. seealso:: `configuration`
+
+    :Parameters:
+
+        arg: `bool` or `Constant`, optional
+            Provide a value that will apply to all subsequent
+            operations.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    TODOACTIVEDOCS
+
+    """
+
+    _name = "ACTIVE_STORAGE"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: ACTIVEVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
+
+        """
+        return bool(arg)
 
 
 def CF():

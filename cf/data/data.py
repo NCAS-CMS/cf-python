@@ -424,21 +424,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     "for compressed input arrays"
                 )
 
-            # Save the input compressed array, as this will contain
-            # extra information, such as a count or index variable.
-            self._set_Array(array)
-
-        if self._is_file_array(array):
+            # Bring the compressed data into memory without
+            # decompressing it
             if to_memory:
-                # Bring the compressed data into memory (without
-                # decompressing it if it's compressed)
                 try:
                     array = array.to_memory()
                 except AttributeError:
                     pass
-            elif hasattr(array, "actify"):
-                # Allow the possibilty of active storage operations
-                self._set_active_storage(True)
 
         if self._is_abstract_Array_subclass(array):
             # Save the input array in case it's useful later. For
@@ -633,7 +625,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _is_file_array(self, array):
         """Whether or not an array is stored on disk.
 
-        .. versionaddedd: TODOACTIVEVER
+        .. versionaddedd: ACTIVEVERSION
 
         :Parameters:
 
@@ -1284,7 +1276,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _del_active_storage(self):
         """TODOACTIVEDOCS.
 
-        .. versionadded:: TODOACTIVEVER
+        .. versionadded:: ACTIVEVERSION
 
         .. seealso:: `active_storage`, `_set_active_storage`
 
@@ -1310,7 +1302,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _set_active_storage(self, value):
         """TODOACTIVEDOCS.
 
-        .. versionadded:: TODOACTIVEVER
+        .. versionadded:: ACTIVEVERSION
 
         .. seealso:: `active_storage`, `_del_active_storage`
 
@@ -1474,6 +1466,20 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         custom = self._custom
         for element in ("first_element", "second_element", "last_element"):
             custom.pop(element, None)
+
+    def _is_abstract_Array_subclass(self, array):
+        """Whether or not an array is a type of Array.
+
+        :Parameters:
+
+            array:
+
+        :Returns:
+
+            `bool`
+
+        """
+        return isinstance(array, cfdm.Array)
 
     def _set_cached_elements(self, elements):
         """Cache selected element values.
@@ -4350,7 +4356,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         the usual (non-active) techniques if an active storage
         operation fails for any reason.
 
-        .. versionadded:: TODOACTIVEVER
+        .. versionadded:: ACTIVEVERSION
 
         **Examples**
 

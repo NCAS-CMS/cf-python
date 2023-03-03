@@ -1,10 +1,11 @@
+# Global lock for netCDF file access
 from ...utils import netcdf_lock
 
 
 class ActiveStorageMixin:
     """TODOACTIVEDOCS.
 
-    .. versionadded:: TODOACTIVEVER
+    .. versionadded:: ACTIVEVERSION
 
     """
 
@@ -26,7 +27,7 @@ class ActiveStorageMixin:
             then these indices work independently along each dimension
             (similar to the way vector subscripts work in Fortran).
 
-        .. versionadded:: TODOACTIVEVER
+        .. versionadded:: ACTIVEVERSION
 
         """
         method = self.get_active_method()
@@ -35,10 +36,18 @@ class ActiveStorageMixin:
             return super().__getitem__(indices)
 
         # Active storage read and reduction. Returns a dictionary.
-        active = Active(self.get_filename(), self.get_ncvar())
+        try:
+            missing_data_indicators = self.get_missing_data_indicators()
+        except AttributeError:
+            missing_data_indicators = {}
+
+        active = Active(
+            self.get_filename(), self.get_ncvar(), **missing_data_indicators
+        )
         active.method = method
         active.components = True
         active.lock = netcdf_lock
+
         return active[indices]
 
     def actify(self, method, axis=None):
@@ -47,7 +56,7 @@ class ActiveStorageMixin:
         The new instance is a deep copy of the original, with the
         additional setting of the active storage method and axis.
 
-        .. versionadded:: TODOACTIVEVER
+        .. versionadded:: ACTIVEVER
 
         .. seealso:: `set_active_axis`, `set_active_method`
 
@@ -71,23 +80,23 @@ class ActiveStorageMixin:
         return a
 
     def get_active_axis(self):
-        """TODOACTIVEDOC.
+        """TODOACTIVEDOCS.
 
-        .. versionadded:: TODOACTIVEVER
+        .. versionadded:: ACTIVEVERSION
 
         .. seealso:: `set_active_axis`
 
         :Returns:
 
-            TODOACTIVEDOC
+            TODOACTIVEDOCS
 
         """
         return self._custom.get("active_axis")
 
     def get_active_method(self):
-        """TODOACTIVEDOC.
+        """TODOACTIVEDOCS.
 
-        .. versionadded:: TODOACTIVEVER
+        .. versionadded:: ACTIVEVERSION
 
         .. seealso:: `set_active_method`
 
@@ -101,9 +110,9 @@ class ActiveStorageMixin:
         return self._custom.get("active_method")
 
     def set_active_axis(self, value):
-        """TODOACTIVEDOC.
+        """TODOACTIVEDOCS.
 
-        .. versionadded:: TODOACTIVEVER
+        .. versionadded:: ACTIVEVERSION
 
         .. seealso:: `get_active_axis`
 
@@ -119,9 +128,9 @@ class ActiveStorageMixin:
         self._custom["active_axis"] = value
 
     def set_active_method(self, value):
-        """TODOACTIVEDOC.
+        """TODOACTIVEDOCS.
 
-        .. versionadded:: TODOACTIVEVER
+        .. versionadded:: ACTIVEVERSION
 
         .. seealso:: `get_active_method`
 
