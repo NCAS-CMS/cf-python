@@ -134,7 +134,7 @@ class _Meta:
         equal=None,
         exist=None,
         ignore=None,
-        dimension=(),
+        dimension=None,
         relaxed_identities=False,
         ncvar_identities=False,
         field_identity=None,
@@ -207,6 +207,11 @@ class _Meta:
                 to aggregation, a new axis is created with an auxiliary
                 coordinate whose datum is the property's value and the
                 property itself is deleted from that field.
+
+            field_ancillaries: (sequence of) `str`, optional
+                TODOCFADOCS. See `cf.aggregate` for details.
+
+                .. versionadded:: TODOCFAVER
 
             copy: `bool` optional
                 If False then do not copy fields prior to aggregation.
@@ -290,56 +295,20 @@ class _Meta:
                     "no identity; consider setting " "relaxed_identities"
                 )
                 return
-        #        elif not self.has_data:
-        #            self.message = "{} has no data".format(f.__class__.__name__)
-        #            return
 
         # ------------------------------------------------------------
         # Promote selected properties to 1-d, size 1 auxiliary
-        # coordinates
+        # coordinates with new independent domain axes
         # ------------------------------------------------------------
-        _copy = copy
-        for prop in dimension:
-            value = f.get_property(prop, None)
-            if value is None:
-                continue
-
-            aux_coord = AuxiliaryCoordinate(
-                properties={"long_name": prop},
-                data=Data([value], units=""),
-                copy=False,
-            )
-            aux_coord.nc_set_variable(prop)
-            aux_coord.id = prop
-
-            if _copy:
-                # Copy the field, as we're about to change it.
-                f = f.copy()
-                self.field = f
-                _copy = False
-
-            axis = f.set_construct(DomainAxis(1))
-            f.set_construct(aux_coord, axes=[axis], copy=False)
-
-            f.del_property(prop)
+        if dimension:
+            f = self.promote_to_auxiliary_coordinate(dimension)
 
         # ------------------------------------------------------------
-        # Create field ancillaries from properties
+        # Promote selected properties to field ancillaries that span
+        # the same domain axes as the field
         # ------------------------------------------------------------
-        for prop in field_ancillaries:
-            print(99999, prop)
-            value = f.get_property(prop, None)
-            if value is None:
-                continue
-
-            data = FullArray(value, shape=f.shape, dtype=np.array(value).dtype)
-
-            field_anc = FieldAncillary(
-                data=Data(data), properties={"long_name": prop}
-            )
-            field_anc.id = prop
-            print(field_anc.dump(), Data(data).array)
-            f.set_construct(field_anc, axes=f.get_data_axes(), copy=False)
+        if field_ancillaries:
+            f = self.promote_to_field_ancillary(field_ancillaries)
 
         construct_axes = f.constructs.data_axes()
 
@@ -1412,6 +1381,105 @@ class _Meta:
 
         return tuple(sorted(names))
 
+    def promote_to_auxiliary_coordinate(self, properties):
+        """Promote properties to auxilliary coordinate constructs.
+
+        Each property is converted to a 1-d auxilliary coordinate
+        construct that spans a new independent size 1 domain axis the
+        field, and the property is deleted.
+
+         ... versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            properties: sequence of `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `Field` or `Domain`
+                TODOCFADOCS
+
+        """
+        f = self.field
+
+        copy = True
+        for prop in properties:
+            value = f.get_property(prop, None)
+            if value is None:
+                continue
+
+            aux_coord = AuxiliaryCoordinate(
+                properties={"long_name": prop},
+                data=Data([value], units=""),
+                copy=False,
+            )
+            aux_coord.nc_set_variable(prop)
+            aux_coord.id = prop
+
+            if copy:
+                # Copy the field as we're about to change it
+                f = f.copy()
+                copy = False
+
+            axis = f.set_construct(DomainAxis(1))
+            f.set_construct(aux_coord, axes=[axis], copy=False)
+            f.del_property(prop)
+
+        self.field = f
+        return f
+
+    def promote_to_field_ancillary(self, properties):
+        """Promote properties to field ancillary constructs.
+
+        Each property is converted to a field ancillary construct that
+        span the same domain axes as the field, and property the is
+        deleted.
+
+        If a domain construct is being aggregated then it is always
+        returned unchanged.
+
+         ... versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            properties: sequence of `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `Field` or `Domain`
+                TODOCFADOCS
+
+        """
+        f = self.field
+        if f.construct_type != "field":
+            return f
+
+        copy = True
+        for prop in properties:
+            value = f.get_property(prop, None)
+            if value is None:
+                continue
+
+            data = FullArray(value, shape=f.shape, dtype=np.array(value).dtype)
+
+            field_anc = FieldAncillary(
+                data=Data(data), properties={"long_name": prop}
+            )
+            field_anc.id = prop
+
+            if copy:
+                # Copy the field as we're about to change it
+                f = f.copy()
+                copy = False
+
+            f.set_construct(field_anc, axes=f.get_data_axes(), copy=False)
+            f.del_property(prop)
+
+        self.field = f
+        return f
+
 
 @_manage_log_level_via_verbosity
 def aggregate(
@@ -1440,7 +1508,7 @@ def aggregate(
     no_overlap=False,
     shared_nc_domain=False,
     field_identity=None,
-    field_ancillaries=(),
+    field_ancillaries=None,
     info=False,
 ):
     """Aggregate field constructs into as few field constructs as
@@ -1667,6 +1735,11 @@ def aggregate(
             numbers. The default value is set by the
             `cf.rtol` function.
 
+        field_ancillaries: (sequence of) `str`, optional
+            TODOCFADOCS
+
+            .. versionadded:: TODOCFAVER
+
         no_overlap:
             Use the *overlap* parameter instead.
 
@@ -1723,6 +1796,7 @@ def aggregate(
             "\ninfo=2 maps to verbose=3"
             "\ninfo=3 maps to verbose=-1",
             version="3.5.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     # Initialise the cache for coordinate and cell measure hashes,
@@ -1755,6 +1829,9 @@ def aggregate(
 
     if isinstance(dimension, str):
         dimension = (dimension,)
+
+    if isinstance(field_ancillaries, str):
+        field_ancillaries = (field_ancillaries,)
 
     if exist_all and equal_all:
         raise ValueError(

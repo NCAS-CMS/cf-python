@@ -778,7 +778,7 @@ def read(
         cfa_options = {}
     else:
         cfa_options = cfa_options.copy()
-        keys = ("substitutions", "field_ancillaries")
+        keys = ("substitutions",)
         if not set(cfa_options).issubset(keys):
             raise ValueError(
                 "Invalid dictionary key to the 'cfa_options' "
@@ -794,13 +794,6 @@ def read(
             substitutions[f"${{{base}}}"] = substitutions.pop(base)
 
     cfa_options["substitutions"] = substitutions
-
-    field_ancillaries = cfa_options.pop("field_ancillaries", None)
-    if field_ancillaries:
-        if "field_ancillaries" in aggregate_options:
-            raise ValueError("TODOCFA")
-
-        aggregate_options["field_ancillaries"] = field_ancillaries
 
     # Initialise the output list of fields/domains
     if domain:

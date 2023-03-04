@@ -91,6 +91,7 @@ class FullArray(Array):
         self._set_component("calendar", calendar, copy=False)
 
     def __array_function__(self, func, types, args, kwargs):
+        """TODOCFADOCS"""
         if func not in _FULLARRAY_HANDLED_FUNCTIONS:
             return NotImplemented
 
