@@ -1306,10 +1306,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # Set the CFA write status to False
             self._cfa_del_write()
 
-    #        # Always set the CFA term status to False
-    #        if "cfa_term" in self._custom:
-    #            del self._custom["cfa_term"]
-
     def _set_dask(self, array, copy=False, clear=_ALL):
         """Set the dask array.
 
@@ -1461,6 +1457,25 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         return self._custom.pop("cfa_write", False)
+
+    def _cfa_set_term(self, value):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `_cfa_get_term`
+
+        :Parameters:
+
+            value: `bool`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        """
+        self._custom["cfa_term"] = bool(value)
 
     def _set_cached_elements(self, elements):
         """Cache selected element values.
@@ -2449,6 +2464,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         dx = self.to_dask_array()
 
+        # TODOCFA what if the data definitions are FileArray, rather
+        # than FragmentArray? Perhaps allow extra locations to be
+        # addby cf.write cfa_options?
+
         updated = False
         dsk = collections_to_dsk((dx,), optimize_graph=True)
         for key, a in dsk.items():
@@ -2485,6 +2504,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         from dask.base import collections_to_dsk
 
+        # TODOCFA what if the data definitions are FileArray, rather
+        # than FragmentArray?
+
         out = set()
 
         dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
@@ -2496,6 +2518,44 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 pass
 
         return out
+
+    def cfa_get_term(self):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `bool`
+
+        """
+        return bool(self._custom.get("cfa_term", False))
+
+    def cfa_get_write(self):
+        """The CFA write status of the data.
+
+        If and only if the CFA write status is `True`, then this
+        `Data` instance has the potential to be written to a
+        CFA-netCDF file as aggregated data. In this case it is the
+        choice of parameters to the `cf.write` function that
+        determines if the data is actually written as aggregated data.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_set_write`, `cf.read`, `cf.write`
+
+        :Returns:
+
+            `bool`
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2])
+        >>> d.cfa_get_write()
+        False
+
+        """
+        return bool(self._custom.get("cfa_write", False))
 
     def cfa_set_fragment_location(self, location):
         """TODOCFADOCS
@@ -2538,32 +2598,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         if updated:
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=_NONE)
-
-    def cfa_get_write(self):
-        """The CFA write status of the data.
-
-        If and only if the CFA write status is `True`, then this
-        `Data` instance has the potential to be written to a
-        CFA-netCDF file as aggregated data. In this case it is the
-        choice of parameters to the `cf.write` function that
-        determines if the data is actually written as aggregated data.
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `cfa_set_write`, `cf.read`, `cf.write`
-
-        :Returns:
-
-            `bool`
-
-        **Examples**
-
-        >>> d = cf.Data([1, 2])
-        >>> d.cfa_get_write()
-        False
-
-        """
-        return self._custom.get("cfa_write", False)
 
     def cfa_set_write(self, status):
         """Set the CFA write status of the data.

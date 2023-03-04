@@ -1436,8 +1436,15 @@ class _Meta:
         span the same domain axes as the field, and property the is
         deleted.
 
+        The `Data` of any the new field ancillary construct is marked
+        as a CFA term, meaning that it will only be written to disk if
+        the parent field construct is written as CFA aggregation
+        variable, and in that case the field ancillary is written as
+        non-standard CFA aggregation instruction variable, rather than
+        a CF-netCDF ancillary variable.
+
         If a domain construct is being aggregated then it is always
-        returned unchanged.
+        returned unchanged
 
          ... versionadded:: TODOCFAVER
 
@@ -1449,7 +1456,7 @@ class _Meta:
         :Returns:
 
             `Field` or `Domain`
-                TODOCFADOCS
+                The TODOCFADOCS
 
         """
         f = self.field
@@ -1462,10 +1469,13 @@ class _Meta:
             if value is None:
                 continue
 
-            data = FullArray(value, shape=f.shape, dtype=np.array(value).dtype)
+            data = Data(
+                FullArray(value, shape=f.shape, dtype=np.array(value).dtype)
+            )
+            data._cfa_set_term(True)
 
             field_anc = FieldAncillary(
-                data=Data(data), properties={"long_name": prop}
+                data=data, properties={"long_name": prop}
             )
             field_anc.id = prop
 
