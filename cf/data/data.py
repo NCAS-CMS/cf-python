@@ -1238,6 +1238,21 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
+    def _cfa_del_write(self):
+        """Set the CFA write status of the data to `False`.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_get_write`, `_cfa_set_write`
+
+        :Returns:
+
+            `bool`
+                The CFA status prior to deletion.
+
+        """
+        return self._custom.pop("cfa_write", False)
+
     def _clear_after_dask_update(self, clear=_ALL):
         """Remove components invalidated by updating the `dask` array.
 
@@ -1443,39 +1458,36 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         for element in ("first_element", "second_element", "last_element"):
             custom.pop(element, None)
 
-    def _cfa_del_write(self):
-        """Set the CFA write status of the data to `False`.
+    def _get_cached_elements(self, elements):
+        """Cache selected element values.
+
+        Updates *data* in-place to store the given element values
+        within its ``custom`` dictionary.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `cfa_get_write`, `_cfa_set_write`
-
-        :Returns:
-
-            `bool`
-                The CFA status prior to deletion.
-
-        """
-        return self._custom.pop("cfa_write", False)
-
-    def _cfa_set_term(self, value):
-        """TODOCFADOCS
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `_cfa_get_term`
+        .. seealso:: `_del_cached_elements`, `_set_cached_elements`
 
         :Parameters:
 
-            value: `bool`
-                TODOCFADOCS
+            elements: `dict`
+               Zero or more element values to be cached, each keyed by
+               a unique identifier to allow unambiguous retrieval.
+               Existing cached elements not specified by *elements*
+               will not be removed.
 
         :Returns:
 
             `None`
 
+        **Examples**
+
+        >>> d._set_cached_elements({'first_element': 273.15})
+
         """
-        self._custom["cfa_term"] = bool(value)
+        custom = self._custom
+        return {
+            key, custom[key] for key in ("first_element", "second_element", "last_element")}
 
     def _set_cached_elements(self, elements):
         """Cache selected element values.
@@ -2520,13 +2532,21 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return out
 
     def cfa_get_term(self):
-        """TODOCFADOCS
+        """The CFA aggregation instruction term status.
 
         .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_set_term`
 
         :Returns:
 
             `bool`
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2])
+        >>> d.cfa_get_term()
+        False
 
         """
         return bool(self._custom.get("cfa_term", False))
@@ -2598,6 +2618,31 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         if updated:
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=_NONE)
+
+    def cfa_set_term(self, status):
+        """Set the CFA aggregation instruction term status.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_get_term`
+
+        :Parameters:
+
+            status: `bool`
+                The new CFA aggregation instruction term status.
+
+        :Returns:
+
+            `None`
+
+        """
+        if status:
+            raise ValueError(
+                "'cfa_set_term' only allows the CFA aggregation instruction "
+                "term write status to be set to False"
+            )
+
+        self._custom.pop("cfa_term", False)
 
     def cfa_set_write(self, status):
         """Set the CFA write status of the data.
@@ -3980,23 +4025,29 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 non_concat_axis_chunks = list(d.chunks)
                 non_concat_axis_chunks.pop(axis)
                 if non_concat_axis_chunks != non_concat_axis_chunks0:
-                    # ... or the CFA write status is False when any
-                    # two input data instances have different chunk
+                    # ... the CFA write status is False when any two
+                    # input data instances have different chunk
                     # patterns for the non-concatenated axes.
                     cfa = _NONE
                     break
 
-        # Set the new dask array, retaining the cached elements ...
-        data0._set_dask(dx, clear=_ALL ^ _CACHE ^ cfa)
+        # Set the new dask array
+        data0._set_dask(dx, clear=_ALL ^ cfa)
 
-        # ... now delete the cached second element, which might now be
-        # incorrect.
-        data0._custom.pop("second_element", None)
+        # Retain valid cached elements
+        cache = processed_data[0]._get_cached_elements()
+        last_element = processed_data[-1]._custom.get("last_element", None)
+        if last_element is None:
+            cache.pop("last_element", None)
+        else:
+            cache["last_element"] = last_element   
 
-        # Set the CFA-netCDF aggregated_data instructions
-        # substitutions by combining them from all of the input data
-        # instances, giving precedence to those towards the left hand
-        # side of the input list.
+        data0._set_cached_elements(cache)
+        
+        # Set the CFA-netCDF aggregated data instructions and file
+        # name substitutions by combining them from all of the input
+        # data instances, giving precedence to those towards the left
+        # hand side of the input list.
         if data0.cfa_get_write():
             aggregated_data = {}
             substitutions = {}
@@ -4007,6 +4058,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             data0.cfa_set_aggregated_data(aggregated_data)
             data0.cfa_set_file_substitutions(substitutions)
 
+        # Set the CFA aggregation instruction term status
+        if data0.cfa_get_term():
+            for d in processed_data[1:]:
+                if not d.cfa_get_term():
+                    data0.cfa_set_term(False)
+                    break
+            
         # Manage cyclicity of axes: if join axis was cyclic, it is no
         # longer.
         axis = data0._parse_axes(axis)[0]
