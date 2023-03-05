@@ -1458,7 +1458,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         for element in ("first_element", "second_element", "last_element"):
             custom.pop(element, None)
 
-    def _get_cached_elements(self, elements):
+    def _get_cached_elements(self):
         """Cache selected element values.
 
         Updates *data* in-place to store the given element values
@@ -1467,14 +1467,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         .. versionadded:: TODOCFAVER
 
         .. seealso:: `_del_cached_elements`, `_set_cached_elements`
-
-        :Parameters:
-
-            elements: `dict`
-               Zero or more element values to be cached, each keyed by
-               a unique identifier to allow unambiguous retrieval.
-               Existing cached elements not specified by *elements*
-               will not be removed.
 
         :Returns:
 
@@ -1487,7 +1479,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         custom = self._custom
         return {
-            key, custom[key] for key in ("first_element", "second_element", "last_element")}
+            key: custom[key] for key in ("first_element", "second_element", "last_element")}
 
     def _set_cached_elements(self, elements):
         """Cache selected element values.
