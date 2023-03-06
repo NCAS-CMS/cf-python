@@ -21,6 +21,7 @@ from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
+from urllib.parse import urlparse
 
 import cfdm
 import netCDF4
@@ -2500,14 +2501,15 @@ def abspath(filename):
     'http://data/archive/file.nc'
 
     """
-    if filename is None:
-        return
+    u = urlparse(filename)
+    scheme = u.scheme
+    if not scheme:
+        return _os_path_abspath(filename)
 
-    u = urllib.parse.urlparse(filename)
-    if u.scheme != "":
-        return filename
+    if scheme == "file":
+        return u.path
 
-    return _os_path_abspath(filename)
+    return filename
 
 
 def relpath(filename, start=None):

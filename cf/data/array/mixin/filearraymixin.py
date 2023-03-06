@@ -1,12 +1,11 @@
+from os.path import dirname
+
 import numpy as np
 
-from ....functions import _DEPRECATION_ERROR_ATTRIBUTE
-
-# import cfdm
+from ....functions import _DEPRECATION_ERROR_ATTRIBUTE, abspath
 
 
-
-class FileArrayMixin:  # (cfdm.data.mixin.FileArrayMixin):
+class FileArrayMixin:
     """Mixin class for an array stored in a file.
 
     .. versionadded:: 3.14.0
@@ -35,11 +34,6 @@ class FileArrayMixin:  # (cfdm.data.mixin.FileArrayMixin):
         """x.__str__() <==> str(x)"""
         return f"{self.get_filename()}, {self.get_address()}"
 
-    #    @property
-    #    def dtype(self):
-    #        """Data-type of the array."""
-    #        return self._get_component("dtype")
-
     @property
     def filename(self):
         """The name of the file containing the array.
@@ -54,11 +48,6 @@ class FileArrayMixin:  # (cfdm.data.mixin.FileArrayMixin):
             version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
-
-    #    @property
-    #    def shape(self):
-    #        """Shape of the array."""
-    #        return self._get_component("shape")
 
     def del_file_location(self, location):
         """TODOCFADOCS
@@ -75,11 +64,32 @@ class FileArrayMixin:  # (cfdm.data.mixin.FileArrayMixin):
             `{{class}}`
                 TODOCFADOCS
 
+        **Examples**
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2')
+        >>> a.get_addresses()
+        ('tas1', 'tas2')
+        >>> b = a.del_file_location('/data1')
+        >>> b = get_filenames()
+        ('/data2/file2',)
+        >>> b.get_addresses()
+        ('tas2',)
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file1', '/data2/file2')
+        >>> a.get_addresses()
+        ('tas1', 'tas1', 'tas2')
+        >>> b = a.del_file_location('/data2')
+        >>> b.get_filenames()
+        ('/data1/file1',)
+        >>> b.get_addresses()
+        ('tas1',)
+
         """
         from os import sep
-        from os.path import dirname
 
-        location = location.rstrip(sep)
+        location = abspath(location).rstrip(sep)
 
         # Note: It is assumed that each existing file name is either
         #       an absolute path or a file URI.
@@ -92,11 +102,8 @@ class FileArrayMixin:  # (cfdm.data.mixin.FileArrayMixin):
                 new_filenames.append(filename)
                 new_addresses.append(address)
 
-        #        if not new_filenames:
-        #            raise ValueError(
-        #                f"Can't remove location {location} when doing so "
-        #                "results in there being no defined files"
-        #            )
+        if not new_filenames:
+            raise ValueError("TODOCFADOCS")
 
         a = self.copy()
         a._set_component("filename", tuple(new_filenames), copy=False)
@@ -110,89 +117,28 @@ class FileArrayMixin:  # (cfdm.data.mixin.FileArrayMixin):
 
         :Returns:
 
-            `set`
+            `tuple`
                 TODOCFADOCS
 
+        **Examples**
+
+        >>> a.get_filenames()
+        ('/data1/file1',)
+        >>> a.file_locations()
+        ('/data1,)
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2')
+        >>> a.file_locations()
+        ('/data1', '/data2')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2', '/data1/file2')
+        >>> a.file_locations()
+        ('/data1', '/data2', '/data1')
+
         """
-        from os.path import dirname
-
-        # Note: It is assumed that each existing file name is either
-        #       an absolute path or a file URI.
-        return set([dirname(f) for f in self.get_filenames()])
-
-    #    def get_addresses(self):
-    #        """TODOCFADOCS Return the names of any files containing the data array.
-    #
-    #        .. versionadded:: TODOCFAVER
-    #
-    #        :Returns:
-    #
-    #            `tuple`
-    #                TODOCFADOCS
-    #
-    #        """
-    #        out = self._get_component("address", None)
-    #        if not out:
-    #            return ()
-    #
-    #        return (out,)
-    #
-    #    def get_formats(self):
-    #        """Return the format of the file.
-    #
-    #        .. versionadded:: TODOCFAVER
-    #
-    #        .. seealso:: `get_format`, `get_filenames`, `get_addresses`
-    #
-    #        :Returns:
-    #
-    #            `tuple`
-    #                The fragment file formats.
-    #
-    #        """
-    #        return (self.get_format(),)
-    #
-    #    def open(self):
-    #        """Returns an open dataset containing the data array.
-    #
-    #        When multiple fragment files have been provided an attempt is
-    #        made to open each one, in arbitrary order, and the
-    #        `netCDF4.Dataset` is returned from the first success.
-    #
-    #        .. versionadded:: TODOCFAVER
-    #
-    #        :Returns:
-    #
-    #            `netCDF4.Dataset`
-    #
-    #        """
-    #        # Loop round the files, returning as soon as we find one that
-    #        # works.
-    #        filenames = self.get_filenames()
-    #        for filename, address in zip(filenames, self.get_addresses()):
-    #            url = urlparse(filename)
-    #            if url.scheme == "file":
-    #                # Convert a file URI into an absolute path
-    #                filename = url.path
-    #
-    #            try:
-    #                nc = netCDF4.Dataset(filename, "r")
-    #            except FileNotFoundError:
-    #                continue
-    #            except RuntimeError as error:
-    #                raise RuntimeError(f"{error}: {filename}")
-    #
-    #            if isisntance(address, str):
-    #                self._set_component("ncvar", address, copy=False)
-    #            else:
-    #                self._set_component("varid", address, copy=False)
-    #
-    #            return nc
-    #
-    #        if len(filenames) == 1:
-    #            raise FileNotFoundError(f"No such netCDF file: {filenames[0]}")
-    #
-    #        raise FileNotFoundError(f"No such netCDF files: {filenames}")
+        return tuple(map(dirname, self.get_filenames()))
 
     def set_file_location(self, location):
         """TODOCFADOCS
@@ -209,37 +155,72 @@ class FileArrayMixin:  # (cfdm.data.mixin.FileArrayMixin):
             `{{class}}`
                 TODOCFADOCS
 
+        **Examples**
+
+        >>> a.get_filenames()
+        ('/data1/file1',)
+        >>> a.get_addresses()
+        ('tas',)
+        >>> b = a.set_file_location('/home/user')
+        >>> b.get_filenames()
+        ('/data1/file1', '/home/user/file1')
+        >>> b.get_addresses()
+        ('tas', 'tas')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2',)
+        >>> a.get_addresses()
+        ('tas', 'tas')
+        >>> b = a.set_file_location('/home/user')
+        >>> b = get_filenames()
+        ('/data1/file1', '/data2/file2', '/home/user/file1', '/home/user/file2')
+        >>> b.get_addresses()
+        ('tas', 'tas', 'tas', 'tas')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file1',)
+        >>> a.get_addresses()
+        ('tas1', 'tas2')
+        >>> b = a.set_file_location('/home/user')
+        >>> b.get_filenames()
+        ('/data1/file1', '/data2/file1', '/home/user/file1')
+        >>> b.get_addresses()
+        ('tas1', 'tas2', 'tas1')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file1',)
+        >>> a.get_addresses()
+        ('tas1', 'tas2')
+        >>> b = a.set_file_location('/data1')
+        >>> b.get_filenames()
+        ('/data1/file1', '/data2/file1')
+        >>> b.get_addresses()
+        ('tas1', 'tas2')
+
         """
         from os import sep
-        from os.path import basename, dirname, join
+        from os.path import basename, join
 
-        location = location.rstrip(sep)
+        location = abspath(location).rstrip(sep)
 
         filenames = self.get_filenames()
         addresses = self.get_addresses()
 
         # Note: It is assumed that each existing file name is either
         #       an absolute path or a fully qualified URI.
-        new_filenames = []
-        new_addresses = []
+        new_filenames = list(filenames)
+        new_addresses = list(addresses)
         for filename, address in zip(filenames, addresses):
-            if dirname(filename) == location:
-                continue
-
             new_filename = join(location, basename(filename))
-            if new_filename in new_filenames:
-                continue
-
-            new_filenames.append(new_filename)
-            new_addresses.append(address)
+            if new_filename not in new_filenames:
+                new_filenames.append(new_filename)
+                new_addresses.append(address)
 
         a = self.copy()
-        a._set_component(
-            "filename", filenames + tuple(new_filenames), copy=False
-        )
+        a._set_component("filename", tuple(new_filenames), copy=False)
         a._set_component(
             "address",
-            addresses + tuple(new_addresses),
+            tuple(new_addresses),
             copy=False,
         )
         return a

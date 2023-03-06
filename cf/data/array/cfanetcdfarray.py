@@ -34,9 +34,7 @@ class CFANetCDFArray(NetCDFArray):
     def __init__(
         self,
         filename=None,
-        ncvar=None,
-        varid=None,
-        group=None,
+        address=None,
         dtype=None,
         mask=True,
         units=False,
@@ -174,21 +172,26 @@ class CFANetCDFArray(NetCDFArray):
             from CFAPython.CFAExceptions import CFAException
             from dask import compute, delayed
 
+            if not isinstance(filename, str):
+                if len(filename) != 1:
+                    raise ValueError("TODOCFADOCS")
+
+                filename = filename[0]
+
+            filename = filename[0]
             cfa = CFADataset(filename, CFAFileFormat.CFANetCDF, "r")
             try:
-                var = cfa.getVar(ncvar)
+                var = cfa.getVar(address)
             except CFAException:
                 raise ValueError(
-                    f"CFA variable {ncvar} not found in file {filename}"
+                    f"CFA variable {address!r} not found in file {filename}"
                 )
 
             shape = tuple([d.len for d in var.getDims()])
 
             super().__init__(
                 filename=filename,
-                ncvar=ncvar,
-                varid=varid,
-                group=group,
+                address=address,
                 shape=shape,
                 dtype=dtype,
                 mask=mask,
@@ -234,9 +237,7 @@ class CFANetCDFArray(NetCDFArray):
         else:
             super().__init__(
                 filename=filename,
-                ncvar=ncvar,
-                varid=varid,
-                group=group,
+                address=address,
                 dtype=dtype,
                 mask=mask,
                 units=units,
@@ -272,8 +273,7 @@ class CFANetCDFArray(NetCDFArray):
         return (
             self.__class__.__name__,
             abspath(self.get_filename()),
-            self.get_ncvar(),
-            self.get_group(),
+            self.get_address(),
             aggregated_data,
         )
 

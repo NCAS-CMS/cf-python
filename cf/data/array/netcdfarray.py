@@ -1,5 +1,4 @@
 import cfdm
-import netCDF4
 from dask.utils import SerializableLock
 
 from ...mixin_container import Container
@@ -39,8 +38,3 @@ class NetCDFArray(FileArrayMixin, Container, cfdm.NetCDFArray):
             return False
 
         return _lock
-
-
-#    def open(self):
-#        """TODOCFADOCS."""
-#        return super().open(netCDF4.Dataset, mode="r")
