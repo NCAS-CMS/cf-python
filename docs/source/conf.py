@@ -384,7 +384,7 @@ sphinx_gallery_conf = {
     "reference_url": {"cf": None},
     "backreferences_dir": "gen_modules/backreferences",
     "doc_module": ("cf"),
-    "inspect_global_variables": True,
+    "inspect_global_variables": False,
     "within_subsection_order": FileNameSortKey,
 }
 
