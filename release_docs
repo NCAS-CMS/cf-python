@@ -154,6 +154,18 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
           _downloads/cf_tutorial_files.zip \
           _downloads/tutorial.py \
           _downloads/field_analysis.py \
+          _downloads/auto_gallery_jupyter.zip \
+          _downloads/auto_gallery_python.zip \
+          _downloads/plot_1_recipe.ipynb \
+          _downloads/plot_1_recipe.py \
+          _downloads/plot_2_recipe.ipynb \
+          _downloads/plot_2_recipe.py \
+          _downloads/plot_3_recipe.ipynb \
+          _downloads/plot_3_recipe.py \
+          _downloads/plot_4_recipe.ipynb \
+          _downloads/plot_4_recipe.py \
+          _downloads/plot_5_recipe.ipynb \
+          _downloads/plot_5_recipe.py \
           _images/*.png \
           _images/*.svg
 
