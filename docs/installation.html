@@ -11,6 +11,10 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -72,7 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_gallery/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -210,7 +214,7 @@ visualisation package</a>, run</p>
 <div class="literal-block-wrapper docutils container" id="id18">
 <div class="code-block-caption"><span class="caption-text"><em>Install with conda.</em></span><a class="headerlink" href="#id18" title="Permalink to this code">¶</a></div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>cf-python<span class="w"> </span>cf-plot<span class="w"> </span>udunits2
-<span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>esmpy=8.2.0
+<span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">esmpy</span><span class="o">=</span><span class="m">8</span>.2.0
 </pre></div>
 </div>
 </div>
@@ -281,7 +285,7 @@ files</span></a>, and</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/netcdf4/">netCDF4</a>, 1.5.4 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.6.0 or newer
 (note that this package may be installed with netCDF4).</p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.10.0.2 or up to,
+<li><p><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.10.0.3 or up to,
 but not including, 1.10.1.0.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.3.4 or newer.</p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/psutil/">psutil</a>, version 0.6.0 or newer.</p></li>
@@ -316,7 +320,7 @@ environments for which these features are not required.</p>
 <ul>
 <li><p><a class="reference external" href="https://earthsystemmodeling.org/esmpy/">ESMF</a>, version
 8.0.0 or up to 8.2.0. This is easily installed via conda with</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>esmpy=8.2.0
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">esmpy</span><span class="o">=</span><span class="m">8</span>.2.0
 </pre></div>
 </div>
 <p>or may be installed from source.</p>
@@ -358,11 +362,11 @@ or newer.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-01-31.
+      &copy;2023, NCAS | Page built on 2023-03-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

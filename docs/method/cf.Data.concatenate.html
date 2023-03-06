@@ -11,6 +11,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -72,7 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_gallery/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -128,7 +132,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.concatenate<a class="headerlink" href="#cf-data-concatenate" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.concatenate">
-<em class="property">classmethod </em><code class="sig-prename descclassname">Data.</code><code class="sig-name descname">concatenate</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">axis=0</em>, <em class="sig-param">cull_graph=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/data/data.py#L3533-L3646"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.concatenate" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-prename descclassname">Data.</code><code class="sig-name descname">concatenate</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">axis=0</em>, <em class="sig-param">cull_graph=True</em>, <em class="sig-param">relaxed_units=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/data/data.py#L3534-L3677"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.concatenate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Join a sequence of data arrays together.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -160,6 +164,27 @@ overall. If set to False then dask graphs are not
 culled. See <a class="reference external" href="https://docs.dask.org/en/latest/optimize.html#dask.optimization.cull" title="(in Dask)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask.optimization.cull</span></code></a> for details.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.14.0.</span></p>
+</div>
+</dd>
+<dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then allow the concatenation of data arrays
+with invalid but otherwise equal units. By default, if
+any data array has invalid units then the
+concatenation will fail.</p>
+<p>A <a class="reference internal" href="../class/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> object is considered to be invalid if its
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">isvalid</span></code> attribute is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;metre&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">Units</span><span class="o">.</span><span class="n">isvalid</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">Units</span><span class="o">.</span><span class="n">isvalid</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;bad-units&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">Units</span><span class="o">.</span><span class="n">isvalid</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.14.1.</span></p>
 </div>
 </dd>
 </dl>
@@ -215,11 +240,11 @@ culled. See <a class="reference external" href="https://docs.dask.org/en/latest/
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-01-31.
+      &copy;2023, NCAS | Page built on 2023-03-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

@@ -11,6 +11,10 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -22,7 +26,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Recipes using cf" href="recipes.html" />
+    <link rel="next" title="Recipes using cf" href="auto_gallery/index.html" />
     <link rel="prev" title="Installation" href="installation.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -72,7 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Contributing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_gallery/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
@@ -86,7 +90,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="installation.html" title="previous chapter"><strong>Installation</strong></a></li>
-      <li>Next: <a href="recipes.html" title="next chapter"><strong>Recipes using cf</strong></a></li>
+      <li>Next: <a href="auto_gallery/index.html" title="next chapter"><strong>Recipes using cf</strong></a></li>
   </ul></li>
 </ul>
 </div>
@@ -161,10 +165,17 @@ using the <strong>Question</strong> issue template.</p>
 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues">https://github.com/NCAS-CMS/cf-python/issues</a>).</p>
 <p>Fork the cf-python GitHub repository
 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python">https://github.com/NCAS-CMS/cf-python</a>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The cf-python GitHub repository uses <code class="docutils literal notranslate"><span class="pre">main</span></code> as the name of its
+default branch, so you must refer to <code class="docutils literal notranslate"><span class="pre">main</span></code> when you need to
+reference the default branch. It is useful to use this as the
+name of the default branch on your fork, if you use one, too.</p>
+</div>
 <p>Clone your fork locally and create a branch:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:&lt;YOUR<span class="w"> </span>GITHUB<span class="w"> </span>USERNAME&gt;/cf-python.git
 <span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>cf-python
-<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>&lt;your-bugfix-feature-branch-name<span class="w"> </span>master&gt;
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>&lt;your-bugfix-feature-branch-name<span class="w"> </span>main&gt;
 </pre></div>
 </div>
 <p>Break your edits up into reasonably-sized commits, each representing
@@ -187,7 +198,7 @@ the change) as:</p>
 <code class="docutils literal notranslate"><span class="pre">docs/source/contributing.rst</span></code>.</p>
 <p>Finally, make sure all commits have been pushed to the remote copy of
 your fork and submit the pull request via the GitHub website, to the
-<code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the <code class="docutils literal notranslate"><span class="pre">NCAS-CMS/cf-python</span></code> repository. Make sure
+<code class="docutils literal notranslate"><span class="pre">main</span></code> branch of the <code class="docutils literal notranslate"><span class="pre">NCAS-CMS/cf-python</span></code> repository. Make sure
 to reference the original issue in the pull request’s description.</p>
 <p>Note that you can create the pull request while you’re working on
 this, as it will automatically update as you add more commits. If it is
@@ -227,11 +238,11 @@ ideas, code, and documentation to the cf library:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-01-31.
+      &copy;2023, NCAS | Page built on 2023-03-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

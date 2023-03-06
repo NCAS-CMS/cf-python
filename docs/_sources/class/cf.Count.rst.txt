@@ -66,6 +66,7 @@ Properties
    ~cf.Count.set_property
    ~cf.Count.properties
    ~cf.Count.clear_properties
+   ~cf.Count.del_properties
    ~cf.Count.set_properties
 
 .. rubric:: Attributes
