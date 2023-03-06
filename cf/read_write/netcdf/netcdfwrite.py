@@ -809,7 +809,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         aggregation_address = []
         aggregation_format = []
         for indices in data.chunk_indices():
-            a = self._cfa_get_filenames(data[indices])
+            a = self._cfa_get_file_details(data[indices])
             if len(a) != 1:
                 if a:
                     raise ValueError(
@@ -926,9 +926,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             from os.path import abspath
             from pathlib import PurePath
 
-            g["cfa_dir"] = PurePath(abspath(g["filename"])).parent
+            g["cfa_dir"] = PurePath(
+                abspath(g["filename"])
+            ).parent  # TODOCFA???
 
-    def _cfa_get_filenames(self, data):
+    def _cfa_get_file_details(self, data):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
@@ -951,18 +953,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         dsk = collections_to_dsk((data.to_dask_array(),), optimize_graph=True)
         for a in dsk.values():
             try:
-                f = a.get_filenames()
+                out.update(
+                    ((a.get_filenames(), a.get_addresses(), a.get_formats()),)
+                )
             except AttributeError:
-                continue
-
-            try:
-                f = ((f, a.get_addresses(), a.get_formats()),)
-            except AttributeError:
-                try:
-                    f = ((f, (a.get_address(),), (a.get_format(),)),)
-                except AttributeError:
-                    continue
-
-            out.update(f)
+                pass
 
         return out

@@ -1,3 +1,4 @@
+import cfdm
 import numpy as np
 
 from ...constants import _stash2standard_name
@@ -7,24 +8,23 @@ from ...functions import (
     load_stash2standard_name,
     parse_indices,
 )
-from ...umread_lib.umfile import File, Rec
+from ...umread_lib.umfile import File  # , Rec
 from .abstract import Array
 from .mixin import FileArrayMixin
 
 
-class UMArray(FileArrayMixin, Array):
+class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
     """A sub-array stored in a PP or UM fields file."""
 
     def __init__(
         self,
         filename=None,
+        address=None,
         dtype=None,
-        ndim=None,
         shape=None,
-        size=None,
-        header_offset=None,
-        data_offset=None,
-        disk_length=None,
+        #        size=None,
+        #        data_offset=None,
+        #        disk_length=None,
         fmt=None,
         word_size=None,
         byte_ordering=None,
@@ -112,24 +112,29 @@ class UMArray(FileArrayMixin, Array):
                 filename = None
 
             try:
+                address = source._get_component("address", None)
+            except AttributeError:
+                address = None
+
+            try:
                 fmt = source._get_component("fmt", None)
             except AttributeError:
                 fmt = None
 
-            try:
-                disk_length = source._get_component("disk_length", None)
-            except AttributeError:
-                disk_length = None
-
-            try:
-                header_offset = source._get_component("header_offset", None)
-            except AttributeError:
-                header_offset = None
-
-            try:
-                data_offset = source._get_component("data_offset", None)
-            except AttributeError:
-                data_offset = None
+            #            try:
+            #                disk_length = source._get_component("disk_length", None)
+            #            except AttributeError:
+            #                disk_length = None
+            #
+            #            try:
+            #                header_offset = source._get_component("header_offset", None)
+            #            except AttributeError:
+            #                header_offset = None
+            #
+            #            try:
+            #                data_offset = source._get_component("data_offset", None)
+            #            except AttributeError:
+            #                data_offset = None
 
             try:
                 dtype = source._get_component("dtype", None)
@@ -156,12 +161,25 @@ class UMArray(FileArrayMixin, Array):
             except AttributeError:
                 calendar = False
 
+        if filename is not None:
+            if isinstance(filename, str):
+                filename = (filename,)
+
+            self._set_component("filename", filename, copy=False)
+
+        if address is not None:
+            if isinstance(address, (str, int)):
+                address = (address,)
+
+            self._set_component("address", address, copy=False)
+
         self._set_component("shape", shape, copy=False)
-        self._set_component("filename", filename, copy=False)
+        #        self._set_component("filename", filename, copy=False)
+        #        self._set_component("address", address, copy=False)
         self._set_component("dtype", dtype, copy=False)
-        self._set_component("header_offset", header_offset, copy=False)
-        self._set_component("data_offset", data_offset, copy=False)
-        self._set_component("disk_length", disk_length, copy=False)
+        #        self._set_component("header_offset", header_offset, copy=False)
+        #        self._set_component("data_offset", data_offset, copy=False)
+        #        self._set_component("disk_length", disk_length, copy=False)
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
 
@@ -185,15 +203,15 @@ class UMArray(FileArrayMixin, Array):
         Returns a subspace of the array as an independent numpy array.
 
         """
-        f = self.open()
-        rec = self._get_rec(f)
+        f, header_offset = self.open()
+        rec = self._get_rec(f, header_offset)
 
         int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
         array = rec.get_data().reshape(self.shape)
 
         self.close(f)
-        del f
+        del f, rec
 
         if indices is not Ellipsis:
             indices = parse_indices(array.shape, indices)
@@ -253,7 +271,7 @@ class UMArray(FileArrayMixin, Array):
         # Return the numpy array
         return array
 
-    def _get_rec(self, f):
+    def _get_rec(self, f, header_offset):
         """Get a container for a record.
 
         This includes the lookup header and file offsets.
@@ -267,27 +285,30 @@ class UMArray(FileArrayMixin, Array):
             f: `umread_lib.umfile.File`
                 The open PP or FF file.
 
+            header_offset: `int`
+
         :Returns:
 
             `umread_lib.umfile.Rec`
                 The record container.
 
         """
-        header_offset = self.header_offset
-        data_offset = self.data_offset
-        disk_length = self.disk_length
-        if data_offset is None or disk_length is None:
-            # This method doesn't require data_offset and disk_length,
-            # so plays nicely with CFA. Is it fast enough that we can
-            # use this method always?
-            for v in f.vars:
-                for r in v.recs:
-                    if r.hdr_offset == header_offset:
-                        return r
-        else:
-            return Rec.from_file_and_offsets(
-                f, header_offset, data_offset, disk_length
-            )
+        #        header_offset = self.header_offset
+        #        data_offset = self.data_offset
+        #        disk_length = self.disk_length
+        #        if data_offset is None or disk_length is None:
+        # This method doesn't require data_offset and disk_length,
+        # so plays nicely with CFA. Is it fast enough that we can
+        # use this method always?
+        for v in f.vars:
+            for r in v.recs:
+                if r.hdr_offset == header_offset:
+                    return r
+
+    #        else:
+    #            return Rec.from_file_and_offsets(
+    #                f, header_offset, data_offset, disk_length
+    #            )
 
     def _set_units(self, int_hdr):
         """The units and calendar properties.
@@ -468,39 +489,39 @@ class UMArray(FileArrayMixin, Array):
             removed_at="5.0.0",
         )  # pragma: no cover
 
-    @property
-    def header_offset(self):
-        """The start position in the file of the header.
-
-        :Returns:
-
-            `int` or `None`
-                The address, or `None` if there isn't one.
-
-        """
-        return self._get_component("header_offset", None)
-
-    @property
-    def data_offset(self):
-        """The start position in the file of the data array.
-
-        :Returns:
-
-            `int`
-
-        """
-        return self._get_component("data_offset")
-
-    @property
-    def disk_length(self):
-        """The number of words on disk for the data array.
-
-        :Returns:
-
-            `int`
-
-        """
-        return self._get_component("disk_length")
+    #    @property
+    #    def header_offset(self):
+    #        """The start position in the file of the header.
+    #
+    #        :Returns:
+    #
+    #            `int` or `None`
+    #                The address, or `None` if there isn't one.
+    #
+    #        """
+    #        return self._get_component("header_offset", None)
+    #
+    #    @property
+    #    def data_offset(self):
+    #        """The start position in the file of the data array.
+    #
+    #        :Returns:
+    #
+    #            `int`
+    #
+    #        """
+    #        return self._get_component("data_offset")
+    #
+    #    @property
+    #    def disk_length(self):
+    #        """The number of words on disk for the data array.
+    #
+    #        :Returns:
+    #
+    #            `int`
+    #
+    #        """
+    #        return self._get_component("disk_length")
 
     @property
     def fmt(self):
@@ -583,20 +604,20 @@ class UMArray(FileArrayMixin, Array):
         if self._get_component("close"):
             f.close_fd()
 
-    def get_address(self):
-        """The address in the file of the variable.
-
-        The address is the word offset of the lookup header.
-
-        .. versionadded:: 3.14.0
-
-        :Returns:
-
-            `int` or `None`
-                The address, or `None` if there isn't one.
-
-        """
-        return self.header_offset
+    #    def get_address(self):
+    #        """The address in the file of the variable.
+    #
+    #        The address is the word offset of the lookup header.
+    #
+    #        .. versionadded:: 3.14.0
+    #
+    #        :Returns:
+    #
+    #            `int` or `None`
+    #                The address, or `None` if there isn't one.
+    #
+    #        """
+    #        return self.header_offset
 
     def get_byte_ordering(self):
         """The endianness of the data.
@@ -678,26 +699,35 @@ class UMArray(FileArrayMixin, Array):
 
         :Returns:
 
-            `umfile_lib.File`
+            `umfile_lib.File`, `int`
 
         **Examples**
 
         >>> f.open()
 
         """
-        try:
-            f = File(
-                path=self.get_filename(),
-                byte_ordering=self.get_byte_ordering(),
-                word_size=self.get_word_size(),
-                fmt=self.get_fmt(),
-            )
-        except Exception as error:
-            try:
-                f.close_fd()
-            except Exception:
-                pass
+        return super().open(
+            File,
+            byte_ordering=self.get_byte_ordering(),
+            word_size=self.get_word_size(),
+            fmt=self.get_fmt(),
+        )
 
-            raise Exception(error)
-        else:
-            return f
+
+#        try:
+#            f = File(
+#                path=self.get_filename(),
+#                byte_ordering=self.get_byte_ordering(),
+#                word_size=self.get_word_size(),
+#                fmt=self.get_fmt(),
+#            )
+#        except Exception as error:
+#            try:
+#                f.close_fd()
+#            except Exception:
+#                pass
+#
+#            raise Exception(error)
+#        else:
+#            return f
+#

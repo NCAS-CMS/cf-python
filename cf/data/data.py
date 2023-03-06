@@ -1479,7 +1479,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         custom = self._custom
         return {
-            key: custom[key] for key in ("first_element", "second_element", "last_element")}
+            key: custom[key]
+            for key in ("first_element", "second_element", "last_element")
+        }
 
     def _set_cached_elements(self, elements):
         """Cache selected element values.
@@ -4026,16 +4028,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # Set the new dask array
         data0._set_dask(dx, clear=_ALL ^ cfa)
 
-        # Retain valid cached elements
-        cache = processed_data[0]._get_cached_elements()
-        last_element = processed_data[-1]._custom.get("last_element", None)
-        if last_element is None:
-            cache.pop("last_element", None)
-        else:
-            cache["last_element"] = last_element   
-
-        data0._set_cached_elements(cache)
-        
         # Set the CFA-netCDF aggregated data instructions and file
         # name substitutions by combining them from all of the input
         # data instances, giving precedence to those towards the left
@@ -4056,7 +4048,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 if not d.cfa_get_term():
                     data0.cfa_set_term(False)
                     break
-            
+
         # Manage cyclicity of axes: if join axis was cyclic, it is no
         # longer.
         axis = data0._parse_axes(axis)[0]
@@ -6220,7 +6212,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         A `dask` chunk that contributes to the computed array is
         assumed to reference data within a file if that chunk's array
-        object has a callable `get_filename` method, the output of
+        object has a callable `get_filenames` method, the output of
         which is added to the returned `set`.
 
         :Returns:
@@ -6272,11 +6264,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
         for a in dsk.values():
             try:
-                f = a.get_filenames()
+                out.update(a.get_filenames())
             except AttributeError:
-                continue
-
-            out.update(f)
+                pass
 
         return out
 

@@ -1,14 +1,12 @@
-from urllib.parse import urlparse
+# from urllib.parse import urlparse
 
-import netCDF4
+# import netCDF4
 
 from ..array.netcdfarray import NetCDFArray
-from .mixin import FragmentArrayMixin, FragmentFileArrayMixin
+from .mixin import FragmentArrayMixin
 
 
-class NetCDFFragmentArray(
-    FragmentFileArrayMixin, FragmentArrayMixin, NetCDFArray
-):
+class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
     """A CFA fragment array stored in a netCDF file.
 
     .. versionadded:: 3.14.0
@@ -32,11 +30,11 @@ class NetCDFFragmentArray(
 
         :Parameters:
 
-            filenames: sequence of `str`, optional
+            filename: (sequence of `str`), optional
                 The names of the netCDF fragment files containing the
                 array.
 
-            addresses: sequence of `str`, optional
+            address: (sequence of `str`0, optional
                 The name of the netCDF variable containing the
                 fragment array. Required unless *varid* is set.
 
@@ -85,16 +83,6 @@ class NetCDFFragmentArray(
 
         if source is not None:
             try:
-                filenames = source._get_component("filenames", None)
-            except AttributeError:
-                filenames = None
-
-            try:
-                addresses = source._get_component("addresses ", None)
-            except AttributeError:
-                addresses = None
-
-            try:
                 aggregated_units = source._get_component(
                     "aggregated_units", False
                 )
@@ -108,48 +96,43 @@ class NetCDFFragmentArray(
             except AttributeError:
                 aggregated_calendar = False
 
-        if filenames:
-            self._set_component("filenames", tuple(filenames), copy=False)
-
-        if addresses:
-            self._set_component("addresses ", tuple(addresses), copy=False)
-
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
 
-    def open(self):
-        """Returns an open dataset containing the data array.
 
-        When multiple fragment files have been provided an attempt is
-        made to open each one, in arbitrary order, and the
-        `netCDF4.Dataset` is returned from the first success.
-
-        .. versionadded:: TODOCFAVER
-
-        :Returns:
-
-            `netCDF4.Dataset`
-
-        """
-        # Loop round the files, returning as soon as we find one that
-        # works.
-        filenames = self.get_filenames()
-        for filename, address in zip(filenames, self.get_addresses()):
-            url = urlparse(filename)
-            if url.scheme == "file":
-                # Convert file URI into an absolute path
-                filename = url.path
-
-            try:
-                nc = netCDF4.Dataset(filename, "r")
-            except FileNotFoundError:
-                continue
-            except RuntimeError as error:
-                raise RuntimeError(f"{error}: {filename}")
-
-            self._set_component("ncvar", address, copy=False)
-            return nc
-
-        raise FileNotFoundError(f"No such netCDF fragment files: {filenames}")
+#    def open(self):
+#        """Returns an open dataset containing the data array.
+#
+#        When multiple fragment files have been provided an attempt is
+#        made to open each one, in arbitrary order, and the
+#        `netCDF4.Dataset` is returned from the first success.
+#
+#        .. versionadded:: TODOCFAVER
+#
+#        :Returns:
+#
+#            `netCDF4.Dataset`
+#
+#        """
+#        # Loop round the files, returning as soon as we find one that
+#        # works.
+#        filenames = self.get_filenames()
+#        for filename, address in zip(filenames, self.get_addresses()):
+#            url = urlparse(filename)
+#            if url.scheme == "file":
+#                # Convert file URI into an absolute path
+#                filename = url.path
+#
+#            try:
+#                nc = netCDF4.Dataset(filename, "r")
+#            except FileNotFoundError:
+#                continue
+#            except RuntimeError as error:
+#                raise RuntimeError(f"{error}: {filename}")
+#
+#            self._set_component("ncvar", address, copy=False)
+#            return nc
+#
+#        raise FileNotFoundError(f"No such netCDF fragment files: {filenames}")

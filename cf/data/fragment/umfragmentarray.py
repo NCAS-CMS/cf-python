@@ -1,11 +1,11 @@
-from urllib.parse import urlparse
+# from urllib.parse import urlparse
 
-from ...umread_lib.umfile import File
+# from ...umread_lib.umfile import File
 from ..array.umarray import UMArray
-from .mixin import FragmentArrayMixin, FragmentFileArrayMixin
+from .mixin import FragmentArrayMixin
 
 
-class UMFragmentArray(FragmentFileArrayMixin, FragmentArrayMixin, UMArray):
+class UMFragmentArray(FragmentArrayMixin, UMArray):
     """A CFA fragment array stored in a UM or PP file.
 
     .. versionadded:: 3.14.0
@@ -14,8 +14,8 @@ class UMFragmentArray(FragmentFileArrayMixin, FragmentArrayMixin, UMArray):
 
     def __init__(
         self,
-        filenames=None,
-        addresses=None,
+        filename=None,
+        address=None,
         dtype=None,
         shape=None,
         aggregated_units=False,
@@ -29,10 +29,10 @@ class UMFragmentArray(FragmentFileArrayMixin, FragmentArrayMixin, UMArray):
 
         :Parameters:
 
-            filenames: sequence of `str`, optional
+            filenames: (sequence of `str`), optional
                 The names of the UM or PP file containing the fragment.
 
-            addresses: sequence of `str`, optional
+            addresses: (sequence of `str`), optional
                 The start words in the files of the header.
 
             dtype: `numpy.dtype`
@@ -69,6 +69,8 @@ class UMFragmentArray(FragmentFileArrayMixin, FragmentArrayMixin, UMArray):
 
         """
         super().__init__(
+            filename=filename,
+            address=address,
             dtype=dtype,
             shape=shape,
             units=units,
@@ -78,16 +80,6 @@ class UMFragmentArray(FragmentFileArrayMixin, FragmentArrayMixin, UMArray):
         )
 
         if source is not None:
-            try:
-                filenames = source._get_component("filenames", None)
-            except AttributeError:
-                filenames = None
-
-            try:
-                addresses = source._get_component("addresses ", None)
-            except AttributeError:
-                addresses = None
-
             try:
                 aggregated_units = source._get_component(
                     "aggregated_units", False
@@ -102,74 +94,69 @@ class UMFragmentArray(FragmentFileArrayMixin, FragmentArrayMixin, UMArray):
             except AttributeError:
                 aggregated_calendar = False
 
-        if filenames:
-            self._set_component("filenames", tuple(filenames), copy=False)
-
-        if addresses:
-            self._set_component("addresses ", tuple(addresses), copy=False)
-
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
 
-    def get_formats(self):
-        """TODOCFADOCS
 
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `get_filenames`, `get_addresses`
-
-        :Returns:
-
-            `tuple`
-
-        """
-        return ("um",) * len(self.get_filenames())
-
-    def open(self):
-        """Returns an open dataset containing the data array.
-
-        When multiple fragment files have been provided an attempt is
-        made to open each one, in arbitrary order, and the
-        `umfile_lib.File` is returned from the first success.
-
-        .. versionadded:: TODOCFAVER
-
-        :Returns:
-
-            `umfile_lib.File`
-
-        """
-        # Loop round the files, returning as soon as we find one that
-        # works.
-        filenames = self.get_filenames()
-        for filename, address in zip(filenames, self.get_addresses()):
-            url = urlparse(filename)
-            if url.scheme == "file":
-                # Convert file URI into an absolute path
-                filename = url.path
-
-                try:
-                    f = File(
-                        path=filename,
-                        byte_ordering=None,
-                        word_size=None,
-                        fmt=None,
-                    )
-                except FileNotFoundError:
-                    continue
-                except Exception as error:
-                    try:
-                        f.close_fd()
-                    except Exception:
-                        pass
-
-                    raise Exception(f"{error}: {filename}")
-
-                self._set_component("header_offset", address, copy=False)
-                return f
-
-        raise FileNotFoundError(
-            f"No such PP or UM fragment files: {filenames}"
-        )
+#    def get_formats(self):
+#        """TODOCFADOCS
+#
+#        .. versionadded:: TODOCFAVER
+#
+#        .. seealso:: `get_filenames`, `get_addresses`
+#
+#        :Returns:
+#
+#            `tuple`
+#
+#        """
+#        return ("um",) * len(self.get_filenames())
+#
+#    def open(self):
+#        """Returns an open dataset containing the data array.
+#
+#        When multiple fragment files have been provided an attempt is
+#        made to open each one, in arbitrary order, and the
+#        `umfile_lib.File` is returned from the first success.
+#
+#        .. versionadded:: TODOCFAVER
+#
+#        :Returns:
+#
+#            `umfile_lib.File`
+#
+#        """
+#        # Loop round the files, returning as soon as we find one that
+#        # works.
+#        filenames = self.get_filenames()
+#        for filename, address in zip(filenames, self.get_addresses()):
+#            url = urlparse(filename)
+#            if url.scheme == "file":
+#                # Convert file URI into an absolute path
+#                filename = url.path
+#
+#                try:
+#                    f = File(
+#                        path=filename,
+#                        byte_ordering=None,
+#                        word_size=None,
+#                        fmt=None,
+#                    )
+#                except FileNotFoundError:
+#                    continue
+#                except Exception as error:
+#                    try:
+#                        f.close_fd()
+#                    except Exception:
+#                        pass
+#
+#                    raise Exception(f"{error}: {filename}")
+#
+#                self._set_component("header_offset", address, copy=False)
+#                return f
+#
+#        raise FileNotFoundError(
+#            f"No such PP or UM fragment files: {filenames}"
+#        )

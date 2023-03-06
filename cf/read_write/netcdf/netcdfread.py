@@ -536,8 +536,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if non_standard_term is not None:
             kwargs["term"] = non_standard_term
 
-        # Get rid of the incorrect shape - this will get set by the
-        # CFAnetCDFArray instance.
+        # Get rid of the incorrect shape of () - this will get set
+        # correctly by the CFAnetCDFArray instance.
         kwargs.pop("shape", None)
 
         # Add the aggregated_data attribute (that can be used by
