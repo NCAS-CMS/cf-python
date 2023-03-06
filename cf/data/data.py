@@ -1474,31 +1474,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return cache.copy()
 
-    def _get_cached_elements(self):
-        """Cache selected element values.
-
-        Updates *data* in-place to store the given element values
-        within its ``custom`` dictionary.
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `_del_cached_elements`, `_set_cached_elements`
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d._set_cached_elements({'first_element': 273.15})
-
-        """
-        custom = self._custom
-        return {
-            key: custom[key]
-            for key in ("first_element", "second_element", "last_element")
-        }
-
     def _set_cached_elements(self, elements):
         """Cache selected element values.
 
@@ -2470,13 +2445,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d._set_dask(da.ceil(dx))
         return d
 
-    def cfa_del_fragment_location(self, location):
+    def cfa_del_file_location(self, location):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `cfa_add_fragment_location`,
-                     `cfa_fragment_locations`
+        .. seealso:: `cfa_set_file_location`, `cfa_file_locations`
 
         :Parameters:
 
@@ -2489,40 +2463,36 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d.cfa_del_fragment_location('/data/model')
+        >>> d.cfa_del_file_location('/data/model')
 
         """
         from dask.base import collections_to_dsk
 
         dx = self.to_dask_array()
 
-        # TODOCFA what if the data definitions are FileArray, rather
-        # than FragmentArray? Perhaps allow extra locations to be
-        # addby cf.write cfa_options?
-
         updated = False
         dsk = collections_to_dsk((dx,), optimize_graph=True)
         for key, a in dsk.items():
             try:
-                dsk[key] = a.del_fragment_location(location)
+                dsk[key] = a.del_file_location(location)
             except AttributeError:
-                # This chunk doesn't contain a CFA fragment
+                # This chunk doesn't contain a file array
                 continue
-            else:
-                # This chunk contains a CFA fragment
-                updated = True
+
+            # This chunk contains a file array and the dask graph has
+            # been updated
+            updated = True
 
         if updated:
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=_NONE)
 
-    def cfa_fragment_locations(self, location):
+    def cfa_file_locations(self, location):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `cfa_del_fragment_location`,
-                     `cfa_set_fragment_location`
+        .. seealso:: `cfa_del_file_location`, `cfa_set_file_location`
 
         :Returns:
 
@@ -2530,23 +2500,20 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d.cfa_fragment_locations()
+        >>> d.cfa_file_locations()
         {'/home/data1', 'file:///data2'}
 
         """
         from dask.base import collections_to_dsk
-
-        # TODOCFA what if the data definitions are FileArray, rather
-        # than FragmentArray?
 
         out = set()
 
         dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
         for key, a in dsk.items():
             try:
-                out.update(a.fragment_locations())
+                out.update(a.file_locations())
             except AttributeError:
-                # This chunk doesn't contain a CFA fragment
+                # This chunk doesn't contain a file array
                 pass
 
         return out
@@ -2597,13 +2564,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         return bool(self._custom.get("cfa_write", False))
 
-    def cfa_set_fragment_location(self, location):
+    def cfa_set_file_location(self, location):
         """TODOCFADOCS
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `cfa_del_fragment_location`,
-                     `cfa_fragment_locations`
+        .. seealso:: `cfa_del_file_location`, `cfa_file_locations`
 
         :Parameters:
 
@@ -2616,7 +2582,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d.cfa_set_fragment_location('/data/model')
+        >>> d.cfa_set_file_location('/data/model')
 
         """
         from dask.base import collections_to_dsk
@@ -2627,13 +2593,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dsk = collections_to_dsk((dx,), optimize_graph=True)
         for key, a in dsk.items():
             try:
-                dsk[key] = a.set_fragment_location(location)
+                dsk[key] = a.set_file_location(location)
             except AttributeError:
-                # This chunk doesn't contain a CFA fragment
+                # This chunk doesn't contain a file array
                 continue
-            else:
-                # This chunk contains a CFA fragment
-                updated = True
+
+            # This chunk contains a file array and the dask graph has
+            # been updated
+            updated = True
 
         if updated:
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
@@ -4074,6 +4041,15 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 if not d.cfa_get_term():
                     data0.cfa_set_term(False)
                     break
+
+        # Set the appropriate cached elements
+        cached_elements = processed_data[0]._get_cached_elements()
+        cached_elements.pop(-1, None)
+        last_element = processed_data[-1]._get_cached_elements().get(-1)
+        if last_element is not None:
+            cached_elements[-1] = last_element
+
+        data0._set_cached_elements(cached_elements)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no
         # longer.
@@ -7968,7 +7944,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         **Examples**
 
         """
-        # TODODASKAPI bring back expand_dime alias (or rather alias this to
+        # TODODASKAPI bring back expand_dims alias (or rather alias this to
         # that)
 
         d = _inplace_enabled_define_and_cleanup(self)
@@ -12225,137 +12201,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             d.override_units(units**2, inplace=True)
 
         return d
-
-    #    def url_or_file_uri(x):
-    #        from urllib.parse import urlparse
-    #
-    #        result = urlparse(x)
-    #        return all([result.scheme in ("file", "http", "https"), result.netloc])
-    #
-    #    def is_url(x):
-    #        from urllib.parse import urlparse
-    #
-    #        result = urlparse(x)
-    #        return all([result.scheme in ("http", "https"), result.netloc])
-    #
-    #    def is_file_uri(x):
-    #        from urllib.parse import urlparse
-    #
-    #        result = urlparse(x)
-    #        return all([result.scheme in ("file"), result.netloc])
-
-    #    def ggg(
-    #        self,
-    #        absolute=False,
-    #        relative=True,
-    #        cfa_filename=None,
-    #        substitions=None,
-    #    ):
-    #        """
-    #
-    #        f = cf.example_field(0)
-    #        cf.write(f, "file_A.nc")
-    #        cf.write(f, "file_B.nc")
-    #
-    #        a = cf.read("file_A.nc", chunks=4)[0].data
-    #        b = cf.read("file_B.nc", chunks=4)[0].data
-    #        c = cf.Data(b.array, units=b.Units, chunks=4)
-    #        d = cf.Data.concatenate([a, a.copy(), b, c], axis=1)
-    #
-    #
-    #        """
-    #        from os.path import abspath, relpath
-    #        from pathlib import PurePath
-    #        from urllib.parse import urlparse
-    #
-    #        from .utils import chunk_indices  # , chunk_positions
-    #
-    #        if substitutions:
-    #            substitions = tuple(substitutions.items())[::-1]
-    #
-    #        if relative:
-    #            cfa_dir = PurePath(abspath(cfa_filename)).parent
-    #
-    #        chunks = self.chunks
-    #
-    #        #        faf = []
-    #        #        max_file = 0
-    #        #        max_address = 0
-    #        #        max_format = 0
-    #
-    #        filenames = []
-    #        address = []
-    #        formats = []
-    #
-    #        for indices in chunk_indices(chunks):
-    #            a = self[indices].get_filenames(address_format=True)
-    #            if len(a) != 1:
-    #                raise ValueError("TODOCFADOCS")
-    #
-    #            filename, address, fmt = a.pop()
-    #
-    #            parsed_filename = urlparse(filename)
-    #            scheme = parsed_filename.scheme
-    #            if scheme not in ("http", "https"):
-    #                path = parsed_filename.path
-    #                if absolute:
-    #                    filename = PurePath(abspath(path)).as_uri()
-    #                elif relative or scheme != "file":
-    #                    filename = relpath(abspath(path), start=cfa_dir)
-    #
-    #            if substitutions:
-    #                for base, sub in substitutions:
-    #                    filename = filename.replace(sub, base)
-    #
-    #            filenames.append(filename)
-    #            addresses.append(address)
-    #            formats.append(fmt)
-    #
-    #        #            faf.append((filename, address, fmt))
-    #        #
-    #        #            max_file = max(max_file, len(filename))
-    #        #            max_address = max(max_address, len(address))
-    #        #            max_format = max(max_format, len(fmt))
-    #
-    #        aggregation_file = np.array(filenames).reshape(shape)
-    #        aggregation_address = np.array(addresses).reshape(
-    #            shape
-    #        )  # , dtype=f"U{max_address}")
-    #        aggregation_format = np.array(formats).reshape(
-    #            shape
-    #        )  # , dtype=f"U{max_format}")
-    #        del filenames
-    #        del address
-    #        del formats
-    #
-    #        #        for position, (filename, address, fmt) in zip(
-    #        #            chunk_positions(chunks), faf
-    #        #        ):
-    #        #            aggregation_file[position] = filename
-    #        #            aggregation_address[position] = address
-    #        #            aggregation_format[position] = fmt
-    #
-    #        # Location
-    #        dtype = np.dtype(np.int32)
-    #        if max(self.to_dask_array().chunksize) > np.iinfo(dtype).max:
-    #            dtype = np.dtype(np.int64)
-    #
-    #        aggregation_location = np.ma.masked_all(
-    #            (self.ndim, max(shape)), dtype=dtype
-    #        )
-    #
-    #        for j, c in enumerate(chunks):
-    #            aggregation_location[j, : len(c)] = c
-    #
-    #        # Return Data objects
-    #        #        data = partial(type(self), chunks=-1)
-    #        data = type(self)
-    #        return {
-    #            "aggregation_location": data(aggregation_location),
-    #            "aggregation_file": data(aggregation_file),
-    #            "aggregation_format": data(aggregation_format),
-    #            "aggregation_address": data(aggregation_address),
-    #        }
 
     def section(
         self, axes, stop=None, chunks=False, min_step=1, mode="dictionary"

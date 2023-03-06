@@ -1173,6 +1173,14 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, f_np.shape)
         self.assertTrue((f.array == f_np).all())
 
+        # Check cached elements
+        str(d)
+        str(e)
+        f = cf.Data.concatenate([d, e], axis=1)
+        cached = f._get_cached_elements()
+        self.assertEqual(cached[0], d.first_element())
+        self.assertEqual(cached[-1], e.last_element())
+
         # Check concatenation with one invalid units
         d.override_units(cf.Units("foo"), inplace=1)
         with self.assertRaises(ValueError):
@@ -4383,7 +4391,7 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_filenames(self):
         """Test `Data.get_filenames`."""
-        d = cf.Data.full((5, 8), 1, chunks=4)
+        d = cf.Data.ones((5, 8), float, chunks=4)
         self.assertEqual(d.get_filenames(), set())
 
         f = cf.example_field(0)
