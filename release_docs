@@ -84,18 +84,18 @@ done
 
 # For Recipes
 files_to_copy=(
-    "source/auto_gallery/auto_gallery_jupyter.zip"
-    "source/auto_gallery/auto_gallery_python.zip"
-    "source/auto_gallery/plot_1_recipe.ipynb"
-    "source/auto_gallery/plot_1_recipe.py"
-    "source/auto_gallery/plot_2_recipe.ipynb"
-    "source/auto_gallery/plot_2_recipe.py"
-    "source/auto_gallery/plot_3_recipe.ipynb"
-    "source/auto_gallery/plot_3_recipe.py"
-    "source/auto_gallery/plot_4_recipe.ipynb"
-    "source/auto_gallery/plot_4_recipe.py"
-    "source/auto_gallery/plot_5_recipe.ipynb"
-    "source/auto_gallery/plot_5_recipe.py"
+    "source/recipes/recipes_jupyter.zip"
+    "source/recipes/recipes_python.zip"
+    "source/recipes/plot_1_recipe.ipynb"
+    "source/recipes/plot_1_recipe.py"
+    "source/recipes/plot_2_recipe.ipynb"
+    "source/recipes/plot_2_recipe.py"
+    "source/recipes/plot_3_recipe.ipynb"
+    "source/recipes/plot_3_recipe.py"
+    "source/recipes/plot_4_recipe.ipynb"
+    "source/recipes/plot_4_recipe.py"
+    "source/recipes/plot_5_recipe.ipynb"
+    "source/recipes/plot_5_recipe.py"
 )
 
 destination_dir="$dir/_downloads"
@@ -103,12 +103,12 @@ destination_dir="$dir/_downloads"
 cp -pv "${files_to_copy[@]}" "$destination_dir"
 
 html_files=(
-    "$dir/auto_gallery/index.html"
-    "$dir/auto_gallery/plot_1_recipe.html"
-    "$dir/auto_gallery/plot_2_recipe.html"
-    "$dir/auto_gallery/plot_3_recipe.html"
-    "$dir/auto_gallery/plot_4_recipe.html"
-    "$dir/auto_gallery/plot_5_recipe.html"
+    "$dir/recipes/index.html"
+    "$dir/recipes/plot_1_recipe.html"
+    "$dir/recipes/plot_2_recipe.html"
+    "$dir/recipes/plot_3_recipe.html"
+    "$dir/recipes/plot_4_recipe.html"
+    "$dir/recipes/plot_5_recipe.html"
 )
 
 for html_file in "${html_files[@]}"
@@ -154,8 +154,8 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
           _downloads/cf_tutorial_files.zip \
           _downloads/tutorial.py \
           _downloads/field_analysis.py \
-          _downloads/auto_gallery_jupyter.zip \
-          _downloads/auto_gallery_python.zip \
+          _downloads/recipes_jupyter.zip \
+          _downloads/recipes_python.zip \
           _downloads/plot_1_recipe.ipynb \
           _downloads/plot_1_recipe.py \
           _downloads/plot_2_recipe.ipynb \
