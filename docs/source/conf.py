@@ -380,11 +380,11 @@ htmlhelp_basename = "cfdoc"
 sphinx_gallery_conf = {
     "examples_dirs": "recipes",  # path to recipe files
     "gallery_dirs": "recipes",  # path to save gallery generated output
-    "run_stale_examples": True,
+    "run_stale_examples": False,
     "reference_url": {"cf": None},
     "backreferences_dir": "gen_modules/backreferences",
     "doc_module": ("cf"),
-    "inspect_global_variables": False,
+    "inspect_global_variables": True,
     "within_subsection_order": FileNameSortKey,
 }
 
