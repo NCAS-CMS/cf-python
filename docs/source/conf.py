@@ -21,6 +21,8 @@ import cfdm
 
 import cf
 
+from sphinx_gallery.sorting import FileNameSortKey
+
 print("\ncf environment:")
 print("-----------------")
 cf.environment()
@@ -101,6 +103,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_toggleprompt",
     "sphinxcontrib.spelling",
+    "sphinx_gallery.gen_gallery",
 ]
 
 
@@ -373,6 +376,17 @@ html_show_sourcelink = False
 # Output file base name for HTML help builder.
 htmlhelp_basename = "cfdoc"
 
+# sphinx-gallery configuration
+sphinx_gallery_conf = {
+    "examples_dirs": "recipes",  # path to recipe files
+    "gallery_dirs": "recipes",  # path to save gallery generated output
+    "run_stale_examples": True,
+    "reference_url": {"cf": None},
+    "backreferences_dir": "gen_modules/backreferences",
+    "doc_module": ("cf"),
+    "inspect_global_variables": False,
+    "within_subsection_order": FileNameSortKey,
+}
 
 # -- Options for LaTeX output -------------------------------------------------
 

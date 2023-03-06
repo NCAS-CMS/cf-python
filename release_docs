@@ -82,6 +82,43 @@ do
     # all pages referencing these resources must be added to this list
 done
 
+# For Recipes
+files_to_copy=(
+    "source/recipes/recipes_jupyter.zip"
+    "source/recipes/recipes_python.zip"
+    "source/recipes/plot_1_recipe.ipynb"
+    "source/recipes/plot_1_recipe.py"
+    "source/recipes/plot_2_recipe.ipynb"
+    "source/recipes/plot_2_recipe.py"
+    "source/recipes/plot_3_recipe.ipynb"
+    "source/recipes/plot_3_recipe.py"
+    "source/recipes/plot_4_recipe.ipynb"
+    "source/recipes/plot_4_recipe.py"
+    "source/recipes/plot_5_recipe.ipynb"
+    "source/recipes/plot_5_recipe.py"
+)
+
+destination_dir="$dir/_downloads"
+
+cp -pv "${files_to_copy[@]}" "$destination_dir"
+
+html_files=(
+    "$dir/recipes/index.html"
+    "$dir/recipes/plot_1_recipe.html"
+    "$dir/recipes/plot_2_recipe.html"
+    "$dir/recipes/plot_3_recipe.html"
+    "$dir/recipes/plot_4_recipe.html"
+    "$dir/recipes/plot_5_recipe.html"
+)
+
+for html_file in "${html_files[@]}"
+do
+    for download_file in "${files_to_copy[@]}"
+    do
+        sed -i "s|href=\".*\/${download_file##*/}\"|href=\"$destination_dir/${download_file##*/}\"|g" "$html_file"
+    done
+done
+
 # Copy over our custom stylesheet. It is referenced in the HTML docs
 # files but Sphinx with alabaster theme doesn't seem to (?) provide a
 # means to transfer it to the created _static dir via the build itself
@@ -117,6 +154,18 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
           _downloads/cf_tutorial_files.zip \
           _downloads/tutorial.py \
           _downloads/field_analysis.py \
+          _downloads/recipes_jupyter.zip \
+          _downloads/recipes_python.zip \
+          _downloads/plot_1_recipe.ipynb \
+          _downloads/plot_1_recipe.py \
+          _downloads/plot_2_recipe.ipynb \
+          _downloads/plot_2_recipe.py \
+          _downloads/plot_3_recipe.ipynb \
+          _downloads/plot_3_recipe.py \
+          _downloads/plot_4_recipe.ipynb \
+          _downloads/plot_4_recipe.py \
+          _downloads/plot_5_recipe.ipynb \
+          _downloads/plot_5_recipe.py \
           _images/*.png \
           _images/*.svg
 
