@@ -1397,7 +1397,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `dict`
-                The cached element values
+                The cached element values, where the keys are the element
+                positions within the dask array and the values are the cached
+                values for each position.
 
         **Examples**
 
