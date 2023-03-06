@@ -21,6 +21,8 @@ import cfdm
 
 import cf
 
+from sphinx_gallery.sorting import FileNameSortKey
+
 print("\ncf environment:")
 print("-----------------")
 cf.environment()
@@ -383,6 +385,7 @@ sphinx_gallery_conf = {
     "backreferences_dir": "gen_modules/backreferences",
     "doc_module": ("cf"),
     "inspect_global_variables": True,
+    "within_subsection_order": FileNameSortKey,
 }
 
 # -- Options for LaTeX output -------------------------------------------------
