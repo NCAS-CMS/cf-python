@@ -1420,7 +1420,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Updates *data* in-place to store the given element values
         within its ``custom`` dictionary.
 
-        .. note:: Never change ``_custom['cached_elements']``
+        .. warning:: Never change ``_custom['cached_elements']``
                   in-place.
 
         .. versionadded:: 3.14.0
