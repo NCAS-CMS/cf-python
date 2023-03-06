@@ -25,10 +25,10 @@ Below is a gallery of recipes using cf:
 
 .. only:: html
 
-  .. image:: /auto_gallery/images/thumb/sphx_glr_plot_1_recipe_thumb.png
+  .. image:: /recipes/images/thumb/sphx_glr_plot_1_recipe_thumb.png
     :alt: Calculating global mean temperature timeseries
 
-  :ref:`sphx_glr_auto_gallery_plot_1_recipe.py`
+  :ref:`sphx_glr_recipes_plot_1_recipe.py`
 
 .. raw:: html
 
@@ -42,10 +42,10 @@ Below is a gallery of recipes using cf:
 
 .. only:: html
 
-  .. image:: /auto_gallery/images/thumb/sphx_glr_plot_2_recipe_thumb.png
+  .. image:: /recipes/images/thumb/sphx_glr_plot_2_recipe_thumb.png
     :alt: Calculating and plotting the global average temperature anomalies
 
-  :ref:`sphx_glr_auto_gallery_plot_2_recipe.py`
+  :ref:`sphx_glr_recipes_plot_2_recipe.py`
 
 .. raw:: html
 
@@ -59,10 +59,10 @@ Below is a gallery of recipes using cf:
 
 .. only:: html
 
-  .. image:: /auto_gallery/images/thumb/sphx_glr_plot_3_recipe_thumb.png
+  .. image:: /recipes/images/thumb/sphx_glr_plot_3_recipe_thumb.png
     :alt: Plotting global mean temperatures spatially
 
-  :ref:`sphx_glr_auto_gallery_plot_3_recipe.py`
+  :ref:`sphx_glr_recipes_plot_3_recipe.py`
 
 .. raw:: html
 
@@ -76,10 +76,10 @@ Below is a gallery of recipes using cf:
 
 .. only:: html
 
-  .. image:: /auto_gallery/images/thumb/sphx_glr_plot_4_recipe_thumb.png
+  .. image:: /recipes/images/thumb/sphx_glr_plot_4_recipe_thumb.png
     :alt: Comparing two datasets with different resolutions using regridding
 
-  :ref:`sphx_glr_auto_gallery_plot_4_recipe.py`
+  :ref:`sphx_glr_recipes_plot_4_recipe.py`
 
 .. raw:: html
 
@@ -93,10 +93,10 @@ Below is a gallery of recipes using cf:
 
 .. only:: html
 
-  .. image:: /auto_gallery/images/thumb/sphx_glr_plot_5_recipe_thumb.png
+  .. image:: /recipes/images/thumb/sphx_glr_plot_5_recipe_thumb.png
     :alt: Plotting wind vectors overlaid on precipitation data
 
-  :ref:`sphx_glr_auto_gallery_plot_5_recipe.py`
+  :ref:`sphx_glr_recipes_plot_5_recipe.py`
 
 .. raw:: html
 
@@ -112,11 +112,11 @@ Below is a gallery of recipes using cf:
 .. toctree::
    :hidden:
 
-   /auto_gallery/plot_1_recipe
-   /auto_gallery/plot_2_recipe
-   /auto_gallery/plot_3_recipe
-   /auto_gallery/plot_4_recipe
-   /auto_gallery/plot_5_recipe
+   /recipes/plot_1_recipe
+   /recipes/plot_2_recipe
+   /recipes/plot_3_recipe
+   /recipes/plot_4_recipe
+   /recipes/plot_5_recipe
 
 
 .. only:: html
@@ -125,11 +125,11 @@ Below is a gallery of recipes using cf:
 
     .. container:: sphx-glr-download sphx-glr-download-python
 
-      :download:`Download all examples in Python source code: auto_gallery_python.zip </auto_gallery/auto_gallery_python.zip>`
+      :download:`Download all examples in Python source code: recipes_python.zip </recipes/recipes_python.zip>`
 
     .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-      :download:`Download all examples in Jupyter notebooks: auto_gallery_jupyter.zip </auto_gallery/auto_gallery_jupyter.zip>`
+      :download:`Download all examples in Jupyter notebooks: recipes_jupyter.zip </recipes/recipes_jupyter.zip>`
 
 
 .. only:: html
