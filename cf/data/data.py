@@ -1310,7 +1310,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+        .. seealso:: `to_dask_array`, `_clear_after_dask_update`,
                      `_del_dask`
 
         :Parameters:
