@@ -43,7 +43,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         """
         if construct_type is None:
-            # This prrevents recursion whilst writing CFA-netCDF term
+            # This prevents recursion whilst writing CFA-netCDF term
             # variables.
             return False
 
@@ -63,11 +63,12 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             if ctype in ("all", construct_type):
                 # ... and then only if it satisfies the number of
                 # dimenions criterion
-                if ndim is None:
-                    return True
+                ok = ndim is None or ndim == data.ndim
+                if ok and cfa_options.get('strict', True) and not data.cfa_get_write():
+                    return False
 
-                return ndim == data.ndim
-
+                return ok
+                
         return False
 
     def _customize_createVariable(self, cfvar, construct_type, kwargs):
