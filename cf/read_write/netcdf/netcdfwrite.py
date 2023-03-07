@@ -64,11 +64,15 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 # ... and then only if it satisfies the number of
                 # dimenions criterion
                 ok = ndim is None or ndim == data.ndim
-                if ok and cfa_options.get('strict', True) and not data.cfa_get_write():
+TODO                if (
+                    ok
+                    and cfa_options.get("strict", True)
+                    and not data.cfa_get_write()
+                ):
                     return False
-
+TODO
                 return ok
-                
+
         return False
 
     def _customize_createVariable(self, cfvar, construct_type, kwargs):

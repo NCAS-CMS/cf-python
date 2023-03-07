@@ -917,7 +917,7 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(g.array.count())
         self.assertTrue(g.construct("grid_latitude").array.count())
 
-        
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
