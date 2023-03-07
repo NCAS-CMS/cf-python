@@ -70,6 +70,7 @@ Dask
    ~cf.Data.cull_graph
    ~cf.Data.dask_compressed_array
    ~cf.Data.rechunk
+   ~cf.Data.todict
    ~cf.Data.to_dask_array
 
 .. rubric:: Attributes

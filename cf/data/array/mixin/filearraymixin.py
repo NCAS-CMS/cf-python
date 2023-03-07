@@ -1,4 +1,5 @@
-from os.path import dirname
+from os import sep
+from os.path import basename, dirname, join
 
 import numpy as np
 
@@ -25,14 +26,6 @@ class FileArrayMixin:
 
         """
         return np.array((), dtype=self.dtype)
-
-    def __repr__(self):
-        """x.__repr__() <==> repr(x)"""
-        return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
-
-    def __str__(self):
-        """x.__str__() <==> str(x)"""
-        return f"{self.get_filename()}, {self.get_address()}"
 
     @property
     def filename(self):
@@ -87,12 +80,8 @@ class FileArrayMixin:
         ('tas1',)
 
         """
-        from os import sep
-
         location = abspath(location).rstrip(sep)
 
-        # Note: It is assumed that each existing file name is either
-        #       an absolute path or a file URI.
         new_filenames = []
         new_addresses = []
         for filename, address in zip(
@@ -198,9 +187,6 @@ class FileArrayMixin:
         ('tas1', 'tas2')
 
         """
-        from os import sep
-        from os.path import basename, join
-
         location = abspath(location).rstrip(sep)
 
         filenames = self.get_filenames()

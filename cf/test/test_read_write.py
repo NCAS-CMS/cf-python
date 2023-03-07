@@ -920,6 +920,36 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(g.array.count())
         self.assertTrue(g.construct("grid_latitude").array.count())
 
+    def test_read_write_cfa(self):
+        """TODOCFADOCS"""
+        f = cf.example_field(0)
+        # tmpfile1 = 'f1.nc'
+        # tmpfile2 = 'f2.nc'
+        # tmpfileh = 'n.nc'
+        # tmpfileh2 = 'c.nc'
+
+        cf.write(f[:2], tmpfile1)
+        cf.write(f[2:], tmpfile2)
+
+        a = cf.read([tmpfile1, tmpfile2])
+        self.assertEqual(len(a), 1)
+        a = a[0]
+
+        nc_file = tmpfileh
+        cfa_file = tmpfileh2
+        cf.write(a, nc_file)
+        cf.write(a, cfa_file, cfa=True)
+
+        n = cf.read(nc_file)
+        c = cf.read(cfa_file)
+        self.assertEqual(len(n), 1)
+        self.assertEqual(len(c), 1)
+
+        n = n[0]
+        c = c[0]
+        self.assertTrue(c.equals(f))
+        self.assertTrue(c.equals(n))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

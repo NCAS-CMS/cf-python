@@ -5,6 +5,7 @@ from functools import partial, reduce
 from itertools import product
 from numbers import Integral
 from operator import mul
+from os import sep
 
 import cfdm
 import cftime
@@ -13,7 +14,7 @@ import numpy as np
 from dask import compute, delayed  # noqa: F401
 from dask.array import Array
 from dask.array.core import normalize_chunks
-from dask.base import is_dask_collection, tokenize
+from dask.base import collections_to_dsk, is_dask_collection, tokenize
 from dask.highlevelgraph import HighLevelGraph
 from dask.optimization import cull
 
@@ -29,6 +30,7 @@ from ..decorators import (
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _section,
+    abspath,
     atol,
     default_netCDF_fillvals,
     free_memory,
@@ -1513,7 +1515,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         self._custom["cached_elements"] = cache
 
-    def _set_cfa_write(self, status):
+    def _cfa_set_write(self, status):
         """Set the CFA write status of the data.
 
         This should only be set to `True` if it is known that the dask
@@ -2445,79 +2447,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d._set_dask(da.ceil(dx))
         return d
 
-    def cfa_del_file_location(self, location):
-        """TODOCFADOCS
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `cfa_set_file_location`, `cfa_file_locations`
-
-        :Parameters:
-
-            location: `str`
-                TODOCFADOCS
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d.cfa_del_file_location('/data/model')
-
-        """
-        from dask.base import collections_to_dsk
-
-        dx = self.to_dask_array()
-
-        updated = False
-        dsk = collections_to_dsk((dx,), optimize_graph=True)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.del_file_location(location)
-            except AttributeError:
-                # This chunk doesn't contain a file array
-                continue
-
-            # This chunk contains a file array and the dask graph has
-            # been updated
-            updated = True
-
-        if updated:
-            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=_NONE)
-
-    def cfa_file_locations(self, location):
-        """TODOCFADOCS
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `cfa_del_file_location`, `cfa_set_file_location`
-
-        :Returns:
-
-            `set`
-
-        **Examples**
-
-        >>> d.cfa_file_locations()
-        {'/home/data1', 'file:///data2'}
-
-        """
-        from dask.base import collections_to_dsk
-
-        out = set()
-
-        dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
-        for key, a in dsk.items():
-            try:
-                out.update(a.file_locations())
-            except AttributeError:
-                # This chunk doesn't contain a file array
-                pass
-
-        return out
-
     def cfa_get_term(self):
         """The CFA aggregation instruction term status.
 
@@ -2563,48 +2492,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         return bool(self._custom.get("cfa_write", False))
-
-    def cfa_set_file_location(self, location):
-        """TODOCFADOCS
-
-        .. versionadded:: TODOCFAVER
-
-        .. seealso:: `cfa_del_file_location`, `cfa_file_locations`
-
-        :Parameters:
-
-            location: `str`
-                TODOCFADOCS
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d.cfa_set_file_location('/data/model')
-
-        """
-        from dask.base import collections_to_dsk
-
-        dx = self.to_dask_array()
-
-        updated = False
-        dsk = collections_to_dsk((dx,), optimize_graph=True)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.set_file_location(location)
-            except AttributeError:
-                # This chunk doesn't contain a file array
-                continue
-
-            # This chunk contains a file array and the dask graph has
-            # been updated
-            updated = True
-
-        if updated:
-            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=_NONE)
 
     def cfa_set_term(self, status):
         """Set the CFA aggregation instruction term status.
@@ -4030,7 +3917,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             substitutions = {}
             for d in processed_data[::-1]:
                 aggregated_data.update(d.cfa_get_aggregated_data({}))
-                substitutions.update(d.cfa_get_file_substitutions())
+                substitutions.update(d.cfa_file_substitutions())
 
             data0.cfa_set_aggregated_data(aggregated_data)
             data0.cfa_set_file_substitutions(substitutions)
@@ -6260,11 +6147,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         {'file_A.nc'}
 
         """
-        from dask.base import collections_to_dsk
-
         out = set()
-        dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
-        for a in dsk.values():
+        for a in self.todict().values():
             try:
                 out.update(a.get_filenames())
             except AttributeError:
@@ -6366,6 +6250,50 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         self.Units = Units(self.get_units(default=None), calendar)
+
+    def set_file_location(self, location):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.set_file_location('/data/model')
+
+        """
+
+        location = abspath(location).rstrip(sep)
+
+        updated = False
+        dsk = self.todict()
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.set_file_location(location)
+            except AttributeError:
+                # This chunk doesn't contain a file array
+                continue
+
+            # This chunk contains a file array and the dask graph has
+            # been updated
+            updated = True
+
+        if not updated:
+            raise ValueError("TODOCFADOCS")
+
+        dx = self.to_dask_array()
+        dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+        self._set_dask(dx, clear=_NONE)
 
     def set_units(self, value):
         """Set the units.
@@ -8455,6 +8383,34 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         self._set_dask(dx, clear=_NONE)
         self.hardmask = False
 
+    def file_locations(self):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `del_file_location`, `set_file_location`
+
+        :Returns:
+
+            `set`
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        out = set()
+
+        for key, a in self.todict().items():
+            try:
+                out.update(a.file_locations())
+            except AttributeError:
+                # This chunk doesn't contain a file array
+                pass
+
+        return out
+
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
         """Replace masked elements with a fill value.
@@ -9006,6 +8962,41 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
+    def chunk_indices(self):
+        """TODOCFADOCS ind the shape of each chunk.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            TODOCFAVER
+
+        **Examples**
+
+        >>> d = cf.Data(np.arange(405).reshape(3, 9, 15),
+        ...             chunks=((1, 2), (9,), (4, 5, 6)))
+        >>> for index in d.chunk_indices():
+        ...     print(index)
+        ...
+        (slice(0, 1, None), slice(0, 9, None), slice(0, 4, None))
+        (slice(0, 1, None), slice(0, 9, None), slice(4, 9, None))
+        (slice(0, 1, None), slice(0, 9, None), slice(9, 15, None))
+        (slice(1, 3, None), slice(0, 9, None), slice(0, 4, None))
+        (slice(1, 3, None), slice(0, 9, None), slice(4, 9, None))
+        (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None))
+
+        """
+        from dask.utils import cached_cumsum
+
+        chunks = self.chunks
+
+        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
+        indices = [
+            [slice(s, s + dim) for s, dim in zip(starts, shapes)]
+            for starts, shapes in zip(cumdims, chunks)
+        ]
+        return product(*indices)
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_units(self, units, inplace=False, i=False):
@@ -9374,6 +9365,47 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         self.override_calendar(None, inplace=True)
         return calendar
+
+    def del_file_location(self, location):
+        """TODOCFADOCS
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `set_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                TODOCFADOCS
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.del_file_location('/data/model')
+
+        """
+        location = abspath(location).rstrip(sep)
+
+        updated = False
+        dsk = self.todict()
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.del_file_location(location)
+            except AttributeError:
+                # This chunk doesn't contain a file array
+                continue
+
+            # This chunk contains a file array and the dask graph has
+            # been updated
+            updated = True
+
+        if updated:
+            dx = self.to_dask_array()
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=_NONE)
 
     def del_units(self, default=ValueError()):
         """Delete the units.
@@ -11029,6 +11061,42 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         d.override_units(_units_1, inplace=True)
 
         return d
+
+    def todict(self):
+        """Return a dictionary of the dask graph key/value pairs.
+
+        Prior to being converted to a dictionary, the graph is
+        optimised to remove unused chunks.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+                The dictionary of the dask graph key/value pairs.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3, 4], chunks=2)
+        >>> d.todict()
+        {('array-7daac373ba27474b6df0af70aab14e49', 0): array([1, 2]),
+         ('array-7daac373ba27474b6df0af70aab14e49', 1): array([3, 4])}
+        >>> e = d[0]
+        >>> e.todict()
+        {('getitem-14d8301a3deec45c98569d73f7a2239c',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-7daac373ba27474b6df0af70aab14e49',
+           0), (slice(0, 1, 1),)),
+         ('array-7daac373ba27474b6df0af70aab14e49', 0): array([1, 2])}
+        >>> dict(e.to_dask_array().dask)
+        {('array-7daac373ba27474b6df0af70aab14e49', 0): array([1, 2]),
+         ('array-7daac373ba27474b6df0af70aab14e49', 1): array([3, 4]),
+         ('getitem-14d8301a3deec45c98569d73f7a2239c',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-7daac373ba27474b6df0af70aab14e49',
+           0), (slice(0, 1, 1),))}
+
+        """
+        dx = self.to_dask_array()
+        return collections_to_dsk((dx,), optimize_graph=True)
 
     def tolist(self):
         """Return the data as a scalar or (nested) list.

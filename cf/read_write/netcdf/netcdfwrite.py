@@ -55,10 +55,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         if data is None:
             return False
 
-        if not data.get_cfa_write():
+        if not data.cfa_get_write():
             return False
 
-        for ctype, ndim in g["cfa_options"].get("constructs", {}):
+        for ctype, ndim in g["cfa_options"].get("constructs", {}).items():
             # Write as CFA if it has an appropriate construct type ...
             if ctype in ("all", construct_type):
                 # ... and then only if it satisfies the number of
@@ -109,6 +109,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         compressed=False,
         attributes={},
         construct_type=None,
+        warn_invalid=None,
     ):
         """Write a Data object.
 
@@ -177,9 +178,14 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         # Check for out-of-range values
         if g["warn_valid"]:
+            if construct_type:
+                var = cfvar
+            else:
+                var = None
+
             dx = dx.map_blocks(
                 self._check_valid,
-                cfvar=cfvar,
+                cfvar=var,
                 attributes=attributes,
                 meta=np.array((), dx.dtype),
             )
@@ -385,7 +391,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Get the fragment netCDF dimensions. These always start with
         # "f_".
         # ------------------------------------------------------------
-        aggregation_address = ggg["aggregation_address"]
+        aggregation_address = ggg["address"]
         fragment_ncdimensions = []
         for ncdim, size in zip(
             ncdimensions + ("extra",) * (aggregation_address.ndim - ndim),
@@ -406,9 +412,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Write the standardised aggregation instruction variables to
         # the CFA-netCDF file
         # ------------------------------------------------------------
-        aggregated_data = data.cfa_get_aggregated_data(default={})
-        substitutions = data.cfa_get_file_substitutions()
+        substitutions = data.cfa_file_substitutions()
+        substitutions.update(g["cfa_options"].get("substitutions", {}))
 
+        aggregated_data = data.cfa_get_aggregated_data(default={})
         aggregated_data_attr = []
 
         # Location
@@ -425,7 +432,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         if substitutions:
             subs = []
             for base, sub in substitutions.items():
-                subs.append(f"${{base}}: {sub}")
+                subs.append(f"{base}: {sub}")
 
             attributes = {"substitutions": " ".join(substitutions)}
         else:
@@ -794,12 +801,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Define the CFA file susbstitutions, giving precedence over
         # those set on the Data object to those provided by the CFA
         # options.
-        data.cfa_set_file_substitutions(
-            g["cfa_options"].get("substitutions", {})
-        )
-        substitutions = data.cfa_get_file_substitutions()
+        substitutions = data.cfa_file_substitutions()
+        substitutions.update(g["cfa_options"].get("substitutions", {}))
 
-        relative = g["cfa_options"].get("relative_paths")
+        absolute_paths = g["cfa_options"].get("absolute_paths")
         cfa_dir = g["cfa_dir"]
 
         # Size of the trailing dimension
@@ -833,11 +838,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 uri_scheme = uri.scheme
                 if not uri_scheme:
                     filename = abspath(join(cfa_dir, filename))
-                    if relative:
-                        filename = relpath(filename, start=cfa_dir)
-                    else:
+                    if absolute_paths:
                         filename = PurePath(filename).as_uri()
-                elif relative and uri_scheme == "file":
+                    else:
+                        filename = relpath(filename, start=cfa_dir)
+                elif not absolute_paths and uri_scheme == "file":
                     filename = relpath(uri.path, start=cfa_dir)
 
                 if substitutions:
@@ -908,10 +913,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # ------------------------------------------------------------
         data = type(data)
         return {
-            "aggregation_location": data(aggregation_location),
-            "aggregation_file": data(aggregation_file),
-            "aggregation_format": data(aggregation_format),
-            "aggregation_address": data(aggregation_address),
+            "location": data(aggregation_location),
+            "file": data(aggregation_file),
+            "format": data(aggregation_format),
+            "address": data(aggregation_address),
         }
 
     def _customize_write_vars(self):

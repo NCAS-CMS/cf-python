@@ -1,6 +1,6 @@
 from copy import deepcopy
 from itertools import accumulate, product
-from os.path import join
+from os.path import dirname, join
 from urllib.parse import urlparse
 
 import numpy as np
@@ -41,7 +41,7 @@ class CFANetCDFArray(NetCDFArray):
         calendar=False,
         instructions=None,
         substitutions=None,
-        non_standard_term=None,
+        term=None,
         source=None,
         copy=True,
     ):
@@ -114,11 +114,11 @@ class CFANetCDFArray(NetCDFArray):
 
                 .. versionadded:: TODOCFAVER
 
-            non_standard_term: `str`, optional
+            term: `str`, optional
                 The name of a non-standard aggregation instruction
                 term from which the array is to be created, instead of
                 the creating the aggregated data in the usual
-                manner. If set then *ncvar* must be the name of the
+                manner. If set then *address* must be the name of the
                 term's CFA-netCDF aggregation instruction variable,
                 which must be defined on the fragment dimensions and
                 no others. Each value of the aggregation instruction
@@ -126,8 +126,7 @@ class CFANetCDFArray(NetCDFArray):
                 corresponding fragment.
 
                 *Parameter example:*
-                  ``non_standard_term='tracking_id',
-                  ncvar='aggregation_id'``
+                  ``address='cfa_tracking_id', term='tracking_id'``
 
                 .. versionadded:: TODOCFAVER
 
@@ -160,9 +159,9 @@ class CFANetCDFArray(NetCDFArray):
                 substitutions = None
 
             try:
-                non_standard_term = source.get_non_standard_term()
+                term = source.get_term()
             except AttributeError:
-                non_standard_term = None
+                term = None
 
         elif filename is not None:
             from pathlib import PurePath
@@ -178,7 +177,6 @@ class CFANetCDFArray(NetCDFArray):
 
                 filename = filename[0]
 
-            filename = filename[0]
             cfa = CFADataset(filename, CFAFileFormat.CFANetCDF, "r")
             try:
                 var = cfa.getVar(address)
@@ -204,9 +202,9 @@ class CFANetCDFArray(NetCDFArray):
 
             parsed_filename = urlparse(filename)
             if parsed_filename.scheme in ("file", "http", "https"):
-                directory = str(PurePath(filename).parent)
+                cfa_directory = str(PurePath(filename).parent)
             else:
-                directory = PurePath(abspath(parsed_filename).path).parent
+                cfa_directory = dirname(abspath(filename))
 
             # Note: It is an as-yet-untested hypothesis that creating
             #       the 'aggregated_data' dictionary for massive
@@ -219,14 +217,14 @@ class CFANetCDFArray(NetCDFArray):
             compute(
                 *[
                     delayed(
-                        self.set_fragment(
+                        self._set_fragment(
                             var,
                             loc,
                             aggregated_data,
                             filename,
-                            directory,
+                            cfa_directory,
                             substitutions,
-                            non_standard_term,
+                            term,
                         )
                     )
                     for loc in product(*[range(i) for i in fragment_shape])
@@ -248,12 +246,12 @@ class CFANetCDFArray(NetCDFArray):
             fragment_shape = None
             aggregated_data = None
             instructions = None
-            non_standard_term = None
+            term = None
 
         self._set_component("fragment_shape", fragment_shape, copy=False)
         self._set_component("aggregated_data", aggregated_data, copy=False)
         self._set_component("instructions", instructions, copy=False)
-        self._set_component("non_standard_term", non_standard_term, copy=False)
+        self._set_component("term", term, copy=False)
 
         if substitutions is not None:
             self._set_component(
@@ -287,9 +285,9 @@ class CFANetCDFArray(NetCDFArray):
         frag_loc,
         aggregated_data,
         cfa_filename,
-        directory,
+        cfa_directory,
         substitutions,
-        non_standard_term,
+        term,
     ):
         """Create a new key/value pair in the *aggregated_data*
         dictionary.
@@ -315,7 +313,7 @@ class CFANetCDFArray(NetCDFArray):
             cfa_filename: `str`
                 TODOCFADOCS
 
-            directory: `str`
+            cfa_directory: `str`
                 TODOCFADOCS
 
                 .. versionadded:: TODOCFAVER
@@ -325,7 +323,7 @@ class CFANetCDFArray(NetCDFArray):
 
                 .. versionadded:: TODOCFAVER
 
-            non_standard_term: `str` or `None`
+            term: `str` or `None`
                 The name of a non-standard aggregation instruction
                 term from which the array is to be created, instead of
                 the creating the aggregated data in the usual
@@ -343,14 +341,14 @@ class CFANetCDFArray(NetCDFArray):
         fragment = var.getFrag(frag_loc=frag_loc)
         location = fragment.location
 
-        if non_standard_term is not None:
+        if term is not None:
             # --------------------------------------------------------
             # This fragment contains a constant value
             # --------------------------------------------------------
             aggregated_data[frag_loc] = {
                 "format": "full",
                 "location": location,
-                "full_value": fragment.non_standard_term(non_standard_term),
+                "full_value": fragment.non_standard_term(term),
             }
             return
 
@@ -372,15 +370,12 @@ class CFANetCDFArray(NetCDFArray):
                     for base, sub in substitutions.items():
                         filename = filename.replace(base, sub)
 
-                parsed_filename = urlparse(filename)
-                if parsed_filename.scheme not in ("file", "http", "https"):
-                    # Find the full path of a relative fragment
-                    # filename
-                    filename = join(directory, parsed_filename.path)
+                if not urlparse(filename).scheme:
+                    filename = join(cfa_directory, filename)
 
             aggregated_data[frag_loc] = {
                 "format": fmt,
-                "file": filename,
+                "filename": filename,
                 "address": address,
                 "location": location,
             }
@@ -512,7 +507,7 @@ class CFANetCDFArray(NetCDFArray):
         """
         return self._get_component("fragment_shape")
 
-    def get_non_standard_term(self, default=ValueError()):
+    def get_term(self, default=ValueError()):
         """TODOCFADOCS.
 
         .. versionadded:: TODOCFAVER
@@ -523,7 +518,7 @@ class CFANetCDFArray(NetCDFArray):
                 TODOCFADOCS.
 
         """
-        return self._get_component("non_standard_term", default=default)
+        return self._get_component("term", default=default)
 
     def subarray_shapes(self, shapes):
         """Create the subarray shapes.
@@ -828,8 +823,7 @@ class CFANetCDFArray(NetCDFArray):
             kwargs.pop("location", None)
 
             FragmentArray = get_FragmentArray(kwargs.pop("format", None))
-
-            fragment_array = FragmentArray(
+            fragment = FragmentArray(
                 dtype=dtype,
                 shape=fragment_shape,
                 aggregated_units=units,
@@ -837,16 +831,9 @@ class CFANetCDFArray(NetCDFArray):
                 **kwargs,
             )
 
-            key = f"{fragment_array.__class__.__name__}-{tokenize(fragment_array)}"
-            dsk[key] = fragment_array
-
-            dsk[name + chunk_location] = (
-                getter,
-                key,
-                f_indices,
-                False,
-                False,
-            )
+            key = f"{fragment.__class__.__name__}-{tokenize(fragment)}"
+            dsk[key] = fragment
+            dsk[name + chunk_location] = (getter, key, f_indices, False, False)
 
         # Return the dask array
         return da.Array(dsk, name[0], chunks=chunks, dtype=dtype)

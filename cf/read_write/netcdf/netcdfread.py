@@ -204,7 +204,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # Set the CFA write status to True when there is exactly
             # one dask chunk
             if data.npartitions == 1:
-                data._set_cfa_write(True)
+                data._cfa_set_write(True)
 
             self._cache_data_elements(data, ncvar)
 
@@ -216,13 +216,13 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if construct is not None:
             # Remove the aggregation attributes from the construct
             self.implementation.del_property(
-                construct, "aggregation_dimensions", None
+                construct, "aggregated_dimensions", None
             )
-            aggregation_data = self.implementation.del_property(
-                construct, "aggregation_data", None
+            aggregated_data = self.implementation.del_property(
+                construct, "aggregated_data", None
             )
         else:
-            aggregation_data = None
+            aggregated_data = None
 
         cfa_array, kwargs = self._create_cfanetcdfarray(
             ncvar,
@@ -238,6 +238,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=kwargs["calendar"],
         )
 
+        # Note: We don't cache elements from CFA variables
+
         # Set the CFA write status to True iff each non-aggregated
         # axis has exactly one dask storage chunk
         if cfa_term is None:
@@ -250,16 +252,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     cfa_write = False
                     break
 
-            data._set_cfa_write(cfa_write)
+            data._cfa_set_write(cfa_write)
 
-            # Store the 'aggregation_data' attribute
-            if aggregation_data:
-                data.cfa_set_aggregation_data(aggregation_data)
+            # Store the 'aggregated_data' attribute
+            if aggregated_data:
+                data.cfa_set_aggregated_data(aggregated_data)
 
             # Store the file substitutions
             data.cfa_set_file_substitutions(kwargs.get("substitutions"))
-
-        # Note: We don't cache elements from aggregated data
 
         return data
 
@@ -358,7 +358,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         """
         super()._customize_read_vars()
-
         g = self.read_vars
         if not g["cfa"]:
             return
@@ -384,8 +383,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # aggregated dimensions.
         dimensions = g["variable_dimensions"]
         attributes = g["variable_attributes"]
+
         for ncvar, attributes in attributes.items():
-            if "aggregate_dimensions" not in attributes:
+            if "aggregated_dimensions" not in attributes:
                 # This is not an aggregated variable
                 continue
 
@@ -400,7 +400,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 ncvar, attributes.get("aggregated_data")
             )
             for x in parsed_aggregated_data:
-                term_ncvar = tuple(x.items())[0][1]
+                term, term_ncvar = tuple(x.items())[0]
+                term_ncvar = term_ncvar[0]
                 g["do_not_create_field"].add(term_ncvar)
 
     def _cache_data_elements(self, data, ncvar):
@@ -551,6 +552,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             term, term_ncvar = tuple(x.items())[0]
             if term != "file":
                 continue
+
+            term_ncvar = term_ncvar[0]
 
             subs = g["variable_attributes"][term_ncvar].get("substitutions")
             if subs is None:
@@ -729,6 +732,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if term in standardised_terms:
                 continue
 
+            ncvar = ncvar[0]
+
             # Still here? Then we've got a non-standard aggregation
             #             term from which we can create a field
             #             ancillary construct.
@@ -761,26 +766,3 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             out[ncvar] = key
 
         return out
-
-    def _cfa(self, ncvar, f):
-        """TODOCFADOCS.
-
-        .. versionadded:: TODOCFAVER
-
-        :Parameters:
-
-            ncvar: `str`
-                The netCDF variable name.
-
-            f: `Field` or `Domain`
-                TODOCFADOCS.
-
-        :Returns:
-
-            TODOCFADOCS.
-
-        """
-        pass
-
-
-#        x = self._parse_x(ncvar, aggregated_data, keys_are_variables=True)

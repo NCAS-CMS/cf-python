@@ -2,7 +2,7 @@ import numpy
 
 from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
-from ..functions import CFA, flat
+from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE, CFA, flat
 from .netcdf import NetCDFWrite
 
 netcdf = NetCDFWrite(implementation())
@@ -27,7 +27,8 @@ def write(
     shuffle=True,
     reference_datetime=None,
     verbose=None,
-    cfa_options=None,
+    cfa=False,
+    #    cfa_options=None,
     single=None,
     double=None,
     variable_attributes=None,
@@ -575,20 +576,17 @@ def write(
 
             .. versionadded:: 3.14.0
 
-        cfa_options: `dict`, optional
-            Parameters for configuring the output CFA-netCDF file. By
-            default *cfa_options* is ``{'paths': 'absolute',
-            'constructs': 'field'}`` and may have any subset of the
-            following keys (and value types):
+        cfa: `bool` or `dict`, otional
+            If True or a (possibly empty) dictionary then write the
+            constructs as CFA-netCDF aggregated variables, where
+            possible and where requested.
 
-            * ``'paths'`` (`str`)
-
-              How to write fragment file names. Set to ``'absolute'``
-              (the default) for them to be written as fully qualified
-              URIs, or else set to ``'relative'`` for them to be
-              relative as paths relative to the CFA-netCDF file being
-              created. Note that in both cases, fragment file defined
-              by fully qualified URLs will always be written as such.
+            If *cfa* is a dictionary then it is used to configure the
+            CFA write process. The default options when CFA writing is
+            enabled are ``{'constructs': 'field', 'absolute_paths':
+            True, 'strict': True, 'substitutions': {}}``, and the
+            dictionary may have any subset of the following key/value
+            pairs:
 
             * ``'constructs'`` (`dict` or (sequence of) `str`)
 
@@ -630,52 +628,49 @@ def write(
                 variables: ``{'field': None, 'auxiliary_coordinate':
                 cf.ge(2)}}``.
 
+            * ``'absolute_paths'`` (`bool`)
+
+              How to write fragment file names. Set to ``'absolute'``
+              (the default) for them to be written as fully qualified
+              URIs, or else set to ``'relative'`` for them to be
+              relative to the CFA-netCDF file being created. Note that
+              in both cases, fragment files defined by fully qualified
+              URLs will always be written as such.
+
+            * ``'absolute_paths'`` (`bool`)
+
+              How to write fragment file names. Set to ``'absolute'``
+              (the default) for them to be written as fully qualified
+              URIs, or else set to ``'relative'`` for them to be
+              relative to the CFA-netCDF file being created. Note that
+              in both cases, fragment files defined by fully qualified
+              URLs will always be written as such.
+
+            * ``'strict'`` (`bool`)
+
+              If True (the default) then raise an exception if it is
+              not possible to write a data identified by the
+              ``'constructs'`` key as a CFA aggregated variable. If
+              False then a warning is logged, and the is written as a
+              normal netCDF variable.
+
             * ``'substitutions'`` (`dict`)
 
               A dictionary whose key/value pairs define text
               substitutions to be applied to the fragment file
               URIs. Each key must be a string of one or more letters,
-              digits, and underscores. These substitutions take
-              precendence over any that are also defined on individual
-              constructs.
+              digits, and underscores. These substitutions are used in
+              conjunction with, and take precendence over, any that
+              are also defined on individual constructs.
 
               Substitutions are stored in the output file by the
-              ``substitutions`` attribute of the ``file`` aggregation
-              instruction variable.
+              ``substitutions`` attribute of the ``file`` CFA
+              aggregation instruction variable.
 
               *Parameter example:*
                 ``{'base': 'file:///data/'}}``
 
-            * ``'properties'`` ((sequence of) `str`)
-
-              For fragments of a field construct's data, a (sequence
-              of) `str` defining one or more properties of the file
-              fragments. For each property specified, the value of
-              that property from each fragment is written to the
-              output CFA-netCDF file in a non-standardised aggregation
-              instruction variable whose term name is the same as the
-              property name.
-
-              When the output file is read in with `cf.read` these
-              variables are converted to field ancillary constructs.
-
-              *Parameter example:*
-                ``'tracking_id'``
-
-              *Parameter example:*
-                ``('tracking_id', 'model_name')``
-
-            * ``'strict'`` (`bool`)
-
-              A `bool` that determines whether or not to raise an
-              `Exception` if it is not possible to write as a CFA
-              aggregated variable a identified by the ``'constructs'``
-              key If True, the default, then an `Exception` an
-              exception is raised, otherwise a warning is logged.
-
-            * ``'base'``
-
-              Deprecated at version 3.14.0 and no longer available.
+            .. versionadded:: TODOCFAVER
 
     :Returns:
 
@@ -695,6 +690,15 @@ def write(
     >>> cf.write(f, 'file.nc', Conventions='CMIP-6.2')
 
     """
+    if fmt in ("CFA", "CFA4", "CFA3"):
+        return _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE(
+            "cf.write",
+            {"fmt": fmt},
+            "Use keyword 'cfa' instead",
+            version="TODOCFAVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
     # Flatten the sequence of intput fields
     fields = tuple(flat(fields))
     if fields:
@@ -732,52 +736,34 @@ def write(
         # ------------------------------------------------------------
         # CFA
         # ------------------------------------------------------------
-        if fmt in ("CFA", "CFA4"):
+        if isinstance(cfa, dict):
+            cfa_options = cfa.copy()
             cfa = True
-            fmt = "NETCDF4"
-        elif fmt == "CFA3":
-            cfa = True
-            fmt = "NETCDF3_CLASSIC"
         else:
-            cfa = False
-
-        if not cfa:
             cfa_options = {}
-        else:
+            cfa = bool(cfa)
+
+        if cfa:
             # Add CFA to the Conventions
+            cfa_conventions = f"CFA-{CFA()}"
             if not Conventions:
-                Conventions = CFA()
+                Conventions = cfa_conventions
             elif isinstance(Conventions, str):
-                Conventions = (Conventions, CFA())
+                Conventions = (Conventions, cfa_conventions)
             else:
-                Conventions = tuple(Conventions) + (CFA(),)
+                Conventions = tuple(Conventions) + (cfa_conventions,)
 
-            # Parse the 'cfa_options' parameter
-            if not cfa_options:
-                cfa_options = {}
-            else:
-                cfa_options = cfa_options.copy()
-                keys = ("paths", "constructs", "substitutions", "properties")
-                if not set(cfa_options).issubset(keys):
-                    raise ValueError(
-                        "Invalid dictionary key to the 'cfa_options' "
-                        f"parameter. Valid keys are {keys}. "
-                        f"Got: {cfa_options}"
-                    )
-
-            cfa_options.setdefault("paths", "absolute")
-            cfa_options.setdefault("constructs", "field")
-            cfa_options.setdefault("substitutions", {})
-            #            cfa_options.setdefault("properties", ())
-
-            paths = cfa_options.pop("paths")
-            if paths not in ("relative", "absolute"):
+            keys = ("constructs", "absolute_paths", "strict", "substitutions")
+            if not set(cfa_options).issubset(keys):
                 raise ValueError(
-                    "Invalid value of 'paths' CFA option. Valid paths "
-                    f"are 'relative' and 'absolute'. Got: {paths!r}"
+                    "Invalid dictionary key to the 'cfa_options' "
+                    f"parameter. Valid keys are {keys}. Got: {cfa_options}"
                 )
 
-            cfa_options["relative_paths"] = paths == "relative"
+            cfa_options.setdefault("constructs", "field")
+            cfa_options.setdefault("absolute_paths", True)
+            cfa_options.setdefault("strict", True)
+            cfa_options.setdefault("substitutions", {})
 
             constructs = cfa_options["constructs"]
             if isinstance(constructs, dict):
@@ -795,12 +781,6 @@ def write(
                     substitutions[f"${{{base}}}"] = substitutions.pop(base)
 
             cfa_options["substitutions"] = substitutions
-
-            #           properties = cfa_options["properties"]
-            #           if isinstance(properties, str):
-            #               properties = (properties,)
-            #
-            #            cfa_options["properties"] = tuple(properties)
 
         extra_write_vars["cfa"] = cfa
         extra_write_vars["cfa_options"] = cfa_options

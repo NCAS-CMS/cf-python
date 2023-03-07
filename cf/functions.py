@@ -3236,6 +3236,24 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
         )
 
 
+def _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE(
+    func,
+    kwarg,
+    value,
+    message="",
+    version=None,
+    removed_at=None,
+):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"Value {value!r} of keyword {kwarg!r} of fcuntion {func!r} "
+        f"has been deprecated at version {version} and is no longer "
+        "available{removed_at}. {message}"
+    )
+
+
 def _DEPRECATION_ERROR_KWARGS(
     instance,
     method,

@@ -23,6 +23,11 @@ class NetCDFArrayTest(unittest.TestCase):
         self.assertEqual(b.get_filenames(), ("/data1/file1",))
         self.assertEqual(b.get_addresses(), ("tas1",))
 
+        # Can't be left with no files
+        self.assertEqual(b.file_locations(), ("/data1",))
+        with self.assertRaises(ValueError):
+            b.del_file_location("/data1/")
+
     def test_NetCDFArray_file_locations(self):
         a = cf.NetCDFArray("/data1/file1")
         self.assertEqual(a.file_locations(), ("/data1",))

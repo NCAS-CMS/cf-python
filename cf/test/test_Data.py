@@ -4506,6 +4506,88 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.Units, units)
         self.assertTrue((e.array == [72, 48, 24, 0]).all())
 
+    def test_Data_cfa_aggregated_data(self):
+        """Test `Data` CFA aggregated_data methods"""
+        d = cf.Data(9)
+        aggregated_data = {
+            "location": "cfa_location",
+            "file": "cfa_file",
+            "address": "cfa_address",
+            "format": "cfa_format",
+            "tracking_id": "tracking_id",
+        }
+
+        self.assertFalse(d.cfa_has_aggregated_data())
+        self.assertIsNone(d.cfa_set_aggregated_data(aggregated_data))
+        self.assertTrue(d.cfa_has_aggregated_data())
+        self.assertEqual(d.cfa_get_aggregated_data(), aggregated_data)
+        self.assertEqual(d.cfa_del_aggregated_data(), aggregated_data)
+        self.assertFalse(d.cfa_has_aggregated_data())
+        self.assertIsNone(d.cfa_get_aggregated_data(None))
+        self.assertIsNone(d.cfa_del_aggregated_data(None))
+
+    def test_Data_cfa_file_substitutions(self):
+        """Test `Data` CFA file_substitutions methods"""
+        d = cf.Data(9)
+        self.assertFalse(d.cfa_has_file_substitutions())
+        self.assertIsNone(
+            d.cfa_set_file_substitutions({"base": "file:///data/"})
+        )
+        self.assertTrue(d.cfa_has_file_substitutions())
+        self.assertEqual(
+            d.cfa_file_substitutions(), {"${base}": "file:///data/"}
+        )
+
+        d.cfa_set_file_substitutions({"${base2}": "/home/data/"})
+        self.assertEqual(
+            d.cfa_file_substitutions(),
+            {"${base}": "file:///data/", "${base2}": "/home/data/"},
+        )
+
+        d.cfa_set_file_substitutions({"${base}": "/new/location/"})
+        self.assertEqual(
+            d.cfa_file_substitutions(),
+            {"${base}": "/new/location/", "${base2}": "/home/data/"},
+        )
+        self.assertEqual(
+            d.cfa_del_file_substitution("${base}"),
+            {"${base}": "/new/location/"},
+        )
+        self.assertEqual(
+            d.cfa_clear_file_substitutions(), {"${base2}": "/home/data/"}
+        )
+        self.assertFalse(d.cfa_has_file_substitutions())
+        self.assertEqual(d.cfa_file_substitutions(), {})
+        self.assertEqual(d.cfa_clear_file_substitutions(), {})
+        self.assertIsNone(d.cfa_del_file_substitution("base", None))
+
+    def test_Data_file_location(self):
+        """Test `Data` file location methods"""
+        f = cf.example_field(0)
+
+        # Can't set file locations when no data is in a file
+        with self.assertRaises(ValueError):
+            f.data.set_file_location("/data/model/")
+
+        cf.write(f, file_A)
+        d = cf.read(file_A, chunks=4)[0].data
+        self.assertGreater(d.npartitions, 1)
+
+        e = d.copy()
+        location = os.path.dirname(os.path.abspath(file_A))
+
+        self.assertEqual(d.file_locations(), set((location,)))
+        self.assertIsNone(d.set_file_location("/data/model/"))
+        self.assertEqual(d.file_locations(), set((location, "/data/model")))
+
+        # Check that we haven't changed 'e'
+        self.assertEqual(e.file_locations(), set((location,)))
+
+        self.assertIsNone(d.del_file_location("/data/model/"))
+        self.assertEqual(d.file_locations(), set((location,)))
+        d.del_file_location("/invalid")
+        self.assertEqual(d.file_locations(), set((location,)))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

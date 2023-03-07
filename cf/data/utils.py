@@ -515,43 +515,6 @@ def chunk_locations(chunks):
     return product(*locations)
 
 
-def chunk_indices(chunks):
-    """Find the shape of each chunk.
-
-    .. versionadded:: TODOCFAVER
-
-    .. seealso:: `chunk_locations`, `chunk_positions`, `chunk_shapes`
-
-    :Parameters:
-
-        chunks: `tuple`
-            The chunk sizes along each dimension, as output by
-            `dask.array.Array.chunks`.
-
-    **Examples**
-
-    >>> chunks = ((1, 2), (9,), (4, 5, 6))
-    >>> for index in cf.data.utils.chunk_indices(chunks):
-    ...     print(index)
-    ...
-    (slice(0, 1, None), slice(0, 9, None), slice(0, 4, None))
-    (slice(0, 1, None), slice(0, 9, None), slice(4, 9, None))
-    (slice(0, 1, None), slice(0, 9, None), slice(9, 15, None))
-    (slice(1, 3, None), slice(0, 9, None), slice(0, 4, None))
-    (slice(1, 3, None), slice(0, 9, None), slice(4, 9, None))
-    (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None))
-
-    """
-    from dask.utils import cached_cumsum
-
-    cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
-    indices = [
-        [slice(s, s + dim) for s, dim in zip(starts, shapes)]
-        for starts, shapes in zip(cumdims, chunks)
-    ]
-    return product(*indices)
-
-
 def scalar_masked_array(dtype=float):
     """Return a scalar masked array.
 

@@ -59,7 +59,7 @@ def read(
     warn_valid=False,
     chunks="auto",
     domain=False,
-    cfa_options=None,
+    cfa=None,
 ):
     """Read field or domain constructs from files.
 
@@ -640,6 +640,11 @@ def read(
 
             .. versionadded:: 3.11.0
 
+        cfa: `dict`, optional
+            TODOCFADOCS
+
+            .. versionadded:: TODOCFAVER
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
 
@@ -773,25 +778,26 @@ def read(
             f"when recursive={recursive!r}"
         )
 
-    # Parse the 'cfa_options' parameter
-    if not cfa_options:
+    # Parse the 'cfa' parameter
+    if cfa is None:
         cfa_options = {}
     else:
-        cfa_options = cfa_options.copy()
+        cfa_options = cfa.copy()
         keys = ("substitutions",)
         if not set(cfa_options).issubset(keys):
             raise ValueError(
-                "Invalid dictionary key to the 'cfa_options' "
-                f"parameter. Valid keys are {keys}. Got: {cfa_options}"
+                "Invalid dictionary key to the 'cfa' parameter."
+                f"Valid keys are {keys}. Got: {cfa_options}"
             )
 
-    cfa_options.setdefault("substitutions", {})
-
-    substitutions = cfa_options["substitutions"].copy()
-    for base, sub in substitutions.items():
-        if not (base.startswith("${") and base.endswith("}")):
-            # Add missing ${...}
-            substitutions[f"${{{base}}}"] = substitutions.pop(base)
+    if "substitutions" in cfa_options:
+        substitutions = cfa_options["substitutions"].copy()
+        for base, sub in tuple(substitutions.items()):
+            if not (base.startswith("${") and base.endswith("}")):
+                # Add missing ${...}
+                substitutions[f"${{{base}}}"] = substitutions.pop(base)
+    else:
+        substitutions = {}
 
     cfa_options["substitutions"] = substitutions
 

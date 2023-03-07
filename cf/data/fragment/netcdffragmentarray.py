@@ -15,8 +15,8 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
     def __init__(
         self,
-        filenames=None,
-        addresses=None,
+        filename=None,
+        address=None,
         dtype=None,
         shape=None,
         aggregated_units=False,
@@ -72,6 +72,8 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
         """
         super().__init__(
+            filename=filename,
+            address=address,
             dtype=dtype,
             shape=shape,
             mask=True,
