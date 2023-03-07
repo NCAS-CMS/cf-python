@@ -1265,7 +1265,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 Specify which components should be removed. Which
                 components are removed is determined by sequentially
                 combining *clear* with the ``_ARRAY`` and ``_CACHE``
-                `integer-valued contants, using the bitwise AND
+                integer-valued contants, using the bitwise AND
                 operator:
 
                 * If ``clear & _ARRAY`` is non-zero then a source
