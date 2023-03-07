@@ -96,6 +96,8 @@ files_to_copy=(
     "source/recipes/plot_4_recipe.py"
     "source/recipes/plot_5_recipe.ipynb"
     "source/recipes/plot_5_recipe.py"
+    "source/recipes/plot_6_recipe.ipynb"
+    "source/recipes/plot_6_recipe.py"
 )
 
 destination_dir="$dir/_downloads"
@@ -109,6 +111,7 @@ html_files=(
     "$dir/recipes/plot_3_recipe.html"
     "$dir/recipes/plot_4_recipe.html"
     "$dir/recipes/plot_5_recipe.html"
+    "$dir/recipes/plot_6_recipe.html"
 )
 
 for html_file in "${html_files[@]}"
@@ -166,6 +169,8 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
           _downloads/plot_4_recipe.py \
           _downloads/plot_5_recipe.ipynb \
           _downloads/plot_5_recipe.py \
+          _downloads/plot_6_recipe.ipynb \
+          _downloads/plot_6_recipe.py \
           _images/*.png \
           _images/*.svg
 
