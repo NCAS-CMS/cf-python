@@ -50,7 +50,7 @@ class CFATest(unittest.TestCase):
         cf.write(f, tmpfile1)
         f = cf.read(tmpfile1)[0]
 
-        for fmt in ("NETCDF4",):
+        for fmt in self.netcdf_fmts:
             cf.write(f, tmpfile2, fmt=fmt, cfa=True)
             g = cf.read(tmpfile2)
             self.assertEqual(len(g), 1)
@@ -58,7 +58,7 @@ class CFATest(unittest.TestCase):
 
             self.assertTrue(f.equals(g))
 
-    def test_CFA(self):
+    def test_CFA_general(self):
         f = cf.example_field(0)
 
         cf.write(f[:2], tmpfile1)
@@ -83,7 +83,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(c.equals(f))
         self.assertTrue(c.equals(n))
 
-    def test_CFA_term_strict(self):
+    def test_CFA_strict(self):
         f = cf.example_field(0)
 
         # By default, can't write as CF-netCDF those variables
@@ -158,6 +158,9 @@ class CFATest(unittest.TestCase):
         self.assertEqual(len(e), 1)
         e = e[0]
         self.assertTrue(e.equals(d))
+
+    def test_CFA_PP(self):
+        pass
 
 
 if __name__ == "__main__":

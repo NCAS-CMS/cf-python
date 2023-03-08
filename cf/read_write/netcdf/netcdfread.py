@@ -158,7 +158,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         uncompress_override=None,
         parent_ncvar=None,
         coord_ncvar=None,
-            cfa_term=None,
+        cfa_term=None,
     ):
         """Create data for a netCDF or CFA-netCDF variable.
 
@@ -243,7 +243,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             units=kwargs["units"],
             calendar=kwargs["calendar"],
         )
-        
+
         # Note: We don't cache elements from CFA variables
 
         # Set the CFA write status to True iff each non-aggregated
@@ -268,7 +268,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             # Store the file substitutions
             data.cfa_set_file_substitutions(kwargs.get("substitutions"))
-       
+
         return data
 
     def _is_cfa_variable(self, ncvar):
