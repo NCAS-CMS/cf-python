@@ -144,12 +144,16 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         if filename is not None:
             if isinstance(filename, str):
                 filename = (filename,)
+            else:
+                filename = tuple(filename)
 
             self._set_component("filename", filename, copy=False)
 
         if address is not None:
             if isinstance(address, int):
                 address = (address,)
+            else:
+                address = tuple(address)
 
             self._set_component("address", address, copy=False)
 
@@ -245,14 +249,6 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
 
         # Return the numpy array
         return array
-
-    def __str__(self):
-        """Called by the `str` built-in function.
-
-        x.__str__() <==> str(x)
-
-        """
-        return f"{self.get_filename(None)}, {self.get_address()}"
 
     def _get_rec(self, f, header_offset):
         """Get a container for a record.

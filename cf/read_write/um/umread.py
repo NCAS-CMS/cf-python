@@ -1131,18 +1131,24 @@ class UMField:
         """TODOCFADOCS"""
         indices_new = []
         pos = pmaxes.index(z_axis)
-        aaa0 = next(indices)
+        aaa0 = indices[0]
         indices2 = [aaa0]
-        for aaa in indices:
+        for aaa in indices[1:]:
             if aaa[pos] > aaa0[pos]:
                 indices2.append(aaa)
             else:
                 indices_new.extend(indices2[::-1])
                 aaa0 = aaa
                 indices2 = [aaa0]
-                
+
         indices_new.extend(indices2[::-1])
-        return indices_new
+        #        print (indices_new)
+
+        indices = [a[:-1] + b[-1:] for a, b in zip(indices, indices_new)]
+        #        print ()
+        #        print (indices)
+
+        return indices
 
     def atmosphere_hybrid_height_coordinate(self, axiscode):
         """`atmosphere_hybrid_height_coordinate` when not an array axis.
@@ -1944,7 +1950,7 @@ class UMField:
                 word_size = self.word_size
                 byte_ordering = self.byte_ordering
 
-                indices = ((i, rec) for i, rec in enumerate(recs))
+                indices = [(i, rec) for i, rec in enumerate(recs)]
                 if z_axis in self.down_axes:
                     indices = self._reorder_z_axis(indices, z_axis, pmaxes)
 
@@ -1994,33 +2000,18 @@ class UMField:
                 word_size = self.word_size
                 byte_ordering = self.byte_ordering
 
-                indices = (
+                indices = [
                     divmod(i, nz) + (rec,) for i, rec in enumerate(recs)
-                )
+                ]
                 if z_axis in self.down_axes:
                     indices = self._reorder_z_axis(indices, z_axis, pmaxes)
-#  
-#                    indices_new = []
-#                    pos = pmaxes.index(z_axis)
-#                    aaa0 = next(indices)
-#                    indices2 = [aaa0]
-#                    for aaa in indices:
-#                        if aaa[pos] > aaa0[pos]:
-#                            indices2.append(aaa)
-#                        else:
-#                            indices_new.extend(indices2[::-1])
-#                            aaa0 = aaa
-#                            indices2 = [aaa0]
-#
-#                    indices_new.extend(indices2[::-1])
-#                    indices = indices_new
 
                 for t, z, rec in indices:
                     #                for i, rec in enumerate(recs):
                     # Find T and Z axis indices
 
                     #                    t, z = divmod(i, nz)
-                    #print (t, z)
+                    # print (t, z)
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)
@@ -3641,6 +3632,7 @@ class UMRead(cfdm.read_write.IORead):
             word_size=g.get("word_size"),
             fmt=g.get("fmt"),
         )
+
 
 """
 Problems:
