@@ -1,3 +1,5 @@
+from os import remove
+
 import cfdm
 import dask.array as da
 import numpy as np
@@ -20,7 +22,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         instance._NetCDFRead = NetCDFRead
         return instance
 
-    def _use_cfa(self, cfvar, construct_type):
+    def _write_as_cfa(self, cfvar, construct_type):
         """Whether or not to write as a CFA variable.
 
         .. versionadded:: 3.0.0
@@ -55,23 +57,28 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         if data is None:
             return False
 
-        if not data.cfa_get_write():
-            return False
-
-        for ctype, ndim in g["cfa_options"].get("constructs", {}).items():
+        cfa_options = g["cfa_options"]
+        for ctype, ndim in cfa_options.get("constructs", {}).items():
             # Write as CFA if it has an appropriate construct type ...
             if ctype in ("all", construct_type):
-                # ... and then only if it satisfies the number of
-                # dimenions criterion
-                ok = ndim is None or ndim == data.ndim
-TODO                if (
-                    ok
-                    and cfa_options.get("strict", True)
-                    and not data.cfa_get_write()
-                ):
-                    return False
-TODO
-                return ok
+                # ... and then only if it satisfies the
+                # number-of-dimenions criterion and the data is
+                # flagged as OK.
+                if ndim is None or ndim == data.ndim:
+                    cfa_get_write = data.cfa_get_write()
+                    if not cfa_get_write and cfa_options["strict"]:
+                        if g["mode"] == "w":
+                            remove(g["filename"])
+
+                        raise ValueError(
+                            f"Can't write {cfvar!r} as a CFA-netCDF "
+                            "aggregation variable. Consider setting "
+                            "cfa_options={'strict': False}"
+                        )
+
+                    return cfa_get_write
+
+                break
 
         return False
 
@@ -98,7 +105,7 @@ TODO
             cfvar, construct_type, kwargs
         )
 
-        if self._use_cfa(cfvar, construct_type):
+        if self._write_as_cfa(cfvar, construct_type):
             kwargs["dimensions"] = ()
             kwargs["chunksizes"] = None
 
@@ -149,11 +156,11 @@ TODO
         """
         g = self.write_vars
 
-        if self._use_cfa(cfvar, construct_type):
+        if self._write_as_cfa(cfvar, construct_type):
             # --------------------------------------------------------
             # Write the data as CFA aggregated data
             # --------------------------------------------------------
-            self._write_cfa_data(ncvar, ncdimensions, data, cfvar)
+            self._create_cfa_data(ncvar, ncdimensions, data, cfvar)
             return
 
         # ------------------------------------------------------------
@@ -345,7 +352,7 @@ TODO
         else:
             return coord2
 
-    def _write_cfa_data(self, ncvar, ncdimensions, data, cfvar):
+    def _create_cfa_data(self, ncvar, ncdimensions, data, cfvar):
         """Write a CFA variable to the netCDF file.
 
         Any CFA private variables required will be autmatically created
@@ -624,7 +631,7 @@ TODO
                 empty string is returned.
 
         """
-        if anc._custom.get("cfa_term", False):
+        if anc.data.cfa_get_term():
             # This field ancillary construct is to be written as a
             # non-standard CFA term belonging to the parent field, or
             # else not at all.
@@ -693,7 +700,7 @@ TODO
         for key, field_anc in self.implementation.get_field_ancillaries(
             field
         ).items():
-            if not field_anc._custom.get("cfa_term", False):
+            if not field_anc.data.cfa_get_term():
                 continue
 
             data = self.implementation.get_data(field_anc, None)
@@ -823,13 +830,15 @@ TODO
             if len(a) != 1:
                 if a:
                     raise ValueError(
-                        f"Can't write CFA variable from {cfvar!r} when a "
-                        "dask storage chunk spans two or more fragment files"
+                        f"Can't write CFA variable from {cfvar!r} when the "
+                        f"dask storage chunk defined by indices {indices} "
+                        "spans two or more external files"
                     )
 
                 raise ValueError(
-                    f"Can't write CFA variable from {cfvar!r} when a "
-                    "dask storage chunk spans zero fragment files"
+                    f"Can't write CFA variable from {cfvar!r} when the "
+                    f"dask storage chunk defined by indices {indices} spans "
+                    "zero external files"
                 )
 
             filenames, addresses, formats = a.pop()

@@ -578,7 +578,7 @@ def write(
 
         cfa: `bool` or `dict`, otional
             If True or a (possibly empty) dictionary then write the
-            constructs as CFA-netCDF aggregated variables, where
+            constructs as CFA-netCDF aggregation variables, where
             possible and where requested.
 
             If *cfa* is a dictionary then it is used to configure the
@@ -586,88 +586,82 @@ def write(
             enabled are ``{'constructs': 'field', 'absolute_paths':
             True, 'strict': True, 'substitutions': {}}``, and the
             dictionary may have any subset of the following key/value
-            pairs:
+            pairs to override thes:
 
-            * ``'constructs'`` (`dict` or (sequence of) `str`)
+            * ``'constructs'``: `dict` or (sequence of) `str`
 
               The types of construct to be written as CFA-netCDF
-              aggregated variables. By default only field constructs
-              are written in this way. The types are given as a
-              (sequence of) `str`, which may take any of the values
-              allowed by the *omit_data* parameter. Alternatively, the
-              same types may be given as keys to a `dict`, whose
-              values specify the number of dimensions that the
-              construct must also have if it is to be written as
-              CFA-netCDF aggregated variable. A value of `None` means
-              no restriction on the number of dimensions, which is
-              equivalent to a value of ``cf.ge(0)``.
+              aggregation variables. By default only field constructs
+              are written as CFA-netCDF aggregation variables.
+
+              The types may be given as a (sequence of) `str`, which
+              may take any of the values allowed by the *omit_data*
+              parameter. Alternatively, the same types may be given as
+              keys to a `dict`, whose values specify the number of
+              dimensions that a construct must also have if it is to
+              be written as CFA-netCDF aggregation variable. A value
+              of `None` means no restriction on the number of
+              dimensions, which is equivalent to a value of
+              ``cf.ge(0)``.
 
               Note that size 1 data arrays are never written as
-              CFA-netCDF aggregated variables, regardless of the
+              CFA-netCDF aggregation variables, regardless of the
               whether or not this has been requested.
 
-              *Parameter example:*
+              *Example:*
                 Equivalent ways to only write cell measure constructs
-                as CFA-netCDF variables: ``'cell_measure``,
-                ``['cell_measure']``, and ``{'cell_measure': None}``.
+                as CFA-netCDF aggregation variables:
+                ``'cell_measure``, ``['cell_measure']``,
+                ``{'cell_measure': None}``, ``{'cell_measure':
+                cf.ge(0)}``
 
-              *Parameter example:*
+              *Example:*
                 Equivalent ways to only write field and auxiliary
-                coordinate constructs as CFA-netCDF variables:
-                ``('field', 'auxiliary_coordinate')`` and ``{'field':
-                None, 'auxiliary_coordinate': None}``.
+                coordinate constructs as CFA-netCDF aggregation
+                variables: ``('field', 'auxiliary_coordinate')`` and
+                ``{'field': None, 'auxiliary_coordinate': None}``.
 
-              *Parameter example:*
-                Only write two dimensional auxiliary coordinate
-                constructs as CFA-netCDF variables:
+              *Example:*
+                Only write two-dimensional auxiliary coordinate
+                constructs as CFA-netCDF aggregation variables:
                 ``{'auxiliary_coordinate': 2}}``.
 
-              *Parameter example:*
-                Only write field constructs, and auxiliary coordinate
-                constructs with two or more dimensions as CFA-netCDF
-                variables: ``{'field': None, 'auxiliary_coordinate':
-                cf.ge(2)}}``.
+              *Example:*
+                Only write auxiliary coordinate constructs with two or
+                more dimensions, and all field constructs as
+                CFA-netCDF variables: ``{'field': None,
+                'auxiliary_coordinate': cf.ge(2)}}``.
 
-            * ``'absolute_paths'`` (`bool`)
+            * ``'absolute_paths'``: `bool`
 
-              How to write fragment file names. Set to ``'absolute'``
-              (the default) for them to be written as fully qualified
-              URIs, or else set to ``'relative'`` for them to be
-              relative to the CFA-netCDF file being created. Note that
-              in both cases, fragment files defined by fully qualified
-              URLs will always be written as such.
+              How to write fragment file names. Set to True (the
+              default) for them to be written as fully qualified URIs,
+              or else set to False for them to be written as local
+              paths relative to the location of the CFA-netCDF file
+              being created.
 
-            * ``'absolute_paths'`` (`bool`)
+            * ``'strict'``:`bool`
 
-              How to write fragment file names. Set to ``'absolute'``
-              (the default) for them to be written as fully qualified
-              URIs, or else set to ``'relative'`` for them to be
-              relative to the CFA-netCDF file being created. Note that
-              in both cases, fragment files defined by fully qualified
-              URLs will always be written as such.
+              If True (the default) then an exception is raised if it
+              is not possible to create a CFA aggregation variable
+              from data identified by the ``'constructs'`` option. If
+              False then a normal CF-netCDF variable in this case.
 
-            * ``'strict'`` (`bool`)
-
-              If True (the default) then raise an exception if it is
-              not possible to write a data identified by the
-              ``'constructs'`` key as a CFA aggregated variable. If
-              False then a warning is logged, and the is written as a
-              normal netCDF variable.
-
-            * ``'substitutions'`` (`dict`)
+            * ``'substitutions'``: `dict`
 
               A dictionary whose key/value pairs define text
               substitutions to be applied to the fragment file
-              URIs. Each key must be a string of one or more letters,
+              names. Each key must be a string of one or more letters,
               digits, and underscores. These substitutions are used in
               conjunction with, and take precendence over, any that
-              are also defined on individual constructs.
+              are also defined on individual constructs (see
+              `cf.Data.cfa_set_file_substitutions` for details).
 
               Substitutions are stored in the output file by the
               ``substitutions`` attribute of the ``file`` CFA
               aggregation instruction variable.
 
-              *Parameter example:*
+              *Example:*
                 ``{'base': 'file:///data/'}}``
 
             .. versionadded:: TODOCFAVER

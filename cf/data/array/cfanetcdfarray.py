@@ -7,6 +7,7 @@ import numpy as np
 
 from ...functions import abspath
 from ..fragment import FullFragmentArray, NetCDFFragmentArray, UMFragmentArray
+from ..utils import chunk_locations, chunk_positions
 from .netcdfarray import NetCDFArray
 
 
@@ -44,6 +45,7 @@ class CFANetCDFArray(NetCDFArray):
         term=None,
         source=None,
         copy=True,
+        x=None,
     ):
         """**Initialisation**
 
@@ -164,28 +166,69 @@ class CFANetCDFArray(NetCDFArray):
                 term = None
 
         elif filename is not None:
-            from pathlib import PurePath
+            aggregated_data = {}
 
-            from CFAPython import CFAFileFormat
-            from CFAPython.CFADataset import CFADataset
-            from CFAPython.CFAExceptions import CFAException
-            from dask import compute, delayed
+            location = x["location"]
+            ndim = location.shape[0]
 
-            if not isinstance(filename, str):
-                if len(filename) != 1:
-                    raise ValueError("TODOCFADOCS")
+            chunks = [i.compressed().tolist() for i in location]
+            shape = [sum(c) for c in chunks]
+            positions = chunk_positions(chunks)
+            locations = chunk_locations(chunks)
 
-                filename = filename[0]
+            if term is not None:
+                # --------------------------------------------------------
+                # This fragment contains a constant value
+                # --------------------------------------------------------
+                term = x[term]
+                fragment_shape = term.shape
+                aggregated_data = {
+                    frag_loc: {
+                        "location": loc,
+                        "fill_value": term[frag_loc].item(),
+                        "format": "full",
+                    }
+                    for frag_loc, loc in zip(positions, locations)
+                }
+            else:
+                a = x["address"]
+                f = x["file"]
+                fmt = x["format"]
+                if not a.ndim:
+                    if f.ndim == ndim:
+                        a = np.full(f.shape, a)
+                    else:
+                        a = np.full(f.shape[:-1], a)
 
-            cfa = CFADataset(filename, CFAFileFormat.CFANetCDF, "r")
-            try:
-                var = cfa.getVar(address)
-            except CFAException:
-                raise ValueError(
-                    f"CFA variable {address!r} not found in file {filename}"
-                )
+                if not fmt.ndim:
+                    fmt = fmt.astype("U")
+                    if f.ndim == ndim:
+                        fmt = np.full(f.shape, fmt)
+                    else:
+                        fmt = np.full(f.shape[:-1], fmt)
 
-            shape = tuple([d.len for d in var.getDims()])
+                if f.ndim == ndim:
+                    fragment_shape = f.shape
+                    aggregated_data = {
+                        frag_loc: {
+                            "location": loc,
+                            "filename": f[frag_loc].item(),
+                            "address": a[frag_loc].item(),
+                            "format": fmt[frag_loc].item(),
+                        }
+                        for frag_loc, loc in zip(positions, locations)
+                    }
+                else:
+                    fragment_shape = f.shape[:-1]
+                    aggregated_data = {
+                        frag_loc: {
+                            "location": loc,
+                            "filename": f[frag_loc].tolist(),
+                            "address": a[frag_loc].tolist(),
+                            "format": fmt[frag_loc].item(),
+                        }
+                        for frag_loc, loc in zip(positions, locations)
+                    }
 
             super().__init__(
                 filename=filename,
@@ -198,40 +241,77 @@ class CFANetCDFArray(NetCDFArray):
                 copy=copy,
             )
 
-            fragment_shape = tuple(var.getFragDef())
+            if False:
+                # CFAPython vesion
+                from pathlib import PurePath
 
-            parsed_filename = urlparse(filename)
-            if parsed_filename.scheme in ("file", "http", "https"):
-                cfa_directory = str(PurePath(filename).parent)
-            else:
-                cfa_directory = dirname(abspath(filename))
+                from CFAPython import CFAFileFormat
+                from CFAPython.CFADataset import CFADataset
+                from CFAPython.CFAExceptions import CFAException
+                from dask import compute, delayed
 
-            # Note: It is an as-yet-untested hypothesis that creating
-            #       the 'aggregated_data' dictionary for massive
-            #       aggretations (e.g. with O(10e6) fragments) will be
-            #       slow, hence the parallelisation of the process
-            #       with delayed + compute; and that the
-            #       parallelisation overheads won't be noticeable for
-            #       small aggregations (e.g. O(10) fragments).
-            aggregated_data = {}
-            compute(
-                *[
-                    delayed(
-                        self._set_fragment(
-                            var,
-                            loc,
-                            aggregated_data,
-                            filename,
-                            cfa_directory,
-                            substitutions,
-                            term,
-                        )
+                if not isinstance(filename, str):
+                    if len(filename) != 1:
+                        raise ValueError("TODOCFADOCS")
+
+                    filename = filename[0]
+
+                cfa = CFADataset(filename, CFAFileFormat.CFANetCDF, "r")
+                try:
+                    var = cfa.getVar(address)
+                except CFAException:
+                    raise ValueError(
+                        f"CFA variable {address!r} not found in file "
+                        f"{filename}"
                     )
-                    for loc in product(*[range(i) for i in fragment_shape])
-                ]
-            )
 
-            del cfa
+                shape = tuple([d.len for d in var.getDims()])
+
+                super().__init__(
+                    filename=filename,
+                    address=address,
+                    shape=shape,
+                    dtype=dtype,
+                    mask=mask,
+                    units=units,
+                    calendar=calendar,
+                    copy=copy,
+                )
+
+                fragment_shape = tuple(var.getFragDef())
+
+                parsed_filename = urlparse(filename)
+                if parsed_filename.scheme in ("file", "http", "https"):
+                    cfa_directory = str(PurePath(filename).parent)
+                else:
+                    cfa_directory = dirname(abspath(filename))
+
+                # Note: It is an as-yet-untested hypothesis that creating
+                #       the 'aggregated_data' dictionary for massive
+                #       aggretations (e.g. with O(10e6) fragments) will be
+                #       slow, hence the parallelisation of the process
+                #       with delayed + compute; and that the
+                #       parallelisation overheads won't be noticeable for
+                #       small aggregations (e.g. O(10) fragments).
+                aggregated_data = {}
+                compute(
+                    *[
+                        delayed(
+                            self._set_fragment(
+                                var,
+                                loc,
+                                aggregated_data,
+                                filename,
+                                cfa_directory,
+                                substitutions,
+                                term,
+                            )
+                        )
+                        for loc in product(*[range(i) for i in fragment_shape])
+                    ]
+                )
+
+                del cfa
         else:
             super().__init__(
                 filename=filename,

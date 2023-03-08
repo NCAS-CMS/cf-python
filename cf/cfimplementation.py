@@ -91,6 +91,7 @@ class CFImplementation(cfdm.CFDMImplementation):
         instructions=None,
         substitutions=None,
         term=None,
+        x=None,
         **kwargs,
     ):
         """Return a `CFANetCDFArray` instance.
@@ -115,6 +116,8 @@ class CFImplementation(cfdm.CFDMImplementation):
 
             term: `str`, optional
 
+            x: `dict`, optional
+
             kwargs: optional
                 Ignored.
 
@@ -134,6 +137,7 @@ class CFImplementation(cfdm.CFDMImplementation):
             instructions=instructions,
             substitutions=substitutions,
             term=term,
+            x=x,
         )
 
 

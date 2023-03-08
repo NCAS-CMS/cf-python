@@ -1411,7 +1411,7 @@ class _Meta:
 
             aux_coord = AuxiliaryCoordinate(
                 properties={"long_name": prop},
-                data=Data([value], units=""),
+                data=Data([value]),
                 copy=False,
             )
             aux_coord.nc_set_variable(prop)
@@ -1475,7 +1475,7 @@ class _Meta:
             data._cfa_set_term(True)
 
             field_anc = FieldAncillary(
-                data=data, properties={"long_name": prop}
+                data=data, properties={"long_name": prop}, copy=False
             )
             field_anc.id = prop
 

@@ -1,4 +1,5 @@
 import cfdm
+import netCDF4
 import numpy as np
 from packaging.version import Version
 
@@ -157,7 +158,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         uncompress_override=None,
         parent_ncvar=None,
         coord_ncvar=None,
-        cfa_term=None,
+            cfa_term=None,
     ):
         """Create data for a netCDF or CFA-netCDF variable.
 
@@ -190,7 +191,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             `Data`
 
         """
-        if cfa_term is None and not self._is_cfa_variable(ncvar):
+        if not cfa_term and not self._is_cfa_variable(ncvar):
             # Create data for a normal netCDF variable
             data = super()._create_data(
                 ncvar=ncvar,
@@ -224,12 +225,17 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         else:
             aggregated_data = None
 
-        cfa_array, kwargs = self._create_cfanetcdfarray(
-            ncvar,
-            unpacked_dtype=unpacked_dtype,
-            coord_ncvar=coord_ncvar,
-            non_standard_term=cfa_term,
-        )
+        if cfa_term:
+            term, term_ncvar = tuple(cfa_term.items())[0]
+            cfa_array, kwargs = self._create_cfanetcdfarray_term(
+                ncvar, term, term_ncvar
+            )
+        else:
+            cfa_array, kwargs = self._create_cfanetcdfarray(
+                ncvar,
+                unpacked_dtype=unpacked_dtype,
+                coord_ncvar=coord_ncvar,
+            )
 
         data = self._create_Data(
             cfa_array,
@@ -237,12 +243,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             units=kwargs["units"],
             calendar=kwargs["calendar"],
         )
-
+        
         # Note: We don't cache elements from CFA variables
 
         # Set the CFA write status to True iff each non-aggregated
         # axis has exactly one dask storage chunk
-        if cfa_term is None:
+        if cfa_term:
+            data._cfa_set_term(True)
+        else:
             cfa_write = True
             for n, numblocks in zip(
                 cfa_array.get_fragment_shape(), data.numblocks
@@ -260,7 +268,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             # Store the file substitutions
             data.cfa_set_file_substitutions(kwargs.get("substitutions"))
-
+       
         return data
 
     def _is_cfa_variable(self, ncvar):
@@ -280,10 +288,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         """
         g = self.read_vars
-        if not g["cfa"] or ncvar in g["external_variables"]:
-            return False
-
-        return "aggregated_dimensions" in g["variable_attributes"][ncvar]
+        return (
+            g["cfa"]
+            and ncvar in g["aggregated_data"]
+            and ncvar not in g["external_variables"]
+        )
 
     def _create_Data(
         self,
@@ -359,8 +368,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         """
         super()._customize_read_vars()
         g = self.read_vars
+
         if not g["cfa"]:
             return
+
+        g["aggregated_data"] = {}
+        g["aggregation_instructions"] = {}
 
         # ------------------------------------------------------------
         # Still here? Then this is a CFA-netCDF file
@@ -399,9 +412,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             parsed_aggregated_data = self._parse_aggregated_data(
                 ncvar, attributes.get("aggregated_data")
             )
-            for x in parsed_aggregated_data:
-                term, term_ncvar = tuple(x.items())[0]
-                term_ncvar = term_ncvar[0]
+            for term_ncvar in parsed_aggregated_data.values():
+                #                term, term_ncvar = tuple(x.items())[0]
+                #                term_ncvar = term_ncvar[0]
                 g["do_not_create_field"].add(term_ncvar)
 
     def _cache_data_elements(self, data, ncvar):
@@ -487,7 +500,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         ncvar,
         unpacked_dtype=False,
         coord_ncvar=None,
-        non_standard_term=None,
+        term=None,
     ):
         """Create a CFA-netCDF variable array.
 
@@ -503,7 +516,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             coord_ncvar: `str`, optional
 
-            non_standard_term: `str`, optional
+            term: `str`, optional
                 The name of a non-standard aggregation instruction
                 term from which to create the array. If set then
                 *ncvar* must be the value of the non-standard term in
@@ -529,50 +542,114 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             return_kwargs_only=True,
         )
 
-        # Specify a non-standardised term from which to create the
-        # data
-        if non_standard_term is not None:
-            kwargs["term"] = non_standard_term
-
-        # Get rid of the incorrect shape of () - this will get set
-        # correctly by the CFAnetCDFArray instance.
+        # Get rid of the incorrect shape of (). This will end up
+        # getting set correctly by the CFANetCDFArray instance.
         kwargs.pop("shape", None)
 
-        # Add the aggregated_data attribute (that can be used by
-        # dask.base.tokenize)
-        aggregated_data = self.read_vars["variable_attributes"][ncvar].get(
-            "aggregated_data"
-        )
-        kwargs["instructions"] = aggregated_data
+        aggregated_data = g["aggregated_data"][ncvar]
 
-        # Find URI substitutions that may be stored in the CFA file
-        # instruction variable's "substitutions" attribute
+        standardised_terms = ("location", "file", "address", "format")
+
+        instructions = []
+        aggregation_instructions = {}
         subs = {}
-        for x in self._parse_aggregated_data(ncvar, aggregated_data):
-            term, term_ncvar = tuple(x.items())[0]
-            if term != "file":
+        for t, term_ncvar in aggregated_data.items():
+            if t not in standardised_terms:
                 continue
 
-            term_ncvar = term_ncvar[0]
+            aggregation_instructions[t] = g["aggregation_instructions"][
+                term_ncvar
+            ]
+            instructions.append(f"{t}: {ncvar}")
 
-            subs = g["variable_attributes"][term_ncvar].get("substitutions")
-            if subs is None:
-                subs = {}
-            else:
-                # Convert the string "${base}: value" to the
-                # dictionary {"${base}": "value"}
-                subs = self.parse_x(term_ncvar, subs)
-                subs = {
-                    key: value[0] for d in subs for key, value in d.items()
-                }
-
-            break
+            if t == "file":
+                # Find URI substitutions that may be stored in the CFA
+                # file instruction variable's "substitutions"
+                # attribute
+                subs = g["variable_attributes"][term_ncvar].get(
+                    "substitutions"
+                )
+                if subs is None:
+                    subs = {}
+                else:
+                    # Convert the string "${base}: value" to the
+                    # dictionary {"${base}": "value"}
+                    subs = self.parse_x(term_ncvar, subs)
+                    subs = {
+                        key: value[0] for d in subs for key, value in d.items()
+                    }
 
         # Apply user-defined substitutions, which take precedence over
         # those defined in the file.
         subs = subs.update(g["cfa_options"].get("substitutions", {}))
         if subs:
             kwargs["substitutions"] = subs
+
+        kwargs["x"] = aggregation_instructions
+        kwargs["instructions"] = " ".join(sorted(instructions))
+
+        # Use the kwargs to create a CFANetCDFArray instance
+        array = self.implementation.initialise_CFANetCDFArray(**kwargs)
+
+        return array, kwargs
+
+    def _create_cfanetcdfarray_term(
+        self,
+        parent_ncvar,
+        term,
+        ncvar,
+    ):
+        """Create a CFA-netCDF variable array.
+
+        .. versionadded:: 3.14.0
+
+        :Parameters:
+
+            parent_ncvar: `str`
+                The name of the CFA-netCDF aggregated variable. See
+                the *term* parameter.
+
+            term: `str`, optional
+                The name of a non-standard aggregation instruction
+                term from which to create the array. If set then
+                *ncvar* must be the value of the non-standard term in
+                the ``aggregation_data`` attribute.
+
+                .. versionadded:: TODOCFAVER
+
+            ncvar: `str`
+                The name of the CFA-netCDF aggregated variable. See
+                the *term* parameter.
+
+        :Returns:
+
+            (`CFANetCDFArray`, `dict`)
+                The new `NetCDFArray` instance and dictionary of the
+                kwargs used to create it.
+
+        """
+        g = self.read_vars
+
+        # Get the kwargs needed to instantiate a general NetCDFArray
+        # instance
+        kwargs = self._create_netcdfarray(
+            ncvar,
+            return_kwargs_only=True,
+        )
+
+        instructions = []
+        aggregation_instructions = {}
+        for t, term_ncvar in g["aggregated_data"][parent_ncvar].items():
+            if t in ("location", term):
+                aggregation_instructions[t] = g["aggregation_instructions"][
+                    term_ncvar
+                ]
+                instructions.append(f"{t}: {ncvar}")
+
+        kwargs["term"] = term
+        kwargs["dtype"] = aggregation_instructions[term].dtype
+        kwargs["x"] = aggregation_instructions
+        kwargs["instructions"] = " ".join(sorted(instructions))
 
         # Use the kwargs to create a CFANetCDFArray instance
         array = self.implementation.initialise_CFANetCDFArray(**kwargs)
@@ -644,33 +721,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return chunks
 
-    def _parse_aggregated_data(self, ncvar, aggregated_data):
-        """Parse a CFA-netCDF aggregated_data attribute.
-
-        .. versionadded:: TODOCFAVER
-
-        :Parameters:
-
-            ncvar: `str`
-                The netCDF variable name.
-
-            aggregated_data: `str` or `None`
-                The CFA-netCDF ``aggregated_data`` attribute.
-
-        :Returns:
-
-            `list`
-
-        """
-        if not aggregated_data:
-            return []
-
-        return self._parse_x(
-            ncvar,
-            aggregated_data,
-            keys_are_variables=True,
-        )
-
     def _customize_field_ancillaries(self, parent_ncvar, f):
         """Create field ancillary constructs from CFA terms.
 
@@ -720,19 +770,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # ------------------------------------------------------------
         g = self.read_vars
 
-        out = {}
-
-        attributes = g["variable_attributes"][parent_ncvar]
-        parsed_aggregated_data = self._parse_aggregated_data(
-            parent_ncvar, attributes.get("aggregated_data")
-        )
         standardised_terms = ("location", "file", "address", "format")
-        for x in parsed_aggregated_data:
-            term, ncvar = tuple(x.items())[0]
+
+        out = {}
+        for term, term_ncvar in g["aggregated_data"][parent_ncvar].items():
             if term in standardised_terms:
                 continue
-
-            ncvar = ncvar[0]
 
             # Still here? Then we've got a non-standard aggregation
             #             term from which we can create a field
@@ -740,7 +783,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             anc = self.implementation.initialise_FieldAncillary()
 
             self.implementation.set_properties(
-                anc, g["variable_attributes"][ncvar]
+                anc, g["variable_attributes"][term_ncvar]
             )
             anc.set_property("long_name", term)
 
@@ -749,13 +792,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # written to disk as a non-standard CFA term.
             anc.id = term
 
-            data = self._create_data(parent_ncvar, anc, cfa_term=term)
+            data = self._create_data(
+                parent_ncvar, anc, cfa_term={term: term_ncvar}
+            )
             self.implementation.set_data(anc, data, copy=False)
-
-            self.implementation.nc_set_variable(anc, ncvar)
-
-            # Set the CFA term status
-            anc._custom["cfa_term"] = True
+            self.implementation.nc_set_variable(anc, term_ncvar)
 
             key = self.implementation.set_field_ancillary(
                 f,
@@ -763,6 +804,73 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 axes=self.implementation.get_field_data_axes(f),
                 copy=False,
             )
-            out[ncvar] = key
+            out[term_ncvar] = key
 
         return out
+
+    def _parse_aggregated_data(self, ncvar, aggregated_data):
+        """Parse a CFA-netCDF aggregated_data attribute.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            ncvar: `str`
+                The netCDF variable name.
+
+            aggregated_data: `str` or `None`
+                The CFA-netCDF ``aggregated_data`` attribute.
+
+        :Returns:
+
+            `dict`
+
+        """
+        if not aggregated_data:
+            return {}
+
+        g = self.read_vars
+        aggregation_instructions = g["aggregation_instructions"]
+
+        out = {}
+        for x in self._parse_x(
+            ncvar,
+            aggregated_data,
+            keys_are_variables=True,
+        ):
+            term, term_ncvar = tuple(x.items())[0]
+            term_ncvar = term_ncvar[0]
+            out[term] = term_ncvar
+
+            if term_ncvar not in aggregation_instructions:
+                array = self._conform_array(g["variables"][term_ncvar][...])
+                aggregation_instructions[term_ncvar] = array
+
+        g["aggregated_data"][ncvar] = out
+        return out
+
+    def _conform_array(self, array):
+        """TODOCFADOCS"""
+        if isinstance(array, str):
+            # string
+            return np.array(array, dtype=f"S{len(array)}").astype("U")
+
+        kind = array.dtype.kind
+        if kind == "O":
+            # string
+            return array.astype("U")
+
+        if kind in "SU":
+            # char
+            if kind == "U":
+                array = array.astype("S")
+
+            array = netCDF4.chartostring(array)
+            shape = array.shape
+            array = np.array([x.rstrip() for x in array.flat], dtype="S")
+            array = np.reshape(array, shape)
+            array = np.ma.masked_where(array == b"", array)
+            return array.astype("U")
+
+        # number
+        return array

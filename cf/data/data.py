@@ -1255,6 +1255,23 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         return self._custom.pop("cfa_write", False)
 
+    def _cfa_set_term(self, value):
+        """TODOCFADOCS Set the CFA write status of the data to `False`.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `cfa_get_term`, `cfa_set_term`
+
+        :Returns:
+
+            `None`
+
+        """
+        if not value:
+            self._custom.pop("cfa_term", None)
+
+        self._custom["cfa_term"] = bool(value)
+
     def _clear_after_dask_update(self, clear=_ALL):
         """Remove components invalidated by updating the `dask` array.
 
