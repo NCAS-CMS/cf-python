@@ -12,7 +12,7 @@ version=`python -c "import cf; print(cf.__version__)"`
 
 sphinx_version=`python -c "import sphinx; print(sphinx.__version__)"`
 if [[ $sphinx_version != "2.4.5"  ]] ; then
-  echo "ERROR: Must use sphinx version 2.4.5. Got $version"
+  echo "ERROR: Must use sphinx version 2.4.5. Got $sphinx_version"
   exit 3
 fi
 
@@ -154,23 +154,9 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
           *.js \
           _static \
           _templates \
-          _downloads/cf_tutorial_files.zip \
-          _downloads/tutorial.py \
-          _downloads/field_analysis.py \
-          _downloads/recipes_jupyter.zip \
-          _downloads/recipes_python.zip \
-          _downloads/plot_1_recipe.ipynb \
-          _downloads/plot_1_recipe.py \
-          _downloads/plot_2_recipe.ipynb \
-          _downloads/plot_2_recipe.py \
-          _downloads/plot_3_recipe.ipynb \
-          _downloads/plot_3_recipe.py \
-          _downloads/plot_4_recipe.ipynb \
-          _downloads/plot_4_recipe.py \
-          _downloads/plot_5_recipe.ipynb \
-          _downloads/plot_5_recipe.py \
-          _downloads/plot_6_recipe.ipynb \
-          _downloads/plot_6_recipe.py \
+          _downloads/*.zip \
+          _downloads/*.ipynb \
+          _downloads/*.py \
           _images/*.png \
           _images/*.svg
 
