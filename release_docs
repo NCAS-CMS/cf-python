@@ -68,6 +68,11 @@ fi
 mkdir -p $dir/_downloads
 
 make html $dir
+rc=$?
+if [[ $rc != 0 ]]; then
+    echo "ERROR: Failed in: make html $dir"
+    exit $rc
+fi
 
 cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py source/field_analysis.py $dir/_downloads
 
