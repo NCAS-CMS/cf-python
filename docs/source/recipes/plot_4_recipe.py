@@ -18,7 +18,9 @@ print(obs)
 
 # %%
 
-model = cf.read("~/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc")
+model = cf.read(
+    "~/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc"
+)
 print(model)
 
 # %%

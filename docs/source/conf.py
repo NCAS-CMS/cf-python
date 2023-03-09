@@ -18,10 +18,9 @@ import re
 import sys
 
 import cfdm
+from sphinx_gallery.sorting import FileNameSortKey
 
 import cf
-
-from sphinx_gallery.sorting import FileNameSortKey
 
 print("\ncf environment:")
 print("-----------------")

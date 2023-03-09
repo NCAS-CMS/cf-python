@@ -9,6 +9,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 # 1. Import cf-python and cf-plot:
 
 import cfplot as cfp
+
 import cf
 
 # %%

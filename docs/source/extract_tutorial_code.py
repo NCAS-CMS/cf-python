@@ -22,7 +22,11 @@ for tutorial_rst in tutorials_rst:
 
             if len(code) == 2:
                 if re.findall("# Raises Exception\s*$", line):
-                    code[1] = "try:\n    " + code[1] + "\nexcept:\n    pass"
+                    code[1] = (
+                        "try:\n    "
+                        + code[1]
+                        + "\nexcept Exception:\n    pass"
+                    )
             else:
                 code = re.split("^\s*\.\.\.\s", line)
 
@@ -56,7 +60,6 @@ for tutorial_rst in tutorials_rst:
                     continue
 
                 tutorial.append(line.replace("   ", "", 1))
-    # --- End: with
 
     tutorial.append("")
 
@@ -64,4 +67,3 @@ for tutorial_rst in tutorials_rst:
 
     with open(tutorial_py, "w") as f:
         f.write("\n".join(tutorial))
-# --- End: for

@@ -9,6 +9,7 @@ In this recipe, we will plot the global mean temperature spatially.
 # 1. Import cf-python and cf-plot:
 
 import cfplot as cfp
+
 import cf
 
 # %%
