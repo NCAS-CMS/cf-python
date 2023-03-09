@@ -1199,7 +1199,7 @@ class FieldDomain:
 
         :Returns:
 
-            `Field` or `None`
+            `{{class}}` or `None`
                 The field with the new dimension coordinate construct,
                 or `None` if the operation was in-place.
 
@@ -1728,7 +1728,7 @@ class FieldDomain:
 
         :Returns:
 
-            `Field` or `None`
+            `{{class}}` or `None`
                 The field with the new auxiliary coordinate construct,
                 or `None` if the operation was in-place.
 
