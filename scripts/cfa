@@ -1305,21 +1305,20 @@ Using cf-python library version {cf.__version__} at {library_path}"""
                     file=sys.stderr,
                 )
                 sys.exit(2)
+        elif option == "--unlimited":
+            unlimited.append(arg)
         elif option == "--cfa_base":
             print(
                 f"{iam} ERROR: The {option} option has been deprecated.",
                 file=sys.stderr,
             )
             sys.exit(2)
-            write_options["cfa_options"] = {"base": arg}
-        elif option == "--unlimited":
-            unlimited.append(arg)
         elif option in ("-v", "--view"):
             view = arg
             if view not in "smc":
                 print(
                     f"{iam} ERROR: The {option} option must have a value "
-                    "of either s, m or c",
+                    "of either 's', 'm' or 'c'.",
                     file=sys.stderr,
                 )
                 sys.exit(2)
@@ -1420,26 +1419,27 @@ Using cf-python library version {cf.__version__} at {library_path}"""
     if unlimited:
         write_options["unlimited"] = unlimited
 
-    if fmt in ("CFA3", "CFA4"):
-        read_options["chunks"] = -1
-        if fmt == "CFA4":
+    if fmt.startswith("CFA"):
+        if fmt in ("CFA",  "CFA4"):
             fmt = "NETCDF4"
-        else:
+        elif fmt == "CFA3":
             fmt = "NETCDF3_CLASSIC"
-
+      
+        read_options["chunks"] = -1
+        
         if cfa_options:
             write_options["cfa"] = cfa_options
         else:
             write_options["cfa"] = True
         
-    elif fmt == "CFA":
-        print(
-            f"{iam} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
-            "'-f CFA4' for netCDF3 classic and netCDF4 CFA output formats "
-            "respectively",
-            file=sys.stderr,
-        )
-        sys.exit(2)
+#    elif fmt == "CFA":
+#        print(
+#            f"{iam} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
+ #           "'-f CFA4' respectively for netCDF3 classic and netCDF4 CFA "
+ #           "output formats.",
+ #           file=sys.stderr,
+ #       )
+ #       sys.exit(2)
 
     write_options["fmt"] = fmt
 
@@ -1520,7 +1520,7 @@ Using cf-python library version {cf.__version__} at {library_path}"""
         # ------------------------------------------------------------
         if view is None and one_to_one:
             outfile = re_sub("(\.pp|\.nc|\.nca)$", ".nc", infile)
-            if fmt in ("CFA3", "CFA4"):
+            if write_options["cfa"]:
                 outfile += "a"
 
             if directory is not None:
