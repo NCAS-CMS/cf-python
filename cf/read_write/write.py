@@ -687,8 +687,9 @@ def write(
     if fmt in ("CFA", "CFA4", "CFA3"):
         return _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE(
             "cf.write",
-            {"fmt": fmt},
-            "Use keyword 'cfa' instead",
+            "fmt",
+            fmt,
+            "Use keywords 'fmt' and 'cfa' instead.",
             version="TODOCFAVER",
             removed_at="5.0.0",
         )  # pragma: no cover

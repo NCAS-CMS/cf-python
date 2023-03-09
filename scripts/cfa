@@ -313,6 +313,26 @@ absolute paths. Ignored for output files of any other format.
 .
 .
 .TP
+.B \-\-cfa_paths=[value]
+For output CFA\-netCDF files only. File names referenced by an output
+CFA\-netCDF file have relative, as opposed to absolute, paths or URL
+bases. This may be useful when relocating a CFA\-netCDF file together
+with the datasets referenced by it.
+.PP
+.RS
+If set with no value (\-\-cfa_base=) or the value is empty then file
+names are given relative to the directory or URL base containing the
+output CFA\-netCDF file. If set with a non\-empty value then file
+names are given relative to the directory or URL base described by the
+value.
+.PP
+By default, file names within CFA\-netCDF files are stored with
+absolute paths. Ignored for output files of any other format.
+.RE
+.RE
+.
+.
+.TP
 .B \-\-compress=N
 Regulate the speed and efficiency of compression. Must be an integer
 between
@@ -1070,6 +1090,7 @@ Written by David Hassell
   [--overwrite]          Overwrite pre-existing output files
   [--unlimited=axis      Create an unlimited dimension
   [--cfa_base=[value]]   Configure CFA-netCDF output files
+  [--cfa_paths=[value]]  Configure CFA-netCDF output files
   [--single]             Write out as single precision
   [--double]             Write out as double precision
   [--compress=N]         Compress the output data
@@ -1183,7 +1204,8 @@ Using cf-python library version {cf.__version__} at {library_path}"""
     aggregate_options = {}
     read_options = {}  # Keyword parameters to cf.read
     write_options = {}  # Keyword parameters to cf.write
-
+    cfa_options = {}
+    
     for option, arg in opts:
         if option in ("-h", "--help"):
             print_help()
@@ -1274,7 +1296,21 @@ Using cf-python library version {cf.__version__} at {library_path}"""
             write_options["single"] = True
         elif option == "--double":
             write_options["double"] = True
+        elif option == "--cfa_paths":
+            cfa_options["absolute_paths"] = option == "absolute"
+            if option not in ("absolute", "relative"):
+                print(
+                    f"{iam} ERROR: The {option} option must have a value "
+                    "of either 'absolute' or 'relative'.",
+                    file=sys.stderr,
+                )
+                sys.exit(2)
         elif option == "--cfa_base":
+            print(
+                f"{iam} ERROR: The {option} option has been deprecated.",
+                file=sys.stderr,
+            )
+            sys.exit(2)
             write_options["cfa_options"] = {"base": arg}
         elif option == "--unlimited":
             unlimited.append(arg)
@@ -1381,12 +1417,22 @@ Using cf-python library version {cf.__version__} at {library_path}"""
                     )
                     sys.exit(2)
 
-    write_options["fmt"] = fmt
-
     if unlimited:
         write_options["unlimited"] = unlimited
 
-    if fmt == "CFA":
+    if fmt in ("CFA3", "CFA4"):
+        read_options["chunks"] = -1
+        if fmt == "CFA4":
+            fmt = "NETCDF4"
+        else:
+            fmt = "NETCDF3_CLASSIC"
+
+        if cfa_options:
+            write_options["cfa"] = cfa_options
+        else:
+            write_options["cfa"] = True
+        
+    elif fmt == "CFA":
         print(
             f"{iam} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
             "'-f CFA4' for netCDF3 classic and netCDF4 CFA output formats "
@@ -1394,6 +1440,8 @@ Using cf-python library version {cf.__version__} at {library_path}"""
             file=sys.stderr,
         )
         sys.exit(2)
+
+    write_options["fmt"] = fmt
 
     if not infiles:
         print(

@@ -3248,9 +3248,9 @@ def _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE(
         removed_at = f" and will be removed at version {removed_at}"
 
     raise DeprecationError(
-        f"Value {value!r} of keyword {kwarg!r} of fcuntion {func!r} "
+        f"Value {value!r} of keyword {kwarg!r} of function {func!r} "
         f"has been deprecated at version {version} and is no longer "
-        "available{removed_at}. {message}"
+        f"available{removed_at}. {message}"
     )
 
 
