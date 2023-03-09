@@ -150,6 +150,7 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
 	  function/*.html \
 	  method/*.html \
 	  attribute/*.html \
+	  recipes/*.html \
           *.inv \
           *.js \
           _static \
