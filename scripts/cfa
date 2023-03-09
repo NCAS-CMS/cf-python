@@ -1205,7 +1205,7 @@ Using cf-python library version {cf.__version__} at {library_path}"""
     read_options = {}  # Keyword parameters to cf.read
     write_options = {}  # Keyword parameters to cf.write
     cfa_options = {}
-    
+
     for option, arg in opts:
         if option in ("-h", "--help"):
             print_help()
@@ -1420,26 +1420,26 @@ Using cf-python library version {cf.__version__} at {library_path}"""
         write_options["unlimited"] = unlimited
 
     if fmt.startswith("CFA"):
-        if fmt in ("CFA",  "CFA4"):
+        if fmt in ("CFA", "CFA4"):
             fmt = "NETCDF4"
         elif fmt == "CFA3":
             fmt = "NETCDF3_CLASSIC"
-      
+
         read_options["chunks"] = -1
-        
+
         if cfa_options:
             write_options["cfa"] = cfa_options
         else:
             write_options["cfa"] = True
-        
-#    elif fmt == "CFA":
-#        print(
-#            f"{iam} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
- #           "'-f CFA4' respectively for netCDF3 classic and netCDF4 CFA "
- #           "output formats.",
- #           file=sys.stderr,
- #       )
- #       sys.exit(2)
+
+    #    elif fmt == "CFA":
+    #        print(
+    #            f"{iam} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
+    #           "'-f CFA4' respectively for netCDF3 classic and netCDF4 CFA "
+    #           "output formats.",
+    #           file=sys.stderr,
+    #       )
+    #       sys.exit(2)
 
     write_options["fmt"] = fmt
 

@@ -39,11 +39,11 @@ class FragmentArrayMixin:
         except ValueError:
             # A ValueError is expected to be raised when the fragment
             # variable has fewer than 'self.ndim' dimensions (we know
-            # this becuase because 'indices' has 'self.ndim'
+            # this because because 'indices' has 'self.ndim'
             # elements).
             axis = self._size_1_axis(indices)
             if axis is not None:
-                # There is a unique size 1 index, that must correspond
+                # There is a unique size 1 index that must correspond
                 # to the missing dimension => Remove it from the
                 # indices, get the fragment array with the new
                 # indices; and then insert the missing size one
@@ -52,22 +52,21 @@ class FragmentArrayMixin:
                 array = super().__getitem__(tuple(indices))
                 array = np.expand_dims(array, axis)
             else:
-                # There are multiple size 1 indices, so we don't know
+                # There are multiple size 1 indices so we don't know
                 # how many missing dimensions the fragment has, nor
                 # their positions => Get the full fragment array and
-                # then reshape it to the shape of the storage chunk,
-                # assuming that it has teh correct size.
+                # then reshape it to the shape of the dask compute
+                # chunk, assuming that it has the correct size.
                 array = super().__getitem__(Ellipsis)
                 if array.size != self.size:
                     raise ValueError(
-                        "Can't get CFA fragment data from "
-                        f"{self.get_filename()} ({self.get_address()}) when "
+                        f"Can't get CFA fragment data from ({self}) when "
                         "the fragment has two or more missing size 1 "
                         "dimensions whilst also spanning two or more "
-                        "storage chunks."
+                        "dask compute chunks."
                         "\n\n"
                         "Consider recreating the data with exactly one"
-                        "storage chunk per fragment (e.g. set the "
+                        "dask compute chunk per fragment (e.g. set the "
                         "parameter 'chunks=None' to cf.read)."
                     )
 
