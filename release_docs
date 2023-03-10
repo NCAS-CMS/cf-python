@@ -129,6 +129,7 @@ for html_file in "${html_files[@]}"
 do
     for download_file in "${files_to_copy[@]}"
     do
+	echo "${download_file##*/}"
         sed -i "s|href=\".*\/${download_file##*/}\"|href=\"_downloads/${download_file##*/}\"|g" "$html_file"
     done
 done
