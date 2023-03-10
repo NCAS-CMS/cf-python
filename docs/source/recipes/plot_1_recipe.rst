@@ -27,12 +27,13 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 1. Import cf-python and cf-plot:
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-14
+.. GENERATED FROM PYTHON SOURCE LINES 10-15
 
 .. code-block:: python
 
 
     import cfplot as cfp
+
     import cf
 
 
@@ -42,11 +43,11 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-16
+.. GENERATED FROM PYTHON SOURCE LINES 16-17
 
 2. Read the field constructs:
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-20
+.. GENERATED FROM PYTHON SOURCE LINES 17-21
 
 .. code-block:: python
 
@@ -68,11 +69,11 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-22
+.. GENERATED FROM PYTHON SOURCE LINES 22-23
 
 3. Select near surface temperature by index and look at its contents:
 
-.. GENERATED FROM PYTHON SOURCE LINES 22-26
+.. GENERATED FROM PYTHON SOURCE LINES 23-27
 
 .. code-block:: python
 
@@ -88,6 +89,8 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     Field: long_name=near-surface temperature (ncvar%tmp)
     -----------------------------------------------------
     Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius
@@ -98,11 +101,11 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-28
+.. GENERATED FROM PYTHON SOURCE LINES 28-29
 
 4. Select latitude and longitude dimensions by identities, with two different techniques:
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-32
+.. GENERATED FROM PYTHON SOURCE LINES 29-33
 
 .. code-block:: python
 
@@ -117,11 +120,11 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-34
+.. GENERATED FROM PYTHON SOURCE LINES 34-35
 
 5. Print the desciption of near surface temperature using the dump method to show properties of all constructs:
 
-.. GENERATED FROM PYTHON SOURCE LINES 34-37
+.. GENERATED FROM PYTHON SOURCE LINES 35-38
 
 .. code-block:: python
 
@@ -136,6 +139,8 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     -----------------------------------------------------
     Field: long_name=near-surface temperature (ncvar%tmp)
     -----------------------------------------------------
@@ -181,11 +186,11 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 38-39
+.. GENERATED FROM PYTHON SOURCE LINES 39-40
 
 6. Latitude and longitude dimension coordinate cell bounds are absent, which are created and set:
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-44
+.. GENERATED FROM PYTHON SOURCE LINES 40-45
 
 .. code-block:: python
 
@@ -212,7 +217,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-50
+.. GENERATED FROM PYTHON SOURCE LINES 46-51
 
 .. code-block:: python
 
@@ -239,7 +244,7 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-54
+.. GENERATED FROM PYTHON SOURCE LINES 52-55
 
 .. code-block:: python
 
@@ -265,11 +270,11 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-56
+.. GENERATED FROM PYTHON SOURCE LINES 56-57
 
 7. Time dimension coordinate cell bounds are similarly created and set for cell sizes of one calendar month:
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-62
+.. GENERATED FROM PYTHON SOURCE LINES 57-63
 
 .. code-block:: python
 
@@ -287,6 +292,8 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     Dimension coordinate: long_name=time
         calendar = 'gregorian'
         long_name = 'time'
@@ -299,11 +306,11 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-64
+.. GENERATED FROM PYTHON SOURCE LINES 64-65
 
 8. Calculate and plot the area weighted mean surface temperature for each time:
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-68
+.. GENERATED FROM PYTHON SOURCE LINES 65-69
 
 .. code-block:: python
 
@@ -320,14 +327,21 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-70
+
+.. GENERATED FROM PYTHON SOURCE LINES 70-71
 
 9. Calculate and plot the annual global mean surface temperature:
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-77
+.. GENERATED FROM PYTHON SOURCE LINES 71-78
 
 .. code-block:: python
 
@@ -347,13 +361,20 @@ In this recipe we will calculate and plot monthly and annual global mean tempera
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
+
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  41.709 seconds)
+   **Total running time of the script:** ( 0 minutes  46.582 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_1_recipe.py:

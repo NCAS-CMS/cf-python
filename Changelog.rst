@@ -1,8 +1,9 @@
 version 3.14.1
 --------------
 
-**2023-??-??**
+**2023-03-10**
 
+* Python 3.7 support removed
 * New method: `cf.Field.del_properties`
   (https://github.com/NCAS-CMS/cf-python/issues/598)
 * New keyword parameter to `cf.Data.concatenate`: ``relaxed_units``
@@ -16,6 +17,7 @@ version 3.14.1
   vertical coordinate reference systems
   (https://github.com/NCAS-CMS/cf-python/issues/599)
 * Changed dependency: ``1.10.0.3<=cfdm<1.10.1.0``
+* Changed dependency: ``8.0.0<=ESMPYcfdm<8.2.0``
 
 ----
 

@@ -67,12 +67,14 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-24
+.. GENERATED FROM PYTHON SOURCE LINES 20-26
 
 .. code-block:: python
 
 
-    model = cf.read("~/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc")
+    model = cf.read(
+        "~/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc"
+    )
     print(model)
 
 
@@ -88,11 +90,11 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 25-26
+.. GENERATED FROM PYTHON SOURCE LINES 27-28
 
 3. Select observation and model temperature fields by identity and index respectively, and look at their contents:
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-30
+.. GENERATED FROM PYTHON SOURCE LINES 28-32
 
 .. code-block:: python
 
@@ -108,6 +110,8 @@ In this recipe, we will regrid two different datasets with different resolutions
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     Field: long_name=near-surface temperature (ncvar%tmp)
     -----------------------------------------------------
     Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius
@@ -118,7 +122,7 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 31-35
+.. GENERATED FROM PYTHON SOURCE LINES 33-37
 
 .. code-block:: python
 
@@ -134,6 +138,8 @@ In this recipe, we will regrid two different datasets with different resolutions
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     Field: air_temperature (ncvar%tas)
     ----------------------------------
     Data            : air_temperature(time(1980), latitude(144), longitude(192)) K
@@ -147,11 +153,11 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-37
+.. GENERATED FROM PYTHON SOURCE LINES 38-39
 
 4. Regrid observational data to that of the model data and create a new low resolution observational data using bilinear interpolation:
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-39
+.. GENERATED FROM PYTHON SOURCE LINES 39-41
 
 .. code-block:: python
 
@@ -165,6 +171,8 @@ In this recipe, we will regrid two different datasets with different resolutions
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     Field: long_name=near-surface temperature (ncvar%tmp)
     -----------------------------------------------------
     Data            : long_name=near-surface temperature(long_name=time(1452), latitude(144), longitude(192)) degrees Celsius
@@ -179,7 +187,7 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  2.869 seconds)
+   **Total running time of the script:** ( 0 minutes  3.979 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_4_recipe.py:

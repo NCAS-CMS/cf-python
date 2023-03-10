@@ -27,12 +27,13 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 1. Import cf-python and cf-plot:
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-14
+.. GENERATED FROM PYTHON SOURCE LINES 10-15
 
 .. code-block:: python
 
 
     import cfplot as cfp
+
     import cf
 
 
@@ -42,11 +43,11 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-16
+.. GENERATED FROM PYTHON SOURCE LINES 16-17
 
 2. Read the field constructs:
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-20
+.. GENERATED FROM PYTHON SOURCE LINES 17-21
 
 .. code-block:: python
 
@@ -68,11 +69,11 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-22
+.. GENERATED FROM PYTHON SOURCE LINES 22-23
 
 3. Select near surface temperature by index and look at its contents:
 
-.. GENERATED FROM PYTHON SOURCE LINES 22-26
+.. GENERATED FROM PYTHON SOURCE LINES 23-27
 
 .. code-block:: python
 
@@ -88,6 +89,8 @@ In this recipe we will calculate and plot the global average temperature anomali
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     Field: long_name=near-surface temperature (ncvar%tmp)
     -----------------------------------------------------
     Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius
@@ -98,11 +101,11 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-28
+.. GENERATED FROM PYTHON SOURCE LINES 28-29
 
 4. Select latitude and longitude dimensions by identities, with two different techniques:
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-32
+.. GENERATED FROM PYTHON SOURCE LINES 29-33
 
 .. code-block:: python
 
@@ -117,11 +120,11 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-34
+.. GENERATED FROM PYTHON SOURCE LINES 34-35
 
 5. Print the desciption of near surface temperature to show properties of all constructs:
 
-.. GENERATED FROM PYTHON SOURCE LINES 34-37
+.. GENERATED FROM PYTHON SOURCE LINES 35-38
 
 .. code-block:: python
 
@@ -136,6 +139,8 @@ In this recipe we will calculate and plot the global average temperature anomali
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     -----------------------------------------------------
     Field: long_name=near-surface temperature (ncvar%tmp)
     -----------------------------------------------------
@@ -181,11 +186,11 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 38-39
+.. GENERATED FROM PYTHON SOURCE LINES 39-40
 
 6. Latitude and longitude dimension coordinate cell bounds are absent, which are created and set:
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-44
+.. GENERATED FROM PYTHON SOURCE LINES 40-45
 
 .. code-block:: python
 
@@ -212,7 +217,7 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-50
+.. GENERATED FROM PYTHON SOURCE LINES 46-51
 
 .. code-block:: python
 
@@ -239,7 +244,7 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-54
+.. GENERATED FROM PYTHON SOURCE LINES 52-55
 
 .. code-block:: python
 
@@ -265,11 +270,11 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-56
+.. GENERATED FROM PYTHON SOURCE LINES 56-57
 
 7. Time dimension coordinate cell bounds are similarly created and set for cell sizes of one calendar month:
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-62
+.. GENERATED FROM PYTHON SOURCE LINES 57-63
 
 .. code-block:: python
 
@@ -287,6 +292,8 @@ In this recipe we will calculate and plot the global average temperature anomali
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     Dimension coordinate: long_name=time
         calendar = 'gregorian'
         long_name = 'time'
@@ -299,11 +306,11 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-64
+.. GENERATED FROM PYTHON SOURCE LINES 64-65
 
 8. Calculate the area weighted mean surface temperature for each time using the collapse method:
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-67
+.. GENERATED FROM PYTHON SOURCE LINES 65-68
 
 .. code-block:: python
 
@@ -317,11 +324,11 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 68-69
+.. GENERATED FROM PYTHON SOURCE LINES 69-70
 
 9. Calculate the annual global mean surface temperature:
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-72
+.. GENERATED FROM PYTHON SOURCE LINES 70-73
 
 .. code-block:: python
 
@@ -335,16 +342,18 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-74
+.. GENERATED FROM PYTHON SOURCE LINES 74-75
 
 10. The temperature values are averaged for the climatological period of 1961-1990 by defining a subspace within these years using `cf.wi` query instance over subspace and doing a statistical collapse with the collapse method:
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-78
+.. GENERATED FROM PYTHON SOURCE LINES 75-81
 
 .. code-block:: python
 
 
-    annual_global_avg_61_90 = annual_global_avg.subspace(T=cf.year(cf.wi(1961, 1990)))
+    annual_global_avg_61_90 = annual_global_avg.subspace(
+        T=cf.year(cf.wi(1961, 1990))
+    )
     print(annual_global_avg_61_90)
 
 
@@ -355,6 +364,10 @@ In this recipe we will calculate and plot the global average temperature anomali
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     Field: long_name=near-surface temperature (ncvar%tmp)
     -----------------------------------------------------
     Data            : long_name=near-surface temperature(long_name=time(30), long_name=latitude(1), long_name=longitude(1)) degrees Celsius
@@ -366,7 +379,7 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 79-83
+.. GENERATED FROM PYTHON SOURCE LINES 82-86
 
 .. code-block:: python
 
@@ -393,11 +406,11 @@ In this recipe we will calculate and plot the global average temperature anomali
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-85
+.. GENERATED FROM PYTHON SOURCE LINES 87-88
 
 11. The temperature anomaly is then calculated by subtracting these climatological temperature values from the annual global average temperatures and plotted:
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-94
+.. GENERATED FROM PYTHON SOURCE LINES 88-97
 
 .. code-block:: python
 
@@ -419,13 +432,20 @@ In this recipe we will calculate and plot the global average temperature anomali
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
+
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  18.336 seconds)
+   **Total running time of the script:** ( 0 minutes  47.408 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_2_recipe.py:

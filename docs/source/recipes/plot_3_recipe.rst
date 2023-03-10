@@ -27,12 +27,13 @@ In this recipe, we will plot the global mean temperature spatially.
 
 1. Import cf-python and cf-plot:
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-14
+.. GENERATED FROM PYTHON SOURCE LINES 10-15
 
 .. code-block:: python
 
 
     import cfplot as cfp
+
     import cf
 
 
@@ -42,11 +43,11 @@ In this recipe, we will plot the global mean temperature spatially.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-16
+.. GENERATED FROM PYTHON SOURCE LINES 16-17
 
 2. Read the field constructs:
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-20
+.. GENERATED FROM PYTHON SOURCE LINES 17-21
 
 .. code-block:: python
 
@@ -68,11 +69,11 @@ In this recipe, we will plot the global mean temperature spatially.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-22
+.. GENERATED FROM PYTHON SOURCE LINES 22-23
 
 3. Select near surface temperature by index and look at its contents:
 
-.. GENERATED FROM PYTHON SOURCE LINES 22-26
+.. GENERATED FROM PYTHON SOURCE LINES 23-27
 
 .. code-block:: python
 
@@ -88,6 +89,8 @@ In this recipe, we will plot the global mean temperature spatially.
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     Field: long_name=near-surface temperature (ncvar%tmp)
     -----------------------------------------------------
     Data            : long_name=near-surface temperature(long_name=time(1452), long_name=latitude(360), long_name=longitude(720)) degrees Celsius
@@ -98,11 +101,11 @@ In this recipe, we will plot the global mean temperature spatially.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-28
+.. GENERATED FROM PYTHON SOURCE LINES 28-29
 
 4. Average the monthly mean surface temperature values by the time axis using the collapse method:
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-31
+.. GENERATED FROM PYTHON SOURCE LINES 29-32
 
 .. code-block:: python
 
@@ -116,11 +119,11 @@ In this recipe, we will plot the global mean temperature spatially.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 32-33
+.. GENERATED FROM PYTHON SOURCE LINES 33-34
 
 5. Plot the global mean surface temperatures:
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-35
+.. GENERATED FROM PYTHON SOURCE LINES 34-36
 
 .. code-block:: python
 
@@ -135,13 +138,20 @@ In this recipe, we will plot the global mean temperature spatially.
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
+
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  7.477 seconds)
+   **Total running time of the script:** ( 0 minutes  7.527 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_3_recipe.py:

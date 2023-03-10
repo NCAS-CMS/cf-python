@@ -27,15 +27,15 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
 1. Import cf-python, cf-plot and numpy:
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-15
+.. GENERATED FROM PYTHON SOURCE LINES 10-16
 
 .. code-block:: python
 
 
-    import cf
     import cfplot as cfp
     import numpy as np
 
+    import cf
 
 
 
@@ -43,16 +43,17 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-17
+
+.. GENERATED FROM PYTHON SOURCE LINES 17-18
 
 2. Read the field constructs using read function:
 
-.. GENERATED FROM PYTHON SOURCE LINES 17-21
+.. GENERATED FROM PYTHON SOURCE LINES 18-22
 
 .. code-block:: python
 
 
-    f = cf.read('~/recipes/au952a.pd20510414.pp')
+    f = cf.read("~/recipes/au952a.pd20510414.pp")
     print(f)
 
 
@@ -68,11 +69,11 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 22-23
+.. GENERATED FROM PYTHON SOURCE LINES 23-24
 
 3. Select the field by index and print its desciption to show properties of all constructs:
 
-.. GENERATED FROM PYTHON SOURCE LINES 23-27
+.. GENERATED FROM PYTHON SOURCE LINES 24-28
 
 .. code-block:: python
 
@@ -88,12 +89,14 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     -----------------------------------------------------------
     Field: id%UM_m01s03i463_vn1006 (ncvar%UM_m01s03i463_vn1006)
     -----------------------------------------------------------
     Conventions = 'CF-1.10'
     _FillValue = -1073741824.0
-    history = 'Converted from UM/PP by cf-python v3.14.0'
+    history = 'Converted from UM/PP by cf-python v3.14.1'
     lbproc = '8192'
     lbtim = '122'
     long_name = 'WIND GUST'
@@ -172,16 +175,16 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-29
+.. GENERATED FROM PYTHON SOURCE LINES 29-30
 
 4. Access the time coordinate of the gust field and retrieve the datetime values of the time coordinate:
 
-.. GENERATED FROM PYTHON SOURCE LINES 29-32
+.. GENERATED FROM PYTHON SOURCE LINES 30-33
 
 .. code-block:: python
 
 
-    print(gust.coordinate('time').datetime_array)
+    print(gust.coordinate("time").datetime_array)
 
 
 
@@ -203,11 +206,11 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-34
+.. GENERATED FROM PYTHON SOURCE LINES 34-35
 
 5. Create a new instance of the `cf.dt` class with a specified year, month, day, hour, minute, second and microsecond. Then store the result in the variable ``test``:
 
-.. GENERATED FROM PYTHON SOURCE LINES 34-37
+.. GENERATED FROM PYTHON SOURCE LINES 35-38
 
 .. code-block:: python
 
@@ -227,15 +230,15 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 38-39
+.. GENERATED FROM PYTHON SOURCE LINES 39-40
 
 6. Plot the wind gust by creating a subspace for the specified variable ``test`` using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `cfplot.mapset <http://ajheaps.github.io/cf-plot/mapset.html>`_ is used to set the mapping parameters like setting the map resolution to 50m:
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-42
+.. GENERATED FROM PYTHON SOURCE LINES 40-43
 
 .. code-block:: python
 
-    cfp.mapset(resolution='50m')
+    cfp.mapset(resolution="50m")
     cfp.con(gust.subspace(T=test), lines=False)
 
 
@@ -247,18 +250,25 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    /home/david/miniconda3/lib/python3.10/site-packages/cartopy/io/__init__.py:241: DownloadWarning: Downloading: https://naturalearth.s3.amazonaws.com/50m_physical/ne_50m_land.zip
+      warnings.warn(f'Downloading: {url}', DownloadWarning)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-44
+
+.. GENERATED FROM PYTHON SOURCE LINES 44-45
 
 7. To see the rotated pole data on the native grid, the above steps are repeated and projection is set to rotated in `cfplot.mapset <http://ajheaps.github.io/cf-plot/mapset.html>`_:
 
-.. GENERATED FROM PYTHON SOURCE LINES 44-47
+.. GENERATED FROM PYTHON SOURCE LINES 45-48
 
 .. code-block:: python
 
-    cfp.mapset(resolution='50m', proj='rotated')
+    cfp.mapset(resolution="50m", proj="rotated")
     cfp.con(gust.subspace(T=test), lines=False)
 
 
@@ -270,20 +280,31 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    /home/david/miniconda3/lib/python3.10/site-packages/cartopy/io/__init__.py:241: DownloadWarning: Downloading: https://naturalearth.s3.amazonaws.com/50m_physical/ne_50m_coastline.zip
+      warnings.warn(f'Downloading: {url}', DownloadWarning)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-49
+
+.. GENERATED FROM PYTHON SOURCE LINES 49-50
 
 8. Create dimension coordinates for the destination grid with the latitude and longitude values for Europe. `np.linspace <https://numpy.org/doc/stable/reference/generated/numpy.linspace.html>`_ generates evenly spaced values between the specified latitude and longitude range. Bounds of the target longitude and target latitude are created and spherical regridding is then performed on the gust variable by passing the target latitude and target longitude as arguments. The method also takes an argument ``'linear'`` which specifies the type of regridding method to use. The desciption of the ``regridded_data`` is finally printed to show properties of all its constructs:
 
-.. GENERATED FROM PYTHON SOURCE LINES 49-62
+.. GENERATED FROM PYTHON SOURCE LINES 50-67
 
 .. code-block:: python
 
 
-    target_latitude = cf.DimensionCoordinate(data=cf.Data(np.linspace(34, 72, num=10), 'degrees_north'))
-    target_longitude = cf.DimensionCoordinate(data=cf.Data(np.linspace(-25, 45, num=10), 'degrees_east'))
+    target_latitude = cf.DimensionCoordinate(
+        data=cf.Data(np.linspace(34, 72, num=10), "degrees_north")
+    )
+    target_longitude = cf.DimensionCoordinate(
+        data=cf.Data(np.linspace(-25, 45, num=10), "degrees_east")
+    )
 
     lon_bounds = target_longitude.create_bounds()
     lat_bounds = target_latitude.create_bounds()
@@ -291,7 +312,7 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
     target_longitude.set_bounds(lon_bounds)
     target_latitude.set_bounds(lat_bounds)
 
-    regridded_data = gust.regrids((target_latitude, target_longitude), 'linear')
+    regridded_data = gust.regrids((target_latitude, target_longitude), "linear")
     regridded_data.dump()
 
 
@@ -302,12 +323,14 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
  .. code-block:: none
 
+    /home/david/miniconda3/lib/python3.10/site-packages/numpy/ma/core.py:467: RuntimeWarning: invalid value encountered in cast
+      fill_value = np.array(fill_value, copy=False, dtype=ndtype)
     -----------------------------------------------------------
     Field: id%UM_m01s03i463_vn1006 (ncvar%UM_m01s03i463_vn1006)
     -----------------------------------------------------------
     Conventions = 'CF-1.10'
     _FillValue = -1073741824.0
-    history = 'Converted from UM/PP by cf-python v3.14.0'
+    history = 'Converted from UM/PP by cf-python v3.14.1'
     lbproc = '8192'
     lbtim = '122'
     long_name = 'WIND GUST'
@@ -361,16 +384,17 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-64
+.. GENERATED FROM PYTHON SOURCE LINES 68-69
 
 9. Step 6 is similarly repeated for the ``regridded_data`` to plot the wind gust on a regular latitude-longitude domain:
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-65
+.. GENERATED FROM PYTHON SOURCE LINES 69-71
 
 .. code-block:: python
 
-    cfp.mapset(resolution='50m')
+    cfp.mapset(resolution="50m")
     cfp.con(regridded_data.subspace(T=test), lines=False)
+
 
 
 .. image-sg:: /recipes/images/sphx_glr_plot_6_recipe_003.png
@@ -385,7 +409,7 @@ In this recipe, we will be regridding from a rotated latitude-longitude source d
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  27.001 seconds)
+   **Total running time of the script:** ( 0 minutes  36.047 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_6_recipe.py:
