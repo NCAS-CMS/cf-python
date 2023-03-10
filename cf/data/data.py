@@ -1486,6 +1486,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d._set_cached_elements({0: 273.15})
 
         """
+        if not elements:
+            return
+
         cache = self._custom.get("cached_elements")
         if cache:
             cache = cache.copy()
@@ -3732,11 +3735,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = da.concatenate(dxs, axis=axis)
 
         # Set the new dask array, retaining the cached elements ...
-        data0._set_dask(dx, clear=_ALL ^ _CACHE)
+        data0._set_dask(dx, clear=_ALL)
 
-        # ... but now delete the cached second element, which might
-        # now be incorrect.
-        data0._custom.pop("second_element", None)
+        # Set the appropriate cached elements
+        cached_elements = {}
+        for i in (0, -1):
+            element = processed_data[i]._get_cached_elements().get(i)
+            if element is not None:
+                cached_elements[i] = element
+
+        data0._set_cached_elements(cached_elements)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
         axis = data0._parse_axes(axis)[0]
@@ -10819,6 +10827,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             iaxes = tuple(range(ndim - 1, -1, -1))
         else:
             iaxes = d._parse_axes(axes)
+
+        if iaxes == tuple(range(ndim)):
+            # Short circuit if the transpose is a null operation
+            return d
 
         # Note: _axes attribute is still important/utilised post-Daskification
         # because e.g. axes labelled as cyclic by the _cyclic attribute use it
