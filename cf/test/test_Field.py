@@ -2530,9 +2530,29 @@ class FieldTest(unittest.TestCase):
         h = f.subspace(grid_longitude=np.float64(20))
         self.assertTrue(g.equals(h))
 
+    def test_Field_auxiliary_to_dimension_to_auxiliary(self):
+        f = cf.example_field(0)
+        nd = len(f.dimension_coordinates())
+
+        g = f.dimension_to_auxiliary('latitude')
+        self.assertEqual(len(g.dimension_coordinates()),nd-1)
+        self.assertEqual(len(g.auxiliary_coordinates()),1)
+
+        h = g.auxiliary_to_dimension('latitude')
+        self.assertEqual(len(h.dimension_coordinates()),nd)
+        self.assertEqual(len(h.auxiliary_coordinates()),0)
+        self.assertTrue(h.equals(f))
+        self.assertIsNone(f.dimension_to_auxiliary('Y', inplace=True))
+        self.assertIsNone(g.auxiliary_to_dimension('Y', inplace=True))
+
+        f=cf.read('geometry_1.nc')[0]
+
+        with self.assertRaises(ValueError):
+            f.auxiliary_to_dimension('latitude')
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
     print("")
     unittest.main(verbosity=2)
+
