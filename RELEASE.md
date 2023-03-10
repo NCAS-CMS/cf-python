@@ -37,11 +37,6 @@
 * Create a link to the new documentation in
   `docs/source/releases.rst`, including the release date.
 
-* Make sure that all the Data tests will run by setting
-  `test_only = []` in `cf/test/test_Data.py` (check that none of
-  the individual tests are un-commented so as to override this in the
-  commented listing beneath).
-
 * Test tutorial code:
 
   ```bash
