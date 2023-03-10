@@ -1767,7 +1767,7 @@ class FieldDomain:
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        key, aux = f.dimension_coordinate(*identity, item=True)
+        key, dim = f.dimension_coordinate(*identity, item=True, **filter_kwargs)
 
         axis = f.get_data_axes(key)
         dim = f._AuxiliaryCoordinate(source=aux)
