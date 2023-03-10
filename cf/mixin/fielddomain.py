@@ -1732,6 +1732,8 @@ class FieldDomain:
                returned by ``f.dimension_coordinate(*identity)``.
                See `dimension_construct` for details.
 
+            {{inplace: `bool`, optional}}
+
         :Returns:
 
             `{{class}}` or `None`
