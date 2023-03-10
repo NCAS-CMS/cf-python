@@ -1733,7 +1733,7 @@ class FieldDomain:
         :Returns:
 
             `{{class}}` or `None`
-                The field with the new auxiliary coordinate construct,
+                The {{class}} with the new auxiliary coordinate construct,
                 or `None` if the operation was in-place.
 
         **Examples**
