@@ -1197,6 +1197,8 @@ class FieldDomain:
                 filter_by_naxes=(1,), **filter_kwargs)``. See
                 `auxiliary_coordinate` for details.                
 
+            {{inplace: `bool`, optional}}
+
         :Returns:
 
             `{{class}}` or `None`
