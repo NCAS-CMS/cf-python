@@ -1554,6 +1554,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         >>> d._set_cached_elements({0: 273.15})
 
         """
+        if not elements:
+            return
+
         cache = self._custom.get("cached_elements")
         if cache:
             cache = cache.copy()

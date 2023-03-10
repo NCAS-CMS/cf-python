@@ -1210,6 +1210,17 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f = cf.Data.concatenate([d, e], axis=1)
 
+        # Test cached elements
+        d = cf.Data([1, 2, 3])
+        e = cf.Data([4, 5])
+        repr(d)
+        repr(e)
+        f = cf.Data.concatenate([d, e], axis=0)
+        self.assertEqual(
+            f._get_cached_elements(),
+            {0: d.first_element(), -1: e.last_element()},
+        )
+
     def test_Data__contains__(self):
         """Test containment checking against Data."""
         d = cf.Data([[0, 1, 2], [3, 4, 5]], units="m", chunks=2)
