@@ -4491,6 +4491,26 @@ class DataTest(unittest.TestCase):
         self.assertTrue((e.array == [72, 48, 24, 0]).all())
 
 
+    def test_Data_clear_after_dask_update(self):
+        """Test Data._clear_after_dask_update"""
+        d = cf.Data([1, 2, 3], 'm')
+        dx = d.to_dask_array()
+
+        d.first_element()
+        d.second_element()
+        d.last_element()
+
+        self.assert()
+        
+        
+        e = d.convert_reference_time(calendar_months=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.assertTrue((e.array == [62, 31, 0, -30]).all())
+
+        d = cf.Data([2, 1, 0, -1], units="years since 2003-12-01")
+        e = d.convert_reference_time(calendar_years=True)
+        self.assertEqual(e.Units, cf.Units("days since 2003-12-01"))
+        self.ass
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cf.environment()
