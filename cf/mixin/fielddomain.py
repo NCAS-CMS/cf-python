@@ -1195,7 +1195,7 @@ class FieldDomain:
                 Select the unique 1-d auxiliary coordinate construct
                 returned by ``f.auxiliary_coordinate(*identity,
                 filter_by_naxes=(1,), **filter_kwargs)``. See
-                `auxiliary_construct` for details.                
+                `auxiliary_coordinate` for details.                
 
         :Returns:
 
