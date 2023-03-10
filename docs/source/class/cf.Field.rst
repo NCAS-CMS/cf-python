@@ -292,6 +292,7 @@ Metadata constructs
    ~cf.Field.has_data_axes
    ~cf.Field.set_data_axes
    ~cf.Field.auxiliary_coordinate
+   ~cf.Field.auxiliary_to_dimension
    ~cf.Field.cell_measure
    ~cf.Field.cell_method
    ~cf.Field.coordinate
@@ -301,6 +302,7 @@ Metadata constructs
    ~cf.Field.set_coordinate_reference
    ~cf.Field.del_coordinate_reference
    ~cf.Field.dimension_coordinate
+   ~cf.Field.dimension_to_auxiliary
    ~cf.Field.domain_ancillary
    ~cf.Field.domain_axis
    ~cf.Field.domain_axis_key

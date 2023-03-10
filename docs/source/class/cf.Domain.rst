@@ -138,6 +138,7 @@ Metadata constructs
    ~cf.Domain.has_data_axes
    ~cf.Domain.set_data_axes
    ~cf.Domain.auxiliary_coordinate
+   ~cf.Domain.auxiliary_to_dimension
    ~cf.Domain.cell_measure
    ~cf.Domain.coordinate
    ~cf.Domain.coordinate_reference
@@ -146,6 +147,7 @@ Metadata constructs
    ~cf.Domain.set_coordinate_reference
    ~cf.Domain.del_coordinate_reference
    ~cf.Domain.dimension_coordinate
+   ~cf.Domain.dimension_to_auxiliary
    ~cf.Domain.domain_ancillary
    ~cf.Domain.domain_axis
    ~cf.Domain.domain_axis_key
