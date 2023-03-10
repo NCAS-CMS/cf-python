@@ -145,9 +145,9 @@ if [[ $1 != "latest" ]] ; then
 fi
 
 # --------------------------------------------------------------------
-# Add and commit the latest or archive
+# Add and commit the latest
 # --------------------------------------------------------------------
-if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
+if [[ $1 = "latest" ]] ; then
   cd $dir
   git add \
           *.html \
@@ -166,7 +166,7 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
           _images/*.png \
           _images/*.svg
 
-  git commit -a -m "v$version $1 documentation"
+  git commit -a -m "v$version documentation"
 fi
 
 set +x
