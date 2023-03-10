@@ -1729,7 +1729,7 @@ class FieldDomain:
 
            identity, filter_kwargs: optional  
                Select the unique dimension coordinate construct
-               returned by ``f.dimension_coordinate(*identity)``.
+               returned by ``f.dimension_coordinate(*identity, **filter_kwargs)``.
                See `dimension_coordinate` for details.
 
             {{inplace: `bool`, optional}}
