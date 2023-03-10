@@ -87,6 +87,14 @@ _dtype_bool = np.dtype(bool)
 _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
+# Contstants used to specify which `Data` components should be cleared
+# when a new dask array is set. See `Data._clear_after_dask_update`
+# for details.
+_NONE = 0  # =  0b0000
+_ARRAY = 1  # = 0b0001
+_CACHE = 2  # = 0b0010
+_ALL = 15  # =  0b1111
+
 
 class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     """An N-dimensional data array with units and masked values.
@@ -353,7 +361,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(array, copy=copy, conform=False)
+                    self._set_dask(array, copy=copy, clear=_NONE)
             else:
                 self._del_dask(None)
 
@@ -459,7 +467,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, conform=False)
+        self._set_dask(array, clear=_NONE)
 
         # Override the data type
         if dtype is not None:
@@ -1121,7 +1129,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self[indices] = reset
 
         # Remove elements made invalid by updating the `dask` array
-        self._conform_after_dask_update()
+        # in-place
+        self._clear_after_dask_update(_ALL)
 
         return
 
@@ -1239,31 +1248,69 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    def _conform_after_dask_update(self):
-        """Remove elements made invalid by updating the `dask` array.
+    def _clear_after_dask_update(self, clear=_ALL):
+        """Remove components invalidated by updating the `dask` array.
 
         Removes or modifies components that can't be guaranteed to be
-        consistent with an updated `dask` array`:
-
-        * Deletes a source array.
-        * Deletes cached element values.
+        consistent with an updated `dask` array. See the *clear*
+        parameter for details.
 
         .. versionadded:: 3.14.0
+
+        .. seealso:: `_del_Array`, `_del_cached_elements`, `_set_dask`
+
+        :Parameters:
+
+            clear: `int`, optional
+                Specify which components should be removed. Which
+                components are removed is determined by sequentially
+                combining *clear* with the ``_ARRAY`` and ``_CACHE``
+                integer-valued contants, using the bitwise AND
+                operator:
+
+                * If ``clear & _ARRAY`` is non-zero then a source
+                  array is deleted.
+
+                * If ``clear & _CACHE`` is non-zero then cached
+                  element values are deleted.
+
+                By default *clear* is the ``_ALL`` integer-valued
+                constant, which results in all components being
+                removed.
+
+                If *clear* is the ``_NONE`` integer-valued constant
+                then no components are removed.
+
+                To retain a component and remove all others, use
+                ``_ALL`` with the bitwise OR operator. For instance,
+                if *clear* is ``_ALL ^ _CACHE`` then the cached
+                element values will be kept but all other components
+                will be removed.
+
+                .. versionadded:: 3.14.1
 
         :Returns:
 
             `None`
 
         """
-        self._del_Array(None)
-        self._del_cached_elements()
+        if not clear:
+            return
 
-    def _set_dask(self, array, copy=False, conform=True):
+        if clear & _ARRAY:
+            # Delete a source array
+            self._del_Array(None)
+
+        if clear & _CACHE:
+            # Delete cached element values
+            self._del_cached_elements()
+
+    def _set_dask(self, array, copy=False, clear=_ALL):
         """Set the dask array.
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+        .. seealso:: `to_dask_array`, `_clear_after_dask_update`,
                      `_del_dask`
 
         :Parameters:
@@ -1275,10 +1322,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If True then copy *array* before setting it. By
                 default it is not copied.
 
-            conform: `bool`, optional
-                If True, the default, then remove elements made
-                invalid by updating the `dask` array. See
-                `_conform_after_dask_update` for details.
+            clear: `int`, optional
+                Specify which components should be removed. By default
+                *clear* is the ``_ALL`` integer-valued constant, which
+                results in all components being removed. See
+                `_clear_after_dask_update` for details.
 
         :Returns:
 
@@ -1308,33 +1356,30 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             array = array.copy()
 
         self._custom["dask"] = array
+        self._clear_after_dask_update(clear)
 
-        if conform:
-            # Remove elements made invalid by updating the `dask`
-            # array
-            self._conform_after_dask_update()
-
-    def _del_dask(self, default=ValueError(), conform=True):
+    def _del_dask(self, default=ValueError(), clear=_ALL):
         """Remove the dask array.
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+        .. seealso:: `to_dask_array`, `_clear_after_dask_update`,
                      `_set_dask`
-
 
         :Parameters:
 
             default: optional
                 Return the value of the *default* parameter if the
-                dask array axes has not been set.
+                dask array axes has not been set. If set to an
+                `Exception` instance then it will be raised instead.
 
-                {{default Exception}}
-
-            conform: `bool`, optional
-                If True, the default, then remove elements made
-                invalid by updating the `dask` array. See
-                `_conform_after_dask_update` for details.
+            clear: `int`, optional
+                Specify which components should be removed. By default
+                *clear* is the ``_ALL`` integer-valued constant, which
+                results in all components being removed. See
+                `_clear_after_dask_update` for details.
+                If there is no dask array then no components are
+                removed, regardless of the value of *clear*.
 
         :Returns:
 
@@ -1355,7 +1400,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Traceback (most recent call last):
             ...
         RuntimeError: No dask array
-
         """
         try:
             out = self._custom.pop("dask")
@@ -1364,11 +1408,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 default, f"{self.__class__.__name__!r} has no dask array"
             )
 
-        if conform:
-            # Remove elements made invalid by deleting the `dask`
-            # array
-            self._conform_after_dask_update()
-
+        self._clear_after_dask_update(clear)
         return out
 
     def _del_cached_elements(self):
@@ -2314,7 +2354,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = self.to_dask_array()
         dx = dx.persist()
-        d._set_dask(dx, conform=False)
+        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE)
 
         return d
 
@@ -2765,7 +2805,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, conform=False)
+        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE)
 
         return d
 
@@ -3689,7 +3729,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Get data as dask arrays and apply concatenation operation
         dxs = [d.to_dask_array() for d in processed_data]
-        data0._set_dask(da.concatenate(dxs, axis=axis))
+        dx = da.concatenate(dxs, axis=axis)
+
+        # Set the new dask array, retaining the cached elements ...
+        data0._set_dask(dx, clear=_ALL ^ _CACHE)
+
+        # ... but now delete the cached second element, which might
+        # now be incorrect.
+        data0._custom.pop("second_element", None)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
         axis = data0._parse_axes(axis)[0]
@@ -7615,7 +7662,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.reshape(shape)
-        d._set_dask(dx)
+
+        # Inserting a dimension doesn't affect the cached elements
+        d._set_dask(dx, clear=_ALL ^ _CACHE)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -8001,7 +8050,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
-        self._set_dask(dx, conform=False)
+        self._set_dask(dx, clear=_NONE)
         self.hardmask = True
 
     def has_calendar(self):
@@ -8098,7 +8147,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
-        self._set_dask(dx, conform=False)
+        self._set_dask(dx, clear=_NONE)
         self.hardmask = False
 
     @_inplace_enabled(default=False)
@@ -10411,7 +10460,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = self.to_dask_array()
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx, conform=False)
+        self._set_dask(dx, clear=_NONE)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -10607,7 +10656,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # one size 1 axis needs squeezing.
         dx = d.to_dask_array()
         dx = dx.squeeze(axis=tuple(axes))
-        d._set_dask(dx)
+
+        # Squeezing a dimension doesn't affect the cached elements
+        d._set_dask(dx, clear=_ALL ^ _CACHE)
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
