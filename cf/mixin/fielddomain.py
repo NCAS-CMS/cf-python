@@ -1187,7 +1187,7 @@ class FieldDomain:
 
             .. versionadded:: 3.14.1
 
-            .. seealso:: `dimension_to_auxiliary`
+        .. seealso:: `dimension_to_auxiliary`
 
         :Parameters:
 
