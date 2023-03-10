@@ -1185,7 +1185,7 @@ class FieldDomain:
         from the selected auxiliary coordinate construct, and the
         auxiliary coordinate construct is removed.
 
-            .. versionadded:: 3.14.1
+        .. versionadded:: 3.14.1
 
         .. seealso:: `dimension_to_auxiliary`
 
