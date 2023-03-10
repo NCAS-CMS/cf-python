@@ -1715,7 +1715,7 @@ class FieldDomain:
     def dimension_to_auxiliary(self, *identity, inplace=False, **filter_kwargs):
         """Move dimension coordinates to an auxiliary coordinate construct.
 
-            .. versionadded:: 3.14.1
+        .. versionadded:: 3.14.1
 
             .. seealso:: `auxiliary_to_dimension`
 
