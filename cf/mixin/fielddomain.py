@@ -1200,7 +1200,7 @@ class FieldDomain:
         :Returns:
 
             `{{class}}` or `None`
-                The field with the new dimension coordinate construct,
+                The {{class}} with the new dimension coordinate construct,
                 or `None` if the operation was in-place.
 
         **Examples**
