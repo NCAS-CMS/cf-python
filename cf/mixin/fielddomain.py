@@ -1178,9 +1178,11 @@ class FieldDomain:
         return True
 
     @_inplace_enabled(default=False)
-    def auxiliary_to_dimension(self, *identity, inplace=False, **filter_kwargs):
+    def auxiliary_to_dimension(
+        self, *identity, inplace=False, **filter_kwargs
+    ):
         """Move auxiliary coordinates to a dimension coordinate construct.
-        
+
         A new dimension coordinate construct is derived
         from the selected auxiliary coordinate construct, and the
         auxiliary coordinate construct is removed.
@@ -1195,7 +1197,7 @@ class FieldDomain:
                 Select the unique 1-d auxiliary coordinate construct
                 returned by ``f.auxiliary_coordinate(*identity,
                 filter_by_naxes=(1,), **filter_kwargs)``. See
-                `auxiliary_coordinate` for details.                
+                `auxiliary_coordinate` for details.
 
             {{inplace: `bool`, optional}}
 
@@ -1240,9 +1242,11 @@ class FieldDomain:
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        filter_kwargs['filter_by_naxes'] = (1,)
+        filter_kwargs["filter_by_naxes"] = (1,)
 
-        key, aux = f.auxiliary_coordinate(*identity, item=True, **filter_kwargs)
+        key, aux = f.auxiliary_coordinate(
+            *identity, item=True, **filter_kwargs
+        )
 
         if aux.dtype.kind in "SU":
             raise ValueError(
@@ -1250,13 +1254,13 @@ class FieldDomain:
                 f"with datatype {aux.dtype}. Only numerical auxiliary "
                 "coordinate constructs can be converted."
             )
-            
+
         if aux.has_geometry():
             raise ValueError(
                 f"Can't create a dimension coordinate construct from {aux!r} "
                 "with geometry cells"
-            )        
-            
+            )
+
         axis = f.get_data_axes(key)
         dim = f._DimensionCoordinate(source=aux)
         f.set_construct(dim, axes=axis)
@@ -1714,7 +1718,9 @@ class FieldDomain:
         return old
 
     @_inplace_enabled(default=False)
-    def dimension_to_auxiliary(self, *identity, inplace=False, **filter_kwargs):
+    def dimension_to_auxiliary(
+        self, *identity, inplace=False, **filter_kwargs
+    ):
         """Move dimension coordinates to an auxiliary coordinate construct.
 
         A new auxiliary coordinate construct is derived
@@ -1727,7 +1733,7 @@ class FieldDomain:
 
         :Parameters:
 
-           identity, filter_kwargs: optional  
+           identity, filter_kwargs: optional
                Select the unique dimension coordinate construct
                returned by ``f.dimension_coordinate(*identity, **filter_kwargs)``.
                See `dimension_coordinate` for details.
@@ -1775,7 +1781,9 @@ class FieldDomain:
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        key, dim = f.dimension_coordinate(*identity, item=True, **filter_kwargs)
+        key, dim = f.dimension_coordinate(
+            *identity, item=True, **filter_kwargs
+        )
 
         axis = f.get_data_axes(key)
         aux = f._AuxiliaryCoordinate(source=dim)

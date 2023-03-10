@@ -3,9 +3,11 @@ from math import prod
 import cfdm
 
 from . import mixin
+from .auxiliarycoordinate import AuxiliaryCoordinate
 from .constructs import Constructs
 from .data import Data
 from .decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
+from .dimensioncoordinate import DimensionCoordinate
 from .domainaxis import DomainAxis
 from .functions import (
     _DEPRECATION_ERROR_ARG,
@@ -13,9 +15,6 @@ from .functions import (
     indices_shape,
     parse_indices,
 )
-
-from .auxiliarycoordinate import    AuxiliaryCoordinate
-from .dimensioncoordinate import    DimensionCoordinate
 
 _empty_set = set()
 
