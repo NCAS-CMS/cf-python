@@ -12,7 +12,7 @@ version=`python -c "import cf; print(cf.__version__)"`
 
 sphinx_version=`python -c "import sphinx; print(sphinx.__version__)"`
 if [[ $sphinx_version != "2.4.5"  ]] ; then
-  echo "ERROR: Must use sphinx version 2.4.5. Got $version"
+  echo "ERROR: Must use sphinx version 2.4.5. Got $sphinx_version"
   exit 3
 fi
 
@@ -68,6 +68,11 @@ fi
 mkdir -p $dir/_downloads
 
 make html $dir
+rc=$?
+if [[ $rc != 0 ]]; then
+    echo "ERROR: Failed in: make html $dir"
+    exit $rc
+fi
 
 cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py source/field_analysis.py $dir/_downloads
 
@@ -80,6 +85,46 @@ do
     $dir/tutorial.html \
     $dir/analysis.html
     # all pages referencing these resources must be added to this list
+done
+
+# For Recipes
+files_to_copy=(
+    "source/recipes/recipes_jupyter.zip"
+    "source/recipes/recipes_python.zip"
+    "source/recipes/plot_1_recipe.ipynb"
+    "source/recipes/plot_1_recipe.py"
+    "source/recipes/plot_2_recipe.ipynb"
+    "source/recipes/plot_2_recipe.py"
+    "source/recipes/plot_3_recipe.ipynb"
+    "source/recipes/plot_3_recipe.py"
+    "source/recipes/plot_4_recipe.ipynb"
+    "source/recipes/plot_4_recipe.py"
+    "source/recipes/plot_5_recipe.ipynb"
+    "source/recipes/plot_5_recipe.py"
+    "source/recipes/plot_6_recipe.ipynb"
+    "source/recipes/plot_6_recipe.py"
+)
+
+destination_dir="$dir/_downloads"
+
+cp -pv "${files_to_copy[@]}" "$destination_dir"
+
+html_files=(
+    "$dir/recipes/index.html"
+    "$dir/recipes/plot_1_recipe.html"
+    "$dir/recipes/plot_2_recipe.html"
+    "$dir/recipes/plot_3_recipe.html"
+    "$dir/recipes/plot_4_recipe.html"
+    "$dir/recipes/plot_5_recipe.html"
+    "$dir/recipes/plot_6_recipe.html"
+)
+
+for html_file in "${html_files[@]}"
+do
+    for download_file in "${files_to_copy[@]}"
+    do
+        sed -i "s|href=\".*\/${download_file##*/}\"|href=\"$destination_dir/${download_file##*/}\"|g" "$html_file"
+    done
 done
 
 # Copy over our custom stylesheet. It is referenced in the HTML docs
@@ -110,13 +155,14 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
 	  function/*.html \
 	  method/*.html \
 	  attribute/*.html \
+	  recipes/*.html \
           *.inv \
           *.js \
           _static \
           _templates \
-          _downloads/cf_tutorial_files.zip \
-          _downloads/tutorial.py \
-          _downloads/field_analysis.py \
+          _downloads/*.zip \
+          _downloads/*.ipynb \
+          _downloads/*.py \
           _images/*.png \
           _images/*.svg
 

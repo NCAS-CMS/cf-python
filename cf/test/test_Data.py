@@ -4410,47 +4410,55 @@ class DataTest(unittest.TestCase):
 
     def test_Data__str__(self):
         """Test `Data.__str__`"""
-        elements0 = ("first_element", "last_element", "second_element")
+        elements0 = (0, -1, 1)
         for array in ([1], [1, 2], [1, 2, 3]):
             elements = elements0[: len(array)]
 
             d = cf.Data(array)
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertNotIn(element, d._custom)
+                self.assertNotIn(element, cache)
 
             self.assertEqual(str(d), str(array))
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertIn(element, d._custom)
+                self.assertIn(element, cache)
 
             d[0] = 1
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertNotIn(element, d._custom)
+                self.assertNotIn(element, cache)
 
             self.assertEqual(str(d), str(array))
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertIn(element, d._custom)
+                self.assertIn(element, cache)
 
             d += 0
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertNotIn(element, d._custom)
+                self.assertNotIn(element, cache)
 
             self.assertEqual(str(d), str(array))
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertIn(element, d._custom)
+                self.assertIn(element, cache)
 
         # Test when size > 3, i.e. second element is not there.
         d = cf.Data([1, 2, 3, 4])
+        cache = d._get_cached_elements()
         for element in elements0:
-            self.assertNotIn(element, d._custom)
+            self.assertNotIn(element, cache)
 
         self.assertEqual(str(d), "[1, ..., 4]")
-        self.assertNotIn("second_element", d._custom)
+        cache = d._get_cached_elements()
+        self.assertNotIn(1, cache)
         for element in elements0[:2]:
-            self.assertIn(element, d._custom)
+            self.assertIn(element, cache)
 
         d[0] = 1
         for element in elements0:
-            self.assertNotIn(element, d._custom)
+            self.assertNotIn(element, d._get_cached_elements())
 
     def test_Data_cull_graph(self):
         """Test `Data.cull`"""

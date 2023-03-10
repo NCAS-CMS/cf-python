@@ -1414,31 +1414,47 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _del_cached_elements(self):
         """Delete any cached element values.
 
-        Updates *data* in-place to remove the cached element values
-        ``'first_element'``, ``'second_element'`` and
-        ``'last_element'``.
-
-        .. note:: By default, `_del_cached_elements` is run whenever
-                  the `_set_dask` and `del_dask` methods are used. If
-                  the `dask` array is updated or changed without using
-                  the default behaviour of either of these two
-                  methods, and there is any chance that the cached
-                  values might be inconsistent with the new data, then
-                  `_del_cached_elements` must be called explicitly to
-                  ensure consistency.
+        Updates *data* in-place to remove the cached element values.
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `_del_dask`, `_set_cached_elements`, `_set_dask`
+        .. seealso:: `_get_cached_elements`, `_set_cached_elements`
 
         :Returns:
 
             `None`
 
         """
-        custom = self._custom
-        for element in ("first_element", "second_element", "last_element"):
-            custom.pop(element, None)
+        self._custom.pop("cached_elements", None)
+
+    def _get_cached_elements(self):
+        """Return the cache of selected element values.
+
+        .. versionadded:: 3.14.1
+
+        .. seealso:: `_del_cached_elements`, `_set_cached_elements`
+
+        :Returns:
+
+            `dict`
+                The cached element values, where the keys are the element
+                positions within the dask array and the values are the cached
+                values for each position.
+
+        **Examples**
+
+        >>> d._get_cached_elements()
+        {}
+
+        >>> d._get_cached_elements()
+        {0: 273.15, 1: 274.56, -1: 269.95}
+
+        """
+        cache = self._custom.get("cached_elements")
+        if not cache:
+            return {}
+
+        return cache.copy()
 
     def _set_cached_elements(self, elements):
         """Cache selected element values.
@@ -1446,9 +1462,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Updates *data* in-place to store the given element values
         within its ``custom`` dictionary.
 
+        .. warning:: Never change ``_custom['cached_elements']``
+                  in-place.
+
         .. versionadded:: 3.14.0
 
-        .. seealso:: `_del_cached_elements`
+        .. seealso:: `_del_cached_elements`, `_get_cached_elements`
 
         :Parameters:
 
@@ -1464,10 +1483,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d._set_cached_elements({'first_element': 273.15})
+        >>> d._set_cached_elements({0: 273.15})
 
         """
-        self._custom.update(elements)
+        cache = self._custom.get("cached_elements")
+        if cache:
+            cache = cache.copy()
+            cache.update(elements)
+        else:
+            cache = elements.copy()
+
+        self._custom["cached_elements"] = cache
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -8217,10 +8243,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         try:
-            return self._custom["first_element"]
+            return self._custom["cached_elements"][0]
         except KeyError:
             item = super().first_element()
-            self._set_cached_elements({"first_element": item})
+            self._set_cached_elements({0: item})
             return item
 
     def second_element(self):
@@ -8256,10 +8282,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         try:
-            return self._custom["second_element"]
+            return self._custom["cached_elements"][1]
         except KeyError:
             item = super().second_element()
-            self._set_cached_elements({"second_element": item})
+            self._set_cached_elements({1: item})
             return item
 
     def last_element(self):
@@ -8300,10 +8326,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         try:
-            return self._custom["last_element"]
+            return self._custom["cached_elements"][-1]
         except KeyError:
             item = super().last_element()
-            self._set_cached_elements({"last_element": item})
+            self._set_cached_elements({-1: item})
             return item
 
     def flat(self, ignore_masked=True):

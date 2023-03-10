@@ -66,6 +66,7 @@ Properties
    ~cf.List.set_property
    ~cf.List.properties
    ~cf.List.clear_properties
+   ~cf.List.del_properties
    ~cf.List.set_properties
 
 .. rubric:: Attributes

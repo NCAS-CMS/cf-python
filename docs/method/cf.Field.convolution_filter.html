@@ -11,6 +11,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -72,7 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -128,7 +132,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.convolution_filter<a class="headerlink" href="#cf-field-convolution-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.convolution_filter">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">convolution_filter</code><span class="sig-paren">(</span><em class="sig-param">window=None</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">update_bounds=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/field.py#L10812-L11149"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convolution_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">convolution_filter</code><span class="sig-paren">(</span><em class="sig-param">window=None</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">update_bounds=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/field.py#L10862-L11199"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convolution_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolve the field construct along the given axis with the
 specified filter.</p>
 <p>The magnitude of the integral of the filter (i.e. the sum of
@@ -137,7 +141,7 @@ the convolved values. For example, window weights of <code class="docutils liter
 <span class="pre">0.2</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2]</span></code> will produce a non-weighted 5-point
 running mean; and window weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will
 produce a 5-point running sum. Note that the window weights
-returned by functions of the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do
+returned by functions of the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do
 not necessarily sum to 1 (see the examples for details).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -161,7 +165,7 @@ update the cell method constructs.</p>
 with <code class="docutils literal notranslate"><span class="pre">window=[0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2]</span></code></p>
 </dd>
 </dl>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite
 of window functions for creating window weights for
 filtering (see the examples for details).</p>
 <div class="versionadded">
@@ -353,7 +357,7 @@ was in-place.</p>
 <p>Calculate a convolution along the time axis with Gaussian window
 weights, using the “nearest” mode at the border of the edges of
 the time dimension (note that the window weights returned by
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> functions do not necessarily sum to 1):</p>
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> functions do not necessarily sum to 1):</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy.signal.windows</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gaussian_window</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gaussian_window</span><span class="p">)</span>
@@ -388,11 +392,11 @@ the time dimension (note that the window weights returned by
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-01-31.
+      &copy;2023, NCAS | Page built on 2023-03-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

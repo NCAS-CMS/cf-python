@@ -436,10 +436,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         # Create a dictionary of the element values
         elements = {}
-        for element, value in zip(
-            ("first_element", "second_element", "last_element"),
-            values,
-        ):
+        for element, value in zip((0, 1, -1), values):
             if value is None:
                 continue
 

@@ -57,7 +57,8 @@ until the result of the final one is requested.
 When the result of a stack of lazy operations is computed it is not
 cached, so if the result is requested again then the calculations are
 re-computed. However, a construct's `~cf.Field.persist` method can be
-used force the result to be retained in memory for fast future access.
+used to force the result to be retained in memory for fast future
+access.
 
 Some notable cases where non-lazy computations occur are:
 

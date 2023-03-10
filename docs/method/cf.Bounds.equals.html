@@ -11,6 +11,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -72,7 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -132,30 +136,32 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
-<li><p>the same descriptive properties must be present, with the same
-values and data types, and vector-valued properties must also
-have same the size and be element-wise equal (see the
-<em>ignore_properties</em> and <em>ignore_data_type</em> parameters), and</p></li>
+<li><p>the same descriptive properties must be present, with the
+same values and data types, and vector-valued properties
+must also have same the size and be element-wise equal (see
+the <em>ignore_properties</em> and <em>ignore_data_type</em> parameters),
+and</p></li>
 </ul>
 <ul class="simple">
-<li><p>if there are data arrays then they must have same shape and data
-type, the same missing data mask, and be element-wise equal (see
-the <em>ignore_data_type</em> parameter).</p></li>
+<li><p>if there are data arrays then they must have same shape and
+data type, the same missing data mask, and be element-wise
+equal (see the <em>ignore_data_type</em> parameter).</p></li>
 </ul>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
-<code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
-differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences)
-are positive, typically very small numbers. See the <em>atol</em> and
-<em>rtol</em> parameters.</p>
-<p>If data arrays are compressed then the compression type and the
-underlying compressed arrays must be the same, as well as the
-arrays in their uncompressed forms. See the <em>ignore_compression</em>
-parameter.</p>
-<p>Any type of object may be tested but, in general, equality is only
-possible with another object of the same type, or a subclass of
-one. See the <em>ignore_type</em> parameter.</p>
-<p>NetCDF elements, such as netCDF variable and dimension names, do
-not constitute part of the CF data model and so are not checked.</p>
+<code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on
+absolute differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative
+differences) are positive, typically very small numbers. See
+the <em>atol</em> and <em>rtol</em> parameters.</p>
+<p>If data arrays are compressed then the compression type and
+the underlying compressed arrays must be the same, as well as
+the arrays in their uncompressed forms. See the
+<em>ignore_compression</em> parameter.</p>
+<p>Any type of object may be tested but, in general, equality is
+only possible with another object of the same type, or a
+subclass of one. See the <em>ignore_type</em> parameter.</p>
+<p>NetCDF elements, such as netCDF variable and dimension names,
+do not constitute part of the CF data model and so are not
+checked.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.7.0.</span></p>
 </div>
@@ -164,16 +170,13 @@ not constitute part of the CF data model and so are not checked.</p>
 <dd class="field-odd"><dl>
 <dt>other:</dt><dd><p>The object to compare for equality.</p>
 </dd>
-<dt>atol: float, optional</dt><dd><p>The tolerance on absolute differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cf.atol.html#cf.atol" title="cf.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.atol</span></code></a>
-function.</p>
+<dt>atol: number, optional</dt><dd><p>The tolerance on absolute differences between real
+numbers. The default value is set by the
+<a class="reference internal" href="../function/cf.atol.html#cf.atol" title="cf.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.atol</span></code></a> function.</p>
 </dd>
-<dt>rtol: float, optional</dt><dd><p>The tolerance on relative differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a>
-function.</p>
-</dd>
-<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the “_FillValue” and “missing_value”
-properties are omitted from the comparison.</p>
+<dt>rtol: number, optional</dt><dd><p>The tolerance on relative differences between real
+numbers. The default value is set by the
+<a class="reference internal" href="../function/cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a> function.</p>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
 string equal ignoring case to one of:</p>
@@ -200,12 +203,22 @@ equivalent string that is set (up to a maximum of
 description that is printed to convey information
 about the operation.</p>
 </dd>
-<dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of properties to omit from the comparison.</p>
-</dd>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
 comparisons. By default different numerical data types
-imply inequality, regardless of whether the elements are
-within the tolerance for equality.</p>
+imply inequality, regardless of whether the elements
+are within the tolerance for equality.</p>
+</dd>
+<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then all <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
+properties are omitted from the comparison.</p>
+</dd>
+</dl>
+<p>{{ignore_properties: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional}}</p>
+<dl class="simple">
+<dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the compression type and, if applicable,
+the underlying compressed arrays must be the same, as
+well as the arrays in their uncompressed forms. By
+default only the the arrays in their uncompressed
+forms are compared.</p>
 </dd>
 <dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then any compression applied to the underlying
 arrays is ignored and only the uncompressed arrays are
@@ -214,10 +227,12 @@ if applicable, the underlying compressed arrays must be
 the same, as well as the arrays in their uncompressed
 forms.</p>
 </dd>
-<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general, equality
-is only possible with another object of the same type, or
-a subclass of one. If <em>ignore_type</em> is True then equality
-is possible for any object with a compatible API.</p>
+<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general,
+equality is only possible with another <a class="reference internal" href="../class/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>
+instance, or a subclass of one. If <em>ignore_type</em> is
+True then <code class="docutils literal notranslate"><span class="pre">cf.Bounds(source=other)</span></code> is
+tested, rather than the <code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the
+<em>other</em> parameter.</p>
 </dd>
 </dl>
 </dd>
@@ -251,11 +266,11 @@ is possible for any object with a compatible API.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-01-31.
+      &copy;2023, NCAS | Page built on 2023-03-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 
