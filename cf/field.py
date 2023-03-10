@@ -252,6 +252,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """Store component classes."""
         instance = super().__new__(cls)
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
+        instance._DimensionCoordinate = DimensionCoordinate
         instance._Bounds = Bounds
         instance._Constructs = Constructs
         instance._Domain = Domain
