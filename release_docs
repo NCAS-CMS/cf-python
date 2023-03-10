@@ -68,6 +68,11 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] || [[ $1 = "dev-clean" ]] ; then
 fi
 mkdir -p $dir/_downloads
 
+if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
+  # Force recreation of recipes
+  rm source/recipes/*.md5
+fi
+
 make html $dir
 rc=$?
 if [[ $rc != 0 ]]; then
