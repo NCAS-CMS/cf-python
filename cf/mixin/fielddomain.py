@@ -1775,7 +1775,7 @@ class FieldDomain:
 
         axis = f.get_data_axes(key)
         aux = f._AuxiliaryCoordinate(source=dim)
-        f.set_construct(dim, axes=axis)
+        f.set_construct(aux, axes=axis)
         f.del_construct(key)
         return f
 
