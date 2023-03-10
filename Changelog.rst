@@ -11,7 +11,7 @@ version 3.14.1
 * New keyword parameter to `cf.unique_constructs`:
   ``ignore_properties``
   (https://github.com/NCAS-CMS/cf-python/issues/597)
-* Allow `cf.aggregate` and to retain external cell meausures
+* Allow `cf.aggregate` and to retain external cell measures
   (https://github.com/NCAS-CMS/cf-python/issues/605)
 * Fixed bug in `cf.Field.collapse` that always retained invalid
   vertical coordinate reference systems

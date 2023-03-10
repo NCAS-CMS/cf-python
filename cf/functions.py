@@ -729,7 +729,7 @@ class chunksize(ConstantAccess):
               `chunksize` is used in a context manager then the `dask`
               configuration value is only altered within that context.
               Setting the chunk size directly from the `dask`
-              configuration API will affect susbsequent data creation,
+              configuration API will affect subsequent data creation,
               but will *not* change the value of `chunksize`.
 
     :Parameters:
@@ -751,7 +751,7 @@ class chunksize(ConstantAccess):
 
             *Parameter example:*
                Chunksizes of ``'2678.9'`` and ``'2.6789 KB'`` are both
-               equvalent to ``2678``.
+               equivalent to ``2678``.
 
     :Returns:
 

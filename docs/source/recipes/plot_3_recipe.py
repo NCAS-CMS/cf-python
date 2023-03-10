@@ -1,6 +1,6 @@
 """
 Plotting global mean temperatures spatially
-====================
+===========================================
 
 In this recipe, we will plot the global mean temperature spatially.
 """

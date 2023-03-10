@@ -1,6 +1,6 @@
 """
 Calculating and plotting the global average temperature anomalies
-====================
+=================================================================
 
 In this recipe we will calculate and plot the global average temperature anomalies.
 """
@@ -31,7 +31,7 @@ lon = temp.coordinate("long_name=longitude")
 lat = temp.coordinate("Y")
 
 # %%
-# 5. Print the desciption of near surface temperature to show properties of all constructs:
+# 5. Print the description of near surface temperature to show properties of all constructs:
 
 temp.dump()
 

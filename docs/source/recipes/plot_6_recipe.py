@@ -1,6 +1,6 @@
 """
 Converting from rotated latitude-longitude to regular latitude-longitude
-====================
+========================================================================
 
 In this recipe, we will be regridding from a rotated latitude-longitude source domain to a regular latitude-longitude destination domain.
 """
@@ -20,7 +20,7 @@ f = cf.read("~/recipes/au952a.pd20510414.pp")
 print(f)
 
 # %%
-# 3. Select the field by index and print its desciption to show properties of all constructs:
+# 3. Select the field by index and print its description to show properties of all constructs:
 
 gust = f[0]
 gust.dump()
@@ -46,7 +46,7 @@ cfp.mapset(resolution="50m", proj="rotated")
 cfp.con(gust.subspace(T=test), lines=False)
 
 # %%
-# 8. Create dimension coordinates for the destination grid with the latitude and longitude values for Europe. `np.linspace <https://numpy.org/doc/stable/reference/generated/numpy.linspace.html>`_ generates evenly spaced values between the specified latitude and longitude range. Bounds of the target longitude and target latitude are created and spherical regridding is then performed on the gust variable by passing the target latitude and target longitude as arguments. The method also takes an argument ``'linear'`` which specifies the type of regridding method to use. The desciption of the ``regridded_data`` is finally printed to show properties of all its constructs:
+# 8. Create dimension coordinates for the destination grid with the latitude and longitude values for Europe. `np.linspace <https://numpy.org/doc/stable/reference/generated/numpy.linspace.html>`_ generates evenly spaced values between the specified latitude and longitude range. Bounds of the target longitude and target latitude are created and spherical regridding is then performed on the gust variable by passing the target latitude and target longitude as arguments. The method also takes an argument ``'linear'`` which specifies the type of regridding method to use. The description of the ``regridded_data`` is finally printed to show properties of all its constructs:
 
 target_latitude = cf.DimensionCoordinate(
     data=cf.Data(np.linspace(34, 72, num=10), "degrees_north")

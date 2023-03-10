@@ -3,6 +3,7 @@ absolutised
 abspath
 addattr
 aggregatable
+al
 allclose
 amongst
 analyse
@@ -46,6 +47,7 @@ boolean
 booleans
 Booleans
 broadcastable
+Caron
 categorised
 cdl
 ceil
@@ -74,6 +76,7 @@ chunksizes
 Chunksizes
 climatological
 Climatological
+cls
 Colour
 conda
 config
@@ -90,6 +93,7 @@ CoordinateReference
 coords
 coprime
 cosh
+crs
 ctype
 cumsum
 curvilinear
@@ -132,6 +136,7 @@ DomainAncillary
 domainaxis
 DomainAxis
 donotchecknonaggregatingaxes
+Drach
 DSG
 dst
 dt
@@ -144,6 +149,7 @@ El
 endian
 eq
 Equivalant
+et
 etc
 extrema
 fdlowing
@@ -173,6 +179,7 @@ fy
 GatheredArray
 ge
 Geosci
+Geosciences
 geospatial
 getitem
 getprop
@@ -180,7 +187,9 @@ getslice
 ggroup
 gregorian
 gt
+Hankin
 hardmask
+Hartnett
 hasbounds
 hasdata
 hashable
@@ -236,6 +245,7 @@ Iwi
 ixor
 Januarys
 Javier
+ji
 jja
 kB
 keepdims
@@ -289,6 +299,7 @@ netcdftime
 Nino
 nondimensional
 nonzero
+normalized
 notPP
 npartitions
 numblocks
@@ -324,6 +335,7 @@ rdiv
 readonly
 rechunk
 rechunked
+Rechunking
 refs
 regrid
 Regrid
@@ -339,6 +351,8 @@ relpath
 repr
 representable
 reshapings
+rewritable
+Rew
 rfloordiv
 rint
 rlshift
@@ -365,6 +379,7 @@ seterr
 setitem
 setmask
 setprop
+Signell
 sinh
 spatiotemporal
 sqrt
@@ -391,6 +406,7 @@ Substrings
 superset
 swapaxes
 symlinks
+sys
 tanh
 tas
 tempdir
@@ -400,8 +416,10 @@ TimeDuration
 timeseries
 timeSeries
 timeSeriesProfile
+todense
 todict
 tolist
+tosparse
 trac
 trajectoryProfile
 trilinear
@@ -426,16 +444,19 @@ uncompresses
 uncompressing
 unfilter
 Univ
+unmapped
 unselected
 Unselected
 unsqueeze
 var
 varid
 varray
+Vd
 verboseness
 versionadded
 vn
-vorticity
+Voronoi
+vorticity	
 wi
 wo
 xor

@@ -1,6 +1,6 @@
 """
 Plotting wind vectors overlaid on precipitation data
-====================
+====================================================
 
 In this recipe we will plot wind vectors, derived from northward and eastward wind components, over precipitation data.
 """
