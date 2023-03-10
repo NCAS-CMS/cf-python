@@ -3,7 +3,7 @@ version 3.14.1
 
 **2023-03-10**
 
-* Python 3.7 support removed
+* Python 3.7 support removed.
 * New method: `cf.Field.del_properties`
   (https://github.com/NCAS-CMS/cf-python/issues/598)
 * New keyword parameter to `cf.Data.concatenate`: ``relaxed_units``
