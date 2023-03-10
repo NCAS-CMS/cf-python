@@ -252,6 +252,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         """Store component classes."""
         instance = super().__new__(cls)
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
+        instance._DimensionCoordinate = DimensionCoordinate
         instance._Bounds = Bounds
         instance._Constructs = Constructs
         instance._Domain = Domain
@@ -3497,7 +3498,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         The method of production of the original data. If it was
         model-generated, `source` should name the model and its version,
         as specifically as could be useful. If it is observational,
-        `source` should characterize it (for example, ``'surface
+        `source` should characterise it (for example, ``'surface
         observation'`` or ``'radiosonde'``). See
         http://cfconventions.org/latest.html for details.
 
@@ -7564,7 +7565,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 collapse axes are removed, but the vertical coordinate
                 reference construct remains. This could result in
                 `compute_vertical_coordinates` returning incorrect
-                non-parameteric vertical coordinate values.
+                non-parametric vertical coordinate values.
 
                 .. versionadded:: 3.14.1
 

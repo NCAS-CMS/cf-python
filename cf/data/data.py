@@ -96,13 +96,13 @@ _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
 # Contstants used to specify which `Data` components should be cleared
-# when the dask array is updated. See `Data._clear_after_dask_update`
+# when a new dask array is set. See `Data._clear_after_dask_update`
 # for details.
-_NONE = 0  # =  0b000000
-_ARRAY = 1  # = 0b000001
-_CACHE = 2  # = 0b000010
-_CFA = 4  # =   0b000100
-_ALL = 7  # =   0b000111
+_NONE = 0  # =  0b0000
+_ARRAY = 1  # = 0b0001
+_CACHE = 2  # = 0b0010
+_CFA = 4  # =   0b0100
+_ALL = 15  # =  0b1111
 
 
 class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
@@ -1120,7 +1120,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
             self[indices] = reset
 
-        # Remove componenets made invalid by updating the `dask` array
+        # Remove elements made invalid by updating the `dask` array
         # in-place
         self._clear_after_dask_update(_ALL)
 
@@ -1261,6 +1261,38 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         .. versionadded:: TODOCFAVER
 
         .. seealso:: `cfa_get_term`, `cfa_set_term`
+
+        .. seealso:: `_del_Array`, `_del_cached_elements`, `_set_dask`
+
+        :Parameters:
+
+            clear: `int`, optional
+                Specify which components should be removed. Which
+                components are removed is determined by sequentially
+                combining *clear* with the ``_ARRAY`` and ``_CACHE``
+                integer-valued contants, using the bitwise AND
+                operator:
+
+                * If ``clear & _ARRAY`` is non-zero then a source
+                  array is deleted.
+
+                * If ``clear & _CACHE`` is non-zero then cached
+                  element values are deleted.
+
+                By default *clear* is the ``_ALL`` integer-valued
+                constant, which results in all components being
+                removed.
+
+                If *clear* is the ``_NONE`` integer-valued constant
+                then no components are removed.
+
+                To retain a component and remove all others, use
+                ``_ALL`` with the bitwise OR operator. For instance,
+                if *clear* is ``_ALL ^ _CACHE`` then the cached
+                element values will be kept but all other components
+                will be removed.
+
+                .. versionadded:: 3.14.1
 
         :Returns:
 
@@ -1412,10 +1444,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 Specify which components should be removed. By default
                 *clear* is the ``_ALL`` integer-valued constant, which
                 results in all components being removed. See
-                `_clear_after_dask_update` for details.
-
-                If there is no dask array then no components are
-                removed, regardless of the value of *clear*.
+                `_clear_after_dask_update` for details. If there is
+                no dask array then no components are removed,
+                regardless of the value of *clear*.
 
         :Returns:
 
@@ -3925,6 +3956,15 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # Set the new dask array
         data0._set_dask(dx, clear=_ALL ^ cfa)
 
+        # Set the appropriate cached elements
+        cached_elements = {}
+        for i in (0, -1):
+            element = processed_data[i]._get_cached_elements().get(i)
+            if element is not None:
+                cached_elements[i] = element
+
+        data0._set_cached_elements(cached_elements)
+
         # Set the CFA-netCDF aggregated data instructions and file
         # name substitutions by combining them from all of the input
         # data instances, giving precedence to those towards the left
@@ -3945,15 +3985,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 if not d.cfa_get_term():
                     data0.cfa_set_term(False)
                     break
-
-        # Set the appropriate cached elements
-        cached_elements = processed_data[0]._get_cached_elements()
-        cached_elements.pop(-1, None)
-        last_element = processed_data[-1]._get_cached_elements().get(-1)
-        if last_element is not None:
-            cached_elements[-1] = last_element
-
-        data0._set_cached_elements(cached_elements)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no
         # longer.

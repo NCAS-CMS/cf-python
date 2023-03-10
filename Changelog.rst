@@ -13,8 +13,9 @@ version 3.14.2
 version 3.14.1
 --------------
 
-**2023-??-??**
+**2023-03-10**
 
+* Python 3.7 support removed.
 * New method: `cf.Field.del_properties`
   (https://github.com/NCAS-CMS/cf-python/issues/598)
 * New keyword parameter to `cf.Data.concatenate`: ``relaxed_units``
@@ -22,12 +23,14 @@ version 3.14.1
 * New keyword parameter to `cf.unique_constructs`:
   ``ignore_properties``
   (https://github.com/NCAS-CMS/cf-python/issues/597)
-* Allow `cf.aggregate` and to retain external cell meausures
+* Allow `cf.aggregate` and to retain external cell measures
   (https://github.com/NCAS-CMS/cf-python/issues/605)
 * Fixed bug in `cf.Field.collapse` that always retained invalid
   vertical coordinate reference systems
   (https://github.com/NCAS-CMS/cf-python/issues/599)
 * Changed dependency: ``1.10.0.3<=cfdm<1.10.1.0``
+* Changed dependency: ``cfunits>=3.3.5``
+* Changed dependency: ``8.0.0<=ESMPYcfdm<8.2.0``
 
 ----
 
@@ -754,7 +757,6 @@ version 2.3.1
 	
 version 2.3.0
 -------------
-----
 
 **2018-10-22**
 

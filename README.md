@@ -42,7 +42,7 @@ http://ncas-cms.github.io/cf-python/installation.html
 Recipes
 =======
 
-https://ncas-cms.github.io/cf-python/recipes.html
+https://ncas-cms.github.io/cf-python/recipes
 
 Tutorial
 ========

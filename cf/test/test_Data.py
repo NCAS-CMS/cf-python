@@ -4506,6 +4506,26 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.Units, units)
         self.assertTrue((e.array == [72, 48, 24, 0]).all())
 
+    def test_Data_clear_after_dask_update(self):
+        """Test Data._clear_after_dask_update"""
+        d = cf.Data([1, 2, 3], "m")
+        dx = d.to_dask_array()
+
+        d.first_element()
+        d.second_element()
+        d.last_element()
+
+        self.assertTrue(d._get_cached_elements())
+
+        _ALL = cf.data.data._ALL
+        _CACHE = cf.data.data._CACHE
+
+        d._set_dask(dx, clear=_ALL ^ _CACHE)
+        self.assertTrue(d._get_cached_elements())
+
+        d._set_dask(dx, clear=_ALL)
+        self.assertFalse(d._get_cached_elements())
+
     def test_Data_cfa_aggregated_data(self):
         """Test `Data` CFA aggregated_data methods"""
         d = cf.Data(9)

@@ -23,7 +23,7 @@
    cf_data_model
    installation
    contributing
-   recipes
+   recipes/index
    tutorial
    analysis
    api_reference

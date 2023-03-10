@@ -108,7 +108,7 @@ visualisation package <http://ajheaps.github.io/cf-plot>`_, run
    :caption: *Install with conda.*
 
    $ conda install -c conda-forge cf-python cf-plot udunits2
-   $ conda install -c conda-forge esmpy
+   $ conda install -c conda-forge esmpy=8.2.0
 
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work.
@@ -201,7 +201,7 @@ Required
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.6.0 or newer
   (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.0.2 or up to,
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.0.3 or up to,
   but not including, 1.10.1.0.
 
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.4 or newer.
@@ -244,11 +244,11 @@ environments for which these features are not required.
 .. rubric:: Regridding
 
 * `ESMF <https://earthsystemmodeling.org/esmpy/>`_, version
-  8.0.0 or newer. This is easily installed via conda with
+  8.0.0 or up to 8.2.0. This is easily installed via conda with
 
   .. code-block:: console
 
-     $ conda install -c conda-forge esmpy
+     $ conda install -c conda-forge esmpy=8.2.0
 
   or may be installed from source.
 
