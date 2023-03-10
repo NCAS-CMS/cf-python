@@ -1721,7 +1721,7 @@ class FieldDomain:
 
         :Parameters:
 
-           identity
+           identity, filter_kwargs: optional  
                Select the unique dimension coordinate construct
                returned by ``f.dimension_coordinate(*identity)``.
                See `dimension_construct` for details.
