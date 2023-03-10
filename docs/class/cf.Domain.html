@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
 
 
 
@@ -131,7 +131,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Domain">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Domain</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.2/cfdm/domain.py#L13-L1052"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Domain</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.3/cfdm/domain.py#L13-L1052"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.properties.Properties</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domain.Domain</span></code></p>
 <p>A domain construct of the CF data model.</p>
 <p>The domain represents a set of discrete “locations” in what
@@ -283,8 +283,8 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.clear_properties.html#cf.Domain.clear_properties" title="cf.Domain.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
 <td><p>Remove all properties.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain.del_properties</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.del_properties.html#cf.Domain.del_properties" title="cf.Domain.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a></p></td>
+<td><p>Remove properties.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.set_properties.html#cf.Domain.set_properties" title="cf.Domain.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
 <td><p>Set properties.</p></td>
@@ -457,29 +457,35 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.auxiliary_coordinate.html#cf.Domain.auxiliary_coordinate" title="cf.Domain.auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinate</span></code></a></p></td>
 <td><p>Select an auxiliary coordinate construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.cell_measure.html#cf.Domain.cell_measure" title="cf.Domain.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.auxiliary_to_dimension.html#cf.Domain.auxiliary_to_dimension" title="cf.Domain.auxiliary_to_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_to_dimension</span></code></a></p></td>
+<td><p>Move auxiliary coordinates to a dimension coordinate construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.cell_measure.html#cf.Domain.cell_measure" title="cf.Domain.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code></a></p></td>
 <td><p>Select a cell measure construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.coordinate.html#cf.Domain.coordinate" title="cf.Domain.coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.coordinate.html#cf.Domain.coordinate" title="cf.Domain.coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate</span></code></a></p></td>
 <td><p>Select a dimension or auxiliary coordinate construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.coordinate_reference.html#cf.Domain.coordinate_reference" title="cf.Domain.coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.coordinate_reference.html#cf.Domain.coordinate_reference" title="cf.Domain.coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference</span></code></a></p></td>
 <td><p>Return a coordinate reference construct, or its key.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.coordinate_reference_domain_axes.html#cf.Domain.coordinate_reference_domain_axes" title="cf.Domain.coordinate_reference_domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference_domain_axes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.coordinate_reference_domain_axes.html#cf.Domain.coordinate_reference_domain_axes" title="cf.Domain.coordinate_reference_domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference_domain_axes</span></code></a></p></td>
 <td><p>Return the domain axes that apply to a coordinate reference construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.get_coordinate_reference.html#cf.Domain.get_coordinate_reference" title="cf.Domain.get_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_reference</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.get_coordinate_reference.html#cf.Domain.get_coordinate_reference" title="cf.Domain.get_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_reference</span></code></a></p></td>
 <td><p>Return a coordinate reference construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.set_coordinate_reference.html#cf.Domain.set_coordinate_reference" title="cf.Domain.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.set_coordinate_reference.html#cf.Domain.set_coordinate_reference" title="cf.Domain.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a></p></td>
 <td><p>Set a coordinate reference construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.del_coordinate_reference.html#cf.Domain.del_coordinate_reference" title="cf.Domain.del_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate_reference</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.del_coordinate_reference.html#cf.Domain.del_coordinate_reference" title="cf.Domain.del_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate_reference</span></code></a></p></td>
 <td><p>Remove a coordinate reference construct and all of its domain ancillary constructs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.dimension_coordinate.html#cf.Domain.dimension_coordinate" title="cf.Domain.dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinate</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.dimension_coordinate.html#cf.Domain.dimension_coordinate" title="cf.Domain.dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinate</span></code></a></p></td>
 <td><p>Select a dimension coordinate construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Domain.dimension_to_auxiliary.html#cf.Domain.dimension_to_auxiliary" title="cf.Domain.dimension_to_auxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_to_auxiliary</span></code></a></p></td>
+<td><p>Move dimension coordinates to an auxiliary coordinate construct.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Domain.domain_ancillary.html#cf.Domain.domain_ancillary" title="cf.Domain.domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillary</span></code></a></p></td>
 <td><p>Select a domain ancillary construct.</p></td>
@@ -915,7 +921,7 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-06.
+      &copy;2023, NCAS | Page built on 2023-03-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

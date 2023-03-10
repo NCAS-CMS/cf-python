@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
 
 
 
@@ -131,7 +131,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/field.py#L194-L15182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/field.py#L194-L15183"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
@@ -324,8 +324,8 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.clear_properties.html#cf.Field.clear_properties" title="cf.Field.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
 <td><p>Remove all properties.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.del_properties</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.del_properties.html#cf.Field.del_properties" title="cf.Field.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a></p></td>
+<td><p>Remove properties.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.set_properties.html#cf.Field.set_properties" title="cf.Field.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
 <td><p>Set properties.</p></td>
@@ -765,32 +765,38 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.auxiliary_coordinate.html#cf.Field.auxiliary_coordinate" title="cf.Field.auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinate</span></code></a></p></td>
 <td><p>Select an auxiliary coordinate construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.cell_measure.html#cf.Field.cell_measure" title="cf.Field.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.auxiliary_to_dimension.html#cf.Field.auxiliary_to_dimension" title="cf.Field.auxiliary_to_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_to_dimension</span></code></a></p></td>
+<td><p>Move auxiliary coordinates to a dimension coordinate construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.cell_measure.html#cf.Field.cell_measure" title="cf.Field.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code></a></p></td>
 <td><p>Select a cell measure construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.cell_method.html#cf.Field.cell_method" title="cf.Field.cell_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_method</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.cell_method.html#cf.Field.cell_method" title="cf.Field.cell_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_method</span></code></a></p></td>
 <td><p>Select a cell method construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate</span></code></a></p></td>
 <td><p>Select a dimension or auxiliary coordinate construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.coordinate_reference.html#cf.Field.coordinate_reference" title="cf.Field.coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.coordinate_reference.html#cf.Field.coordinate_reference" title="cf.Field.coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference</span></code></a></p></td>
 <td><p>Return a coordinate reference construct, or its key.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.coordinate_reference_domain_axes.html#cf.Field.coordinate_reference_domain_axes" title="cf.Field.coordinate_reference_domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference_domain_axes</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.coordinate_reference_domain_axes.html#cf.Field.coordinate_reference_domain_axes" title="cf.Field.coordinate_reference_domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference_domain_axes</span></code></a></p></td>
 <td><p>Return the domain axes that apply to a coordinate reference construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.get_coordinate_reference.html#cf.Field.get_coordinate_reference" title="cf.Field.get_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_reference</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.get_coordinate_reference.html#cf.Field.get_coordinate_reference" title="cf.Field.get_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_reference</span></code></a></p></td>
 <td><p>Return a coordinate reference construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.set_coordinate_reference.html#cf.Field.set_coordinate_reference" title="cf.Field.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.set_coordinate_reference.html#cf.Field.set_coordinate_reference" title="cf.Field.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a></p></td>
 <td><p>Set a coordinate reference construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.del_coordinate_reference.html#cf.Field.del_coordinate_reference" title="cf.Field.del_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate_reference</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.del_coordinate_reference.html#cf.Field.del_coordinate_reference" title="cf.Field.del_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate_reference</span></code></a></p></td>
 <td><p>Remove a coordinate reference construct and all of its domain ancillary constructs.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.dimension_coordinate.html#cf.Field.dimension_coordinate" title="cf.Field.dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinate</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.dimension_coordinate.html#cf.Field.dimension_coordinate" title="cf.Field.dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinate</span></code></a></p></td>
 <td><p>Select a dimension coordinate construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Field.dimension_to_auxiliary.html#cf.Field.dimension_to_auxiliary" title="cf.Field.dimension_to_auxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_to_auxiliary</span></code></a></p></td>
+<td><p>Move dimension coordinates to an auxiliary coordinate construct.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Field.domain_ancillary.html#cf.Field.domain_ancillary" title="cf.Field.domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillary</span></code></a></p></td>
 <td><p>Select a domain ancillary construct.</p></td>
@@ -2103,7 +2109,7 @@ construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-06.
+      &copy;2023, NCAS | Page built on 2023-03-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

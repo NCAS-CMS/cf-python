@@ -41,7 +41,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.14.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.14.1</a></h1>
 
 
 
@@ -234,21 +234,24 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </div>
 <section id="version-3-14-1">
 <h2><a class="toc-backref" href="#id2">version 3.14.1</a><a class="headerlink" href="#version-3-14-1" title="Permalink to this headline">¶</a></h2>
-<p><strong>2023-??-??</strong></p>
+<p><strong>2023-03-10</strong></p>
 <ul class="simple">
-<li><p>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.del_properties</span></code>
+<li><p>Python 3.7 support removed.</p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.del_properties.html#cf.Field.del_properties" title="cf.Field.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.del_properties</span></code></a>
 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/598">https://github.com/NCAS-CMS/cf-python/issues/598</a>)</p></li>
 <li><p>New keyword parameter to <a class="reference internal" href="method/cf.Data.concatenate.html#cf.Data.concatenate" title="cf.Data.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.concatenate</span></code></a>: <code class="docutils literal notranslate"><span class="pre">relaxed_units</span></code>
 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/602">https://github.com/NCAS-CMS/cf-python/issues/602</a>)</p></li>
 <li><p>New keyword parameter to <a class="reference internal" href="function/cf.unique_constructs.html#cf.unique_constructs" title="cf.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.unique_constructs</span></code></a>:
 <code class="docutils literal notranslate"><span class="pre">ignore_properties</span></code>
 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/597">https://github.com/NCAS-CMS/cf-python/issues/597</a>)</p></li>
-<li><p>Allow <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> and to retain external cell meausures
+<li><p>Allow <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> and to retain external cell measures
 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/605">https://github.com/NCAS-CMS/cf-python/issues/605</a>)</p></li>
 <li><p>Fixed bug in <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> that always retained invalid
 vertical coordinate reference systems
 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/599">https://github.com/NCAS-CMS/cf-python/issues/599</a>)</p></li>
 <li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">1.10.0.3&lt;=cfdm&lt;1.10.1.0</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cfunits&gt;=3.3.5</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">8.0.0&lt;=ESMPYcfdm&lt;8.2.0</span></code></p></li>
 </ul>
 </section>
 <hr class="docutils" />
@@ -947,7 +950,6 @@ than base e</p></li>
 </section>
 <section id="version-2-3-0">
 <h2><a class="toc-backref" href="#id32">version 2.3.0</a><a class="headerlink" href="#version-2-3-0" title="Permalink to this headline">¶</a></h2>
-<hr class="docutils" />
 <p><strong>2018-10-22</strong></p>
 <ul class="simple">
 <li><p>The collapse method can now be parallelised by running any cf-python
@@ -1785,7 +1787,7 @@ to Jeff Whitaker).</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-06.
+      &copy;2023, NCAS | Page built on 2023-03-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

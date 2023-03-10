@@ -1,6 +1,6 @@
 """
 Plotting wind vectors overlaid on precipitation data
-====================
+====================================================
 
 In this recipe we will plot wind vectors, derived from northward and eastward wind components, over precipitation data.
 """
@@ -9,6 +9,7 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 # 1. Import cf-python and cf-plot:
 
 import cfplot as cfp
+
 import cf
 
 # %%

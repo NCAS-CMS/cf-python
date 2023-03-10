@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
 
 
 
@@ -136,6 +136,7 @@ to download the full example code</p>
 <li><p>Import cf-python and cf-plot:</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+
 <span class="kn">import</span> <span class="nn">cf</span>
 </pre></div>
 </div>
@@ -173,7 +174,7 @@ Dimension coords: long_name=time(1452) = [1901-01-16 00:00:00, ..., 2021-12-16 0
 </pre></div>
 </div>
 <ol class="arabic simple" start="5">
-<li><p>Print the desciption of near surface temperature to show properties of all constructs:</p></li>
+<li><p>Print the description of near surface temperature to show properties of all constructs:</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">temp</span><span class="o">.</span><span class="n">dump</span></a><span class="p">()</span>
 </pre></div>
@@ -295,7 +296,9 @@ Dimension coordinate: long_name=longitude
 <ol class="arabic simple" start="10">
 <li><p>The temperature values are averaged for the climatological period of 1961-1990 by defining a subspace within these years using <cite>cf.wi</cite> query instance over subspace and doing a statistical collapse with the collapse method:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annual_global_avg_61_90</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">annual_global_avg</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="n">T</span><span class="o">=</span><a href="../function/cf.year.html#cf.year" title="cf.year" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">year</span></a><span class="p">(</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="mi">1961</span><span class="p">,</span> <span class="mi">1990</span><span class="p">)))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annual_global_avg_61_90</span></a> <span class="o">=</span> <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">annual_global_avg</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span>
+    <span class="n">T</span><span class="o">=</span><a href="../function/cf.year.html#cf.year" title="cf.year" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">year</span></a><span class="p">(</span><a href="../function/cf.wi.html#cf.wi" title="cf.wi" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">wi</span></a><span class="p">(</span><span class="mi">1961</span><span class="p">,</span> <span class="mi">1990</span><span class="p">))</span>
+<span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annual_global_avg_61_90</span></a><span class="p">)</span>
 </pre></div>
 </div>
@@ -334,13 +337,13 @@ Dimension coords: long_name=time(1) = [1976-01-01 12:00:00] gregorian
 <span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_2_recipe_001.png" srcset="../_images/sphx_glr_plot_2_recipe_001.png" alt="Global Average Temperature Anomaly (1901-2021)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  18.336 seconds)</p>
+<img src="../_images/sphx_glr_plot_2_recipe_001.png" srcset="../_images/sphx_glr_plot_2_recipe_001.png" alt="Global Average Temperature Anomaly (1901-2021)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  0.794 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-2-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="/home/ankit/cf-python/docs/_downloads/plot_2_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_2_recipe.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="/home/david/NCAS-CMS/cf-python/docs/_downloads/plot_2_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_2_recipe.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="/home/ankit/cf-python/docs/_downloads/plot_2_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_2_recipe.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="/home/david/NCAS-CMS/cf-python/docs/_downloads/plot_2_recipe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_2_recipe.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -354,7 +357,7 @@ Dimension coords: long_name=time(1) = [1976-01-01 12:00:00] gregorian
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-06.
+      &copy;2023, NCAS | Page built on 2023-03-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
