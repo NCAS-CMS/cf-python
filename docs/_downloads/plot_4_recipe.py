@@ -1,6 +1,6 @@
 """
 Comparing two datasets with different resolutions using regridding
-====================
+==================================================================
 
 In this recipe, we will regrid two different datasets with different resolutions. An example use case could be one where the observational dataset with a higher resolution needs to be regridded to that of the model dataset so that they can be compared with each other.
 """
@@ -18,7 +18,9 @@ print(obs)
 
 # %%
 
-model = cf.read("~/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc")
+model = cf.read(
+    "~/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc"
+)
 print(model)
 
 # %%

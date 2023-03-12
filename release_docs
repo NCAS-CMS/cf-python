@@ -56,6 +56,7 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
     echo "test_tutorial_code failed."
     # exit $rc
   fi
+  pre-commit run --files tutorial.py field_analysis.py 
 fi
 
 # --------------------------------------------------------------------
@@ -66,6 +67,11 @@ if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] || [[ $1 = "dev-clean" ]] ; then
   rm -fr $dir/.doctrees
 fi
 mkdir -p $dir/_downloads
+
+#if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
+#  # Force recreation of recipes
+#  rm source/recipes/*.md5
+#fi
 
 make html $dir
 rc=$?
@@ -123,7 +129,8 @@ for html_file in "${html_files[@]}"
 do
     for download_file in "${files_to_copy[@]}"
     do
-        sed -i "s|href=\".*\/${download_file##*/}\"|href=\"$destination_dir/${download_file##*/}\"|g" "$html_file"
+	echo "${download_file##*/}"
+        sed -i "s|href=\".*\/${download_file##*/}\"|href=\"../_downloads/${download_file##*/}\"|g" "$html_file"
     done
 done
 

@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
 
 
 
@@ -132,7 +132,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Field.equals<a class="headerlink" href="#cf-field-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.equals">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.2/cfdm/decorators.py#L117-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.3/cfdm/decorators.py#L117-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -211,9 +211,9 @@ are within the tolerance for equality.</p>
 <dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then all <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
 properties are omitted from the comparison.</p>
 </dd>
-</dl>
-<p>{{ignore_properties: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional}}</p>
-<dl class="simple">
+<dt>ignore_properties: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of properties to omit from the
+comparison.</p>
+</dd>
 <dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the compression type and, if applicable,
 the underlying compressed arrays must be the same, as
 well as the arrays in their uncompressed forms. By
@@ -266,7 +266,7 @@ tested, rather than the <code class="docutils literal notranslate"><span class="
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-06.
+      &copy;2023, NCAS | Page built on 2023-03-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

@@ -19,7 +19,7 @@
 
 
 Comparing two datasets with different resolutions using regridding
-====================
+==================================================================
 
 In this recipe, we will regrid two different datasets with different resolutions. An example use case could be one where the observational dataset with a higher resolution needs to be regridded to that of the model dataset so that they can be compared with each other.
 
@@ -67,12 +67,14 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-24
+.. GENERATED FROM PYTHON SOURCE LINES 20-26
 
 .. code-block:: python
 
 
-    model = cf.read("~/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc")
+    model = cf.read(
+        "~/recipes/tas_Amon_HadGEM3-GC3-1_hist-1p0_r3i1p1f2_gn_185001-201412.nc"
+    )
     print(model)
 
 
@@ -88,11 +90,11 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 25-26
+.. GENERATED FROM PYTHON SOURCE LINES 27-28
 
 3. Select observation and model temperature fields by identity and index respectively, and look at their contents:
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-30
+.. GENERATED FROM PYTHON SOURCE LINES 28-32
 
 .. code-block:: python
 
@@ -118,7 +120,7 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 31-35
+.. GENERATED FROM PYTHON SOURCE LINES 33-37
 
 .. code-block:: python
 
@@ -147,11 +149,11 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-37
+.. GENERATED FROM PYTHON SOURCE LINES 38-39
 
 4. Regrid observational data to that of the model data and create a new low resolution observational data using bilinear interpolation:
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-39
+.. GENERATED FROM PYTHON SOURCE LINES 39-41
 
 .. code-block:: python
 
@@ -179,7 +181,7 @@ In this recipe, we will regrid two different datasets with different resolutions
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  2.732 seconds)
+   **Total running time of the script:** ( 0 minutes  3.300 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_4_recipe.py:

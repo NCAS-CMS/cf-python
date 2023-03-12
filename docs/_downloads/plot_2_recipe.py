@@ -1,6 +1,6 @@
 """
 Calculating and plotting the global average temperature anomalies
-====================
+=================================================================
 
 In this recipe we will calculate and plot the global average temperature anomalies.
 """
@@ -9,6 +9,7 @@ In this recipe we will calculate and plot the global average temperature anomali
 # 1. Import cf-python and cf-plot:
 
 import cfplot as cfp
+
 import cf
 
 # %%
@@ -30,7 +31,7 @@ lon = temp.coordinate("long_name=longitude")
 lat = temp.coordinate("Y")
 
 # %%
-# 5. Print the desciption of near surface temperature to show properties of all constructs:
+# 5. Print the description of near surface temperature to show properties of all constructs:
 
 temp.dump()
 
@@ -72,7 +73,9 @@ annual_global_avg = global_avg.collapse("T: mean", group=cf.Y())
 # %%
 # 10. The temperature values are averaged for the climatological period of 1961-1990 by defining a subspace within these years using `cf.wi` query instance over subspace and doing a statistical collapse with the collapse method:
 
-annual_global_avg_61_90 = annual_global_avg.subspace(T=cf.year(cf.wi(1961, 1990)))
+annual_global_avg_61_90 = annual_global_avg.subspace(
+    T=cf.year(cf.wi(1961, 1990))
+)
 print(annual_global_avg_61_90)
 
 # %%

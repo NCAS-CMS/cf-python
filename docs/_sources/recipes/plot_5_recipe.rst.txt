@@ -19,7 +19,7 @@
 
 
 Plotting wind vectors overlaid on precipitation data
-====================
+====================================================
 
 In this recipe we will plot wind vectors, derived from northward and eastward wind components, over precipitation data.
 
@@ -27,12 +27,13 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 1. Import cf-python and cf-plot:
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-14
+.. GENERATED FROM PYTHON SOURCE LINES 10-15
 
 .. code-block:: python
 
 
     import cfplot as cfp
+
     import cf
 
 
@@ -42,11 +43,11 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-16
+.. GENERATED FROM PYTHON SOURCE LINES 16-17
 
 2. Read the field constructs:
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-20
+.. GENERATED FROM PYTHON SOURCE LINES 17-21
 
 .. code-block:: python
 
@@ -67,7 +68,7 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-25
+.. GENERATED FROM PYTHON SOURCE LINES 22-26
 
 .. code-block:: python
 
@@ -88,7 +89,7 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-30
+.. GENERATED FROM PYTHON SOURCE LINES 27-31
 
 .. code-block:: python
 
@@ -109,11 +110,11 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 31-32
+.. GENERATED FROM PYTHON SOURCE LINES 32-33
 
 3. Select wind vectors and precipitation data by index and look at their contents:
 
-.. GENERATED FROM PYTHON SOURCE LINES 32-35
+.. GENERATED FROM PYTHON SOURCE LINES 33-36
 
 .. code-block:: python
 
@@ -140,7 +141,7 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-40
+.. GENERATED FROM PYTHON SOURCE LINES 37-41
 
 .. code-block:: python
 
@@ -168,7 +169,7 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-45
+.. GENERATED FROM PYTHON SOURCE LINES 42-46
 
 .. code-block:: python
 
@@ -194,11 +195,11 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-47
+.. GENERATED FROM PYTHON SOURCE LINES 47-48
 
 4. Plot the wind vectors on top of precipitation data for June 1995 by creating a subspace with a date-time object and using `cfplot.con <http://ajheaps.github.io/cf-plot/con.html>`_. Here `cfplot.gopen <http://ajheaps.github.io/cf-plot/gopen.html>`_ is used to define the parts of the plot area, which is closed by `cfplot.gclose <http://ajheaps.github.io/cf-plot/gclose.html>`_; `cfplot.cscale <http://ajheaps.github.io/cf-plot/cscale.html>`_ is used to choose one of the colour maps amongst many available; `cfplot.levs <http://ajheaps.github.io/cf-plot/levs.html>`_ is used to set the contour levels for precipitation data; and `cfplot.vect <http://ajheaps.github.io/cf-plot/vect.html>`_ is used to plot the wind vectors for June 1995:
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-64
+.. GENERATED FROM PYTHON SOURCE LINES 48-65
 
 .. code-block:: python
 
@@ -234,7 +235,7 @@ In this recipe we will plot wind vectors, derived from northward and eastward wi
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  4.687 seconds)
+   **Total running time of the script:** ( 0 minutes  6.238 seconds)
 
 
 .. _sphx_glr_download_recipes_plot_5_recipe.py:

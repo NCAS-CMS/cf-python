@@ -146,7 +146,7 @@ time
 c = a.regridc([time], axes='T', method='linear')
 try:
     c = a.regridc([time], axes='T', method='conservative')  # Raises Exception
-except:
+except Exception:
     pass
 bounds = time.create_bounds()
 time.set_bounds(bounds)
@@ -248,7 +248,7 @@ t
 t.log(base=10)
 try:
     t.exp()  # Raises Exception
-except:
+except Exception:
     pass
 q, t = cf.read('file.nc')
 print(q)

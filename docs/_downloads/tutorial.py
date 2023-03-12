@@ -9,7 +9,7 @@ z = cf.read(['file.nc', 'precipitation_flux.nc'])
 len(z)
 try:
     y = cf.read('$PWD')  # Raises Exception
-except:
+except Exception:
     pass
 y = cf.read('$PWD', ignore_read_error=True)
 len(y)
@@ -112,7 +112,7 @@ print(f.array)
 f.Units
 try:
     print(f.datetime_array)  # Raises Exception
-except:
+except Exception:
     pass
 q, t = cf.read('file.nc')
 t
@@ -262,12 +262,12 @@ t.auxiliary_coordinate('latitude', key=True)
 t.auxiliary_coordinate('latitude', item=True)
 try:
     t.construct('measure:volume')                # Raises Exception
-except:
+except Exception:
     pass
 t.construct('measure:volume', default=False)
 try:
     t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
-except:
+except Exception:
     pass
 c = t.constructs.filter_by_measure("volume")
 len(c)
@@ -275,7 +275,7 @@ d = t.constructs("units=degrees")
 len(d)
 try:
     t.construct("units=degrees")  # Raises Exception
-except:
+except Exception:
     pass
 print(t.construct("units=degrees", default=None))
 lon = q.construct('longitude')
