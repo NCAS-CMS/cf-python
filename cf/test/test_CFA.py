@@ -5,6 +5,8 @@ import os
 import tempfile
 import unittest
 
+import netCDF4
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -105,15 +107,8 @@ class CFATest(unittest.TestCase):
         self.assertTrue(g[0].equals(f))
 
     def test_CFA_field_ancillaries(self):
-        import cf
-
         f = cf.example_field(0)
         self.assertFalse(f.field_ancillaries())
-
-        tmpfile1 = "delme1.nc"
-        tmpfile2 = "delme2.nc"
-        tmpfile3 = "delme3.nc"
-        tmpfile4 = "delme4.nc"
 
         a = f[:2]
         b = f[2:]
@@ -158,6 +153,43 @@ class CFATest(unittest.TestCase):
         self.assertEqual(len(e), 1)
         e = e[0]
         self.assertTrue(e.equals(d))
+
+    def test_substitutions(self):
+        f = cf.example_field(0)
+        cf.write(f, tmpfile1)
+        f = cf.read(tmpfile1)[0]
+
+        tmpfile2 = "delme2.nc"
+        cwd = os.getcwd()
+        for base in ("base", "${base}"):
+            cf.write(f, tmpfile2, cfa={"substitutions": {base: cwd}})
+            nc = netCDF4.Dataset(tmpfile2, "r")
+            self.assertEqual(
+                nc.variables["cfa_file"].getncattr("substitutions"),
+                f"${{base}}: {cwd}",
+            )
+            nc.close()
+
+        g = cf.read(tmpfile2)
+        self.assertEqual(len(g), 1)
+        g = g[0]
+        self.assertTrue(f.equals(g))
+
+    # From python 3.4 pathlib is available.
+    #
+    # In [1]: from pathlib import Path
+    #
+    # In [2]: Path('..').is_absolute()
+    # Out[2]: False
+    #
+    # In [3]: Path('C:/').is_absolute()
+    # Out[3]: True
+    #
+    # In [4]: Path('..').resolve()
+    # Out[4]: WindowsPath('C:/the/complete/path')
+    #
+    # In [5]: Path('C:/').resolve()
+    # Out[5]: WindowsPath('C:/')
 
     def test_CFA_PP(self):
         pass

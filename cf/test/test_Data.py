@@ -4619,6 +4619,26 @@ class DataTest(unittest.TestCase):
         d.del_file_location("/invalid")
         self.assertEqual(d.file_locations(), set((location,)))
 
+    def test_Data_todict(self):
+        """Test Data.todict"""
+        d = cf.Data([1, 2, 3, 4], chunks=2)
+        key = "array-7daac373ba27474b6df0af70aab14e49"
+
+        x = d.todict()
+        self.assertIsInstance(x, dict)
+        self.assertIn((key, 0), x)
+        self.assertIn((key, 1), x)
+
+        e = d[0]
+        x = e.todict()
+        self.assertIn((key, 0), x)
+        self.assertNotIn((key, 1), x)
+
+        x = e.todict(optimize_graph=False)
+        self.assertIsInstance(x, dict)
+        self.assertIn((key, 0), x)
+        self.assertIn((key, 1), x)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

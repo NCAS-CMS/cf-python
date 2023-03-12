@@ -770,7 +770,7 @@ def write(
                 cfa_options["constructs"] = {c: None for c in constructs}
 
             substitutions = cfa_options["substitutions"].copy()
-            for base, sub in substitutions.items():
+            for base, sub in tuple(substitutions.items()):
                 if not (base.startswith("${") and base.endswith("}")):
                     # Add missing ${...}
                     substitutions[f"${{{base}}}"] = substitutions.pop(base)

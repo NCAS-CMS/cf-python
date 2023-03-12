@@ -225,9 +225,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             ncdim: `str` or `None`
                 The name of the netCDF dimension for this dimension
-                coordinate construct, including any groups structure. Note
-                that the group structure may be different to the
-                corodinate variable, and the basename.
+                coordinate construct, including any groups
+                structure. Note that the group structure may be
+                different to the corodinate variable, and the
+                basename.
 
                 .. versionadded:: 3.6.0
 
@@ -442,11 +443,12 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # File
         term = "file"
         if substitutions:
+            # Create the "substitutions" netCDF attribute
             subs = []
             for base, sub in substitutions.items():
                 subs.append(f"{base}: {sub}")
 
-            attributes = {"substitutions": " ".join(substitutions)}
+            attributes = {"substitutions": " ".join(subs)}
         else:
             attributes = None
 
@@ -460,23 +462,32 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         # Address
         term = "address"
+
+        # Attempt to reduce addresses to a common scalar value
+        u = ggg[term].unique().compressed().persist()
+        if u.size == 1:
+            ggg[term] = u.squeeze()
+            dimensions = ()
+        else:
+            dimensions = fragment_ncdimensions
+
         term_ncvar = self._cfa_write_term_variable(
             ggg[term],
             aggregated_data.get(term, f"cfa_{term}"),
-            fragment_ncdimensions,
+            ncdimensions,
         )
         aggregated_data_attr.append(f"{term}: {term_ncvar}")
 
         # Format
         term = "format"
-        dimensions = fragment_ncdimensions
-
-        # Attempt to reduce formats to a common scalar value
-        if term == "format":
-            u = ggg[term].unique().compressed().persist()
-            if u.size == 1:
-                ggg[term] = u.squeeze()
-                dimensions = ()
+        
+        # Attempt to reduce addresses to a common scalar value
+        u = ggg[term].unique().compressed().persist()
+        if u.size == 1:
+            ggg[term] = u.squeeze()
+            dimensions = ()
+        else:
+            dimensions = fragment_ncdimensions
 
         term_ncvar = self._cfa_write_term_variable(
             ggg[term],
@@ -735,11 +746,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # ancillary's 'id' attribute
             term = getattr(field_anc, "id", "term")
             term = term.replace(" ", "_")
-            base = term
+            name = term
             n = 0
             while term in terms:
                 n += 1
-                term = f"{base}_{n}"
+                term = f"{name}_{n}"
 
             terms.append(term)
 
@@ -966,11 +977,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 the data then an empty `set` is returned.
 
         """
-        from dask.base import collections_to_dsk
-
         out = set()
-        dsk = collections_to_dsk((data.to_dask_array(),), optimize_graph=True)
-        for a in dsk.values():
+        for a in data.todict().values():
             try:
                 out.update(
                     ((a.get_filenames(), a.get_addresses(), a.get_formats()),)
@@ -979,3 +987,4 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 pass
 
         return out
+

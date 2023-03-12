@@ -574,7 +574,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 else:
                     # Convert the string "${base}: value" to the
                     # dictionary {"${base}": "value"}
-                    subs = self.parse_x(term_ncvar, subs)
+                    subs = self._parse_x(term_ncvar, subs)
                     subs = {
                         key: value[0] for d in subs for key, value in d.items()
                     }

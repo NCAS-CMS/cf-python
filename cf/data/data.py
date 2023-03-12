@@ -11113,13 +11113,19 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return d
 
-    def todict(self):
+    def todict(self, optimize_graph=True):
         """Return a dictionary of the dask graph key/value pairs.
 
-        Prior to being converted to a dictionary, the graph is
-        optimised to remove unused chunks.
-
         .. versionadded:: TODOCFAVER
+
+        .. seealso:: `to_dask_array`, `tolist`
+
+        :Parameters:
+
+            `optimize_graph`: `bool`
+                If True, the default, then prior to being converted to
+                a dictionary, the graph is optimised to remove unused
+                chunks.
 
         :Returns:
 
@@ -11138,7 +11144,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
           0): (<function dask.array.chunk.getitem(obj, index)>, ('array-7daac373ba27474b6df0af70aab14e49',
            0), (slice(0, 1, 1),)),
          ('array-7daac373ba27474b6df0af70aab14e49', 0): array([1, 2])}
-        >>> dict(e.to_dask_array().dask)
+        >>> e.todict(optimize_graph=False)
         {('array-7daac373ba27474b6df0af70aab14e49', 0): array([1, 2]),
          ('array-7daac373ba27474b6df0af70aab14e49', 1): array([3, 4]),
          ('getitem-14d8301a3deec45c98569d73f7a2239c',
@@ -11147,7 +11153,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         dx = self.to_dask_array()
-        return collections_to_dsk((dx,), optimize_graph=True)
+
+        if optimize_graph:
+            return collections_to_dsk((dx,), optimize_graph=True)
+
+        return dict(collections_to_dsk((dx,), optimize_graph=False))
 
     def tolist(self):
         """Return the data as a scalar or (nested) list.
@@ -11157,6 +11167,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         If ``N`` is 0 then, since the depth of the nested list is 0,
         it will not be a list at all, but a simple Python scalar.
+
+        .. sealso:: `todict`
 
         :Returns:
 
