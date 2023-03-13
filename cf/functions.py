@@ -2651,6 +2651,9 @@ def hash_array(array, algorithm=hashlib.sha1):
     """
     h = algorithm()
 
+    if is_dask_collection(array):
+        array = array.array
+    
     h.update(dumps(array.dtype.name))
     h.update(dumps(array.shape))
 

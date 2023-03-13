@@ -445,6 +445,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
+        # We can't tell if input dask arrays have deterministic names
+        self._custom['deterministic_name'] = not is_dask_collection(array)
+        
         array = to_dask(array, chunks, **kwargs)
 
         # Find out if we have an array of date-time objects
@@ -7526,7 +7529,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # ------------------------------------------------------------
         # Check that each instance has equal array values
         # ------------------------------------------------------------
-        # Check that each instance has the same units
+        self_dx = self.to_dask_array()
+        other_dx = other.to_dask_array()
+
+        # Check that each instance has the same units. Do this before
+        # any other possible short circuits.
         self_Units = self.Units
         other_Units = other.Units
         if self_Units != other_Units:
@@ -7536,8 +7543,41 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
             return False
 
-        self_dx = self.to_dask_array()
-        other_dx = other.to_dask_array()
+        if self._custom.get('deterministic_name') and other._custom.get('deterministic_name') and self_dx.name == other_dx.name:
+            return True
+
+
+        # Return False if there are different cached elements
+        cache0 = self._get_cached_elements()
+        if cache0:
+            cache1 = other._get_cached_elements()
+            if cache1 and sorted(cache0) == sorted(cache1):
+                rtol=float(rtol)
+                atol=float(atol)
+                for key, value0 in cache0.items():
+                    value1 = cache1[key]
+                    if value0 is np.ma.masked:
+                        if value1 is not np.ma.masked :
+                            logger.info(
+                                f"{self.__class__.__name__}: Different array "
+                                f"values (atol={atol}, rtol={rtol})"
+                            )
+                            return False
+                    elif value1 is np.ma.masked:
+                        logger.info(
+                            f"{self.__class__.__name__}: Different array "
+                            f"values (atol={atol}, rtol={rtol})"
+                        )
+                        return False
+
+                    # TODO - strings
+                    
+                    if not np.allclose(value0, value1, rtol=rtol, atol=atol):
+                        logger.info(
+                            f"{self.__class__.__name__}: Different array "
+                            f"values (atol={atol}, rtol={rtol})"
+                        )
+                        return False
 
         # Now check that corresponding elements are equal within a tolerance.
         # We assume that all inputs are masked arrays. Note we compare the

@@ -2,10 +2,9 @@ import logging
 from collections import namedtuple
 from operator import itemgetter
 
+import numpy as np
+
 from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
-from numpy import argsort as numpy_argsort
-from numpy import dtype as numpy_dtype
-from numpy import sort as numpy_sort
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .data.data import Data
@@ -16,7 +15,7 @@ from .decorators import (
 )
 from .domainaxis import DomainAxis
 from .fieldlist import FieldList
-from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, _numpy_allclose
+from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from .functions import atol as cf_atol
 from .functions import flat, hash_array
 from .functions import rtol as cf_rtol
@@ -26,7 +25,7 @@ from .units import Units
 logger = logging.getLogger(__name__)
 
 
-_dtype_float = numpy_dtype(float)
+_dtype_float = np.dtype(float)
 
 # # --------------------------------------------------------------------
 # # Global properties, as defined in Appendix A of the CF conventions.
@@ -2220,7 +2219,7 @@ def _create_hash_and_first_values(
                 # ... or which doesn't have a dimension coordinate but
                 # does have one or more 1-d auxiliary coordinates
                 aux = m_axis_identity["keys"][0]
-                sort_indices = numpy_argsort(field.constructs[aux].array)
+                sort_indices = np.argsort(field.constructs[aux].array)
                 m_sort_keys[axis] = aux
                 null_sort = False
 
@@ -2267,6 +2266,7 @@ def _create_hash_and_first_values(
                             hfl_cache,
                             rtol,
                             atol,
+                            missing_data=False,
                         )
                         m.first_bounds[identity] = fb
                         m.last_bounds[identity] = lb
@@ -2567,6 +2567,7 @@ def _get_hfl(
     hfl_cache,
     rtol,
     atol,
+        missing_data=True,
 ):
     """Return the hash value, and optionally first and last values or
     bounds.
@@ -2613,58 +2614,84 @@ def _get_hfl(
 
     if create_hash or create_fl or create_flb:
         # Change the data type if required
-        if d.dtype.char not in ("d", "S", "U"):
-            d = d.copy()
-            d.dtype = _dtype_float
+#        if d.dtype.char not in ("d", "S", "U"):
+#            if d.dtype != _dtype_float:
+#                d = d.copy()
+ #               print (222, d.dtype)
+#                d.dtype = _dtype_float
 
         # Change the units to the canonical ones
-        units = d.Units
+#        units = d.Units
         d.Units = canonical_units
-
+#        print ('new', units, canonical_units, d.Units) #, d.array)
         # Get the data array
+#        if null_sort:
+#            array = d.array
+#        else:
+#            array = d.array[sort_indices]
         if null_sort:
-            array = d.array
+            array = d
         else:
-            array = d.array[sort_indices]
+            array = d[sort_indices]
 
-        # Reinstate the original units
-        d.Units = units
+#        # Reinstate the original units
+#        d.Units = units
 
+# https://stackoverflow.com/questions/46610947/checking-if-two-dasks-are-the-same
         if create_hash:
-            hash_value = hash_array(array)
+            if array._custom['deterministic_name']:
+                hash_value = hash(array.to_dask_array().name)
+            else:
+                hash_value = hash_array(array.to_dask_array())
 
             if hash_value not in hfl_cache.hash_to_array:
                 # Compare arrays, overriding hash value
                 found_close = False
                 for hash_value0, array0 in hfl_cache.hash_to_array.items():
-                    if array0.shape != array.shape:
-                        continue
+#                    if array0.shape != array.shape:
+#                        continue
 
-                    if array0.shape != array.shape:
-                        continue
+#                    print (array.get_units(), array._get_cached_elements(), array0._get_cached_elements())
+#                    if _numpy_allclose(array0, array, rtol=rtol, atol=atol):
 
-                    if _numpy_allclose(array0, array, rtol=rtol, atol=atol):
+                    if array.equals(array0,  rtol=rtol, atol=atol, ignore_data_type=True):
+#                        print ('iiiiiii', array.array, array0.array)
                         hash_value = hash_value0
                         found_close = True
                         break
 
                 if not found_close:
                     hfl_cache.hash_to_array[hash_value] = array
-            else:
-                pass
 
-            hfl_cache.hash[key] = hash_value
-
+#            hfl_cache.hash[key] = hash_value
+#            print ("\n",hfl_cache.hash_to_array)
         if create_fl:
-            first = array.item(0)
-            last = array.item(-1)
-            hfl_cache.fl[key] = (first, last)
+            if hash_value in hfl_cache.fl:
+                first, last = hfl_cache.fl[hash_value]
+            else:
+                first = array.first_element()
+                last = array.last_element()
+                hfl_cache.fl[hash_value] = (first, last)
 
         if create_flb:
             # Record the bounds of the first and last (sorted) cells
-            first = numpy_sort(array[0, ...])
-            last = numpy_sort(array[-1, ...])
-            hfl_cache.flb[key] = (first, last)
+#            first =np.sort(array[0, ...])
+#            last = np.sort(array[-1, ...])
+            if hash_value in hfl_cache.flb:
+                first, last = hfl_cache.flb[hash_value]
+            else:
+                cached_elements = array._get_cached_elements()
+                x = []
+                for i in (0, 1, -2, -1):
+                    value = cached_elements.get(i)
+                    if value is None:
+                        value = array.datum(i)
+                        
+                    x.append(value)
+                    
+                first  = sorted(x[:2])
+                last = sorted(x[2:] )                
+                hfl_cache.flb[hash_value] = (first, last)
 
     if first_and_last_values or first_and_last_bounds:
         return hash_value, first, last
@@ -3025,6 +3052,7 @@ def _aggregate_2_fields(
     # ----------------------------------------------------------------
     direction0 = parent0.direction(adim0)
     if parent1.direction(adim1) != direction0:
+        print ('abcde 9999')
         parent1.flip(adim1, inplace=True)
 
     # ----------------------------------------------------------------

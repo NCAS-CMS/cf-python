@@ -1634,13 +1634,18 @@ class UMField:
 
         """
         if array is not None:
-            array = Data(array, units=units, fill_value=fill_value)
-            self.implementation.set_data(c, array, copy=False)
+            d = Data(array, units=units, fill_value=fill_value)
+            d._set_cached_elements({0: array.item(0), -1: array.item(-1)})
+            self.implementation.set_data(c, d, copy=False)
 
         if bounds is not None:
-            bounds_data = Data(bounds, units=units, fill_value=fill_value)
+            b = Data(bounds, units=units, fill_value=fill_value)
+            b._set_cached_elements({0: bounds.item(0),
+                                    1: bounds.item(1),
+                                    -2: bounds.item(-2),
+                                    -1: bounds.item(-1)})
             bounds = self.implementation.initialise_Bounds()
-            self.implementation.set_data(bounds, bounds_data, copy=False)
+            self.implementation.set_data(bounds, b, copy=False)
             self.implementation.set_bounds(c, bounds, copy=False)
 
         return c
@@ -1715,6 +1720,7 @@ class UMField:
                 ctime = cftime.datetime(*LBDTIME, calendar=self.calendar)
 
             ctime = Data(ctime, reftime).array.item()
+            ctime._set_cached_elements({-1: ctime.first_element()})
             _cached_ctime[key] = ctime
 
         return ctime
