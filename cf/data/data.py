@@ -6343,6 +6343,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             raise ValueError("TODOCFADOCS")
 
         dx = self.to_dask_array()
+#        name = tokenize(dx.name, location)
         dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
         self._set_dask(dx, clear=_NONE)
 

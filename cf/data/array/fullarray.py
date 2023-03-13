@@ -91,7 +91,6 @@ class FullArray(Array):
         self._set_component("calendar", calendar, copy=False)
 
     def __array_function__(self, func, types, args, kwargs):
-        """TODOCFADOCS"""
         if func not in _FULLARRAY_HANDLED_FUNCTIONS:
             return NotImplemented
 
@@ -170,35 +169,33 @@ class FullArray(Array):
 
         return f"Filled with {fill_value!r}"
 
-    def _set_units(self):
-        """The units and calendar properties.
-
-        These are the values set during initialisation, defaulting to
-        `None` if either was not set at that time.
-
-        .. versionadded:: 3.14.0
-
-        :Returns:
-
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
-
-        """
-        # TODOCFA: Consider moving _set_units to cfdm.Array, or some
-        #          other common ancestor so that this, and other,
-        #          subclasses can access it.
-        units = self.get_units(False)
-        if units is False:
-            units = None
-            self._set_component("units", units, copy=False)
-
-        calendar = self.get_calendar(False)
-        if calendar is False:
-            calendar = None
-            self._set_component("calendar", calendar, copy=False)
-
-        return units, calendar
+    #    def _set_units(self):
+    #        """The units and calendar properties.
+    #
+    #        These are the values set during initialisation, defaulting to
+    #        `None` if either was not set at that time.
+    #
+    #        .. versionadded:: 3.14.0
+    #
+    #        :Returns:
+    #
+    #            `tuple`
+    #                The units and calendar values, either of which may be
+    #                `None`.
+    #
+    #        """
+    #        # TODOCFA: Consider moving _set_units to cfdm.Array, or some
+    #        #          other common ancestor so that this, and other,
+    #        #          subclasses can access it.
+    #        units = self.get_units(False)
+    #        if units is False:
+    #            self._set_component("units", None, copy=False)
+    #
+    #        calendar = self.get_calendar(False)
+    #        if calendar is False:
+    #            self._set_component("calendar", None, copy=False)
+    #
+    #        return units, calendar
 
     @property
     def dtype(self):
