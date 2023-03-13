@@ -1128,13 +1128,38 @@ class UMField:
         return "\n".join(out)
 
     def _reorder_z_axis(self, indices, z_axis, pmaxes):
-        """TODOCFADOCS"""
+        """Reorder the Z axis `Rec` instances.
+
+        :Parmaeters:
+
+            indices: `list`
+                Aggregation axis indices. See `create_data` for details.
+
+            z_axis: `int`
+                The identifier of the Z axis
+
+            pmaxes: sequence of `int`
+                The aggregation axes, which include the Z axis.
+
+        **Examples**
+
+        >>> _reorder_z_axis([(0, <Rec A>), (1, <Rec B>)], 0, [0])
+        [(0, <Rec B>), (1, <Rec A>)]
+
+        >>> _reorder_z_axis(
+        ...     [(0, 0, <Rec A>), (0, 1, <Rec B>), (1, 0, <Rec C>), (1, 1, <Rec D>)],
+        ...     1, [0, 1]
+        ... )
+        [(0, 0, <Rec B>), (0, 1, <Rec A>), (1, 0, <Rec D>), (1, 1, <Rec C>)]
+
+
+        """
         indices_new = []
-        pos = pmaxes.index(z_axis)
+        zpos = pmaxes.index(z_axis)
         aaa0 = indices[0]
         indices2 = [aaa0]
         for aaa in indices[1:]:
-            if aaa[pos] > aaa0[pos]:
+            if aaa[zpos] > aaa0[zpos]:
                 indices2.append(aaa)
             else:
                 indices_new.extend(indices2[::-1])
@@ -1142,12 +1167,8 @@ class UMField:
                 indices2 = [aaa0]
 
         indices_new.extend(indices2[::-1])
-        #        print (indices_new)
 
         indices = [a[:-1] + b[-1:] for a, b in zip(indices, indices_new)]
-        #        print ()
-        #        print (indices)
-
         return indices
 
     def atmosphere_hybrid_height_coordinate(self, axiscode):
@@ -1951,10 +1972,10 @@ class UMField:
                 byte_ordering = self.byte_ordering
 
                 indices = [(i, rec) for i, rec in enumerate(recs)]
+
                 if z_axis in self.down_axes:
                     indices = self._reorder_z_axis(indices, z_axis, pmaxes)
 
-                #                for i, rec in enumerate(recs):
                 for i, rec in indices:
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
@@ -2007,11 +2028,6 @@ class UMField:
                     indices = self._reorder_z_axis(indices, z_axis, pmaxes)
 
                 for t, z, rec in indices:
-                    #                for i, rec in enumerate(recs):
-                    # Find T and Z axis indices
-
-                    #                    t, z = divmod(i, nz)
-                    # print (t, z)
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)

@@ -4,6 +4,7 @@ import faulthandler
 import os
 import tempfile
 import unittest
+from pathlib import PurePath
 
 import netCDF4
 
@@ -56,11 +57,9 @@ class CFATest(unittest.TestCase):
             cf.write(f, tmpfile2, fmt=fmt, cfa=True)
             g = cf.read(tmpfile2)
             self.assertEqual(len(g), 1)
-            g = g[0]
+            self.assertTrue(f.equals(g[0]))
 
-            self.assertTrue(f.equals(g))
-
-    def test_CFA_general(self):
+    def test_CFA_multiple_fragments(self):
         f = cf.example_field(0)
 
         cf.write(f[:2], tmpfile1)
@@ -79,11 +78,8 @@ class CFATest(unittest.TestCase):
         c = cf.read(cfa_file)
         self.assertEqual(len(n), 1)
         self.assertEqual(len(c), 1)
-
-        n = n[0]
-        c = c[0]
-        self.assertTrue(c.equals(f))
-        self.assertTrue(c.equals(n))
+        self.assertTrue(c[0].equals(f))
+        self.assertTrue(n[0].equals(c[0]))
 
     def test_CFA_strict(self):
         f = cf.example_field(0)
@@ -93,7 +89,7 @@ class CFATest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cf.write(f, tmpfile1, cfa=True)
 
-        # The previous line should have deleted the file
+        # The previous line should have deleted the output file
         self.assertFalse(os.path.exists(tmpfile1))
 
         cf.write(f, tmpfile1, cfa={"strict": False})
@@ -151,48 +147,283 @@ class CFATest(unittest.TestCase):
         cf.write(d, tmpfile5, cfa=True)
         e = cf.read(tmpfile5)
         self.assertEqual(len(e), 1)
-        e = e[0]
-        self.assertTrue(e.equals(d))
+        self.assertTrue(e[0].equals(d))
 
-    def test_substitutions(self):
+    def test_CFA_substitutions_0(self):
         f = cf.example_field(0)
         cf.write(f, tmpfile1)
         f = cf.read(tmpfile1)[0]
 
-        tmpfile2 = "delme2.nc"
+        cwd = os.getcwd()
+
+        f.data.cfa_set_file_substitutions({"base": cwd})
+
+        cf.write(
+            f,
+            tmpfile2,
+            cfa={"absolute_paths": True},
+        )
+
+        nc = netCDF4.Dataset(tmpfile2, "r")
+        cfa_file = nc.variables["cfa_file"]
+        self.assertEqual(
+            cfa_file.getncattr("substitutions"),
+            f"${{base}}: {cwd}",
+        )
+        self.assertEqual(
+            cfa_file[...], f"file://${{base}}/{os.path.basename(tmpfile1)}"
+        )
+        nc.close()
+
+        g = cf.read(tmpfile2)
+        self.assertEqual(len(g), 1)
+        self.assertTrue(f.equals(g[0]))
+
+    def test_CFA_substitutions_1(self):
+        f = cf.example_field(0)
+        cf.write(f, tmpfile1)
+        f = cf.read(tmpfile1)[0]
+
         cwd = os.getcwd()
         for base in ("base", "${base}"):
-            cf.write(f, tmpfile2, cfa={"substitutions": {base: cwd}})
+            cf.write(
+                f,
+                tmpfile2,
+                cfa={"absolute_paths": True, "substitutions": {base: cwd}},
+            )
+
             nc = netCDF4.Dataset(tmpfile2, "r")
+            cfa_file = nc.variables["cfa_file"]
             self.assertEqual(
-                nc.variables["cfa_file"].getncattr("substitutions"),
+                cfa_file.getncattr("substitutions"),
                 f"${{base}}: {cwd}",
+            )
+            self.assertEqual(
+                cfa_file[...], f"file://${{base}}/{os.path.basename(tmpfile1)}"
             )
             nc.close()
 
         g = cf.read(tmpfile2)
         self.assertEqual(len(g), 1)
-        g = g[0]
-        self.assertTrue(f.equals(g))
+        self.assertTrue(f.equals(g[0]))
 
-    # From python 3.4 pathlib is available.
-    #
-    # In [1]: from pathlib import Path
-    #
-    # In [2]: Path('..').is_absolute()
-    # Out[2]: False
-    #
-    # In [3]: Path('C:/').is_absolute()
-    # Out[3]: True
-    #
-    # In [4]: Path('..').resolve()
-    # Out[4]: WindowsPath('C:/the/complete/path')
-    #
-    # In [5]: Path('C:/').resolve()
-    # Out[5]: WindowsPath('C:/')
+    def test_CFA_substitutions_2(self):
+        f = cf.example_field(0)
+        cf.write(f, tmpfile1)
+        f = cf.read(tmpfile1)[0]
+
+        cwd = os.getcwd()
+
+        # RRRRRRRRRRRRRRRRRRR
+        f.data.cfa_clear_file_substitutions()
+        f.data.cfa_set_file_substitutions({"base": cwd})
+
+        cf.write(
+            f,
+            tmpfile2,
+            cfa={
+                "absolute_paths": True,
+                "substitutions": {"base2": "/bad/location"},
+            },
+        )
+
+        nc = netCDF4.Dataset(tmpfile2, "r")
+        cfa_file = nc.variables["cfa_file"]
+        self.assertEqual(
+            cfa_file.getncattr("substitutions"),
+            f"${{base2}}: /bad/location ${{base}}: {cwd}",
+        )
+        self.assertEqual(
+            cfa_file[...], f"file://${{base}}/{os.path.basename(tmpfile1)}"
+        )
+        nc.close()
+
+        g = cf.read(tmpfile2)
+        self.assertEqual(len(g), 1)
+        self.assertTrue(f.equals(g[0]))
+
+        # RRRRRRRRRRRRRRRRRRR
+        f.data.cfa_clear_file_substitutions()
+        f.data.cfa_set_file_substitutions({"base": "/bad/location"})
+
+        cf.write(
+            f,
+            tmpfile2,
+            cfa={"absolute_paths": True, "substitutions": {"base": cwd}},
+        )
+
+        nc = netCDF4.Dataset(tmpfile2, "r")
+        cfa_file = nc.variables["cfa_file"]
+        self.assertEqual(
+            cfa_file.getncattr("substitutions"),
+            f"${{base}}: {cwd}",
+        )
+        self.assertEqual(
+            cfa_file[...], f"file://${{base}}/{os.path.basename(tmpfile1)}"
+        )
+        nc.close()
+
+        g = cf.read(tmpfile2)
+        self.assertEqual(len(g), 1)
+        self.assertTrue(f.equals(g[0]))
+
+        # RRRRRRRRRRRRRRRR
+        f.data.cfa_clear_file_substitutions()
+        f.data.cfa_set_file_substitutions({"base2": "/bad/location"})
+
+        cf.write(
+            f,
+            tmpfile2,
+            cfa={"absolute_paths": True, "substitutions": {"base": cwd}},
+        )
+
+        nc = netCDF4.Dataset(tmpfile2, "r")
+        cfa_file = nc.variables["cfa_file"]
+        self.assertEqual(
+            cfa_file.getncattr("substitutions"),
+            f"${{base2}}: /bad/location ${{base}}: {cwd}",
+        )
+        self.assertEqual(
+            cfa_file[...], f"file://${{base}}/{os.path.basename(tmpfile1)}"
+        )
+        nc.close()
+
+        g = cf.read(tmpfile2)
+        self.assertEqual(len(g), 1)
+        self.assertTrue(f.equals(g[0]))
+
+    def test_CFA_absolute_paths(self):
+        f = cf.example_field(0)
+        cf.write(f, tmpfile1)
+        f = cf.read(tmpfile1)[0]
+
+        for absolute_paths, filename in zip(
+            (True, False),
+            (
+                PurePath(os.path.abspath(tmpfile1)).as_uri(),
+                os.path.basename(tmpfile1),
+            ),
+        ):
+            cf.write(f, tmpfile2, cfa={"absolute_paths": absolute_paths})
+
+            nc = netCDF4.Dataset(tmpfile2, "r")
+            cfa_file = nc.variables["cfa_file"]
+            self.assertEqual(cfa_file[...], filename)
+            nc.close()
+
+            g = cf.read(tmpfile2)
+            self.assertEqual(len(g), 1)
+            self.assertTrue(f.equals(g[0]))
+
+    def test_CFA_constructs(self):
+        f = cf.example_field(1)
+        f.del_construct("T")
+        f.del_construct("long_name=Grid latitude name")
+        cf.write(f, tmpfile1)
+        f = cf.read(tmpfile1)[0]
+
+        # No constructs
+        cf.write(f, tmpfile2, cfa={"constructs": []})
+        nc = netCDF4.Dataset(tmpfile2, "r")
+        for var in nc.variables.values():
+            attrs = var.ncattrs()
+            self.assertNotIn("aggregated_dimensions", attrs)
+            self.assertNotIn("aggregated_data", attrs)
+
+        nc.close()
+
+        # Field construct
+        cf.write(f, tmpfile2, cfa={"constructs": "field"})
+        nc = netCDF4.Dataset(tmpfile2, "r")
+        for ncvar, var in nc.variables.items():
+            attrs = var.ncattrs()
+            if ncvar in ("ta",):
+                self.assertFalse(var.ndim)
+                self.assertIn("aggregated_dimensions", attrs)
+                self.assertIn("aggregated_data", attrs)
+            else:
+                self.assertNotIn("aggregated_dimensions", attrs)
+                self.assertNotIn("aggregated_data", attrs)
+
+        nc.close()
+
+        # Dimension construct
+        for constructs in (
+            "dimension_coordinate",
+            ["dimension_coordinate"],
+            {"dimension_coordinate": None},
+            {"dimension_coordinate": 1},
+            {"dimension_coordinate": cf.eq(1)},
+        ):
+            cf.write(f, tmpfile2, cfa={"constructs": constructs})
+            nc = netCDF4.Dataset(tmpfile2, "r")
+            for ncvar, var in nc.variables.items():
+                attrs = var.ncattrs()
+                if ncvar in (
+                    "x",
+                    "x_bnds",
+                    "y",
+                    "y_bnds",
+                    "atmosphere_hybrid_height_coordinate",
+                    "atmosphere_hybrid_height_coordinate_bounds",
+                ):
+                    self.assertFalse(var.ndim)
+                    self.assertIn("aggregated_dimensions", attrs)
+                    self.assertIn("aggregated_data", attrs)
+                else:
+                    self.assertNotIn("aggregated_dimensions", attrs)
+                    self.assertNotIn("aggregated_data", attrs)
+
+            nc.close()
+
+        # Dimension and auxiliary constructs
+        for constructs in (
+            ["dimension_coordinate", "auxiliary_coordinate"],
+            {"dimension_coordinate": None, "auxiliary_coordinate": cf.ge(2)},
+        ):
+            cf.write(f, tmpfile2, cfa={"constructs": constructs})
+            nc = netCDF4.Dataset(tmpfile2, "r")
+            for ncvar, var in nc.variables.items():
+                attrs = var.ncattrs()
+                if ncvar in (
+                    "x",
+                    "x_bnds",
+                    "y",
+                    "y_bnds",
+                    "atmosphere_hybrid_height_coordinate",
+                    "atmosphere_hybrid_height_coordinate_bounds",
+                    "latitude_1",
+                    "longitude_1",
+                ):
+                    self.assertFalse(var.ndim)
+                    self.assertIn("aggregated_dimensions", attrs)
+                    self.assertIn("aggregated_data", attrs)
+                else:
+                    self.assertNotIn("aggregated_dimensions", attrs)
+                    self.assertNotIn("aggregated_data", attrs)
+
+            nc.close()
 
     def test_CFA_PP(self):
-        pass
+        f = cf.read("file1.pp")[0]
+        cf.write(f, tmpfile1, cfa=True)
+
+        nc = netCDF4.Dataset(tmpfile1, "r")
+        for ncvar, var in nc.variables.items():
+            attrs = var.ncattrs()
+            if ncvar in ("UM_m01s15i201_vn405",):
+                self.assertFalse(var.ndim)
+                self.assertIn("aggregated_dimensions", attrs)
+                self.assertIn("aggregated_data", attrs)
+            else:
+                self.assertNotIn("aggregated_dimensions", attrs)
+                self.assertNotIn("aggregated_data", attrs)
+
+        nc.close()
+
+        g = cf.read(tmpfile1)
+        self.assertEqual(len(g), 1)
+        self.assertTrue(f.equals(g[0]))
 
 
 if __name__ == "__main__":

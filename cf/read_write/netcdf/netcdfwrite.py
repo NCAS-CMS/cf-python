@@ -22,7 +22,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         instance._NetCDFRead = NetCDFRead
         return instance
 
-    def _write_as_cfa(self, cfvar, construct_type):
+    def _write_as_cfa(self, cfvar, construct_type, domain_axes):
         """Whether or not to write as a CFA variable.
 
         .. versionadded:: 3.0.0
@@ -36,6 +36,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 *cfvar* is not a construct.
 
                 .. versionadded:: TODOCFAVER
+
+            domain-axes: `None`, or `tuple` of `int`
 
         :Returns:
 
@@ -64,7 +66,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 # ... and then only if it satisfies the
                 # number-of-dimenions criterion and the data is
                 # flagged as OK.
-                if ndim is None or ndim == data.ndim:
+                if ndim is None or ndim == len(domain_axes):
                     cfa_get_write = data.cfa_get_write()
                     if not cfa_get_write and cfa_options["strict"]:
                         if g["mode"] == "w":
@@ -73,7 +75,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                         raise ValueError(
                             f"Can't write {cfvar!r} as a CFA-netCDF "
                             "aggregation variable. Consider setting "
-                            "cfa_options={'strict': False}"
+                            "cfa={'strict': False}"
                         )
 
                     return cfa_get_write
@@ -82,7 +84,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return False
 
-    def _customize_createVariable(self, cfvar, construct_type, kwargs):
+    def _customize_createVariable(
+        self, cfvar, construct_type, domain_axes, kwargs
+    ):
         """Customise keyword arguments for
         `netCDF4.Dataset.createVariable`.
 
@@ -102,10 +106,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         """
         kwargs = super()._customize_createVariable(
-            cfvar, construct_type, kwargs
+            cfvar, construct_type, domain_axes, kwargs
         )
 
-        if self._write_as_cfa(cfvar, construct_type):
+        if self._write_as_cfa(cfvar, construct_type, domain_axes):
             kwargs["dimensions"] = ()
             kwargs["chunksizes"] = None
 
@@ -117,6 +121,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         cfvar,
         ncvar,
         ncdimensions,
+        domain_axes=None,
         unset_values=(),
         compressed=False,
         attributes={},
@@ -156,11 +161,16 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         """
         g = self.write_vars
 
-        if self._write_as_cfa(cfvar, construct_type):
+        if self._write_as_cfa(cfvar, construct_type, domain_axes):
             # --------------------------------------------------------
             # Write the data as CFA aggregated data
             # --------------------------------------------------------
-            self._create_cfa_data(ncvar, ncdimensions, data, cfvar)
+            self._create_cfa_data(
+                ncvar,
+                ncdimensions,
+                data,
+                cfvar,
+            )
             return
 
         # ------------------------------------------------------------
@@ -389,9 +399,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # ------------------------------------------------------------
         location_ncdimensions = []
         for size in ggg["location"].shape:
-            l_ncdim = self._netcdf_name(
-                f"f_loc_{size}", dimsize=size, role="cfa_location"
-            )
+            l_ncdim = f"f_{size}_loc"
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
                 self._write_dimension(l_ncdim, None, size=size)
@@ -410,9 +418,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             ncdimensions + ("extra",) * (aggregation_address.ndim - ndim),
             aggregation_address.shape,
         ):
-            f_ncdim = self._netcdf_name(
-                f"f_{ncdim}", dimsize=size, role="cfa_fragment"
-            )
+            f_ncdim = f"f_{ncdim}"
             if f_ncdim not in g["dimensions"]:
                 # Create a new fragement dimension
                 self._write_dimension(f_ncdim, None, size=size)
@@ -448,7 +454,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             for base, sub in substitutions.items():
                 subs.append(f"{base}: {sub}")
 
-            attributes = {"substitutions": " ".join(subs)}
+            attributes = {"substitutions": " ".join(sorted(subs))}
         else:
             attributes = None
 
@@ -474,13 +480,13 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         term_ncvar = self._cfa_write_term_variable(
             ggg[term],
             aggregated_data.get(term, f"cfa_{term}"),
-            ncdimensions,
+            dimensions,
         )
         aggregated_data_attr.append(f"{term}: {term_ncvar}")
 
         # Format
         term = "format"
-        
+
         # Attempt to reduce addresses to a common scalar value
         u = ggg[term].unique().compressed().persist()
         if u.size == 1:
@@ -514,7 +520,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             ncvar,
             extra={
                 "aggregated_dimensions": " ".join(ncdimensions),
-                "aggregated_data": " ".join(aggregated_data_attr),
+                "aggregated_data": " ".join(sorted(aggregated_data_attr)),
             },
         )
 
@@ -679,7 +685,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # Create a new CFA term variable in the file
             ncvar = self._netcdf_name(ncvar)
             self._write_netcdf_variable(
-                ncvar, ncdimensions, cfvar=data, extra=attributes
+                ncvar, ncdimensions, data, None, extra=attributes
             )
         else:
             # This CFA term variable has already been written to the
@@ -987,4 +993,3 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 pass
 
         return out
-

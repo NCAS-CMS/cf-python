@@ -36,8 +36,8 @@ def to_dask(array, chunks, **from_array_options):
             Keyword arguments to be passed to `dask.array.from_array`.
 
             If *from_array_options* has no ``'lock'`` key then the
-            `lock` keyword is set to the `_dask_lock` attribute of
-            *array* or, if there is no such attribute, `False`.
+            `lock` keyword is set to the `_lock` attribute of *array*
+            or, if there is no such attribute, `False`.
 
             If *from_array_options* has no ``'meta'`` key then the
             `meta` keyword is set to the `_dask_meta` attribute of
@@ -79,7 +79,7 @@ def to_dask(array, chunks, **from_array_options):
         array = np.asanyarray(array)
 
     kwargs = from_array_options
-    kwargs.setdefault("lock", getattr(array, "_dask_lock", False))
+    kwargs.setdefault("lock", getattr(array, "_lock", False))
     kwargs.setdefault("meta", getattr(array, "_dask_meta", None))
 
     try:

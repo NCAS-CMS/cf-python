@@ -567,21 +567,19 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 # file instruction variable's "substitutions"
                 # attribute
                 subs = g["variable_attributes"][term_ncvar].get(
-                    "substitutions"
+                    "substitutions", {}
                 )
-                if subs is None:
-                    subs = {}
-                else:
+                if subs:
                     # Convert the string "${base}: value" to the
                     # dictionary {"${base}": "value"}
-                    subs = self._parse_x(term_ncvar, subs)
+                    s = subs.split()
                     subs = {
-                        key: value[0] for d in subs for key, value in d.items()
+                        base[:-1]: sub for base, sub in zip(s[::2], s[1::2])
                     }
 
         # Apply user-defined substitutions, which take precedence over
         # those defined in the file.
-        subs = subs.update(g["cfa_options"].get("substitutions", {}))
+        subs.update(g["cfa_options"].get("substitutions", {}))
         if subs:
             kwargs["substitutions"] = subs
 

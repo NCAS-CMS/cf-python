@@ -230,6 +230,15 @@ class CFANetCDFArray(NetCDFArray):
                         for frag_loc, loc in zip(positions, locations)
                     }
 
+                # Apply string substitutions to the fragment filename
+                if substitutions:
+                    for xx in aggregated_data.values():
+                        filename = xx["filename"]
+                        for base, sub in substitutions.items():
+                            filename = filename.replace(base, sub)
+
+                        xx["filename"] = filename
+
             super().__init__(
                 filename=filename,
                 address=address,
@@ -913,7 +922,13 @@ class CFANetCDFArray(NetCDFArray):
 
             key = f"{fragment.__class__.__name__}-{tokenize(fragment)}"
             dsk[key] = fragment
-            dsk[name + chunk_location] = (getter, key, f_indices, False, False)
+            dsk[name + chunk_location] = (
+                getter,
+                key,
+                f_indices,
+                False,
+                getattr(fragment, "_lock", False),
+            )
 
         # Return the dask array
         return da.Array(dsk, name[0], chunks=chunks, dtype=dtype)

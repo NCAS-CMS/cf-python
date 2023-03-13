@@ -20,21 +20,16 @@ class NetCDFArray(FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
         return super().__repr__().replace("<", "<CF ", 1)
 
     @property
-    def _dask_lock(self):
+    def _lock(self):
         """Set the lock for use in `dask.array.from_array`.
 
-        Returns a lock object (unless no file name has been set, in
-        which case `False` is returned) because concurrent reads are
-        not currently supported by the netCDF-C library. The lock
-        object will be the same for all `NetCDFArray` instances,
-        regardless of the dataset they access, which means that all
-        netCDF file access coordinates around the same lock.
+        Returns a lock object because concurrent reads are not
+        currently supported by the netCDF-C library. The lock object
+        will be the same for all `NetCDFArray` instances, regardless
+        of the dataset they access, which means that access to all
+        netCDF files coordinates around the same lock.
 
         .. versionadded:: 3.14.0
 
         """
-        filename = self.get_filename(None)
-        if filename is None:
-            return False
-
         return _lock

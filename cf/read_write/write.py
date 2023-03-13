@@ -2,7 +2,12 @@ import numpy
 
 from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
-from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE, CFA, flat
+from ..functions import (
+    _DEPRECATION_ERROR_FUNCTION_KWARG,
+    _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE,
+    CFA,
+    flat,
+)
 from .netcdf import NetCDFWrite
 
 netcdf = NetCDFWrite(implementation())
@@ -28,7 +33,6 @@ def write(
     reference_datetime=None,
     verbose=None,
     cfa=False,
-    #    cfa_options=None,
     single=None,
     double=None,
     variable_attributes=None,
@@ -37,6 +41,7 @@ def write(
     group=True,
     coordinates=False,
     omit_data=None,
+    cfa_options=None,
 ):
     """Write field constructs to a netCDF file.
 
@@ -583,10 +588,10 @@ def write(
 
             If *cfa* is a dictionary then it is used to configure the
             CFA write process. The default options when CFA writing is
-            enabled are ``{'constructs': 'field', 'absolute_paths':
-            True, 'strict': True, 'substitutions': {}}``, and the
-            dictionary may have any subset of the following key/value
-            pairs to override thes:
+            enabled, by any means, are ``{'constructs': 'field',
+            'absolute_paths': True, 'strict': True, 'substitutions':
+            {}}``, and the dictionary may have any subset of the
+            following key/value pairs to override these defaults:
 
             * ``'constructs'``: `dict` or (sequence of) `str`
 
@@ -597,16 +602,12 @@ def write(
               The types may be given as a (sequence of) `str`, which
               may take any of the values allowed by the *omit_data*
               parameter. Alternatively, the same types may be given as
-              keys to a `dict`, whose values specify the number of
+              keys to a `dict` whose values specify the number of
               dimensions that a construct must also have if it is to
               be written as CFA-netCDF aggregation variable. A value
               of `None` means no restriction on the number of
               dimensions, which is equivalent to a value of
               ``cf.ge(0)``.
-
-              Note that size 1 data arrays are never written as
-              CFA-netCDF aggregation variables, regardless of the
-              whether or not this has been requested.
 
               *Example:*
                 Equivalent ways to only write cell measure constructs
@@ -622,14 +623,15 @@ def write(
                 ``{'field': None, 'auxiliary_coordinate': None}``.
 
               *Example:*
-                Only write two-dimensional auxiliary coordinate
-                constructs as CFA-netCDF aggregation variables:
-                ``{'auxiliary_coordinate': 2}}``.
+                Equivalent ways to only write two-dimensional
+                auxiliary coordinate constructs as CFA-netCDF
+                aggregation variables: ``{'auxiliary_coordinate':
+                2}}`` and ``{'auxiliary_coordinate': cf.eq(2)}}``.
 
               *Example:*
                 Only write auxiliary coordinate constructs with two or
-                more dimensions, and all field constructs as
-                CFA-netCDF variables: ``{'field': None,
+                more dimensions as CFA-netCDF variables, and also all
+                field constructs: ``{'field': None,
                 'auxiliary_coordinate': cf.ge(2)}}``.
 
             * ``'absolute_paths'``: `bool`
@@ -645,7 +647,8 @@ def write(
               If True (the default) then an exception is raised if it
               is not possible to create a CFA aggregation variable
               from data identified by the ``'constructs'`` option. If
-              False then a normal CF-netCDF variable in this case.
+              False then a normal CF-netCDF variable will be written
+              in this case.
 
             * ``'substitutions'``: `dict`
 
@@ -665,6 +668,9 @@ def write(
                 ``{'base': 'file:///data/'}}``
 
             .. versionadded:: TODOCFAVER
+
+        cfa_options: Deprecated at version TODOCFAVER
+            Use the *cfa* parameter instead.
 
     :Returns:
 
@@ -690,6 +696,15 @@ def write(
             "fmt",
             fmt,
             "Use keywords 'fmt' and 'cfa' instead.",
+            version="TODOCFAVER",
+            removed_at="5.0.0",
+        )  # pragma: no cover
+
+    if cfa_options is not None:
+        return _DEPRECATION_ERROR_FUNCTION_KWARG(
+            "cf.write",
+            "cfa_options",
+            "Use keyword 'cfa' instead.",
             version="TODOCFAVER",
             removed_at="5.0.0",
         )  # pragma: no cover
