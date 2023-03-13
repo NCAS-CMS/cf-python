@@ -35,9 +35,8 @@ print(ensemble)
 print(ensemble.constructs)
 
 # %%
-# 6. Loop over the realizations in the ensemble using the *range* function and the *domain_axis* to determine the size of the realization dimension. For each realization, extract a subspace of the ensemble using the *subspace* method and the ``'id%realization'`` keyword argument along specific latitude and longitude and plot the realizations from the 4D field using `cfplot.lineplot <http://ajheaps.github.io/cf-plot/lineplot.html>`_. The *squeeze* method removes any dimensions of size 1 from the field to produce a 2D field.
-# The ensemble mean is plotted similarly by using the *collapse* method to take the mean along the ``'realization'`` dimension of the ensemble.
-
+# 6. Loop over the realizations in the ensemble using the *range* function and the *domain_axis* to determine the size of the realization dimension. For each realization, extract a subspace of the ensemble using the *subspace* method and the ``'id%realization'`` keyword argument along specific latitude and longitude and plot the realizations from the 4D field using `cfplot.lineplot <http://ajheaps.github.io/cf-plot/lineplot.html>`_. 
+# A moving average of the ensemble along the time axis, with a window size of 90 (i.e., a 3-month moving average) is calculated using the *moving_window* method. The ``mode='nearest'`` parameter is used to specify that the padded data should be filled with the values of the nearest data point. The *squeeze* method removes any dimensions of size 1 from the field to produce a 2D field:
 
 cfp.gopen()
 
@@ -48,7 +47,7 @@ for realization in range(1, ensemble.domain_axis('id%realization').size + 1):
         label=f'Member {realization}',
         linewidth=1.0)
 
-cfp.lineplot(ensemble.collapse('mean', 'id%realization')[:, :, 0, 0].squeeze(),
+cfp.lineplot(ensemble.moving_window(method='mean', window_size=90, axis='T', mode='nearest')[0, :, 0, 0].squeeze(),
     label='Ensemble mean', linewidth=2.0, color='black',
     title='Model Ensemble Pressure')
     
