@@ -47,7 +47,9 @@ for realization in range(1, ensemble.domain_axis('id%realization').size + 1):
         label=f'Member {realization}',
         linewidth=1.0)
 
-cfp.lineplot(ensemble.moving_window(method='mean', window_size=90, axis='T', mode='nearest')[0, :, 0, 0].squeeze(),
+cfp.lineplot(
+    ensemble.moving_window(method='mean', window_size=90, axis='T',
+        mode='nearest')[0, :, 0, 0].squeeze(),
     label='Ensemble mean', linewidth=2.0, color='black',
     title='Model Ensemble Pressure')
     
