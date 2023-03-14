@@ -74,10 +74,24 @@ class _HFLCache:
     values and first and last cell bounds."""
 
     def __init__(self):
+        # Store mappings of equivalent Data hashes
         self.hash_map = {}
         self.fl = {}
         self.flb = {}
+        # Store general Data objects, separated into groups of (shape,
+        # canonical units) and then keyed by unique their hashes.
+        #
+        # E.g. {(12,), <CF Units: m)): {'d34re': <CF Data(12): >
+        #                               '865x4': <CF Data(12): >},
+        #       (1,),  <CF Units: s)): {'12g67': <CF Data(1): >}}
         self.hash_to_data = {}
+        # Store coordinate bounds Data objects, separated into groups
+        # of (shape, canonical units) and then keyed by unique their
+        # hashes.
+        #
+        # E.g. {(12, 2), <CF Units: m)): {'d34re': <CF Data(12, 2): >
+        #                                 '865x4': <CF Data(12, 2): >},
+        #       (1, 2),  <CF Units: s)): {'12g67': <CF Data(1 ,2): >}}
         self.hash_to_data_bounds = {}
 
 
@@ -2600,26 +2614,26 @@ def _get_hfl(
         d = d[sort_indices]
 
     if create_flb:
-        hash_to_array = hfl_cache.hash_to_data_bounds
+        hash_to_data = hfl_cache.hash_to_data_bounds
     else:
-        hash_to_array = hfl_cache.hash_to_data
+        hash_to_data = hfl_cache.hash_to_data
 
     shape = d.shape
     key = (shape, canonical_units)
-    hash_to_array.setdefault(key, {})
-    hash_to_array = hash_to_array[key]
+    hash_to_data.setdefault(key, {})
+    hash_to_data = hash_to_data[key]
 
-    if d._custom["deterministic_name"]:
+    if d._get_deterministic_name():
         hash_value = d.to_dask_array().name
     else:
         hash_value = tokenize(d.array)
 
     if hash_value in hfl_cache.hash_map:
         hash_value = hfl_cache.hash_map[hash_value]
-    elif hash_value not in hash_to_array:
+    elif hash_value not in hash_to_data:
         found_close = False
         kind = d.dtype.kind
-        for hash_value0, d0 in hash_to_array.items():
+        for hash_value0, d0 in hash_to_data.items():
             kind0 = d0.dtype.kind
             if kind != kind0 and (kind not in "ifu" or kind0 not in "ifu"):
                 # Data types are incompatible, so 'd' can't equal 'd0'
@@ -2629,27 +2643,26 @@ def _get_hfl(
                 d0, rtol=rtol, atol=atol, ignore_data_type=True, verbose=1
             ):
                 hfl_cache.hash_map[hash_value] = hash_value0
-                hash_to_array[hash_value] = d
+                hash_to_data[hash_value] = d
                 hash_value = hash_value0
                 found_close = True
                 break
 
         if not found_close:
-            hash_to_array[hash_value] = d
+            hash_to_data[hash_value] = d
 
     if create_fl:
-        if hash_value in hfl_cache.fl:
-            first, last = hfl_cache.fl[hash_value]
-        else:
+        # Record the first and last cells
+        first, last = hfl_cache.fl.get(hash_value, (None, None))
+        if first is None:
             first = d.first_element()
             last = d.last_element()
             hfl_cache.fl[hash_value] = (first, last)
 
     if create_flb:
         # Record the bounds of the first and last (sorted) cells
-        if hash_value in hfl_cache.flb:
-            first, last = hfl_cache.flb[hash_value]
-        else:
+        first, last = hfl_cache.flb.get(hash_value, (None, None))
+        if first is None:
             cached_elements = d._get_cached_elements()
             x = []
             for i in (0, 1, -2, -1):

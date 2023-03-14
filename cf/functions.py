@@ -2603,7 +2603,7 @@ def hash_array(array, algorithm=None):
     """Return a hash value of a numpy array.
 
     Deprecated at version 3.14.2 and is no longer available. Use
-    function `dask.base.tokenize` instead.
+    `dask.base.tokenize` instead.
 
     The hash value is dependent on the data type and the shape of the
     array. If the array is a masked array then the hash value is

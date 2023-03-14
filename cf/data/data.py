@@ -446,7 +446,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 "options. Use the 'chunks' parameter instead."
             )
 
-        # We can't tell if input dask arrays have deterministic names
+        # Set whether or not we're sure that the Data instance has a
+        # determinsitic name
         self._custom["deterministic_name"] = not is_dask_collection(array)
 
         array = to_dask(array, chunks, **kwargs)
@@ -1460,6 +1461,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return cache.copy()
 
+    def _get_deterministic_name(self):
+        """Get the deterministic name status.
+
+        .. versionadded:: 3.14.2
+
+        :Returns:
+
+            `bool`
+
+        """
+        return self._custom["deterministic_name"]
+
     def _set_cached_elements(self, elements):
         """Cache selected element values.
 
@@ -1501,6 +1514,33 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             cache = elements.copy()
 
         self._custom["cached_elements"] = cache
+
+    def _update_deterministic_name(self, other):
+        """Update the deterministic name status.
+
+        .. versionadded:: 3.14.2
+
+        :Parameters:
+
+            other: `False` or `Data`
+                If `False` then set the deterministic name status to
+                `False`. If `Data` then set the deterministic name
+                status to `False` if *other* has a deterministic name
+                status.
+
+        :Returns:
+
+            `None`
+
+        """
+        custom = self._custom
+        if other is False:
+            custom["deterministic_name"] = False
+        elif other is not True:
+            custom["deterministic_name"] = (
+                custom["deterministic_name"]
+                and other._custom["deterministic_name"]
+            )
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -2317,6 +2357,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if q.ndim:
             axes = d._axes
             d._axes = (new_axis_identifier(axes),) + axes
+
+        d._update_deterministic_name(not is_dask_collection(q))
 
         return d
 
@@ -3446,6 +3488,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if axes is not None:
                 self._axes = axes
 
+            self._update_deterministic_name(other)
             return self
         else:  # not, so concerns a new Data object copied from self, data0
             data0._set_dask(result)
@@ -3453,6 +3496,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if axes is not None:
                 data0._axes = axes
 
+            data0._update_deterministic_name(other)
             return data0
 
     def _parse_indices(self, *args, **kwargs):
@@ -3602,6 +3646,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         d = self.copy()
         d._set_dask(dx)
+
+        # Don't know (yet) if 'operator' has a deterministic name
+        d._update_deterministic_name(False)
+
         return d
 
     @classmethod
@@ -8677,6 +8725,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         for a_axis in a._cyclic:
             d.cyclic(ndim + a._axes.index(a_axis))
 
+        d._update_deterministic_name(a)
         return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
@@ -9457,10 +9506,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             dx = da.isclose(self, y, atol=atol, rtol=rtol)
 
-            d = self.copy(array=False)
+            d = self.copy()
             d._set_dask(dx)
             d.hardmask = _DEFAULT_HARDMASK
             d.override_units(_units_None, inplace=True)
+            d._update_deterministic_name(not is_dask_collection(y))
+
             return d
 
     @_inplace_enabled(default=False)
@@ -10286,6 +10337,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             cf_where, dx, da.asanyarray(condition), x, y, d.hardmask
         )
         d._set_dask(dx)
+
+        # Don't know (yet) if 'x' and 'y' have a deterministic names
+        d._update_deterministic_name(False)
 
         return d
 

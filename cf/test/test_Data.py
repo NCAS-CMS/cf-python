@@ -236,7 +236,7 @@ class DataTest(unittest.TestCase):
         d3 = cf.Data(a.astype(np.float64), "m", chunks=chunksize)
         h = cf.Data(np.full(shape, np.nan), "m", chunks=chunksize)
         # TODODASK: implement and test equal_nan kwarg to configure NaN eq.
-        self.assertFalse(h.equals(h.copy(), verbose=2))
+        self.assertFalse(h.equals(h.copy()))
         with self.assertLogs(level=-1) as catch:
             # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
             self.assertFalse(h.equals(d3, verbose=2))
@@ -431,8 +431,6 @@ class DataTest(unittest.TestCase):
         # Only one log check is sufficient here
         with self.assertLogs(level=-1) as catch:
             self.assertFalse(k1.equals(k2, atol=0.005, rtol=0, verbose=2))
-            for log_msg in catch.output:
-                print(log_msg)
             self.assertTrue(
                 any(
                     "Data: Different array values (atol=0.005, rtol=0.0)"
@@ -4530,6 +4528,20 @@ class DataTest(unittest.TestCase):
 
         d._set_dask(dx, clear=_ALL)
         self.assertFalse(d._get_cached_elements())
+
+    def test_Data_update_deterministic_name(self):
+        """Test Data._clear_after_dask_update"""
+        d = cf.Data([1, 2], "m")
+        e = cf.Data([4, 5], "km")
+        self.assertTrue(d._custom["deterministic_name"])
+        self.assertTrue(e._custom["deterministic_name"])
+        self.assertTrue((d + e)._custom["deterministic_name"])
+        self.assertTrue((d + e.array)._custom["deterministic_name"])
+        self.assertFalse((d + e.to_dask_array())._custom["deterministic_name"])
+
+        d._update_deterministic_name(False)
+        self.assertFalse(d._custom["deterministic_name"])
+        self.assertFalse((d + e)._custom["deterministic_name"])
 
 
 if __name__ == "__main__":

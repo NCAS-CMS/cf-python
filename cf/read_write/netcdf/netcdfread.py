@@ -410,7 +410,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         """
         if data.data.get_compression_type():
-            # Don't cache elements from arrays compressed by
+            # Don't get cached elements from arrays compressed by
             # convention, as they'll likely be wrong.
             return
 
@@ -429,14 +429,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         size = variable.size
         ndim = variable.ndim
 
-        dtype = variable.dtype
-        if dtype is not str and dtype.kind in "SU":
-            # Variable is a netCDF char array with a trailing
-            # dimension
-            ndim -= 1
-            char = True
-        else:
-            char = False
+        char = False
+        if data.ndim == ndim - 1:
+            dtype = variable.dtype
+            if dtype is not str and dtype.kind in "SU":
+                # Variable is a netCDF classic style char array with a
+                # trailing dimension
+                ndim -= 1
+                char = True
 
         if size == 1:
             value = variable[(slice(0, 1),) * ndim]
@@ -467,8 +467,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 value = np.ma.masked
             else:
                 if char:
-                    # Variable is a netCDF char array so collapse (by
-                    # concatenation) the outermost (fastest varying)
+                    # Variable is a netCDF classic style char array
+                    # so collapse (by concatenation) the outermost
+                    # (fastest varying)
                     # dimension. E.g. [['a','b','c']] becomes ['abc']
                     a = netCDF4.chartostring(value)
                     shape = a.shape

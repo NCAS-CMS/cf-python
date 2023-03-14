@@ -485,10 +485,11 @@ _docstring_substitution_definitions = {
     "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
                 If True then unnecessary tasks are removed (culled)
                 from each array's dask graph before
-                concatenation. This process has a performance overhead
-                but can sometimes improve performance overall. If
-                False (the default) then dask graphs are not
-                culled. See `dask.optimization.cull` for details.
+                concatenation. This process can have a considerable
+                overhead but can sometimes improve the overall
+                performance of a workflow. If False (the default) then
+                dask graphs are not culled. See
+                `dask.optimization.cull` for details.
 
                 .. versionadded:: 3.14.0""",
     # ----------------------------------------------------------------
