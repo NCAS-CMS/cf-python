@@ -28,6 +28,7 @@ from ..decorators import (
 )
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
+    _numpy_allclose,
     _section,
     atol,
     default_netCDF_fillvals,
@@ -446,8 +447,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             )
 
         # We can't tell if input dask arrays have deterministic names
-        self._custom['deterministic_name'] = not is_dask_collection(array)
-        
+        self._custom["deterministic_name"] = not is_dask_collection(array)
+
         array = to_dask(array, chunks, **kwargs)
 
         # Find out if we have an array of date-time objects
@@ -3604,7 +3605,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @classmethod
-    def concatenate(cls, data, axis=0, cull_graph=True, relaxed_units=False):
+    def concatenate(cls, data, axis=0, cull_graph=False, relaxed_units=False):
         """Join a sequence of data arrays together.
 
         .. seealso:: `cull_graph`
@@ -7539,45 +7540,42 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if self_Units != other_Units:
             logger.info(
                 f"{self.__class__.__name__}: Different Units "
-                f"({self.Units!r}, {other.Units!r})"
+                f"({self_Units!r}, {other_Units!r})"
             )
             return False
 
-        if self._custom.get('deterministic_name') and other._custom.get('deterministic_name') and self_dx.name == other_dx.name:
-            return True
-
+        rtol = float(rtol)
+        atol = float(atol)
 
         # Return False if there are different cached elements
         cache0 = self._get_cached_elements()
         if cache0:
             cache1 = other._get_cached_elements()
             if cache1 and sorted(cache0) == sorted(cache1):
-                rtol=float(rtol)
-                atol=float(atol)
+                a, b = [], []
                 for key, value0 in cache0.items():
                     value1 = cache1[key]
-                    if value0 is np.ma.masked:
-                        if value1 is not np.ma.masked :
-                            logger.info(
-                                f"{self.__class__.__name__}: Different array "
-                                f"values (atol={atol}, rtol={rtol})"
-                            )
-                            return False
-                    elif value1 is np.ma.masked:
-                        logger.info(
-                            f"{self.__class__.__name__}: Different array "
-                            f"values (atol={atol}, rtol={rtol})"
-                        )
-                        return False
+                    if value0 is np.ma.masked or value1 is np.ma.masked:
+                        # Don't test on masked values - this logic is
+                        # determined elsewhere.
+                        continue
 
-                    # TODO - strings
-                    
-                    if not np.allclose(value0, value1, rtol=rtol, atol=atol):
-                        logger.info(
-                            f"{self.__class__.__name__}: Different array "
-                            f"values (atol={atol}, rtol={rtol})"
-                        )
-                        return False
+                    # Make sure strings are unicode
+                    try:
+                        value0 = value0.decode()
+                        value1 = value1.decode()
+                    except AttributeError:
+                        pass
+
+                    a.append(value0)
+                    b.append(value1)
+
+                if a and not _numpy_allclose(a, b, rtol=rtol, atol=atol):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different array "
+                        f"values (atol={atol}, rtol={rtol})"
+                    )
+                    return False
 
         # Now check that corresponding elements are equal within a tolerance.
         # We assume that all inputs are masked arrays. Note we compare the
@@ -7590,8 +7588,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 self_dx,
                 other_dx,
                 masked_equal=True,
-                rtol=float(rtol),
-                atol=float(atol),
+                rtol=rtol,
+                atol=atol,
             )
         elif not self_is_numeric and not other_is_numeric:
             # If the array (say d) is fully masked, then the output of

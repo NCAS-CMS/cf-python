@@ -4047,7 +4047,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         return axis in self.cyclic()
 
     @classmethod
-    def concatenate(cls, fields, axis=0, cull_graph=True):
+    def concatenate(cls, fields, axis=0, cull_graph=False):
         """Join a sequence of fields together.
 
         This is different to `cf.aggregate` because it does not account
@@ -9356,7 +9356,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # Concatenate the partial collapses
             # --------------------------------------------------------
             try:
-                f = self.concatenate(fl, axis=iaxis)
+                f = self.concatenate(fl, axis=iaxis, cull_graph=True)
             except ValueError as error:
                 raise ValueError(f"Can't collapse: {error}")
 

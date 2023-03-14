@@ -236,7 +236,7 @@ class DataTest(unittest.TestCase):
         d3 = cf.Data(a.astype(np.float64), "m", chunks=chunksize)
         h = cf.Data(np.full(shape, np.nan), "m", chunks=chunksize)
         # TODODASK: implement and test equal_nan kwarg to configure NaN eq.
-        self.assertFalse(h.equals(h.copy()))
+        self.assertFalse(h.equals(h.copy(), verbose=2))
         with self.assertLogs(level=-1) as catch:
             # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
             self.assertFalse(h.equals(d3, verbose=2))
@@ -431,9 +431,11 @@ class DataTest(unittest.TestCase):
         # Only one log check is sufficient here
         with self.assertLogs(level=-1) as catch:
             self.assertFalse(k1.equals(k2, atol=0.005, rtol=0, verbose=2))
+            for log_msg in catch.output:
+                print(log_msg)
             self.assertTrue(
                 any(
-                    "Data: Different array values (atol=0.005, rtol=0)"
+                    "Data: Different array values (atol=0.005, rtol=0.0)"
                     in log_msg
                     for log_msg in catch.output
                 )

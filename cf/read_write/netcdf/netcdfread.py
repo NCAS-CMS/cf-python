@@ -1,4 +1,5 @@
 import cfdm
+import netCDF4
 import numpy as np
 
 """
@@ -408,6 +409,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             `None`
 
         """
+        if data.data.get_compression_type():
+            # Don't cache elements from arrays compressed by
+            # convention, as they'll likely be wrong.
+            return
+
         g = self.read_vars
 
         # Get the netCDF4.Variable for the data
@@ -421,15 +427,32 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         # Get the required element values
         size = variable.size
+        ndim = variable.ndim
+
+        dtype = variable.dtype
+        if dtype is not str and dtype.kind in "SU":
+            # Variable is a netCDF char array with a trailing
+            # dimension
+            ndim -= 1
+            char = True
+        else:
+            char = False
+
         if size == 1:
-            value = variable[(slice(0, 1, 1),) * variable.ndim]
+            value = variable[(slice(0, 1),) * ndim]
             values = (value, None, value)
         elif size == 3:
-            values = variable[...].flatten()
+            if char:
+                values = (
+                    variable[(slice(0, 1),) * ndim],
+                    variable[(slice(0, 1),) * (ndim - 1) + (slice(1, 2),)],
+                    variable[(slice(-1, None, 1),) * ndim],
+                )
+            else:
+                values = variable[...].flatten()
         else:
-            ndim = variable.ndim
             values = (
-                variable[(slice(0, 1, 1),) * ndim],
+                variable[(slice(0, 1),) * ndim],
                 None,
                 variable[(slice(-1, None, 1),) * ndim],
             )
@@ -443,6 +466,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if np.ma.is_masked(value):
                 value = np.ma.masked
             else:
+                if char:
+                    # Variable is a netCDF char array so collapse (by
+                    # concatenation) the outermost (fastest varying)
+                    # dimension. E.g. [['a','b','c']] becomes ['abc']
+                    a = netCDF4.chartostring(value)
+                    shape = a.shape
+                    a = np.array([x.rstrip() for x in a.flat])
+                    a = np.reshape(a, shape)
+                    value = np.ma.masked_where(a == "", a)
+
                 try:
                     value = value.item()
                 except (AttributeError, ValueError):

@@ -1299,7 +1299,7 @@ class PropertiesDataBounds(PropertiesData):
         )  # pragma: no cover
 
     @classmethod
-    def concatenate(cls, variables, axis=0, cull_graph=True):
+    def concatenate(cls, variables, axis=0, cull_graph=False):
         """Join a sequence of variables together.
 
         .. seealso:: `Data.cull_graph`

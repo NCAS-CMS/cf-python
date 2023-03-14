@@ -130,7 +130,7 @@ class FieldTest(unittest.TestCase):
 
         self.assertFalse(f.has_construct("height"))
 
-    def test_Field_compress_uncompress(self):
+    def test_Field_AAAcompress_uncompress(self):
         methods = ("contiguous", "indexed", "indexed_contiguous")
 
         for method in methods:

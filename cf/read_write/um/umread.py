@@ -1640,10 +1640,14 @@ class UMField:
 
         if bounds is not None:
             b = Data(bounds, units=units, fill_value=fill_value)
-            b._set_cached_elements({0: bounds.item(0),
-                                    1: bounds.item(1),
-                                    -2: bounds.item(-2),
-                                    -1: bounds.item(-1)})
+            b._set_cached_elements(
+                {
+                    0: bounds.item(0),
+                    1: bounds.item(1),
+                    -2: bounds.item(-2),
+                    -1: bounds.item(-1),
+                }
+            )
             bounds = self.implementation.initialise_Bounds()
             self.implementation.set_data(bounds, b, copy=False)
             self.implementation.set_bounds(c, bounds, copy=False)
