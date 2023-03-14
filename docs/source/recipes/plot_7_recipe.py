@@ -23,7 +23,7 @@ print(f)
 f[1].dump()
 
 # %%
-# 4. An ensemble of the members is then created by aggregating the data in ``f`` along the ``'realization'`` using the cf.aggregate function and storing the result in the variable ``ensemble``. ``'relaxed_identities=True'`` allows for missing coordinate identities to be inferred. [0] selects the first element of the resulting list. ``id%realization`` now shows as an auxiliary coordinate for the ensemble:
+# 4. An ensemble of the members is then created by aggregating the data in ``f`` along a new ``'realization'`` axis using the cf.aggregate function, and storing the result in the variable ``ensemble``. ``'relaxed_identities=True'`` allows for missing coordinate identities to be inferred. [0] selects the first element of the resulting list. ``id%realization`` now shows as an auxiliary coordinate for the ensemble:
 
 ensemble = cf.aggregate(f, dimension=('realization',), relaxed_identities=True)[0]
 print(ensemble)
