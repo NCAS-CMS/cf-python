@@ -94,22 +94,21 @@ do
 done
 
 # For Recipes
+recipes_files=(
+    "plot_1_recipe"
+    "plot_2_recipe"
+    "plot_3_recipe"
+    "plot_4_recipe"
+    "plot_5_recipe"
+    "plot_6_recipe"
+    "plot_7_recipe"
+)
+
 files_to_copy=(
     "source/recipes/recipes_jupyter.zip"
     "source/recipes/recipes_python.zip"
-    "source/recipes/plot_1_recipe.ipynb"
-    "source/recipes/plot_1_recipe.py"
-    "source/recipes/plot_2_recipe.ipynb"
-    "source/recipes/plot_2_recipe.py"
-    "source/recipes/plot_3_recipe.ipynb"
-    "source/recipes/plot_3_recipe.py"
-    "source/recipes/plot_4_recipe.ipynb"
-    "source/recipes/plot_4_recipe.py"
-    "source/recipes/plot_5_recipe.ipynb"
-    "source/recipes/plot_5_recipe.py"
-    "source/recipes/plot_6_recipe.ipynb"
-    "source/recipes/plot_6_recipe.py"
-    "source/recipes/plot_7_recipe.py"
+    $(printf "source/recipes/%s.ipynb " "${recipes_files[@]}")
+    $(printf "source/recipes/%s.py " "${recipes_files[@]}")
 )
 
 destination_dir="$dir/_downloads"
@@ -118,21 +117,14 @@ cp -pv "${files_to_copy[@]}" "$destination_dir"
 
 html_files=(
     "$dir/recipes/index.html"
-    "$dir/recipes/plot_1_recipe.html"
-    "$dir/recipes/plot_2_recipe.html"
-    "$dir/recipes/plot_3_recipe.html"
-    "$dir/recipes/plot_4_recipe.html"
-    "$dir/recipes/plot_5_recipe.html"
-    "$dir/recipes/plot_6_recipe.html"
-    "$dir/recipes/plot_7_recipe.html"
+    $(printf "$dir/recipes/%s.html " "${recipes_files[@]}")
 )
 
 for html_file in "${html_files[@]}"
 do
-    for download_file in "${files_to_copy[@]}"
+    for recipe_file in "${recipes_files[@]}"
     do
-	echo "${download_file##*/}"
-        sed -i "s|href=\".*\/${download_file##*/}\"|href=\"../_downloads/${download_file##*/}\"|g" "$html_file"
+        sed -i "s|href=\".*\/${recipe_file}\.\(ipynb\|py\)\"|href=\"../_downloads/${recipe_file}.\1\"|g" "$html_file"
     done
 done
 
