@@ -27,7 +27,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Tutorial" href="../tutorial.html" />
-    <link rel="prev" title="Plotting wind vectors overlaid on precipitation data" href="plot_5_recipe.html" />
+    <link rel="prev" title="Converting from rotated latitude-longitude to regular latitude-longitude" href="plot_6_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -90,7 +90,7 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
-      <li>Previous: <a href="plot_5_recipe.html" title="previous chapter">Plotting wind vectors overlaid on precipitation data</a></li>
+      <li>Previous: <a href="plot_6_recipe.html" title="previous chapter">Converting from rotated latitude-longitude to regular latitude-longitude</a></li>
       <li>Next: <a href="../tutorial.html" title="next chapter"><strong>Tutorial</strong></a></li>
   </ul></li>
   </ul></li>
@@ -135,14 +135,15 @@ to download the full example code</p>
 <ol class="arabic simple">
 <li><p>Import cf-python and cf-plot:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+
+<span class="kn">import</span> <span class="nn">cf</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
 <li><p>Read the field constructs using read function and store it in the variable <code class="docutils literal notranslate"><span class="pre">f</span></code>. The * in the filename is a wildcard character which means the function reads all files in the directory that match the specified pattern. [0:5] selects the first five elements of the resulting list:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s1">&#39;~/recipes/realization/PRMSL.1941_mem*.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a> <span class="o">=</span> <a href="../function/cf.read.html#cf.read" title="cf.read" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">&quot;~/recipes/realization/PRMSL.1941_mem*.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">)</span>
 </pre></div>
 </div>
@@ -216,7 +217,9 @@ Dimension coordinate: longitude
 <ol class="arabic simple" start="4">
 <li><p>An ensemble of the members is then created by aggregating the data in <code class="docutils literal notranslate"><span class="pre">f</span></code> along a new <code class="docutils literal notranslate"><span class="pre">'realization'</span></code> axis using the cf.aggregate function, and storing the result in the variable <code class="docutils literal notranslate"><span class="pre">ensemble</span></code>. <code class="docutils literal notranslate"><span class="pre">'relaxed_identities=True'</span></code> allows for missing coordinate identities to be inferred. [0] selects the first element of the resulting list. <code class="docutils literal notranslate"><span class="pre">id%realization</span></code> now shows as an auxiliary coordinate for the ensemble:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ensemble</span></a> <span class="o">=</span> <a href="../function/cf.aggregate.html#cf.aggregate" title="cf.aggregate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">aggregate</span></a><span class="p">(</span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;realization&#39;</span><span class="p">,),</span> <span class="n">relaxed_identities</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ensemble</span></a> <span class="o">=</span> <a href="../function/cf.aggregate.html#cf.aggregate" title="cf.aggregate" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-function"><span class="n">cf</span><span class="o">.</span><span class="n">aggregate</span></a><span class="p">(</span>
+    <a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;realization&quot;</span><span class="p">,),</span> <span class="n">relaxed_identities</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><a href="../class/cf.Field.html#cf.Field" title="cf.Field" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ensemble</span></a><span class="p">)</span>
 </pre></div>
 </div>
@@ -250,23 +253,29 @@ Auxiliary coords: id%realization(id%realization(5)) = [1, ..., 5]
 A moving average of the ensemble along the time axis, with a window size of 90 (i.e. an approximately 3-month moving average) is calculated using the <em>moving_window</em> method. The <code class="docutils literal notranslate"><span class="pre">mode='nearest'</span></code> parameter is used to specify how to pad the data outside of the time range. The <em>squeeze</em> method removes any dimensions of size 1 from the field to produce a 2D field:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="https://ajheaps.github.io/cf-plot/gopen.html#cfplot.gopen" title="cfplot.gopen" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span></a><span class="p">()</span>
 
-<span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realization</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <a href="../method/cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">ensemble</span><span class="o">.</span><span class="n">domain_axis</span></a><span class="p">(</span><span class="s1">&#39;id</span><span class="si">%r</span><span class="s1">ealization&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realization</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <a href="../method/cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">ensemble</span><span class="o">.</span><span class="n">domain_axis</span></a><span class="p">(</span><span class="s2">&quot;id</span><span class="si">%r</span><span class="s2">ealization&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
     <a href="https://ajheaps.github.io/cf-plot/lineplot.html#cfplot.lineplot" title="cfplot.lineplot" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span></a><span class="p">(</span>
-        <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">ensemble</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;id</span><span class="si">%r</span><span class="s1">ealization&#39;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realization</span></a><span class="p">},</span>
-            <span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Member </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realization</span></a><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <a href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">ensemble</span><span class="o">.</span><span class="n">subspace</span></a><span class="p">(</span>
+            <span class="o">**</span><span class="p">{</span><span class="s2">&quot;id</span><span class="si">%r</span><span class="s2">ealization&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realization</span></a><span class="p">},</span> <span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realization</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span>
 
 <a href="https://ajheaps.github.io/cf-plot/lineplot.html#cfplot.lineplot" title="cfplot.lineplot" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span></a><span class="p">(</span>
-    <a href="../method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">ensemble</span><span class="o">.</span><span class="n">moving_window</span></a><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span>
-        <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
-    <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ensemble mean&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Model Ensemble Pressure&#39;</span><span class="p">)</span>
+    <a href="../method/cf.Field.moving_window.html#cf.Field.moving_window" title="cf.Field.moving_window" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-method"><span class="n">ensemble</span><span class="o">.</span><span class="n">moving_window</span></a><span class="p">(</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ensemble mean&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Model Ensemble Pressure&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
 <a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_7_recipe_001.png" srcset="../_images/sphx_glr_plot_7_recipe_001.png" alt="Model Ensemble Pressure" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  14.422 seconds)</p>
+<img src="../_images/sphx_glr_plot_7_recipe_001.png" srcset="../_images/sphx_glr_plot_7_recipe_001.png" alt="Model Ensemble Pressure" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  19.808 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-7-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_7_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_7_recipe.py</span></code></a></p>
@@ -286,7 +295,7 @@ A moving average of the ensemble along the time axis, with a window size of 90 (
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-13.
+      &copy;2023, NCAS | Page built on 2023-03-14.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
