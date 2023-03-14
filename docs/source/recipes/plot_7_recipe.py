@@ -35,7 +35,7 @@ print(ensemble)
 print(ensemble.constructs)
 
 # %%
-# 6. Loop over the realizations in the ensemble using the *range* function and the *domain_axis* to determine the size of the realization dimension. For each realization, extract a subspace of the ensemble using the *subspace* method and the ``'id%realization'`` keyword argument along specific latitude and longitude and plot the realizations from the 4D field using `cfplot.lineplot <http://ajheaps.github.io/cf-plot/lineplot.html>`_. 
+# 6. Loop over the realizations in the ensemble using the *range* function and the *domain_axis* to determine the size of the realization dimension. For each realization, extract a subspace of the ensemble using the *subspace* method and the ``'id%realization'`` keyword argument along a specific latitude and longitude and plot the realizations from the 4D field using `cfplot.lineplot <http://ajheaps.github.io/cf-plot/lineplot.html>`_. 
 # A moving average of the ensemble along the time axis, with a window size of 90 (i.e., a 3-month moving average) is calculated using the *moving_window* method. The ``mode='nearest'`` parameter is used to specify that the padded data should be filled with the values of the nearest data point. The *squeeze* method removes any dimensions of size 1 from the field to produce a 2D field:
 
 cfp.gopen()
