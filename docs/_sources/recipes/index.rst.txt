@@ -121,6 +121,22 @@ Below is a gallery of recipes using cf:
       <div class="sphx-glr-thumbnail-title">Converting from rotated latitude-longitude to regular latitude-longitude</div>
     </div>
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In this recipe, we will plot the members of a model ensemble.">
+
+.. only:: html
+
+  .. image:: /recipes/images/thumb/sphx_glr_plot_7_recipe_thumb.png
+    :alt: Plotting members of a model ensemble
+
+  :ref:`sphx_glr_recipes_plot_7_recipe.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plotting members of a model ensemble</div>
+    </div>
+
 
 .. raw:: html
 
@@ -136,6 +152,7 @@ Below is a gallery of recipes using cf:
    /recipes/plot_4_recipe
    /recipes/plot_5_recipe
    /recipes/plot_6_recipe
+   /recipes/plot_7_recipe
 
 
 .. only:: html
