@@ -30,7 +30,7 @@ print(ensemble)
 
 
 # %%
-# 5. To see the constructs for the ensemble, the *constructs* attribute is passed in print:
+# 5. To see the constructs for the ensemble, print the *constructs* attribute:
 
 print(ensemble.constructs)
 
