@@ -41,6 +41,7 @@ _cached_size_1_height_coordinate = {}
 _cached_z_reference_coordinate = {}
 _cached_date2num = {}
 _cached_model_level_number_coordinate = {}
+_cached_data = {}
 
 # --------------------------------------------------------------------
 # Constants
@@ -1083,7 +1084,7 @@ class UMField:
                     config={
                         "axis": xaxis,
                         "coord": xc,
-                        "period": Data(360.0, units=xc.Units),
+                        "period": self.get_data(np.array(360.0), xc.Units)
                     },
                 )
 
@@ -1634,22 +1635,13 @@ class UMField:
 
         """
         if array is not None:
-            d = Data(array, units=units, fill_value=fill_value)
-            d._set_cached_elements({0: array.item(0), -1: array.item(-1)})
-            self.implementation.set_data(c, d, copy=False)
+            data = self.get_data(array, units, fill_value)
+            self.implementation.set_data(c, data, copy=False)
 
         if bounds is not None:
-            b = Data(bounds, units=units, fill_value=fill_value)
-            b._set_cached_elements(
-                {
-                    0: bounds.item(0),
-                    1: bounds.item(1),
-                    -2: bounds.item(-2),
-                    -1: bounds.item(-1),
-                }
-            )
+            data = self.get_data(bounds, units, fill_value, bounds=True)
             bounds = self.implementation.initialise_Bounds()
-            self.implementation.set_data(bounds, b, copy=False)
+            self.implementation.set_data(bounds, data, copy=False)
             self.implementation.set_bounds(c, bounds, copy=False)
 
         return c
@@ -1724,7 +1716,6 @@ class UMField:
                 ctime = cftime.datetime(*LBDTIME, calendar=self.calendar)
 
             ctime = Data(ctime, reftime).array.item()
-            ctime._set_cached_elements({-1: ctime.first_element()})
             _cached_ctime[key] = ctime
 
         return ctime
@@ -3012,10 +3003,6 @@ class UMField:
                 bounds = self.create_bounds_array(
                     array - delta_by_2, array + delta_by_2
                 )
-        #                bounds = np.empty((size, 2), dtype=float)
-        #                bounds[:, 0] = array - delta_by_2
-        #                bounds[:, 1] = array + delta_by_2
-
         else:
             # Create coordinate from extra data
             array = self.extra.get(axis, None)
@@ -3023,9 +3010,6 @@ class UMField:
             upper_bounds = self.extra.get(axis + "_upper_bound", None)
             if lower_bounds is not None and upper_bounds is not None:
                 bounds = self.create_bounds_array(lower_bounds, upper_bounds)
-            #                bounds = np.empty((array.size, 2), dtype=float)
-            #                bounds[:, 0] = lower_bounds
-            #                bounds[:, 1] = upper_bounds
             else:
                 bounds = None
 
@@ -3033,15 +3017,15 @@ class UMField:
 
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(dc, array, bounds, units=units)
-        dc = self.coord_positive(dc, axiscode, axis_key)  # _axis[axis])
+        dc = self.coord_positive(dc, axiscode, axis_key)
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
 
         if X and bounds is not None:
             autocyclic["cyclic"] = abs(bounds[0, 0] - bounds[-1, -1]) == 360.0
-            autocyclic["period"] = Data(360.0, units=units)
             autocyclic["axis"] = axis_key
             autocyclic["coord"] = dc
+            autocyclic["period"] = self.get_data(np.array(360.0), units)
 
         key = self.implementation.set_dimension_coordinate(
             self.field, dc, axes=[axis_key], copy=False, autocyclic=autocyclic
@@ -3049,6 +3033,61 @@ class UMField:
 
         return key, dc, axis_key
 
+    def get_data(self, array, units, fill_value=None, bounds=False):
+        """Create data, or get it from the cache.
+
+        .. versionadded:: 3.14.2
+
+        :Parameters:
+        
+            array: `np.ndarray`
+                The data.
+
+            units: `Units
+                The units
+
+            fill_value: scalar
+                The fill value.
+
+            bounds: `bool`
+                Whether or not the data are bounds of 1-d coordinates.
+
+        :Returns:
+        
+            `Data`
+
+        """
+        token = tokenize(array, units)
+        data = _cached_data.get(token)
+        if data is None:
+            data = Data(array, units=units ,fill_value=fill_value)
+            if not bounds:
+                if array.size == 1:
+                    value = array.item(0)
+                    data._set_cached_elements({0: value, -1: value})
+                else:
+                    data._set_cached_elements(
+                        {
+                            0: array.item(0),
+                            1: array.item(1),
+                            -1: array.item(-1),
+                        }
+                    )
+            else:
+                data._set_cached_elements(
+                    {
+                        0:  array.item(0),
+                        1:  array.item(1),
+                        -2: array.item(-2),
+                        -1: array.item(-1),
+                    }
+                )
+
+            _cached_data[token] = data
+            
+        return data.copy()
+                    
+    
     def site_coordinates_from_extra_data(self):
         """Create site-related coordinates from extra data.
 

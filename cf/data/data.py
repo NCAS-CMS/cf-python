@@ -3771,9 +3771,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             # Turn any scalar array into a 1-d array
             if not data1.ndim:
-                data1 = data1.copy()
+                data1 = data1.insert_dimension()
                 copied = True
-                data1.insert_dimension(inplace=True)
 
             # Check and conform, if necessary, the units of all inputs
             units1 = data1.Units
@@ -4440,16 +4439,16 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         except KeyError:
             pass
         else:
+            if not old_units or self.Units.equals(value):
+                self._Units = value
+                return
+
             if old_units and not old_units.equivalent(value):
                 raise ValueError(
                     f"Can't set Units to {value!r} that are not "
                     f"equivalent to the current units {old_units!r}. "
                     "Consider using the override_units method instead."
                 )
-
-            if not old_units or self.Units.equals(value):
-                self._Units = value
-                return
 
         dtype = self.dtype
         if dtype.kind in "iu":
@@ -4459,11 +4458,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 dtype = _dtype_float
 
         dx = self.to_dask_array()
-        dx = dx.map_blocks(
-            partial(cf_units, from_units=old_units, to_units=value),
-            dtype=dtype,
-        )
-        self._set_dask(dx)
+
+        func = partial(cf_units, from_units=old_units, to_units=value)
+        dx = dx.map_blocks(func, dtype=dtype)
+        self._set_dask(dx, clear=_ALL ^ _CACHE)
+
+        # Adjust the cached values for the new units
+        cache = self._get_cached_elements()
+        if cache:
+            self._set_cached_elements(
+                {index: func(value) for index, value in cache.items()}
+            )
 
         self._Units = value
 

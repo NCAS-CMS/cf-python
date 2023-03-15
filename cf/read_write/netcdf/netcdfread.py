@@ -455,6 +455,17 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
                     variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
                 )
+        elif ndim == 1:
+            if size == 1:
+                value = variable[:1]
+                values = (value, value)
+            elif size == 2:
+                indices = (0, 1, -1)
+                value = variable[-1:]
+                values = (variable[:1], value, value)
+            else:
+                indices = (0, 1, -1)
+                values = (variable[:1], variable[1:2], variable[-1:])
         elif size == 1:
             value = variable[(slice(0, 1),) * ndim]
             values = (value, value)

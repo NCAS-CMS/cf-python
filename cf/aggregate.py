@@ -2443,9 +2443,8 @@ def _create_hash_and_first_values(
 
                     domain_axes = item_axes[key]
                     if axes != domain_axes:
-                        coord = coord.copy()  # _only_Data=True)  # TODO
                         iaxes = [domain_axes.index(axis) for axis in axes]
-                        coord.transpose(iaxes, inplace=True)
+                        coord = coord.transpose(iaxes)
 
                     sort_indices = [m_sort_indices[axis] for axis in axes]
 
@@ -2484,9 +2483,8 @@ def _create_hash_and_first_values(
                 )
                 domain_axes = item_axes[key]
                 if axes != domain_axes:
-                    field_anc = field_anc.copy()  # _only_Data=True)  # TODO
                     iaxes = [domain_axes.index(axis) for axis in axes]
-                    field_anc.transpose(iaxes, inplace=True)
+                    field_anc = field_anc.transpose(iaxes)
 
                 sort_indices = tuple([m_sort_indices[axis] for axis in axes])
 

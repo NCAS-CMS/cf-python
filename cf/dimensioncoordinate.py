@@ -114,64 +114,32 @@ class DimensionCoordinate(
         if data is not None:
             # Infer the direction from the data
             if data.size > 1:
-                data = data[0:2].array
+                c = data._get_cached_elements()
+                if c:
+                    try:
+                        return bool(c.get(0) < c.get(1))
+                    except TypeError:
+                        pass
+
+                data = data[:2].compute()
                 return bool(data.item(0) < data.item(1))
 
         # Still here?
         data = self.get_bounds_data(None, _fill_value=False)
         if data is not None:
             # Infer the direction from the bounds
-            b = data[(0,) * (data.ndim - 1)].array
+            c = data._get_cached_elements()
+            if c:
+                try:
+                    return bool(c.get(0) < c.get(1))
+                except TypeError:
+                    pass
+
+            b = data[:1].compute()
             return bool(b.item(0) < b.item(1))
 
         # Still here? Then infer the direction from the units.
         return not self.Units.ispressure
-
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    #    @property
-    #    def cellsize(self):
-    #        '''The cell sizes.
-    #
-    #    :Returns:
-    #
-    #        `Data`
-    #            The size for each cell.
-    #
-    #    **Examples**
-    #
-    #    >>> print(c.bounds)
-    #    <CF Bounds: latitude(3, 2) degrees_north>
-    #    >>> print(c.bounds.array)
-    #    [[-90. -87.]
-    #     [-87. -80.]
-    #     [-80. -67.]]
-    #    >>> print(d.cellsize)
-    #    <CF Data(3): [3.0, 7.0, 13.0] degrees_north>
-    #    >>> print(d.cellsize.array)
-    #    [  3.   7.  13.]
-    #    >>> print(c.sin().cellsize.array)
-    #    [ 0.00137047  0.01382178  0.0643029 ]
-    #
-    #    >>> del(c.bounds)
-    #    >>> c.cellsize
-    #    AttributeError: Can't get cell sizes when coordinates have no bounds
-    #
-    #        '''
-    #        cells = self.get_bounds_data(None)
-    #        if cells is None:
-    #            raise AttributeError(
-    #                "Can't get cell sizes when coordinates have no bounds")
-    #
-    #        if self.direction():
-    #            cells = cells[:, 1] - cells[:, 0]
-    #        else:
-    #            cells = cells[:, 0] - cells[:, 1]
-    #
-    #        cells.squeeze(1, inplace=True)
-    #
-    #        return cells
 
     @property
     def decreasing(self):
@@ -230,69 +198,6 @@ class DimensionCoordinate(
 
         """
         return self.direction()
-
-    #    @property
-    #    def lower_bounds(self):
-    #        '''The lower dimension coordinate bounds in a `cf.Data` object.
-    #
-    #    .. seealso:: `bounds`, `upper_bounds`
-    #
-    #    **Examples**
-    #
-    #    >>> print(c.bounds.array)
-    #    [[ 5  3]
-    #     [ 3  1]
-    #     [ 1 -1]]
-    #    >>> c.lower_bounds
-    #    <CF Data(3): [3, 1, -1]>
-    #    >>> print(c.lower_bounds.array)
-    #    [ 3  1 -1]
-    #
-    #        '''
-    #        data = self.get_bounds_data(None)
-    #        if data is None:
-    #            raise ValueError(
-    #                "Can't get lower bounds when there are no bounds")
-    #
-    #        if self.direction():
-    #            i = 0
-    #        else:
-    #            i = 1
-    #
-    #        out = data[..., i]
-    #        out.squeeze(1, inplace=True)
-    #        return out
-
-    #
-    #    @property
-    #    def upper_bounds(self):
-    #        '''The upper dimension coordinate bounds in a `cf.Data` object.
-    #
-    #    .. seealso:: `bounds`, `lower_bounds`
-    #
-    #    **Examples**
-    #
-    #    >>> print(c.bounds.array)
-    #    [[ 5  3]
-    #     [ 3  1]
-    #     [ 1 -1]]
-    #    >>> c.upper_bounds
-    #    <CF Data(3): [5, 3, 1]>
-    #    >>> print(c.upper_bounds.array)
-    #    [5  3  1]
-    #
-    #        '''
-    #        data = self.get_bounds_data(None)
-    #        if data is None:
-    #            raise ValueError(
-    #                "Can't get upper bounds when there are no bounds")
-    #
-    #        if self.direction():
-    #            i = 1
-    #        else:
-    #            i = 0
-    #
-    #        return data[..., i].squeeze(1)
 
     def direction(self):
         """Return True if the dimension coordinate values are
