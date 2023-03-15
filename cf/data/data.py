@@ -6343,7 +6343,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             raise ValueError("TODOCFADOCS")
 
         dx = self.to_dask_array()
-#        name = tokenize(dx.name, location)
+        #        name = tokenize(dx.name, location)
         dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
         self._set_dask(dx, clear=_NONE)
 
@@ -11126,7 +11126,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             `optimize_graph`: `bool`
                 If True, the default, then prior to being converted to
                 a dictionary, the graph is optimised to remove unused
-                chunks.
+                chunks. Note that optimising the graph can add a
+                considerable performance overhead.
 
         :Returns:
 
@@ -11137,19 +11138,19 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         >>> d = cf.Data([1, 2, 3, 4], chunks=2)
         >>> d.todict()
-        {('array-7daac373ba27474b6df0af70aab14e49', 0): array([1, 2]),
-         ('array-7daac373ba27474b6df0af70aab14e49', 1): array([3, 4])}
+        {('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2]),
+         ('array-2f41b21b4cd29f757a7bfa932bf67832', 1): array([3, 4])}
         >>> e = d[0]
         >>> e.todict()
-        {('getitem-14d8301a3deec45c98569d73f7a2239c',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-7daac373ba27474b6df0af70aab14e49',
+        {('getitem-153fd24082bc067cf438a0e213b41ce6',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-2f41b21b4cd29f757a7bfa932bf67832',
            0), (slice(0, 1, 1),)),
-         ('array-7daac373ba27474b6df0af70aab14e49', 0): array([1, 2])}
+         ('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2])}
         >>> e.todict(optimize_graph=False)
-        {('array-7daac373ba27474b6df0af70aab14e49', 0): array([1, 2]),
-         ('array-7daac373ba27474b6df0af70aab14e49', 1): array([3, 4]),
-         ('getitem-14d8301a3deec45c98569d73f7a2239c',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-7daac373ba27474b6df0af70aab14e49',
+        {('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2]),
+         ('array-2f41b21b4cd29f757a7bfa932bf67832', 1): array([3, 4]),
+         ('getitem-153fd24082bc067cf438a0e213b41ce6',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-2f41b21b4cd29f757a7bfa932bf67832',
            0), (slice(0, 1, 1),))}
 
         """

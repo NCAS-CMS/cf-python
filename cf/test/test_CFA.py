@@ -408,6 +408,7 @@ class CFATest(unittest.TestCase):
         f = cf.read("file1.pp")[0]
         cf.write(f, tmpfile1, cfa=True)
 
+        # Check that only the fields have been aggregated
         nc = netCDF4.Dataset(tmpfile1, "r")
         for ncvar, var in nc.variables.items():
             attrs = var.ncattrs()

@@ -174,6 +174,19 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         # By default, close the UM file after data array access
         self._set_component("close", True, copy=False)
 
+    def __dask_tokenize__(self):
+        """Return a value fully representative of the object.
+
+        .. versionadded:: TODOCFAVER
+
+        """
+        return (
+            self.__class__,
+            self.shape,
+            self.get_filenames(),
+            self.get_addresses(),
+        )
+
     def __getitem__(self, indices):
         """Return a subspace of the array.
 

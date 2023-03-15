@@ -11,6 +11,20 @@ _lock = SerializableLock()
 class NetCDFArray(FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
     """An array stored in a netCDF file."""
 
+    def __dask_tokenize__(self):
+        """Return a value fully representative of the object.
+
+        .. versionadded:: TODOCFAVER
+
+        """
+        return (
+            self.__class__,
+            self.shape,
+            self.get_filenames(),
+            self.get_addresses(),
+            self.get_mask(),
+        )
+
     def __repr__(self):
         """Called by the `repr` built-in function.
 

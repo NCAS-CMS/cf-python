@@ -1432,15 +1432,6 @@ Using cf-python library version {cf.__version__} at {library_path}"""
         else:
             write_options["cfa"] = True
 
-    #    elif fmt == "CFA":
-    #        print(
-    #            f"{iam} ERROR: '-f CFA' has been replaced by '-f CFA3' or "
-    #           "'-f CFA4' respectively for netCDF3 classic and netCDF4 CFA "
-    #           "output formats.",
-    #           file=sys.stderr,
-    #       )
-    #       sys.exit(2)
-
     write_options["fmt"] = fmt
 
     if not infiles:

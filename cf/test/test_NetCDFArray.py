@@ -2,6 +2,8 @@ import datetime
 import faulthandler
 import unittest
 
+from dask.base import tokenize
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cf
@@ -72,6 +74,13 @@ class NetCDFArrayTest(unittest.TestCase):
         b = a.set_file_location("/data1")
         self.assertEqual(b.get_filenames(), a.get_filenames())
         self.assertEqual(b.get_addresses(), a.get_addresses())
+
+    def test_NetCDFArray__dask_tokenize__(self):
+        a = cf.NetCDFArray("/data1/file1", "tas", shape=(12, 2), mask=False)
+        self.assertEqual(tokenize(a), tokenize(a.copy()))
+
+        b = cf.NetCDFArray("/home/file2", "tas", shape=(12, 2))
+        self.assertNotEqual(tokenize(a), tokenize(b))
 
 
 if __name__ == "__main__":

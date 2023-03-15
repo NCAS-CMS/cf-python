@@ -90,12 +90,39 @@ class FullArray(Array):
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
 
+    def __array__(self, *dtype):
+        """The numpy array interface.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            dtype: optional
+                Typecode or data-type to which the array is cast.
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the data.
+
+        """
+        array = self[...]
+        if not dtype:
+            return array
+        else:
+            return array.astype(dtype[0], copy=False)
+
     def __array_function__(self, func, types, args, kwargs):
+        """The `numpy` `__array_function__` protocol.
+
+        .. versionadded:: TODOCFAVER
+
+        """
         if func not in _FULLARRAY_HANDLED_FUNCTIONS:
             return NotImplemented
 
-        # Note: this allows subclasses that don't override
-        # __array_function__ to handle MyArray objects
+        # Note: This allows subclasses that don't override
+        #       __array_function__ to handle FullArray objects
         if not all(issubclass(t, self.__class__) for t in types):
             return NotImplemented
 
@@ -168,34 +195,6 @@ class FullArray(Array):
             return "Uninitialised"
 
         return f"Filled with {fill_value!r}"
-
-    #    def _set_units(self):
-    #        """The units and calendar properties.
-    #
-    #        These are the values set during initialisation, defaulting to
-    #        `None` if either was not set at that time.
-    #
-    #        .. versionadded:: 3.14.0
-    #
-    #        :Returns:
-    #
-    #            `tuple`
-    #                The units and calendar values, either of which may be
-    #                `None`.
-    #
-    #        """
-    #        # TODOCFA: Consider moving _set_units to cfdm.Array, or some
-    #        #          other common ancestor so that this, and other,
-    #        #          subclasses can access it.
-    #        units = self.get_units(False)
-    #        if units is False:
-    #            self._set_component("units", None, copy=False)
-    #
-    #        calendar = self.get_calendar(False)
-    #        if calendar is False:
-    #            self._set_component("calendar", None, copy=False)
-    #
-    #        return units, calendar
 
     @property
     def dtype(self):
@@ -284,6 +283,7 @@ def unique(
             axis=axis,
         )
 
+    # Fast unique based in the full value
     x = a.get_full_value()
     if x is np.ma.masked:
         return np.ma.masked_all((1,), dtype=a.dtype)

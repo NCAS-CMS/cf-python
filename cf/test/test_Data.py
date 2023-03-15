@@ -4622,7 +4622,7 @@ class DataTest(unittest.TestCase):
     def test_Data_todict(self):
         """Test Data.todict"""
         d = cf.Data([1, 2, 3, 4], chunks=2)
-        key = "array-7daac373ba27474b6df0af70aab14e49"
+        key = d.to_dask_array().name
 
         x = d.todict()
         self.assertIsInstance(x, dict)
