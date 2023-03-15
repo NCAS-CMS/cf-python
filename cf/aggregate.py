@@ -2636,8 +2636,8 @@ def _get_hfl(
     hash_to_data.setdefault(key, {})
     hash_to_data = hash_to_data[key]
 
-    if d._get_deterministic():
-        hash_value = d.name
+    if d.has_deterministic_name():
+        hash_value = d.get_deterministic_name()
     else:
         hash_value = tokenize(d.array)
 

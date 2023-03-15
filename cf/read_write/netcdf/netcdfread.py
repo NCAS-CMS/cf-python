@@ -439,25 +439,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         indices = (0, -1)
 
-        if ndim and data.shape[-1] == 2:
-            # Assume that anything with a last dimension of size 2
-            # contains 1-d coordinate bounds
-            indices = (0, 1, -2, -1)
-            ndim1 = ndim - 1
-            values = (
-                variable[(slice(0, 1),) * ndim1 + (slice(0, 1),)],
-                variable[(slice(0, 1),) * ndim1 + (slice(1, 2),)],
-            )
-            if data.size == 1:
-                values = values + values
-            else:
-                values += (
-                    variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
-                    variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
-                )
-        elif ndim == 1:
+        if ndim == 1:
+            # Also cache the second element for 1-d data, on the
+            # assumption that they may well be dimension coordinate
+            # data.
             if size == 1:
-                value = variable[:1]
+                value = variable[...]
                 values = (value, value)
             elif size == 2:
                 indices = (0, 1, -1)
@@ -466,13 +453,31 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             else:
                 indices = (0, 1, -1)
                 values = (variable[:1], variable[1:2], variable[-1:])
+        elif ndim == 2 and data.shape[-1] == 2:
+            # Assume that 2-d data with a last dimension of size 2
+            # contains coordinate bounds, for which it is useful to
+            # cache the upper and lower bounds of the the first and
+            # last cells.
+            indices = (0, 1, -2, -1)
+            ndim1 = ndim - 1
+            values = (
+                variable[(slice(0, 1),) * ndim1 + (slice(0, 1),)],
+                variable[(slice(0, 1),) * ndim1 + (slice(1, 2),)],
+            )
+            if data.size == 2:
+                values = values + values
+            else:
+                values += (
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
+                )
         elif size == 1:
-            value = variable[(slice(0, 1),) * ndim]
+            value = variable[...]
             values = (value, value)
         elif size == 3:
             indices = (0, 1, -1)
             if char:
-                values = variable[...].reshape(size, variable.shape[-1])
+                values = variable[...].reshape(3, variable.shape[-1])
             else:
                 values = variable[...].flatten()
         else:

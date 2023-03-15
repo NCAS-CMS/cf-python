@@ -1084,7 +1084,7 @@ class UMField:
                     config={
                         "axis": xaxis,
                         "coord": xc,
-                        "period": self.get_data(np.array(360.0), xc.Units)
+                        "period": self.get_data(np.array(360.0), xc.Units),
                     },
                 )
 
@@ -3039,7 +3039,7 @@ class UMField:
         .. versionadded:: 3.14.2
 
         :Parameters:
-        
+
             array: `np.ndarray`
                 The data.
 
@@ -3053,14 +3053,15 @@ class UMField:
                 Whether or not the data are bounds of 1-d coordinates.
 
         :Returns:
-        
+
             `Data`
+                An independent copy of the new data.
 
         """
         token = tokenize(array, units)
         data = _cached_data.get(token)
         if data is None:
-            data = Data(array, units=units ,fill_value=fill_value)
+            data = Data(array, units=units, fill_value=fill_value)
             if not bounds:
                 if array.size == 1:
                     value = array.item(0)
@@ -3076,18 +3077,17 @@ class UMField:
             else:
                 data._set_cached_elements(
                     {
-                        0:  array.item(0),
-                        1:  array.item(1),
+                        0: array.item(0),
+                        1: array.item(1),
                         -2: array.item(-2),
                         -1: array.item(-1),
                     }
                 )
 
             _cached_data[token] = data
-            
+
         return data.copy()
-                    
-    
+
     def site_coordinates_from_extra_data(self):
         """Create site-related coordinates from extra data.
 

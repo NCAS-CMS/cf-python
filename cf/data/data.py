@@ -1461,33 +1461,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return cache.copy()
 
-    def _get_deterministic(self):
-        """Get the deterministic name status.
-
-        If the deterministic name status is True then the data array
-        may be assumed to be "equal" to that of another `Data` object
-        also with True deterministic name status and the same
-        `name`. Any equality conventions applied by the `equals`
-        method (such as NaN values being considered unequal) are not
-        applicable to this "equality", because the actual data array
-        values are not available.
-
-        .. note:: The oppoite is not true, in that if two `Data`
-                  objects with True deterministic name status are
-                  considered equal by their `equals` methods, then
-                  they might not have equal `name` attributes.
-
-        .. versionadded:: 3.14.2
-
-        .. seealso:: _update_deterministic
-
-        :Returns:
-
-            `bool`
-
-        """
-        return self._custom["deterministic"]
-
     def _set_cached_elements(self, elements):
         """Cache selected element values.
 
@@ -1535,7 +1508,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         .. versionadded:: 3.14.2
 
-        .. seealso:: _get_deterministic
+        .. seealso:: `get_deterministic_name`,
+                     `has_deterministic_name`
 
         :Parameters:
 
@@ -3816,7 +3790,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Set if the name is deterministic
         deterministic = True
         for d in processed_data:
-            if not d._get_deterministic():
+            if not d.has_deterministic_name():
                 deterministic = False
                 break
 
@@ -4457,13 +4431,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             else:
                 dtype = _dtype_float
 
-        dx = self.to_dask_array()
-
         func = partial(cf_units, from_units=old_units, to_units=value)
+
+        dx = self.to_dask_array()
         dx = dx.map_blocks(func, dtype=dtype)
         self._set_dask(dx, clear=_ALL ^ _CACHE)
 
-        # Adjust the cached values for the new units
+        # Adjust cached values for the new units
         cache = self._get_cached_elements()
         if cache:
             self._set_cached_elements(
@@ -4656,11 +4630,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
         return bool(dx.any())
-
-    @property
-    def name(self):
-        """The dask name used to relate the array to its task graph."""
-        return self.to_dask_array().name
 
     @property
     def nbytes(self):
@@ -5991,6 +5960,36 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         return self
+
+    def get_deterministic_name(self):
+        """TODODOCSThe dask name used to relate the array to its task graph.
+
+        If the deterministic name status is True then the data array
+        may be assumed to be "equal" to that of another `Data` object
+        also with True deterministic name status and the same
+        `name`. Any equality conventions applied by the `equals`
+        method (such as NaN values being considered unequal) are not
+        applicable to this "equality", because the actual data array
+        values are not available.
+
+        .. note:: The oppoite is not true, in that if two `Data`
+                  objects with True deterministic name status are
+                  considered equal by their `equals` methods, then
+                  they might not have equal `name` attributes.
+
+        .. versionadded:: 3.14.2
+
+        .. seealso:: `has_deterministic_name`
+
+        :Returns:
+
+            `str`
+                TODODOCS
+        """
+        if not self.has_deterministic_name():
+            raise ValueError()
+
+        return tokenize(self.to_dask_array().name, self.Units)
 
     def get_filenames(self):
         """The names of files containing parts of the data array.
@@ -8214,6 +8213,34 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         return hasattr(self.Units, "calendar")
+
+    def has_deterministic_name(self):
+        """Get the deterministic name status.
+
+        TODODOCS
+        If the deterministic name status is True then the data array
+        may be assumed to be "equal" to that of another `Data` object
+        also with True deterministic name status and the same
+        `name`. Any equality conventions applied by the `equals`
+        method (such as NaN values being considered unequal) are not
+        applicable to this "equality", because the actual data array
+        values are not available.
+
+        .. note:: The oppoite is not true, in that if two `Data`
+                  objects with True deterministic name status are
+                  considered equal by their `equals` methods, then
+                  they might not have equal `name` attributes.
+
+        .. versionadded:: 3.14.2
+
+        .. seealso:: `get_deterministic_name`
+
+        :Returns:
+
+            `bool`
+
+        """
+        return self._custom["deterministic"]
 
     def has_units(self):
         """Whether units have been set.
