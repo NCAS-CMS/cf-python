@@ -74,25 +74,40 @@ class _HFLCache:
     values and first and last cell bounds."""
 
     def __init__(self):
-        # Store mappings of equivalent Data hashes
+        # Store mappings of equivalent Data hashes. This links Data
+        # objects that are equal but have different hashes, such as
+        # cf.Data(1, 'day since 2002-01-01') and cf.Data(366, 'day
+        # since 2001-01-01').
+        #
+        # E.g. {'d34re': '5752f', '865x4': 'xx45y'}
         self.hash_map = {}
-        self.fl = {}
-        self.flb = {}
-        # Store general Data objects, separated into groups of (shape,
-        # canonical units) and then keyed by unique their hashes.
+        # Store non-coordinate-bounds Data objects, separated into
+        # groups of (shape, canonical units) and then keyed by unique
+        # hashes.
         #
         # E.g. {(12,), <CF Units: m)): {'d34re': <CF Data(12): >
         #                               '865x4': <CF Data(12): >},
         #       (1,),  <CF Units: s)): {'12g67': <CF Data(1): >}}
         self.hash_to_data = {}
         # Store coordinate bounds Data objects, separated into groups
-        # of (shape, canonical units) and then keyed by unique their
-        # hashes.
+        # of (shape, canonical units) and then keyed by unique hashes.
         #
-        # E.g. {(12, 2), <CF Units: m)): {'d34re': <CF Data(12, 2): >
-        #                                 '865x4': <CF Data(12, 2): >},
-        #       (1, 2),  <CF Units: s)): {'12g67': <CF Data(1 ,2): >}}
+        # E.g. {(12, 2), <CF Units: m)): {'kljsd': <CF Data(12, 2): >
+        #                                 'o8t3g': <CF Data(12, 2): >},
+        #       (1, 2),  <CF Units: s)): {'7v7gl': <CF Data(1 ,2): >}}
         self.hash_to_data_bounds = {}
+        # The first and last values of a non-coordinate-bounds Data
+        # object.
+        #
+        # E.g. {'238f5': (-89.375, 89.375),
+        #       '39c81': (0.0, 358.75)}
+        self.fl = {}
+        # The first and last cell bounds of a coordinate bounds Data
+        # object.
+        #
+        # E.g. {'08d99': ([-90.0, -88.75], [88.75, 90.0]),
+        #       '6c0e0': ([-0.625, 0.625], [358.125, 359.375])}
+        self.flb = {}
 
 
 class _Meta:
@@ -2623,8 +2638,8 @@ def _get_hfl(
     hash_to_data.setdefault(key, {})
     hash_to_data = hash_to_data[key]
 
-    if d._get_deterministic_name():
-        hash_value = d.to_dask_array().name
+    if d._get_deterministic():
+        hash_value = d.name
     else:
         hash_value = tokenize(d.array)
 

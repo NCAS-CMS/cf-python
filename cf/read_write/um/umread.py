@@ -2018,10 +2018,10 @@ class UMField:
             fill_value = None
 
         # Create the dask array
-        array = da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
+        dx = da.Array(dsk, name[0], chunks=chunks, dtype=dtype)
 
         # Create the Data object
-        data = Data(array, units=um_Units, fill_value=fill_value)
+        data = Data(dx, units=um_Units, fill_value=fill_value)
 
         self.data = data
         self.data_axes = data_axes

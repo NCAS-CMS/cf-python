@@ -1213,6 +1213,12 @@ class DataTest(unittest.TestCase):
             {0: d.first_element(), -1: e.last_element()},
         )
 
+        # Test deterministic
+        self.assertTrue(f._get_deterministic())
+        e._update_deterministic(False)
+        f = cf.Data.concatenate([d, e], axis=0)
+        self.assertFalse(f._get_deterministic())
+
     def test_Data__contains__(self):
         """Test containment checking against Data."""
         d = cf.Data([[0, 1, 2], [3, 4, 5]], units="m", chunks=2)
@@ -4529,19 +4535,19 @@ class DataTest(unittest.TestCase):
         d._set_dask(dx, clear=_ALL)
         self.assertFalse(d._get_cached_elements())
 
-    def test_Data_update_deterministic_name(self):
-        """Test Data._clear_after_dask_update"""
+    def test_Data_get_update_deterministic(self):
+        """Test Data_deterministic methods"""
         d = cf.Data([1, 2], "m")
         e = cf.Data([4, 5], "km")
-        self.assertTrue(d._custom["deterministic_name"])
-        self.assertTrue(e._custom["deterministic_name"])
-        self.assertTrue((d + e)._custom["deterministic_name"])
-        self.assertTrue((d + e.array)._custom["deterministic_name"])
-        self.assertFalse((d + e.to_dask_array())._custom["deterministic_name"])
+        self.assertTrue(d._get_deterministic())
+        self.assertTrue(e._get_deterministic())
+        self.assertTrue((d + e)._get_deterministic())
+        self.assertTrue((d + e.array)._get_deterministic())
+        self.assertFalse((d + e.to_dask_array())._get_deterministic())
 
-        d._update_deterministic_name(False)
-        self.assertFalse(d._custom["deterministic_name"])
-        self.assertFalse((d + e)._custom["deterministic_name"])
+        d._update_deterministic(False)
+        self.assertFalse(d._get_deterministic())
+        self.assertFalse((d + e)._get_deterministic())
 
 
 if __name__ == "__main__":

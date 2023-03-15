@@ -448,7 +448,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         # Set whether or not we're sure that the Data instance has a
         # determinsitic name
-        self._custom["deterministic_name"] = not is_dask_collection(array)
+        self._custom["deterministic"] = not is_dask_collection(array)
 
         array = to_dask(array, chunks, **kwargs)
 
@@ -1461,17 +1461,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         return cache.copy()
 
-    def _get_deterministic_name(self):
+    def _get_deterministic(self):
         """Get the deterministic name status.
 
+        If the deterministic name status is True then the data array
+        may be assumed to be "equal" to that of another `Data` object
+        also with True deterministic name status and the same
+        `name`. Any equality conventions applied by the `equals`
+        method (such as NaN values being considered unequal) are not
+        applicable to this "equality", because the actual data array
+        values are not available.
+
+        .. note:: The oppoite is not true, in that if two `Data`
+                  objects with True deterministic name status are
+                  considered equal by their `equals` methods, then
+                  they might not have equal `name` attributes.
+
         .. versionadded:: 3.14.2
+
+        .. seealso:: _update_deterministic
 
         :Returns:
 
             `bool`
 
         """
-        return self._custom["deterministic_name"]
+        return self._custom["deterministic"]
 
     def _set_cached_elements(self, elements):
         """Cache selected element values.
@@ -1515,10 +1530,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         self._custom["cached_elements"] = cache
 
-    def _update_deterministic_name(self, other):
+    def _update_deterministic(self, other):
         """Update the deterministic name status.
 
         .. versionadded:: 3.14.2
+
+        .. seealso:: _get_deterministic
 
         :Parameters:
 
@@ -1535,11 +1552,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         custom = self._custom
         if other is False:
-            custom["deterministic_name"] = False
+            custom["deterministic"] = False
         elif other is not True:
-            custom["deterministic_name"] = (
-                custom["deterministic_name"]
-                and other._custom["deterministic_name"]
+            custom["deterministic"] = (
+                custom["deterministic"] and other._custom["deterministic"]
             )
 
     @_inplace_enabled(default=False)
@@ -2358,7 +2374,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             axes = d._axes
             d._axes = (new_axis_identifier(axes),) + axes
 
-        d._update_deterministic_name(not is_dask_collection(q))
+        d._update_deterministic(not is_dask_collection(q))
 
         return d
 
@@ -3488,7 +3504,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if axes is not None:
                 self._axes = axes
 
-            self._update_deterministic_name(other)
+            self._update_deterministic(other)
             return self
         else:  # not, so concerns a new Data object copied from self, data0
             data0._set_dask(result)
@@ -3496,7 +3512,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if axes is not None:
                 data0._axes = axes
 
-            data0._update_deterministic_name(other)
+            data0._update_deterministic(other)
             return data0
 
     def _parse_indices(self, *args, **kwargs):
@@ -3648,7 +3664,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx)
 
         # Don't know (yet) if 'operator' has a deterministic name
-        d._update_deterministic_name(False)
+        d._update_deterministic(False)
 
         return d
 
@@ -3786,7 +3802,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dxs = [d.to_dask_array() for d in processed_data]
         dx = da.concatenate(dxs, axis=axis)
 
-        # Set the new dask array, retaining the cached elements ...
+        # Set the new dask array
         data0._set_dask(dx, clear=_ALL)
 
         # Set the appropriate cached elements
@@ -3797,6 +3813,15 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 cached_elements[i] = element
 
         data0._set_cached_elements(cached_elements)
+
+        # Set if the name is deterministic
+        deterministic = True
+        for d in processed_data:
+            if not d._get_deterministic():
+                deterministic = False
+                break
+
+        data0._update_deterministic(deterministic)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
         axis = data0._parse_axes(axis)[0]
@@ -4626,6 +4651,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         )
 
         return bool(dx.any())
+
+    @property
+    def name(self):
+        """The dask name used to relate the array to its task graph."""
+        return self.to_dask_array().name
 
     @property
     def nbytes(self):
@@ -7600,7 +7630,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if cache0:
             cache1 = other._get_cached_elements()
             if cache1 and sorted(cache0) == sorted(cache1):
-                a, b = [], []
+                a = []
+                b = []
                 for key, value0 in cache0.items():
                     value1 = cache1[key]
                     if value0 is np.ma.masked or value1 is np.ma.masked:
@@ -8725,7 +8756,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         for a_axis in a._cyclic:
             d.cyclic(ndim + a._axes.index(a_axis))
 
-        d._update_deterministic_name(a)
+        d._update_deterministic(a)
         return d
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
@@ -9510,7 +9541,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             d._set_dask(dx)
             d.hardmask = _DEFAULT_HARDMASK
             d.override_units(_units_None, inplace=True)
-            d._update_deterministic_name(not is_dask_collection(y))
+            d._update_deterministic(not is_dask_collection(y))
 
             return d
 
@@ -10339,7 +10370,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d._set_dask(dx)
 
         # Don't know (yet) if 'x' and 'y' have a deterministic names
-        d._update_deterministic_name(False)
+        d._update_deterministic(False)
 
         return d
 

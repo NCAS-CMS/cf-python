@@ -426,57 +426,70 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             variable = g["variables"].get(ncvar)
 
         # Get the required element values
-        size = variable.size
-        ndim = variable.ndim
+        size = data.size
+        ndim = data.ndim
 
         char = False
-        if data.ndim == ndim - 1:
+        if variable.ndim == ndim + 1:
             dtype = variable.dtype
             if dtype is not str and dtype.kind in "SU":
-                # Variable is a netCDF classic style char array with a
-                # trailing dimension
-                ndim -= 1
+                # This variable is a netCDF classic style char array
+                # with a trailing dimension that needs to be collapsed
                 char = True
 
-        if size == 1:
-            value = variable[(slice(0, 1),) * ndim]
-            values = (value, None, value)
-        elif size == 3:
-            if char:
-                values = (
-                    variable[(slice(0, 1),) * ndim],
-                    variable[(slice(0, 1),) * (ndim - 1) + (slice(1, 2),)],
-                    variable[(slice(-1, None, 1),) * ndim],
+        indices = (0, -1)
+
+        if ndim and data.shape[-1] == 2:
+            # Assume that anything with a last dimension of size 2
+            # contains 1-d coordinate bounds
+            indices = (0, 1, -2, -1)
+            ndim1 = ndim - 1
+            values = (
+                variable[(slice(0, 1),) * ndim1 + (slice(0, 1),)],
+                variable[(slice(0, 1),) * ndim1 + (slice(1, 2),)],
+            )
+            if data.size == 1:
+                values = values + values
+            else:
+                values += (
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
                 )
+        elif size == 1:
+            value = variable[(slice(0, 1),) * ndim]
+            values = (value, value)
+        elif size == 3:
+            indices = (0, 1, -1)
+            if char:
+                values = variable[...].reshape(size, variable.shape[-1])
             else:
                 values = variable[...].flatten()
         else:
             values = (
                 variable[(slice(0, 1),) * ndim],
-                None,
                 variable[(slice(-1, None, 1),) * ndim],
             )
 
         # Create a dictionary of the element values
         elements = {}
-        for element, value in zip((0, 1, -1), values):
-            if value is None:
-                continue
+        for index, value in zip(indices, values):
+            if char:
+                # Variable is a netCDF classic style char array so
+                # collapse (by concatenation) the outermost (fastest
+                # varying) dimension. E.g. [['a','b','c']] becomes
+                # ['abc']
+                if value.dtype.kind == "U":
+                    value = value.astype("S")
+
+                a = netCDF4.chartostring(value)
+                shape = a.shape
+                a = np.array([x.rstrip() for x in a.flat])
+                a = np.reshape(a, shape)
+                value = np.ma.masked_where(a == "", a)
 
             if np.ma.is_masked(value):
                 value = np.ma.masked
             else:
-                if char:
-                    # Variable is a netCDF classic style char array
-                    # so collapse (by concatenation) the outermost
-                    # (fastest varying)
-                    # dimension. E.g. [['a','b','c']] becomes ['abc']
-                    a = netCDF4.chartostring(value)
-                    shape = a.shape
-                    a = np.array([x.rstrip() for x in a.flat])
-                    a = np.reshape(a, shape)
-                    value = np.ma.masked_where(a == "", a)
-
                 try:
                     value = value.item()
                 except (AttributeError, ValueError):
@@ -488,7 +501,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     # a Python scalar.
                     pass
 
-            elements[element] = value
+            elements[index] = value
 
         # Store the elements in the data object
         data._set_cached_elements(elements)

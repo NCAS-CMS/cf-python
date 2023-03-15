@@ -81,6 +81,7 @@ Dask
 
    ~cf.Data.compute
    ~cf.Data.chunks
+   ~cf.Data.name
    ~cf.Data.npartitions
    ~cf.Data.numblocks
    
