@@ -5977,9 +5977,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         different to that applied by the `equals` method in that NaN
         and inf values are always considered equal.
 
-        Note that the opposite is not always true, in that two `Data`
-        objects which are considered equal by their `equals` methods
-        might not have the same deterministic name.
+        Note that the opposite is not always true. Two `Data` objects
+        that are considered equal by their `equals` methods might not
+        have the same deterministic name.
 
         An exception is raised if there is no determinisitic name.
 

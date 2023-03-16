@@ -79,22 +79,24 @@ class _HFLCache:
         # cf.Data(1, 'day since 2002-01-01') and cf.Data(366, 'day
         # since 2001-01-01').
         #
-        # E.g. {'d34re': '5752f', '865x4': 'xx45y'}
+        # E.g. {'5752f': '5752f', 'd34re': '5752f', '865x4': 'xx45y'}
         self.hash_map = {}
         # Store non-coordinate-bounds Data objects, separated into
         # groups of (shape, canonical units) and then keyed by unique
         # hashes.
         #
-        # E.g. {((12,), <CF Units: m>)): {'d34re': <CF Data(12): >
-        #                                 '865x4': <CF Data(12): >},
-        #       ((1,),  <CF Units: s>)): {'12g67': <CF Data(1): >}}
+        # E.g.
+        # {((12,), <CF Units: m>), ((-1: 10),)): {'d34re': <CF Data(12): >
+        #                                         '865x4': <CF Data(12): >},
+        #  ((1,),  <CF Units: s>), ((-1: 10),)): {'12g67': <CF Data(1): >}}
         self.hash_to_data = {}
         # Store coordinate bounds Data objects, separated into groups
         # of (shape, canonical units) and then keyed by unique hashes.
         #
-        # E.g. {((12, 2), <CF Units: m>)): {'kljsd': <CF Data(12, 2): >
-        #                                   'o8t3g': <CF Data(12, 2): >},
-        #       ((1, 2),  <CF Units: s>)): {'7v7gl': <CF Data(1 ,2): >}}
+        # E.g.
+        # {((12, 2), <CF Units: m>, ((-1: 6),)): {'kljsd': <CF Data(12, 2): >
+        #                                         'o8t3g': <CF Data(12, 2): >},
+        #  ((1, 2),  <CF Units: s>, ((-1: 2),)): {'7v7gl': <CF Data(1 ,2): >}}
         self.hash_to_data_bounds = {}
         # The first and last values of non-coordinate-bounds Data
         # objects.
@@ -2604,9 +2606,10 @@ def _get_hfl(
 
     :Returns:
 
-        `int` or 3-`tuple`
-            Hash value for the coordinates and cell measures, in a tuple with
-            the first and last cell values or bounds if either is requested.
+        `str` or 3-`tuple`
+            A unique representative value for the coordinates and cell
+            measures, in a tuple with the first and last cell values
+            or bounds if either is requested.
 
     """
     create_fl = first_and_last_values
@@ -2627,14 +2630,10 @@ def _get_hfl(
         d = d[sort_indices]
 
     hash_map = hfl_cache.hash_map
-    if create_flb:
-        hash_to_data = hfl_cache.hash_to_data_bounds
-    else:
-        hash_to_data = hfl_cache.hash_to_data
 
-    key = (d.shape, canonical_units)
-    hash_to_data.setdefault(key, {})
-    hash_to_data = hash_to_data[key]
+#    key = (d.shape, canonical_units, tuple(sorted(d._get_cached_elements().item#s())))
+#    hash_to_data.setdefault(key, {})
+#    hash_to_data = hash_to_data[key]
 
     try:
         hash_value = d.get_deterministic_name()
@@ -2643,27 +2642,41 @@ def _get_hfl(
 
     if hash_value in hash_map:
         hash_value = hash_map[hash_value]
-    elif hash_value not in hash_to_data:
-        found_close = False
-        kind = d.dtype.kind
-        for hash_value0, d0 in hash_to_data.items():
-            kind0 = d0.dtype.kind
-            if kind != kind0 and (kind not in "ifu" or kind0 not in "ifu"):
-                # Data types are incompatible, so 'd' can't equal 'd0'
-                continue
-
-            if d.equals(
-                d0, rtol=rtol, atol=atol, ignore_data_type=True, verbose=1
-            ):
-                hash_map[hash_value] = hash_value0
+    else:
+        if create_flb:
+            hash_to_data = hfl_cache.hash_to_data_bounds
+        else:
+            hash_to_data = hfl_cache.hash_to_data
+            
+        key = (d.shape, canonical_units, tuple(sorted(d._get_cached_elements().items())))
+        hash_to_data.setdefault(key, {})
+        hash_to_data = hash_to_data[key]
+        if hash_value not in hash_to_data:
+            # We've not seen this hash value before ...
+            found_equal = False
+            kind = d.dtype.kind
+            for hash_value0, d0 in hash_to_data.items():
+                kind0 = d0.dtype.kind
+                if kind != kind0 and (kind not in "ifu" or kind0 not in "ifu"):
+                    # Data types are incompatible, so 'd' can't equal 'd0'
+                    continue
+            
+                if d.equals(
+                    d0, rtol=rtol, atol=atol, ignore_data_type=True, verbose=1
+                ):
+                    # ... but the data that it represents has been seen.
+                    hash_map[hash_value] = hash_value0
+                    hash_value = hash_value0
+                    found_equal = True
+                    break
+            
+            if not found_equal:
+                hash_map[hash_value] = hash_value
                 hash_to_data[hash_value] = d
-                hash_value = hash_value0
-                found_close = True
-                break
 
-        if not found_close:
-            hash_to_data[hash_value] = d
-
+#    print ()
+#    print (hash_map)
+#    print (hfl_cache.hash_to_data)
     if create_fl:
         # Record the first and last cells
         first, last = hfl_cache.fl.get(hash_value, (None, None))

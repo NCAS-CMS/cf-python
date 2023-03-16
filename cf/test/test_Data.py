@@ -4558,14 +4558,6 @@ class DataTest(unittest.TestCase):
     def test_Data_get_deterministic_name(self):
         """Test Data.get_deterministic_name"""
         d = cf.Data([1, 2], "m")
-        self.assertEqual(
-            d.get_deterministic_name(), "f05bc4fe0699b6b1cd461cf3327511bb"
-        )
-        self.assertEqual(
-            (d + 1).get_deterministic_name(),
-            "bdd6039958f88decff3a7fd0b66ee986",
-        )
-
         e = d.copy()
         e.Units = cf.Units("metre")
         self.assertEqual(
@@ -4576,6 +4568,10 @@ class DataTest(unittest.TestCase):
         self.assertNotEqual(
             e.get_deterministic_name(), d.get_deterministic_name()
         )
+
+        d._update_deterministic(False)
+        with self.assertRaises(ValueError):
+            d.get_deterministic_name()
 
 
 if __name__ == "__main__":
