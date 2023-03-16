@@ -1515,21 +1515,28 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             other: `False` or `Data`
                 If `False` then set the deterministic name status to
-                `False`. If `Data` then set the deterministic name
-                status to `False` if *other* has a deterministic name
-                status.
+                `False`. If `True` then do not change the
+                deterministic name status. If `Data` then set the
+                deterministic name status to `False` if and only if
+                *other* has a False deterministic name status.
 
         :Returns:
 
             `None`
 
         """
-        custom = self._custom
         if other is False:
-            custom["deterministic"] = False
-        elif other is not True:
+            self._custom["deterministic"] = False
+            return
+
+        if other is True:
+            return
+
+        custom = self._custom
+        deterministic = custom["deterministic"]
+        if deterministic:
             custom["deterministic"] = (
-                custom["deterministic"] and other._custom["deterministic"]
+                deterministic and other._custom["deterministic"]
             )
 
     @_inplace_enabled(default=False)
@@ -5962,20 +5969,19 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return self
 
     def get_deterministic_name(self):
-        """TODODOCSThe dask name used to relate the array to its task graph.
+        """Get the deterministic name for the data.
 
-        If the deterministic name status is True then the data array
-        may be assumed to be "equal" to that of another `Data` object
-        also with True deterministic name status and the same
-        `name`. Any equality conventions applied by the `equals`
-        method (such as NaN values being considered unequal) are not
-        applicable to this "equality", because the actual data array
-        values are not available.
+        If there is a deterministic name then the data array may be
+        assumed to be "equal" to that of another `Data` object with
+        the same deterministic name. This measure of equality is
+        different to that applied by the `equals` method in that NaN
+        and inf values are always considered equal.
 
-        .. note:: The oppoite is not true, in that if two `Data`
-                  objects with True deterministic name status are
-                  considered equal by their `equals` methods, then
-                  they might not have equal `name` attributes.
+        Note that the opposite is not always true, in that two `Data`
+        objects which are considered equal by their `equals` methods
+        might not have the same deterministic name.
+
+        An exception is raised if there is no determinisitic name.
 
         .. versionadded:: 3.14.2
 
@@ -5984,12 +5990,44 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `str`
-                TODODOCS
+                The deterministic name.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3], 'm')
+        >>> d.has_deterministic_name()
+        True
+        >>> d.get_deterministic_name()
+        '6380dd3674fbf10d30561484b084e9b3'
+        >>> d1 = cf.Data([1, 2, 3], 'metre')
+        >>> d1.get_deterministic_name()
+        '6380dd3674fbf10d30561484b084e9b3'
+        >>> d1.get_deterministic_name() == d.get_deterministic_name()
+        True
+        >>> d1.equals(d)
+        True
+
+        >>> e = d + 1
+        >>> e.get_deterministic_name()
+        '1bd7398f9af2ebfc31e86a0e9712f44b'
+        >>> f = e - 1
+        >>> f.get_deterministic_name()
+        '607fab0fe055491a1670e3eb350fa5ac'
+        >>> f.get_deterministic_name() == d.get_deterministic_name()
+        False
+        >>> f.equals(d)
+        True
+
         """
-        if not self.has_deterministic_name():
+        if not self._custom["deterministic"]:
             raise ValueError()
 
-        return tokenize(self.to_dask_array().name, self.Units)
+        units = self._Units
+        return tokenize(
+            self.to_dask_array().name,
+            units.formatted(definition=True, names=True),
+            units._canonical_calendar,
+        )
 
     def get_filenames(self):
         """The names of files containing parts of the data array.
@@ -8215,21 +8253,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return hasattr(self.Units, "calendar")
 
     def has_deterministic_name(self):
-        """Get the deterministic name status.
+        """Whether there is a deterministic name for the data.
 
-        TODODOCS
-        If the deterministic name status is True then the data array
-        may be assumed to be "equal" to that of another `Data` object
-        also with True deterministic name status and the same
-        `name`. Any equality conventions applied by the `equals`
-        method (such as NaN values being considered unequal) are not
-        applicable to this "equality", because the actual data array
-        values are not available.
-
-        .. note:: The oppoite is not true, in that if two `Data`
-                  objects with True deterministic name status are
-                  considered equal by their `equals` methods, then
-                  they might not have equal `name` attributes.
+        See ``get_deterministic_name` for details.
 
         .. versionadded:: 3.14.2
 
@@ -8238,6 +8264,13 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         :Returns:
 
             `bool`
+                Whether or not there is a deterministic name.
+
+        **Examples**
+
+        >>> d = cf.Data([1, 2, 3], 'm')
+        >>> d.has_deterministic_name()
+        True
 
         """
         return self._custom["deterministic"]

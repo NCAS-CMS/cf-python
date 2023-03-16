@@ -3023,9 +3023,9 @@ class UMField:
 
         if X and bounds is not None:
             autocyclic["cyclic"] = abs(bounds[0, 0] - bounds[-1, -1]) == 360.0
+            autocyclic["period"] = self.get_data(np.array(360.0), units)
             autocyclic["axis"] = axis_key
             autocyclic["coord"] = dc
-            autocyclic["period"] = self.get_data(np.array(360.0), units)
 
         key = self.implementation.set_dimension_coordinate(
             self.field, dc, axes=[axis_key], copy=False, autocyclic=autocyclic

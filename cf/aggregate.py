@@ -85,25 +85,25 @@ class _HFLCache:
         # groups of (shape, canonical units) and then keyed by unique
         # hashes.
         #
-        # E.g. {(12,), <CF Units: m)): {'d34re': <CF Data(12): >
-        #                               '865x4': <CF Data(12): >},
-        #       (1,),  <CF Units: s)): {'12g67': <CF Data(1): >}}
+        # E.g. {((12,), <CF Units: m>)): {'d34re': <CF Data(12): >
+        #                                 '865x4': <CF Data(12): >},
+        #       ((1,),  <CF Units: s>)): {'12g67': <CF Data(1): >}}
         self.hash_to_data = {}
         # Store coordinate bounds Data objects, separated into groups
         # of (shape, canonical units) and then keyed by unique hashes.
         #
-        # E.g. {(12, 2), <CF Units: m)): {'kljsd': <CF Data(12, 2): >
-        #                                 'o8t3g': <CF Data(12, 2): >},
-        #       (1, 2),  <CF Units: s)): {'7v7gl': <CF Data(1 ,2): >}}
+        # E.g. {((12, 2), <CF Units: m>)): {'kljsd': <CF Data(12, 2): >
+        #                                   'o8t3g': <CF Data(12, 2): >},
+        #       ((1, 2),  <CF Units: s>)): {'7v7gl': <CF Data(1 ,2): >}}
         self.hash_to_data_bounds = {}
-        # The first and last values of a non-coordinate-bounds Data
-        # object.
+        # The first and last values of non-coordinate-bounds Data
+        # objects.
         #
         # E.g. {'238f5': (-89.375, 89.375),
         #       '39c81': (0.0, 358.75)}
         self.fl = {}
-        # The first and last cell bounds of a coordinate bounds Data
-        # object.
+        # The sorted first and last cell bounds of coordinate bounds
+        # Data objects.
         #
         # E.g. {'08d99': ([-90.0, -88.75], [88.75, 90.0]),
         #       '6c0e0': ([-0.625, 0.625], [358.125, 359.375])}
@@ -2626,23 +2626,23 @@ def _get_hfl(
     if not null_sort:
         d = d[sort_indices]
 
+    hash_map = hfl_cache.hash_map
     if create_flb:
         hash_to_data = hfl_cache.hash_to_data_bounds
     else:
         hash_to_data = hfl_cache.hash_to_data
 
-    shape = d.shape
-    key = (shape, canonical_units)
+    key = (d.shape, canonical_units)
     hash_to_data.setdefault(key, {})
     hash_to_data = hash_to_data[key]
 
-    if d.has_deterministic_name():
+    try:
         hash_value = d.get_deterministic_name()
-    else:
+    except ValueError:
         hash_value = tokenize(d.array)
 
-    if hash_value in hfl_cache.hash_map:
-        hash_value = hfl_cache.hash_map[hash_value]
+    if hash_value in hash_map:
+        hash_value = hash_map[hash_value]
     elif hash_value not in hash_to_data:
         found_close = False
         kind = d.dtype.kind
@@ -2655,7 +2655,7 @@ def _get_hfl(
             if d.equals(
                 d0, rtol=rtol, atol=atol, ignore_data_type=True, verbose=1
             ):
-                hfl_cache.hash_map[hash_value] = hash_value0
+                hash_map[hash_value] = hash_value0
                 hash_to_data[hash_value] = d
                 hash_value = hash_value0
                 found_close = True

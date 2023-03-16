@@ -4541,8 +4541,8 @@ class DataTest(unittest.TestCase):
         d._set_dask(dx, clear=_ALL)
         self.assertFalse(d._get_cached_elements())
 
-    def test_Data_deterministic(self):
-        """Test Data_deterministic methods"""
+    def test_Data_has_deterministic_name(self):
+        """Test Data.has_deterministic_name"""
         d = cf.Data([1, 2], "m")
         e = cf.Data([4, 5], "km")
         self.assertTrue(d.has_deterministic_name())
@@ -4554,6 +4554,28 @@ class DataTest(unittest.TestCase):
         d._update_deterministic(False)
         self.assertFalse(d.has_deterministic_name())
         self.assertFalse((d + e).has_deterministic_name())
+
+    def test_Data_get_deterministic_name(self):
+        """Test Data.get_deterministic_name"""
+        d = cf.Data([1, 2], "m")
+        self.assertEqual(
+            d.get_deterministic_name(), "f05bc4fe0699b6b1cd461cf3327511bb"
+        )
+        self.assertEqual(
+            (d + 1).get_deterministic_name(),
+            "bdd6039958f88decff3a7fd0b66ee986",
+        )
+
+        e = d.copy()
+        e.Units = cf.Units("metre")
+        self.assertEqual(
+            e.get_deterministic_name(), d.get_deterministic_name()
+        )
+
+        e = d + 1 - 1
+        self.assertNotEqual(
+            e.get_deterministic_name(), d.get_deterministic_name()
+        )
 
 
 if __name__ == "__main__":
