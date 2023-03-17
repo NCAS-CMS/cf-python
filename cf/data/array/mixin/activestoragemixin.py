@@ -40,7 +40,7 @@ class ActiveStorageMixin:
             # Normal read by local client. Returns a numpy array.
             return super().__getitem__(indices)
 
-        # Active storage read and reduction. Returns a dictionary.
+        # Active storage reduction. Returns a dictionary.
         try:
             missing_values = self.get_missing_values()
         except AttributeError:
