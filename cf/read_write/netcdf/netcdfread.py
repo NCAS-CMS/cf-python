@@ -1,25 +1,6 @@
 import cfdm
 import numpy as np
 
-"""
-TODOCFA: remove aggregation_* properties from constructs
-
-TODOCFA: Create auxiliary coordinates from non-standardised terms
-
-TODOCFA: Reference instruction variables (and/or set as
-         "do_not_create_field")
-
-TODOCFA: Create auxiliary coordinates from non-standardised terms
-
-TODOCFA: Consider scanning for cfa variables to the top (e.g. where
-         scanning for geometry varables is). This will probably need a
-         change in cfdm so that a customizable hook can be overlaoded
-         (like `_customize_read_vars` does).
-
-TODOCFA: What about groups/netcdf_flattener?
-
-"""
-
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     """A container for instantiating Fields from a netCDF dataset.

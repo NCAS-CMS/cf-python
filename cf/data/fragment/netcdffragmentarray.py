@@ -1,8 +1,9 @@
+from ..array.mixin import ActiveStorageMixin
 from ..array.netcdfarray import NetCDFArray
 from .abstract import FragmentArray
 
 
-class NetCDFFragmentArray(FragmentArray):
+class NetCDFFragmentArray(ActiveStorageMixin, FragmentArray):
     """A CFA fragment array stored in a netCDF file.
 
     .. versionadded:: 3.14.0
@@ -115,7 +116,7 @@ class NetCDFFragmentArray(FragmentArray):
         differences:
 
           * A dimension's index can't be rank-reducing, i.e. it can't
-            be an integer, nor a scalar `numpy` or `dask` array.
+            be an integer, a scalar `numpy`, nor a `dask` array.
 
           * When two or more dimension's indices are sequences of
             integers then these indices work independently along each

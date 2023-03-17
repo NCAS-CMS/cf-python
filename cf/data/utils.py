@@ -5,6 +5,7 @@ from operator import mul
 
 import dask.array as da
 import numpy as np
+from dask.utils import SerializableLock
 
 from ..cfdatetime import (
     canonical_calendar,
@@ -14,10 +15,16 @@ from ..cfdatetime import (
     rt2dt,
     st2rt,
 )
+from ..functions import active_storage
 from ..units import Units
 from .dask_utils import cf_YMDhms
 
 _units_None = Units(None)
+
+# --------------------------------------------------------------------
+# Global lock for netCDF file access
+# --------------------------------------------------------------------
+netcdf_lock = SerializableLock()
 
 
 def is_numeric_dtype(array):
@@ -820,6 +827,7 @@ def collapse(
         "keepdims": keepdims,
         "split_every": split_every,
         "mtol": mtol,
+        "active_storage": d.active_storage and active_storage(),
     }
 
     weights = parse_weights(d, weights, axis)
@@ -942,8 +950,9 @@ def parse_weights(d, weights, axis=None):
     w = []
     shape = d.shape
     axes = d._axes
+    Data = type(d)
     for key, value in weights.items():
-        value = type(d).asdata(value)
+        value = Data.asdata(value)
 
         # Make sure axes are in ascending order
         if key != tuple(sorted(key)):

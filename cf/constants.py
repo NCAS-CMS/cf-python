@@ -63,6 +63,7 @@ CONSTANTS = {
     "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
     "BOUNDS_COMBINATION_MODE": "AND",
     "CHUNKSIZE": parse_bytes(_CHUNKSIZE),
+    "ACTIVE_STORAGE": True,
 }
 
 masked = np.ma.masked

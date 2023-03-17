@@ -314,6 +314,13 @@ _docstring_substitution_definitions = {
                 value. A default can also be set globally with the
                 ``split_every`` key in `dask.config`. See
                 `dask.array.reduction` for details.""",
+    # active_storage
+    "{{active_storage: `bool`, optional}}": """{{active_storage: `bool`, optional}}
+                If True then attempt to perform the collapse using
+                active storage reductions. However, if other necessary
+                conditions are not met (see `cf.data.collapse.actify`
+                for details) then the operation will be executed
+                without active storage.""",
     # Collapse chunk_function
     "{{chunk_function: callable, optional}}": """{{chunk_function: callable, optional}}
                 Provides the ``chunk`` parameter to

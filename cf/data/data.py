@@ -29,6 +29,7 @@ from ..decorators import (
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _section,
+    active_storage,
     atol,
     default_netCDF_fillvals,
     free_memory,
@@ -90,10 +91,11 @@ _DEFAULT_HARDMASK = True
 # Contstants used to specify which `Data` components should be cleared
 # when a new dask array is set. See `Data._clear_after_dask_update`
 # for details.
-_NONE = 0  # =  0b0000
-_ARRAY = 1  # = 0b0001
-_CACHE = 2  # = 0b0010
-_ALL = 15  # =  0b1111
+_NONE = 0  # =   0b0000
+_ARRAY = 1  # =  0b0001
+_CACHE = 2  # =  0b0010
+_ACTIVE = 8  # = 0b1000
+_ALL = 15  # =   0b1111
 
 
 class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
@@ -423,19 +425,21 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     "for compressed input arrays"
                 )
 
-            # Bring the compressed data into memory without
-            # decompressing it
-            if to_memory:
-                try:
-                    array = array.to_memory()
-                except AttributeError:
-                    pass
+        # Bring the compressed data into memory without
+        # decompressing it
+        if to_memory:
+            try:
+                array = array.to_memory()
+            except AttributeError:
+                pass
 
         if self._is_abstract_Array_subclass(array):
             # Save the input array in case it's useful later. For
-            # compressed input arrays this will contain extra information,
-            # such as a count or index variable.
+            # compressed input arrays this will contain extra
+            # information, such as a count or index variable.
             self._set_Array(array)
+            # Data files are candidates for active storage reductions
+            self._set_active_storage(True)
 
         # Cast the input data as a dask array
         kwargs = init_options.get("from_array", {})
@@ -620,20 +624,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _rtol(self):
         """Return the current value of the `cf.rtol` function."""
         return rtol().value
-
-    def _is_abstract_Array_subclass(self, array):
-        """Whether or not an array is a type of abstract Array.
-
-        :Parameters:
-
-            array:
-
-        :Returns:
-
-            `bool`
-
-        """
-        return isinstance(array, cfdm.Array)
 
     def __data__(self):
         """Returns a new reference to self."""
@@ -1274,6 +1264,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 * If ``clear & _CACHE`` is non-zero then cached
                   element values are deleted.
 
+                * If ``clear & _ACTIVE`` is non-zero then set the
+                  active storage status to `False`.
+
                 By default *clear* is the ``_ALL`` integer-valued
                 constant, which results in all components being
                 removed.
@@ -1304,6 +1297,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         if clear & _CACHE:
             # Delete cached element values
             self._del_cached_elements()
+
+        if clear & _ACTIVE:
+            # Set active storage to False
+            self._del_active_storage()
 
     def _set_dask(self, array, copy=False, clear=_ALL):
         """Set the dask array.
@@ -1411,6 +1408,32 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self._clear_after_dask_update(clear)
         return out
 
+    def _del_active_storage(self):
+        """Set the active storage reduction status to False.
+
+        .. versionadded:: ACTIVEVERSION
+
+        .. seealso:: `active_storage`, `_set_active_storage`
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d = cf.Data([9])
+        >>> d.active_storage()
+        False
+        >>> d._set_active_storage(True)
+        >>> d.active_storage()
+        True
+        >>> d._del_active_storage()
+        >>> d.active_storage()
+        False
+
+        """
+        self._custom.pop("active_storage", False)
+
     def _del_cached_elements(self):
         """Delete any cached element values.
 
@@ -1455,6 +1478,46 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             return {}
 
         return cache.copy()
+
+    def _is_abstract_Array_subclass(self, array):
+        """Whether or not an array is a type of Array.
+
+        :Parameters:
+
+            array:
+
+        :Returns:
+
+            `bool`
+
+        """
+        return isinstance(array, cfdm.Array)
+
+    def _set_active_storage(self, value):
+        """Set the active storage reduction status.
+
+        .. versionadded:: ACTIVEVERSION
+
+        .. seealso:: `active_storage`, `_del_active_storage`
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d = cf.Data([9])
+        >>> d.active_storage()
+        False
+        >>> d._set_active_storage(True)
+        >>> d.active_storage()
+        True
+        >>> d._del_active_storage()
+        >>> d.active_storage()
+        False
+
+        """
+        self._custom["active_storage"] = bool(value)
 
     def _set_cached_elements(self, elements):
         """Cache selected element values.
@@ -3734,8 +3797,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dxs = [d.to_dask_array() for d in processed_data]
         dx = da.concatenate(dxs, axis=axis)
 
+        # Set the active storage status
+        active = _ACTIVE
+        for d in processed_data:
+            if not d.active_storage:
+                # Set the output active storage status to False when any
+                # input data instance has False status
+                active = _NONE
+                break
+
         # Set the new dask array, retaining the cached elements ...
-        data0._set_dask(dx, clear=_ALL)
+        data0._set_dask(dx, clear=_ALL ^ active)
 
         # Set the appropriate cached elements
         cached_elements = {}
@@ -4311,7 +4383,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     # ----------------------------------------------------------------
     @property
     def chunks(self):
-        """The chunk sizes for each dimension.
+        """The `dask` chunk sizes for each dimension.
 
         .. versionadded:: 3.14.0
 
@@ -4333,6 +4405,27 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
+    @property
+    def active_storage(self):
+        """Whether or not active storage recductions are possible.
+
+        If the `active_storage` attribute is `True` then reductions
+        (such as calculating the minimum value of the data) will
+        attempt to use active storage capabilities, falling back on
+        the usual (non-active) techniques if an active storage
+        operation fails for any reason.
+
+        .. versionadded:: ACTIVEVERSION
+
+        **Examples**
+
+        >>> d = cf.Data([9])
+        >>> d.active_storage
+        False
+
+        """
+        return self._custom.get("active_storage", False)
+
     @property
     def Units(self):
         """The `cf.Units` object containing the units of the data array.
@@ -7364,7 +7457,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         d.soften_mask()
 
         dx = d.to_dask_array()
-        dx = Collapse().unique(dx, split_every=split_every)
+        dx = Collapse().unique(
+            dx,
+            split_every=split_every,
+            active_storage=d.active_storage and active_storage(),
+        )
 
         d._set_dask(dx)
 
