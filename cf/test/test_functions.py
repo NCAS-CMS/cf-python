@@ -54,7 +54,7 @@ class functionTest(unittest.TestCase):
         self.assertIsInstance(org, dict)
 
         # Check all keys that should be there are, with correct value type:
-        self.assertEqual(len(org), 8)  # update expected len if add new key(s)
+        self.assertEqual(len(org), 9)  # update expected len if add new key(s)
 
         # Types expected:
         self.assertIsInstance(org["atol"], float)

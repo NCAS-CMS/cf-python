@@ -263,7 +263,9 @@ def configuration(
             current value.
 
         active_storage: `bool` or `Constant`, optional
-            TODOACTIVEDOCS
+            The new value (either True to enable active storage
+            reductions or False to disable them). The default is to
+            not change the current behaviour.
 
             .. versionaddedd:: ACTIVEVERSION
 
@@ -1146,7 +1148,7 @@ class bounds_combination_mode(ConstantAccess):
 
 
 class active_storage(ConstantAccess):
-    """TODOACTIVEDOCS
+    """Whether or not to allow active storage reductions.
 
     .. versionadded:: ACTIVEVERSION
 
@@ -1166,7 +1168,12 @@ class active_storage(ConstantAccess):
 
     **Examples**
 
-    TODOACTIVEDOCS
+    >>> cf.active_storage()
+    True
+    >>> cf.active_storage(False)
+    True
+    >>> cf.active_storage()
+    False
 
     """
 

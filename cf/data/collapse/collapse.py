@@ -12,21 +12,23 @@ from .collapse_utils import check_input_dtype, double_precision_dtype
 class Collapse(metaclass=DocstringRewriteMeta):
     """Container for functions that collapse dask arrays.
 
-    **Active storage**
+    **Active storage reductions**
 
-    A collapse method (such as `max`, `max_abs`, etc.) will attempt to
-    make use of active storage if:
+    A collapse method (such as `max`, `var`, etc.) will attempt to
+    make use of active storage reductions if:
 
-    * The collapse method's *active_storage* parameter is True.
+    * The collapse method's *active_storage* parameter is set to True.
 
-    * The method has a corresponding active function defined in
-      `collapse_active`.
+    * The method has a corresponding active chunk function defined in
+      the `collapse_active.active_chunk_functions` dictionary.
 
-    When these conditions are passed, the graph of the `dask` array is
+    These conditions alone are not sufficient active storage
+    reductions to occur. In addition, the graph of the `dask` array is
     inspected to confirm that making use of active storage is
-    possible, and if so the `dask` graph is modified to expect the
-    per-chunk reductions to be carried out externally. See
-    `collapse_active.actify` for details.
+    possible, and if so the graph is modified to expect the per-chunk
+    reductions to be carried out externally.
+
+    See `cf.data.collapse.actify` for details.
 
     .. versionadded:: 3.14.0
 

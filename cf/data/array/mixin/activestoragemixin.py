@@ -3,9 +3,6 @@ try:
 except ModuleNotFoundError:
     Active = None
 
-# Global lock for netCDF file access
-from ...utils import netcdf_lock
-
 
 class ActiveStorageMixin:
     """TODOACTIVEDOCS.
@@ -36,7 +33,7 @@ class ActiveStorageMixin:
 
         """
         method = self.get_active_method()
-        if method is None or Active is None:
+        if method is None:
             # Normal read by local client. Returns a numpy array.
             return super().__getitem__(indices)
 
@@ -54,7 +51,10 @@ class ActiveStorageMixin:
         )
         active.method = method
         active.components = True
-        active.lock = netcdf_lock
+        try:
+            active.lock = self._dask_lock
+        except AttributeError:
+            pass
 
         return active[indices]
 

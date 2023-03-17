@@ -29,6 +29,7 @@ from ..decorators import (
 from ..functions import (
     _DEPRECATION_ERROR_KWARGS,
     _section,
+    active_storage,
     atol,
     default_netCDF_fillvals,
     free_memory,
@@ -37,7 +38,6 @@ from ..functions import (
 )
 from ..mixin_container import Container
 from ..units import Units
-from .array.mixin import FileArrayMixin
 from .collapse import Collapse
 from .creation import generate_axis_identifiers, to_dask
 from .dask_utils import (
@@ -94,7 +94,7 @@ _DEFAULT_HARDMASK = True
 _NONE = 0  # =   0b0000
 _ARRAY = 1  # =  0b0001
 _CACHE = 2  # =  0b0010
-_ACTIVE = 8  # = 0b0010
+_ACTIVE = 8  # = 0b1000
 _ALL = 15  # =   0b1111
 
 
@@ -438,6 +438,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             # compressed input arrays this will contain extra
             # information, such as a count or index variable.
             self._set_Array(array)
+            # Data files are candidates for active storage reductions
             self._set_active_storage(True)
 
         # Cast the input data as a dask array
@@ -623,24 +624,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _rtol(self):
         """Return the current value of the `cf.rtol` function."""
         return rtol().value
-
-    def _is_file_array(self, array):
-        """Whether or not an array is stored on disk.
-
-        .. versionaddedd: ACTIVEVERSION
-
-        :Parameters:
-
-            array:
-                TODOACTIVEDOCS
-
-        :Returns:
-
-            `bool`
-                TODOACTIVEDOCS
-
-        """
-        return isinstance(array, FileArrayMixin)
 
     def __data__(self):
         """Returns a new reference to self."""
@@ -1281,7 +1264,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 * If ``clear & _CACHE`` is non-zero then cached
                   element values are deleted.
 
-                * If ``clear & _ACTIVE`` is non-zero then TODOACTIVE
+                * If ``clear & _ACTIVE`` is non-zero then set the
+                  active storage status to `False`.
 
                 By default *clear* is the ``_ALL`` integer-valued
                 constant, which results in all components being
@@ -1315,7 +1299,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._del_cached_elements()
 
         if clear & _ACTIVE:
-            # Delete cached element values
+            # Set active storage to False
             self._del_active_storage()
 
     def _set_dask(self, array, copy=False, clear=_ALL):
@@ -1425,7 +1409,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return out
 
     def _del_active_storage(self):
-        """TODOACTIVEDOCS.
+        """Set the active storage reduction status to False.
 
         .. versionadded:: ACTIVEVERSION
 
@@ -1510,7 +1494,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return isinstance(array, cfdm.Array)
 
     def _set_active_storage(self, value):
-        """TODOACTIVEDOCS.
+        """Set the active storage reduction status.
 
         .. versionadded:: ACTIVEVERSION
 
@@ -1518,8 +1502,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         :Returns:
 
-            `bool`
-                 TODOACTIVEDOCS
+            `None`
 
         **Examples**
 
@@ -7475,7 +7458,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = Collapse().unique(
-            dx, split_every=split_every, active_storage=d.active_storage
+            dx,
+            split_every=split_every,
+            active_storage=d.active_storage and active_storage(),
         )
 
         d._set_dask(dx)
