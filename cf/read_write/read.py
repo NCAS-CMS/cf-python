@@ -568,7 +568,7 @@ def read(
                 spanned by data.
 
                 Each dictionary key identifies a file dimension in one
-                of three ways: 1. the netCDF dimension name, preceeded
+                of three ways: 1. the netCDF dimension name, preceded
                 by ``ncdim%`` (e.g. ``'ncdim%lat'``); 2. the "standard
                 name" attribute of a CF-netCDF coordinate variable
                 that spans the dimension (e.g. ``'latitude'``); or

@@ -88,13 +88,14 @@ _dtype_bool = np.dtype(bool)
 _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
-#
-_NONE = 0
-_ARRAY = 1
-_CACHE = 2
-_CFA = 4
-_ACTIVE = 8
-_ALL = _ARRAY | _CACHE | _CFA | _ACTIVE
+# Contstants used to specify which `Data` components should be cleared
+# when a new dask array is set. See `Data._clear_after_dask_update`
+# for details.
+_NONE = 0  # =   0b0000
+_ARRAY = 1  # =  0b0001
+_CACHE = 2  # =  0b0010
+_ACTIVE = 8  # = 0b0010
+_ALL = 15  # =   0b1111
 
 
 class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
@@ -362,7 +363,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 except (AttributeError, TypeError):
                     pass
                 else:
-                    self._set_dask(array, copy=copy, conform=False)
+                    self._set_dask(array, copy=copy, clear=_NONE)
             else:
                 self._del_dask(None)
 
@@ -424,19 +425,20 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     "for compressed input arrays"
                 )
 
-            # Bring the compressed data into memory without
-            # decompressing it
-            if to_memory:
-                try:
-                    array = array.to_memory()
-                except AttributeError:
-                    pass
+        # Bring the compressed data into memory without
+        # decompressing it
+        if to_memory:
+            try:
+                array = array.to_memory()
+            except AttributeError:
+                pass
 
         if self._is_abstract_Array_subclass(array):
             # Save the input array in case it's useful later. For
             # compressed input arrays this will contain extra
             # information, such as a count or index variable.
             self._set_Array(array)
+            self._set_active_storage(True)
 
         # Cast the input data as a dask array
         kwargs = init_options.get("from_array", {})
@@ -468,7 +470,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, conform=False)
+        self._set_dask(array, clear=_NONE)
 
         # Override the data type
         if dtype is not None:
@@ -1134,7 +1136,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             self[indices] = reset
 
         # Remove elements made invalid by updating the `dask` array
-        self._conform_after_dask_update()
+        # in-place
+        self._clear_after_dask_update(_ALL)
 
         return
 
@@ -1252,86 +1255,75 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def __keepdims_indexing__(self, value):
         self._custom["__keepdims_indexing__"] = bool(value)
 
-    def _conform_after_dask_update(self):
-        """Remove elements made invalid by updating the `dask` array.
+    def _clear_after_dask_update(self, clear=_ALL):
+        """Remove components invalidated by updating the `dask` array.
 
         Removes or modifies components that can't be guaranteed to be
-        consistent with an updated `dask` array`:
-
-        * Deletes a source array.
-        * Deletes cached element values.
-        * Sets "active storage" to `False`
+        consistent with an updated `dask` array. See the *clear*
+        parameter for details.
 
         .. versionadded:: 3.14.0
+
+        .. seealso:: `_del_Array`, `_del_cached_elements`, `_set_dask`
+
+        :Parameters:
+
+            clear: `int`, optional
+                Specify which components should be removed. Which
+                components are removed is determined by sequentially
+                combining *clear* with the ``_ARRAY`` and ``_CACHE``
+                integer-valued contants, using the bitwise AND
+                operator:
+
+                * If ``clear & _ARRAY`` is non-zero then a source
+                  array is deleted.
+
+                * If ``clear & _CACHE`` is non-zero then cached
+                  element values are deleted.
+
+                * If ``clear & _ACTIVE`` is non-zero then TODOACTIVE
+
+                By default *clear* is the ``_ALL`` integer-valued
+                constant, which results in all components being
+                removed.
+
+                If *clear* is the ``_NONE`` integer-valued constant
+                then no components are removed.
+
+                To retain a component and remove all others, use
+                ``_ALL`` with the bitwise OR operator. For instance,
+                if *clear* is ``_ALL ^ _CACHE`` then the cached
+                element values will be kept but all other components
+                will be removed.
+
+                .. versionadded:: 3.14.1
 
         :Returns:
 
             `None`
 
         """
-        self._del_Array(None)
-        self._del_cached_elements()
-        self._del_active_storage()
+        if not clear:
+            return
 
-    def _del_active_storage(self):
-        """TODOACTIVEDOCS.
+        if clear & _ARRAY:
+            # Delete a source array
+            self._del_Array(None)
 
-        .. versionadded:: ACTIVEVERSION
+        if clear & _CACHE:
+            # Delete cached element values
+            self._del_cached_elements()
 
-        .. seealso:: `active_storage`, `_set_active_storage`
+        if clear & _ACTIVE:
+            # Delete cached element values
+            self._del_active_storage()
 
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d = cf.Data([9])
-        >>> d.active_storage()
-        False
-        >>> d._set_active_storage(True)
-        >>> d.active_storage()
-        True
-        >>> d._del_active_storage()
-        >>> d.active_storage()
-        False
-
-        """
-        self._custom.pop("active_storage", False)
-
-    def _set_active_storage(self, value):
-        """TODOACTIVEDOCS.
-
-        .. versionadded:: ACTIVEVERSION
-
-        .. seealso:: `active_storage`, `_del_active_storage`
-
-        :Returns:
-
-            `bool`
-                 TODOACTIVEDOCS
-
-        **Examples**
-
-        >>> d = cf.Data([9])
-        >>> d.active_storage()
-        False
-        >>> d._set_active_storage(True)
-        >>> d.active_storage()
-        True
-        >>> d._del_active_storage()
-        >>> d.active_storage()
-        False
-
-        """
-        self._custom["active_storage"] = bool(value)
-
-    def _set_dask(self, array, copy=False, conform=True):
-        """Set the `dask` array.
+    def _set_dask(self, array, copy=False, clear=_ALL):
+        """Set the dask array.
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `to_dask_array`, `_conform_after_dask_update`
+        .. seealso:: `to_dask_array`, `_clear_after_dask_update`,
                      `_del_dask`
 
         :Parameters:
@@ -1343,10 +1335,11 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 If True then copy *array* before setting it. By
                 default it is not copied.
 
-            conform: `bool`, optional
-                If True, the default, then remove elements made
-                invalid by updating the `dask` array. See
-                `_conform_after_dask_update` for details.
+            clear: `int`, optional
+                Specify which components should be removed. By default
+                *clear* is the ``_ALL`` integer-valued constant, which
+                results in all components being removed. See
+                `_clear_after_dask_update` for details.
 
         :Returns:
 
@@ -1376,32 +1369,30 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             array = array.copy()
 
         self._custom["dask"] = array
+        self._clear_after_dask_update(clear)
 
-        if conform:
-            # Remove elements made invalid by updating the `dask`
-            # array
-            self._conform_after_dask_update()
-
-    def _del_dask(self, default=ValueError(), conform=True):
-        """Remove the `dask` array.
+    def _del_dask(self, default=ValueError(), clear=_ALL):
+        """Remove the dask array.
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `to_dask_array`, `_conform_after_dask_update`,
+        .. seealso:: `to_dask_array`, `_clear_after_dask_update`,
                      `_set_dask`
 
         :Parameters:
 
             default: optional
                 Return the value of the *default* parameter if the
-                dask array axes has not been set.
+                dask array axes has not been set. If set to an
+                `Exception` instance then it will be raised instead.
 
-                {{default Exception}}
-
-            conform: `bool`, optional
-                If True, the default, then remove elements made
-                invalid by updating the `dask` array. See
-                `_conform_after_dask_update` for details.
+            clear: `int`, optional
+                Specify which components should be removed. By default
+                *clear* is the ``_ALL`` integer-valued constant, which
+                results in all components being removed. See
+                `_clear_after_dask_update` for details.
+                If there is no dask array then no components are
+                removed, regardless of the value of *clear*.
 
         :Returns:
 
@@ -1422,7 +1413,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         Traceback (most recent call last):
             ...
         RuntimeError: No dask array
-
         """
         try:
             out = self._custom.pop("dask")
@@ -1431,41 +1421,79 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 default, f"{self.__class__.__name__!r} has no dask array"
             )
 
-        if conform:
-            # Remove elements made invalid by deleting the `dask`
-            # array
-            self._conform_after_dask_update()
-
+        self._clear_after_dask_update(clear)
         return out
+
+    def _del_active_storage(self):
+        """TODOACTIVEDOCS.
+
+        .. versionadded:: ACTIVEVERSION
+
+        .. seealso:: `active_storage`, `_set_active_storage`
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d = cf.Data([9])
+        >>> d.active_storage()
+        False
+        >>> d._set_active_storage(True)
+        >>> d.active_storage()
+        True
+        >>> d._del_active_storage()
+        >>> d.active_storage()
+        False
+
+        """
+        self._custom.pop("active_storage", False)
 
     def _del_cached_elements(self):
         """Delete any cached element values.
 
-        Updates *data* in-place to remove the cached element values
-        ``'first_element'``, ``'second_element'`` and
-        ``'last_element'``.
-
-        .. note:: By default, `_del_cached_elements` is run whenever
-                  the `_set_dask` and `del_dask` methods are used. If
-                  the `dask` array is updated or changed without using
-                  the default behaviour of either of these two
-                  methods, and there is any chance that the cached
-                  values might be inconsistent with the new data, then
-                  `_del_cached_elements` must be called explicitly to
-                  ensure consistency.
+        Updates *data* in-place to remove the cached element values.
 
         .. versionadded:: 3.14.0
 
-        .. seealso:: `_del_dask`, `_set_cached_elements`, `_set_dask`
+        .. seealso:: `_get_cached_elements`, `_set_cached_elements`
 
         :Returns:
 
             `None`
 
         """
-        custom = self._custom
-        for element in ("first_element", "second_element", "last_element"):
-            custom.pop(element, None)
+        self._custom.pop("cached_elements", None)
+
+    def _get_cached_elements(self):
+        """Return the cache of selected element values.
+
+        .. versionadded:: 3.14.1
+
+        .. seealso:: `_del_cached_elements`, `_set_cached_elements`
+
+        :Returns:
+
+            `dict`
+                The cached element values, where the keys are the element
+                positions within the dask array and the values are the cached
+                values for each position.
+
+        **Examples**
+
+        >>> d._get_cached_elements()
+        {}
+
+        >>> d._get_cached_elements()
+        {0: 273.15, 1: 274.56, -1: 269.95}
+
+        """
+        cache = self._custom.get("cached_elements")
+        if not cache:
+            return {}
+
+        return cache.copy()
 
     def _is_abstract_Array_subclass(self, array):
         """Whether or not an array is a type of Array.
@@ -1481,15 +1509,45 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         return isinstance(array, cfdm.Array)
 
+    def _set_active_storage(self, value):
+        """TODOACTIVEDOCS.
+
+        .. versionadded:: ACTIVEVERSION
+
+        .. seealso:: `active_storage`, `_del_active_storage`
+
+        :Returns:
+
+            `bool`
+                 TODOACTIVEDOCS
+
+        **Examples**
+
+        >>> d = cf.Data([9])
+        >>> d.active_storage()
+        False
+        >>> d._set_active_storage(True)
+        >>> d.active_storage()
+        True
+        >>> d._del_active_storage()
+        >>> d.active_storage()
+        False
+
+        """
+        self._custom["active_storage"] = bool(value)
+
     def _set_cached_elements(self, elements):
         """Cache selected element values.
 
         Updates *data* in-place to store the given element values
         within its ``custom`` dictionary.
 
+        .. warning:: Never change ``_custom['cached_elements']``
+                  in-place.
+
         .. versionadded:: 3.14.0
 
-        .. seealso:: `_del_cached_elements`
+        .. seealso:: `_del_cached_elements`, `_get_cached_elements`
 
         :Parameters:
 
@@ -1505,10 +1563,20 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d._set_cached_elements({'first_element': 273.15})
+        >>> d._set_cached_elements({0: 273.15})
 
         """
-        self._custom.update(elements)
+        if not elements:
+            return
+
+        cache = self._custom.get("cached_elements")
+        if cache:
+            cache = cache.copy()
+            cache.update(elements)
+        else:
+            cache = elements.copy()
+
+        self._custom["cached_elements"] = cache
 
     @_inplace_enabled(default=False)
     def diff(self, axis=-1, n=1, inplace=False):
@@ -2369,8 +2437,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = self.to_dask_array()
         dx = dx.persist()
-        d._set_dask(dx, conform=False)  # TODOACTIVE
-        d._del_active_storage()  # TODOACTIVE
+        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE)
 
         return d
 
@@ -2821,8 +2888,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, conform=False)  # TODOACTIVE
-        d._del_active_storage()  # TODOACTIVE
+        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE)
 
         return d
 
@@ -3751,13 +3817,23 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # Set the active storage status
         active = _ACTIVE
         for d in processed_data:
-            if not d.active_storage():
+            if not d.active_storage:
                 # Set the output active storage status to False when any
                 # input data instance has False status
                 active = _NONE
                 break
 
-        data0._set_dask(dx, conform=_ALL ^ active)
+        # Set the new dask array, retaining the cached elements ...
+        data0._set_dask(dx, clear=_ALL ^ active)
+
+        # Set the appropriate cached elements
+        cached_elements = {}
+        for i in (0, -1):
+            element = processed_data[i]._get_cached_elements().get(i)
+            if element is not None:
+                cached_elements[i] = element
+
+        data0._set_cached_elements(cached_elements)
 
         # Manage cyclicity of axes: if join axis was cyclic, it is no longer
         axis = data0._parse_axes(axis)[0]
@@ -7706,7 +7782,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = d.to_dask_array()
         dx = dx.reshape(shape)
-        d._set_dask(dx)
+
+        # Inserting a dimension doesn't affect the cached elements
+        d._set_dask(dx, clear=_ALL ^ _CACHE)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -8092,7 +8170,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
-        self._set_dask(dx, conform=False)
+        self._set_dask(dx, clear=_NONE)
         self.hardmask = True
 
     def has_calendar(self):
@@ -8189,7 +8267,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         """
         dx = self.to_dask_array()
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
-        self._set_dask(dx, conform=False)
+        self._set_dask(dx, clear=_NONE)
         self.hardmask = False
 
     @_inplace_enabled(default=False)
@@ -8285,10 +8363,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         try:
-            return self._custom["first_element"]
+            return self._custom["cached_elements"][0]
         except KeyError:
             item = super().first_element()
-            self._set_cached_elements({"first_element": item})
+            self._set_cached_elements({0: item})
             return item
 
     def second_element(self):
@@ -8324,10 +8402,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         try:
-            return self._custom["second_element"]
+            return self._custom["cached_elements"][1]
         except KeyError:
             item = super().second_element()
-            self._set_cached_elements({"second_element": item})
+            self._set_cached_elements({1: item})
             return item
 
     def last_element(self):
@@ -8368,10 +8446,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         """
         try:
-            return self._custom["last_element"]
+            return self._custom["cached_elements"][-1]
         except KeyError:
             item = super().last_element()
-            self._set_cached_elements({"last_element": item})
+            self._set_cached_elements({-1: item})
             return item
 
     def flat(self, ignore_masked=True):
@@ -10502,7 +10580,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = self.to_dask_array()
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx, conform=False)
+        self._set_dask(dx, clear=_NONE)
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
@@ -10698,7 +10776,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # one size 1 axis needs squeezing.
         dx = d.to_dask_array()
         dx = dx.squeeze(axis=tuple(axes))
-        d._set_dask(dx)
+
+        # Squeezing a dimension doesn't affect the cached elements
+        d._set_dask(dx, clear=_ALL ^ _CACHE)
 
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in axes]
@@ -10859,6 +10939,10 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             iaxes = tuple(range(ndim - 1, -1, -1))
         else:
             iaxes = d._parse_axes(axes)
+
+        if iaxes == tuple(range(ndim)):
+            # Short circuit if the transpose is a null operation
+            return d
 
         # Note: _axes attribute is still important/utilised post-Daskification
         # because e.g. axes labelled as cyclic by the _cyclic attribute use it

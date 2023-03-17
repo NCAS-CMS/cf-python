@@ -11,6 +11,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -38,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
 
 
 
@@ -72,7 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -126,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.chunksize<a class="headerlink" href="#cf-chunksize" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.chunksize">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">chunksize</code><span class="sig-paren">(</span><em class="sig-param">*arg</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.0/cf/__init__.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.chunksize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">chunksize</code><span class="sig-paren">(</span><em class="sig-param">*arg</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/__init__.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.chunksize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the default chunksize used by <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> arrays.</p>
 <p>If called without any arguments then the existing chunksize is
 returned.</p>
@@ -137,7 +141,7 @@ global configuration value <code class="docutils literal notranslate"><span clas
 <a class="reference internal" href="#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a> is used in a context manager then the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
 configuration value is only altered within that context.
 Setting the chunk size directly from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code>
-configuration API will affect susbsequent data creation,
+configuration API will affect subsequent data creation,
 but will <em>not</em> change the value of <a class="reference internal" href="#cf.chunksize" title="cf.chunksize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunksize</span></code></a>.</p>
 </div>
 <dl class="field-list">
@@ -156,7 +160,7 @@ a non-integral amount of bytes, then the integer part
 or <code class="docutils literal notranslate"><span class="pre">'2</span> <span class="pre">MiB'</span></code></p>
 </dd>
 <dt><em>Parameter example:</em></dt><dd><p>Chunksizes of <code class="docutils literal notranslate"><span class="pre">'2678.9'</span></code> and <code class="docutils literal notranslate"><span class="pre">'2.6789</span> <span class="pre">KB'</span></code> are both
-equvalent to <code class="docutils literal notranslate"><span class="pre">2678</span></code>.</p>
+equivalent to <code class="docutils literal notranslate"><span class="pre">2678</span></code>.</p>
 </dd>
 </dl>
 </dd>
@@ -182,11 +186,11 @@ new value was specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-01-31.
+      &copy;2023, NCAS | Page built on 2023-03-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

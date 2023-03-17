@@ -11,6 +11,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -22,7 +26,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Bounds.set_properties" href="cf.Bounds.set_properties.html" />
+    <link rel="next" title="cf.Bounds.del_properties" href="cf.Bounds.del_properties.html" />
     <link rel="prev" title="cf.Bounds.properties" href="cf.Bounds.properties.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
 
 
 
@@ -72,7 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html"><strong>Contributing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../recipes.html"><strong>Recipes using cf</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recipes/index.html"><strong>Recipes using cf</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
@@ -89,7 +93,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Bounds.html">cf.Bounds</a><ul>
       <li>Previous: <a href="cf.Bounds.properties.html" title="previous chapter">cf.Bounds.properties</a></li>
-      <li>Next: <a href="cf.Bounds.set_properties.html" title="next chapter">cf.Bounds.set_properties</a></li>
+      <li>Next: <a href="cf.Bounds.del_properties.html" title="next chapter">cf.Bounds.del_properties</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -128,14 +132,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Bounds.clear_properties<a class="headerlink" href="#cf-bounds-clear-properties" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Bounds.clear_properties">
-<code class="sig-prename descclassname">Bounds.</code><code class="sig-name descname">clear_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.2/cfdm/core/abstract/properties.py#L43-L80"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds.clear_properties" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Bounds.</code><code class="sig-name descname">clear_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.3/cfdm/core/abstract/properties.py#L43-L81"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds.clear_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove all properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Bounds.del_property.html#cf.Bounds.del_property" title="cf.Bounds.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a> <a class="reference internal" href="cf.Bounds.properties.html#cf.Bounds.properties" title="cf.Bounds.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a>, <a class="reference internal" href="cf.Bounds.set_properties.html#cf.Bounds.set_properties" title="cf.Bounds.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p>
+<p><a class="reference internal" href="cf.Bounds.del_properties.html#cf.Bounds.del_properties" title="cf.Bounds.del_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_properties</span></code></a>, <a class="reference internal" href="cf.Bounds.del_property.html#cf.Bounds.del_property" title="cf.Bounds.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a>, <a class="reference internal" href="cf.Bounds.properties.html#cf.Bounds.properties" title="cf.Bounds.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a>,
+<a class="reference internal" href="cf.Bounds.set_properties.html#cf.Bounds.set_properties" title="cf.Bounds.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -179,11 +184,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-01-31.
+      &copy;2023, NCAS | Page built on 2023-03-10.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

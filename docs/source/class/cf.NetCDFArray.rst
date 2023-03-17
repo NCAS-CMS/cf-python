@@ -26,6 +26,7 @@ cf.NetCDFArray
    ~cf.NetCDFArray.get_filenames
    ~cf.NetCDFArray.get_group
    ~cf.NetCDFArray.get_mask
+   ~cf.NetCDFArray.get_missing_values 
    ~cf.NetCDFArray.get_ncvar
    ~cf.NetCDFArray.get_subspace
    ~cf.NetCDFArray.get_units

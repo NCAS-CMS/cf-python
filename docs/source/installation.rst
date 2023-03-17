@@ -32,7 +32,7 @@ Windows Subsystem for Linux (WSL)
 **Python versions**
 -------------------
 
-The cf package is only for Python 3.7 or newer.
+The cf package is only for Python 3.8 or newer.
 
 ----
 
@@ -190,9 +190,9 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, 3.7 or newer.
+* `Python <https://www.python.org/>`_, 3.8 or newer.
 
-* `numpy <https://pypi.org/project/numpy/>`_, 1.22 or newer.
+* `numpy <https://pypi.org/project/numpy/>`_, 1.22.0 or newer.
 
 * `dask <https://pypi.org/project/dask/>`_, 2022.12.1 or newer.
 
@@ -204,7 +204,7 @@ Required
 * `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.0.3 or up to,
   but not including, 1.10.1.0.
 
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.4 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.5 or newer.
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 

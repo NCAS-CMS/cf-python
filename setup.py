@@ -112,8 +112,8 @@ CF Python
 =========
 
 The Python cf package is an Earth science data analysis library that
-is built on a complete implementation of the [CF data
-model](https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-CF-data-model).
+is built on a complete implementation of the `CF data
+model <https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-CF-data-model>`_.
 
 Documentation
 =============
@@ -123,8 +123,8 @@ http://ncas-cms.github.io/cf-python
 Dask
 ====
 
-From version 3.14.0, the ``cf`` package uses
-[Dask](https://docs.dask.org) for all of its data manipulations.
+From version 3.14.0, the ``cf`` package uses `Dask
+<https://docs.dask.org>`_ for all of its data manipulations.
 
 Recipes
 =======
@@ -160,15 +160,15 @@ constructs are available with the
 [cfplot](http://ajheaps.github.io/cf-plot) package, that needs to be
 installed seprately to the ``cf`` package.
 
-See the [cfplot
-gallery](http://ajheaps.github.io/cf-plot/gallery.html) for the full
-range range plotting possibilities with example code.
+See the `cfplot gallery
+<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the full range
+range plotting possibilities with example code.
 
 Functionality
 =============
 
-The ``cf`` package implements the [CF data
-model](https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-CF-data-model)
+The ``cf`` package implements the `CF data model
+<https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-CF-data-model>`_
 for its internal data structures and so is able to process any
 CF-compliant dataset. It is not strict about CF-compliance, however,
 so that partially conformant datasets may be ingested from existing
@@ -244,9 +244,8 @@ extras_require = {
     "regridding": ["esmpy", "ESMF>=8.0"],
     "convolution filters, derivatives, relative vorticity": ["scipy>=1.1.0"],
     "subspacing with multi-dimensional construct cells": ["matplotlib>=3.0.0"],
-    "parallel processing": ["mpich", "mpi4py>=3.0.0"],
     "documentation": [
-        "sphinx>=2,<=4",
+        "sphinx==2.4.5",
         "sphinx-copybutton",
         "sphinx-toggleprompt",
         "sphinxcontrib-spelling",
@@ -305,6 +304,7 @@ setup(
         "cf.data.array",
         "cf.data.array.abstract",
         "cf.data.array.mixin",
+        "cf.data.collapse",
         "cf.data.fragment",
         "cf.data.fragment.abstract",
         "cf.data.mixin",

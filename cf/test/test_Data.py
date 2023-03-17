@@ -1202,6 +1202,17 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f = cf.Data.concatenate([d, e], axis=1)
 
+        # Test cached elements
+        d = cf.Data([1, 2, 3])
+        e = cf.Data([4, 5])
+        repr(d)
+        repr(e)
+        f = cf.Data.concatenate([d, e], axis=0)
+        self.assertEqual(
+            f._get_cached_elements(),
+            {0: d.first_element(), -1: e.last_element()},
+        )
+
     def test_Data__contains__(self):
         """Test containment checking against Data."""
         d = cf.Data([[0, 1, 2], [3, 4, 5]], units="m", chunks=2)
@@ -4410,47 +4421,55 @@ class DataTest(unittest.TestCase):
 
     def test_Data__str__(self):
         """Test `Data.__str__`"""
-        elements0 = ("first_element", "last_element", "second_element")
+        elements0 = (0, -1, 1)
         for array in ([1], [1, 2], [1, 2, 3]):
             elements = elements0[: len(array)]
 
             d = cf.Data(array)
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertNotIn(element, d._custom)
+                self.assertNotIn(element, cache)
 
             self.assertEqual(str(d), str(array))
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertIn(element, d._custom)
+                self.assertIn(element, cache)
 
             d[0] = 1
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertNotIn(element, d._custom)
+                self.assertNotIn(element, cache)
 
             self.assertEqual(str(d), str(array))
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertIn(element, d._custom)
+                self.assertIn(element, cache)
 
             d += 0
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertNotIn(element, d._custom)
+                self.assertNotIn(element, cache)
 
             self.assertEqual(str(d), str(array))
+            cache = d._get_cached_elements()
             for element in elements:
-                self.assertIn(element, d._custom)
+                self.assertIn(element, cache)
 
         # Test when size > 3, i.e. second element is not there.
         d = cf.Data([1, 2, 3, 4])
+        cache = d._get_cached_elements()
         for element in elements0:
-            self.assertNotIn(element, d._custom)
+            self.assertNotIn(element, cache)
 
         self.assertEqual(str(d), "[1, ..., 4]")
-        self.assertNotIn("second_element", d._custom)
+        cache = d._get_cached_elements()
+        self.assertNotIn(1, cache)
         for element in elements0[:2]:
-            self.assertIn(element, d._custom)
+            self.assertIn(element, cache)
 
         d[0] = 1
         for element in elements0:
-            self.assertNotIn(element, d._custom)
+            self.assertNotIn(element, d._get_cached_elements())
 
     def test_Data_active_storage(self):
         """Test `Data.active_storage`."""
@@ -4529,6 +4548,26 @@ class DataTest(unittest.TestCase):
         e = d.convert_reference_time(units)
         self.assertEqual(e.Units, units)
         self.assertTrue((e.array == [72, 48, 24, 0]).all())
+
+    def test_Data_clear_after_dask_update(self):
+        """Test Data._clear_after_dask_update"""
+        d = cf.Data([1, 2, 3], "m")
+        dx = d.to_dask_array()
+
+        d.first_element()
+        d.second_element()
+        d.last_element()
+
+        self.assertTrue(d._get_cached_elements())
+
+        _ALL = cf.data.data._ALL
+        _CACHE = cf.data.data._CACHE
+
+        d._set_dask(dx, clear=_ALL ^ _CACHE)
+        self.assertTrue(d._get_cached_elements())
+
+        d._set_dask(dx, clear=_ALL)
+        self.assertFalse(d._get_cached_elements())
 
 
 if __name__ == "__main__":

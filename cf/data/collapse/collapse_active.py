@@ -219,7 +219,7 @@ def actify(a, method, axis=None):
             # support active storage reductions
             ok_to_actify = False
             break
-        
+
         # Still here? Then this chunk is a data definition that points
         # to files, so try to insert an actified copy into the dask
         # graph.

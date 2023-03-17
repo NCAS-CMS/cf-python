@@ -10,7 +10,8 @@
 
 * Make sure that the `long_description` in `setup.py` is up to date.
 
-* Make sure that `Changelog.rst` is up to date.
+* Make sure that `Changelog.rst` is up to date (version, date and
+  changes).
 
 * Deprecated methods and keyword arguments: Check the code for
   deprecated methods and keyword arguments that can be completely
@@ -35,11 +36,6 @@
 
 * Create a link to the new documentation in
   `docs/source/releases.rst`, including the release date.
-
-* Make sure that all the Data tests will run by setting
-  `test_only = []` in `cf/test/test_Data.py` (check that none of
-  the individual tests are un-commented so as to override this in the
-  commented listing beneath).
 
 * Test tutorial code:
 
