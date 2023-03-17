@@ -1839,6 +1839,12 @@ class PropertiesData(Properties):
                 If *value* is `None` then any existing period is removed
                 from the construct.
 
+            config:
+                Additional parameters for optimising the
+                operation. See the code for details.
+
+                .. versionadded:: 3.9.0
+
         :Returns:
 
             `Data` or `None`

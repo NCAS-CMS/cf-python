@@ -2096,7 +2096,7 @@ def aggregate(
                         verbose=verbose,
                         concatenate=concatenate,
                         relaxed_units=relaxed_units,
-                        copy=(copy or not exclude),
+                        copy=copy,  # (copy or not exclude),
                     )
 
                     if not m0:
@@ -2612,14 +2612,9 @@ def _get_hfl(
             or bounds if either is requested.
 
     """
-    create_fl = first_and_last_values
-    create_flb = first_and_last_bounds
-
-    key = None
-
     d = v.get_data(None)
     if d is None:
-        if create_fl or create_flb:
+        if first_and_last_values or first_and_last_bounds:
             return None, None, None
 
         return
@@ -2638,7 +2633,7 @@ def _get_hfl(
     if hash_value in hash_map:
         hash_value = hash_map[hash_value]
     else:
-        if create_flb:
+        if first_and_last_values:
             hash_to_data = hfl_cache.hash_to_data_bounds
         else:
             hash_to_data = hfl_cache.hash_to_data
@@ -2669,7 +2664,7 @@ def _get_hfl(
                 hash_map[hash_value] = hash_value
                 hash_to_data[hash_value] = d
 
-    if create_fl:
+    if first_and_last_values:
         # Record the first and last cells
         first, last = hfl_cache.fl.get(hash_value, (None, None))
         if first is None:
@@ -2677,7 +2672,7 @@ def _get_hfl(
             last = d.last_element()
             hfl_cache.fl[hash_value] = (first, last)
 
-    if create_flb:
+    if first_and_last_bounds:
         # Record the bounds of the first and last (sorted) cells
         first, last = hfl_cache.flb.get(hash_value, (None, None))
         if first is None:
@@ -2694,7 +2689,7 @@ def _get_hfl(
             last = sorted(x[2:])
             hfl_cache.flb[hash_value] = (first, last)
 
-    if create_fl or create_flb:
+    if first_and_last_values or first_and_last_bounds:
         return hash_value, first, last
     else:
         return hash_value
@@ -3028,6 +3023,7 @@ def _aggregate_2_fields(
 
     parent0 = m0.field
     parent1 = m1.field
+
     if copy:
         parent1 = parent1.copy()
 
@@ -3187,6 +3183,7 @@ def _aggregate_2_fields(
                 (construct0.get_data(), construct1.get_data()),
                 axis,
                 relaxed_units=relaxed_units,
+                copy=copy,
             )
             construct0.set_data(data, copy=False)
             if construct0.has_bounds():
@@ -3197,6 +3194,7 @@ def _aggregate_2_fields(
                     ),
                     axis,
                     relaxed_units=relaxed_units,
+                    copy=copy,
                 )
                 construct0.bounds.set_data(data, copy=False)
         else:
@@ -3208,6 +3206,7 @@ def _aggregate_2_fields(
                 ),
                 axis,
                 relaxed_units=relaxed_units,
+                copy=copy,
             )
             construct0.set_data(data)
             if construct0.has_bounds():
@@ -3218,6 +3217,7 @@ def _aggregate_2_fields(
                     ),
                     axis,
                     relaxed_units=relaxed_units,
+                    copy=copy,
                 )
                 construct0.bounds.set_data(data)
 
@@ -3271,6 +3271,7 @@ def _aggregate_2_fields(
                 (parent0.get_data(), parent1.get_data()),
                 axis,
                 relaxed_units=relaxed_units,
+                copy=copy,
             )
         else:
             # The fields are decreasing along the aggregating axis
@@ -3278,6 +3279,7 @@ def _aggregate_2_fields(
                 (parent1.get_data(), parent0.get_data()),
                 axis,
                 relaxed_units=relaxed_units,
+                copy=copy,
             )
 
         # Update the size of the aggregating axis in parent0

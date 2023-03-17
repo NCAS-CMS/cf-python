@@ -3650,7 +3650,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         return d
 
     @classmethod
-    def concatenate(cls, data, axis=0, cull_graph=False, relaxed_units=False):
+    def concatenate(
+        cls, data, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
         """Join a sequence of data arrays together.
 
         .. seealso:: `cull_graph`
@@ -3694,6 +3696,17 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 False
 
                 .. versionadded:: 3.14.1
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the data
+                arrays, if required, prior to the concatenation,
+                thereby ensuring that the input data arrays are not
+                changed by the concatenation process. If False then
+                some or all input data arrays might be changed
+                in-place, but the concatenation process will be
+                faster.
+
+                .. versionadded:: 3.14.2
 
         :Returns:
 
@@ -3743,17 +3756,24 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             for d in data:
                 d.cull_graph()
 
-        data0 = data[0].copy()
+        data0 = data[0]
+        units0 = data0.Units
+
+        if copy:
+            data0 = data0.copy()
+            copied = True
+        else:
+            copied = False
 
         processed_data = []
-        units0 = data0.Units
         for index, data1 in enumerate(data):
-            copied = False  # to avoid making two copies in a given case
-
             # Turn any scalar array into a 1-d array
             if not data1.ndim:
+                if not copied:
+                    data1 = data1.copy()
+                    copied = True
+
                 data1 = data1.insert_dimension()
-                copied = True
 
             # Check and conform, if necessary, the units of all inputs
             units1 = data1.Units
@@ -3765,18 +3785,22 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             ):
                 # Allow identical invalid units to be equal
                 pass
-            elif not units0.equivalent(units1):
+            elif units0.equals(units1):
+                pass
+            elif units0.equivalent(units1):
+                if not copied:
+                    data1 = data1.copy()
+                    copied = True
+
+                data1.Units = units0
+            else:
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have "
                     "equivalent units"
                 )
-            elif not units0.equals(units1):
-                if not copied:
-                    data1 = data1.copy()
-
-                data1.Units = units0
 
             processed_data.append(data1)
+            copied = not copy  # to avoid making two copies in a given case
 
         # Get data as dask arrays and apply concatenation operation
         dxs = [d.to_dask_array() for d in processed_data]
@@ -3794,7 +3818,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         data0._set_cached_elements(cached_elements)
 
-        # Set if the name is deterministic
+        # Set if the concatenated name is deterministic
         deterministic = True
         for d in processed_data:
             if not d.has_deterministic_name():

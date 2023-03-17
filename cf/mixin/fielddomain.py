@@ -1629,7 +1629,7 @@ class FieldDomain:
                 coordinates, otherwise it is assumed to have the same
                 units as the dimension coordinates.
 
-            config: `dict`
+            config: `dict`, optional
                 Additional parameters for optimising the
                 operation. See the code for details.
 

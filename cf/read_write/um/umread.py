@@ -35,12 +35,13 @@ logger = logging.getLogger(__name__)
 
 _cached_runid = {}
 _cached_latlon = {}
-_cached_time = {}
 _cached_ctime = {}
 _cached_size_1_height_coordinate = {}
-_cached_z_reference_coordinate = {}
+# _cached_z_reference_coordinate = {}
 _cached_date2num = {}
 _cached_model_level_number_coordinate = {}
+_cached_regular_array = {}
+_cached_regular_bounds = {}
 _cached_data = {}
 
 # --------------------------------------------------------------------
@@ -1084,7 +1085,9 @@ class UMField:
                     config={
                         "axis": xaxis,
                         "coord": xc,
-                        "period": self.get_data(np.array(360.0), xc.Units),
+                        "period": self.get_data(
+                            np.array(360.0), xc.Units, copy=False
+                        ),
                     },
                 )
 
@@ -1191,7 +1194,9 @@ class UMField:
 
         # Insert new Z axis
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axis_key = self.implementation.set_domain_axis(self.field, da)
+        axis_key = self.implementation.set_domain_axis(
+            self.field, da, copy=False
+        )
         _axis["z"] = axis_key
 
         ac = self.implementation.initialise_DomainAncillary()
@@ -1326,7 +1331,7 @@ class UMField:
 
         # Create Z domain axis construct
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisZ = self.implementation.set_domain_axis(field, da)
+        axisZ = self.implementation.set_domain_axis(field, da, copy=False)
         _axis["z"] = axisZ
 
         # ac = AuxiliaryCoordinate()
@@ -1429,7 +1434,7 @@ class UMField:
 
         # Insert new Z axis
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axis_key = self.implementation.set_domain_axis(field, da)
+        axis_key = self.implementation.set_domain_axis(field, da, copy=False)
         _axis["z"] = axis_key
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -2350,19 +2355,6 @@ class UMField:
             # Int or float
             return rec.get_type_and_num_words()[0]
 
-    #            rec_file = rec.file
-    #            # data_type = rec_file.c_interface.get_type_and_length(
-    #            data_type = rec_file.c_interface.get_type_and_num_words(
-    #                rec.int_hdr)[0]
-    #            if data_type == 'int':
-    #                # Integer
-    #                data_type = 'int%d' % (rec_file.word_size * 8)
-    #            else:
-    #                # Float
-    #                data_type = 'float%d' % (rec_file.word_size * 8)
-    #
-    #        return np.dtype(data_type)
-
     def printfdr(self, display=False):
         """Print out the contents of PP field headers.
 
@@ -2404,7 +2396,7 @@ class UMField:
         dc.id = "UM_pseudolevel"
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisP = self.implementation.set_domain_axis(self.field, da)
+        axisP = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["p"] = axisP
 
         self.implementation.set_dimension_coordinate(
@@ -2472,7 +2464,7 @@ class UMField:
         dc = _cached_size_1_height_coordinate.get(key, None)
 
         da = self.implementation.initialise_DomainAxis(size=1)
-        axisZ = self.implementation.set_domain_axis(self.field, da)
+        axisZ = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["z"] = axisZ
 
         if dc is not None:
@@ -2645,7 +2637,7 @@ class UMField:
             climatology = False
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisT = self.implementation.set_domain_axis(self.field, da)
+        axisT = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["t"] = axisT
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -2692,7 +2684,7 @@ class UMField:
         # Note that `axis` might not be "t". For instance, it could be
         # "y" if the time coordinates are coming from extra data.
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisT = self.implementation.set_domain_axis(self.field, da)
+        axisT = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis[axis] = axisT
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -2940,11 +2932,12 @@ class UMField:
             axiscode: `int`
 
             axis: `str`
-                'x' or 'y'
+                Which type of coordinate to create: ``'x'`` or
+                ``'y'``.
 
         :Returns:
 
-            `str, `DimensionCoordinate`
+            (`str`, `DimensionCoordinate`)
 
         """
         X = axiscode in (11, -11)
@@ -2960,7 +2953,9 @@ class UMField:
             size = self.lbnpt
 
             da = self.implementation.initialise_DomainAxis(size=size)
-            axis_key = self.implementation.set_domain_axis(self.field, da)
+            axis_key = self.implementation.set_domain_axis(
+                self.field, da, copy=False
+            )
             _axis["x"] = axis_key
         else:
             delta = self.bdy
@@ -2968,7 +2963,9 @@ class UMField:
             size = self.lbrow
 
             da = self.implementation.initialise_DomainAxis(size=size)
-            axis_key = self.implementation.set_domain_axis(self.field, da)
+            axis_key = self.implementation.set_domain_axis(
+                self.field, da, copy=False
+            )
             _axis["y"] = axis_key
 
             autocyclic = _autocyclic_false
@@ -2982,12 +2979,15 @@ class UMField:
                 while origin + delta * size < -360.0:
                     origin += 360.0
 
-            array = np.arange(
-                origin + delta,
-                origin + delta * (size + 0.5),
-                delta,
-                dtype=float,
-            )
+            array = _cached_regular_array.get((origin, delta, size))
+            if array is None:
+                array = np.arange(
+                    origin + delta,
+                    origin + delta * (size + 0.5),
+                    delta,
+                    dtype=float,
+                )
+                _cached_regular_array[(origin, delta, size)] = array
 
             # Create the coordinate bounds
             if axiscode in (13, 31, 40, 99):
@@ -2999,10 +2999,13 @@ class UMField:
                 # 99 = Other
                 bounds = None
             else:
-                delta_by_2 = 0.5 * delta
-                bounds = self.create_bounds_array(
-                    array - delta_by_2, array + delta_by_2
-                )
+                bounds = _cached_regular_bounds.get((origin, delta, size))
+                if bounds is None:
+                    delta_by_2 = 0.5 * delta
+                    bounds = self.create_bounds_array(
+                        array - delta_by_2, array + delta_by_2
+                    )
+                    _cached_regular_bounds[(origin, delta, size)] = bounds
         else:
             # Create coordinate from extra data
             array = self.extra.get(axis, None)
@@ -3023,7 +3026,9 @@ class UMField:
 
         if X and bounds is not None:
             autocyclic["cyclic"] = abs(bounds[0, 0] - bounds[-1, -1]) == 360.0
-            autocyclic["period"] = self.get_data(np.array(360.0), units)
+            autocyclic["period"] = self.get_data(
+                np.array(360.0), units, copy=False
+            )
             autocyclic["axis"] = axis_key
             autocyclic["coord"] = dc
 
@@ -3033,7 +3038,7 @@ class UMField:
 
         return key, dc, axis_key
 
-    def get_data(self, array, units, fill_value=None, bounds=False):
+    def get_data(self, array, units, fill_value=None, bounds=False, copy=True):
         """Create data, or get it from the cache.
 
         .. versionadded:: 3.14.2
@@ -3051,6 +3056,10 @@ class UMField:
 
             bounds: `bool`
                 Whether or not the data are bounds of 1-d coordinates.
+
+            copy: `bool`
+                Whether or not to return an independent copy of the
+                data.
 
         :Returns:
 
@@ -3085,8 +3094,10 @@ class UMField:
                 )
 
             _cached_data[token] = data
+        elif copy:
+            data = data.copy()
 
-        return data.copy()
+        return data
 
     def site_coordinates_from_extra_data(self):
         """Create site-related coordinates from extra data.
@@ -3164,13 +3175,6 @@ class UMField:
         if _coord_positive.get(axiscode, None) == "down":
             bounds0, bounds1 = bounds1, bounds0
 
-            #        key = (axiscode, array, bounds0, bounds1)
-        #        dc = _cached_z_coordinate.get(key, None)
-
-        #        if dc is not None:
-        #            copy = True
-        #        else:
-        copy = False
         array = np.array(array, dtype=float)
         bounds0 = np.array(bounds0, dtype=float)
         bounds1 = np.array(bounds1, dtype=float)
@@ -3182,7 +3186,7 @@ class UMField:
             bounds = self.create_bounds_array(bounds0, bounds1)
 
         da = self.implementation.initialise_DomainAxis(size=array.size)
-        axisZ = self.implementation.set_domain_axis(self.field, da)
+        axisZ = self.implementation.set_domain_axis(self.field, da, copy=False)
         _axis["z"] = axisZ
 
         dc = self.implementation.initialise_DimensionCoordinate()
@@ -3200,78 +3204,77 @@ class UMField:
             self.field,
             dc,
             axes=[_axis["z"]],
-            copy=copy,
-            autocyclic=_autocyclic_false,
-        )
-
-        logger.info("    " + dc.dump(display=False))  # pragma: no cover
-
-        return dc
-
-    @_manage_log_level_via_verbose_attr
-    def z_reference_coordinate(self, axiscode):
-        """Create and return the Z reference coordinates."""
-        logger.info(
-            "Creating Z reference coordinates from BRLEV"
-        )  # pragma: no cover
-
-        array = np.array(
-            [rec.real_hdr.item(brlev) for rec in self.z_recs], dtype=float
-        )
-
-        LBVC = self.lbvc
-        atol = self.atol
-
-        key = (axiscode, LBVC, array)
-        dc = _cached_z_reference_coordinate.get(key, None)
-
-        if dc is not None:
-            copy = True
-        else:
-            if not 128 <= LBVC <= 139:
-                bounds = []
-                for rec in self.z_recs:
-                    BRLEV = rec.real_hdr.item(brlev)
-                    BRSVD1 = rec.real_hdr.item(brsvd1)
-
-                    if abs(BRSVD1 - BRLEV) >= atol:
-                        bounds = None
-                        break
-
-                    bounds.append((BRLEV, BRSVD1))
-            else:
-                bounds = None
-
-            if bounds:
-                bounds = np.array((bounds,), dtype=float)
-
-            dc = self.implementation.initialise_DimensionCoordinate()
-            dc = self.coord_data(
-                dc,
-                array,
-                bounds,
-                units=_axiscode_to_Units.setdefault(axiscode, None),
-            )
-            dc = self.coord_axis(dc, axiscode)
-            dc = self.coord_names(dc, axiscode)
-
-            if not dc.get("positive", True):  # ppp
-                dc.flip(i=True)
-
-            _cached_z_reference_coordinate[key] = dc
-            copy = False
-
-        self.implementation.set_dimension_coordinate(
-            self.field,
-            dc,
-            axes=[_axis["z"]],
-            copy=copy,
+            copy=False,
             autocyclic=_autocyclic_false,
         )
 
         return dc
 
 
+#    @_manage_log_level_via_verbose_attr
+#    def z_reference_coordinate(self, axiscode):
+#        """Create and return the Z reference coordinates."""
+#        logger.info(
+#            "Creating Z reference coordinates from BRLEV"
+#        )  # pragma: no cover
+#
+#        array = np.array(
+#            [rec.real_hdr.item(brlev) for rec in self.z_recs], dtype=float
+#        )
+#
+#        LBVC = self.lbvc
+#        atol = self.atol
+#
+#        key = (axiscode, LBVC, array)
+#        dc = _cached_z_reference_coordinate.get(key, None)
+#
+#        if dc is not None:
+#            copy = True
+#        else:
+#            if not 128 <= LBVC <= 139:
+#                bounds = []
+#                for rec in self.z_recs:
+#                    BRLEV = rec.real_hdr.item(brlev)
+#                    BRSVD1 = rec.real_hdr.item(brsvd1)
+#
+#                    if abs(BRSVD1 - BRLEV) >= atol:
+#                        bounds = None
+#                        break
+#
+#                    bounds.append((BRLEV, BRSVD1))
+#            else:
+#                bounds = None
+#
+#            if bounds:
+#                bounds = np.array((bounds,), dtype=float)
+#
+#            dc = self.implementation.initialise_DimensionCoordinate()
+#            dc = self.coord_data(
+#                dc,
+#                array,
+#                bounds,
+#                units=_axiscode_to_Units.setdefault(axiscode, None),
+#            )
+#            dc = self.coord_axis(dc, axiscode)
+#            dc = self.coord_names(dc, axiscode)
+#
+#            if not dc.get("positive", True):  # ppp
+#                dc.flip(i=True)
+#
+#            _cached_z_reference_coordinate[key] = dc
+#            copy = False
+#
+#        self.implementation.set_dimension_coordinate(
+#            self.field,
+#            dc,
+#            axes=[_axis["z"]],
+#            copy=copy,
+#            autocyclic=_autocyclic_false,
+#        )
+#
+#        return dc
+#
+#
 # _stash2standard_name = {}
 #
 # def load_stash2standard_name(table=None, delimiter='!', merge=True):
