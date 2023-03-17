@@ -18,6 +18,7 @@ from .fieldlist import FieldList
 from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from .functions import atol as cf_atol
 from .functions import flat
+
 from .functions import rtol as cf_rtol
 from .query import gt
 from .units import Units
@@ -316,9 +317,11 @@ class _Meta:
 
         if self.identity is None:
             if not allow_no_identity and self.has_data:
-                self.message = (
-                    "no identity; consider setting " "relaxed_identities"
-                )
+                if is_log_level_info(logger):
+                    self.message = (
+                        "no identity; consider setting relaxed_identities=True"
+                    )
+                    
                 return
         #        elif not self.has_data:
         #            self.message = "{} has no data".format(f.__class__.__name__)
@@ -485,9 +488,10 @@ class _Meta:
             if info_1d_coord:
                 identity = info_1d_coord[0]["identity"]
             elif not self.relaxed_identities:
-                self.message = (
-                    "axis has no one-dimensional nor scalar coordinates"
-                )
+                if is_log_level_info(logger):
+                    self.message = (
+                        "axis has no one-dimensional nor scalar coordinates"
+                    )
                 return
 
             size = None
@@ -497,10 +501,13 @@ class _Meta:
                 # its netCDF dimension name.
                 identity = domain_axis.nc_get_dimension(None)
                 if identity is None:
-                    self.message = (
-                        f"axis {f.constructs.domain_axis_identity(axis)!r} "
-                        "has no netCDF dimension name"
-                    )  # TODO
+                    if is_log_level_info(logger):
+                        self.message = (
+                            "axis "
+                            f"{f.constructs.domain_axis_identity(axis)!r} "
+                            "has no netCDF dimension name"
+                        )  # TODO
+                        
                     return
 
                 size = domain_axis.get_size()
@@ -721,7 +728,9 @@ class _Meta:
                 # have the same units and span the same axes.
                 for value in info_msr[units]:
                     if axes == value["axes"]:
-                        self.message = f"duplicate {msr!r}"
+                        if is_log_level_info(logger):
+                            self.message = f"duplicate {msr!r}"
+                            
                         return
             else:
                 info_msr[units] = []
@@ -982,11 +991,15 @@ class _Meta:
 
         """
         if not msr.Units:
-            self.message = f"{msr.identity()!r} cell measure has no units"
+            if is_log_level_info(logger):
+                self.message = f"{msr.identity()!r} cell measure has no units"
+                
             return False
 
         if not msr.has_data():
-            self.message = f"{msr.identity()!r} cell measure has no data"
+            if is_log_level_info(logger):
+                self.message = f"{msr.identity()!r} cell measure has no data"
+                
             return False
 
         return True
@@ -1004,7 +1017,9 @@ class _Meta:
 
         """
         if not msr.get_measure(False):
-            self.message = f"{msr.identity()!r} cell measure has no measure"
+            if is_log_level_info(logger):
+                self.message = f"{msr.identity()!r} cell measure has no measure"
+                
             return False
 
         return True
@@ -1051,7 +1066,8 @@ class _Meta:
                 return identity
 
         # Still here?
-        self.message = f"{coord!r} has no identity or no data"
+        if is_log_level_info(logger):
+            self.message = f"{coord!r} has no identity or no data"
 
     def field_ancillary_has_identity_and_data(self, anc):
         """Return a field ancillary's identity if it has one and has
@@ -1079,7 +1095,9 @@ class _Meta:
             all_field_anc_identities = self.all_field_anc_identities
 
             if identity in all_field_anc_identities:
-                self.message = f"multiple {identity!r} field ancillaries"
+                if is_log_level_info(logger):
+                    self.message = f"multiple {identity!r} field ancillaries"
+                    
                 return
 
             if anc.has_data():
@@ -1087,9 +1105,11 @@ class _Meta:
                 return identity
 
         # Still here?
-        self.message = (
-            f"{anc.identity()!r} field ancillary has no identity or " "no data"
-        )
+        if is_log_level_info(logger):
+            self.message = (
+                f"{anc.identity()!r} field ancillary has no identity or "
+                "no data"
+            )
 
     def coordinate_reference_signatures(self, refs):
         """List the structural signatures of given coordinate
@@ -1158,19 +1178,24 @@ class _Meta:
             )
 
         if anc_identity is None:
-            self.message = (
-                f"{anc.identity()!r} domain ancillary has no identity"
-            )
+            if is_log_level_info(logger):
+                self.message = (
+                    f"{anc.identity()!r} domain ancillary has no identity"
+                )
+                
             return
 
         all_domain_anc_identities = self.all_domain_anc_identities
 
         if anc_identity in all_domain_anc_identities:
-            self.message = f"multiple {anc.identity()!r} domain ancillaries"
+            if is_log_level_info(logger):
+                self.message = f"multiple {anc.identity()!r} domain ancillaries"
             return
 
         if not anc.has_data():
-            self.message = f"{anc.identity()!r} domain ancillary has no data"
+            if is_log_level_info(logger):
+                self.message = f"{anc.identity()!r} domain ancillary has no data"
+                
             return
 
         all_domain_anc_identities.add(anc_identity)
@@ -1193,11 +1218,12 @@ class _Meta:
         """
         if not is_log_level_detail(logger):
             return
-
+        print (self.cell_values)
         if signature:
             logger.detail(
                 "STRUCTURAL SIGNATURE:\n" + self.string_structural_signature()
             )
+
         if self.cell_values:
             logger.detail(
                 "CANONICAL COORDINATES:\n" + self.coordinate_values()
@@ -2139,7 +2165,7 @@ def aggregate(
             output_constructs.extend((m.field for m in meta))
 
     aggregate.status = status
-
+  
     if status:
         logger.info("")
 
@@ -2321,53 +2347,6 @@ def _create_hash_and_first_values(
                     h = (h,)
 
                 hash_values.append(h)
-            #                else:
-            #                    coord_units = coord.Units
-            #
-            #                    # Change the coordinate data type if required
-            #                    if coord.dtype.char not in ('d', 'S'):
-            #                        coord = coord.copy(_only_Data=True)
-            #                        coord.dtype = _dtype_float
-            #
-            #                    # Change the coordinate's units to the canonical ones
-            #                    coord.Units = canonical_units
-            #
-            #                    # Get the coordinate's data array
-            #                    if null_sort:
-            #                        array = coord.Data.array
-            #                    else:
-            #                        array = coord.Data.array[sort_indices]
-            #
-            #                    hash_value = hash_array(array)
-            #
-            #                    first_values.append(array.item(0)) #[0])
-            #                    last_values.append(array.item(-1)) #[-1])
-            #
-            #                    if coord._hasbounds:
-            #                        if null_sort:
-            #                            array = coord.bounds.Data.array
-            #                        else:
-            #                            array = coord.bounds.Data.array[sort_indices, ...]
-            #
-            #                        hash_value = (hash_value, hash_array(array))
-            #
-            #                        if key[:3] == 'dim':  # can do better than this! DCH
-            #                            # Record the bounds of the first and last
-            #                            # (sorted) cells of a dimension coordinate
-            #                            # (don't need to do this for an auxiliary
-            #                            # coordinate).
-            #                            array0 = array[0, ...].copy()
-            #                            array0.sort()
-            #                            m.first_bounds[identity] = array0
-            #
-            #                            array0 = array[-1, ...].copy()
-            #                            array0.sort()
-            #                            m.last_bounds[identity] = array0
-            #
-            #                    hash_values.append(hash_value)
-            #
-            #                    # Reinstate the coordinate's original units
-            #                    coord.Units = coord_units
 
             m_hash_values[identity] = hash_values
             m_first_values[identity] = first_values
@@ -2560,28 +2539,6 @@ def _create_hash_and_first_values(
                     h = (h,)
 
                 anc["hash_value"] = h
-
-        #            for anc in m.domain_anc.values():
-        #                key             = anc['key']
-        #                canonical_units = anc['units']
-        #
-        #                field_anc = field.item(key)
-        #
-        #                axes = tuple(
-        #                    [m_id_to_axis[identity] for identity in anc['axes']])
-        #                domain_axes = item_axes[key]
-        #                if axes != domain_axes:
-        #                    field_anc = field_anc.copy()  #_only_Data=True)  # TODO
-        #                    iaxes = [domain_axes.index(axis) for axis in axes]
-        #                    field_anc.transpose(iaxes, inplace=True)
-        #
-        #                sort_indices = tuple([m_sort_indices[axis] for axis in axes])
-        #
-        #                # Get the hash of the data array
-        #                h = _get_hfl(field_anc, canonical_units, sort_indices,
-        #                             False, False, False, hfl_cache, rtol, atol)
-        #
-        #                anc['hash_value'] = h
 
         m.cell_values = True
 
@@ -2811,9 +2768,11 @@ def _group_fields(meta, axis):
             # Zero axes have different 1-d coordinate values, so don't
             # aggregate anything in this entire group.
             # --------------------------------------------------------
-            meta[
-                0
-            ].message = "Some fields have identical sets of 1-d coordinates."
+            if is_log_level_info(logger):
+                meta[
+                    0
+                ].message = "Some fields have identical sets of 1-d coordinates."
+                
             return ()
 
         else:
@@ -2902,14 +2861,15 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                 >= m1.first_values[axis][dim_coord_index1]
             ):
                 # Found overlap
-                meta[0].message = (
-                    f"{m.axis[axis]['ids'][dim_coord_index]!r} "
-                    "dimension coordinate ranges overlap: "
-                    f"[{m0.first_values[axis][dim_coord_index0]}, "
-                    f"{m0.last_values[axis][dim_coord_index0]}], "
-                    f"[{m1.first_values[axis][dim_coord_index1]}, "
-                    f"{m1.last_values[axis][dim_coord_index1]}]"
-                )
+                if is_log_level_info(logger):
+                    meta[0].message = (
+                        f"{m.axis[axis]['ids'][dim_coord_index]!r} "
+                        "dimension coordinate ranges overlap: "
+                        f"[{m0.first_values[axis][dim_coord_index0]}, "
+                        f"{m0.last_values[axis][dim_coord_index0]}], "
+                        f"[{m1.first_values[axis][dim_coord_index1]}, "
+                        f"{m1.last_values[axis][dim_coord_index1]}]"
+                    )
 
                 return False
 
@@ -2926,14 +2886,16 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                         # because overlapping has been disallowed and
                         # the first cell from field1 overlaps with the
                         # last cell from field0.
-                        meta[0].message = (
-                            f"overlap={m.axis[axis]['ids'][dim_coord_index]} "
-                            f"and {overlap!r} dimension coordinate bounds "
-                            f"values overlap ({m1.first_bounds[axis][0]} "
-                            f"< {m0.last_bounds[axis][1]})"
-                        )
+                        if is_log_level_info(logger):
+                            meta[0].message = (
+                                f"overlap={bool(overlap)} and "
+                                f"{m.axis[axis]['ids'][dim_coord_index]!r} "
+                                "dimension coordinate bounds values overlap "
+                                f"({m1.first_bounds[axis][0]} "
+                                f"< {m0.last_bounds[axis][1]})"
+                            )
 
-                        return
+                        return False
 
             if contiguous:
                 for m0, m1 in zip(meta[:-1], meta[1:]):
@@ -2943,14 +2905,17 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                         # specified and the first cell from parent1 is
                         # not contiguous with the last cell from
                         # parent0.
-                        meta[0].message = (
-                            "contiguous="
-                            f"{m.axis[axis]['ids'][dim_coord_index]} and "
-                            f"{contiguous!r} dimension coordinate cells are "
-                            f"not contiguous ({m0.last_bounds[axis][1]} < "
-                            f"{m1.first_bounds[axis][0]})"
-                        )
-                        return
+                        if is_log_level_info(logger):
+                            meta[0].message = (
+                                f"contiguous={bool(contiguous)} and "
+                                f"{m.axis[axis]['ids'][dim_coord_index]} "
+                                "dimension coordinate cells are not "
+                                "contiguous "
+                                f"({m0.last_bounds[axis][1]} < "
+                                f"{m1.first_bounds[axis][0]})"
+                            )
+
+                        return False
 
     else:
         # ------------------------------------------------------------
@@ -2970,13 +2935,14 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                     len(set_of_1d_aux_coord_values)
                     != number_of_1d_aux_coord_values
                 ):
-                    meta[0].message = (
-                        f"no {identity!r} dimension coordinates and "
-                        f"{identity!r} auxiliary coordinates have duplicate "
-                        "values"
+                    if is_log_level_info(logger):
+                        meta[0].message = (
+                            f"no {identity!r} dimension coordinates and "
+                            f"{identity!r} auxiliary coordinates have "
+                            "duplicate values"
                     )
 
-                    return
+                    return False
 
     # ----------------------------------------------------------------
     # Still here? Then the aggregating axis does not overlap between
