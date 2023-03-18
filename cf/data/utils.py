@@ -5,7 +5,6 @@ from operator import mul
 
 import dask.array as da
 import numpy as np
-from dask.utils import SerializableLock
 
 from ..cfdatetime import (
     canonical_calendar,
@@ -20,11 +19,6 @@ from ..units import Units
 from .dask_utils import cf_YMDhms
 
 _units_None = Units(None)
-
-# --------------------------------------------------------------------
-# Global lock for netCDF file access
-# --------------------------------------------------------------------
-netcdf_lock = SerializableLock()
 
 
 def is_numeric_dtype(array):
