@@ -6,7 +6,7 @@ from ....units import Units
 
 
 class FragmentArrayMixin:
-    """Mixin for a CFA fragment array.
+    """Mixin class for a CFA fragment array.
 
     .. versionadded:: TODOCFAVER
 
@@ -32,6 +32,10 @@ class FragmentArrayMixin:
         .. versionadded:: TODOCFAVER
 
         """
+        # TODOACTIVE: modify this the for case when
+        #             super().__getitem__(tuple(indices)) returns a
+        #             dictionary
+
         indices = self._parse_indices(indices)
 
         try:
@@ -56,18 +60,18 @@ class FragmentArrayMixin:
                 # how many missing dimensions the fragment has, nor
                 # their positions => Get the full fragment array and
                 # then reshape it to the shape of the dask compute
-                # chunk, assuming that it has the correct size.
+                # chunk.
                 array = super().__getitem__(Ellipsis)
                 if array.size != self.size:
                     raise ValueError(
                         f"Can't get CFA fragment data from ({self}) when "
                         "the fragment has two or more missing size 1 "
-                        "dimensions whilst also spanning two or more "
+                        "dimensions, whilst also spanning two or more "
                         "dask compute chunks."
                         "\n\n"
-                        "Consider recreating the data with exactly one"
-                        "dask compute chunk per fragment (e.g. set the "
-                        "parameter 'chunks=None' to cf.read)."
+                        "Consider re-creating the data with exactly one "
+                        "dask compute chunk per fragment (e.g. by setting "
+                        "'chunks=None' as a keyword to cf.read)."
                     )
 
                 array = array.reshape(self.shape)
@@ -75,68 +79,54 @@ class FragmentArrayMixin:
         array = self._conform_to_aggregated_units(array)
         return array
 
-    def _size_1_axis(self, indices):
-        """Find the position of a unique size 1 index.
+    def _conform_to_aggregated_units(self, array):
+        """Conform the array to have the aggregated units.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `_parse_indices`, `__getitem__`
-
         :Parameters:
 
-            indices: sequence of index
-                The array indices to be parsed, as returned by
-                `_parse_indices`.
+            array: `numpy.ndarray` or `dict`
+                The array to be conformed. If *array* is a `dict` with
+                `numpy` array values then selected values are
+                conformed.
 
         :Returns:
 
-            `int` or `None`
-                The position of the unique size 1 index, or `None` if
-                there are zero or at least two of them.
+            `numpy.ndarray` or `dict`
+                The conformed array. The returned array may or may not
+                be the input array updated in-place, depending on its
+                data type and the nature of its units and the
+                aggregated units.
 
-        **Examples**
-
-        >>> a._size_1_axis(([2, 4, 5], slice(0, 1), slice(0, 73)))
-        1
-        >>> a._size_1_axis(([2, 4, 5], slice(3, 4), slice(0, 73)))
-        1
-        >>> a._size_1_axis(([2, 4, 5], [0], slice(0, 73)))
-        1
-        >>> a._size_1_axis(([2, 4, 5], slice(0, 144), slice(0, 73)))
-        None
-        >>> a._size_1_axis(([2, 4, 5], slice(3, 7), [0, 1]))
-        None
-        >>> a._size_1_axis(([2, 4, 5], slice(0, 1), [0]))
-        None
+                If *array* is a `dict` then a dictionary of conformed
+                arrays is returned.
 
         """
-        axis = None  # Position of unique size 1 index
+        units = self.Units
+        if units:
+            aggregated_units = self.aggregated_Units
+            if not units.equivalent(aggregated_units):
+                raise ValueError(
+                    f"Can't convert fragment data with units {units!r} to "
+                    f"have aggregated units {aggregated_units!r}"
+                )
 
-        n_size_1 = 0  # Number of size 1 indices
-        for i, (index, n) in enumerate(zip(indices, self.shape)):
-            try:
-                x = index.indices(n)
-                if abs(x[1] - x[0]) == 1:
-                    # Index is a size 1 slice
-                    n_size_1 += 1
-                    axis = i
-            except AttributeError:
-                try:
-                    if index.size == 1:
-                        # Index is a size 1 numpy or dask array
-                        n_size_1 += 1
-                        axis = i
-                except AttributeError:
-                    if len(index) == 1:
-                        # Index is a size 1 list
-                        n_size_1 += 1
-                        axis = i
+            if units != aggregated_units:
+                if isinstance(array, dict):
+                    # 'array' is a dictionary.
+                    raise ValueError(
+                        "TODOACTIVE. This error is notification of an "
+                        "unreplaced placeholder for dealing with active "
+                        "storage reductions on CFA fragments."
+                    )
+                else:
+                    # 'array' is a numpy array
+                    array = Units.conform(
+                        array, units, aggregated_units, inplace=True
+                    )
 
-        if n_size_1 > 1:
-            # There are two or more size 1 indices
-            axis = None
-
-        return axis
+        return array
 
     def _parse_indices(self, indices):
         """Parse the indices that retrieve the fragment data.
@@ -219,57 +209,68 @@ class FragmentArrayMixin:
 
         return indices
 
-    def _conform_to_aggregated_units(self, array):
-        """Conform the array to have the aggregated units.
+    def _size_1_axis(self, indices):
+        """Find the position of a unique size 1 index.
 
         .. versionadded:: TODOCFAVER
 
+        .. seealso:: `_parse_indices`, `__getitem__`
+
         :Parameters:
 
-            array: `numpy.ndarray` or `dict`
-                The array to be conformed. If *array* is a `dict` with
-                `numpy` array values then each value is conformed.
+            indices: sequence of index
+                The array indices to be parsed, as returned by
+                `_parse_indices`.
 
         :Returns:
 
-            `numpy.ndarray` or `dict`
-                The conformed array. The returned array may or may not
-                be the input array updated in-place, depending on its
-                data type and the nature of its units and the
-                aggregated units.
+            `int` or `None`
+                The position of the unique size 1 index, or `None` if
+                there are zero or at least two of them.
 
-                If *array* is a `dict` then a dictionary of conformed
-                arrays is returned.
+        **Examples**
+
+        >>> a._size_1_axis(([2, 4, 5], slice(0, 1), slice(0, 73)))
+        1
+        >>> a._size_1_axis(([2, 4, 5], slice(3, 4), slice(0, 73)))
+        1
+        >>> a._size_1_axis(([2, 4, 5], [0], slice(0, 73)))
+        1
+        >>> a._size_1_axis(([2, 4, 5], slice(0, 144), slice(0, 73)))
+        None
+        >>> a._size_1_axis(([2, 4, 5], slice(3, 7), [0, 1]))
+        None
+        >>> a._size_1_axis(([2, 4, 5], slice(0, 1), [0]))
+        None
 
         """
-        units = self.Units
-        if units:
-            aggregated_units = self.aggregated_Units
-            if not units.equivalent(aggregated_units):
-                raise ValueError(
-                    f"Can't convert fragment data with units {units!r} to "
-                    f"have aggregated units {aggregated_units!r}"
-                )
+        axis = None
 
-            if units != aggregated_units:
-                if isinstance(array, dict):
-                    # 'array' is a dictionary
+        n_size_1 = 0  # Number of size 1 indices
+        for i, (index, n) in enumerate(zip(indices, self.shape)):
+            try:
+                x = index.indices(n)
+                if abs(x[1] - x[0]) == 1:
+                    # Index is a size 1 slice
+                    n_size_1 += 1
+                    axis = i
+            except AttributeError:
+                try:
+                    if index.size == 1:
+                        # Index is a size 1 numpy or dask array
+                        n_size_1 += 1
+                        axis = i
+                except AttributeError:
+                    if len(index) == 1:
+                        # Index is a size 1 list
+                        n_size_1 += 1
+                        axis = i
 
-                    # TODOACTIVE: '_active_chunk_methds = {}' is a
-                    #             placeholder for the real thing
-                    _active_chunk_methds = {}
-                    for key, value in array.items():
-                        if key in _active_chunk_methds:
-                            array[key] = Units.conform(
-                                value, units, aggregated_units, inplace=True
-                            )
-                else:
-                    # 'array' is a numpy array
-                    array = Units.conform(
-                        array, units, aggregated_units, inplace=True
-                    )
+        if n_size_1 > 1:
+            # There are two or more size 1 indices
+            axis = None
 
-        return array
+        return axis
 
     @property
     def aggregated_Units(self):
