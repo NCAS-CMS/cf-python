@@ -17,13 +17,7 @@ class NetCDFArray(FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
         .. versionadded:: TODOCFAVER
 
         """
-        return (
-            self.__class__,
-            self.shape,
-            self.get_filenames(),
-            self.get_addresses(),
-            self.get_mask(),
-        )
+        return super().__dask_tokenize__() + (self.get_mask(),)
 
     def __repr__(self):
         """Called by the `repr` built-in function.

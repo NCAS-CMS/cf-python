@@ -458,6 +458,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             dt = True
 
         first_value = None
+
         if not dt and array.dtype.kind == "O":
             kwargs = init_options.get("first_non_missing_value", {})
             first_value = first_non_missing_value(array, **kwargs)

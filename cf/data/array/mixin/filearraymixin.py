@@ -13,6 +13,19 @@ class FileArrayMixin:
 
     """
 
+    def __dask_tokenize__(self):
+        """Return a value fully representative of the object.
+
+        .. versionadded:: TODOCFAVER
+
+        """
+        return (
+            self.__class__,
+            self.shape,
+            self.get_filenames(),
+            self.get_addresses(),
+        )
+
     @property
     def _dask_meta(self):
         """The metadata for the containing dask array.

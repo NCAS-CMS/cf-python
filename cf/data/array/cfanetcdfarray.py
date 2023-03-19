@@ -1,4 +1,5 @@
 from copy import deepcopy
+from functools import partial
 from itertools import accumulate, product
 from os.path import dirname, join
 from urllib.parse import urlparse
@@ -10,6 +11,13 @@ from ..fragment import FullFragmentArray, NetCDFFragmentArray, UMFragmentArray
 from ..utils import chunk_locations, chunk_positions
 from .netcdfarray import NetCDFArray
 
+# Store fragment array classes.
+_FragmentArray = {
+    "nc": NetCDFFragmentArray,
+    "um": UMFragmentArray,
+    "full": FullFragmentArray,
+}
+
 
 class CFANetCDFArray(NetCDFArray):
     """A CFA aggregated array stored in a netCDF file.
@@ -17,20 +25,6 @@ class CFANetCDFArray(NetCDFArray):
     .. versionadded:: 3.14.0
 
     """
-
-    def __new__(cls, *args, **kwargs):
-        """Store fragment array classes.
-
-        .. versionadded:: 3.14.0
-
-        """
-        instance = super().__new__(cls)
-        instance._FragmentArray = {
-            "nc": NetCDFFragmentArray,
-            "um": UMFragmentArray,
-            "full": FullFragmentArray,
-        }
-        return instance
 
     def __init__(
         self,
@@ -51,43 +45,21 @@ class CFANetCDFArray(NetCDFArray):
 
         :Parameters:
 
-            filename: `str`
-                The name of the netCDF file containing the array.
+            filename: (sequence of `str`), optional
+                The name of the CFA-netCDF file containing the
+                array. If a sequence then it must contain one element.
 
-            ncvar: `str`, optional
-                The name of the netCDF variable containing the
-                array. Required unless *varid* is set.
+            address: (sequence of `str`0, optional
+                The name of the CFA-netCDF aggregation variable the
+                array. If a sequence then it must contain one element.
 
-            varid: `int`, optional
-                The UNIDATA netCDF interface ID of the variable
-                containing the array. Required if *ncvar* is not set,
-                ignored if *ncvar* is set.
-
-            group: `None` or sequence of `str`, optional
-                Specify the netCDF4 group to which the netCDF variable
-                belongs. By default, or if *group* is `None` or an
-                empty sequence, it assumed to be in the root
-                group. The last element in the sequence is the name of
-                the group in which the variable lies, with other
-                elements naming any parent groups (excluding the root
-                group).
-
-                *Parameter example:*
-                  To specify that a variable is in the root group:
-                  ``group=()`` or ``group=None``
-
-                *Parameter example:*
-                  To specify that a variable is in the group '/forecasts':
-                  ``group=['forecasts']``
-
-                *Parameter example:*
-                  To specify that a variable is in the group
-                  '/forecasts/model2': ``group=['forecasts', 'model2']``
+            shape: `tuple` of `int`
+                The shape of the aggregated data array.
 
             dtype: `numpy.dtype`
-                The data type of the array in the netCDF file. May be
-                `None` if the numpy data-type is not known (which can be
-                the case for netCDF string types, for example).
+                The data type of the aggregated data array. May be
+                `None` if the numpy data-type is not known (which can
+                be the case for netCDF string types, for example).
 
             mask: `bool`
                 If True (the default) then mask by convention when
@@ -119,8 +91,8 @@ class CFANetCDFArray(NetCDFArray):
             term: `str`, optional
                 The name of a non-standard aggregation instruction
                 term from which the array is to be created, instead of
-                the creating the aggregated data in the usual
-                manner. If set then *address* must be the name of the
+                the creating the aggregated data in the standard
+                terms. If set then *address* must be the name of the
                 term's CFA-netCDF aggregation instruction variable,
                 which must be defined on the fragment dimensions and
                 no others. Each value of the aggregation instruction
@@ -178,7 +150,8 @@ class CFANetCDFArray(NetCDFArray):
 
             if term is not None:
                 # --------------------------------------------------------
-                # This fragment contains a constant value
+                # This fragment contains a constant value, not file
+                # locations.
                 # --------------------------------------------------------
                 term = x[term]
                 fragment_shape = term.shape
@@ -194,18 +167,12 @@ class CFANetCDFArray(NetCDFArray):
                 a = x["address"]
                 f = x["file"]
                 fmt = x["format"]
+
                 if not a.ndim:
-                    if f.ndim == ndim:
-                        a = np.full(f.shape, a)
-                    else:
-                        a = np.full(f.shape[:-1], a)
+                    a = np.full(f.shape, a, dtype=a.dtype)
 
                 if not fmt.ndim:
-                    fmt = fmt.astype("U")
-                    if f.ndim == ndim:
-                        fmt = np.full(f.shape, fmt)
-                    else:
-                        fmt = np.full(f.shape[:-1], fmt)
+                    fmt = np.full(f.shape, fmt, dtype=fmt.dtype)
 
                 if f.ndim == ndim:
                     fragment_shape = f.shape
@@ -225,19 +192,19 @@ class CFANetCDFArray(NetCDFArray):
                             "location": loc,
                             "filename": f[frag_loc].tolist(),
                             "address": a[frag_loc].tolist(),
-                            "format": fmt[frag_loc].item(),
+                            "format": fmt[frag_loc].tolist(),
                         }
                         for frag_loc, loc in zip(positions, locations)
                     }
 
-                # Apply string substitutions to the fragment filename
+                # Apply string substitutions to the fragment filenames
                 if substitutions:
-                    for xx in aggregated_data.values():
-                        filename = xx["filename"]
+                    for value in aggregated_data.values():
+                        filename = value["filename"]
                         for base, sub in substitutions.items():
                             filename = filename.replace(base, sub)
 
-                        xx["filename"] = filename
+                        value["filename"] = filename
 
             super().__init__(
                 filename=filename,
@@ -353,16 +320,12 @@ class CFANetCDFArray(NetCDFArray):
         .. versionadded:: 3.14.0
 
         """
+        out = super().__dask_tokenize__()
         aggregated_data = self._get_component("instructions", None)
         if aggregated_data is None:
             aggregated_data = self.get_aggregated_data(copy=False)
 
-        return (
-            self.__class__.__name__,
-            abspath(self.get_filename()),
-            self.get_address(),
-            aggregated_data,
-        )
+        return out + (aggregated_data,)
 
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]"""
@@ -528,30 +491,30 @@ class CFANetCDFArray(NetCDFArray):
 
         return aggregated_data
 
-    def get_FragmentArray(self, fragment_format):
-        """Return a fragment array class.
-
-        .. versionadded:: 3.14.0
-
-        :Parameters:
-
-            fragment_format: `str`
-                The dataset format of the fragment. Either ``'nc'``,
-                ``'um'``, or ``'full'``.
-
-        :Returns:
-
-                The class for representing a fragment array of the
-                given format.
-
-        """
-        try:
-            return self._FragmentArray[fragment_format]
-        except KeyError:
-            raise ValueError(
-                "Can't get FragmentArray class for unknown "
-                f"fragment dataset format: {fragment_format!r}"
-            )
+    #    def get_FragmentArray(self, fragment_format):
+    #        """Return a fragment array class.
+    #
+    #        .. versionadded:: 3.14.0
+    #
+    #        :Parameters:
+    #
+    #            fragment_format: `str`
+    #                The dataset format of the fragment. Either ``'nc'``,
+    #                ``'um'``, or ``'full'``.
+    #
+    #        :Returns:
+    #
+    #                The class for representing a fragment array of the
+    #                given format.
+    #
+    #        """
+    #        try:
+    #            return _FragmentArray[fragment_format]
+    #        except KeyError:
+    #            raise ValueError(
+    #                "Can't get FragmentArray class for unknown "
+    #                f"fragment dataset format: {fragment_format!r}"
+    #            )
 
     def get_fragmented_dimensions(self):
         """Get the positions dimension that have two or more fragments.
@@ -896,8 +859,14 @@ class CFANetCDFArray(NetCDFArray):
         # Set the chunk sizes for the dask array
         chunks = self.subarray_shapes(chunks)
 
+        if self.get_mask():
+            fragment_arrays = _FragmentArray
+        else:
+            fragment_arrays = _FragmentArray.copy()
+            fragment_arrays["nc"] = partial(_FragmentArray["nc"], mask=False)
+
         # Create a FragmentArray for each chunk
-        get_FragmentArray = self.get_FragmentArray
+        #        get_FragmentArray = self.get_FragmentArray
 
         dsk = {}
         for (
@@ -911,7 +880,18 @@ class CFANetCDFArray(NetCDFArray):
             kwargs = aggregated_data[chunk_location].copy()
             kwargs.pop("location", None)
 
-            FragmentArray = get_FragmentArray(kwargs.pop("format", None))
+            #            FragmentArray = get_FragmentArray(kwargs.pop("format", None))
+
+            #            FragmentArray = FragmentArray[kwargs.pop("format", None)]
+            fragment_format = kwargs.pop("format", None)
+            try:
+                FragmentArray = fragment_arrays[fragment_format]
+            except KeyError:
+                raise ValueError(
+                    "Can't get FragmentArray class for unknown "
+                    f"fragment dataset format: {fragment_format!r}"
+                )
+
             fragment = FragmentArray(
                 dtype=dtype,
                 shape=fragment_shape,

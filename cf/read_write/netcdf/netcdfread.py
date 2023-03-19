@@ -3,11 +3,6 @@ import netCDF4
 import numpy as np
 from packaging.version import Version
 
-"""
-TODOCFA: What about groups/netcdf_flattener?
-
-"""
-
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     """A container for instantiating Fields from a netCDF dataset.
@@ -290,7 +285,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         g = self.read_vars
         return (
             g["cfa"]
-            and ncvar in g["aggregated_data"]
+            and ncvar in g["cfa_aggregated_data"]
             and ncvar not in g["external_variables"]
         )
 
@@ -372,8 +367,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if not g["cfa"]:
             return
 
-        g["aggregated_data"] = {}
-        g["aggregation_instructions"] = {}
+        g["cfa_aggregated_data"] = {}
+        g["cfa_aggregation_instructions"] = {}
+        g["cfa_file_substitutions"] = {}
 
         # ------------------------------------------------------------
         # Still here? Then this is a CFA-netCDF file
@@ -409,7 +405,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             # Do not create fields/domains from aggregation
             # instruction variables
-            parsed_aggregated_data = self._parse_aggregated_data(
+            parsed_aggregated_data = self._cfa_parse_aggregated_data(
                 ncvar, attributes.get("aggregated_data")
             )
             for term_ncvar in parsed_aggregated_data.values():
@@ -546,42 +542,25 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # getting set correctly by the CFANetCDFArray instance.
         kwargs.pop("shape", None)
 
-        aggregated_data = g["aggregated_data"][ncvar]
+        aggregated_data = g["cfa_aggregated_data"][ncvar]
 
         standardised_terms = ("location", "file", "address", "format")
 
         instructions = []
         aggregation_instructions = {}
-        subs = {}
         for t, term_ncvar in aggregated_data.items():
             if t not in standardised_terms:
                 continue
 
-            aggregation_instructions[t] = g["aggregation_instructions"][
+            aggregation_instructions[t] = g["cfa_aggregation_instructions"][
                 term_ncvar
             ]
-            instructions.append(f"{t}: {ncvar}")
+            instructions.append(f"{t}: {term_ncvar}")
 
             if t == "file":
-                # Find URI substitutions that may be stored in the CFA
-                # file instruction variable's "substitutions"
-                # attribute
-                subs = g["variable_attributes"][term_ncvar].get(
-                    "substitutions", {}
+                kwargs["substitutions"] = g["cfa_file_substitutions"].get(
+                    term_ncvar
                 )
-                if subs:
-                    # Convert the string "${base}: value" to the
-                    # dictionary {"${base}": "value"}
-                    s = subs.split()
-                    subs = {
-                        base[:-1]: sub for base, sub in zip(s[::2], s[1::2])
-                    }
-
-        # Apply user-defined substitutions, which take precedence over
-        # those defined in the file.
-        subs.update(g["cfa_options"].get("substitutions", {}))
-        if subs:
-            kwargs["substitutions"] = subs
 
         kwargs["x"] = aggregation_instructions
         kwargs["instructions"] = " ".join(sorted(instructions))
@@ -637,11 +616,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         instructions = []
         aggregation_instructions = {}
-        for t, term_ncvar in g["aggregated_data"][parent_ncvar].items():
+        for t, term_ncvar in g["cfa_aggregated_data"][parent_ncvar].items():
             if t in ("location", term):
-                aggregation_instructions[t] = g["aggregation_instructions"][
-                    term_ncvar
-                ]
+                aggregation_instructions[t] = g[
+                    "cfa_aggregation_instructions"
+                ][term_ncvar]
                 instructions.append(f"{t}: {ncvar}")
 
         kwargs["term"] = term
@@ -720,10 +699,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         return chunks
 
     def _customize_field_ancillaries(self, parent_ncvar, f):
-        """Create field ancillary constructs from CFA terms.
-
-        This method is primarily aimed at providing a customisation
-        entry point for subclasses.
+        """Create customised field ancillary constructs.
 
         This method currently creates:
 
@@ -732,7 +708,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
           the same domain axes as the parent field construct.
           Constructs are never created for `Domain` instances.
 
-        .. versionadded:: TODODASKCFA
+        .. versionadded:: TODOCFAVER
 
         :Parameters:
 
@@ -771,8 +747,13 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         standardised_terms = ("location", "file", "address", "format")
 
         out = {}
-        for term, term_ncvar in g["aggregated_data"][parent_ncvar].items():
+        for term, term_ncvar in g["cfa_aggregated_data"][parent_ncvar].items():
             if term in standardised_terms:
+                continue
+
+            if g["variables"][term_ncvar].ndim != f.ndim:
+                # Can only create field ancillaries with the same rank
+                # as the field
                 continue
 
             # Still here? Then we've got a non-standard aggregation
@@ -793,6 +774,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             data = self._create_data(
                 parent_ncvar, anc, cfa_term={term: term_ncvar}
             )
+
             self.implementation.set_data(anc, data, copy=False)
             self.implementation.nc_set_variable(anc, term_ncvar)
 
@@ -806,8 +788,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return out
 
-    def _parse_aggregated_data(self, ncvar, aggregated_data):
-        """Parse a CFA-netCDF aggregated_data attribute.
+    def _cfa_parse_aggregated_data(self, ncvar, aggregated_data):
+        """Parse a CFA-netCDF ``aggregated_data`` attribute.
 
         .. versionadded:: TODOCFAVER
 
@@ -822,13 +804,15 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         :Returns:
 
             `dict`
+                The parsed attribute.
 
         """
         if not aggregated_data:
             return {}
 
         g = self.read_vars
-        aggregation_instructions = g["aggregation_instructions"]
+        aggregation_instructions = g["cfa_aggregation_instructions"]
+        variable_attributes = g["variable_attributes"]
 
         out = {}
         for x in self._parse_x(
@@ -840,15 +824,54 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             term_ncvar = term_ncvar[0]
             out[term] = term_ncvar
 
-            if term_ncvar not in aggregation_instructions:
-                array = self._conform_array(g["variables"][term_ncvar][...])
-                aggregation_instructions[term_ncvar] = array
+            if term_ncvar in aggregation_instructions:
+                # Already processed this term
+                continue
 
-        g["aggregated_data"][ncvar] = out
+            array = g["variables"][term_ncvar][...]
+            aggregation_instructions[term_ncvar] = self._cfa_conform_array(
+                array
+            )
+
+            if term == "file":
+                # Find URI substitutions that may be stored in the
+                # CFA file instruction variable's "substitutions"
+                # attribute
+                subs = variable_attributes[term_ncvar].get(
+                    "substitutions",
+                )
+                if subs:
+                    # Convert the string "${base}: value" to the
+                    # dictionary {"${base}": "value"}
+                    s = subs.split()
+                    subs = {
+                        base[:-1]: sub for base, sub in zip(s[::2], s[1::2])
+                    }
+
+                    # Apply user-defined substitutions, which take
+                    # precedence over those defined in the file.
+                    subs.update(g["cfa_options"].get("substitutions", {}))
+                    g["cfa_file_substitutions"][term_ncvar] = subs
+
+        g["cfa_aggregated_data"][ncvar] = out
         return out
 
-    def _conform_array(self, array):
-        """TODOCFADOCS"""
+    def _cfa_conform_array(self, array):
+        """Conform an array so that it is suitable for CFA processing.
+
+        .. versionadded: TODOCFAVER
+
+        :Parameters:
+
+            array: `np.ndarray`
+                The array to conform.
+
+        :Returns:
+
+            array: `np.ndarray`
+                The conformed array.
+
+        """
         if isinstance(array, str):
             # string
             return np.array(array, dtype=f"S{len(array)}").astype("U")

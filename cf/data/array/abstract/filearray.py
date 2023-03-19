@@ -73,22 +73,6 @@ class FileArray(FileArrayMixin, Array):
             "in subclasses"
         )  # pragma: no cover
 
-    #    def get_filename(self):
-    #        """Return the name of the file containing the array.
-    #
-    #        :Returns:
-    #
-    #            `str` or `None`
-    #                The filename, or `None` if there isn't one.
-    #
-    #        **Examples**
-    #
-    #        >>> a.get_filename()
-    #        'file.nc'
-    #
-    #        """
-    #        return self._get_component("filename", None)
-
     def open(self):
         """Returns an open dataset containing the data array."""
         raise NotImplementedError(
