@@ -4590,15 +4590,15 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.cfa_has_file_substitutions())
         self.assertEqual(d.cfa_file_substitutions(), {})
         self.assertEqual(d.cfa_clear_file_substitutions(), {})
-        self.assertIsNone(d.cfa_del_file_substitution("base", None))
+        self.assertEqual(d.cfa_del_file_substitution("base"), {})
 
     def test_Data_file_location(self):
         """Test `Data` file location methods"""
         f = cf.example_field(0)
 
-        # Can't set file locations when no data is in a file
-        with self.assertRaises(ValueError):
-            f.data.set_file_location("/data/model/")
+        self.assertEqual(
+            f.data.add_file_location("/data/model/"), "/data/model"
+        )
 
         cf.write(f, file_A)
         d = cf.read(file_A, chunks=4)[0].data
@@ -4608,13 +4608,13 @@ class DataTest(unittest.TestCase):
         location = os.path.dirname(os.path.abspath(file_A))
 
         self.assertEqual(d.file_locations(), set((location,)))
-        self.assertIsNone(d.set_file_location("/data/model/"))
+        self.assertEqual(d.add_file_location("/data/model/"), "/data/model")
         self.assertEqual(d.file_locations(), set((location, "/data/model")))
 
         # Check that we haven't changed 'e'
         self.assertEqual(e.file_locations(), set((location,)))
 
-        self.assertIsNone(d.del_file_location("/data/model/"))
+        self.assertEqual(d.del_file_location("/data/model/"), "/data/model")
         self.assertEqual(d.file_locations(), set((location,)))
         d.del_file_location("/invalid")
         self.assertEqual(d.file_locations(), set((location,)))

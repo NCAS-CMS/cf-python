@@ -37,16 +37,10 @@ from ..functions import (
     parse_indices,
     rtol,
 )
-
-# from ..mixin_container import Container
 from ..mixin2 import CFANetCDF, Container
 from ..units import Units
 from .collapse import Collapse
-from .creation import (  # is_file_array,
-    generate_axis_identifiers,
-    is_abstract_Array_subclass,
-    to_dask,
-)
+from .creation import generate_axis_identifiers, to_dask
 from .dask_utils import (
     _da_ma_allclose,
     cf_contains,
@@ -437,11 +431,17 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             except AttributeError:
                 pass
 
-        if is_abstract_Array_subclass(array):
-            # Save the input array in case it's useful later. For
-            # compressed input arrays this will contain extra information,
-            # such as a count or index variable.
+        try:
+            array.get_filenames()
+        except AttributeError:
+            pass
+        else:
             self._set_Array(array)
+        #        if is_abstract_Array_subclass(array):
+        #            # Save the input array in case it's useful later. For
+        #            # compressed input arrays this will contain extra information,
+        #            # such as a count or index variable.
+        #            self._set_Array(array)
 
         # Cast the input data as a dask array
         kwargs = init_options.get("from_array", {})
@@ -1257,43 +1257,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return self._custom.pop("cfa_write", False)
 
     def _cfa_set_term(self, value):
-        """TODOCFADOCS Set the CFA write status of the data to `False`.
+        """Set the CFA aggregation instruction term status.
 
         .. versionadded:: TODOCFAVER
 
         .. seealso:: `cfa_get_term`, `cfa_set_term`
 
-        .. seealso:: `_del_Array`, `_del_cached_elements`, `_set_dask`
-
         :Parameters:
 
-            clear: `int`, optional
-                Specify which components should be removed. Which
-                components are removed is determined by sequentially
-                combining *clear* with the ``_ARRAY`` and ``_CACHE``
-                integer-valued contants, using the bitwise AND
-                operator:
-
-                * If ``clear & _ARRAY`` is non-zero then a source
-                  array is deleted.
-
-                * If ``clear & _CACHE`` is non-zero then cached
-                  element values are deleted.
-
-                By default *clear* is the ``_ALL`` integer-valued
-                constant, which results in all components being
-                removed.
-
-                If *clear* is the ``_NONE`` integer-valued constant
-                then no components are removed.
-
-                To retain a component and remove all others, use
-                ``_ALL`` with the bitwise OR operator. For instance,
-                if *clear* is ``_ALL ^ _CACHE`` then the cached
-                element values will be kept but all other components
-                will be removed.
-
-                .. versionadded:: 3.14.1
+            status: `bool`
+                The new CFA aggregation instruction term status.
 
         :Returns:
 
@@ -1570,16 +1543,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def _cfa_set_write(self, status):
         """Set the CFA write status of the data.
 
-        This should only be set to `True` if it is known that the dask
-        array is compatible with the requirements of a CFA-netCDF
-        aggregation variable (or non-stan... TODOCFADOCS). Conversely,
-        it should be set to `False` if it that compaibility can not be
-        guaranteed.
-
-        The CFA status may be set to `True` in `cf.read`. See
-        `NetCDFRead._create_data` for details.
-
-        If unset then the CFA write status defaults to `False`.
+        If and only if the CFA write status is True then it may be
+        possible to write the data as an aggregation variable to a
+        CFA-netCDF file.
 
         .. versionadded:: TODOCFAVER
 
@@ -2502,6 +2468,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def cfa_get_term(self):
         """The CFA aggregation instruction term status.
 
+        If True then the data represents that of a non-standard CFA
+        aggregation instruction variable.
+
         .. versionadded:: TODOCFAVER
 
         .. seealso:: `cfa_set_term`
@@ -2522,11 +2491,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def cfa_get_write(self):
         """The CFA write status of the data.
 
-        If and only if the CFA write status is `True`, then this
-        `Data` instance has the potential to be written to a
-        CFA-netCDF file as aggregated data. In this case it is the
-        choice of parameters to the `cf.write` function that
-        determines if the data is actually written as aggregated data.
+        If and only if the CFA write status is True then it may be
+        possible to write the data as an aggregation variable to a
+        CFA-netCDF file.
 
         .. versionadded:: TODOCFAVER
 
@@ -2547,6 +2514,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
     def cfa_set_term(self, status):
         """Set the CFA aggregation instruction term status.
+
+        If True then the data represents that of a non-standard CFA
+        aggregation instruction variable.
 
         .. versionadded:: TODOCFAVER
 
@@ -2573,7 +2543,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def cfa_set_write(self, status):
         """Set the CFA write status of the data.
 
-        TODOCFADOCS
+        If and only if the CFA write status is True then it may be
+        possible to write the data as an aggregation variable to a
+        CFA-netCDF file.
 
         .. versionadded:: TODOCFAVER
 
@@ -3708,8 +3680,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 The regridded data.
 
         """
-        from dask import delayed
-
         from .dask_regrid import regrid, regrid_weights
 
         shape = self.shape
@@ -3980,8 +3950,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 aggregated_data.update(d.cfa_get_aggregated_data({}))
                 substitutions.update(d.cfa_file_substitutions())
 
-            data0.cfa_set_aggregated_data(aggregated_data)
-            data0.cfa_set_file_substitutions(substitutions)
+            if aggregated_data:
+                data0.cfa_set_aggregated_data(aggregated_data)
+
+            if substitutions:
+                data0.cfa_set_file_substitutions(substitutions)
 
         # Set the CFA aggregation instruction term status
         if data0.cfa_get_term():
@@ -6143,11 +6116,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def get_filenames(self):
         """The names of files containing parts of the data array.
 
-        Returns the names of any files that are required to deliver
-        the computed data array. This list may contain fewer names
-        than the collection of file names that defined the data when
-        it was first instantiated, as could be the case after the data
-        has been subspaced.
+        Returns the names of any files that may be required to deliver
+        the computed data array. This set may contain fewer names than
+        the collection of file names that defined the data when it was
+        first instantiated, as could be the case after the data has
+        been subspaced.
 
         **Implementation**
 
@@ -6303,8 +6276,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """
         self.Units = Units(self.get_units(default=None), calendar)
 
-    def set_file_location(self, location):
-        """TODOCFADOCS
+    def add_file_location(self, location):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
 
         .. versionadded:: TODOCFAVER
 
@@ -6313,25 +6289,27 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         :Parameters:
 
             location: `str`
-                TODOCFADOCS
+                The new location.
 
         :Returns:
 
-            `None`
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
 
         **Examples**
 
-        >>> d.set_file_location('/data/model')
+        >>> d.add_file_location('/data/model/')
+        '/data/model'
 
         """
-
         location = abspath(location).rstrip(sep)
 
         updated = False
         dsk = self.todict()
         for key, a in dsk.items():
             try:
-                dsk[key] = a.set_file_location(location)
+                dsk[key] = a.add_file_location(location)
             except AttributeError:
                 # This chunk doesn't contain a file array
                 continue
@@ -6340,13 +6318,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             # been updated
             updated = True
 
-        if not updated:
-            raise ValueError("TODOCFADOCS")
+        if updated:
+            dx = self.to_dask_array()
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=_NONE)
 
-        dx = self.to_dask_array()
-        #        name = tokenize(dx.name, location)
-        dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-        self._set_dask(dx, clear=_NONE)
+        return location
 
     def set_units(self, value):
         """Set the units.
@@ -8437,15 +8414,20 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         self.hardmask = False
 
     def file_locations(self):
-        """TODOCFADOCS
+        """The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `del_file_location`, `set_file_location`
+        .. seealso:: `add_file_location`, `del_file_location`
 
         :Returns:
 
             `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
 
         **Examples**
 
@@ -9016,18 +8998,23 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return d
 
     def chunk_indices(self):
-        """TODOCFADOCS ind the shape of each chunk.
+        """Return indices that define each dask compute chunk.
 
         .. versionadded:: TODOCFAVER
 
+        .. seealso:: `chunks`
+
         :Returns:
 
-            TODOCFAVER
+            `itertools.product`
+                An iterator over tuples of indices of the data array.
 
         **Examples**
 
         >>> d = cf.Data(np.arange(405).reshape(3, 9, 15),
         ...             chunks=((1, 2), (9,), (4, 5, 6)))
+        >>> d.npartitions
+        6
         >>> for index in d.chunk_indices():
         ...     print(index)
         ...
@@ -9420,24 +9407,30 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         return calendar
 
     def del_file_location(self, location):
-        """TODOCFADOCS
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `set_file_location`, `file_locations`
+        .. seealso:: `add_file_location`, `file_locations`
 
         :Parameters:
 
             location: `str`
-                TODOCFADOCS
+                 The file location to remove.
 
         :Returns:
 
-            `None`
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
 
         **Examples**
 
-        >>> d.del_file_location('/data/model')
+        >>> d.del_file_location('/data/model/')
+        '/data/model'
 
         """
         location = abspath(location).rstrip(sep)
@@ -9459,6 +9452,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             dx = self.to_dask_array()
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=_NONE)
+
+        return location
 
     def del_units(self, default=ValueError()):
         """Delete the units.

@@ -209,7 +209,7 @@ class _Meta:
                 property itself is deleted from that field.
 
             field_ancillaries: (sequence of) `str`, optional
-                TODOCFADOCS. See `cf.aggregate` for details.
+                See `cf.aggregate` for details.
 
                 .. versionadded:: TODOCFAVER
 
@@ -1393,12 +1393,13 @@ class _Meta:
         :Parameters:
 
             properties: sequence of `str`
-                TODOCFADOCS
+                The names of the properties to be promoted.
 
         :Returns:
 
             `Field` or `Domain`
-                TODOCFADOCS
+                The field or domain with the new auxiliary coordinate
+                constructs.
 
         """
         f = self.field
@@ -1432,9 +1433,9 @@ class _Meta:
     def promote_to_field_ancillary(self, properties):
         """Promote properties to field ancillary constructs.
 
-        Each property is converted to a field ancillary construct that
-        span the same domain axes as the field, and property the is
-        deleted.
+        For each input field, each property is converted to a field
+        ancillary construct that spans the entire domain, with the
+        constant value of the property.
 
         The `Data` of any the new field ancillary construct is marked
         as a CFA term, meaning that it will only be written to disk if
@@ -1450,13 +1451,14 @@ class _Meta:
 
         :Parameters:
 
-            properties: sequence of `str`
-                TODOCFADOCS
+            properties: sequnce of `str`
+                The names of the properties to be promoted.
 
         :Returns:
 
             `Field` or `Domain`
-                The TODOCFADOCS
+                The field or domain with the new field ancillary
+                constructs.
 
         """
         f = self.field
@@ -1746,7 +1748,12 @@ def aggregate(
             `cf.rtol` function.
 
         field_ancillaries: (sequence of) `str`, optional
-            TODOCFADOCS
+            Create new field ancillary constructs for each input field
+            which has one or more of the given properties. For each
+            input field, each property is converted to a field
+            ancillary construct that spans the entire domain, with the
+            constant value of the propertyand the property itself is
+            deleted.
 
             .. versionadded:: TODOCFAVER
 

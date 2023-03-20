@@ -214,7 +214,6 @@ class CFATest(unittest.TestCase):
 
         cwd = os.getcwd()
 
-        # RRRRRRRRRRRRRRRRRRR
         f.data.cfa_clear_file_substitutions()
         f.data.cfa_set_file_substitutions({"base": cwd})
 
@@ -242,7 +241,6 @@ class CFATest(unittest.TestCase):
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0]))
 
-        # RRRRRRRRRRRRRRRRRRR
         f.data.cfa_clear_file_substitutions()
         f.data.cfa_set_file_substitutions({"base": "/bad/location"})
 
@@ -267,7 +265,6 @@ class CFATest(unittest.TestCase):
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0]))
 
-        # RRRRRRRRRRRRRRRR
         f.data.cfa_clear_file_substitutions()
         f.data.cfa_set_file_substitutions({"base2": "/bad/location"})
 
@@ -425,6 +422,23 @@ class CFATest(unittest.TestCase):
         g = cf.read(tmpfile1)
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0]))
+
+    def test_CFA_multiple_files(self):
+        tmpfile1 = "delme1.nc"
+        tmpfile2 = "delme2.nc"
+        f = cf.example_field(0)
+        cf.write(f, tmpfile1)
+        f = cf.read(tmpfile1)[0]
+        f.add_file_location("/new/location")
+
+        cf.write(f, tmpfile2, cfa=True)
+        g = cf.read(tmpfile2)
+        self.assertEqual(len(g), 1)
+        g = g[0]
+        self.assertTrue(f.equals(g))
+
+        self.assertEqual(len(g.data.get_filenames()), 2)
+        self.assertEqual(len(g.get_filenames()), 3)
 
 
 if __name__ == "__main__":

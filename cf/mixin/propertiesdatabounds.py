@@ -1135,6 +1135,45 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             del data.dtype
 
+    def add_file_location(self, location):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                The new location.
+
+        :Returns:
+
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
+
+        **Examples**
+
+        >>> d.add_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = super().add_file_location(location)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.add_file_location(location)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.add_file_location(location)
+
+        return location
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def ceil(self, bounds=True, inplace=False, i=False):
@@ -1182,48 +1221,17 @@ class PropertiesDataBounds(PropertiesData):
             i=i,
         )
 
-    def cfa_set_file_substitutions(self, value):
-        """TODOCFADOCS
-
-        .. versionadded:: TODOCFAVER
-
-        :Parameters:
-
-            base: `str`
-                TODOCFADOCS
-
-            sub: `str`
-                TODOCFADOCS
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> c.cfa_add_file_substitution('base', '/data/model')
-
-        """
-        super().cfa_set_file_substitutions(value)
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.cfa_set_file_substitutions(value)
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.cfa_set_file_substitutions(value)
-
     def cfa_clear_file_substitutions(
         self,
     ):
-        """TODOCFADOCS
+        """Remove all of the CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
         :Returns:
 
             `dict`
+                {{Returns cfa_clear_file_substitutions}}
 
         **Examples**
 
@@ -1244,18 +1252,18 @@ class PropertiesDataBounds(PropertiesData):
         return out
 
     def cfa_del_file_substitution(self, base):
-        """TODOCFADOCS
+        """Remove a CFA-netCDF file name substitution.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
-            base: `str`
-                TODOCFADOCS
+            {{cfa base: `str`}}
 
         :Returns:
 
-            `None`
+            `dict`
+                {{Returns cfa_del_file_substitution}}
 
         **Examples**
 
@@ -1272,42 +1280,42 @@ class PropertiesDataBounds(PropertiesData):
         if interior_ring is not None:
             interior_ring.cfa_del_file_substitution(base)
 
-    def cfa_get_file_substitutions(self):
-        """TODOCFADOCS
+    def cfa_file_substitutions(self):
+        """Return the CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
         :Returns:
 
             `dict`
+                {{Returns cfa_file_substitutions}}
 
         **Examples**
 
-        >>> c.cfa_get_file_substitutions()
+        >>> c.cfa_file_substitutions()
         {}
 
         """
-        out = super().cfa_get_file_substitutions()
+        out = super().cfa_file_substitutions()
 
         bounds = self.get_bounds(None)
         if bounds is not None:
-            out.update(bounds.cfa_get_file_substitutions({}))
+            out.update(bounds.cfa_file_substitutions({}))
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            out.update(interior_ring.cfa_get_file_substitutions({}))
+            out.update(interior_ring.cfa_file_substitutions({}))
 
         return out
 
-    def cfa_add_fragment_location(self, location):
-        """TODOCFADOCS
+    def cfa_set_file_substitutions(self, substitutions):
+        """Set CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
-            location: `str`
-                TODOCFADOCS
+            {{cfa substitutions: `dict`}}
 
         :Returns:
 
@@ -1315,18 +1323,18 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples**
 
-        >>> c.cfa_add_fragment_location('/data/model')
+        >>> c.cfa_add_file_substitutions({'base', '/data/model'})
 
         """
-        super().cfa_add_fragment_location(location)
+        super().cfa_set_file_substitutions(substitutions)
 
         bounds = self.get_bounds(None)
         if bounds is not None:
-            bounds.cfa_add_fragment_location(location)
+            bounds.cfa_set_file_substitutions(substitutions)
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            interior_ring.cfa_add_fragment_location(location)
+            interior_ring.cfa_set_file_substitutions(substitutions)
 
     def chunk(self, chunksize=None):
         """Partition the data array.
@@ -2045,6 +2053,40 @@ class PropertiesDataBounds(PropertiesData):
 
         return super().get_property(prop, default)
 
+    def file_locations(self):
+        """The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        out = super().file_locations()
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds.file_locations())
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring.file_locations())
+
+        return out
+
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         """Flatten axes of the data.
@@ -2115,6 +2157,45 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.flatten(axes, inplace=True)
 
         return v
+
+    def del_file_location(self, location):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                 The file location to remove.
+
+        :Returns:
+
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> c.del_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = super().del_file_location(location)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.del_file_location(location)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.del_file_location(location)
+
+        return location
 
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)

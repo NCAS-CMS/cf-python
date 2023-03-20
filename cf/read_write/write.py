@@ -160,9 +160,11 @@ def write(
             ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
                                         file with extensions (see below)
 
-            ``'CFA'`` or ``'CFA4'``     CFA-netCDF4 format file
+            ``'CFA'`` or ``'CFA4'``     Deprecated at version TODOCFAVER.
+                                        Use the *cfa* parameter instead.
 
-            ``'CFA3'``                  CFA-netCDF3 classic format file
+            ``'CFA3'``                  Deprecated at version TODOCFAVER.
+                                        Use the *cfa* parameter instead.
             ==========================  ================================
 
             By default the format is ``'NETCDF4'``.
@@ -588,10 +590,10 @@ def write(
 
             If *cfa* is a dictionary then it is used to configure the
             CFA write process. The default options when CFA writing is
-            enabled, by any means, are ``{'constructs': 'field',
-            'absolute_paths': True, 'strict': True, 'substitutions':
-            {}}``, and the dictionary may have any subset of the
-            following key/value pairs to override these defaults:
+            enabled are ``{'constructs': 'field', 'absolute_paths':
+            True, 'strict': True, 'substitutions': {}}``, and the
+            dictionary may have any subset of the following key/value
+            pairs to override these defaults:
 
             * ``'constructs'``: `dict` or (sequence of) `str`
 
@@ -654,11 +656,13 @@ def write(
 
               A dictionary whose key/value pairs define text
               substitutions to be applied to the fragment file
-              names. Each key must be a string of one or more letters,
-              digits, and underscores. These substitutions are used in
-              conjunction with, and take precendence over, any that
-              are also defined on individual constructs (see
-              `cf.Data.cfa_set_file_substitutions` for details).
+              names. Each key may be specified with or without the
+              ``${...}`` syntax. For instance, the following are
+              equivalent: ``{'base': 'sub'}``, ``{'${base}': 'sub'}``.
+              The substitutions are used in conjunction with, and take
+              precedence over, any that are also defined on individual
+              constructs (see `cf.Data.cfa_set_file_substitutions` for
+              details).
 
               Substitutions are stored in the output file by the
               ``substitutions`` attribute of the ``file`` CFA
@@ -695,7 +699,7 @@ def write(
             "cf.write",
             "fmt",
             fmt,
-            "Use keywords 'fmt' and 'cfa' instead.",
+            "Use the 'cfa' keyword instead.",
             version="TODOCFAVER",
             removed_at="5.0.0",
         )  # pragma: no cover

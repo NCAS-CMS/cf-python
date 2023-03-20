@@ -641,7 +641,24 @@ def read(
             .. versionadded:: 3.11.0
 
         cfa: `dict`, optional
-            TODOCFADOCS
+            Configure the reading of CFA-netCDF files. The dictionary
+            may have any subset of the following key/value pairs to
+            override the information read from the file:
+
+            * ``'substitutions'``: `dict`
+
+              A dictionary whose key/value pairs define text
+              substitutions to be applied to the fragment file
+              names. Each key may be specified with or without the
+              ``${...}`` syntax. For instance, the following are
+              equivalent: ``{'base': 'sub'}``, ``{'${base}': 'sub'}``.
+              The substitutions are used in conjunction with, and take
+              precedence over, any that are stored in the CFA-netCDF
+              file by the ``substitutions`` attribute of the ``file``
+              CFA aggregation instruction variable.
+
+              *Example:*
+                ``{'base': 'file:///data/'}}``
 
             .. versionadded:: TODOCFAVER
 

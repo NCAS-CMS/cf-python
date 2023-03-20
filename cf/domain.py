@@ -1,4 +1,5 @@
 from math import prod
+from os import sep
 
 import cfdm
 
@@ -12,6 +13,7 @@ from .domainaxis import DomainAxis
 from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_METHOD,
+    abspath,
     indices_shape,
     parse_indices,
 )
@@ -130,47 +132,58 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             [domain_axis.get_size(0) for domain_axis in domain_axes.values()]
         )
 
-    def cfa_add_fragment_location(
+    def add_file_location(
         self,
         location,
     ):
-        """TODOCFADOCS
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
 
         .. versionadded:: TODOCFAVER
+
+        .. seealso:: `del_file_location`, `file_locations`
 
         :Parameters:
 
             location: `str`
-                TODOCFADOCS
+                The new location.
 
         :Returns:
 
-            `None`
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
 
         **Examples**
 
-        >>> f.cfa_add_fragment_location('/data/model')
+        >>> f.add_file_location('/data/model/')
+        '/data/model'
 
         """
+        location = abspath(location).rstrip(sep)
+
         for c in self.constructs.filter_by_data(todict=True).values():
-            c.cfa_add_fragment_location(
-                location,
-            )
+            c.add_file_location(location)
+
+        return location
 
     def cfa_clear_file_substitutions(
         self,
     ):
-        """TODOCFADOCS
+        """Remove all of the CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
         :Returns:
 
             `dict`
+                {{Returns cfa_clear_file_substitutions}}
 
         **Examples**
 
-        >>> f.cfa_clear_file_substitutions()
+        >>> d.cfa_clear_file_substitutions()
         {}
 
         """
@@ -180,24 +193,25 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         return out
 
-    def cfa_get_file_substitutions(self):
-        """TODOCFADOCS
+    def cfa_file_substitutions(self):
+        """Return the CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
         :Returns:
 
             `dict`
+                {{Returns cfa_file_substitutions}}
 
         **Examples**
 
-        >>> f.cfa_get_file_substitutions()
+        >>> d.cfa_file_substitutions()
         {}
 
         """
         out = {}
         for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.cfa_get_file_substitutions())
+            out.update(c.cfa_file_substitutions())
 
         return out
 
@@ -205,22 +219,23 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         self,
         base,
     ):
-        """TODOCFADOCS
+        """Remove a CFA-netCDF file name substitution.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
             base: `str`
-                TODOCFADOCS
+                {{cfa base: `str`}}
 
         :Returns:
 
-            `None`
+            `dict`
+                {{Returns cfa_del_file_substitution}}
 
         **Examples**
 
-        >>> f.cfa_del_file_substitution('base', '/data/model')
+        >>> f.cfa_del_file_substitution('base')
 
         """
         for c in self.constructs.filter_by_data(todict=True).values():
@@ -230,19 +245,15 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
     def cfa_set_file_substitutions(
         self,
-        value,
+        substitutions,
     ):
-        """TODOCFADOCS
+        """Set CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
-            base: `str`
-                TODOCFADOCS
-
-            sub: `str`
-                TODOCFADOCS
+            {{cfa substitutions: `dict`}}
 
         :Returns:
 
@@ -250,11 +261,11 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         **Examples**
 
-        >>> f.cfa_set_file_substitution({'base': '/data/model'})
+        >>> d.cfa_set_file_substitutions({'base': '/data/model'})
 
         """
         for c in self.constructs.filter_by_data(todict=True).values():
-            c.cfa_set_file_substitutions(value)
+            c.cfa_set_file_substitutions(substitutions)
 
     def close(self):
         """Close all files referenced by the domain construct.
@@ -281,6 +292,73 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
+
+    def del_file_location(
+        self,
+        location,
+    ):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                 The file location to remove.
+
+        :Returns:
+
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.del_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = abspath(location).rstrip(sep)
+
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.del_file_location(location)
+
+        return location
+
+    def file_locations(
+        self,
+    ):
+        """The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        out = set()
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.file_locations())
+
+        return out
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):

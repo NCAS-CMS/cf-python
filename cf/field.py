@@ -2,6 +2,7 @@ import logging
 from collections import namedtuple
 from functools import reduce
 from operator import mul as operator_mul
+from os import sep
 
 import cfdm
 import numpy as np
@@ -46,6 +47,7 @@ from .functions import (
     _DEPRECATION_ERROR_METHOD,
     DeprecationError,
     _section,
+    abspath,
     flat,
     parse_indices,
 )
@@ -3643,26 +3645,28 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return w
 
-    def cfa_get_file_substitutions(self, constructs=True):
-        """TODOCFADOCS
+    def cfa_clear_file_substitutions(
+        self,
+    ):
+        """Remove all of the CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
         :Returns:
 
             `dict`
+                {{Returns cfa_clear_file_substitutions}}
 
         **Examples**
 
-        >>> f.cfa_get_file_substitutions()
+        >>> f.cfa_clear_file_substitutions()
         {}
 
         """
-        out = super().cfa_get_file_substitutions()
+        out = super().cfa_clear_file_substitution()
 
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                out.update(c.cfa_set_file_substitution())
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.cfa_clear_file_substitutions())
 
         return out
 
@@ -3671,29 +3675,26 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         base,
         constructs=True,
     ):
-        """TODOCFADOCS
+        """Remove a CFA-netCDF file name substitution.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
-            base: `str`
-                TODOCFADOCS
+            {{cfa base: `str`}}
 
-            constructs: `bool`
-                If True, the default, then metadata constructs are
-                also transposed so that their axes are in the same
-                relative order as in the transposed data array of the
-                field. By default metadata constructs are not
-                altered. TODOCFADOCS
+            constructs: `bool`, optional
+                If True (the default) then metadata constructs also
+                have the file substitutions removed from them.
 
         :Returns:
 
-            `None`
+            `dict`
+                {{Returns cfa_del_file_substitution}}
 
         **Examples**
 
-        >>> f.cfa_del_file_substitution('base', '/data/model')
+        >>> f.cfa_del_file_substitution('base')
 
         """
         super().cfa_del_file_substitution(base)
@@ -3702,58 +3703,90 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             for c in self.constructs.filter_by_data(todict=True).values():
                 c.cfa_del_file_substitution(base)
 
-    def cfa_del_fragment_location(
+    def cfa_file_substitutions(self, constructs=True):
+        """Return the CFA-netCDF file name substitutions.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_file_substitutions}}
+
+        **Examples**
+
+        >>> f.cfa_file_substitutions()
+        {}
+
+        """
+        out = super().cfa_file_substitutions()
+
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                out.update(c.cfa_file_substitutions())
+
+        return out
+
+    def del_file_location(
         self,
         location,
         constructs=True,
     ):
-        """TODOCFADOCS
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
 
         .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `file_locations`
 
         :Parameters:
 
             location: `str`
-                TODOCFADOCS
+                 The file location to remove.
+
+            constructs: `bool`, optional
+                If True (the default) then metadata constructs also
+                have the new file location removed from them.
 
         :Returns:
 
-            `None`
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
 
         **Examples**
 
-        >>> f.cfa_set_fragment_location('/data/model')
+        >>> d.del_file_location('/data/model/')
+        '/data/model'
 
         """
-        super().cfa_del_fragment_location(location)
+        location = abspath(location).rstrip(sep)
+        super().del_file_location(location)
 
         if constructs:
             for c in self.constructs.filter_by_data(todict=True).values():
-                c.cfa_del_fragment_location(location)
+                c.del_file_location(location, inplace=True)
+
+        return location
 
     def cfa_set_file_substitutions(
         self,
-        value,
+        substitutions,
         constructs=True,
     ):
-        """TODOCFADOCS
+        """Set CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
-            base: `str`
-                TODOCFADOCS
+            {{cfa substitutions: `dict`}}
 
-            sub: `str`
-                TODOCFADOCS
-
-            constructs: `bool`
-                If True, the default, then metadata constructs are
-                also transposed so that their axes are in the same
-                relative order as in the transposed data array of the
-                field. By default metadata constructs are not
-                altered. TODOCFADOCS
+            constructs: `bool`, optional
+                If True (the default) then metadata constructs also
+                have the file substitutions set on them.
 
         :Returns:
 
@@ -3761,43 +3794,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Examples**
 
-        >>> f.cfa_set_file_substitution({'base': '/data/model'})
+        >>> f.cfa_set_file_substitutions({'base': '/data/model'})
 
         """
-        super().cfa_set_file_substitutions(value)
+        super().cfa_set_file_substitutions(substitutions)
 
         if constructs:
             for c in self.constructs.filter_by_data(todict=True).values():
-                c.cfa_set_file_substitutions(value)
-
-    def cfa_set_fragment_location(
-        self,
-        location,
-        constructs=True,
-    ):
-        """TODOCFADOCS
-
-        .. versionadded:: TODOCFAVER
-
-        :Parameters:
-
-            location: `str`
-                TODOCFADOCS
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> f.cfa_set_fragment_location('/data/model')
-
-        """
-        super().cfa_set_fragment_location(location)
-
-        if constructs:
-            for c in self.constructs.filter_by_data(todict=True).values():
-                c.cfa_set_fragment_location(location)
+                c.cfa_set_file_substitutions(substitutions)
 
     def radius(self, default=None):
         """Return the radius of a latitude-longitude plane defined in
@@ -11594,6 +11598,41 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return f
 
+    def file_locations(self, constructs=True):
+        """The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Parameters:
+
+            constructs: `bool`, optional
+                If True (the default) then the file locations from
+                metadata constructs are also returned.
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> f.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        out = super().file_locations()
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                out.update(c.file_locations())
+
+        return out
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
@@ -11937,7 +11976,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                 provided, or if no axes are specified then the axis order
                 is reversed.
 
-            constructs: `bool`
+            constructs: `bool`, optional
                 If True then metadata constructs are also transposed so
                 that their axes are in the same relative order as in the
                 transposed data array of the field. By default metadata
@@ -13986,6 +14025,48 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         return SubspaceField(self)
+
+    def add_file_location(
+        self,
+        location,
+        constructs=True,
+    ):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                The new location.
+
+            constructs: `bool`, optional
+                If True (the default) then metadata constructs also
+                have the new file location added to them.
+
+        :Returns:
+
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
+
+        **Examples**
+
+        >>> f.add_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = super().add_file_location(location)
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.add_file_location(location)
+
+        return location
 
     def section(self, axes=None, stop=None, min_step=1, **kwargs):
         """Return a FieldList of m dimensional sections of a Field of n

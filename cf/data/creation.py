@@ -3,10 +3,7 @@ from functools import lru_cache
 
 import dask.array as da
 import numpy as np
-from cfdm import Array
 from dask.base import is_dask_collection
-
-from .array.mixin import FileArrayMixin
 
 
 def to_dask(array, chunks, **from_array_options):
@@ -119,41 +116,3 @@ def generate_axis_identifiers(n):
 
     """
     return [f"dim{i}" for i in range(n)]
-
-
-def is_file_array(array):
-    """Whether or not an array is stored on disk.
-
-    .. versionaddedd: TODOCFAVER
-
-    :Parameters:
-
-        array:
-            TODOCFADOCS
-
-    :Returns:
-
-        `bool`
-            TODOCFADOCS
-
-    """
-    return isinstance(array, FileArrayMixin)
-
-
-def is_abstract_Array_subclass(array):
-    """Whether or not an array is a type of abstract Array.
-
-    .. versionaddedd: TODOCFAVER
-
-    :Parameters:
-
-        array:
-            TODOCFADOCS
-
-    :Returns:
-
-        `bool`
-            TODOCFADOCS
-
-    """
-    return isinstance(array, Array)

@@ -56,19 +56,20 @@ class FileArrayMixin:
         )  # pragma: no cover
 
     def del_file_location(self, location):
-        """TODOCFADOCS
+        """Remove reference to files in the given location.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
             location: `str`
-                TODOCFADOCS
+                 The file location to remove.
 
         :Returns:
 
             `{{class}}`
-                TODOCFADOCS
+                A new {{class}} with reference to files in *location*
+                removed.
 
         **Examples**
 
@@ -105,7 +106,10 @@ class FileArrayMixin:
                 new_addresses.append(address)
 
         if not new_filenames:
-            raise ValueError("TODOCFADOCS")
+            raise ValueError(
+                "Can't delete a file location when it results in there "
+                "being no files"
+            )
 
         a = self.copy()
         a._set_component("filename", tuple(new_filenames), copy=False)
@@ -113,14 +117,16 @@ class FileArrayMixin:
         return a
 
     def file_locations(self):
-        """TODOCFADOCS
+        """The locations of the files, any of which may contain the data.
 
         .. versionadded:: TODOCFAVER
 
         :Returns:
 
             `tuple`
-                TODOCFADOCS
+                The file locations, one for each file, as absolute
+                paths with no trailing separate pathname component
+                separator.
 
         **Examples**
 
@@ -142,20 +148,24 @@ class FileArrayMixin:
         """
         return tuple(map(dirname, self.get_filenames()))
 
-    def set_file_location(self, location):
-        """TODOCFADOCS
+    def add_file_location(self, location):
+        """Add a new file location.
+
+        All existing files are additionally referenced from the given
+        location.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
             location: `str`
-                TODOCFADOCS
+                The new location.
 
         :Returns:
 
             `{{class}}`
-                TODOCFADOCS
+                A new {{class}} with all previous files additionally
+                referenced from *location*.
 
         **Examples**
 
@@ -163,9 +173,9 @@ class FileArrayMixin:
         ('/data1/file1',)
         >>> a.get_addresses()
         ('tas',)
-        >>> b = a.set_file_location('/home/user')
+        >>> b = a.add_file_location('/home')
         >>> b.get_filenames()
-        ('/data1/file1', '/home/user/file1')
+        ('/data1/file1', '/home/file1')
         >>> b.get_addresses()
         ('tas', 'tas')
 
@@ -173,9 +183,9 @@ class FileArrayMixin:
         ('/data1/file1', '/data2/file2',)
         >>> a.get_addresses()
         ('tas', 'tas')
-        >>> b = a.set_file_location('/home/user')
+        >>> b = a.add_file_location('/home/')
         >>> b = get_filenames()
-        ('/data1/file1', '/data2/file2', '/home/user/file1', '/home/user/file2')
+        ('/data1/file1', '/data2/file2', '/home/file1', '/home/file2')
         >>> b.get_addresses()
         ('tas', 'tas', 'tas', 'tas')
 
@@ -183,9 +193,9 @@ class FileArrayMixin:
         ('/data1/file1', '/data2/file1',)
         >>> a.get_addresses()
         ('tas1', 'tas2')
-        >>> b = a.set_file_location('/home/user')
+        >>> b = a.add_file_location('/home/')
         >>> b.get_filenames()
-        ('/data1/file1', '/data2/file1', '/home/user/file1')
+        ('/data1/file1', '/data2/file1', '/home/file1')
         >>> b.get_addresses()
         ('tas1', 'tas2', 'tas1')
 
@@ -193,7 +203,7 @@ class FileArrayMixin:
         ('/data1/file1', '/data2/file1',)
         >>> a.get_addresses()
         ('tas1', 'tas2')
-        >>> b = a.set_file_location('/data1')
+        >>> b = a.add_file_location('/data1')
         >>> b.get_filenames()
         ('/data1/file1', '/data2/file1')
         >>> b.get_addresses()

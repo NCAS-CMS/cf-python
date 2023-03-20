@@ -628,11 +628,11 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         return self._get_component("fmt", None)
 
     def get_format(self):
-        """TODOCFADOCS
+        """The format of the files.
 
         .. versionadded:: TODOCFAVER
 
-        .. seealso:: `get_filename`, `get_address`
+        .. seealso:: `get_address`, `get_filename`, `get_formats`
 
         :Returns:
 

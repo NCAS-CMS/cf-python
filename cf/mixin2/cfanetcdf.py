@@ -274,11 +274,7 @@ class CFANetCDF(NetCDFMixin):
             self._nc_set("cfa_aggregated_data", value)
 
     def cfa_clear_file_substitutions(self):
-        """Remove the CFA-netCDF file name substitutions.
-
-        The file substitutions are stored in the `substitutions`
-        attribute of a CFA-netCDF `file` aggregation aggregation
-        instruction term.
+        """Remove all of the CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
 
@@ -290,7 +286,7 @@ class CFANetCDF(NetCDFMixin):
         :Returns:
 
             `dict`
-                The removed CFA-netCDF file name substitutions.
+                {{Returns cfa_clear_file_substitutions}}
 
         **Examples**
 
@@ -321,12 +317,8 @@ class CFANetCDF(NetCDFMixin):
         """
         return self._nc_del("cfa_file_substitutions", {}).copy()
 
-    def cfa_del_file_substitution(self, base, default=ValueError()):
-        """Remove the CFA-netCDF file name substitutions.
-
-        The file substitutions are stored in the `substitutions`
-        attribute of a CFA-netCDF `file` aggregation aggregation
-        instruction term.
+    def cfa_del_file_substitution(self, base):
+        """Remove a CFA-netCDF file name substitution.
 
         .. versionadded:: TODOCFAVER
 
@@ -337,21 +329,12 @@ class CFANetCDF(NetCDFMixin):
 
         :Parameters:
 
-            base: `str`
-                The substition definition to be removed. May be
-                specified with or without the ``${...}`` syntax. For
-                instance, the following are equivalent: ``'base'``,
-                ``'${base}'``.
-
-            default: optional
-                Return the value of the *default* parameter if file
-                name substitution has not been set. If set to an
-                `Exception` instance then it will be raised instead.
+            {{cfa base: `str`}}
 
         :Returns:
 
             `dict`
-                The removed CFA-netCDF file name substitutions.
+                {{Returns cfa_del_file_substitution}}
 
         **Examples**
 
@@ -376,8 +359,8 @@ class CFANetCDF(NetCDFMixin):
         {}
         >>> f.cfa_clear_file_substitutions()
         {}
-        >>> print(f.cfa_del_file_substitution('base', None))
-        None
+        >>> print(f.cfa_del_file_substitution('base'))
+        {}
 
         """
         if not (base.startswith("${") and base.endswith("}")):
@@ -385,14 +368,7 @@ class CFANetCDF(NetCDFMixin):
 
         subs = self.cfa_file_substitutions()
         if base not in subs:
-            if default is None:
-                return
-
-            return self._default(
-                default,
-                f"{self.__class__.__name__} has no netCDF {base!r} "
-                "CFA file substitution",
-            )
+            return {}
 
         out = {base: subs.pop(base)}
         if subs:
@@ -405,10 +381,6 @@ class CFANetCDF(NetCDFMixin):
     def cfa_file_substitutions(self):
         """Return the CFA-netCDF file name substitutions.
 
-        The file substitutions are stored in the `substitutions`
-        attribute of a CFA-netCDF `file` aggregation aggregation
-        instruction term.
-
         .. versionadded:: TODOCFAVER
 
         .. seealso:: `cfa_clear_file_substitutions`,
@@ -417,7 +389,7 @@ class CFANetCDF(NetCDFMixin):
                      `cfa_set_file_substitution`
         :Returns:
 
-            value: `dict`
+            `dict`
                 The CFA-netCDF file name substitutions.
 
         **Examples**
@@ -455,10 +427,6 @@ class CFANetCDF(NetCDFMixin):
 
     def cfa_has_file_substitutions(self):
         """Whether any CFA-netCDF file name substitutions have been set.
-
-        The file substitutions are stored in the `substitutions`
-        attribute of a CFA-netCDF `file` aggregation aggregation
-        instruction term.
 
         .. versionadded:: TODOCFAVER
 
@@ -502,12 +470,8 @@ class CFANetCDF(NetCDFMixin):
         """
         return self._nc_has("cfa_file_substitutions")
 
-    def cfa_set_file_substitutions(self, value):
+    def cfa_set_file_substitutions(self, substitutions):
         """Set CFA-netCDF file name substitutions.
-
-        The file substitutions are stored in the `substitutions`
-        attribute of a CFA-netCDF `file` aggregation aggregation
-        instruction term.
 
         .. versionadded:: TODOCFAVER
 
@@ -518,15 +482,7 @@ class CFANetCDF(NetCDFMixin):
 
         :Parameters:
 
-            value: `str` or `dict`
-                The substition definitions in a dictionary whose
-                key/value pairs are the file name parts to be
-                substituted and their corresponding substitution text.
-
-                The substition definition may be specified with or
-                without the ``${...}`` syntax. For instance, the
-                following are equivalent: ``{'base': 'sub'}``,
-                ``{'${base}': 'sub'}``.
+            {{cfa substitutions: `dict`}}
 
         :Returns:
 
@@ -559,14 +515,14 @@ class CFANetCDF(NetCDFMixin):
         None
 
         """
-        if not value:
+        if not substitutions:
             return
 
-        value = value.copy()
-        for base, sub in tuple(value.items()):
+        substitutions = substitutions.copy()
+        for base, sub in tuple(substitutions.items()):
             if not (base.startswith("${") and base.endswith("}")):
-                value[f"${{{base}}}"] = value.pop(base)
+                substitutions[f"${{{base}}}"] = substitutions.pop(base)
 
         subs = self.cfa_file_substitutions()
-        subs.update(value)
+        subs.update(substitutions)
         self._nc_set("cfa_file_substitutions", subs)

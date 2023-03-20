@@ -391,14 +391,14 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         ndim = data.ndim
 
-        ggg = self._ggg(data, cfvar)
+        cfa = self._cfa_aggregation_instructions(data, cfvar)
 
         # ------------------------------------------------------------
         # Get the location netCDF dimensions. These always start with
-        # "f_loc_".
+        # "f_{size}_loc".
         # ------------------------------------------------------------
         location_ncdimensions = []
-        for size in ggg["location"].shape:
+        for size in cfa["location"].shape:
             l_ncdim = f"f_{size}_loc"
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
@@ -412,7 +412,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Get the fragment netCDF dimensions. These always start with
         # "f_".
         # ------------------------------------------------------------
-        aggregation_address = ggg["address"]
+        aggregation_address = cfa["address"]
         fragment_ncdimensions = []
         for ncdim, size in zip(
             ncdimensions + ("extra",) * (aggregation_address.ndim - ndim),
@@ -440,7 +440,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         # Location
         term = "location"
         term_ncvar = self._cfa_write_term_variable(
-            ggg[term],
+            cfa[term],
             aggregated_data.get(term, f"cfa_{term}"),
             location_ncdimensions,
         )
@@ -459,7 +459,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             attributes = None
 
         term_ncvar = self._cfa_write_term_variable(
-            ggg[term],
+            cfa[term],
             aggregated_data.get(term, f"cfa_{term}"),
             fragment_ncdimensions,
             attributes=attributes,
@@ -470,15 +470,15 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         term = "address"
 
         # Attempt to reduce addresses to a common scalar value
-        u = ggg[term].unique().compressed().persist()
+        u = cfa[term].unique().compressed().persist()
         if u.size == 1:
-            ggg[term] = u.squeeze()
+            cfa[term] = u.squeeze()
             dimensions = ()
         else:
             dimensions = fragment_ncdimensions
 
         term_ncvar = self._cfa_write_term_variable(
-            ggg[term],
+            cfa[term],
             aggregated_data.get(term, f"cfa_{term}"),
             dimensions,
         )
@@ -488,15 +488,15 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         term = "format"
 
         # Attempt to reduce addresses to a common scalar value
-        u = ggg[term].unique().compressed().persist()
+        u = cfa[term].unique().compressed().persist()
         if u.size == 1:
-            ggg[term] = u.squeeze()
+            cfa[term] = u.squeeze()
             dimensions = ()
         else:
             dimensions = fragment_ncdimensions
 
         term_ncvar = self._cfa_write_term_variable(
-            ggg[term],
+            cfa[term],
             aggregated_data.get(term, f"cfa_{term}"),
             dimensions,
         )
@@ -659,19 +659,23 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _cfa_write_term_variable(
         self, data, ncvar, ncdimensions, attributes=None
     ):
-        """TODOCFADOCS.
+        """Write a CFA aggregation instruction term variable
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
             data `Data`
+                The data to write.
 
             ncvar: `str`
+                The netCDF variable name.
 
             ncdimensions: `tuple` of `str`
+                The variable's netCDF dimensions.
 
             attributes: `dict`, optional
+                Any attributes to attach to the variable.
 
         :Returns:
 
@@ -697,9 +701,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _cfa_write_non_standard_terms(
         self, field, fragment_ncdimensions, aggregated_data
     ):
-        """TODOCFADOCS
+        """ "Write a non-standard CFA aggregation instruction term variable
 
-        Look for non-standard CFA terms stored as field ancillaries
+        Wites non-standard CFA terms stored as field ancillaries
 
         .. versionadded:: TODOCFAVER
 
@@ -773,7 +777,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
     @classmethod
     def _cfa_unique(cls, a):
-        """TODOCFADOCS.
+        """Return the unique value of an array.
+
+        If there are multipl unique vales then missing data is
+        returned.
 
         .. versionadded:: TODOCFAVER
 
@@ -785,7 +792,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         :Returns:
 
             `numpy.ndarray`
-                 A size 1 array containg the unique value, or missing
+                A size 1 array containing the unique value, or missing
                 data if there is not a unique unique value.
 
         """
@@ -800,25 +807,34 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return np.ma.masked_all(out_shape, dtype=a.dtype)
 
-    def _ggg(self, data, cfvar):
-        """TODOCFADOCS
+    def _cfa_aggregation_instructions(self, data, cfvar):
+        """Convert data to standardised CFA aggregation instruction terms.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
             data: `Data`
-                TODOCFADOCS
+                The data to be converted to standardised CFA
+                aggregation instruction terms.
 
             cfvar: construct
-                TODOCFADOCS
+                The construct that contains the *data*.
 
         :Returns:
 
             `dict`
-                A dictionary whose keys are the sandardised CFA
+                A dictionary whose keys are the standardised CFA
                 aggregation instruction terms, keyed by `Data`
                 instances containing the corresponding variables.
+
+        **Examples**
+
+        >>> n._cfa_aggregation_instructions(data, cfvar)
+        {'location': <CF Data(2, 1): [[5, 8]]>,
+         'file': <CF Data(1, 1): [[file:///home/file.nc]]>,
+         'format': <CF Data(1, 1): [[nc]]>,
+         'address': <CF Data(1, 1): [[q]]>}
 
         """
         from os.path import abspath, join, relpath
@@ -843,22 +859,24 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         aggregation_address = []
         aggregation_format = []
         for indices in data.chunk_indices():
-            a = self._cfa_get_file_details(data[indices])
-            if len(a) != 1:
-                if a:
+            file_details = self._cfa_get_file_details(data[indices])
+            if len(file_details) != 1:
+                if file_details:
                     raise ValueError(
-                        f"Can't write CFA variable from {cfvar!r} when the "
+                        "Can't write CFA-netCDF aggregation variable from "
+                        f"{cfvar!r} when the "
                         f"dask storage chunk defined by indices {indices} "
-                        "spans two or more external files"
+                        "spans two or more files"
                     )
 
                 raise ValueError(
-                    f"Can't write CFA variable from {cfvar!r} when the "
+                    "Can't write CFA-netCDF aggregation variable from "
+                    f"{cfvar!r} when the "
                     f"dask storage chunk defined by indices {indices} spans "
-                    "zero external files"
+                    "zero files"
                 )
 
-            filenames, addresses, formats = a.pop()
+            filenames, addresses, formats = file_details.pop()
 
             if len(filenames) > n_trailing:
                 n_trailing = len(filenames)
@@ -967,20 +985,29 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             ).parent  # TODOCFA???
 
     def _cfa_get_file_details(self, data):
-        """TODOCFADOCS
+        """Get the details of all files referenced by the data.
 
         .. versionadded:: TODOCFAVER
 
         :Parameters:
 
              data: `Data`
-                The array.
+                The data
 
         :Returns:
 
             `set`
-                The file names. If no files are required to compute
-                the data then an empty `set` is returned.
+                The file names, the addresses in the files, and the
+                file formats. If no files are required to compute the
+                data then an empty `set` is returned.
+
+        **Examples**
+
+        >>> n._cfa_get_file_details(data):
+        {(('/home/file.nc',), ('tas',), ('nc',))}
+
+        >>> n._cfa_get_file_details(data):
+        {(('/home/file.pp',), (34556,), ('um',))}
 
         """
         out = set()
