@@ -19,43 +19,43 @@ from ..units import Units
 def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     """An effective dask.array.ma.allclose method.
 
-    True if two dask arrays are element-wise equal within
-    a tolerance.
+        True if two dask arrays are element-wise equal within
+        a tolerance.
 
-    Equivalent to allclose except that masked values are treated
-    as equal (default) or unequal, depending on the masked_equal
-    argument.
+        Equivalent to allclose except that masked values are treated
+        as equal (default) or unequal, depending on the masked_equal
+        argument.
 
-    Define an effective da.ma.allclose method here because one is
-    currently missing in the Dask codebase.
+        Define an effective da.ma.allclose method here because one is
+        currently missing in the Dask codebase.
+    de
+        Note that all default arguments are the same as those provided to
+        the corresponding NumPy method (see the `numpy.ma.allclose` API
+        reference).
 
-    Note that all default arguments are the same as those provided to
-    the corresponding NumPy method (see the `numpy.ma.allclose` API
-    reference).
+        .. versionadded:: 3.14.0
 
-    .. versionadded:: 3.14.0
+            :Parameters:
 
-        :Parameters:
+                x: a dask array to compare with y
 
-            x: a dask array to compare with y
+                y: a dask array to compare with x
 
-            y: a dask array to compare with x
+                masked_equal: `bool`, optional
+                    Whether masked values in a and b are considered
+                    equal (True) or not (False). They are considered equal
+                    by default.
 
-            masked_equal: `bool`, optional
-                Whether masked values in a and b are considered
-                equal (True) or not (False). They are considered equal
-                by default.
+                {{rtol: number, optional}}
 
-            {{rtol: number, optional}}
+                {{atol: number, optional}}
 
-            {{atol: number, optional}}
+            :Returns:
 
-        :Returns:
-
-            Boolean
-                A Boolean value indicating whether or not the
-                two dask arrays are element-wise equal to
-                the given *rtol* and *atol* tolerance.
+                Boolean
+                    A Boolean value indicating whether or not the
+                    two dask arrays are element-wise equal to
+                    the given *rtol* and *atol* tolerance.
 
     """
     # TODODASK: put in a PR to Dask to request to add as genuine method.
@@ -272,7 +272,11 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
     """
     from math import prod
 
-    if np.ma.is_masked(a):
+    if np.ma.isMA(a) and not np.ma.is_masked(a):
+        # Masked array with no masked elements
+        a = a.data
+
+    if np.ma.isMA(a):
         # ------------------------------------------------------------
         # Input array is masked: Replace missing values with NaNs and
         # remask later.
@@ -303,10 +307,6 @@ def cf_percentile(a, q, axis, method, keepdims=False, mtol=1):
             sup.filter(
                 category=RuntimeWarning,
                 message=".*All-NaN slice encountered.*",
-            )
-            sup.filter(
-                category=UserWarning,
-                message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
             )
             p = np.nanpercentile(
                 a,

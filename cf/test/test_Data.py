@@ -2527,10 +2527,6 @@ class DataTest(unittest.TestCase):
                 category=RuntimeWarning,
                 message=".*All-NaN slice encountered.*",
             )
-            sup.filter(
-                category=UserWarning,
-                message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
-            )
             for axis in [None] + self.axes_combinations:
                 for keepdims in (True, False):
                     for q in ranks:
@@ -2544,6 +2540,11 @@ class DataTest(unittest.TestCase):
                         b1 = d.percentile(q, axes=axis, squeeze=not keepdims)
                         self.assertEqual(b1.shape, a1.shape)
                         self.assertTrue((b1.array == a1).all())
+
+        # Check for no warning when data is of masked type but with no
+        # missing values
+        d = cf.Data(np.ma.arange(100))
+        d.percentile(ranks[0])
 
         # Test scalar input (not masked)
         a = np.array(9)
@@ -2564,10 +2565,6 @@ class DataTest(unittest.TestCase):
             sup.filter(
                 category=RuntimeWarning,
                 message=".*All-NaN slice encountered.*",
-            )
-            sup.filter(
-                category=UserWarning,
-                message="Warning: 'partition' will ignore the 'mask' of the MaskedArray.*",
             )
             for keepdims in (True, False):
                 for q in ranks:
