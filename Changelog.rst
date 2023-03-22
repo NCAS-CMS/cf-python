@@ -1,3 +1,14 @@
+version 3.14.2
+--------------
+
+**2023-04-??**
+
+* Fixed bug that produced a benign UserWarning from
+  `cf.Field.percentile`
+  (https://github.com/NCAS-CMS/cf-python/issues/619)
+
+----
+  
 version 3.14.1
 --------------
 
