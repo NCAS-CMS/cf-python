@@ -19,43 +19,42 @@ from ..units import Units
 def _da_ma_allclose(x, y, masked_equal=True, rtol=None, atol=None):
     """An effective dask.array.ma.allclose method.
 
-        True if two dask arrays are element-wise equal within
-        a tolerance.
+    True if two dask arrays are element-wise equal within a tolerance.
 
-        Equivalent to allclose except that masked values are treated
-        as equal (default) or unequal, depending on the masked_equal
-        argument.
+    Equivalent to allclose except that masked values are treated as
+    equal (default) or unequal, depending on the masked_equal
+    argument.
 
-        Define an effective da.ma.allclose method here because one is
-        currently missing in the Dask codebase.
-    de
-        Note that all default arguments are the same as those provided to
-        the corresponding NumPy method (see the `numpy.ma.allclose` API
-        reference).
+    Define an effective da.ma.allclose method here because one is
+    currently missing in the Dask codebase.
 
-        .. versionadded:: 3.14.0
+    Note that all default arguments are the same as those provided to
+    the corresponding NumPy method (see the `numpy.ma.allclose` API
+    reference).
 
-            :Parameters:
+    .. versionadded:: 3.14.0
 
-                x: a dask array to compare with y
+    :Parameters:
 
-                y: a dask array to compare with x
+        x: a dask array to compare with y
 
-                masked_equal: `bool`, optional
-                    Whether masked values in a and b are considered
-                    equal (True) or not (False). They are considered equal
-                    by default.
+        y: a dask array to compare with x
 
-                {{rtol: number, optional}}
+        masked_equal: `bool`, optional
+            Whether masked values in a and b are considered equal
+            (True) or not (False). They are considered equal by
+            default.
 
-                {{atol: number, optional}}
+        {{rtol: number, optional}}
 
-            :Returns:
+        {{atol: number, optional}}
 
-                Boolean
-                    A Boolean value indicating whether or not the
-                    two dask arrays are element-wise equal to
-                    the given *rtol* and *atol* tolerance.
+    :Returns:
+
+        `bool`
+            A Boolean value indicating whether or not the two dask
+            arrays are element-wise equal to the given *rtol* and
+            *atol* tolerance.
 
     """
     # TODODASK: put in a PR to Dask to request to add as genuine method.
