@@ -673,9 +673,6 @@ class CFANetCDFArray(NetCDFArray):
             fragment_arrays = _FragmentArray.copy()
             fragment_arrays["nc"] = partial(_FragmentArray["nc"], mask=False)
 
-        # Create a FragmentArray for each chunk
-        #        get_FragmentArray = self.get_FragmentArray
-
         dsk = {}
         for (
             u_indices,
@@ -685,7 +682,7 @@ class CFANetCDFArray(NetCDFArray):
             fragment_location,
             fragment_shape,
         ) in zip(*self.subarrays(chunks)):
-            kwargs = aggregated_data[chunk_location].copy()
+            kwargs = aggregated_data[fragment_location].copy()
             kwargs.pop("location", None)
 
             fragment_format = kwargs.pop("format", None)
