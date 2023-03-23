@@ -662,14 +662,6 @@ class UMField:
         BDX = real_hdr[bdx]
         BDY = real_hdr[bdy]
 
-        if not LBROW or not LBNPT:
-            logger.warn(
-                f"WARNING: Skipping field derived from STASH code {stash} "
-                f"with LBROW={LBROW} and LBNPT={LBNPT}"
-            )  # pragma: no cover
-            self.field = (None,)
-            return
-
         if stash:
             section, item = divmod(stash, 1000)
             um_stash_source = "m%02ds%02di%03d" % (submodel, section, item)
