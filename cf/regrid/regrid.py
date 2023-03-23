@@ -469,7 +469,7 @@ def regrid(
         )
 
     if return_operator:
-        print ('ppp')
+        regrid_operator.tosparse()
         return regrid_operator
 
     # ----------------------------------------------------------------

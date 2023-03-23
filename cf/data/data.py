@@ -3549,34 +3549,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         non_regrid_axes = [i for i in range(self.ndim) if i not in regrid_axes]
 
-        # Cast weights and mask arrays as dask arrays
-        weights = da.asanyarray(operator.weights)
-        row = da.asanyarray(operator.row)
-        col = da.asanyarray(operator.col)
-
         src_mask = operator.src_mask
         if src_mask is not None:
             src_mask = da.asanyarray(src_mask)
 
-        dst_mask = operator.dst_mask
-        if dst_mask is not None:
-            dst_mask = da.asanyarray(dst_mask)
-
-        # Create a delayed object that calculates the weights
-        # matrix
-        weights_func = partial(
-            regrid_weights,
-            src_shape=src_shape,
-            dst_shape=operator.dst_shape,
-            dtype=dst_dtype,
-            start_index=operator.start_index,
-            dense=(dst_mask is not None)
-        )
-        weights = delayed(weights_func, pure=True)(
-            weights=weights,
-            row=row,
-            col=col,
-            dst_mask=dst_mask,
+        weights_dst_mask = delayed(regrid_weights, pure=True)(
+            operator=operator, dst_dtype=dst_dtype
         )
 
         # Create a regridding function to apply to each chunk
@@ -3591,7 +3569,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = dx.map_blocks(
             regrid_func,
-            weights=weights,
+            weights_dst_mask=weights_dst_mask,
             ref_src_mask=src_mask,
             chunks=regridded_chunks,
             meta=np.array((), dtype=dst_dtype),

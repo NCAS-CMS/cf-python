@@ -1,3 +1,14 @@
+version 3.14.2
+--------------
+
+**2023-04-??**
+
+* Fix excessive memory use arising from `cf.Field.regrids` and
+  `cf.Field.Regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/623)
+
+----
+
 version 3.14.1
 --------------
 

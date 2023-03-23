@@ -669,7 +669,7 @@ class UMField:
             )  # pragma: no cover
             self.field = (None,)
             return
-        
+
         if stash:
             section, item = divmod(stash, 1000)
             um_stash_source = "m%02ds%02di%03d" % (submodel, section, item)

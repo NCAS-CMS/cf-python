@@ -1,5 +1,6 @@
 from copy import deepcopy
 
+import numpy as np
 from cfdm import Container
 
 from ..decorators import _display_or_return
@@ -339,10 +340,18 @@ class RegridOperator(mixin_Container, Container):
                 The deep copy.
 
         """
+        row = self.row
+        if row is not None:
+            row = row.copy()
+
+        col = self.col
+        if col is not None:
+            col = col.copy()
+
         return type(self)(
             self.weights.copy(),
-            self.row.copy(),
-            self.col.copy(),
+            row,
+            col,
             method=self.method,
             src_shape=self.src_shape,
             dst_shape=self.dst_shape,
@@ -487,93 +496,25 @@ class RegridOperator(mixin_Container, Container):
             removed_at="5.0.0",
         )
 
-    def todense(self, order="C"):
-        """Return the weights in dense format.
-
-        .. versionadded:: 3.14.0
-
-        .. seealso:: `tosparse`
-
-        :Parameters:
-
-            order: `str`, optional
-                Specify the memory layout of the returned weights
-                matrix. ``'C'`` (the default) means C order
-                (row-major), and``'F'`` means Fortran order
-                (column-major).
+    def tosparse(self):
+        """Convert the weights to `scipy` sparse array format in-place.
 
         :Returns:
 
-            `numpy.ndarray`
-                The 2-d dense weights matrix, an array with with shape
-                ``(J, I)``, where ``J`` is the number of destination
-                grid cells and ``I`` is the number of source grid
-                cells.
+            `None`
 
         """
-        return self.tosparse().todense(order=order)
-
-    def tosparse(self, xxx='coo'):
-        """Return the weights in sparse COOrdinate format.
-
-        See `scipy.sparse._arrays.coo_array` for sparse format
-        details.
-
-        .. versionadded:: 3.14.0
-
-        .. seealso:: `todense`
-
-        :Returns:
-
-            `scipy.sparse._arrays.coo_array`
-                The sparse array of weights.
-
-        """
-        from math import prod
-
-        from scipy.sparse import coo_array, csr_array
-
         row = self.row
-        col = self.col
-        start_index = self.start_index
-        if start_index:
-            row = row - start_index
-            col = col - start_index
+        if row is None:
+            return
 
-        src_size = prod(self.src_shape)
-        dst_size = prod(self.dst_shape)
-
-        if xx == 'csr':
-            sparse_array = csr_array
-        elif xx == 'csr':
-            sparse_array = coo_array
-        
-        return sparse_array(
-            (self.weights, (row, col)), shape=[dst_size, src_size]
-        )
-
-    def tocsr(self):
-        """Return the weights in Compressed Sparse Row array format.
-
-        See `scipy.sparse._arrays.csr_array` for sparse format
-        details.
-
-        .. versionadded:: 3.14.0
-
-        .. seealso:: `todense`
-
-        :Returns:
-
-            `scipy.sparse._arrays.csr_array`
-                The sparse array of weights.
-
-        """
         from math import prod
 
         from scipy.sparse import csr_array
 
-        row = self.row
         col = self.col
+        weights = self.weights
+
         start_index = self.start_index
         if start_index:
             row = row - start_index
@@ -582,6 +523,38 @@ class RegridOperator(mixin_Container, Container):
         src_size = prod(self.src_shape)
         dst_size = prod(self.dst_shape)
 
-        return csr_array(
-            (self.weights, (row, col)), shape=[dst_size, src_size]
-        )
+        weights = csr_array((weights, (row, col)), shape=[dst_size, src_size])
+
+        del row, col
+        self._set_component("weights", weights, copy=False)
+        self._set_component("row", None, copy=False)
+        self._set_component("col", None, copy=False)
+
+        dst_mask = self.dst_mask
+        if dst_mask is not None:
+            if dst_mask.dtype != bool or dst_mask.shape != self.dst_shape:
+                raise ValueError(
+                    f"The {self.__class__.__name__}.dst_mask attribute must "
+                    "be None or a Boolean numpy array with shape "
+                    f"{self.dst_shape}. Got: dtype={dst_mask.dtype}, "
+                    f"shape={dst_mask.shape}"
+                )
+
+            dst_mask = np.array(dst_mask).reshape((dst_size,))
+        else:
+            dst_mask = np.zeros((dst_size,), dtype=bool)
+
+        # Set the destination grid mask to True where the weights for
+        # destination grid points are all zero
+        count_nonzero = np.count_nonzero
+        getrow = weights.getrow
+        for j in range(dst_size):
+            if not count_nonzero(getrow(j).data):
+                dst_mask[j] = True
+
+        if not dst_mask.any():
+            dst_mask = None
+        else:
+            dst_mask = dst_mask.reshape(self.dst_shape)
+
+        self._set_component("dst_mask", dst_mask, copy=False)
