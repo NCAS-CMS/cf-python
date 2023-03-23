@@ -513,7 +513,7 @@ class RegridOperator(mixin_Container, Container):
         """
         return self.tosparse().todense(order=order)
 
-    def tosparse(self):
+    def tosparse(self, xxx='coo'):
         """Return the weights in sparse COOrdinate format.
 
         See `scipy.sparse._arrays.coo_array` for sparse format
@@ -531,7 +531,7 @@ class RegridOperator(mixin_Container, Container):
         """
         from math import prod
 
-        from scipy.sparse import coo_array
+        from scipy.sparse import coo_array, csr_array
 
         row = self.row
         col = self.col
@@ -543,6 +543,45 @@ class RegridOperator(mixin_Container, Container):
         src_size = prod(self.src_shape)
         dst_size = prod(self.dst_shape)
 
-        return coo_array(
+        if xx == 'csr':
+            sparse_array = csr_array
+        elif xx == 'csr':
+            sparse_array = coo_array
+        
+        return sparse_array(
+            (self.weights, (row, col)), shape=[dst_size, src_size]
+        )
+
+    def tocsr(self):
+        """Return the weights in Compressed Sparse Row array format.
+
+        See `scipy.sparse._arrays.csr_array` for sparse format
+        details.
+
+        .. versionadded:: 3.14.0
+
+        .. seealso:: `todense`
+
+        :Returns:
+
+            `scipy.sparse._arrays.csr_array`
+                The sparse array of weights.
+
+        """
+        from math import prod
+
+        from scipy.sparse import csr_array
+
+        row = self.row
+        col = self.col
+        start_index = self.start_index
+        if start_index:
+            row = row - start_index
+            col = col - start_index
+
+        src_size = prod(self.src_shape)
+        dst_size = prod(self.dst_shape)
+
+        return csr_array(
             (self.weights, (row, col)), shape=[dst_size, src_size]
         )

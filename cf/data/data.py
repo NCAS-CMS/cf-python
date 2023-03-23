@@ -3570,6 +3570,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             dst_shape=operator.dst_shape,
             dtype=dst_dtype,
             start_index=operator.start_index,
+            dense=(dst_mask is not None)
         )
         weights = delayed(weights_func, pure=True)(
             weights=weights,

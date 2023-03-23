@@ -469,6 +469,7 @@ def regrid(
         )
 
     if return_operator:
+        print ('ppp')
         return regrid_operator
 
     # ----------------------------------------------------------------

@@ -145,6 +145,7 @@ def regrid(
             The regridded data.
 
     """
+    weights, dst_mask = weights
     # ----------------------------------------------------------------
     # Reshape the array into a form suitable for the regridding dot
     # product, i.e. a 2-d array whose right-hand dimension represents
@@ -224,27 +225,29 @@ def regrid(
         regridded_data = np.ma.empty(
             (dst_size, n_slices), dtype=weights.dtype, order="F"
         )
-        prev_weights, prev_mask = None, None
+        prev_weights, prev_src_mask , prev_dst_mask = None, None, None
         for n in range(n_slices):
             n = slice(n, n + 1)
             a_n = a[:, n]
-            regridded_data[:, n], prev_mask, prev_weights = _regrid(
+            regridded_data[:, n], prev_src_mask, prev_dst_mask, prev_weights = _regrid(
                 a_n,
                 np.ma.getmaskarray(a_n[:, 0]),
+                dst_mask,
                 weights,
                 method,
-                prev_mask=prev_mask,
+                prev_mask=prev_src_mask,
+                prev_dst_mask=prev_dst_mask,
                 prev_weights=prev_weights,
                 min_weight=min_weight,
             )
 
         a = regridded_data
-        del a_n, regridded_data, prev_weights, prev_mask
+        del a_n, regridded_data, prev_weights, prev_src_mask, prev_dst_mask
     else:
         # Source data is either not masked or the source mask is same
         # for all slices => all slices can be regridded
         # simultaneously.
-        a, _, _ = _regrid(a, src_mask, weights, method, min_weight=min_weight)
+        a, _, _ , _ = _regrid(a, src_mask, dst_mask, weights, method, min_weight=min_weight)
         del _
 
     # ----------------------------------------------------------------
@@ -263,9 +266,11 @@ def regrid(
 def _regrid(
     a,
     src_mask,
+        dst_mask,
     weights,
     method,
     prev_mask=None,
+    prev_dst_mask=None,
     prev_weights=None,
     min_weight=None,
 ):
@@ -322,6 +327,10 @@ def _regrid(
             The source grid mask used by a previous call to `_regrid`.
             See *prev_weights* for details`.
 
+        prev_dst_mask: `numpy.ndarray` or `None`
+            The destination grid mask used by a previous call to
+            `_regrid`.  See *prev_weights* for details`.
+
         prev_weights: `numpy.ndarray`, optional
             The weights matrix used by a previous call to `_regrid`,
             possibly modified to account for missing data. If
@@ -352,6 +361,7 @@ def _regrid(
         # matrix.
         # ------------------------------------------------------------
         w = prev_weights
+        dst_mask = prev_dst_mask
     else:
         # ------------------------------------------------------------
         # Source data is masked and we might need to adjust the
@@ -377,7 +387,7 @@ def _regrid(
             #
             # where w_iXj is the unmasked weight for masked source
             # cell i and destination cell j.
-            D = 1 - weights[:, src_mask].sum(axis=1, keepdims=True)
+            #D = 1 - weights[:, src_mask].sum(axis=1, keepdims=True)
 
             # Get rid of values that are approximately zero, or
             # spuriously negative. These values of 'D' correspond to
@@ -385,16 +395,16 @@ def _regrid(
             # cells. These weights will be zeroed later on, so it's OK
             # to set their value to 1, i.e. a nice non-zero value that
             # will allow us to divide by 'D' in the next step.
-            D = np.where(D < min_weight, 1, D)
+            #D = np.where(D < min_weight, 1, D)
 
             # Divide the weights by 'D'. Note that for destination
             # cells which do not intersect any masked source grid
             # cells, 'D' will now be 1.
-            w = weights / D
+            #w = weights / D
 
             # Zero the weights associated with masked source grid
             # cells
-            w[:, src_mask] = 0
+            #w[:, src_mask] = 0
 
             # Mask out rows of the weights matrix which contain all
             # zeros. Such a row corresponds to a destination grid cell
@@ -402,9 +412,38 @@ def _regrid(
             #
             # Note: Rows that correspond to masked destination grid
             #       cells will have already been masked.
-            w = np.ma.where(
-                np.count_nonzero(w, axis=1, keepdims=True), w, np.ma.masked
-            )
+            #w = np.ma.where(
+            #    np.count_nonzero(w, axis=1, keepdims=True), w, np.ma.masked
+            #)
+            
+            dst_size = weights.shape[0]
+            if dst_mask is None:
+                dst_mask = np.zeros((dst_size,), dtype=bool)
+            else:
+                dst_mask = dst_mask.copy()
+            
+            w = weights.copy()
+            
+            getrow =  w.getrow
+            for j in range(dst_size):
+                w_j = getrow(j)
+                indices = w_j.indices
+                mask = src_mask[indices]
+                if not mask.any():
+                    continue
+
+                if mask.all():
+                    dst_mask[j] = True
+                    continue
+
+                data = w_j.data
+                D_j = 1 - data[mask].sum()
+                if D_j >= min_weight:
+                    data  = data / D_j
+                    
+                data[mask] = 0
+                w[j, indices] = data
+
 
         elif method in ("linear", "bilinear", "nearest_dtos"):
             # 2) Linear and nearest neighbour methods:
@@ -414,22 +453,40 @@ def _regrid(
             # corresponds to a masked source grid cell i. Such a row
             # corresponds to a destination grid cell that intersects
             # at least one masked source grid cell.
-            if np.ma.isMA(weights):
-                where = np.ma.where
+#            if np.ma.isMA(weights):
+#                where = np.ma.where
+#            else:
+#                where = np.where
+#
+#            j = np.unique(where((weights >= min_weight) & (src_mask))[0])
+#            if j.size:
+#                if np.ma.isMA(weights):
+#                    w = weights.copy()
+#                else:
+#                    w = np.ma.array(weights, copy=True)
+#
+#                w[j, :] = np.ma.masked
+#            else:
+#                w = weights
+            dst_size = weights.shape[0]
+            if dst_mask is None:
+                dst_mask = np.zeros((dst_size,), dtype=bool)
             else:
-                where = np.where
+                dst_mask = dst_mask.copy()
+            
+            dst_mask = dst_mask.copy()
+            getrow =  weights.getrow
+            where = np.where
+            for j in range(dst_size):
+                w_j = getrow(j)
+                mask = src_mask[w_j.indices]
+                if not mask.any():
+                    continue
 
-            j = np.unique(where((weights >= min_weight) & (src_mask))[0])
-            if j.size:
-                if np.ma.isMA(weights):
-                    w = weights.copy()
-                else:
-                    w = np.ma.array(weights, copy=True)
+                if where((mask) & (w_j.data >= min_weight))[0].size:
+                    dst_mask[j] = True
 
-                w[j, :] = np.ma.masked
-            else:
-                w = weights
-
+            w = weights
         elif method in (
             "patch",
             "conservative_2nd",
@@ -452,7 +509,11 @@ def _regrid(
     a = np.ma.getdata(a)
     a = w.dot(a)
 
-    return a, src_mask, w
+    if dst_mask is not None:
+        a = np.ma.array(a)
+        a[dst_mask] = np.ma.masked    
+
+    return a, src_mask, dst_mask, w
 
 
 def regrid_weights(
@@ -466,6 +527,7 @@ def regrid_weights(
     start_index=0,
     dense=True,
     order="C",
+        masked=True,
 ):
     """Create a weights matrix for use in `regrid`.
 
@@ -540,7 +602,7 @@ def regrid_weights(
     """
     from math import prod
 
-    from scipy.sparse import coo_array
+    from scipy.sparse import csr_array
 
     # Create a sparse array for the weights
     src_size = prod(src_shape)
@@ -554,32 +616,53 @@ def regrid_weights(
         row = row - start_index
         col = col - start_index
 
-    w = coo_array((weights, (row, col)), shape=shape)
+    w = csr_array((weights, (row, col)), shape=shape)
 
-    if dense:
-        # Convert the sparse array to a dense array of weights, padded
-        # with zeros.
-        w = w.todense(order=order)
+    if dst_mask is not None:
+        if dst_mask.dtype != bool or dst_mask.shape != dst_shape:
+            raise ValueError(
+                "The 'dst_mask' parameter must be None or a "
+                f"Boolean numpy array with shape {dst_shape}. Got: "
+                f"dtype={dst_mask.dtype}, shape={dst_mask.shape}"
+            )
 
-        # Mask out rows that correspond to masked destination
-        # cells. Such a row will have all zero values, or be
-        # identified by 'dst_mask'.
-        not_masked = np.count_nonzero(w, axis=1, keepdims=True)
-        if dst_mask is not None:
-            if dst_mask.dtype != bool or dst_mask.shape != dst_shape:
-                raise ValueError(
-                    "The 'dst_mask' parameter must be None or a "
-                    f"Boolean numpy array with shape {dst_shape}. Got: "
-                    f"dtype={dst_mask.dtype}, shape={dst_mask.shape}"
-                )
-
-            not_masked = not_masked.astype(bool, copy=False)
-            not_masked &= ~dst_mask.reshape(dst_mask.size, 1)
-
-        if not not_masked.all():
-            # Some destination cells are masked
-            w = np.ma.where(not_masked, w, np.ma.masked)
+        dst_mask = dst_mask.reshape(dst_mask.size)
     else:
-        raise NotImplementedError("Can't yet use sparse arrays")
+        dst_mask = np.zeros((dst_size,), dtype=bool)
 
-    return w
+    count_nonzero = np.count_nonzero
+    getrow = w.getrow
+    for j in range(w.shape[0]):
+        if not count_nonzero(getrow(j).data):
+            dst_mask[j] = True
+            
+    if not dst_mask.any():
+        dst_mask = None
+
+    return w, dst_mask
+
+#    if masked: #dense:
+#        # Convert the sparse array to a dense array of weights, padded
+#        # with zeros.
+#        w = w.todense(order=order)
+#
+#        # Mask out rows that correspond to masked destination
+#        # cells. Such a row will have all zero values, or be
+#        # identified by 'dst_mask'.
+#        not_masked = np.count_nonzero(w, axis=1, keepdims=True)
+#        if dst_mask is not None:
+#            if dst_mask.dtype != bool or dst_mask.shape != dst_shape:
+#                raise ValueError(
+#                    "The 'dst_mask' parameter must be None or a "
+#                    f"Boolean numpy array with shape {dst_shape}. Got: "
+#                    f"dtype={dst_mask.dtype}, shape={dst_mask.shape}"
+#                )
+#only dst mask!
+#            not_masked = not_masked.astype(bool, copy=False)
+#            not_masked &= ~dst_mask.reshape(dst_mask.size, 1)
+#
+#        if not not_masked.all():
+#            # Some destination cells are masked
+#            w = np.ma.where(not_masked, w, np.ma.masked)
+##    else:
+##        raise NotImplementedError("Can't yet use sparse arrays")
