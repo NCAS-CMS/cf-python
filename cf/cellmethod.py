@@ -3,8 +3,10 @@ import re
 from ast import literal_eval as ast_literal_eval
 
 import cfdm
+import numpy as np
 
-from .data.data import Data
+from .data import Data
+from .data.utils import conform_units
 from .decorators import (
     _deprecated_kwarg_check,
     _inplace_enabled,
@@ -115,9 +117,9 @@ class CellMethod(cfdm.CellMethod):
                 if not cell_methods[0].endswith(":"):
                     break
 
-                # TODO Check that "name" ends with colon? How? ('lat: mean
-                #      (area-weighted) or lat: mean (interval: 1 degree_north comment:
-                #      area-weighted)')
+                # TODO Check that "name" ends with colon? How? ('lat:
+                #      mean (area-weighted) or lat: mean (interval: 1
+                #      degree_north comment: area-weighted)')
 
                 axis = cell_methods.pop(0)[:-1]
 
@@ -574,7 +576,6 @@ class CellMethod(cfdm.CellMethod):
             )  # pragma: no cover
             return False
 
-        #        other1 = other.copy()
         argsort = [axes1.index(axis0) for axis0 in axes0]
         other1 = other.sorted(indices=argsort)
 
@@ -609,7 +610,13 @@ class CellMethod(cfdm.CellMethod):
             for data0, data1 in zip(
                 intervals0, other1.get_qualifier("interval", ())
             ):
-                if not data0.allclose(data1, rtol=rtol, atol=atol):
+                data1 = conform_units(data1, data0.Units)
+                if not np.allclose(
+                    data0.first_element(),
+                    data1.first_element(),
+                    rtol=data0._rtol,
+                    atol=data0._atol,
+                ):
                     logger.info(
                         f"{self.__class__.__name__}: Different interval "
                         f"data: {self.intervals!r} != {other.intervals!r}"

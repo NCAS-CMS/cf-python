@@ -450,29 +450,36 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         # determinsitic name
         self._custom["deterministic"] = not is_dask_collection(array)
 
-        array = to_dask(array, chunks, **kwargs)
+        dx = to_dask(array, chunks, **kwargs)
+
+        if not dx.ndim:
+            if isinstance(array, (int, float, str)):
+                self._set_cached_elements({0: array, -1: array})
+            elif isinstance(array, np.ndarray):
+                array = array.item()
+                self._set_cached_elements({0: array, -1: array})
 
         # Find out if we have an array of date-time objects
         if units.isreftime:
             dt = True
 
         first_value = None
-        if not dt and array.dtype.kind == "O":
+        if not dt and dx.dtype.kind == "O":
             kwargs = init_options.get("first_non_missing_value", {})
-            first_value = first_non_missing_value(array, **kwargs)
+            first_value = first_non_missing_value(dx, **kwargs)
 
             if first_value is not None:
                 dt = hasattr(first_value, "timetuple")
 
         # Convert string or object date-times to floating point
         # reference times
-        if dt and array.dtype.kind in "USO":
-            array, units = convert_to_reftime(array, units, first_value)
+        if dt and dx.dtype.kind in "USO":
+            dx, units = convert_to_reftime(dx, units, first_value)
             # Reset the units
             self._Units = units
 
         # Store the dask array
-        self._set_dask(array, clear=_NONE)
+        self._set_dask(dx, clear=_NONE)
 
         # Override the data type
         if dtype is not None:
@@ -3487,6 +3494,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
             self._update_deterministic(other)
             return self
+
         else:  # not, so concerns a new Data object copied from self, data0
             data0._set_dask(result)
             data0.override_units(new_Units, inplace=True)
@@ -3816,7 +3824,8 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
             if element is not None:
                 cached_elements[i] = element
 
-        data0._set_cached_elements(cached_elements)
+        if cached_elements:
+            data0._set_cached_elements(cached_elements)
 
         # Set if the concatenated name is deterministic
         deterministic = True

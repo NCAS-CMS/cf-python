@@ -176,7 +176,7 @@ class DSGTest(unittest.TestCase):
         self.assertEqual(len(g), len(f))
 
         for i in range(len(f)):
-            self.assertTrue(g[i].equals(f[i], verbose=2))
+            self.assertTrue(g[i].equals(f[i], verbose=3))
 
         # ------------------------------------------------------------
         # Test creation

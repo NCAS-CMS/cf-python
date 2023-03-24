@@ -9750,7 +9750,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate
@@ -10187,7 +10187,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate
@@ -13031,7 +13031,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate
@@ -14128,7 +14128,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate
@@ -14362,7 +14362,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         : time(1) = [2019-01-01 00:00:00]
         Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                         : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                        : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
         Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
         Coord references: grid_mapping_name:rotated_latitude_longitude
                         : standard_name:atmosphere_hybrid_height_coordinate

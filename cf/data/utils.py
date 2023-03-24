@@ -555,6 +555,10 @@ def conform_units(value, units, message=None):
             message that is independent of the calling context is
             used.
 
+    :Returns:
+
+            TODO
+
     **Examples**
 
     >>> cf.data.utils.conform_units(1, cf.Units('m'))
@@ -586,11 +590,15 @@ def conform_units(value, units, message=None):
     if value_units is None:
         return value
 
+    if value_units == units:
+        return value
+
     if value_units.equivalent(units):
-        if value_units != units:
-            value = value.copy()
-            value.Units = units
-    elif value_units and units:
+        value = value.copy()
+        value.Units = units
+        return value
+
+    if value_units and units:
         if message is None:
             message = (
                 f"Units {value_units!r} are incompatible with units {units!r}"

@@ -198,7 +198,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         """
         if not self._is_cfa_variable(ncvar):
             # Create data for a normal netCDF variable
-            return super()._create_data(
+            data = super()._create_data(
                 ncvar=ncvar,
                 construct=construct,
                 unpacked_dtype=unpacked_dtype,
@@ -206,6 +206,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 parent_ncvar=parent_ncvar,
                 coord_ncvar=coord_ncvar,
             )
+
+            if self.implementation.get_construct_type(construct) != "field":
+                # Only cache values from non-field data, on the
+                # assumption that field data is general so large that
+                # finding the cached values takes too long.
+                self._cache_data_elements(data, ncvar)
+
+            return data
 
         # ------------------------------------------------------------
         # Still here? Then create data for a CFA-netCDF variable
@@ -323,7 +331,33 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # therefore has unknown data type. To find the correct
             # data type (e.g. "|S7"), we need to read the data into
             # memory.
-            array = array[...]
+            # Get the netCDF4.Variable for the data
+            g = self.read_vars
+            if g["has_groups"]:
+                group, name = self._netCDF4_group(
+                    g["variable_grouped_dataset"][ncvar], ncvar
+                )
+                variable = group.variables.get(name)
+            else:
+                variable = g["variables"].get(ncvar)
+
+            array = variable[...]
+
+            string_type = isinstance(array, str)
+            if string_type:
+                # A netCDF string type scalar variable comes out as Python
+                # str object, so convert it to a numpy array.
+                array = np.array(array, dtype=f"U{len(array)}")
+
+            if not array.ndim:
+                array = array.squeeze()
+
+            if not string_type:
+                # A netCDF string type N-d (N>=1) variable comes out as a
+                # numpy object array, so convert it to numpy string array.
+                array = array.astype("U", copy=False)
+                # netCDF4 does not auto-mask VLEN variable, so do it here.
+                array = np.ma.where(array == "", np.ma.masked, array)
 
         # Parse dask chunks
         chunks = self._parse_chunks(ncvar)
@@ -336,7 +370,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             chunks=chunks,
             **kwargs,
         )
-        self._cache_data_elements(data, ncvar)
 
         return data
 
