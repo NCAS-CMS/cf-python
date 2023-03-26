@@ -2543,8 +2543,10 @@ class DataTest(unittest.TestCase):
 
         # Check for no warning when data is of masked type but with no
         # missing values
-        d = cf.Data(np.ma.arange(100))
-        d.percentile(ranks[0])
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", category=UserWarning)
+            d = cf.Data(np.ma.arange(100))
+            d.percentile(ranks[0])
 
         # Test scalar input (not masked)
         a = np.array(9)
