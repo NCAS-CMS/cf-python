@@ -640,8 +640,10 @@ class UMField:
 
         int_hdr = rec0.int_hdr
         self.int_hdr_dtype = int_hdr.dtype
-
+        self.real_hdr_dtype = rec0.real_hdr.dtype
         int_hdr = int_hdr.tolist()
+
+        self.real_hdr_dtype = rec0.real_hdr.dtype
         real_hdr = rec0.real_hdr.tolist()
         self.int_hdr = int_hdr
         self.real_hdr = real_hdr
@@ -1180,15 +1182,16 @@ class UMField:
 
         # "a" domain ancillary
         array = np.array(
-            [rec.real_hdr[blev] for rec in self.z_recs], dtype=float  # Zsea
+            [rec.real_hdr[blev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,  # Zsea
         )
         bounds0 = np.array(
             [rec.real_hdr[brlev] for rec in self.z_recs],  # Zsea lower
-            dtype=float,
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
             [rec.real_hdr[brsvd1] for rec in self.z_recs],  # Zsea upper
-            dtype=float,
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
@@ -1262,13 +1265,16 @@ class UMField:
 
         # "b" domain ancillary
         array = np.array(
-            [rec.real_hdr[bhlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds0 = np.array(
-            [rec.real_hdr[bhrlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhrlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
-            [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brsvd2] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
@@ -1319,13 +1325,16 @@ class UMField:
         field = self.field
 
         array = np.array(
-            [rec.real_hdr[blev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[blev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds0 = np.array(
-            [rec.real_hdr[brlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
-            [rec.real_hdr[brsvd1] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brsvd1] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
@@ -1349,13 +1358,16 @@ class UMField:
         )
 
         array = np.array(
-            [rec.real_hdr[bhlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds0 = np.array(
-            [rec.real_hdr[bhrlev] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[bhrlev] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds1 = np.array(
-            [rec.real_hdr[brsvd2] for rec in self.z_recs], dtype=float
+            [rec.real_hdr[brsvd2] for rec in self.z_recs],
+            dtype=self.real_hdr_dtype,
         )
         bounds = self.create_bounds_array(bounds0, bounds1)
 
@@ -3175,12 +3187,12 @@ class UMField:
         if _coord_positive.get(axiscode, None) == "down":
             bounds0, bounds1 = bounds1, bounds0
 
-        array = np.array(array, dtype=float)
-        bounds0 = np.array(bounds0, dtype=float)
-        bounds1 = np.array(bounds1, dtype=float)
+        array = np.array(array, dtype=self.real_hdr_dtype)
+        bounds0 = np.array(bounds0, dtype=self.real_hdr_dtype)
+        bounds1 = np.array(bounds1, dtype=self.real_hdr_dtype)
         bounds = self.create_bounds_array(bounds0, bounds1)
 
-        if (bounds0 == bounds1).all():
+        if (bounds0 == bounds1).all() or np.allclose(bounds.min(), _pp_rmdi):
             bounds = None
         else:
             bounds = self.create_bounds_array(bounds0, bounds1)
@@ -3520,6 +3532,9 @@ class UMRead(cfdm.read_write.IORead):
 
         f = self.file_open(filename)
 
+        # Clear caches
+        _cached_data.clear()
+
         um = [
             UMField(
                 var,
@@ -3536,6 +3551,9 @@ class UMRead(cfdm.read_write.IORead):
             )
             for var in f.vars
         ]
+
+        # Clear caches
+        _cached_data.clear()
 
         self.file_close()
 

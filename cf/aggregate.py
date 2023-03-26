@@ -72,6 +72,7 @@ _no_units = Units()
 class _HFLCache:
     """A cache for coordinate and cell measure hashes, first and last
     values and first and last cell bounds."""
+
     def __init__(self):
         # Store mappings of equivalent Data hashes. This links Data
         # objects that are equal but have different hashes, such as
@@ -253,6 +254,7 @@ class _Meta:
                 reduce the time taken for aggregation.
 
         """
+        #
         self._bool = False
         self.cell_values = False
 
@@ -426,8 +428,9 @@ class _Meta:
                 )
 
                 canonical_direction = self.canonical_direction(
-                    dim_identity, dim_coord)
-                
+                    dim_identity, dim_coord
+                )
+
                 info_dim.append(
                     {
                         "identity": dim_identity,
@@ -924,15 +927,11 @@ class _Meta:
         return canonical_axes
 
     def canonical_direction(self, identity, dim_coord):
-        """TODO
-
-        """
+        """TODO"""
         c = self._canonical_direction
         direction = c.get(identity)
         if direction is None:
-            print (dim_coord.array)
             direction = dim_coord.direction()
-            print ('888', dim_coord, direction)
             c[identity] = direction
 
         return direction
@@ -1010,7 +1009,9 @@ class _Meta:
         """
         _canonical_cell_methods = self._canonical_cell_methods
 
-        cell_methods = self.field.cell_methods(todict=True)
+        cell_methods = self.field.constructs.filter_by_type(
+            "cell_method", todict=True
+        )
         if not cell_methods:
             return
 
@@ -1838,6 +1839,12 @@ def aggregate(
     # first and last values and first and last cell bounds
     hfl_cache = _HFLCache()
 
+    # Reset the canonical attributes
+    _Meta._canonical_axes = {}
+    _Meta._canonical_direction = {}
+    _Meta._canonical_units = {}
+    _Meta._canonical_cell_methods = []
+
     output_constructs = []
 
     output_constructs_append = output_constructs.append
@@ -2196,7 +2203,7 @@ def aggregate(
                         relaxed_units=relaxed_units,
                         copy=copy,  # (copy or not exclude),
                     )
-                    
+
                     if not m0:
                         # Couldn't aggregate these two fields, so
                         # abandon all aggregations on the fields with
@@ -2337,8 +2344,6 @@ def _create_hash_and_first_values(
                 # ... which has a dimension coordinate
                 m_sort_keys[axis] = axis
                 if not dim_coord.direction():
-                    print (99999, dim_coord, dim_coord.direction(), m._canonical_direction)
-                    print (dim_coord.array)
                     # Axis is decreasing
                     sort_indices = slice(None, None, -1)
                     null_sort = False
@@ -2667,7 +2672,7 @@ def _get_hfl(
     d.Units = canonical_units
 
     if not null_sort and d.size > 1:
-        print ('this is bad')
+        print("this is bad")
         d = d[sort_indices]
 
     hash_map = hfl_cache.hash_map
@@ -3110,7 +3115,7 @@ def _aggregate_2_fields(
 
     constructs0 = parent0.constructs.todict()
     constructs1 = parent1.constructs.todict()
-        
+
     # ----------------------------------------------------------------
     # Find matching pairs of coordinates and cell measures which span
     # the aggregating axis
