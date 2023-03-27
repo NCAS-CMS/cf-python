@@ -661,8 +661,8 @@ def write(
               equivalent: ``{'base': 'sub'}``, ``{'${base}': 'sub'}``.
               The substitutions are used in conjunction with, and take
               precedence over, any that are also defined on individual
-              constructs (see `cf.Data.cfa_set_file_substitutions` for
-              details).
+              constructs (see `cf.Data.cfa_update_file_substitutions`
+              for details).
 
               Substitutions are stored in the output file by the
               ``substitutions`` attribute of the ``file`` CFA

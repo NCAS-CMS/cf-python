@@ -243,7 +243,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
                 base,
             )
 
-    def cfa_set_file_substitutions(
+    def cfa_update_file_substitutions(
         self,
         substitutions,
     ):
@@ -261,11 +261,11 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
 
         **Examples**
 
-        >>> d.cfa_set_file_substitutions({'base': '/data/model'})
+        >>> d.cfa_update_file_substitutions({'base': '/data/model'})
 
         """
         for c in self.constructs.filter_by_data(todict=True).values():
-            c.cfa_set_file_substitutions(substitutions)
+            c.cfa_update_file_substitutions(substitutions)
 
     def close(self):
         """Close all files referenced by the domain construct.

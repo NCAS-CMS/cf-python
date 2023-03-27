@@ -262,7 +262,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 data.cfa_set_aggregated_data(aggregated_data)
 
             # Store the file substitutions
-            data.cfa_set_file_substitutions(kwargs.get("substitutions"))
+            data.cfa_update_file_substitutions(kwargs.get("substitutions"))
 
         return data
 

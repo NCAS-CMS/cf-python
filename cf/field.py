@@ -3771,7 +3771,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         return location
 
-    def cfa_set_file_substitutions(
+    def cfa_update_file_substitutions(
         self,
         substitutions,
         constructs=True,
@@ -3794,14 +3794,14 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         **Examples**
 
-        >>> f.cfa_set_file_substitutions({'base': '/data/model'})
+        >>> f.cfa_update_file_substitutions({'base': '/data/model'})
 
         """
-        super().cfa_set_file_substitutions(substitutions)
+        super().cfa_update_file_substitutions(substitutions)
 
         if constructs:
             for c in self.constructs.filter_by_data(todict=True).values():
-                c.cfa_set_file_substitutions(substitutions)
+                c.cfa_update_file_substitutions(substitutions)
 
     def radius(self, default=None):
         """Return the radius of a latitude-longitude plane defined in

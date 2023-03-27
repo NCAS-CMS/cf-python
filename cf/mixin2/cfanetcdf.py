@@ -16,7 +16,7 @@ class CFANetCDF(NetCDFMixin):
 
     """
 
-    def cfa_del_aggregated_data(self, default=ValueError()):
+    def cfa_del_aggregated_data(self):
         """Remove the CFA-netCDF aggregation instruction terms.
 
         The aggregation instructions are stored in the
@@ -28,14 +28,6 @@ class CFANetCDF(NetCDFMixin):
         .. seealso:: `cfa_get_aggregated_data`,
                      `cfa_has_aggregated_data`,
                      `cfa_set_aggregated_data`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                CFA-netCDF aggregation terms have not been set. If set
-                to an `Exception` instance then it will be raised
-                instead.
 
         :Returns:
 
@@ -67,14 +59,15 @@ class CFANetCDF(NetCDFMixin):
          'tracking_id': 'tracking_id'}
         >>> f.cfa_has_aggregated_data()
         False
-        >>> print(f.cfa_get_aggregated_data(None))
-        None
-        None
+        >>> f.cfa_del_aggregated_data()
+        {}
+        >>> f.cfa_get_aggregated_data()
+        {}
 
         """
-        return self._nc_del("cfa_aggregated_data", default=default)
+        return self._nc_del("cfa_aggregated_data", {}).copy()
 
-    def cfa_get_aggregated_data(self, default=ValueError()):
+    def cfa_get_aggregated_data(self):
         """Return the CFA-netCDF aggregation instruction terms.
 
         The aggregation instructions are stored in the
@@ -87,14 +80,6 @@ class CFANetCDF(NetCDFMixin):
                      `cfa_has_aggregated_data`,
                      `cfa_set_aggregated_data`
 
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                CFA-netCDF aggregation terms have not been set. If set
-                to an `Exception` instance then it will be raised
-                instead.
-
         :Returns:
 
             `dict`
@@ -102,7 +87,6 @@ class CFANetCDF(NetCDFMixin):
                 corresponding netCDF variable names in a dictionary
                 whose key/value pairs are the aggregation instruction
                 terms and their corresponding variable names.
-
 
         **Examples**
 
@@ -129,23 +113,17 @@ class CFANetCDF(NetCDFMixin):
          'tracking_id': 'tracking_id'}
         >>> f.cfa_has_aggregated_data()
         False
-        >>> print(f.cfa_get_aggregated_data(None))
-        None
-        >>> print(f.cfa_del_aggregated_data(None))
-        None
+        >>> f.cfa_del_aggregated_data()
+        {}
+        >>> f.cfa_get_aggregated_data()
+        {}
 
         """
         out = self._nc_get("cfa_aggregated_data", default=None)
         if out is not None:
             return out.copy()
 
-        if default is None:
-            return default
-
-        return self._default(
-            default,
-            f"{self.__class__.__name__} has no CFA-netCDF aggregation terms",
-        )
+        return {}
 
     def cfa_has_aggregated_data(self):
         """Whether any CFA-netCDF aggregation instruction terms have been set.
@@ -191,11 +169,10 @@ class CFANetCDF(NetCDFMixin):
          'tracking_id': 'tracking_id'}
         >>> f.cfa_has_aggregated_data()
         False
-        >>> print(f.cfa_get_aggregated_data(None))
-        None
-        >>> print(f.cfa_del_aggregated_data(None))
-        None
-
+        >>> f.cfa_del_aggregated_data()
+        {}
+        >>> f.cfa_get_aggregated_data()
+        {}
         """
         return self._nc_has("cfa_aggregated_data")
 
@@ -257,10 +234,10 @@ class CFANetCDF(NetCDFMixin):
          'tracking_id': 'tracking_id'}
         >>> f.cfa_has_aggregated_data()
         False
-        >>> print(f.cfa_get_aggregated_data(None))
-        None
-        >>> print(f.cfa_del_aggregated_data(None))
-        None
+        >>> f.cfa_del_aggregated_data()
+        {}
+        >>> f.cfa_get_aggregated_data()
+        {}
 
         """
         if value:
@@ -281,7 +258,7 @@ class CFANetCDF(NetCDFMixin):
         .. seealso:: `cfa_del_file_substitution`,
                      `cfa_file_substitutions`,
                      `cfa_has_file_substitutions`,
-                     `cfa_set_file_substitutions`
+                     `cfa_update_file_substitutions`
 
         :Returns:
 
@@ -290,15 +267,15 @@ class CFANetCDF(NetCDFMixin):
 
         **Examples**
 
-        >>> f.`cfa_set_file_substitutions({'base': 'file:///data/'})
+        >>> f.cfa_update_file_substitutions({'base': 'file:///data/'})
         >>> f.cfa_has_file_substitutions()
         True
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.`cfa_set_file_substitutions({'${base2}': '/home/data/'})
+        >>> f.cfa_update_file_substitutions({'${base2}': '/home/data/'})
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.`cfa_set_file_substitutions({'${base}': '/new/location/'})
+        >>> f.cfa_update_file_substitutions({'${base}': '/new/location/'})
         >>> f.cfa_file_substitutions()
         {'${base}': '/new/location/', '${base2}': '/home/data/'}
         >>> f.cfa_del_file_substitution('${base}')
@@ -325,7 +302,7 @@ class CFANetCDF(NetCDFMixin):
         .. seealso:: `cfa_clear_file_substitutions`,
                      `cfa_file_substitutions`,
                      `cfa_has_file_substitutions`,
-                     `cfa_set_file_substitutions`
+                     `cfa_update_file_substitutions`
 
         :Parameters:
 
@@ -338,15 +315,15 @@ class CFANetCDF(NetCDFMixin):
 
         **Examples**
 
-        >>> f.cfa_set_file_substitutions({'base': 'file:///data/'})
+        >>> f.cfa_update_file_substitutions({'base': 'file:///data/'})
         >>> f.cfa_has_file_substitutions()
         True
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.`cfa_set_file_substitutions({'${base2}': '/home/data/'})
+        >>> f.cfa_update_file_substitutions({'${base2}': '/home/data/'})
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.`cfa_set_file_substitutions({'${base}': '/new/location/'})
+        >>> f.cfa_update_file_substitutions({'${base}': '/new/location/'})
         >>> f.cfa_file_substitutions()
         {'${base}': '/new/location/', '${base2}': '/home/data/'}
         >>> f.cfa_del_file_substitution('${base}')
@@ -386,7 +363,7 @@ class CFANetCDF(NetCDFMixin):
         .. seealso:: `cfa_clear_file_substitutions`,
                      `cfa_del_file_substitution`,
                      `cfa_file_substitutions`,
-                     `cfa_set_file_substitution`
+                     `cfa_update_file_substitution`
         :Returns:
 
             `dict`
@@ -394,15 +371,15 @@ class CFANetCDF(NetCDFMixin):
 
         **Examples**
 
-        >>> f.`cfa_set_file_substitutions({'base': 'file:///data/'})
+        >>> f.cfa_update_file_substitutions({'base': 'file:///data/'})
         >>> f.cfa_has_file_substitutions()
         True
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.`cfa_set_file_substitutions({'${base2}': '/home/data/'})
+        >>> f.cfa_update_file_substitutions({'${base2}': '/home/data/'})
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.`cfa_set_file_substitutions({'${base}': '/new/location/'})
+        >>> f.cfa_update_file_substitutions({'${base}': '/new/location/'})
         >>> f.cfa_file_substitutions()
         {'${base}': '/new/location/', '${base2}': '/home/data/'}
         >>> f.cfa_del_file_substitution('${base}')
@@ -433,7 +410,7 @@ class CFANetCDF(NetCDFMixin):
         .. seealso:: `cfa_clear_file_substitutions`,
                      `cfa_del_file_substitution`,
                      `cfa_file_substitutions`,
-                     `cfa_set_file_substitutions`
+                     `cfa_update_file_substitutions`
 
         :Returns:
 
@@ -443,15 +420,15 @@ class CFANetCDF(NetCDFMixin):
 
         **Examples**
 
-        >>> f.`cfa_set_file_substitutions({'base': 'file:///data/'})
+        >>> f.cfa_update_file_substitutions({'base': 'file:///data/'})
         >>> f.cfa_has_file_substitutions()
         True
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.`cfa_set_file_substitutions({'${base2}': '/home/data/'})
+        >>> f.cfa_update_file_substitutions({'${base2}': '/home/data/'})
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.`cfa_set_file_substitutions({'${base}': '/new/location/'})
+        >>> f.cfa_update_file_substitutions({'${base}': '/new/location/'})
         >>> f.cfa_file_substitutions()
         {'${base}': '/new/location/', '${base2}': '/home/data/'}
         >>> f.cfa_del_file_substitution('${base}')
@@ -470,7 +447,7 @@ class CFANetCDF(NetCDFMixin):
         """
         return self._nc_has("cfa_file_substitutions")
 
-    def cfa_set_file_substitutions(self, substitutions):
+    def cfa_update_file_substitutions(self, substitutions):
         """Set CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
@@ -490,15 +467,15 @@ class CFANetCDF(NetCDFMixin):
 
         **Examples**
 
-        >>> f.`cfa_set_file_substitutions({'base': 'file:///data/'})
+        >>> f.cfa_update_file_substitutions({'base': 'file:///data/'})
         >>> f.cfa_has_file_substitutions()
         True
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.`cfa_set_file_substitutions({'${base2}': '/home/data/'})
+        >>> f.cfa_update_file_substitutions({'${base2}': '/home/data/'})
         >>> f.cfa_file_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.`cfa_set_file_substitutions({'${base}': '/new/location/'})
+        >>> f.cfa_update_file_substitutions({'${base}': '/new/location/'})
         >>> f.cfa_file_substitutions()
         {'${base}': '/new/location/', '${base2}': '/home/data/'}
         >>> f.cfa_del_file_substitution('${base}')

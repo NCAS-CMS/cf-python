@@ -434,7 +434,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         substitutions = data.cfa_file_substitutions()
         substitutions.update(g["cfa_options"].get("substitutions", {}))
 
-        aggregated_data = data.cfa_get_aggregated_data(default={})
+        aggregated_data = data.cfa_get_aggregated_data()
         aggregated_data_attr = []
 
         # Location

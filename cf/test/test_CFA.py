@@ -156,7 +156,7 @@ class CFATest(unittest.TestCase):
 
         cwd = os.getcwd()
 
-        f.data.cfa_set_file_substitutions({"base": cwd})
+        f.data.cfa_update_file_substitutions({"base": cwd})
 
         cf.write(
             f,
@@ -215,7 +215,7 @@ class CFATest(unittest.TestCase):
         cwd = os.getcwd()
 
         f.data.cfa_clear_file_substitutions()
-        f.data.cfa_set_file_substitutions({"base": cwd})
+        f.data.cfa_update_file_substitutions({"base": cwd})
 
         cf.write(
             f,
@@ -242,7 +242,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(f.equals(g[0]))
 
         f.data.cfa_clear_file_substitutions()
-        f.data.cfa_set_file_substitutions({"base": "/bad/location"})
+        f.data.cfa_update_file_substitutions({"base": "/bad/location"})
 
         cf.write(
             f,
@@ -266,7 +266,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(f.equals(g[0]))
 
         f.data.cfa_clear_file_substitutions()
-        f.data.cfa_set_file_substitutions({"base2": "/bad/location"})
+        f.data.cfa_update_file_substitutions({"base2": "/bad/location"})
 
         cf.write(
             f,

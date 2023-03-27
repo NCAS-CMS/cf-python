@@ -3947,14 +3947,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             aggregated_data = {}
             substitutions = {}
             for d in processed_data[::-1]:
-                aggregated_data.update(d.cfa_get_aggregated_data({}))
+                aggregated_data.update(d.cfa_get_aggregated_data())
                 substitutions.update(d.cfa_file_substitutions())
 
             if aggregated_data:
                 data0.cfa_set_aggregated_data(aggregated_data)
 
             if substitutions:
-                data0.cfa_set_file_substitutions(substitutions)
+                data0.cfa_update_file_substitutions(substitutions)
 
         # Set the CFA aggregation instruction term status
         if data0.cfa_get_term():

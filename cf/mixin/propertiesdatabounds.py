@@ -1308,7 +1308,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
 
-    def cfa_set_file_substitutions(self, substitutions):
+    def cfa_update_file_substitutions(self, substitutions):
         """Set CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
@@ -1326,15 +1326,15 @@ class PropertiesDataBounds(PropertiesData):
         >>> c.cfa_add_file_substitutions({'base', '/data/model'})
 
         """
-        super().cfa_set_file_substitutions(substitutions)
+        super().cfa_update_file_substitutions(substitutions)
 
         bounds = self.get_bounds(None)
         if bounds is not None:
-            bounds.cfa_set_file_substitutions(substitutions)
+            bounds.cfa_update_file_substitutions(substitutions)
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            interior_ring.cfa_set_file_substitutions(substitutions)
+            interior_ring.cfa_update_file_substitutions(substitutions)
 
     def chunk(self, chunksize=None):
         """Partition the data array.

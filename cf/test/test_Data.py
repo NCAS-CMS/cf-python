@@ -4554,28 +4554,28 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.cfa_get_aggregated_data(), aggregated_data)
         self.assertEqual(d.cfa_del_aggregated_data(), aggregated_data)
         self.assertFalse(d.cfa_has_aggregated_data())
-        self.assertIsNone(d.cfa_get_aggregated_data(None))
-        self.assertIsNone(d.cfa_del_aggregated_data(None))
+        self.assertEqual(d.cfa_get_aggregated_data(), {})
+        self.assertEqual(d.cfa_del_aggregated_data(), {})
 
     def test_Data_cfa_file_substitutions(self):
         """Test `Data` CFA file_substitutions methods"""
         d = cf.Data(9)
         self.assertFalse(d.cfa_has_file_substitutions())
         self.assertIsNone(
-            d.cfa_set_file_substitutions({"base": "file:///data/"})
+            d.cfa_update_file_substitutions({"base": "file:///data/"})
         )
         self.assertTrue(d.cfa_has_file_substitutions())
         self.assertEqual(
             d.cfa_file_substitutions(), {"${base}": "file:///data/"}
         )
 
-        d.cfa_set_file_substitutions({"${base2}": "/home/data/"})
+        d.cfa_update_file_substitutions({"${base2}": "/home/data/"})
         self.assertEqual(
             d.cfa_file_substitutions(),
             {"${base}": "file:///data/", "${base2}": "/home/data/"},
         )
 
-        d.cfa_set_file_substitutions({"${base}": "/new/location/"})
+        d.cfa_update_file_substitutions({"${base}": "/new/location/"})
         self.assertEqual(
             d.cfa_file_substitutions(),
             {"${base}": "/new/location/", "${base2}": "/home/data/"},

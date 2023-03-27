@@ -2508,7 +2508,7 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
-    def cfa_set_file_substitutions(self, substitutions):
+    def cfa_update_file_substitutions(self, substitutions):
         """Set CFA-netCDF file name substitutions.
 
         .. versionadded:: TODOCFAVER
@@ -2523,12 +2523,12 @@ class PropertiesData(Properties):
 
         **Examples**
 
-        >>> f.cfa_set_file_substitutions({'base', '/data/model'})
+        >>> f.cfa_update_file_substitutions({'base', '/data/model'})
 
         """
         data = self.get_data(None, _fill_value=False, _units=False)
         if data is not None:
-            data.cfa_set_file_substitutions(substitutions)
+            data.cfa_update_file_substitutions(substitutions)
 
     @_inplace_enabled(default=False)
     def cfa_clear_file_substitutions(self, inplace=False):
