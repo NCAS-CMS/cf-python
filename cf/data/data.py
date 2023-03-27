@@ -452,13 +452,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         dx = to_dask(array, chunks, **kwargs)
 
-        if not dx.ndim:
-            if isinstance(array, (int, float, str)):
-                self._set_cached_elements({0: array, -1: array})
-            elif isinstance(array, np.ndarray):
-                array = array.item()
-                self._set_cached_elements({0: array, -1: array})
-
         # Find out if we have an array of date-time objects
         if units.isreftime:
             dt = True
@@ -1513,14 +1506,14 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
     def _update_deterministic(self, other):
         """Update the deterministic name status.
 
-        .. versionadded:: 3.14.2
+        .. versionadded:: 3.15.0
 
         .. seealso:: `get_deterministic_name`,
                      `has_deterministic_name`
 
         :Parameters:
 
-            other: `False` or `Data`
+            other: `bool` or `Data`
                 If `False` then set the deterministic name status to
                 `False`. If `True` then do not change the
                 deterministic name status. If `Data` then set the
@@ -2463,7 +2456,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Performance**
 
-        `array` causes all delayed operations to be computed.
+        `compute` causes all delayed operations to be computed.
 
         .. versionadded:: 3.14.0
 
@@ -3714,7 +3707,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 in-place, but the concatenation process will be
                 faster.
 
-                .. versionadded:: 3.14.2
+                .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -3781,7 +3774,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     data1 = data1.copy()
                     copied = True
 
-                data1 = data1.insert_dimension()
+                data1.insert_dimension(inplace=True)
 
             # Check and conform, if necessary, the units of all inputs
             units1 = data1.Units
@@ -4867,7 +4860,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         **Performance**
 
-        `array` causes all delayed operations to be computed.
+        `array` causes all delayed operations to be computed. The
+        returned `numpy` array is a deep copy of that returned by
+        created `compute`.
 
         .. seealso:: `datetime_array`, `compute`, `persist`
 
@@ -6008,7 +6003,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         assumed to be "equal" to that of another `Data` object with
         the same deterministic name. This measure of equality is
         different to that applied by the `equals` method in that NaN
-        and inf values are always considered equal.
+        and inf values are, in effect, always considered equal.
 
         Note that the opposite is not always true. Two `Data` objects
         that are considered equal by their `equals` methods might not
@@ -6016,7 +6011,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         An exception is raised if there is no determinisitic name.
 
-        .. versionadded:: 3.14.2
+        .. versionadded:: 3.15.0
 
         .. seealso:: `has_deterministic_name`
 
@@ -6040,15 +6035,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         >>> d1.equals(d)
         True
 
-        >>> e = d + 1
+        >>> e = d + 1 - 1
         >>> e.get_deterministic_name()
-        '1bd7398f9af2ebfc31e86a0e9712f44b'
-        >>> f = e - 1
-        >>> f.get_deterministic_name()
-        '607fab0fe055491a1670e3eb350fa5ac'
-        >>> f.get_deterministic_name() == d.get_deterministic_name()
+        '0b83ada62d4b014bae83c3de1c1d3a80'
+        >>> e.get_deterministic_name() == d.get_deterministic_name()
         False
-        >>> f.equals(d)
+        >>> e.equals(d)
         True
 
         """
@@ -7700,7 +7692,9 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         rtol = float(rtol)
         atol = float(atol)
 
-        # Return False if there are different cached elements
+        # Return False if there are different cached elements. This
+        # provides a possible short circuit for that case that two
+        # arrays are not equal, but not in the case that they are.
         cache0 = self._get_cached_elements()
         if cache0:
             cache1 = other._get_cached_elements()
@@ -8290,7 +8284,7 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
 
         See ``get_deterministic_name` for details.
 
-        .. versionadded:: 3.14.2
+        .. versionadded:: 3.15.0
 
         .. seealso:: `get_deterministic_name`
 

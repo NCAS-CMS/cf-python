@@ -135,7 +135,7 @@ class DimensionCoordinate(
                 except TypeError:
                     pass
 
-            b = data[:1].compute()
+            b = data[0].compute()
             return bool(b.item(0) < b.item(1))
 
         # Still here? Then infer the direction from the units.

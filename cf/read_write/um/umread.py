@@ -1087,9 +1087,7 @@ class UMField:
                     config={
                         "axis": xaxis,
                         "coord": xc,
-                        "period": self.get_data(
-                            np.array(360.0), xc.Units, copy=False
-                        ),
+                        "period": self.get_data(np.array(360.0), xc.Units),
                     },
                 )
 
@@ -3038,9 +3036,7 @@ class UMField:
 
         if X and bounds is not None:
             autocyclic["cyclic"] = abs(bounds[0, 0] - bounds[-1, -1]) == 360.0
-            autocyclic["period"] = self.get_data(
-                np.array(360.0), units, copy=False
-            )
+            autocyclic["period"] = self.get_data(np.array(360.0), units)
             autocyclic["axis"] = axis_key
             autocyclic["coord"] = dc
 
@@ -3050,10 +3046,10 @@ class UMField:
 
         return key, dc, axis_key
 
-    def get_data(self, array, units, fill_value=None, bounds=False, copy=True):
+    def get_data(self, array, units, fill_value=None, bounds=False):
         """Create data, or get it from the cache.
 
-        .. versionadded:: 3.14.2
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -3068,10 +3064,6 @@ class UMField:
 
             bounds: `bool`
                 Whether or not the data are bounds of 1-d coordinates.
-
-            copy: `bool`
-                Whether or not to return an independent copy of the
-                data.
 
         :Returns:
 
@@ -3106,10 +3098,8 @@ class UMField:
                 )
 
             _cached_data[token] = data
-        elif copy:
-            data = data.copy()
 
-        return data
+        return data.copy()
 
     def site_coordinates_from_extra_data(self):
         """Create site-related coordinates from extra data.
@@ -3533,7 +3523,7 @@ class UMRead(cfdm.read_write.IORead):
         f = self.file_open(filename)
 
         # Clear caches
-        _cached_data.clear()
+        #        _cached_data.clear()
 
         um = [
             UMField(
@@ -3553,7 +3543,7 @@ class UMRead(cfdm.read_write.IORead):
         ]
 
         # Clear caches
-        _cached_data.clear()
+        #        _cached_data.clear()
 
         self.file_close()
 

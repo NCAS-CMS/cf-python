@@ -329,9 +329,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         if array.dtype is None:
             # The array is based on a netCDF VLEN variable, and
             # therefore has unknown data type. To find the correct
-            # data type (e.g. "|S7"), we need to read the data into
-            # memory.
-            # Get the netCDF4.Variable for the data
+            # data type (e.g. "<U7"), we need to read the entire array
+            # from its netCDF variable into memory to find the longest
+            # string.
             g = self.read_vars
             if g["has_groups"]:
                 group, name = self._netCDF4_group(
@@ -356,7 +356,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 # A netCDF string type N-d (N>=1) variable comes out as a
                 # numpy object array, so convert it to numpy string array.
                 array = array.astype("U", copy=False)
-                # netCDF4 does not auto-mask VLEN variable, so do it here.
+                # NetCDF4 doesn't auto-mask VLEN variables
                 array = np.ma.where(array == "", np.ma.masked, array)
 
         # Parse dask chunks

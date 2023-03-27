@@ -557,7 +557,7 @@ def conform_units(value, units, message=None):
 
     :Returns:
 
-            TODO
+            The  *value* with conformed units.
 
     **Examples**
 
@@ -587,10 +587,7 @@ def conform_units(value, units, message=None):
 
     """
     value_units = getattr(value, "Units", None)
-    if value_units is None:
-        return value
-
-    if value_units == units:
+    if value_units is None or value_units == units:
         return value
 
     if value_units.equivalent(units):

@@ -1,5 +1,7 @@
 import logging
 from collections import namedtuple
+from dataclasses import dataclass
+from dataclasses import field as dataclasses_field
 from operator import itemgetter
 
 import numpy as np
@@ -69,47 +71,69 @@ _signature_properties = set(
 _no_units = Units()
 
 
+@dataclass()
 class _HFLCache:
     """A cache for coordinate and cell measure hashes, first and last
     values and first and last cell bounds."""
 
-    def __init__(self):
-        # Store mappings of equivalent Data hashes. This links Data
-        # objects that are equal but have different hashes, such as
-        # cf.Data(1, 'day since 2002-01-01') and cf.Data(366, 'day
-        # since 2001-01-01').
-        #
-        # E.g. {'5752f': '5752f', 'd34re': '5752f', '865x4': 'xx45y'}
-        self.hash_map = {}
-        # Store non-coordinate-bounds Data objects, separated into
-        # groups of (shape, canonical units) and then keyed by unique
-        # hashes.
-        #
-        # E.g.
-        # {((12,), <CF Units: m>)): {'d34re': <CF Data(12): >
-        #                            '865x4': <CF Data(12): >},
-        #  ((1,),  <CF Units: s>)): {'12g67': <CF Data(1): >}}
-        self.hash_to_data = {}
-        # Store coordinate bounds Data objects, separated into groups
-        # of (shape, canonical units) and then keyed by unique hashes.
-        #
-        # E.g.
-        # {((12, 2), <CF Units: m>): {'kljsd': <CF Data(12, 2): >
-        #                             'o8t3g': <CF Data(12, 2): >},
-        #  ((1, 2),  <CF Units: s>): {'7v7gl': <CF Data(1 ,2): >}}
-        self.hash_to_data_bounds = {}
-        # The first and last values of non-coordinate-bounds Data
-        # objects.
-        #
-        # E.g. {'238f5': (-89.375, 89.375),
-        #       '39c81': (0.0, 358.75)}
-        self.fl = {}
-        # The sorted first and last cell bounds of coordinate bounds
-        # Data objects.
-        #
-        # E.g. {'08d99': ([-90.0, -88.75], [88.75, 90.0]),
-        #       '6c0e0': ([-0.625, 0.625], [358.125, 359.375])}
-        self.flb = {}
+    # Store mappings of equivalent Data hashes. This links Data
+    # objects that are equal but have different hashes, such as
+    # cf.Data(1, 'day since 2002-01-01') and cf.Data(366, 'day since
+    # 2001-01-01').
+    #
+    # E.g. {'5752f': '5752f', 'd34re': '5752f', '865x4': 'xx45y'}
+    hash_map: dict = dataclasses_field(default_factory=dict)
+
+    # Store non-coordinate-bounds Data objects, separated into groups
+    # of (shape, canonical units) and then keyed by unique hashes.
+    #
+    # E.g.
+    # {((12,), <CF Units: m>)): {'d34re': <CF Data(12): >
+    #                            '865x4': <CF Data(12): >},
+    #  ((1,),  <CF Units: s>)): {'12g67': <CF Data(1): >}}
+    hash_to_data: dict = dataclasses_field(default_factory=dict)
+
+    # Store coordinate bounds Data objects, separated into groups of
+    # (shape, canonical units) and then keyed by unique hashes.
+    #
+    # E.g.
+    # {((12, 2), <CF Units: m>): {'kljsd': <CF Data(12, 2): >
+    #                             'o8t3g': <CF Data(12, 2): >},
+    #  ((1, 2),  <CF Units: s>): {'7v7gl': <CF Data(1 ,2): >}}
+    hash_to_data_bounds: dict = dataclasses_field(default_factory=dict)
+
+    # The first and last values of non-coordinate-bounds Data objects.
+    #
+    # E.g. {'238f5': (-89.375, 89.375),
+    #       '39c81': (0.0, 358.75)}
+    fl: dict = dataclasses_field(default_factory=dict)
+
+    # The sorted first and last cell bounds of coordinate bounds Data
+    # objects.
+    #
+    # E.g. {'08d99': ([-90.0, -88.75], [88.75, 90.0]),
+    #       '6c0e0': ([-0.625, 0.625], [358.125, 359.375])}
+    flb: dict = dataclasses_field(default_factory=dict)
+
+
+@dataclass()
+class _Canonical:
+    """Storage canonical versions of metadata construct attributes.
+
+    .. versionaddedd:: 3.15.0
+
+    """
+
+    # Construct axes: For each construct identity, the sorted axis
+    # identities.
+    axes: dict = dataclasses_field(default_factory=dict)
+
+    # Construct units: For each construct identity, the equivalent
+    # canonincal units.
+    units: dict = dataclasses_field(default_factory=dict)
+
+    # Cell methods: Canonical forms of cell methods.
+    cell_methods: list = dataclasses_field(default_factory=list)
 
 
 class _Meta:
@@ -119,18 +143,6 @@ class _Meta:
     aggregate the field.
 
     """
-
-    #
-    _canonical_axes = {}
-
-    #
-    _canonical_direction = {}
-
-    #
-    _canonical_units = {}
-
-    #
-    _canonical_cell_methods = []
 
     #
     _structural_signature = namedtuple(
@@ -175,6 +187,7 @@ class _Meta:
         relaxed_identities=False,
         ncvar_identities=False,
         field_identity=None,
+        canonical=None,
         copy=True,
     ):
         """**initialisation**
@@ -254,7 +267,6 @@ class _Meta:
                 reduce the time taken for aggregation.
 
         """
-        #
         self._bool = False
         self.cell_values = False
 
@@ -294,6 +306,8 @@ class _Meta:
         #
         # For example: {'dim2': 'time'}
         self.axis_to_id = {}
+
+        self.canonical = canonical
 
         # ------------------------------------------------------------
         # Parent field or domain
@@ -427,10 +441,6 @@ class _Meta:
                     dim_coord, dim_identity, relaxed_units=relaxed_units
                 )
 
-                canonical_direction = self.canonical_direction(
-                    dim_identity, dim_coord
-                )
-
                 info_dim.append(
                     {
                         "identity": dim_identity,
@@ -439,7 +449,6 @@ class _Meta:
                         "hasdata": dim_coord.has_data(),
                         "hasbounds": dim_coord.has_bounds(),
                         "coordrefs": self.find_coordrefs(axis),
-                        "direction": canonical_direction,
                     }
                 )
 
@@ -557,7 +566,7 @@ class _Meta:
         for key, nd_aux_coord in f.auxiliary_coordinates(
             filter_by_naxes=(gt(1),), todict=True
         ).items():
-            # Find axes' canonical identities
+            # Find axes' identities
             axes = tuple(
                 [self.axis_to_id[axis] for axis in construct_axes[key]]
             )
@@ -610,11 +619,10 @@ class _Meta:
                 field_anc, identity, relaxed_units=relaxed_units
             )
 
-            # Find axes' canonical identities
+            # Find axes' identities
             axes = tuple(
                 [self.axis_to_id[axis] for axis in construct_axes[key]]
             )
-            #            axes = tuple(sorted(axes))
 
             # Find the canonical axes
             canonical_axes = self.canonical_axes(field_anc, identity, axes)
@@ -669,11 +677,10 @@ class _Meta:
                     anc, identity, relaxed_units=relaxed_units
                 )
 
-                # Find the canonical identities of the axes
+                # Find the identities of the axes
                 axes = tuple(
                     [self.axis_to_id[axis] for axis in construct_axes[key]]
                 )
-                #                axes = tuple(sorted(axes))
 
                 # Find the canonical axes
                 canonical_axes = self.canonical_axes(anc, identity, axes)
@@ -705,11 +712,10 @@ class _Meta:
                 anc, identity, relaxed_units=relaxed_units
             )
 
-            # Find the canonical identities of the axes
+            # Find the identities of the axes
             axes = tuple(
                 [self.axis_to_id[axis] for axis in construct_axes[key]]
             )
-            #          axes = tuple(sorted(axes))
 
             # Find the canonical axes
             canonical_axes = self.canonical_axes(anc, identity, axes)
@@ -747,11 +753,10 @@ class _Meta:
                 relaxed_units=relaxed_units,
             )
 
-            # Find axes' canonical identities
+            # Find axes' identities
             axes = tuple(
                 [self.axis_to_id[axis] for axis in construct_axes[key]]
             )
-            #            axes = tuple(sorted(axes))
 
             if units in info_msr:
                 # Check for ambiguous cell measures, i.e. those which
@@ -907,17 +912,31 @@ class _Meta:
         return new
 
     def canonical_axes(self, variable, identity, axes):
-        """TODO
+        """Return a construct's canonical axes.
+
+        .. versionadded:: 3.15.0
+
+        :Parameters:
+
+            variable: Construct
+                A construct.
+
+            identity: `str`
+                The construct identity.
+
+            axes: `tuple`
+                The identities of the constriuct axes, in the order
+                that applies to the construct.
 
         :Returns:
 
             `tuple`
+                The identities of the construct axes in canonical
+                order.
 
         """
         ndim = getattr(variable, "ndim", None)
-        c = self._canonical_axes.setdefault(
-            (variable.construct_type, ndim), {}
-        )
+        c = self.canonical.axes.setdefault((variable.construct_type, ndim), {})
 
         canonical_axes = c.get(identity)
         if canonical_axes is None:
@@ -926,18 +945,8 @@ class _Meta:
 
         return canonical_axes
 
-    def canonical_direction(self, identity, dim_coord):
-        """TODO"""
-        c = self._canonical_direction
-        direction = c.get(identity)
-        if direction is None:
-            direction = dim_coord.direction()
-            c[identity] = direction
-
-        return direction
-
     def canonical_units(self, variable, identity, relaxed_units=False):
-        """Updates the `_canonical_units` attribute.
+        """Get the canonical units.
 
         :Parameters:
 
@@ -960,22 +969,22 @@ class _Meta:
         else:
             return _no_units
 
-        _canonical_units = self._canonical_units
+        canonical_units = self.canonical.units
 
-        if identity in _canonical_units:
+        if identity in canonical_units:
             if var_units.isvalid:
                 if var_units:
-                    for u in _canonical_units[identity]:
+                    for u in canonical_units[identity]:
                         if var_units.equivalent(u):
                             return u
 
                     # Still here?
-                    _canonical_units[identity].append(var_units)
+                    canonical_units[identity].append(var_units)
                 elif relaxed_units or variable.dtype.kind in ("S", "U"):
                     return _no_units
 
             elif relaxed_units:
-                for u in _canonical_units[identity]:
+                for u in canonical_units[identity]:
                     if u.isvalid:
                         continue
 
@@ -983,10 +992,10 @@ class _Meta:
                         return u
 
                 # Still here?
-                _canonical_units[identity].append(var_units)
+                canonical_units[identity].append(var_units)
         else:
             if var_units or (relaxed_units and not var_units.isvalid):
-                _canonical_units[identity] = [var_units]
+                canonical_units[identity] = [var_units]
             elif relaxed_units or variable.dtype.kind in ("S", "U"):
                 return _no_units
 
@@ -1007,7 +1016,7 @@ class _Meta:
             `CellMethods` or `None`
 
         """
-        _canonical_cell_methods = self._canonical_cell_methods
+        canonical_cell_methods = self.canonical.cell_methods
 
         cell_methods = self.field.constructs.filter_by_type(
             "cell_method", todict=True
@@ -1021,7 +1030,7 @@ class _Meta:
             cm = cm.sorted()
             cms.append(cm)
 
-        for canonical_cms in _canonical_cell_methods:  # TODO
+        for canonical_cms in canonical_cell_methods:  # TODO
             if len(cms) != len(canonical_cms):
                 continue
 
@@ -1037,7 +1046,7 @@ class _Meta:
         # Still here?
         cms = tuple(cms)
 
-        _canonical_cell_methods.append(cms)
+        canonical_cell_methods.append(cms)
 
         return cms
 
@@ -1287,7 +1296,7 @@ class _Meta:
         """
         if not is_log_level_detail(logger):
             return
-        print(self.cell_values)
+
         if signature:
             logger.detail(
                 "STRUCTURAL SIGNATURE:\n" + self.string_structural_signature()
@@ -1835,15 +1844,12 @@ def aggregate(
             version="3.5.0",
         )  # pragma: no cover
 
-    # Initialise the cache for coordinate and cell measure hashes,
+    # Initialise the cache of coordinate and cell measure hashes,
     # first and last values and first and last cell bounds
     hfl_cache = _HFLCache()
 
-    # Reset the canonical attributes
-    _Meta._canonical_axes = {}
-    _Meta._canonical_direction = {}
-    _Meta._canonical_units = {}
-    _Meta._canonical_cell_methods = []
+    # Initialise the cache of canonical metadata attributes
+    canonical = _Canonical()
 
     output_constructs = []
 
@@ -1942,6 +1948,7 @@ def aggregate(
             ncvar_identities=ncvar_identities,
             field_identity=field_identity,
             respect_valid=respect_valid,
+            canonical=canonical,
             copy=copy,
         )
 
@@ -2188,7 +2195,7 @@ def aggregate(
                 # ----------------------------------------------------
                 # Still here? Then pass through the fields
                 # ----------------------------------------------------
-                m0 = m[0]
+                m0 = m[0].copy()
                 if copy:
                     m0 = m0.copy()
 
@@ -2287,6 +2294,8 @@ def _create_hash_and_first_values(
         `None`
 
     """
+    canonical_direction = {}
+
     for m in meta:
         field = m.field
         constructs = field.constructs.todict()
@@ -2343,19 +2352,23 @@ def _create_hash_and_first_values(
             if dim_coord is not None:
                 # ... which has a dimension coordinate
                 m_sort_keys[axis] = axis
-                if not dim_coord.direction():
-                    # Axis is decreasing
-                    sort_indices = slice(None, None, -1)
-                    null_sort = False
+
+                direction = dim_coord.direction()
+                if identity in canonical_direction:
+                    null_sort = direction == canonical_direction[identity]
                 else:
-                    # Axis is increasing
-                    sort_indices = slice(None)
                     null_sort = True
+                    canonical_direction[identity] = direction
+
+                if null_sort:
+                    sort_indices = slice(None)
+                else:
+                    sort_indices = slice(None, None, -1)
             else:
                 # ... or which doesn't have a dimension coordinate but
                 # does have one or more 1-d auxiliary coordinates
                 aux = m_axis_identity["keys"][0]
-                sort_indices = np.argsort(constructs[aux].array)
+                sort_indices = np.argsort(constructs[aux].data.compute())
                 m_sort_keys[axis] = aux
                 null_sort = False
 
@@ -2628,11 +2641,28 @@ def _create_hash_and_first_values(
 
 
 def _sort_indices_null_sort(m, canonical_axes):
-    """TODO"""
+    """The sort indices for axes, and whether or not to use them.
+
+    .. versionadded:: 3.15.0
+
+    :Parameters:
+
+        m: `_Meta`
+            The meta object ofr a `Field` or `Domain`
+
+        canonical_axes: `tuple` of `str`
+            The canonical axis identities.
+
+    :Returns:
+
+        (`tuple`, `bool`)
+            The sort indices for the axes, and whether or not to use
+            them.
+
+    """
     canonical_axes = [m.id_to_axis[identity] for identity in canonical_axes]
     sort_indices = tuple([m.sort_indices[axis] for axis in canonical_axes])
     null_sort = sort_indices == (slice(None),) * len(sort_indices)
-
     return sort_indices, null_sort
 
 
@@ -2649,6 +2679,9 @@ def _get_hfl(
 ):
     """Return the hash value, and optionally first and last values or
     bounds.
+
+    The overall aim of this method is to minimise number of call to
+    `Data.equals`.
 
     :Parameters:
 
@@ -2672,14 +2705,13 @@ def _get_hfl(
     d.Units = canonical_units
 
     if not null_sort and d.size > 1:
-        print("this is bad")
         d = d[sort_indices]
 
     hash_map = hfl_cache.hash_map
     try:
         hash_value = d.get_deterministic_name()
     except ValueError:
-        hash_value = tokenize(d.array)
+        hash_value = tokenize(d.compute())
 
     if hash_value in hash_map:
         hash_value = hash_map[hash_value]
@@ -3024,7 +3056,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
             number_of_1d_aux_coord_values = 0
             for m in meta:
                 aux = m.axis[axis]["keys"][i]
-                array = m.field.constructs[aux].array
+                array = m.field.constructs[aux].data.compute()
                 set_of_1d_aux_coord_values.update(array)
                 number_of_1d_aux_coord_values += array.size
                 if (

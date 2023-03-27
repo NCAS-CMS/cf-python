@@ -2602,7 +2602,7 @@ def pathjoin(path1, path2):
 def hash_array(array, algorithm=None):
     """Return a hash value of a numpy array.
 
-    Deprecated at version 3.14.2 and is no longer available. Use
+    Deprecated at version 3.15.0 and is no longer available. Use
     `dask.base.tokenize` instead.
 
     The hash value is dependent on the data type and the shape of the
@@ -2653,7 +2653,7 @@ def hash_array(array, algorithm=None):
     _DEPRECATION_ERROR_FUNCTION(
         "hash_array",
         "Use 'dask.base.tokenize' instead.",
-        version="3.14.2",
+        version="3.15.0",
         removed_at="5.0.0",
     )  # pragma: no cover
 
