@@ -10,13 +10,14 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
+from cfdm import is_log_level_info
 from dask import compute, delayed  # noqa: F401
 from dask.array import Array
 from dask.array.core import normalize_chunks
-from dask.base import is_dask_collection, tokenize
+from dask.base import collections_to_dsk, is_dask_collection, tokenize
 from dask.highlevelgraph import HighLevelGraph
 from dask.optimization import cull
-
+        
 from ..cfdatetime import dt as cf_dt
 from ..constants import masked as cf_masked
 from ..decorators import (
@@ -6113,8 +6114,6 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         {'file_A.nc'}
 
         """
-        from dask.base import collections_to_dsk
-
         out = set()
         dsk = collections_to_dsk((self.to_dask_array(),), optimize_graph=True)
         for a in dsk.values():
@@ -7683,10 +7682,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         self_Units = self.Units
         other_Units = other.Units
         if self_Units != other_Units:
-            logger.info(
-                f"{self.__class__.__name__}: Different Units "
-                f"({self_Units!r}, {other_Units!r})"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different Units "
+                    f"({self_Units!r}, {other_Units!r})"
+                )
+
             return False
 
         rtol = float(rtol)
@@ -7719,10 +7720,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                     b.append(value1)
 
                 if a and not _numpy_allclose(a, b, rtol=rtol, atol=atol):
-                    logger.info(
-                        f"{self.__class__.__name__}: Different array "
-                        f"values (atol={atol}, rtol={rtol})"
-                    )
+                    if is_log_level_info(logger):
+                        logger.info(
+                            f"{self.__class__.__name__}: Different array "
+                            f"values (atol={atol}, rtol={rtol})"
+                        )
+
                     return False
 
         # Now check that corresponding elements are equal within a tolerance.
@@ -7754,10 +7757,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
                 data_comparison = True
 
         else:  # one is numeric and other isn't => not equal (incompat. dtype)
-            logger.info(
-                f"{self.__class__.__name__}: Different data types:"
-                f"{self_dx.dtype} != {other_dx.dtype}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different data types:"
+                    f"{self_dx.dtype} != {other_dx.dtype}"
+                )
+
             return False
 
         mask_comparison = da.all(
@@ -7769,10 +7774,12 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         result = da.logical_and(data_comparison, mask_comparison)
 
         if not result.compute():
-            logger.info(
-                f"{self.__class__.__name__}: Different array values ("
-                f"atol={atol}, rtol={rtol})"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different array values ("
+                    f"atol={atol}, rtol={rtol})"
+                )
+
             return False
         else:
             return True
@@ -11280,6 +11287,18 @@ class Data(DataClassDeprecationsMixin, Container, cfdm.Data):
         dx = da.ones(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
+    @_inplace_enabled(default=True)
+    def optimize_graph(self, inplace=True):
+        """TODO"""
+        
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d.to_dask_array()
+        dsk = collections_to_dsk((dx,), optimize_graph=True)
+        dx2 = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
+        d._set_dask(dx2, clear=_NONE)
+        return d
+    
     @classmethod
     def zeros(
         cls,

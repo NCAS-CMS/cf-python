@@ -2,6 +2,7 @@ import logging
 from copy import deepcopy
 
 import numpy as np
+from cfdm import is_log_level_info
 
 from .decorators import (
     _deprecated_kwarg_check,
@@ -348,14 +349,16 @@ class Flags:
         """
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            logger.info(
-                "%s: Different type: %s, %s"
-                % (
-                    self.__class__.__name__,
-                    self.__class__.__name__,
-                    other.__class__.__name__,
-                )
-            )  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    "%s: Different type: %s, %s"
+                    % (
+                        self.__class__.__name__,
+                        self.__class__.__name__,
+                        other.__class__.__name__,
+                    )
+                )  # pragma: no cover
+
             return False
 
         self.sort()
@@ -371,10 +374,12 @@ class Flags:
         for attr in ("_flag_meanings", "_flag_values", "_flag_masks"):
             if hasattr(self, attr):
                 if not hasattr(other, attr):
-                    logger.info(
-                        "%s: Different attributes: %s"
-                        % (self.__class__.__name__, attr[1:])
-                    )  # pragma: no cover
+                    if is_log_level_info(logger):
+                        logger.info(
+                            "%s: Different attributes: %s"
+                            % (self.__class__.__name__, attr[1:])
+                        )  # pragma: no cover
+
                     return False
 
                 x = getattr(self, attr)
@@ -388,17 +393,21 @@ class Flags:
                     ignore_fill_value=ignore_fill_value,
                     verbose=verbose,
                 ):
-                    print(
-                        "%s: Different '%s': %r, %r"
-                        % (self.__class__.__name__, attr[1:], x, y)
-                    )  # pragma: no cover
+                    if is_log_level_info(logger):
+                        print(
+                            "%s: Different '%s': %r, %r"
+                            % (self.__class__.__name__, attr[1:], x, y)
+                        )  # pragma: no cover
+
                     return False
 
             elif hasattr(other, attr):
-                print(
-                    "%s: Different attributes: %s"
-                    % (self.__class__.__name__, attr[1:])
-                )  # pragma: no cover
+                if is_log_level_info(logger):
+                    print(
+                        "%s: Different attributes: %s"
+                        % (self.__class__.__name__, attr[1:])
+                    )  # pragma: no cover
+
                 return False
 
         return True

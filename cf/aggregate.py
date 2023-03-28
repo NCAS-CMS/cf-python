@@ -24,6 +24,9 @@ from .functions import rtol as cf_rtol
 from .query import gt
 from .units import Units
 
+import dask.array as da
+from dask.base import collections_to_dsk
+
 logger = logging.getLogger(__name__)
 
 
@@ -188,6 +191,7 @@ class _Meta:
         ncvar_identities=False,
         field_identity=None,
         canonical=None,
+        info=False,
         copy=True,
     ):
         """**initialisation**
@@ -280,6 +284,7 @@ class _Meta:
         self.all_domain_anc_identities = set()
 
         self.message = ""
+        self.info = info
 
         strict_identities = not (
             relaxed_identities
@@ -337,7 +342,7 @@ class _Meta:
 
         if self.identity is None:
             if not allow_no_identity and self.has_data:
-                if is_log_level_info(logger):
+                if info:
                     self.message = (
                         "no identity; consider setting relaxed_identities=True"
                     )
@@ -504,7 +509,7 @@ class _Meta:
             if info_1d_coord:
                 identity = info_1d_coord[0]["identity"]
             elif not self.relaxed_identities:
-                if is_log_level_info(logger):
+                if info:
                     self.message = (
                         "axis has no one-dimensional nor scalar coordinates"
                     )
@@ -517,7 +522,7 @@ class _Meta:
                 # its netCDF dimension name.
                 identity = domain_axis.nc_get_dimension(None)
                 if identity is None:
-                    if is_log_level_info(logger):
+                    if info:
                         self.message = (
                             "axis "
                             f"{f.constructs.domain_axis_identity(axis)!r} "
@@ -763,7 +768,7 @@ class _Meta:
                 # have the same units and span the same axes.
                 for value in info_msr[units]:
                     if axes == value["axes"]:
-                        if is_log_level_info(logger):
+                        if info:
                             self.message = f"duplicate {msr!r}"
 
                         return
@@ -1063,13 +1068,13 @@ class _Meta:
 
         """
         if not msr.Units:
-            if is_log_level_info(logger):
+            if self.info:
                 self.message = f"{msr.identity()!r} cell measure has no units"
 
             return False
 
         if not msr.has_data():
-            if is_log_level_info(logger):
+            if self.info:
                 self.message = f"{msr.identity()!r} cell measure has no data"
 
             return False
@@ -1089,7 +1094,7 @@ class _Meta:
 
         """
         if not msr.get_measure(False):
-            if is_log_level_info(logger):
+            if self.info:
                 self.message = (
                     f"{msr.identity()!r} cell measure has no measure"
                 )
@@ -1140,7 +1145,7 @@ class _Meta:
                 return identity
 
         # Still here?
-        if is_log_level_info(logger):
+        if self.info:
             self.message = f"{coord!r} has no identity or no data"
 
     def field_ancillary_has_identity_and_data(self, anc):
@@ -1169,7 +1174,7 @@ class _Meta:
             all_field_anc_identities = self.all_field_anc_identities
 
             if identity in all_field_anc_identities:
-                if is_log_level_info(logger):
+                if self.info:
                     self.message = f"multiple {identity!r} field ancillaries"
 
                 return
@@ -1179,7 +1184,7 @@ class _Meta:
                 return identity
 
         # Still here?
-        if is_log_level_info(logger):
+        if self.info:
             self.message = (
                 f"{anc.identity()!r} field ancillary has no identity or "
                 "no data"
@@ -1252,7 +1257,7 @@ class _Meta:
             )
 
         if anc_identity is None:
-            if is_log_level_info(logger):
+            if self.info:
                 self.message = (
                     f"{anc.identity()!r} domain ancillary has no identity"
                 )
@@ -1262,14 +1267,14 @@ class _Meta:
         all_domain_anc_identities = self.all_domain_anc_identities
 
         if anc_identity in all_domain_anc_identities:
-            if is_log_level_info(logger):
+            if self.info:
                 self.message = (
                     f"multiple {anc.identity()!r} domain ancillaries"
                 )
             return
 
         if not anc.has_data():
-            if is_log_level_info(logger):
+            if self.info:
                 self.message = (
                     f"{anc.identity()!r} domain ancillary has no data"
                 )
@@ -1307,7 +1312,8 @@ class _Meta:
                 "CANONICAL COORDINATES:\n" + self.coordinate_values()
             )
 
-        logger.debug(f"COMPLETE AGGREGATION METADATA:\n{self}")
+        if is_log_level_debug(logger):
+            logger.debug(f"COMPLETE AGGREGATION METADATA:\n{self}")
 
     def string_structural_signature(self):
         """Return a multi-line string giving a field's structual
@@ -1844,6 +1850,10 @@ def aggregate(
             version="3.5.0",
         )  # pragma: no cover
 
+    info = is_log_level_info(logger)
+    detail = is_log_level_detail(logger)
+    debug = is_log_level_debug(logger)
+
     # Initialise the cache of coordinate and cell measure hashes,
     # first and last values and first and last cell bounds
     hfl_cache = _HFLCache()
@@ -1949,6 +1959,7 @@ def aggregate(
             field_identity=field_identity,
             respect_valid=respect_valid,
             canonical=canonical,
+            info=info,
             copy=copy,
         )
 
@@ -1956,12 +1967,13 @@ def aggregate(
             unaggregatable = True
             status = 1
 
-            if is_log_level_info(logger):
+            if info:
                 # Note: deliberately no gap between 'has' and '{exclude}'
-                logger.info(
-                    f"Unaggregatable {f!r} has{exclude} been output: "
-                    f"{meta.message}"
-                )
+                if info:
+                    logger.info(
+                        f"Unaggregatable {f!r} has{exclude} been output: "
+                        f"{meta.message}"
+                    )
 
             if not exclude:
                 # This field does not have a structural signature, so
@@ -2027,7 +2039,8 @@ def aggregate(
             # if not, decorator would have errored before cf.aggregate ran.
             _reset_log_emergence_level(verbose)
 
-        logger.detail("")
+        if detail:
+            logger.detail("")
 
         if len(meta) == 1:
             # --------------------------------------------------------
@@ -2043,7 +2056,7 @@ def aggregate(
             continue
 
         if not relaxed_units and not meta[0].units.isvalid:
-            if is_log_level_info(logger):
+            if info:
                 x = ", ".join(set(repr(m.units) for m in meta))
                 logger.info(
                     f"Unaggregatable {meta[0].field.identity()!r} fields "
@@ -2118,7 +2131,8 @@ def aggregate(
         if verbose is not None:
             _reset_log_emergence_level(verbose)
 
-        logger.detail("")
+        if detail:
+            logger.detail("")
 
         # Take a shallow copy in case we abandon and want to output
         # the original, unaggregated fields.
@@ -2141,10 +2155,10 @@ def aggregate(
             # identity of the aggregating axis, is set in
             # _group_fields().
             # --------------------------------------------------------
-            grouped_meta = _group_fields(meta, axis)
+            grouped_meta = _group_fields(meta, axis, info=info)
 
             if not grouped_meta:
-                if is_log_level_info(logger):
+                if info:
                     logger.info(
                         f"Unaggregatable {meta[0].field.identity()!r} fields "
                         f"have{exclude} been output: {meta[0].message}"
@@ -2154,11 +2168,12 @@ def aggregate(
                 break
 
             if len(grouped_meta) == number_of_fields:
-                if is_log_level_debug(logger):
+                if debug:
                     logger.debug(
                         f"{meta[0].field.identity()!r} fields can't be "
                         f"aggregated along their {axis!r} axis"
                     )
+
                 continue
 
             # --------------------------------------------------------
@@ -2181,9 +2196,9 @@ def aggregate(
                 # group if any do.
                 # ----------------------------------------------------
                 if not _ok_coordinate_arrays(
-                    m, axis, overlap, contiguous, verbose
+                    m, axis, overlap, contiguous, info, verbose
                 ):
-                    if is_log_level_info(logger):
+                    if info:
                         logger.info(
                             f"Unaggregatable {m[0].field.identity()!r} fields "
                             f"have{exclude} been output: {m[0].message}"
@@ -2216,7 +2231,7 @@ def aggregate(
                         # abandon all aggregations on the fields with
                         # this structural signature, including those
                         # already done.
-                        if is_log_level_info(logger):
+                        if info:
                             logger.info(
                                 f"Unaggregatable {m1.field.identity()!r} "
                                 f"fields have{exclude} been output: "
@@ -2225,12 +2240,17 @@ def aggregate(
 
                         unaggregatable = True
                         break
-
+   NOT TO SELF: concetnation of *multiple* fields at a time (rather than just 2) is better. i.e. da.conatnenate([a, b, c, d, e], axis=0) is much butter than t = da.concatenate([a, b], axis=0;  t = da.concatenate([t, c], axis=0; etc,
+ 
+#                todict(m0)
+                    
                 m[:] = [m0]
 
             if unaggregatable:
                 break
 
+            
+            
             # --------------------------------------------------------
             # Still here? Then the aggregation along this axis was
             # completely successful for each sub-group, so reassemble
@@ -2252,9 +2272,6 @@ def aggregate(
 
     aggregate.status = status
 
-    if status:
-        logger.info("")
-
     Type = "field"
     if output_constructs:
         Type = output_constructs[0].construct_type
@@ -2270,6 +2287,17 @@ def aggregate(
     return output_constructs
 
 
+def todict(m):
+    f = m.field
+    f.data.optmize_graph()
+    dx = f.to_dask_array()
+    dsk = collections_to_dsk((dx,), optimize_graph=True)
+    dx2 = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
+    f.data._set_dask(dx2)
+
+    for c in f.constructs.filter_by_data(todict=True).values():        
+        c.data.optmize_graph()
+               
 # --------------------------------------------------------------------
 # Initialise the status
 # --------------------------------------------------------------------
@@ -2695,7 +2723,7 @@ def _get_hfl(
             or bounds if either is requested.
 
     """
-    d = v.get_data(None)
+    d = v.get_data(None, _units=False, _fill_value=False)
     if d is None:
         if first_and_last_values or first_and_last_bounds:
             return None, None, None
@@ -2735,7 +2763,12 @@ def _get_hfl(
                     continue
 
                 if d.equals(
-                    d0, rtol=rtol, atol=atol, ignore_data_type=True, verbose=1
+                    d0,
+                    rtol=rtol,
+                    atol=atol,
+                    ignore_data_type=True,
+                    ignore_fill_value=True,
+                    verbose=1,
                 ):
                     # ... but the data that it represents has been seen.
                     hash_map[hash_value] = hash_value0
@@ -2778,7 +2811,7 @@ def _get_hfl(
         return hash_value
 
 
-def _group_fields(meta, axis):
+def _group_fields(meta, axis, info=False):
     """Return a FieldList of the potentially aggregatable fields.
 
     :Parameters:
@@ -2894,7 +2927,7 @@ def _group_fields(meta, axis):
             # Zero axes have different 1-d coordinate values, so don't
             # aggregate anything in this entire group.
             # --------------------------------------------------------
-            if is_log_level_info(logger):
+            if info:
                 meta[
                     0
                 ].message = (
@@ -2937,7 +2970,9 @@ def _sorted_by_first_values(meta, axis):
 
 
 @_manage_log_level_via_verbosity
-def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
+def _ok_coordinate_arrays(
+    meta, axis, overlap, contiguous, info=False, verbose=None
+):
     """Return True if the aggregating 1-d coordinates of the aggregating
     axis are all aggregatable.
 
@@ -2989,7 +3024,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                 >= m1.first_values[axis][dim_coord_index1]
             ):
                 # Found overlap
-                if is_log_level_info(logger):
+                if info:
                     meta[0].message = (
                         f"{m.axis[axis]['ids'][dim_coord_index]!r} "
                         "dimension coordinate ranges overlap: "
@@ -3014,7 +3049,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                         # because overlapping has been disallowed and
                         # the first cell from field1 overlaps with the
                         # last cell from field0.
-                        if is_log_level_info(logger):
+                        if info:
                             meta[0].message = (
                                 f"overlap={bool(overlap)} and "
                                 f"{m.axis[axis]['ids'][dim_coord_index]!r} "
@@ -3033,7 +3068,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                         # specified and the first cell from parent1 is
                         # not contiguous with the last cell from
                         # parent0.
-                        if is_log_level_info(logger):
+                        if info:
                             meta[0].message = (
                                 f"contiguous={bool(contiguous)} and "
                                 f"{m.axis[axis]['ids'][dim_coord_index]} "
@@ -3063,7 +3098,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, verbose=None):
                     len(set_of_1d_aux_coord_values)
                     != number_of_1d_aux_coord_values
                 ):
-                    if is_log_level_info(logger):
+                    if info:
                         meta[0].message = (
                             f"no {identity!r} dimension coordinates and "
                             f"{identity!r} auxiliary coordinates have "
@@ -3275,45 +3310,60 @@ def _aggregate_2_fields(
         if direction0:
             # The fields are increasing along the aggregating axis
             data = Data.concatenate(
-                (construct0.get_data(), construct1.get_data()),
-                axis,
-                relaxed_units=relaxed_units,
-                copy=copy,
-            )
-            construct0.set_data(data, copy=False)
-            if construct0.has_bounds():
-                data = Data.concatenate(
-                    (
-                        construct0.bounds.get_data(_fill_value=False),
-                        construct1.bounds.get_data(_fill_value=False),
-                    ),
-                    axis,
-                    relaxed_units=relaxed_units,
-                    copy=copy,
-                )
-                construct0.bounds.set_data(data, copy=False)
-        else:
-            # The fields are decreasing along the aggregating axis
-            data = Data.concatenate(
                 (
-                    construct1.get_data(_fill_value=False),
-                    construct0.get_data(_fill_value=False),
+                    construct0.get_data(_units=False, _fill_value=False),
+                    construct1.get_data(_units=False, _fill_value=False),
                 ),
                 axis,
                 relaxed_units=relaxed_units,
                 copy=copy,
             )
-            construct0.set_data(data)
+#            data = Data.zeros(data.shape, dtype=data.dtype) # ppp
+            construct0.set_data(data, copy=False)
             if construct0.has_bounds():
                 data = Data.concatenate(
                     (
-                        construct1.bounds.get_data(_fill_value=False),
-                        construct0.bounds.get_data(_fill_value=False),
+                        construct0.bounds.get_data(
+                            _units=False, _fill_value=False
+                        ),
+                        construct1.bounds.get_data(
+                            _units=False, _fill_value=False
+                        ),
                     ),
                     axis,
                     relaxed_units=relaxed_units,
                     copy=copy,
                 )
+#                data = Data.zeros(data.shape, dtype=data.dtype) # ppp
+                construct0.bounds.set_data(data, copy=False)
+        else:
+            # The fields are decreasing along the aggregating axis
+            data = Data.concatenate(
+                (
+                    construct1.get_data(_units=False, _fill_value=False),
+                    construct0.get_data(_units=False, _fill_value=False),
+                ),
+                axis,
+                relaxed_units=relaxed_units,
+                copy=copy,
+            )
+#            data = Data.zeros(data.shape, dtype=data.dtype) # ppp
+            construct0.set_data(data)
+            if construct0.has_bounds():
+                data = Data.concatenate(
+                    (
+                        construct1.bounds.get_data(
+                            _units=False, _fill_value=False
+                        ),
+                        construct0.bounds.get_data(
+                            _units=False, _fill_value=False
+                        ),
+                    ),
+                    axis,
+                    relaxed_units=relaxed_units,
+                    copy=copy,
+                )
+#                data = Data.zeros(data.shape, dtype=data.dtype) # ppp
                 construct0.bounds.set_data(data)
 
     # ----------------------------------------------------------------
@@ -3363,7 +3413,10 @@ def _aggregate_2_fields(
         if direction0:
             # The fields are increasing along the aggregating axis
             data = Data.concatenate(
-                (parent0.get_data(), parent1.get_data()),
+                (
+                    parent0.get_data(_units=False, _fill_value=False),
+                    parent1.get_data(_units=False, _fill_value=False),
+                ),
                 axis,
                 relaxed_units=relaxed_units,
                 copy=copy,
@@ -3371,7 +3424,10 @@ def _aggregate_2_fields(
         else:
             # The fields are decreasing along the aggregating axis
             data = Data.concatenate(
-                (parent1.get_data(), parent0.get_data()),
+                (
+                    parent1.get_data(_units=False, _fill_value=False),
+                    parent0.get_data(_units=False, _fill_value=False),
+                ),
                 axis,
                 relaxed_units=relaxed_units,
                 copy=copy,
@@ -3382,6 +3438,7 @@ def _aggregate_2_fields(
         domain_axis += constructs1[adim1].get_size()
 
         # Insert the concatentated data into the field
+#        data = Data.zeros(data.shape, dtype=data.dtype) # ppp
         parent0.set_data(data, set_axes=False, copy=False)
     else:
         domain_axis = constructs0[adim0]

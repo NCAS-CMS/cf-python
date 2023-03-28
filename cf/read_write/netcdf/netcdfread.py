@@ -209,8 +209,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
             if self.implementation.get_construct_type(construct) != "field":
                 # Only cache values from non-field data, on the
-                # assumption that field data is general so large that
-                # finding the cached values takes too long.
+                # assumption that field data is, in general, so large
+                # that finding the cached values takes too long. See
+                # method `_cache_data_elements` for details.
                 self._cache_data_elements(data, ncvar)
 
             return data
@@ -418,13 +419,24 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def _cache_data_elements(self, data, ncvar):
         """Cache selected element values.
 
-        Updates *data* in-place to store its first, second and last
-        element values inside its ``custom`` dictionary.
+        Updates *data* in-place to store its first, second,
+        penultimate, and last element values (as appropriate).
 
-        Doing this here is cheap because only the individual elements
-        are read from the already-open file, as opposed to being
-        retrieved from *data* (which would require a whole dask chunk
-        to be read to get each single value).
+        These values are used by `cf.aggregate` and for inspection.
+
+        Doing this here is quite cheap because only the individual
+        elements are read from the already-open file, as opposed to
+        being retrieved from *data* (which would require a whole dask
+        chunk to be read to get each single value).
+
+        However, empirical evidence shows that using netCDF4 to access
+        the first and last elements of a large array on disk
+        (e.g. shape (1, 75, 1207, 1442)) is slow (e.g. ~2 seconds) and
+        doesn't scale well with array size (i.e. it takes
+        disproportionally longer for larger arrays). Such arrays are
+        usually in field constructs, for which `cf.aggregate` does not
+        need to know any array values, so it should be be consdidered
+        to not call this method for field constructs.
 
         .. versionadded:: 3.14.0
 

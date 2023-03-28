@@ -8,7 +8,7 @@ import cfdm
 import cftime
 import dask.array as da
 import numpy as np
-from cfdm import Constructs
+from cfdm import Constructs, is_log_level_info
 from dask.array.core import getter, normalize_chunks
 from dask.base import tokenize
 from netCDF4 import date2num as netCDF4_date2num
@@ -491,6 +491,7 @@ class UMField:
         verbose=None,
         implementation=None,
         select=None,
+        info=False,
         **kwargs,
     ):
         """**Initialisation**
@@ -546,6 +547,8 @@ class UMField:
 
         """
         self._bool = False
+
+        self.info = info
 
         self.implementation = implementation
 
@@ -1074,7 +1077,8 @@ class UMField:
 
             # Check for decreasing axes that aren't decreasing
             down_axes = self.down_axes
-            logger.info(f"down_axes = {down_axes}")  # pragma: no cover
+            if self.info:
+                logger.info(f"down_axes = {down_axes}")  # pragma: no cover
 
             if down_axes:
                 field.flip(down_axes, inplace=True)
@@ -1850,7 +1854,8 @@ class UMField:
             `Data`
 
         """
-        logger.info("Creating data:")  # pragma: no cover
+        if self.info:
+            logger.info("Creating data:")  # pragma: no cover
 
         LBROW = self.lbrow
         LBNPT = self.lbnpt
@@ -3164,9 +3169,11 @@ class UMField:
             `DimensionCoordinate`
 
         """
-        logger.info(
-            "Creating Z coordinates and bounds from BLEV, BRLEV and " "BRSVD1:"
-        )  # pragma: no cover
+        if self.info:
+            logger.info(
+                "Creating Z coordinates and bounds from BLEV, BRLEV and "
+                "BRSVD1:"
+            )  # pragma: no cover
 
         z_recs = self.z_recs
         array = tuple([rec.real_hdr.item(blev) for rec in z_recs])
@@ -3525,6 +3532,8 @@ class UMRead(cfdm.read_write.IORead):
         # Clear caches
         #        _cached_data.clear()
 
+        info = is_log_level_info(logger)
+
         um = [
             UMField(
                 var,
@@ -3538,6 +3547,7 @@ class UMRead(cfdm.read_write.IORead):
                 verbose=verbose,
                 implementation=self.implementation,
                 select=select,
+                info=info,
             )
             for var in f.vars
         ]

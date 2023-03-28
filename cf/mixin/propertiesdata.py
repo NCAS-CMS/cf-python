@@ -2,6 +2,7 @@ import logging
 from itertools import chain
 
 import numpy as np
+from cfdm import is_log_level_info
 
 from ..cfdatetime import dt
 from ..data import Data
@@ -731,10 +732,12 @@ class PropertiesData(Properties):
 
         """
         if self.has_data() != other.has_data():
-            logger.info(
-                f"{self.__class__.__name__}: Only one construct "
-                f"has data: {self!r}, {other!r}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Only one construct "
+                    f"has data: {self!r}, {other!r}"
+                )
+
             return False
 
         if not self.has_data():
@@ -744,24 +747,30 @@ class PropertiesData(Properties):
         data1 = other.get_data(_fill_value=False)
 
         if data0.shape != data1.shape:
-            logger.info(
-                f"{self.__class__.__name__}: Data have different shapes: "
-                f"{data0.shape}, {data1.shape}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Data have different shapes: "
+                    f"{data0.shape}, {data1.shape}"
+                )
+
             return False
 
         if not data0.Units.equivalent(data1.Units):
-            logger.info(
-                f"{self.__class__.__name__}: Data have non-equivalent units: "
-                f"{data0.Units!r}, {data1.Units!r}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Data have non-equivalent "
+                    f"units: {data0.Units!r}, {data1.Units!r}"
+                )
+
             return False
 
         if not data0.allclose(data1, rtol=rtol, atol=atol):
-            logger.info(
-                f"{self.__class__.__name__}: Data have non-equivalent values: "
-                f"{data0!r}, {data1!r}"
-            )
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Data have non-equivalent "
+                    f"values: {data0!r}, {data1!r}"
+                )
+
             return False
 
         return True
@@ -3004,10 +3013,12 @@ class PropertiesData(Properties):
         # Check that each instance has the same Units
         try:
             if not self.Units.equals(other.Units):
-                logger.info(
-                    f"{self.__class__.__name__}: Different Units: "
-                    f"{self.Units!r} != {other.Units!r}"
-                )
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different Units: "
+                        f"{self.Units!r} != {other.Units!r}"
+                    )
+
                 return False
         except AttributeError:
             pass
@@ -5007,6 +5018,19 @@ class PropertiesData(Properties):
 
         return v
 
+    @_inplace_enabled(default=True)
+    def optimize_graph(self):
+        """TODO"""
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
+            "optimize_graph",
+            inplace=True
+        )
+
+#        data = v.get_data(None, units=None, _fill_value=None))
+#        if data is not None:
+#            data.optimize_graph()
+            
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):

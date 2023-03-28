@@ -3,7 +3,7 @@ import re
 from ast import literal_eval as ast_literal_eval
 
 import cfdm
-import numpy as np
+from cfdm import is_log_level_info
 
 from .data import Data
 from .data.utils import conform_units
@@ -560,20 +560,24 @@ class CellMethod(cfdm.CellMethod):
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            logger.info(
-                f"{self.__class__.__name__}: Different types: "
-                f"{self.__class__.__name__} != {other.__class__.__name__}"
-            )  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Different types: "
+                    f"{self.__class__.__name__} != {other.__class__.__name__}"
+                )  # pragma: no cover
+
             return False
 
         axes0 = self.get_axes(())
         axes1 = other.get_axes(())
 
         if len(axes0) != len(axes1) or set(axes0) != set(axes1):
-            logger.info(
-                f"{self.__class__.__name__}: Non-equivalent axes: "
-                f"{axes0!r}, {axes1!r}"
-            )  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Non-equivalent axes: "
+                    f"{axes0!r}, {axes1!r}"
+                )  # pragma: no cover
+
             return False
 
         argsort = [axes1.index(axis0) for axis0 in axes0]
@@ -582,10 +586,12 @@ class CellMethod(cfdm.CellMethod):
         if not self.equals(
             other1, rtol=rtol, atol=atol, ignore_qualifiers=("interval",)
         ):
-            logger.info(
-                f"{self.__class__.__name__}: Non-equivalent: "
-                f"{self!r}, {other!r}"
-            )  # pragma: no cover
+            if is_log_level_info(logger):
+                logger.info(
+                    f"{self.__class__.__name__}: Non-equivalent: "
+                    f"{self!r}, {other!r}"
+                )  # pragma: no cover
+
             return False
 
         self1 = self
@@ -597,12 +603,14 @@ class CellMethod(cfdm.CellMethod):
             if len(self1.get_qualifier("interval", ())) != len(
                 other1.get_qualifier("interval", ())
             ):
-                logger.info(
-                    f"{self.__class__.__name__}: Different numbers of "
-                    "intervals: "
-                    f"{self1.get_qualifier('interval', ())!r} != "
-                    f"{other1.get_qualifier('interval', ())!r}"
-                )  # pragma: no cover
+                if is_log_level_info(logger):
+                    logger.info(
+                        f"{self.__class__.__name__}: Different numbers of "
+                        "intervals: "
+                        f"{self1.get_qualifier('interval', ())!r} != "
+                        f"{other1.get_qualifier('interval', ())!r}"
+                    )  # pragma: no cover
+
                 return False
 
         intervals0 = self1.get_qualifier("interval", ())
@@ -611,16 +619,19 @@ class CellMethod(cfdm.CellMethod):
                 intervals0, other1.get_qualifier("interval", ())
             ):
                 data1 = conform_units(data1, data0.Units)
-                if not np.allclose(
-                    data0.first_element(),
-                    data1.first_element(),
-                    rtol=data0._rtol,
-                    atol=data0._atol,
+                if not data0.equals(
+                    data1,
+                    rtol=rtol,
+                    atol=atol,
+                    ignore_data_type=True,
+                    ignore_fill_value=True,
                 ):
-                    logger.info(
-                        f"{self.__class__.__name__}: Different interval "
-                        f"data: {self.intervals!r} != {other.intervals!r}"
-                    )  # pragma: no cover
+                    if is_log_level_info(logger):
+                        logger.info(
+                            f"{self.__class__.__name__}: Different interval "
+                            f"data: {self.intervals!r} != {other.intervals!r}"
+                        )  # pragma: no cover
+
                     return False
 
         # Still here? Then they are equivalent
