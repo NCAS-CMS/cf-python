@@ -2985,9 +2985,9 @@ def environment(display=True, paths=True):
     scipy: 1.8.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/scipy/__init__.py
     matplotlib: 3.4.3 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/matplotlib/__init__.py
     cftime: 1.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cftime/__init__.py
-    cfunits: 3.3.5 /home/username/cfunits/cfunits/__init__.py
+    cfunits: 3.3.6 /home/username/cfunits/cfunits/__init__.py
     cfplot: 3.1.18 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfplot/__init__.py
-    cfdm: 1.10.0.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
+    cfdm: 1.10.1.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/__init__.py
     cf: 3.14.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/cf/__init__.py
 
     >>> cf.environment(paths=False)
@@ -3005,9 +3005,9 @@ def environment(display=True, paths=True):
     scipy: 1.8.0
     matplotlib: 3.4.3
     cftime: 1.6.0
-    cfunits: 3.3.5
+    cfunits: 3.3.6
     cfplot: 3.1.18
-    cfdm: 1.10.0.1
+    cfdm: 1.10.1.0
     cf: 3.14.0
 
     """

@@ -204,7 +204,7 @@ Required
 * `cfdm <https://pypi.org/project/cfdm/>`_, version 1.10.1.0 or up to,
   but not including, 1.10.2.0.
 
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.5 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.3.6 or newer.
 
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 

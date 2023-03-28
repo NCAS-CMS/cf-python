@@ -8,7 +8,8 @@ version 3.15.0
 * Removed benign UserWarning from `cf.Field.percentile`
   (https://github.com/NCAS-CMS/cf-python/issues/619)
 * Changed dependency: ``1.10.1.0<=cfdm<1.10.2.0``
-  
+* Changed dependency: ``cfunits>=3.3.6``
+
 ----
   
 version 3.14.1
