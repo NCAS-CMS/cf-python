@@ -33,7 +33,7 @@ version 3.14.1
   (https://github.com/NCAS-CMS/cf-python/issues/599)
 * Changed dependency: ``1.10.0.3<=cfdm<1.10.1.0``
 * Changed dependency: ``cfunits>=3.3.5``
-* Changed dependency: ``8.0.0<=ESMPYcfdm<8.2.0``
+* Changed dependency: ``8.0.0<=ESMPY<8.2.0``
 
 ----
 
