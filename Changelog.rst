@@ -5,9 +5,13 @@ version 3.15.0
 
 * Performance improvements to `cf.aggregate`
   (https://github.com/NCAS-CMS/cf-python/issues/598)
+* Removed benign UserWarning from `cf.Field.percentile`
+  (https://github.com/NCAS-CMS/cf-python/issues/619)
 * Changed dependency: ``1.10.1.0<=cfdm<1.10.2.0``
   
-*version 3.14.1
+----
+  
+version 3.14.1
 --------------
 
 **2023-03-10**
