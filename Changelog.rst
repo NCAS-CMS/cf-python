@@ -3,11 +3,13 @@ version 3.14.2
 
 **2023-04-??**
 
+* Fixed bug in `cf.Field.read` when reading UM/PP data that are
+  runlength encoded (https://github.com/NCAS-CMS/cf-python/issues/621)
 * Removed benign UserWarning from `cf.Field.percentile`
   (https://github.com/NCAS-CMS/cf-python/issues/619)
 
 ----
-  
+
 version 3.14.1
 --------------
 
