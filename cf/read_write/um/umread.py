@@ -664,8 +664,9 @@ class UMField:
 
         if not LBROW or not LBNPT:
             logger.warn(
-                f"WARNING: Skipping field derived from STASH code {stash} "
-                f"with LBROW={LBROW} and LBNPT={LBNPT}"
+                f"WARNING: Skipping STASH code {stash} with LBROW={LBROW}, "
+                f"LBNPT={LBNPT}, LBPACK={int_hdr[lbpack]} "
+                "(possibly runlength encoded)"
             )  # pragma: no cover
             self.field = (None,)
             return
