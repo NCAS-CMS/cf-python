@@ -5,6 +5,9 @@ version 3.14.2
 
 * Fixed bug in `cf.Field.read` when reading UM/PP data that are
   runlength encoded (https://github.com/NCAS-CMS/cf-python/issues/621)
+* Fixed bug in `cf.Field.compute_vertical_coordinates` that retained
+  incorrect bounds properties
+  (https://github.com/NCAS-CMS/cf-python/issues/626)
 * Removed benign UserWarning from `cf.Field.percentile`
   (https://github.com/NCAS-CMS/cf-python/issues/619)
 

@@ -10245,6 +10245,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             if computed_standard_name:
                 c.standard_name = computed_standard_name
 
+            if c.has_bounds():
+                c.bounds.clear_properties()
+
             logger.detail(
                 "Non-parametric coordinates:\n"
                 f"{c.dump(display=False, _level=1)}"
