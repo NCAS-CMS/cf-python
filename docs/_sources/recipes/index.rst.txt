@@ -140,6 +140,23 @@ Below is a gallery of recipes using cf:
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="In this recipe, we will analyse and plot temperature trends from the HadCRUT.5.0.1.0 dataset fo...">
+
+.. only:: html
+
+  .. image:: /recipes/images/thumb/sphx_glr_plot_8_recipe_thumb.png
+    :alt: Plotting statistically significant temperature trends with stippling
+
+  :ref:`sphx_glr_recipes_plot_8_recipe.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plotting statistically significant temperature trends with stippling</div>
+    </div>
+
+
+.. raw:: html
+
     </div>
 
 
@@ -153,6 +170,7 @@ Below is a gallery of recipes using cf:
    /recipes/plot_5_recipe
    /recipes/plot_6_recipe
    /recipes/plot_7_recipe
+   /recipes/plot_8_recipe
 
 
 .. only:: html
