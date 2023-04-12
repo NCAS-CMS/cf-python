@@ -27,13 +27,13 @@ def linear_trend(data, time_axis):
 
 
 # %%
-# * ``create_trend_stipple_obj(temp_data, input_data)``: This function creates a new object with the input data provided and *collapses* the time dimension by taking the mean. It takes two arguments: ``'temp_data'``, which represents the temperature data object, and ``'input_data'``, which is the data to be set in the new object. The function creates a copy of the ``'temp_data'`` object, sets the input data with the ``'Y'`` (latitude) and ``'X'`` (longitude) axes, and then *collapses* the time dimension using the ``"T: mean"`` operation:
+# * ``create_trend_stipple_obj(temp_data, input_data)``: This function creates a new object with the input data provided and *collapses* the time dimension by taking the mean. It takes two arguments: ``'temp_data'``, which represents the temperature data object, and ``'input_data'``, which is the data to be set in the new object. The function creates a copy of the ``'temp_data'`` object by selecting the first element using index and *squeezes* it to remove the size 1 axis. It then sets the input data with the ``'Y'`` (latitude) and ``'X'`` (longitude) axes, and then *collapses* the time dimension using the ``"T: mean"`` operation:
 
 
 def create_trend_stipple_obj(temp_data, input_data):
-    trend_stipple_obj = temp_data.copy()
+    trend_stipple_obj = temp_data[0].squeeze()
     trend_stipple_obj.set_data(input_data, axes=["Y", "X"])
-    return trend_stipple_obj.collapse("T: mean")
+    return trend_stipple_obj
 
 
 # %%
