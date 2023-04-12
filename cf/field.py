@@ -9922,7 +9922,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
         """
         data = self._Data(data, copy=False)
-            
+
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
 
@@ -9968,15 +9968,15 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             data_shape = set(data.shape)
             sizes.discard(1)
             data_shape.discard(1)
-            if data_shape != sizes:                
+            if data_shape != sizes:
                 raise ValueError(
                     "Can't set data: Input data must span all axes that "
                     "have size greater than 1, as well as optionally "
                     "spanning any size 1 axes."
                 )
-        
+
             if isinstance(axes, (str, int, slice)):
-                axes = (axes,) 
+                axes = (axes,)
 
             axes = [f.domain_axis(axis, key=True) for axis in axes]
 
