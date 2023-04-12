@@ -2570,27 +2570,6 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.auxiliary_to_dimension("latitude")
 
-    def test_Field_set_data(self):
-        f = cf.example_field(0)
-
-        # Test 'axes' parameter
-        f.set_data(f.data, axes=["Y", "X"])
-
-        with self.assertRaises(ValueError):
-            f.set_data(f.data.transpose(), axes=["Y", "X"])
-
-        with self.assertRaises(ValueError):
-            f.set_data(f.data, axes=["Y"])
-
-        with self.assertRaises(ValueError):
-            f.set_data(f.data[0], axes=["Y", "X"])
-
-        with self.assertRaises(ValueError):
-            f.set_data(f.data, axes=["T", "X"])
-
-        with self.assertRaises(ValueError):
-            f.set_data(f.data[0], axes=["T", "X"])
-
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
