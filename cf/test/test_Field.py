@@ -1020,15 +1020,6 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             g.set_data(cf.Data(9), axes="X")
 
-        g = cf.Field()
-        a = g.set_construct(cf.DomainAxis(9))
-        b = g.set_construct(cf.DomainAxis(10))
-        g.set_data(cf.Data(list(range(9))), axes=a)
-        with self.assertRaises(Exception):
-            g.set_data(cf.Data(list(range(9))), axes=b)
-        with self.assertRaises(Exception):
-            g.set_data(cf.Data(list(range(9))), axes=[b, a])
-
         # Test inplace
         f = self.f.copy()
         d = f.del_data()
@@ -1054,6 +1045,35 @@ class FieldTest(unittest.TestCase):
             g.set_data(cf.Data(numpy.arange(8)))
         with self.assertRaises(Exception):
             g.set_data(cf.Data(numpy.arange(90).reshape(10, 9)))
+
+        # Test 'axes' parameter
+        g = cf.Field()
+        a = g.set_construct(cf.DomainAxis(9))
+        b = g.set_construct(cf.DomainAxis(10))
+        with self.assertRaises(Exception):
+            g.set_data(cf.Data(list(range(9))), axes=a)
+        with self.assertRaises(Exception):
+            g.set_data(cf.Data(list(range(9))), axes=b)
+        with self.assertRaises(Exception):
+            g.set_data(cf.Data(list(range(9))), axes=[b, a])
+
+        f = cf.example_field(0)
+        f.set_data(f.data, axes=["Y", "X"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data.transpose(), axes=["Y", "X"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data, axes=["Y"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data[0], axes=["Y", "X"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data, axes=["T", "X"])
+
+        with self.assertRaises(ValueError):
+            f.set_data(f.data[0], axes=["T", "X"])
 
     def test_Field_get_data_axes(self):
         f = self.f
