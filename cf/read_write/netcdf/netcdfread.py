@@ -351,8 +351,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return data
 
-    def _customize_read_vars(self):
-        """Customize the read parameters.
+    def _customise_read_vars(self):
+        """Customise the read parameters.
 
         Take the opportunity to apply CFA updates to
         `read_vars['variable_dimensions']` and
@@ -361,7 +361,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         .. versionadded:: 3.0.0
 
         """
-        super()._customize_read_vars()
+        super()._customise_read_vars()
         g = self.read_vars
 
         if not g["cfa"]:
@@ -698,7 +698,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return chunks
 
-    def _customize_field_ancillaries(self, parent_ncvar, f):
+    def _customise_field_ancillaries(self, parent_ncvar, f):
         """Create customised field ancillary constructs.
 
         This method currently creates:
@@ -726,10 +726,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         **Examples**
 
-        >>> n._customize_field_ancillaries('tas', f)
+        >>> n._customise_field_ancillaries('tas', f)
         {}
 
-        >>> n._customize_field_ancillaries('pr', f)
+        >>> n._customise_field_ancillaries('pr', f)
         {'tracking_id': 'fieldancillary1'}
 
         """

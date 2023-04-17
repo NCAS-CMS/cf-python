@@ -84,7 +84,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return False
 
-    def _customize_createVariable(
+    def _customise_createVariable(
         self, cfvar, construct_type, domain_axes, kwargs
     ):
         """Customise keyword arguments for
@@ -105,7 +105,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 `netCDF4.Dataset.createVariable`.
 
         """
-        kwargs = super()._customize_createVariable(
+        kwargs = super()._customise_createVariable(
             cfvar, construct_type, domain_axes, kwargs
         )
 
@@ -968,7 +968,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             "address": data(aggregation_address),
         }
 
-    def _customize_write_vars(self):
+    def _customise_write_vars(self):
         """Customise the write parameters.
 
         .. versionadded:: TODOCFAVER
