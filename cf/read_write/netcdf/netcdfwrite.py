@@ -37,7 +37,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
                 .. versionadded:: TODOCFAVER
 
-            domain-axes: `None`, or `tuple` of `int`
+            domain_axes: `None`, or `tuple` of `str`
+                The domain axis construct identidifiers for *cfvar*.
+
+                .. versionadded:: TODOCFAVER
 
         :Returns:
 
@@ -96,6 +99,17 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             cfvar: cf instance that contains data
 
+            construct_type: `str`
+                The construct type of the *cfvar*, or its parent if
+                *cfvar* is not a construct.
+
+                .. versionadded:: TODOCFAVER
+
+            domain_axes: `None`, or `tuple` of `str`
+                The domain axis construct identidifiers for *cfvar*.
+
+                .. versionadded:: TODOCFAVER
+
             kwargs: `dict`
 
         :Returns:
@@ -141,6 +155,11 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             ncvar: `str`
 
             ncdimensions: `tuple` of `str`
+
+            domain_axes: `None`, or `tuple` of `str`
+                The domain axis construct identidifiers for *cfvar*.
+
+                .. versionadded:: TODOCFAVER
 
             unset_values: sequence of numbers
 
