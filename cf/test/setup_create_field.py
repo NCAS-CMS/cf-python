@@ -68,26 +68,23 @@ class create_fieldTest(unittest.TestCase):
         )
         aux3.standard_name = "longitude"
 
-        aux4 = cf.AuxiliaryCoordinate(
-            data=cf.Data(
-                numpy.array(
-                    [
-                        "alpha",
-                        "beta",
-                        "gamma",
-                        "delta",
-                        "epsilon",
-                        "zeta",
-                        "eta",
-                        "theta",
-                        "iota",
-                        "kappa",
-                    ],
-                    dtype="S",
-                )
-            )
+        array = numpy.ma.array(
+            [
+                "alpha",
+                "beta",
+                "gamma",
+                "delta",
+                "epsilon",
+                "zeta",
+                "eta",
+                "theta",
+                "iota",
+                "kappa",
+            ],
         )
-        aux4.standard_name = "greek_letters"
+        array[0] = numpy.ma.masked
+        aux4 = cf.AuxiliaryCoordinate(data=cf.Data(array))
+        aux4.set_property("long_name", "greek_letters")
 
         # ------------------------------------------------------------
         # TODO: Re-instate this line when
@@ -203,7 +200,7 @@ class create_fieldTest(unittest.TestCase):
         g = cf.read(self.filename, squeeze=True, verbose=0)[0]
 
         self.assertTrue(
-            g.equals(f, verbose=0), "Field not equal to itself read back in"
+            g.equals(f, verbose=1), "Field not equal to itself read back in"
         )
 
         x = g.dump(display=False)
