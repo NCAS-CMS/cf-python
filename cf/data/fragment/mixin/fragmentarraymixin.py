@@ -131,7 +131,7 @@ class FragmentArrayMixin:
     def _parse_indices(self, indices):
         """Parse the indices that retrieve the fragment data.
 
-        Ellipses are replaced with the approriate number `slice`
+        Ellipses are replaced with the approriate number of `slice`
         instances, and rank-reducing indices (such as an integer or
         scalar array) are disallowed.
 
