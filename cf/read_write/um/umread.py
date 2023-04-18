@@ -662,6 +662,15 @@ class UMField:
         BDX = real_hdr[bdx]
         BDY = real_hdr[bdy]
 
+        if not LBROW or not LBNPT:
+            logger.warn(
+                f"WARNING: Skipping STASH code {stash} with LBROW={LBROW}, "
+                f"LBNPT={LBNPT}, LBPACK={int_hdr[lbpack]} "
+                "(possibly runlength encoded)"
+            )  # pragma: no cover
+            self.field = (None,)
+            return
+
         if stash:
             section, item = divmod(stash, 1000)
             um_stash_source = "m%02ds%02di%03d" % (submodel, section, item)
@@ -3072,10 +3081,6 @@ class UMField:
                 bounds = self.create_bounds_array(
                     array - delta_by_2, array + delta_by_2
                 )
-        #                bounds = np.empty((size, 2), dtype=float)
-        #                bounds[:, 0] = array - delta_by_2
-        #                bounds[:, 1] = array + delta_by_2
-
         else:
             # Create coordinate from extra data
             array = self.extra.get(axis, None)
@@ -3083,9 +3088,6 @@ class UMField:
             upper_bounds = self.extra.get(axis + "_upper_bound", None)
             if lower_bounds is not None and upper_bounds is not None:
                 bounds = self.create_bounds_array(lower_bounds, upper_bounds)
-            #                bounds = np.empty((array.size, 2), dtype=float)
-            #                bounds[:, 0] = lower_bounds
-            #                bounds[:, 1] = upper_bounds
             else:
                 bounds = None
 

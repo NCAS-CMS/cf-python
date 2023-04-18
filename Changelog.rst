@@ -7,6 +7,10 @@ version 3.14.2
 * New method: `cf.Data.get_cfa_write`
 * New method: `cf.Data.set_cfa_write`
 * Changed dependency: ``?????<=cfdm<?????``
+* Fixed bug in `cf.Field.read` when reading UM/PP data that are
+  runlength encoded (https://github.com/NCAS-CMS/cf-python/issues/621)
+* Removed benign UserWarning from `cf.Field.percentile`
+  (https://github.com/NCAS-CMS/cf-python/issues/619)
 
 ----
 

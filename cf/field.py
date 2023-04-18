@@ -10122,6 +10122,19 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
             # --------------------------------------------------------
             # Axes have been set
             # --------------------------------------------------------
+
+            # Check that the input data spans all of the size > 1 axes
+            sizes = set([axis.get_size() for axis in domain_axes.values()])
+            data_shape = set(data.shape)
+            sizes.discard(1)
+            data_shape.discard(1)
+            if data_shape != sizes:
+                raise ValueError(
+                    "Can't set data: Input data must span all axes that "
+                    "have size greater than 1, as well as optionally "
+                    "spanning any size 1 axes."
+                )
+
             if isinstance(axes, (str, int, slice)):
                 axes = (axes,)
 
@@ -10129,8 +10142,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
 
             if len(axes) != data.ndim:
                 raise ValueError(
-                    f"Can't set data: {len(axes)} axes provided, but "
-                    f"{data.ndim} needed"
+                    f"Can't set data: Input data spans {data.ndim} "
+                    f"dimensions, but only {len(axes)} were specified by "
+                    "the 'axes' parameter."
                 )
 
             for axis, size in zip(axes, data.shape):
@@ -10140,8 +10154,9 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
                         domain_axes[axis].get_size(None) for axis in axes
                     )
                     raise ValueError(
-                        f"Can't set data: Data shape {data.shape} differs "
-                        f"from shape implied by axes {axes}: {axes_shape}"
+                        f"Can't set data: Input data shape {data.shape} "
+                        f"differs from shape implied by the given axes "
+                        f"{axes}: {axes_shape}"
                     )
 
         elif f.get_data_axes(default=None) is None:

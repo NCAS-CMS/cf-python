@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.7]
+        python-version: [3.8]
     runs-on: ${{ matrix.os }}
 
     # The sequence of tasks that will be executed as part of this job:
