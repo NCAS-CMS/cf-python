@@ -1752,7 +1752,7 @@ def aggregate(
             which has one or more of the given properties. For each
             input field, each property is converted to a field
             ancillary construct that spans the entire domain, with the
-            constant value of the propertyand the property itself is
+            constant value of the property, and the property itself is
             deleted.
 
             .. versionadded:: TODOCFAVER
