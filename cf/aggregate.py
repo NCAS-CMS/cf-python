@@ -1439,8 +1439,8 @@ class _Meta:
 
         The `Data` of any the new field ancillary construct is marked
         as a CFA term, meaning that it will only be written to disk if
-        the parent field construct is written as CFA aggregation
-        variable, and in that case the field ancillary is written as
+        the parent field construct is written as a CFA aggregation
+        variable, and in that case the field ancillary is written as a
         non-standard CFA aggregation instruction variable, rather than
         a CF-netCDF ancillary variable.
 
