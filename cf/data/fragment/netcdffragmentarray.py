@@ -104,37 +104,3 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
         )
 
 
-#    def open(self):
-#        """Returns an open dataset containing the data array.
-#
-#        When multiple fragment files have been provided an attempt is
-#        made to open each one, in arbitrary order, and the
-#        `netCDF4.Dataset` is returned from the first success.
-#
-#        .. versionadded:: TODOCFAVER
-#
-#        :Returns:
-#
-#            `netCDF4.Dataset`
-#
-#        """
-#        # Loop round the files, returning as soon as we find one that
-#        # works.
-#        filenames = self.get_filenames()
-#        for filename, address in zip(filenames, self.get_addresses()):
-#            url = urlparse(filename)
-#            if url.scheme == "file":
-#                # Convert file URI into an absolute path
-#                filename = url.path
-#
-#            try:
-#                nc = netCDF4.Dataset(filename, "r")
-#            except FileNotFoundError:
-#                continue
-#            except RuntimeError as error:
-#                raise RuntimeError(f"{error}: {filename}")
-#
-#            self._set_component("ncvar", address, copy=False)
-#            return nc
-#
-#        raise FileNotFoundError(f"No such netCDF fragment files: {filenames}")
