@@ -102,5 +102,3 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
-
-
