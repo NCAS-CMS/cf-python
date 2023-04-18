@@ -333,10 +333,12 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def file_locations(
         self,
     ):
-        """The locations of files containing parts of the data.
+        """The locations of files containing parts of the components data.
 
         Returns the locations of any files that may be required to
-        deliver the computed data array.
+        deliver the computed data arrays of any of the component
+        constructs (such as dimension coordinate constructs, cell
+        measure constructs, etc.).
 
         .. versionadded:: TODOCFAVER
 
