@@ -1382,7 +1382,7 @@ class _Meta:
         return tuple(sorted(names))
 
     def promote_to_auxiliary_coordinate(self, properties):
-        """Promote properties to auxilliary coordinate constructs.
+        """Promote properties to auxiliary coordinate constructs.
 
         Each property is converted to a 1-d auxilliary coordinate
         construct that spans a new independent size 1 domain axis the
