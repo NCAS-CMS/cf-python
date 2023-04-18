@@ -38,7 +38,7 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
                 The file name(s).
 
             address: (sequence of) `int`, optional
-                The start position in the file(s) of the header(s)
+                The start position in the file(s) of the header(s).
 
                 .. versionadded:: TODOCFAVER
 
