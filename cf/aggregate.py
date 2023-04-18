@@ -1385,8 +1385,8 @@ class _Meta:
         """Promote properties to auxiliary coordinate constructs.
 
         Each property is converted to a 1-d auxilliary coordinate
-        construct that spans a new independent size 1 domain axis the
-        field, and the property is deleted.
+        construct that spans a new independent size 1 domain axis of
+        the field, and the property is deleted.
 
          ... versionadded:: TODOCFAVER
 
