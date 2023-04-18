@@ -1445,7 +1445,7 @@ class _Meta:
         a CF-netCDF ancillary variable.
 
         If a domain construct is being aggregated then it is always
-        returned unchanged
+        returned unchanged.
 
          ... versionadded:: TODOCFAVER
 
