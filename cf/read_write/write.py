@@ -644,7 +644,7 @@ def write(
               paths relative to the location of the CFA-netCDF file
               being created.
 
-            * ``'strict'``:`bool`
+            * ``'strict'``: `bool`
 
               If True (the default) then an exception is raised if it
               is not possible to create a CFA aggregation variable
