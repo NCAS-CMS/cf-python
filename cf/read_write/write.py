@@ -628,7 +628,7 @@ def write(
                 Equivalent ways to only write two-dimensional
                 auxiliary coordinate constructs as CFA-netCDF
                 aggregation variables: ``{'auxiliary_coordinate':
-                2}}`` and ``{'auxiliary_coordinate': cf.eq(2)}}``.
+                2}`` and ``{'auxiliary_coordinate': cf.eq(2)}``.
 
               *Example:*
                 Only write auxiliary coordinate constructs with two or
