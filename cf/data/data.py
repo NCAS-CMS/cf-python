@@ -437,11 +437,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             pass
         else:
             self._set_Array(array)
-        #        if is_abstract_Array_subclass(array):
-        #            # Save the input array in case it's useful later. For
-        #            # compressed input arrays this will contain extra information,
-        #            # such as a count or index variable.
-        #            self._set_Array(array)
 
         # Cast the input data as a dask array
         kwargs = init_options.get("from_array", {})
