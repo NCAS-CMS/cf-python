@@ -138,14 +138,14 @@ def write(
         fmt: `str`, optional
             The format of the output file. One of:
 
-            ==========================  ================================
+            ==========================  ==============================
             *fmt*                       Output file type
-            ==========================  ================================
-            ``'NETCDF4'``               NetCDF4 format file. This is the
-                                        default.
+            ==========================  ==============================
+            ``'NETCDF4'``               NetCDF4 format file. This is
+                                        the default.
 
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see
-                                        below)
+            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
+                                        (see below)
 
             ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
                                         (limited to file sizes less
@@ -158,14 +158,17 @@ def write(
                                         ``'NETCDF3_64BIT_OFFSET'``
 
             ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                        file with extensions (see below)
+                                        file with extensions (see
+                                        below)
 
-            ``'CFA'`` or ``'CFA4'``     Deprecated at version TODOCFAVER.
-                                        Use the *cfa* parameter instead.
+            ``'CFA'`` or ``'CFA4'``     Deprecated at version
+                                        TODOCFAVER.  See the *cfa*
+                                        parameter.
 
-            ``'CFA3'``                  Deprecated at version TODOCFAVER.
-                                        Use the *cfa* parameter instead.
-            ==========================  ================================
+            ``'CFA3'``                  Deprecated at version
+                                        TODOCFAVER.  See the *cfa*
+                                        parameter.
+            ==========================  ==============================
 
             By default the format is ``'NETCDF4'``.
 
@@ -587,6 +590,9 @@ def write(
             If True or a (possibly empty) dictionary then write the
             constructs as CFA-netCDF aggregation variables, where
             possible and where requested.
+
+            The netCDF format of the CFA-netCDF file is determined by
+            the *fmt* parameter, as usual.
 
             If *cfa* is a dictionary then it is used to configure the
             CFA write process. The default options when CFA writing is
