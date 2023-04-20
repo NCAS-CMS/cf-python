@@ -425,7 +425,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 "for compressed input arrays"
             )
 
-        if to_memory:  # and is_file_array(array):
+        if to_memory:
             try:
                 array = array.to_memory()
             except AttributeError:
