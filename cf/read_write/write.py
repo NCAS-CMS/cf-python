@@ -669,7 +669,7 @@ def write(
               aggregation instruction variable.
 
               *Example:*
-                ``{'base': 'file:///data/'}}``
+                ``{'base': 'file:///data/'}``
 
             .. versionadded:: TODOCFAVER
 
