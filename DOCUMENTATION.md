@@ -4,7 +4,7 @@
   index.html page.
 
 * This index.html does not have the functionality to filter the recipes
-  according to their functions. To achieve this, docs/source/recipes/filter.rst
+  according to their functions. To achieve this, `docs/source/recipes/filter.rst`
   acts like a template where the Javascript, CSS and some of the HTML elements
   are added manually, whereas the remaining elements are taken directly from
   the generated index.html of Sphinx-Gallery. 
@@ -15,7 +15,7 @@
 
 * To display the newly created recipe with the filters,
   `docs/source/recipes/filter.rst` has to be edited. This requires copying the
-  generated lines from `/docs/_sources/recipes` for the new recipe to
+  generated lines from `/docs/_sources/recipes/index.rst.txt` for the new recipe to
   `docs/source/recipes/filter.rst`:
   
   ```html
@@ -39,7 +39,7 @@
   ```
 
 * The filters corresponding to the recipe are inserted in the
-  <div class="sphx-glr-thumbcontainer"> with a space separating multiple filters
+  `<div class="sphx-glr-thumbcontainer">` with a space separating multiple filters
   ,e.g.,
 
   ```html
@@ -47,7 +47,7 @@
   tooltip="In this recipe, we will analyse and plot temperature trends from the 
   HadCRUT.5.0.1.0 dataset fo...">
   ```
-* If the filter doesn't exist, it has to be added in <div class="filter-menu"> 
+* If the filter doesn't exist, it has to be added in `<div class="filter-menu">` 
   alphabetically, e.g.,
 
   ```html
