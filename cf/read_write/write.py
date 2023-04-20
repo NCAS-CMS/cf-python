@@ -634,7 +634,7 @@ def write(
                 Only write auxiliary coordinate constructs with two or
                 more dimensions as CFA-netCDF variables, and also all
                 field constructs: ``{'field': None,
-                'auxiliary_coordinate': cf.ge(2)}}``.
+                'auxiliary_coordinate': cf.ge(2)}``.
 
             * ``'absolute_paths'``: `bool`
 
