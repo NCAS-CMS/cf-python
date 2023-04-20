@@ -583,7 +583,7 @@ def write(
 
             .. versionadded:: 3.14.0
 
-        cfa: `bool` or `dict`, otional
+        cfa: `bool` or `dict`, optional
             If True or a (possibly empty) dictionary then write the
             constructs as CFA-netCDF aggregation variables, where
             possible and where requested.
