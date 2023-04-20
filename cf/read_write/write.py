@@ -606,7 +606,7 @@ def write(
               parameter. Alternatively, the same types may be given as
               keys to a `dict` whose values specify the number of
               dimensions that a construct must also have if it is to
-              be written as CFA-netCDF aggregation variable. A value
+              be written as a CFA-netCDF aggregation variable. A value
               of `None` means no restriction on the number of
               dimensions, which is equivalent to a value of
               ``cf.ge(0)``.
