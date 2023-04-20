@@ -26,7 +26,7 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
 
         :Parameters:
 
-            filenames: (sequence of `str`), optional
+            filename: (sequence of `str`), optional
                 The names of the UM or PP files containing the fragment.
 
             addresses: (sequence of `str`), optional
