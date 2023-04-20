@@ -298,14 +298,14 @@ Deprecated. Use \-\-cfa_paths instead.
 .
 .
 .TP
-.B \-\-cfa_paths=[value]
+.B \-\-cfa_paths=value
 For output CFA\-netCDF files only. File names referenced by an output
 CFA\-netCDF file have relative, as opposed to absolute, paths or URL
 bases. This may be useful when relocating a CFA\-netCDF file together
 with the datasets referenced by it.
 .PP
 .RS
-If set with no value (\-\-cfa_base=) or the value is empty then file
+If set with no value (\-\-cfa_paths=) or the value is empty then file
 names are given relative to the directory or URL base containing the
 output CFA\-netCDF file. If set with a non\-empty value then file
 names are given relative to the directory or URL base described by the
@@ -1074,7 +1074,7 @@ Written by David Hassell
   [--reference_datetime] Override coordinate reference date-times
   [--overwrite]          Overwrite pre-existing output files
   [--unlimited=axis      Create an unlimited dimension
-  [--cfa_paths=[value]]  Configure CFA-netCDF output files
+  [--cfa_paths=value]    Configure CFA-netCDF output files
   [--single]             Write out as single precision
   [--double]             Write out as double precision
   [--compress=N]         Compress the output data
@@ -1107,7 +1107,7 @@ Using cf-python library version {cf.__version__} at {library_path}"""
             "1aDd:f:hino:r:s:uv:x:",
             longopts=[
                 "axis=",
-                "cfa_base=",
+                "cfa_paths=",
                 "compress=",
                 "contiguous",
                 "Directory",
@@ -1155,6 +1155,7 @@ Using cf-python library version {cf.__version__} at {library_path}"""
                 "read=",
                 "write=",
                 "verbose=",
+                "cfa_base=",
             ],
         )
     except GetoptError as err:
