@@ -153,7 +153,7 @@ class FragmentArrayMixin:
         (12, 1, 73, 144)
         >>> a._parse_indices([2, 4, 5], Ellipsis, slice(45, 67))
         [[2, 4, 5], slice(0, 1), slice(0, 73), slice(45, 67)]
-        >>> a._parse_indices(([2, 4, 5], [0], slice(None), slice(45, 67))
+        >>> a._parse_indices([2, 4, 5], [0], slice(None), slice(45, 67))
         [[2, 4, 5], [0], slice(0, 73), slice(45, 67)]
 
         """
