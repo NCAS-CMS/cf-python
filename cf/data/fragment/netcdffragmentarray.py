@@ -30,7 +30,7 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
                 The names of the netCDF fragment files containing the
                 array.
 
-            address: (sequence of `str`0, optional
+            address: (sequence of `str`), optional
                 The name of the netCDF variable containing the
                 fragment array. Required unless *varid* is set.
 
