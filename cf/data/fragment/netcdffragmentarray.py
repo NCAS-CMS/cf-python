@@ -1,7 +1,3 @@
-# from urllib.parse import urlparse
-
-# import netCDF4
-
 from ..array.netcdfarray import NetCDFArray
 from .mixin import FragmentArrayMixin
 
