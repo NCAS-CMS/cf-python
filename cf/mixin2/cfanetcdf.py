@@ -362,7 +362,7 @@ class CFANetCDF(NetCDFMixin):
 
         .. seealso:: `cfa_clear_file_substitutions`,
                      `cfa_del_file_substitution`,
-                     `cfa_file_substitutions`,
+                     `cfa_has_file_substitutions`,
                      `cfa_update_file_substitutions`
         :Returns:
 
