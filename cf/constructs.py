@@ -16,8 +16,9 @@ class Constructs(cfdm.Constructs):
     unique identifier that corresponds to a metadata construct value;
     is indexable by metadata construct identifier; and provides a
     subset of the usual dictionary methods: `get`, `items`, `keys`,
-    and `values`. The container can be converted to an actual `dict`
-    with the `todict` method.
+    and `values`. The number of constructs (which may be zero) can be
+    found via the Python `len` function. The container can be
+    converted to an actual `dict` with the `todict` method.
 
     **Filtering**
 
@@ -34,7 +35,7 @@ class Constructs(cfdm.Constructs):
     either ``x = c('latitude')`` or ``x =
     c.filter_by_identity('latitude')``. More generally,
     ``c(*identities, **filter_kwargs)`` is equivalent to
-    ``c.filter(filter_by_identity=identities, **filter_kwargs)``
+    ``c.filter(filter_by_identity=identities, **filter_kwargs)``.
 
     **Metadata constructs**
 
