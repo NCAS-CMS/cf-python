@@ -100,7 +100,7 @@ class CFImplementation(cfdm.CFDMImplementation):
 
             filename: `str`
 
-            address: (sequence of) `str or `int``
+            address: (sequence of) `str` or `int`
 
             dytpe: `numpy.dtype`
 
