@@ -29,7 +29,7 @@ class UMFragmentArray(FragmentArrayMixin, UMArray):
             filename: (sequence of `str`), optional
                 The names of the UM or PP files containing the fragment.
 
-            addresses: (sequence of `str`), optional
+            address: (sequence of `str`), optional
                 The start words in the files of the header.
 
             dtype: `numpy.dtype`
