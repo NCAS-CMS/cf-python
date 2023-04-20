@@ -2249,8 +2249,10 @@ def aggregate(
                     #       = da.concatenate([a, b], axis=0; t =
                     #       da.concatenate([t, c], axis=0; etc.
                     #
-                    #       This will need more of a refactor than is
-                    #       possible at this time (April 2023).
+                    #       This refactor away from pair-wise
+                    #       concatenation will need more effort than
+                    #       is possible at this time (April 2023), and
+                    #       so is postponed for now.
                     
                 m[:] = [m0]
 
