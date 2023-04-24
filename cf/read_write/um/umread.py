@@ -1140,7 +1140,7 @@ class UMField:
                 details.
 
             z_axis: `int`
-                The identifier of the Z axis
+                The identifier of the Z axis.
 
             pmaxes: sequence of `int`
                 The aggregation axes, which include the Z axis.
