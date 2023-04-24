@@ -47,7 +47,7 @@ class CFANetCDFArray(NetCDFArray):
                 array. If a sequence then it must contain one element.
 
             address: (sequence of) `str`, optional
-                The name of the CFA-netCDF aggregation variable the
+                The name of the CFA-netCDF aggregation variable for the
                 array. If a sequence then it must contain one element.
 
             shape: `tuple` of `int`
