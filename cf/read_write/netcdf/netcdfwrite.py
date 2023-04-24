@@ -38,7 +38,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 .. versionadded:: TODOCFAVER
 
             domain_axes: `None`, or `tuple` of `str`
-                The domain axis construct identidifiers for *cfvar*.
+                The domain axis construct identifiers for *cfvar*.
 
                 .. versionadded:: TODOCFAVER
 
@@ -106,7 +106,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 .. versionadded:: TODOCFAVER
 
             domain_axes: `None`, or `tuple` of `str`
-                The domain axis construct identidifiers for *cfvar*.
+                The domain axis construct identifiers for *cfvar*.
 
                 .. versionadded:: TODOCFAVER
 
@@ -157,7 +157,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             ncdimensions: `tuple` of `str`
 
             domain_axes: `None`, or `tuple` of `str`
-                The domain axis construct identidifiers for *cfvar*.
+                The domain axis construct identifiers for *cfvar*.
 
                 .. versionadded:: TODOCFAVER
 
@@ -256,7 +256,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 The name of the netCDF dimension for this dimension
                 coordinate construct, including any groups
                 structure. Note that the group structure may be
-                different to the corodinate variable, and the
+                different to the coordinate variable, and the
                 basename.
 
                 .. versionadded:: 3.6.0
@@ -720,9 +720,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _cfa_write_non_standard_terms(
         self, field, fragment_ncdimensions, aggregated_data
     ):
-        """ "Write a non-standard CFA aggregation instruction term variable
+        """Write a non-standard CFA aggregation instruction term variable.
 
-        Wites non-standard CFA terms stored as field ancillaries
+        Writes non-standard CFA terms stored as field ancillaries.
 
         .. versionadded:: TODOCFAVER
 
@@ -798,7 +798,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _cfa_unique(cls, a):
         """Return the unique value of an array.
 
-        If there are multipl unique vales then missing data is
+        If there are multiple unique vales then missing data is
         returned.
 
         .. versionadded:: TODOCFAVER

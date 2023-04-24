@@ -414,8 +414,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 ncvar, attributes.get("aggregated_data")
             )
             for term_ncvar in parsed_aggregated_data.values():
-                #                term, term_ncvar = tuple(x.items())[0]
-                #                term_ncvar = term_ncvar[0]
                 g["do_not_create_field"].add(term_ncvar)
 
     def _cache_data_elements(self, data, ncvar):
