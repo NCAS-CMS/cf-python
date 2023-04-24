@@ -426,7 +426,25 @@ Groups
    ~cf.Field.nc_clear_group_attributes
    ~cf.Field.nc_set_group_attribute
    ~cf.Field.nc_set_group_attributes
-  
+
+CFA
+^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.Field.add_file_location
+   ~cf.Field.cfa_clear_file_substitutions
+   ~cf.Field.cfa_del_file_substitution
+   ~cf.Field.cfa_file_substitutions
+   ~cf.Field.cfa_update_file_substitutions
+   ~cf.Field.del_file_location
+   ~cf.Field.file_locations
+
 Geometries
 ^^^^^^^^^^
 
