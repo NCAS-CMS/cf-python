@@ -318,7 +318,7 @@ class CFANetCDFArray(NetCDFArray):
         return aggregated_data
 
     def get_fragmented_dimensions(self):
-        """Get the positions dimension that have two or more fragments.
+        """Get the positions of dimensions that have two or more fragments.
 
         .. versionadded:: 3.14.0
 
