@@ -272,7 +272,7 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
                 The record container.
 
         """
-        # This method doesn't require data_offset and disk_length,
+        # TODOCFA: This method doesn't require data_offset and disk_length,
         # so plays nicely with CFA. Is it fast enough that we can
         # use this method always?
         for v in f.vars:
