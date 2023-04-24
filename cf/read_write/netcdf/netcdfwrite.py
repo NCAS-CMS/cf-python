@@ -1015,7 +1015,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         :Returns:
 
-            `set`
+            `set` of 3-tuples
                 The file names, the addresses in the files, and the
                 file formats. If no files are required to compute the
                 data then an empty `set` is returned.
