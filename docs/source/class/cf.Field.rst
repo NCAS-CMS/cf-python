@@ -478,6 +478,8 @@ Domain axes
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.domain_axis
+   ~cf.Field.domain_axes
    ~cf.Field.analyse_items
    ~cf.Field.autocyclic
    ~cf.Field.axes

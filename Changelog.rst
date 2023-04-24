@@ -10,6 +10,9 @@ version 3.15.0
 * New function: `cf.CFA`
 * New method: `cf.Data.get_cfa_write`
 * New method: `cf.Data.set_cfa_write`
+* Fix excessive memory use arising from `cf.Field.regrids` and
+  `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/623)
 * Fixed bug in `cf.Field.read` when reading UM/PP data that are
   runlength encoded (https://github.com/NCAS-CMS/cf-python/issues/621)
 * Removed benign UserWarning from `cf.Field.percentile`
