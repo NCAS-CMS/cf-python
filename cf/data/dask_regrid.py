@@ -324,7 +324,7 @@ def _regrid(
             signifies a masked cell.
 
         dst_mask: `numpy.ndarray` or `None`
-            The refernce destination grid mask to be applied to the
+            The reference destination grid mask to be applied to the
             regridded data. If `None` then this is equivalent to a
             mask of all `False`. If a Boolean `numpy` array then it
             must have shape ``(J,)``, where ``J`` is the number of
