@@ -998,9 +998,9 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             from os.path import abspath
             from pathlib import PurePath
 
-            g["cfa_dir"] = PurePath(
-                abspath(g["filename"])
-            ).parent  # TODOCFA???
+            # Find the absolute directory path of the output
+            # CFA-netCDF file URI
+            g["cfa_dir"] = PurePath(abspath(g["filename"])).parent
 
     def _cfa_get_file_details(self, data):
         """Get the details of all files referenced by the data.
