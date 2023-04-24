@@ -170,7 +170,7 @@ class CFANetCDFArray(NetCDFArray):
 
                 extra_dimension = f.ndim > ndim
                 if extra_dimension:
-                    # There is a extra non-fragment dimension
+                    # There is an extra non-fragment dimension
                     fragment_shape = f.shape[:-1]
                 else:
                     fragment_shape = f.shape
