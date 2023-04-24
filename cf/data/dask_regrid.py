@@ -85,7 +85,7 @@ def regrid(
 
             If a `numpy.ndarray` with shape ``(J,)`` then this is the
             reference destination grid mask that was used during the
-            creation of the weights. If `None` then there are
+            creation of the weights. If `None` then there are no
             reference destination grid masked points.
 
             In either case the reference destination grid mask may get
