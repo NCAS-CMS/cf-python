@@ -20,7 +20,7 @@ class CFANetCDF(NetCDFMixin):
         """Remove the CFA-netCDF aggregation instruction terms.
 
         The aggregation instructions are stored in the
-        `aggregation_data` attribute of a CFA-netCDF aggregation
+        ``aggregation_data`` attribute of a CFA-netCDF aggregation
         variable.
 
         .. versionadded:: TODOCFAVER
@@ -71,7 +71,7 @@ class CFANetCDF(NetCDFMixin):
         """Return the CFA-netCDF aggregation instruction terms.
 
         The aggregation instructions are stored in the
-        `aggregation_data` attribute of a CFA-netCDF aggregation
+        ``aggregation_data`` attribute of a CFA-netCDF aggregation
         variable.
 
         .. versionadded:: TODOCFAVER
@@ -129,7 +129,7 @@ class CFANetCDF(NetCDFMixin):
         """Whether any CFA-netCDF aggregation instruction terms have been set.
 
         The aggregation instructions are stored in the
-        `aggregation_data` attribute of a CFA-netCDF aggregation
+        ``aggregation_data`` attribute of a CFA-netCDF aggregation
         variable.
 
         .. versionadded:: TODOCFAVER
@@ -173,6 +173,7 @@ class CFANetCDF(NetCDFMixin):
         {}
         >>> f.cfa_get_aggregated_data()
         {}
+
         """
         return self._nc_has("cfa_aggregated_data")
 
@@ -180,7 +181,7 @@ class CFANetCDF(NetCDFMixin):
         """Set the CFA-netCDF aggregation instruction terms.
 
         The aggregation instructions are stored in the
-        `aggregation_data` attribute of a CFA-netCDF aggregation
+        ``aggregation_data`` attribute of a CFA-netCDF aggregation
         variable.
 
         If there are any ``/`` (slash) characters in the netCDF
