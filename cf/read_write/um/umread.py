@@ -1076,8 +1076,6 @@ class UMField:
             for cm in cell_methods:
                 self.implementation.set_cell_method(field, cm)
 
-            #            # Check for decreasing axes that aren't decreasing
-            #            down_axes = self.down_axes
             logger.info(f"down_axes = {self.down_axes}")  # pragma: no cover
 
             #            print (down_axes )
