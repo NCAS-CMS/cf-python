@@ -140,7 +140,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         compressed=False,
         attributes={},
         construct_type=None,
-        warn_invalid=None,
     ):
         """Write a Data object.
 
