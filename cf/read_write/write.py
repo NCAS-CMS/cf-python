@@ -2,7 +2,12 @@ import numpy
 
 from ..cfimplementation import implementation
 from ..decorators import _manage_log_level_via_verbosity
-from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, flat
+from ..functions import (
+    _DEPRECATION_ERROR_FUNCTION_KWARG,
+    _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE,
+    CFA,
+    flat,
+)
 from .netcdf import NetCDFWrite
 
 netcdf = NetCDFWrite(implementation())
@@ -27,7 +32,7 @@ def write(
     shuffle=True,
     reference_datetime=None,
     verbose=None,
-    cfa_options=None,
+    cfa=False,
     single=None,
     double=None,
     variable_attributes=None,
@@ -36,9 +41,7 @@ def write(
     group=True,
     coordinates=False,
     omit_data=None,
-    HDF_chunksizes=None,
-    no_shuffle=None,
-    unlimited=None,
+    cfa_options=None,
 ):
     """Write field constructs to a netCDF file.
 
@@ -135,14 +138,14 @@ def write(
         fmt: `str`, optional
             The format of the output file. One of:
 
-            ==========================  ================================
+            ==========================  ==============================
             *fmt*                       Output file type
-            ==========================  ================================
-            ``'NETCDF4'``               NetCDF4 format file. This is the
-                                        default.
+            ==========================  ==============================
+            ``'NETCDF4'``               NetCDF4 format file. This is
+                                        the default.
 
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see
-                                        below)
+            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
+                                        (see below)
 
             ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
                                         (limited to file sizes less
@@ -155,17 +158,19 @@ def write(
                                         ``'NETCDF3_64BIT_OFFSET'``
 
             ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                        file with extensions (see below)
+                                        file with extensions (see
+                                        below)
 
-            ``'CFA'`` or ``'CFA4'``     CFA-netCDF4 format file
+            ``'CFA'`` or ``'CFA4'``     Deprecated at version
+                                        TODOCFAVER.  See the *cfa*
+                                        parameter.
 
-            ``'CFA3'``                  CFA-netCDF3 classic format file
-            ==========================  ================================
+            ``'CFA3'``                  Deprecated at version
+                                        TODOCFAVER.  See the *cfa*
+                                        parameter.
+            ==========================  ==============================
 
             By default the format is ``'NETCDF4'``.
-
-            All formats support large files (i.e. those greater than
-            2GB) except ``'NETCDF3_CLASSIC'``.
 
             ``'NETCDF3_64BIT_DATA'`` is a format that requires version
             4.4.0 or newer of the C library (use `cf.environment` to
@@ -356,31 +361,6 @@ def write(
             external to the named external file. Ignored if there are
             no such constructs.
 
-        cfa_options: `dict`, optional
-            A dictionary giving parameters for configuring the output
-            CFA-netCDF file:
-
-            ==========  ===============================================
-            Key         Value
-            ==========  ===============================================
-            ``'base'``  * If ``None`` (the default) then file names
-                          within CFA-netCDF files are stored with
-                          absolute paths.
-
-                        * If set to an empty string then file names
-                          within CFA-netCDF files are given relative to
-                          the directory or URL base containing the
-                          output CFA-netCDF file.
-
-                        * If set to a string then file names within
-                          CFA-netCDF files are given relative to the
-                          directory or URL base described by the
-                          value. For example: ``'../archive'``.
-            ==========  ===============================================
-
-            By default no parameters are specified.
-
-
         endian: `str`, optional
             The endian-ness of the output file. Valid values are
             ``'little'``, ``'big'`` or ``'native'``. By default the
@@ -439,9 +419,6 @@ def write(
             `netCDF4 package
             <http://unidata.github.io/netcdf4-python>`_ for more
             details.
-
-            This parameter replaces the deprecated *no_shuffle*
-            parameter.
 
         datatype: `dict`, optional
             Specify data type conversions to be applied prior to
@@ -609,15 +586,101 @@ def write(
 
             .. versionadded:: 3.14.0
 
-        HDF_chunksizes: deprecated at version 3.0.0
-            HDF chunk sizes may be set for individual constructs prior
-            to writing, instead. See `cf.Data.nc_set_hdf5_chunksizes`.
+        cfa: `bool` or `dict`, optional
+            If True or a (possibly empty) dictionary then write the
+            constructs as CFA-netCDF aggregation variables, where
+            possible and where requested.
 
-        no_shuffle: deprecated at version 3.0.0
-            Use keyword *shuffle* instead.
+            The netCDF format of the CFA-netCDF file is determined by
+            the *fmt* parameter, as usual.
 
-        unlimited: deprecated at version 3.0.0
-            Use method `DomainAxis.nc_set_unlimited` instead.
+            If *cfa* is a dictionary then it is used to configure the
+            CFA write process. The default options when CFA writing is
+            enabled are ``{'constructs': 'field', 'absolute_paths':
+            True, 'strict': True, 'substitutions': {}}``, and the
+            dictionary may have any subset of the following key/value
+            pairs to override these defaults:
+
+            * ``'constructs'``: `dict` or (sequence of) `str`
+
+              The types of construct to be written as CFA-netCDF
+              aggregation variables. By default only field constructs
+              are written as CFA-netCDF aggregation variables.
+
+              The types may be given as a (sequence of) `str`, which
+              may take any of the values allowed by the *omit_data*
+              parameter. Alternatively, the same types may be given as
+              keys to a `dict` whose values specify the number of
+              dimensions that a construct must also have if it is to
+              be written as a CFA-netCDF aggregation variable. A value
+              of `None` means no restriction on the number of
+              dimensions, which is equivalent to a value of
+              ``cf.ge(0)``.
+
+              *Example:*
+                Equivalent ways to only write cell measure constructs
+                as CFA-netCDF aggregation variables:
+                ``'cell_measure``, ``['cell_measure']``,
+                ``{'cell_measure': None}``, ``{'cell_measure':
+                cf.ge(0)}``
+
+              *Example:*
+                Equivalent ways to only write field and auxiliary
+                coordinate constructs as CFA-netCDF aggregation
+                variables: ``('field', 'auxiliary_coordinate')`` and
+                ``{'field': None, 'auxiliary_coordinate': None}``.
+
+              *Example:*
+                Equivalent ways to only write two-dimensional
+                auxiliary coordinate constructs as CFA-netCDF
+                aggregation variables: ``{'auxiliary_coordinate':
+                2}`` and ``{'auxiliary_coordinate': cf.eq(2)}``.
+
+              *Example:*
+                Only write auxiliary coordinate constructs with two or
+                more dimensions as CFA-netCDF variables, and also all
+                field constructs: ``{'field': None,
+                'auxiliary_coordinate': cf.ge(2)}``.
+
+            * ``'absolute_paths'``: `bool`
+
+              How to write fragment file names. Set to True (the
+              default) for them to be written as fully qualified URIs,
+              or else set to False for them to be written as local
+              paths relative to the location of the CFA-netCDF file
+              being created.
+
+            * ``'strict'``: `bool`
+
+              If True (the default) then an exception is raised if it
+              is not possible to create a CFA aggregation variable
+              from data identified by the ``'constructs'`` option. If
+              False then a normal CF-netCDF variable will be written
+              in this case.
+
+            * ``'substitutions'``: `dict`
+
+              A dictionary whose key/value pairs define text
+              substitutions to be applied to the fragment file
+              names. Each key may be specified with or without the
+              ``${...}`` syntax. For instance, the following are
+              equivalent: ``{'base': 'sub'}``, ``{'${base}': 'sub'}``.
+              The substitutions are used in conjunction with, and take
+              precedence over, any that are also defined on individual
+              constructs (see `cf.Data.cfa_update_file_substitutions`
+              for details).
+
+              Substitutions are stored in the output file by the
+              ``substitutions`` attribute of the ``file`` CFA
+              aggregation instruction variable.
+
+              *Example:*
+                ``{'base': 'file:///data/'}``
+
+            .. versionadded:: TODOCFAVER
+
+        cfa_options: Deprecated at version TODOCFAVER
+            Use the *cfa* parameter instead.
 
     :Returns:
 
@@ -637,26 +700,23 @@ def write(
     >>> cf.write(f, 'file.nc', Conventions='CMIP-6.2')
 
     """
-    if unlimited is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+    if fmt in ("CFA", "CFA4", "CFA3"):
+        return _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE(
             "cf.write",
-            {"unlimited": unlimited},
-            "Use method 'DomainAxis.nc_set_unlimited' instead.",
+            "fmt",
+            fmt,
+            "Use the 'cfa' keyword instead.",
+            version="TODOCFAVER",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
-    if no_shuffle is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+    if cfa_options is not None:
+        return _DEPRECATION_ERROR_FUNCTION_KWARG(
             "cf.write",
-            {"no_shuffle": no_shuffle},
-            "Use keyword 'shuffle' instead.",
-        )  # pragma: no cover
-
-    if HDF_chunksizes is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS(
-            "cf.write",
-            {"HDF_chunksizes": HDF_chunksizes},
-            "HDF chunk sizes may be set for individual field constructs "
-            "prior to writing, instead.",
+            "cfa_options",
+            "Use keyword 'cfa' instead.",
+            version="TODOCFAVER",
+            removed_at="5.0.0",
         )  # pragma: no cover
 
     # Flatten the sequence of intput fields
@@ -670,9 +730,7 @@ def write(
                 raise ValueError("Can't set datatype and double")
 
         if single is not None and double is not None:
-            raise ValueError(
-                "Can't set both the single and double " "parameters"
-            )
+            raise ValueError("Can't set both the single and double parameters")
 
         if single is not None and not single:
             double = True
@@ -692,32 +750,60 @@ def write(
                 numpy.dtype("int32"): numpy.dtype(int),
             }
 
-        extra_write_vars = {
-            "cfa": False,
-            "cfa_options": {},
-            "reference_datetime": reference_datetime,
-        }
+        # Extra write variables
+        extra_write_vars = {"reference_datetime": reference_datetime}
 
-        # CFA options
-        if fmt in ("CFA", "CFA4"):
-            extra_write_vars["cfa"] = True
-            fmt = "NETCDF4"
-            if cfa_options:
-                extra_write_vars["cfa_options"] = cfa_options
-        elif fmt == "CFA3":
-            extra_write_vars["cfa"] = True
-            fmt = "NETCDF3_CLASSIC"
-            if cfa_options:
-                extra_write_vars["cfa_options"] = cfa_options
+        # ------------------------------------------------------------
+        # CFA
+        # ------------------------------------------------------------
+        if isinstance(cfa, dict):
+            cfa_options = cfa.copy()
+            cfa = True
+        else:
+            cfa_options = {}
+            cfa = bool(cfa)
 
-        if extra_write_vars["cfa"]:
-            if Conventions:
-                if isinstance(Conventions, str):
-                    Conventions = (Conventions,)
-
-                Conventions = tuple(Conventions) + ("CFA",)
+        if cfa:
+            # Add CFA to the Conventions
+            cfa_conventions = f"CFA-{CFA()}"
+            if not Conventions:
+                Conventions = cfa_conventions
+            elif isinstance(Conventions, str):
+                Conventions = (Conventions, cfa_conventions)
             else:
-                Conventions = "CFA"
+                Conventions = tuple(Conventions) + (cfa_conventions,)
+
+            keys = ("constructs", "absolute_paths", "strict", "substitutions")
+            if not set(cfa_options).issubset(keys):
+                raise ValueError(
+                    "Invalid dictionary key to the 'cfa_options' "
+                    f"parameter. Valid keys are {keys}. Got: {cfa_options}"
+                )
+
+            cfa_options.setdefault("constructs", "field")
+            cfa_options.setdefault("absolute_paths", True)
+            cfa_options.setdefault("strict", True)
+            cfa_options.setdefault("substitutions", {})
+
+            constructs = cfa_options["constructs"]
+            if isinstance(constructs, dict):
+                cfa_options["constructs"] = constructs.copy()
+            else:
+                if isinstance(constructs, str):
+                    constructs = (constructs,)
+
+                cfa_options["constructs"] = {c: None for c in constructs}
+
+            substitutions = cfa_options["substitutions"].copy()
+            for base, sub in tuple(substitutions.items()):
+                if not (base.startswith("${") and base.endswith("}")):
+                    # Add missing ${...}
+                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
+
+            cfa_options["substitutions"] = substitutions
+
+        extra_write_vars["cfa"] = cfa
+        extra_write_vars["cfa_options"] = cfa_options
 
         netcdf.write(
             fields,

@@ -425,6 +425,23 @@ NetCDF
    ~cf.CellMeasure.nc_get_external
    ~cf.CellMeasure.nc_set_external 
 
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellMeasure.add_file_location
+   ~cf.CellMeasure.cfa_clear_file_substitutions
+   ~cf.CellMeasure.cfa_del_file_substitution
+   ~cf.CellMeasure.cfa_file_substitutions
+   ~cf.CellMeasure.cfa_update_file_substitutions
+   ~cf.CellMeasure.del_file_location
+   ~cf.CellMeasure.file_locations
 
 Aliases
 -------

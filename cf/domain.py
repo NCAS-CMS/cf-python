@@ -1,4 +1,5 @@
 from math import prod
+from os import sep
 
 import cfdm
 
@@ -12,6 +13,7 @@ from .domainaxis import DomainAxis
 from .functions import (
     _DEPRECATION_ERROR_ARG,
     _DEPRECATION_ERROR_METHOD,
+    abspath,
     indices_shape,
     parse_indices,
 )
@@ -130,6 +132,141 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             [domain_axis.get_size(0) for domain_axis in domain_axes.values()]
         )
 
+    def add_file_location(
+        self,
+        location,
+    ):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                The new location.
+
+        :Returns:
+
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
+
+        **Examples**
+
+        >>> f.add_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = abspath(location).rstrip(sep)
+
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.add_file_location(location)
+
+        return location
+
+    def cfa_clear_file_substitutions(
+        self,
+    ):
+        """Remove all of the CFA-netCDF file name substitutions.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_clear_file_substitutions}}
+
+        **Examples**
+
+        >>> d.cfa_clear_file_substitutions()
+        {}
+
+        """
+        out = {}
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.cfa_clear_file_substitutions())
+
+        return out
+
+    def cfa_file_substitutions(self):
+        """Return the CFA-netCDF file name substitutions.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_file_substitutions}}
+
+        **Examples**
+
+        >>> d.cfa_file_substitutions()
+        {}
+
+        """
+        out = {}
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.cfa_file_substitutions())
+
+        return out
+
+    def cfa_del_file_substitution(
+        self,
+        base,
+    ):
+        """Remove a CFA-netCDF file name substitution.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            base: `str`
+                {{cfa base: `str`}}
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_del_file_substitution}}
+
+        **Examples**
+
+        >>> f.cfa_del_file_substitution('base')
+
+        """
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.cfa_del_file_substitution(
+                base,
+            )
+
+    def cfa_update_file_substitutions(
+        self,
+        substitutions,
+    ):
+        """Set CFA-netCDF file name substitutions.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.cfa_update_file_substitutions({'base': '/data/model'})
+
+        """
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.cfa_update_file_substitutions(substitutions)
+
     def close(self):
         """Close all files referenced by the domain construct.
 
@@ -155,6 +292,75 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
             version="3.14.0",
             removed_at="5.0.0",
         )  # pragma: no cover
+
+    def del_file_location(
+        self,
+        location,
+    ):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                 The file location to remove.
+
+        :Returns:
+
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.del_file_location('/data/model/')
+        '/data/model'
+
+        """
+        location = abspath(location).rstrip(sep)
+
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.del_file_location(location)
+
+        return location
+
+    def file_locations(
+        self,
+    ):
+        """The locations of files containing parts of the components data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data arrays of any of the component
+        constructs (such as dimension coordinate constructs, cell
+        measure constructs, etc.).
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        out = set()
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.file_locations())
+
+        return out
 
     @_inplace_enabled(default=False)
     def flip(self, axes=None, inplace=False):

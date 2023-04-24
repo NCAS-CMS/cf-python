@@ -38,7 +38,6 @@ _cached_latlon = {}
 _cached_time = {}
 _cached_ctime = {}
 _cached_size_1_height_coordinate = {}
-_cached_z_reference_coordinate = {}
 _cached_date2num = {}
 _cached_model_level_number_coordinate = {}
 
@@ -1077,12 +1076,7 @@ class UMField:
             for cm in cell_methods:
                 self.implementation.set_cell_method(field, cm)
 
-            # Check for decreasing axes that aren't decreasing
-            down_axes = self.down_axes
-            logger.info(f"down_axes = {down_axes}")  # pragma: no cover
-
-            if down_axes:
-                field.flip(down_axes, inplace=True)
+            logger.info(f"down_axes = {self.down_axes}")  # pragma: no cover
 
             # Force cyclic X axis for particular values of LBHEM
             if xkey is not None and int_hdr[lbhem] in (0, 1, 2, 4):
@@ -1134,6 +1128,57 @@ class UMField:
         out.append("")
 
         return "\n".join(out)
+
+    def _reorder_z_axis(self, indices, z_axis, pmaxes):
+        """Reorder the Z axis `Rec` instances.
+
+        :Parameters:
+
+            indices: `list`
+                Aggregation axis indices. See `create_data` for
+                details.
+
+            z_axis: `int`
+                The identifier of the Z axis.
+
+            pmaxes: sequence of `int`
+                The aggregation axes, which include the Z axis.
+
+        :Returns:
+
+            `list`
+
+        **Examples**
+
+        >>> _reorder_z_axis([(0, <Rec A>), (1, <Rec B>)], 0, [0])
+        [(0, <Rec B>), (1, <Rec A>)]
+
+        >>> _reorder_z_axis(
+        ...     [(0, 0, <Rec A>),
+        ...      (0, 1, <Rec B>),
+        ...      (1, 0, <Rec C>),
+        ...      (1, 1, <Rec D>)],
+        ...     1, [0, 1]
+        ... )
+        [(0, 0, <Rec B>), (0, 1, <Rec A>), (1, 0, <Rec D>), (1, 1, <Rec C>)]
+
+        """
+        indices_new = []
+        zpos = pmaxes.index(z_axis)
+        aaa0 = indices[0]
+        indices2 = [aaa0]
+        for aaa in indices[1:]:
+            if aaa[zpos] > aaa0[zpos]:
+                indices2.append(aaa)
+            else:
+                indices_new.extend(indices2[::-1])
+                aaa0 = aaa
+                indices2 = [aaa0]
+
+        indices_new.extend(indices2[::-1])
+
+        indices = [a[:-1] + b[-1:] for a, b in zip(indices, indices_new)]
+        return indices
 
     def atmosphere_hybrid_height_coordinate(self, axiscode):
         """`atmosphere_hybrid_height_coordinate` when not an array axis.
@@ -1246,8 +1291,9 @@ class UMField:
             dc = None
         else:
             array = array / toa_height
+            bounds = bounds / toa_height
             dc = self.implementation.initialise_DimensionCoordinate()
-            dc = self.coord_data(dc, array, bounds, units=_Units[""])
+            dc = self.coord_data(dc, array, bounds, units=_Units["1"])
             self.implementation.set_properties(
                 dc,
                 {"standard_name": "atmosphere_hybrid_height_coordinate"},
@@ -1644,10 +1690,12 @@ class UMField:
         """
         if array is not None:
             array = Data(array, units=units, fill_value=fill_value)
+            array._cfa_set_write(True)
             self.implementation.set_data(c, array, copy=False)
 
         if bounds is not None:
             bounds_data = Data(bounds, units=units, fill_value=fill_value)
+            bounds_data._cfa_set_write(True)
             bounds = self.implementation.initialise_Bounds()
             self.implementation.set_data(bounds, bounds_data, copy=False)
             self.implementation.set_bounds(c, bounds, copy=False)
@@ -1685,7 +1733,8 @@ class UMField:
 
         :Parameters:
 
-            c: Coordinate construct
+            c: `Coordinate`
+               A 1-d coordinate construct
 
             axiscode: `int`
 
@@ -1701,6 +1750,7 @@ class UMField:
             c.positive = positive
             if positive == "down" and axiscode != 4:
                 self.down_axes.add(domain_axis_key)
+                c.flip(inplace=True)
 
         return c
 
@@ -1870,6 +1920,9 @@ class UMField:
         name = (UMArray().__class__.__name__ + "-" + token,)
         dsk = {}
         full_slice = Ellipsis
+        klass_name = UMArray().__class__.__name__
+
+        fmt = self.fmt
 
         if len(recs) == 1:
             # --------------------------------------------------------
@@ -1888,19 +1941,19 @@ class UMField:
 
             subarray = UMArray(
                 filename=filename,
+                address=rec.hdr_offset,
                 shape=yx_shape,
                 dtype=data_type_in_file(rec),
-                header_offset=rec.hdr_offset,
-                data_offset=rec.data_offset,
-                disk_length=rec.disk_length,
-                fmt=self.fmt,
+                fmt=fmt,
                 word_size=self.word_size,
                 byte_ordering=self.byte_ordering,
                 units=units,
                 calendar=calendar,
             )
 
-            dsk[name + (0, 0)] = (getter, subarray, full_slice, False, False)
+            key = f"{klass_name}-{tokenize(subarray)}"
+            dsk[key] = subarray
+            dsk[name + (0, 0)] = (getter, key, full_slice, False, False)
 
             dtype = data_type_in_file(rec)
             chunks = normalize_chunks((-1, -1), shape=data_shape, dtype=dtype)
@@ -1917,18 +1970,23 @@ class UMField:
                 # ----------------------------------------------------
                 # 1-d partition matrix
                 # ----------------------------------------------------
+                z_axis = _axis[self.z_axis]
                 if nz > 1:
-                    pmaxes = [_axis[self.z_axis]]
+                    pmaxes = [z_axis]
                     data_shape = (nz, LBROW, LBNPT)
                 else:
                     pmaxes = [_axis["t"]]
                     data_shape = (nt, LBROW, LBNPT)
 
-                fmt = self.fmt
                 word_size = self.word_size
                 byte_ordering = self.byte_ordering
 
-                for i, rec in enumerate(recs):
+                indices = [(i, rec) for i, rec in enumerate(recs)]
+
+                if z_axis in self.down_axes:
+                    indices = self._reorder_z_axis(indices, z_axis, pmaxes)
+
+                for i, rec in indices:
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)
@@ -1937,11 +1995,9 @@ class UMField:
 
                     subarray = UMArray(
                         filename=filename,
+                        address=rec.hdr_offset,
                         shape=shape,
                         dtype=file_data_type,
-                        header_offset=rec.hdr_offset,
-                        data_offset=rec.data_offset,
-                        disk_length=rec.disk_length,
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
@@ -1949,9 +2005,11 @@ class UMField:
                         calendar=calendar,
                     )
 
+                    key = f"{klass_name}-{tokenize(subarray)}"
+                    dsk[key] = subarray
                     dsk[name + (i, 0, 0)] = (
                         getter,
-                        subarray,
+                        key,
                         full_slice,
                         False,
                         False,
@@ -1965,17 +2023,21 @@ class UMField:
                 # ----------------------------------------------------
                 # 2-d partition matrix
                 # ----------------------------------------------------
-                pmaxes = [_axis["t"], _axis[self.z_axis]]
+                z_axis = _axis[self.z_axis]
+                pmaxes = [_axis["t"], z_axis]
+
                 data_shape = (nt, nz, LBROW, LBNPT)
 
-                fmt = self.fmt
                 word_size = self.word_size
                 byte_ordering = self.byte_ordering
 
-                for i, rec in enumerate(recs):
-                    # Find T and Z axis indices
-                    t, z = divmod(i, nz)
+                indices = [
+                    divmod(i, nz) + (rec,) for i, rec in enumerate(recs)
+                ]
+                if z_axis in self.down_axes:
+                    indices = self._reorder_z_axis(indices, z_axis, pmaxes)
 
+                for t, z, rec in indices:
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)
@@ -1984,11 +2046,9 @@ class UMField:
 
                     subarray = UMArray(
                         filename=filename,
+                        address=rec.hdr_offset,
                         shape=shape,
                         dtype=file_data_type,
-                        header_offset=rec.hdr_offset,
-                        data_offset=rec.data_offset,
-                        disk_length=rec.disk_length,
                         fmt=fmt,
                         word_size=word_size,
                         byte_ordering=byte_ordering,
@@ -1996,9 +2056,11 @@ class UMField:
                         calendar=calendar,
                     )
 
+                    key = f"{klass_name}-{tokenize(subarray)}"
+                    dsk[key] = subarray
                     dsk[name + (t, z, 0, 0)] = (
                         getter,
-                        subarray,
+                        key,
                         full_slice,
                         False,
                         False,
@@ -2021,6 +2083,7 @@ class UMField:
 
         # Create the Data object
         data = Data(array, units=um_Units, fill_value=fill_value)
+        data._cfa_set_write(True)
 
         self.data = data
         self.data_axes = data_axes
@@ -3117,12 +3180,6 @@ class UMField:
         if _coord_positive.get(axiscode, None) == "down":
             bounds0, bounds1 = bounds1, bounds0
 
-            #        key = (axiscode, array, bounds0, bounds1)
-        #        dc = _cached_z_coordinate.get(key, None)
-
-        #        if dc is not None:
-        #            copy = True
-        #        else:
         copy = False
         array = np.array(array, dtype=float)
         bounds0 = np.array(bounds0, dtype=float)
@@ -3158,69 +3215,6 @@ class UMField:
         )
 
         logger.info("    " + dc.dump(display=False))  # pragma: no cover
-
-        return dc
-
-    @_manage_log_level_via_verbose_attr
-    def z_reference_coordinate(self, axiscode):
-        """Create and return the Z reference coordinates."""
-        logger.info(
-            "Creating Z reference coordinates from BRLEV"
-        )  # pragma: no cover
-
-        array = np.array(
-            [rec.real_hdr.item(brlev) for rec in self.z_recs], dtype=float
-        )
-
-        LBVC = self.lbvc
-        atol = self.atol
-
-        key = (axiscode, LBVC, array)
-        dc = _cached_z_reference_coordinate.get(key, None)
-
-        if dc is not None:
-            copy = True
-        else:
-            if not 128 <= LBVC <= 139:
-                bounds = []
-                for rec in self.z_recs:
-                    BRLEV = rec.real_hdr.item(brlev)
-                    BRSVD1 = rec.real_hdr.item(brsvd1)
-
-                    if abs(BRSVD1 - BRLEV) >= atol:
-                        bounds = None
-                        break
-
-                    bounds.append((BRLEV, BRSVD1))
-            else:
-                bounds = None
-
-            if bounds:
-                bounds = np.array((bounds,), dtype=float)
-
-            dc = self.implementation.initialise_DimensionCoordinate()
-            dc = self.coord_data(
-                dc,
-                array,
-                bounds,
-                units=_axiscode_to_Units.setdefault(axiscode, None),
-            )
-            dc = self.coord_axis(dc, axiscode)
-            dc = self.coord_names(dc, axiscode)
-
-            if not dc.get("positive", True):  # ppp
-                dc.flip(i=True)
-
-            _cached_z_reference_coordinate[key] = dc
-            copy = False
-
-        self.implementation.set_dimension_coordinate(
-            self.field,
-            dc,
-            axes=[_axis["z"]],
-            copy=copy,
-            autocyclic=_autocyclic_false,
-        )
 
         return dc
 

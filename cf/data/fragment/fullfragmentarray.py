@@ -1,24 +1,23 @@
-from ..array.netcdfarray import NetCDFArray
+from ..array.fullarray import FullArray
 from .mixin import FragmentArrayMixin
 
 
-class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
-    """A CFA fragment array stored in a netCDF file.
+class FullFragmentArray(FragmentArrayMixin, FullArray):
+    """A CFA fragment array that is filled with a value.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: TODOCFAVER
 
     """
 
     def __init__(
         self,
-        filename=None,
-        address=None,
+        fill_value=None,
         dtype=None,
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
         units=False,
-        calendar=None,
+        calendar=False,
         source=None,
         copy=True,
     ):
@@ -26,22 +25,17 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
         :Parameters:
 
-            filename: (sequence of `str`), optional
-                The names of the netCDF fragment files containing the
-                array.
+            fill_value: scalar
+                The fill value.
 
-            address: (sequence of `str`), optional
-                The name of the netCDF variable containing the
-                fragment array. Required unless *varid* is set.
-
-            dtype: `numpy.dtype`, optional
+            dtype: `numpy.dtype`
                 The data type of the aggregated array. May be `None`
                 if the numpy data-type is not known (which can be the
                 case for netCDF string types, for example). This may
                 differ from the data type of the netCDF fragment
                 variable.
 
-            shape: `tuple`, optional
+            shape: `tuple`
                 The shape of the fragment within the aggregated
                 array. This may differ from the shape of the netCDF
                 fragment variable in that the latter may have fewer
@@ -50,13 +44,14 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
             units: `str` or `None`, optional
                 The units of the fragment data. Set to `None` to
                 indicate that there are no units. If unset then the
-                units will be set during the first `__getitem__` call.
+                units will be set to `None` during the first
+                `__getitem__` call.
 
             calendar: `str` or `None`, optional
                 The calendar of the fragment data. Set to `None` to
                 indicate the CF default calendar, if applicable. If
-                unset then the calendar will be set during the first
-                `__getitem__` call.
+                unset then the calendar will be set to `None` during
+                the first `__getitem__` call.
 
             {{aggregated_units: `str` or `None`, optional}}
 
@@ -68,15 +63,13 @@ class NetCDFFragmentArray(FragmentArrayMixin, NetCDFArray):
 
         """
         super().__init__(
-            filename=filename,
-            address=address,
+            fill_value=fill_value,
             dtype=dtype,
             shape=shape,
-            mask=True,
             units=units,
             calendar=calendar,
             source=source,
-            copy=copy,
+            copy=False,
         )
 
         if source is not None:

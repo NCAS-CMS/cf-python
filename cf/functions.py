@@ -21,6 +21,7 @@ from os.path import expanduser as _os_path_expanduser
 from os.path import expandvars as _os_path_expandvars
 from os.path import join as _os_path_join
 from os.path import relpath as _os_path_relpath
+from urllib.parse import urlparse
 
 import cfdm
 import netCDF4
@@ -30,7 +31,7 @@ from dask.base import is_dask_collection
 from dask.utils import parse_bytes
 from psutil import virtual_memory
 
-from . import __file__, __version__
+from . import __cfa_version__, __file__, __version__
 from .constants import (
     CONSTANTS,
     OperandBoundsCombination,
@@ -1148,6 +1149,33 @@ def CF():
 
 
 CF.__doc__ = cfdm.CF.__doc__.replace("cfdm.", "cf.")
+
+
+def CFA():
+    """The version of the CFA conventions.
+
+    This indicates which version of the CFA conventions are
+    represented by this release of the cf package, and therefore the
+    version can not be changed.
+
+    .. versionadded:: TODOCFAVER
+
+    .. seealso:: `cf.CF`
+
+    :Returns:
+
+        `str`
+            The version of the CFA conventions represented by this
+            release of the cf package.
+
+    **Examples**
+
+    >>> cf.CFA()
+    '0.6.2'
+
+    """
+    return __cfa_version__
+
 
 # Module-level alias to avoid name clashes with function keyword
 # arguments (corresponding to 'import atol as cf_atol' etc. in other
@@ -2473,14 +2501,15 @@ def abspath(filename):
     'http://data/archive/file.nc'
 
     """
-    if filename is None:
-        return
+    u = urlparse(filename)
+    scheme = u.scheme
+    if not scheme:
+        return _os_path_abspath(filename)
 
-    u = urllib.parse.urlparse(filename)
-    if u.scheme != "":
-        return filename
+    if scheme == "file":
+        return u.path
 
-    return _os_path_abspath(filename)
+    return filename
 
 
 def relpath(filename, start=None):
@@ -3205,6 +3234,44 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(
             f"version {version} and is no longer available{removed_at}. "
             f"{message}"
         )
+
+
+def _DEPRECATION_ERROR_FUNCTION_KWARG_VALUE(
+    func,
+    kwarg,
+    value,
+    message="",
+    version=None,
+    removed_at=None,
+):
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"Value {value!r} of keyword {kwarg!r} of function {func!r} "
+        f"has been deprecated at version {version} and is no longer "
+        f"available{removed_at}. {message}"
+    )
+
+
+def _DEPRECATION_ERROR_FUNCTION_KWARG(
+    func,
+    kwarg=None,
+    message="",
+    version=None,
+    removed_at=None,
+):
+    if version is None:
+        raise ValueError("Must provide deprecation version, e.g. '3.14.0'")
+
+    if removed_at:
+        removed_at = f" and will be removed at version {removed_at}"
+
+    raise DeprecationError(
+        f"Keyword {kwarg!r} of function {func} has been deprecated "
+        f"at version {version} and is no longer available{removed_at}. "
+        f"{message}"
+    )
 
 
 def _DEPRECATION_ERROR_KWARGS(

@@ -17,14 +17,22 @@ cf.NetCDFArray
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.NetCDFArray.add_file_location
    ~cf.NetCDFArray.close
    ~cf.NetCDFArray.copy
+   ~cf.NetCDFArray.del_file_location
+   ~cf.NetCDFArray.file_locations
+   ~cf.NetCDFArray.filename
    ~cf.NetCDFArray.get_address
+   ~cf.NetCDFArray.get_addresses
+   ~cf.NetCDFArray.get_format
+   ~cf.NetCDFArray.get_formats
    ~cf.NetCDFArray.get_calendar
    ~cf.NetCDFArray.get_compression_type
    ~cf.NetCDFArray.get_filename
    ~cf.NetCDFArray.get_filenames
    ~cf.NetCDFArray.get_group
+   ~cf.NetCDFArray.get_groups
    ~cf.NetCDFArray.get_mask
    ~cf.NetCDFArray.get_missing_values 
    ~cf.NetCDFArray.get_ncvar
@@ -33,7 +41,8 @@ cf.NetCDFArray
    ~cf.NetCDFArray.get_varid
    ~cf.NetCDFArray.open
    ~cf.NetCDFArray.to_memory
-   
+   ~cf.NetCDFArray.Units
+
 .. rubric:: Attributes
 
 .. autosummary::

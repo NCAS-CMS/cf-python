@@ -83,7 +83,7 @@ class create_fieldTest(unittest.TestCase):
                         "iota",
                         "kappa",
                     ],
-                    dtype="S",
+                    dtype="U",
                 )
             )
         )

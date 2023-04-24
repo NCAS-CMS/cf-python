@@ -15539,6 +15539,77 @@ def _make_regrid_file(filename):
     ]
 
 
+def _make_cfa_file(filename):
+    n = netCDF4.Dataset(filename, "w", format="NETCDF4")
+
+    n.Conventions = f"CF-{VN} CFA-0.6.2"
+    n.comment = (
+        "A CFA-netCDF file with non-standarised aggregation instructions"
+    )
+
+    n.createDimension("time", 12)
+    level = n.createDimension("level", 1)
+    lat = n.createDimension("lat", 73)
+    lon = n.createDimension("lon", 144)
+    n.createDimension("f_time", 2)
+    n.createDimension("f_level", 1)
+    n.createDimension("f_lat", 1)
+    n.createDimension("f_lon", 1)
+    n.createDimension("i", 4)
+    n.createDimension("j", 2)
+
+    lon = n.createVariable("lon", "f4", ("lon",))
+    lon.standard_name = "longitude"
+    lon.units = "degrees_east"
+
+    lat = n.createVariable("lat", "f4", ("lat",))
+    lat.standard_name = "latitude"
+    lat.units = "degrees_north"
+
+    time = n.createVariable("time", "f4", ("time",))
+    time.standard_name = "time"
+    time.units = "days since 2000-01-01"
+
+    level = n.createVariable("level", "f4", ("level",))
+
+    tas = n.createVariable("tas", "f4", ())
+    tas.standard_name = "air_temperature"
+    tas.units = "K"
+    tas.aggregated_dimensions = "time level lat lon"
+    tas.aggregated_data = "location: aggregation_location file: aggregation_file format: aggregation_format address: aggregation_address tracking_id: aggregation_tracking_id"
+
+    loc = n.createVariable("aggregation_location", "i4", ("i", "j"))
+    loc[0, :] = 6
+    loc[1, 0] = level.size
+    loc[2, 0] = lat.size
+    loc[3, 0] = lon.size
+
+    fil = n.createVariable(
+        "aggregation_file", str, ("f_time", "f_level", "f_lat", "f_lon")
+    )
+    fil[0, 0, 0, 0] = "January-June.nc"
+    fil[1, 0, 0, 0] = "July-December.nc"
+
+    add = n.createVariable(
+        "aggregation_address", str, ("f_time", "f_level", "f_lat", "f_lon")
+    )
+    add[0, 0, 0, 0] = "tas0"
+    add[1, 0, 0, 0] = "tas1"
+
+    fmt = n.createVariable("aggregation_format", str, ())
+    fmt[()] = "nc"
+
+    tid = n.createVariable(
+        "aggregation_tracking_id", str, ("f_time", "f_level", "f_lat", "f_lon")
+    )
+    tid[0, 0, 0, 0] = "tracking_id0"
+    tid[1, 0, 0, 0] = "tracking_id1"
+
+    n.close()
+
+    return filename
+
+
 contiguous_file = _make_contiguous_file("DSG_timeSeries_contiguous.nc")
 indexed_file = _make_indexed_file("DSG_timeSeries_indexed.nc")
 indexed_contiguous_file = _make_indexed_contiguous_file(
@@ -15571,6 +15642,8 @@ subsampled_file_1 = _make_subsampled_1("subsampled_1.nc")
 subsampled_file_1 = _make_subsampled_2("subsampled_2.nc")
 
 regrid_file = _make_regrid_file("regrid.nc")
+
+cfa_file = _make_cfa_file("cfa.nc")
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
