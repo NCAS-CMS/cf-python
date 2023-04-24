@@ -812,7 +812,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             `numpy.ndarray`
                 A size 1 array containing the unique value, or missing
-                data if there is not a unique unique value.
+                data if there is not a unique value.
 
         """
         out_shape = (1,) * a.ndim
