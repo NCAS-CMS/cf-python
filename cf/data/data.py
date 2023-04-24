@@ -1277,7 +1277,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         """Remove components invalidated by updating the `dask` array.
 
         Removes or modifies components that can't be guaranteed to be
-        consistent with an updated `dask` array`. See the *clear*
+        consistent with an updated `dask` array. See the *clear*
         parameter for details.
 
         .. versionadded:: 3.14.0
