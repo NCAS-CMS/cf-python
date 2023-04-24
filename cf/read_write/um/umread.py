@@ -38,7 +38,6 @@ _cached_latlon = {}
 _cached_time = {}
 _cached_ctime = {}
 _cached_size_1_height_coordinate = {}
-# _cached_z_reference_coordinate = {}
 _cached_date2num = {}
 _cached_model_level_number_coordinate = {}
 
