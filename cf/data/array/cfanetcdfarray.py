@@ -348,7 +348,7 @@ class CFANetCDFArray(NetCDFArray):
         """Get the sizes of the fragment dimensions.
 
         The fragment dimension sizes are given in the same order as
-        the aggregated dimension sizes given by `shape`
+        the aggregated dimension sizes given by `shape`.
 
         .. versionadded:: 3.14.0
 
