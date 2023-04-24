@@ -3899,7 +3899,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # Set the CFA write status
         #
-        # Assume at first that all input data instance have True
+        # Assume at first that all input data instances have True
         # status, but ...
         cfa = _CFA
         for d in processed_data:
