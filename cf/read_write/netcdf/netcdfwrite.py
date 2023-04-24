@@ -844,7 +844,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
             `dict`
                 A dictionary whose keys are the standardised CFA
-                aggregation instruction terms, keyed by `Data`
+                aggregation instruction terms, with values of `Data`
                 instances containing the corresponding variables.
 
         **Examples**
