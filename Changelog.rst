@@ -3,6 +3,9 @@ version 3.14.2
 
 **2023-04-??**
 
+* Fix excessive memory use arising from `cf.Field.regrids` and
+  `cf.Field.regridc`
+  (https://github.com/NCAS-CMS/cf-python/issues/623)
 * Fixed bug in `cf.Field.read` when reading UM/PP data that are
   runlength encoded (https://github.com/NCAS-CMS/cf-python/issues/621)
 * Removed benign UserWarning from `cf.Field.percentile`
