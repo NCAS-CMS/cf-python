@@ -356,7 +356,7 @@ def _regrid(
 
         prev_src_mask: `numpy.ndarray` or `None`
             The source grid mask used by a previous call to `_regrid`.
-            See *prev_weights* for details`.
+            See *prev_weights* for details.
 
         prev_dst_mask: `numpy.ndarray` or `None`
             The destination grid mask used by a previous call to
