@@ -32,7 +32,7 @@ class FragmentArrayMixin:
         .. versionadded:: TODOCFAVER
 
         """
-        # TODOACTIVE: modify this the for case when
+        # TODOACTIVE: modify this for the case when
         #             super().__getitem__(tuple(indices)) returns a
         #             dictionary
 
