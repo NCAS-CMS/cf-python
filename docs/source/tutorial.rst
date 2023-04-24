@@ -119,16 +119,20 @@ elements.
 
 The following file types can be read:
 
-* All formats of netCDF3 and netCDF4 files (including `CFA-netCDF
-  <http://www.met.reading.ac.uk/~david/cfa/0.4/index.html>`_ files)
-  can be read, containing datasets for any version of CF up to and
-  including CF-|version|.
+* All formats of netCDF3 and netCDF4 files can be read, containing
+  datasets for any version of CF up to and including CF-|version|.
 
 ..
 
 * Files in `CDL format
   <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_working_with_netcdf_files.html>`_,
   with or without the data array values.
+
+..
+
+* `CFA-netCDF
+  <https://github.com/NCAS-CMS/cfa-conventions/blob/master/source/cfa.md>`_
+  files at version 0.6 or later.
 
 ..
 
@@ -5256,6 +5260,10 @@ The `cf.write` function has optional parameters to
 
 * append to the netCDF file rather than over-writing it by default;
 
+* write as a `CFA-netCDF
+  <https://github.com/NCAS-CMS/cfa-conventions/blob/master/source/cfa.md>`_
+  file.
+
 * specify which field construct properties should become netCDF data
   variable attributes and which should become netCDF global
   attributes;
@@ -5274,6 +5282,8 @@ The `cf.write` function has optional parameters to
 * apply netCDF compression and packing; and
 
 * set the endian-ness of the output data.
+
+* omit the data arrays of selected constructs.
 
 For example, to use the `mode` parameter to append a new field, or fields,
 to a netCDF file whilst preserving the field or fields already contained
