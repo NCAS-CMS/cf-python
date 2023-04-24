@@ -746,17 +746,26 @@ class FormulaTermsTest(unittest.TestCase):
         f = cf.example_field(1)
         self.assertIsNone(f.auxiliary_coordinate("altitude", default=None))
 
-        g = f.compute_vertical_coordinates(verbose=None)
-
-        altitude = g.auxiliary_coordinate("altitude")
         orog = f.domain_ancillary("surface_altitude")
         a = f.domain_ancillary("ncvar%a")
         b = f.domain_ancillary("ncvar%b")
+
+        # Set bounds properties on 'a' to check that they do not
+        # appear on the bounds of the computed vertical coordinates
+        a.bounds.set_property("foo", "bar")
+
+        g = f.compute_vertical_coordinates(verbose=None)
+        altitude = g.auxiliary_coordinate("altitude")
 
         self.assertTrue(altitude)
         self.assertTrue(altitude.has_bounds())
         self.assertEqual(altitude.shape, (1,) + orog.shape)
         self.assertEqual(altitude.bounds.shape, altitude.shape + (2,))
+
+        # Check that bounds properties were cleared
+        properties = altitude.bounds.properties()
+        properties.pop("units", None)
+        self.assertFalse(properties)
 
         # Check array values
         orog = orog.data.insert_dimension(-1)

@@ -469,6 +469,7 @@ def regrid(
         )
 
     if return_operator:
+        regrid_operator.tosparse()
         return regrid_operator
 
     # ----------------------------------------------------------------

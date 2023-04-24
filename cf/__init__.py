@@ -97,6 +97,7 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
 __cf_version__ = cfdm.core.__cf_version__
+__cfa_version__ = "0.6.2"
 
 from packaging.version import Version
 import importlib.util
@@ -198,7 +199,7 @@ if not Version(_minimum_vn) <= _cfdm_version < Version(_maximum_vn):
     )
 
 # Check the version of dask
-_minimum_vn = "2022.12.1"
+_minimum_vn = "2022.02.1"
 if Version(dask.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad dask version: cf requires dask>={_minimum_vn}. "
@@ -262,7 +263,7 @@ from .data.array import (
 )
 
 from .data.fragment import (
-    MissingFragmentArray,
+    FullFragmentArray,
     NetCDFFragmentArray,
     UMFragmentArray,
 )

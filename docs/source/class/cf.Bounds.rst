@@ -405,6 +405,23 @@ NetCDF
    ~cf.Bounds.nc_has_dimension
    ~cf.Bounds.nc_set_dimension
 
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Bounds.add_file_location
+   ~cf.Bounds.cfa_clear_file_substitutions
+   ~cf.Bounds.cfa_del_file_substitution
+   ~cf.Bounds.cfa_file_substitutions
+   ~cf.Bounds.cfa_update_file_substitutions
+   ~cf.Bounds.del_file_location
+   ~cf.Bounds.file_locations
 
 Aliases
 -------

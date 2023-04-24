@@ -492,6 +492,22 @@ _docstring_substitution_definitions = {
                 `dask.optimization.cull` for details.
 
                 .. versionadded:: 3.14.0""",
+    # cfa substitutions
+    "{{cfa substitutions: `dict`}}": """substitutions: `dict`
+                The substitution definitions in a dictionary whose
+                key/value pairs are the file name parts to be
+                substituted and their corresponding substitution text.
+
+                Each substitution definition may be specified with or
+                without the ``${...}`` syntax. For instance, the
+                following are equivalent: ``{'base': 'sub'}``,
+                ``{'${base}': 'sub'}``.""",
+    # cfa base
+    "{{cfa base: `str`}}": """base: `str`
+                The substitution definition to be removed. May be
+                specified with or without the ``${...}`` syntax. For
+                instance, the following are equivalent: ``'base'`` and
+                ``'${base}'``.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
@@ -524,4 +540,19 @@ _docstring_substitution_definitions = {
                             checked. The coordinates check will be
                             carried out, however, if the
                             *check_coordinates* parameter is True.""",
+    # Returns cfa_file_substitutions
+    "{{Returns cfa_file_substitutions}}": """The CFA-netCDF file name substitutions in a dictionary
+                whose key/value pairs are the file name parts to be
+                substituted and their corresponding substitution
+                text.""",
+    # Returns cfa_clear_file_substitutions
+    "{{Returns cfa_clear_file_substitutions}}": """The removed CFA-netCDF file name substitutions in a
+                dictionary whose key/value pairs are the file name
+                parts to be substituted and their corresponding
+                substitution text.""",
+    # Returns cfa_clear_file_substitutions
+    "{{Returns cfa_del_file_substitution}}": """
+                The removed CFA-netCDF file name substitution. If the
+                substitution was not defined then an empty dictionary
+                is returned.""",
 }

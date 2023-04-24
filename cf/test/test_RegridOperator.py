@@ -26,22 +26,12 @@ class RegridOperatorTest(unittest.TestCase):
         self.assertIsNone(self.r.dst_axes)
         self.assertIsNone(self.r.src_mask)
         self.assertIsNone(self.r.dst_mask)
-        self.assertEqual(self.r.weights.ndim, 1)
-        self.assertEqual(self.r.row.ndim, 1)
-        self.assertEqual(self.r.col.ndim, 1)
-        self.assertEqual(self.r.row.size, self.r.weights.size)
-        self.assertEqual(self.r.col.size, self.r.weights.size)
+        self.assertEqual(self.r.weights.ndim, 2)
+        self.assertIsNone(self.r.row)
+        self.assertIsNone(self.r.col)
 
     def test_RegridOperator_copy(self):
         self.assertIsInstance(self.r.copy(), self.r.__class__)
-
-    def test_RegridOperator_todense(self):
-        from math import prod
-
-        w = self.r.todense()
-        self.assertEqual(
-            w.shape, (prod(self.r.dst_shape), prod(self.r.src_shape))
-        )
 
 
 if __name__ == "__main__":

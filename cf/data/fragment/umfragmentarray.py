@@ -1,8 +1,8 @@
 from ..array.umarray import UMArray
-from .abstract import FragmentArray
+from .mixin import FragmentArrayMixin
 
 
-class UMFragmentArray(FragmentArray):
+class UMFragmentArray(FragmentArrayMixin, UMArray):
     """A CFA fragment array stored in a UM or PP file.
 
     .. versionadded:: 3.14.0
@@ -26,11 +26,11 @@ class UMFragmentArray(FragmentArray):
 
         :Parameters:
 
-            filename: `str`
-                The name of the UM or PP file containing the fragment.
+            filename: (sequence of `str`), optional
+                The names of the UM or PP files containing the fragment.
 
-            address: `int`, optional
-                The start word in the file of the header.
+            address: (sequence of `str`), optional
+                The start words in the files of the header.
 
             dtype: `numpy.dtype`
                 The data type of the aggregated array. May be `None`
@@ -65,28 +65,33 @@ class UMFragmentArray(FragmentArray):
             {{init copy: `bool`, optional}}
 
         """
-        if source is not None:
-            super().__init__(source=source, copy=copy)
-            return
-
-        array = UMArray(
-            filename=filename,
-            header_offset=address,
-            dtype=dtype,
-            shape=shape,
-            units=units,
-            calendar=calendar,
-            copy=False,
-        )
-
         super().__init__(
             filename=filename,
             address=address,
             dtype=dtype,
             shape=shape,
-            aggregated_units=aggregated_units,
-            aggregated_calendar=aggregated_calendar,
-            array=array,
+            units=units,
+            calendar=calendar,
             source=source,
             copy=False,
+        )
+
+        if source is not None:
+            try:
+                aggregated_units = source._get_component(
+                    "aggregated_units", False
+                )
+            except AttributeError:
+                aggregated_units = False
+
+            try:
+                aggregated_calendar = source._get_component(
+                    "aggregated_calendar", False
+                )
+            except AttributeError:
+                aggregated_calendar = False
+
+        self._set_component("aggregated_units", aggregated_units, copy=False)
+        self._set_component(
+            "aggregated_calendar", aggregated_calendar, copy=False
         )

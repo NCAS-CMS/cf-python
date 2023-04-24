@@ -1,5 +1,6 @@
 import logging
 from itertools import chain
+from os import sep
 
 import numpy as np
 from cfdm import is_log_level_info
@@ -17,6 +18,7 @@ from ..functions import (
     _DEPRECATION_ERROR_ATTRIBUTE,
     _DEPRECATION_ERROR_KWARGS,
     _DEPRECATION_ERROR_METHOD,
+    abspath,
     default_netCDF_fillvals,
 )
 from ..functions import equivalent as cf_equivalent
@@ -1602,6 +1604,39 @@ class PropertiesData(Properties):
 
         self.Units = Units(None, getattr(self, "calendar", None))
 
+    def add_file_location(self, location):
+        """Add a new file location in-place.
+
+        All data definitions that reference files are additionally
+        referenced from the given location.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `del_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                The new location.
+
+        :Returns:
+
+            `str`
+                The new location as an absolute path with no trailing
+                separate pathname component separator.
+
+        **Examples**
+
+        >>> d.add_file_location('/data/model/')
+        '/data/model'
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.add_file_location(location)
+
+        return abspath(location).rstrip(sep)
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def mask_invalid(self, inplace=False, i=False):
@@ -2488,6 +2523,100 @@ class PropertiesData(Properties):
             delete_props=True,
         )
 
+    def cfa_update_file_substitutions(self, substitutions):
+        """Set CFA-netCDF file name substitutions.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.cfa_update_file_substitutions({'base', '/data/model'})
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            data.cfa_update_file_substitutions(substitutions)
+
+    @_inplace_enabled(default=False)
+    def cfa_clear_file_substitutions(self, inplace=False):
+        """Remove all of the CFA-netCDF file name substitutions.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_clear_file_substitutions}}
+
+        **Examples**
+
+        >>> f.cfa_clear_file_substitutions()
+        {}
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return {}
+
+        return data.cfa_clear_file_substitutions({})
+
+    def cfa_del_file_substitution(
+        self,
+        base,
+    ):
+        """Remove a CFA-netCDF file name substitution.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            `dict`
+                {{Returns cfa_del_file_substitution}}
+
+        **Examples**
+
+        >>> f.cfa_del_file_substitution('base')
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            data.cfa_del_file_substitution(base)
+
+    def cfa_file_substitutions(
+        self,
+    ):
+        """Return the CFA-netCDF file name substitutions.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `dict`
+                {{Returns cfa_file_substitutions}}
+
+        **Examples**
+
+        >>> g = f.cfa_file_substitutions()
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return {}
+
+        return data.cfa_file_substitutions({})
+
     def chunk(self, chunksize=None):
         """Partition the data array.
 
@@ -2914,6 +3043,39 @@ class PropertiesData(Properties):
 
         return data.datum(*index)
 
+    def del_file_location(self, location):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `file_locations`
+
+        :Parameters:
+
+            location: `str`
+                 The file location to remove.
+
+        :Returns:
+
+            `str`
+                The removed location as an absolute path with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> f.del_file_location('/data/model/')
+        '/data/model'
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.del_file_location(location)
+
+        return abspath(location).rstrip(sep)
+
     @_manage_log_level_via_verbosity
     def equals(
         self,
@@ -3242,6 +3404,34 @@ class PropertiesData(Properties):
             calendar_months=calendar_months,
             calendar_years=calendar_years,
         )
+
+    def file_locations(self):
+        """The locations of files containing parts of the data.
+
+        Returns the locations of any files that may be required to
+        deliver the computed data array.
+
+        .. versionadded:: TODOCFAVER
+
+        .. seealso:: `add_file_location`, `del_file_location`
+
+        :Returns:
+
+            `set`
+                The unique file locations as absolute paths with no
+                trailing separate pathname component separator.
+
+        **Examples**
+
+        >>> d.file_locations()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.file_locations()
+
+        return set()
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
@@ -5024,13 +5214,13 @@ class PropertiesData(Properties):
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self),
             "optimize_graph",
-            inplace=True
+            inplace=True,
         )
 
-#        data = v.get_data(None, units=None, _fill_value=None))
-#        if data is not None:
-#            data.optimize_graph()
-            
+    #        data = v.get_data(None, units=None, _fill_value=None))
+    #        if data is not None:
+    #            data.optimize_graph()
+
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
