@@ -49,6 +49,7 @@ class CFATest(unittest.TestCase):
     netcdf_fmts = netcdf3_fmts + netcdf4_fmts
 
     def test_CFA_fmt(self):
+        """Test the cf.read 'fmt' and 'cfa' keywords."""
         f = cf.example_field(0)
         cf.write(f, tmpfile1)
         f = cf.read(tmpfile1)[0]
@@ -60,6 +61,7 @@ class CFATest(unittest.TestCase):
             self.assertTrue(f.equals(g[0]))
 
     def test_CFA_multiple_fragments(self):
+        """Test CFA with more than one fragment."""
         f = cf.example_field(0)
 
         cf.write(f[:2], tmpfile1)
@@ -82,6 +84,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(n[0].equals(c[0]))
 
     def test_CFA_strict(self):
+        """Test CFA 'strict' option to the cfa.write 'cfa' keyword."""
         f = cf.example_field(0)
 
         # By default, can't write as CF-netCDF those variables
@@ -103,6 +106,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(g[0].equals(f))
 
     def test_CFA_field_ancillaries(self):
+        """Test creation of field ancillaries from non-standard CFA terms."""
         f = cf.example_field(0)
         self.assertFalse(f.field_ancillaries())
 
@@ -150,6 +154,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(e[0].equals(d))
 
     def test_CFA_substitutions_0(self):
+        """Test CFA substitution URI substitutions (0)."""
         f = cf.example_field(0)
         cf.write(f, tmpfile1)
         f = cf.read(tmpfile1)[0]
@@ -180,6 +185,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(f.equals(g[0]))
 
     def test_CFA_substitutions_1(self):
+        """Test CFA substitution URI substitutions (1)."""
         f = cf.example_field(0)
         cf.write(f, tmpfile1)
         f = cf.read(tmpfile1)[0]
@@ -208,6 +214,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(f.equals(g[0]))
 
     def test_CFA_substitutions_2(self):
+        """Test CFA substitution URI substitutions (2)."""
         f = cf.example_field(0)
         cf.write(f, tmpfile1)
         f = cf.read(tmpfile1)[0]
@@ -290,6 +297,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(f.equals(g[0]))
 
     def test_CFA_absolute_paths(self):
+        """Test CFA 'absolute_paths' option to the cfa.write 'cfa' keyword."""
         f = cf.example_field(0)
         cf.write(f, tmpfile1)
         f = cf.read(tmpfile1)[0]
@@ -313,6 +321,7 @@ class CFATest(unittest.TestCase):
             self.assertTrue(f.equals(g[0]))
 
     def test_CFA_constructs(self):
+        """Test choice of constructs to write as CFA-netCDF variables."""
         f = cf.example_field(1)
         f.del_construct("T")
         f.del_construct("long_name=Grid latitude name")
@@ -402,6 +411,7 @@ class CFATest(unittest.TestCase):
             nc.close()
 
     def test_CFA_PP(self):
+        """Test writing CFA-netCDF with PP format fragments."""
         f = cf.read("file1.pp")[0]
         cf.write(f, tmpfile1, cfa=True)
 
@@ -424,6 +434,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(f.equals(g[0]))
 
     def test_CFA_multiple_files(self):
+        """Test storing multiple CFA frgament locations."""
         tmpfile1 = "delme1.nc"
         tmpfile2 = "delme2.nc"
         f = cf.example_field(0)
