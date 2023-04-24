@@ -499,6 +499,17 @@ class RegridOperator(mixin_Container, Container):
     def tosparse(self):
         """Convert the weights to `scipy` sparse array format in-place.
 
+        The weights are converted to Compressed Sparse Row(CSR) array
+        format, i.e. the `weights` attribute becomes a
+        `scipy.sparse._arrays.csr_array` object. A CSR array used as
+        the most efficient sparse array type given that we expect no
+        changes to the sparsity structure, and any further
+        modification of the weights to account for missing values in
+        the source grid will always involve row-slicing.
+
+        The `dst_mask` attribute is updated to `True` for desitnation
+        grid points for which the weights are all zero.
+
         :Returns:
 
             `None`
