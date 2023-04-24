@@ -2357,9 +2357,19 @@ def aggregate(
 
                         unaggregatable = True
                         break
-                    #   NOT TO SELF: concetnation of *multiple* fields at a time (rather than just 2) is better. i.e. da.conatnenate([a, b, c, d, e], axis=0) is much butter than t = da.concatenate([a, b], axis=0;  t = da.concatenate([t, c], axis=0; etc,
 
-                #                todict(m0)
+                    # TODO: As a further performance improvement,
+                    #       concatenation of multiple fields at a time
+                    #       (rather than just 2) is MUCH
+                    #       better. i.e. t = da.conatnenate([a, b, c,
+                    #       d, e], axis=0) is very much faster than t
+                    #       = da.concatenate([a, b], axis=0; t =
+                    #       da.concatenate([t, c], axis=0; etc.
+                    #
+                    #       This refactor away from pair-wise
+                    #       concatenation will need more effort than
+                    #       is possible at this time (April 2023), and
+                    #       so is postponed for now.
 
                 m[:] = [m0]
 
