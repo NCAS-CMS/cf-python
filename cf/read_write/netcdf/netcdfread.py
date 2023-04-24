@@ -313,16 +313,18 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             ncvar: `str`
                 The netCDF variable containing the array.
 
-            ncdimensions: sequence of `str`, optional
-                The netCDF dimensions spanned by the array.
-
-                .. versionadded:: 3.14.fill_value:
+            units: `str`, optional
                 The units of *array*. By default, or if `None`, it is
                 assumed that there are no units.
 
             calendar: `str`, optional
                 The calendar of *array*. By default, or if `None`, it is
                 assumed that there is no calendar.
+
+            ncdimensions: sequence of `str`, optional
+                The netCDF dimensions spanned by the array.
+
+                .. versionadded:: 3.14.0
 
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
