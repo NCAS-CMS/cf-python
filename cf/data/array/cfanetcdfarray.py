@@ -91,7 +91,7 @@ class CFANetCDFArray(NetCDFArray):
             term: `str`, optional
                 The name of a non-standard aggregation instruction
                 term from which the array is to be created, instead of
-                the creating the aggregated data in the standard
+                creating the aggregated data in the standard
                 terms. If set then *address* must be the name of the
                 term's CFA-netCDF aggregation instruction variable,
                 which must be defined on the fragment dimensions and
