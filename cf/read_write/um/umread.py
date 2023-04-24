@@ -1140,7 +1140,7 @@ class UMField:
                 details.
 
             z_axis: `int`
-                The identifier of the Z axis
+                The identifier of the Z axis.
 
             pmaxes: sequence of `int`
                 The aggregation axes, which include the Z axis.
@@ -3220,70 +3220,6 @@ class UMField:
         return dc
 
 
-#    @_manage_log_level_via_verbose_attr
-#    def z_reference_coordinate(self, axiscode):
-#        """Create and return the Z reference coordinates."""
-#        logger.info(
-#            "Creating Z reference coordinates from BRLEV"
-#        )  # pragma: no cover
-#
-#        array = np.array(
-#            [rec.real_hdr.item(brlev) for rec in self.z_recs], dtype=float
-#        )
-#
-#        LBVC = self.lbvc
-#        atol = self.atol
-#        print(99999)
-#        key = (axiscode, LBVC, array)
-#        dc = _cached_z_reference_coordinate.get(key)
-#
-#        if dc is not None:
-#            copy = True
-#        else:
-#            if not 128 <= LBVC <= 139:
-#                bounds = []
-#                for rec in self.z_recs:
-#                    BRLEV = rec.real_hdr.item(brlev)
-#                    BRSVD1 = rec.real_hdr.item(brsvd1)
-#
-#                    if abs(BRSVD1 - BRLEV) >= atol:
-#                        bounds = None
-#                        break
-#
-#                    bounds.append((BRLEV, BRSVD1))
-#            else:
-#                bounds = None
-#
-#            if bounds:
-#                bounds = np.array((bounds,), dtype=float)
-#
-#            dc = self.implementation.initialise_DimensionCoordinate()
-#            dc = self.coord_data(
-#                dc,
-#                array,
-#                bounds,
-#                units=_axiscode_to_Units.setdefault(axiscode, None),
-#            )
-#            dc = self.coord_axis(dc, axiscode)
-#            dc = self.coord_names(dc, axiscode)
-#
-#            if not dc.get("positive", True):  # ppp
-#                dc.flip(inplace=True)
-#
-#            _cached_z_reference_coordinate[key] = dc
-#            copy = False
-#
-#        self.implementation.set_dimension_coordinate(
-#            self.field,
-#            dc,
-#            axes=[_axis["z"]],
-#            copy=copy,
-#            autocyclic=_autocyclic_false,
-#        )
-#
-#        return dc
-#
-#
 # _stash2standard_name = {}
 #
 # def load_stash2standard_name(table=None, delimiter='!', merge=True):
