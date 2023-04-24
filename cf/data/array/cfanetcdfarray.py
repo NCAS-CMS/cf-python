@@ -42,11 +42,11 @@ class CFANetCDFArray(NetCDFArray):
 
         :Parameters:
 
-            filename: (sequence of `str`), optional
+            filename: (sequence of) `str`, optional
                 The name of the CFA-netCDF file containing the
                 array. If a sequence then it must contain one element.
 
-            address: (sequence of `str`0, optional
+            address: (sequence of) `str`, optional
                 The name of the CFA-netCDF aggregation variable the
                 array. If a sequence then it must contain one element.
 
