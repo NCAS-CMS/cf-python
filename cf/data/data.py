@@ -1304,7 +1304,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                   status is set to `False`.
 
                 * If ``clear`` is non-zero then the CFA term status is
-                  set to False.
+                  set to `False`.
 
                 By default *clear* is the ``_ALL`` integer-valued
                 constant, which results in all components being
