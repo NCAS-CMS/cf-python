@@ -239,7 +239,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             calendar=kwargs["calendar"],
         )
 
-        # Note: We don't cache elements from CFA variables
+        # Note: We don't cache elements from CFA variables, because
+        #       the data are in fragment files which have not been
+        #       opened; and may not not even be openable, such as
+        #       could be the case if a fragement was on tape storage.
 
         # Set the CFA write status to True iff each non-aggregated
         # axis has exactly one dask storage chunk
