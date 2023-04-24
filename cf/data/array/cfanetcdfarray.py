@@ -50,9 +50,6 @@ class CFANetCDFArray(NetCDFArray):
                 The name of the CFA-netCDF aggregation variable for the
                 array. If a sequence then it must contain one element.
 
-            shape: `tuple` of `int`
-                The shape of the aggregated data array.
-
             dtype: `numpy.dtype`
                 The data type of the aggregated data array. May be
                 `None` if the numpy data-type is not known (which can
