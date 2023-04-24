@@ -381,7 +381,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # ------------------------------------------------------------
         if g["CFA_version"] < Version("0.6.2"):
             raise ValueError(
-                f"Can't read file {g['filename']} that uses obselete "
+                f"Can't read file {g['filename']} that uses obsolete "
                 f"CFA conventions version CFA-{g['CFA_version']}. "
                 "(Note that version 3.13.1 can be used to read and "
                 "write CFA-0.4 files.)"
