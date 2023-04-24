@@ -1078,7 +1078,6 @@ class UMField:
 
             logger.info(f"down_axes = {self.down_axes}")  # pragma: no cover
 
-
             # Force cyclic X axis for particular values of LBHEM
             if xkey is not None and int_hdr[lbhem] in (0, 1, 2, 4):
                 field.cyclic(
