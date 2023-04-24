@@ -283,7 +283,7 @@ def unique(
             axis=axis,
         )
 
-    # Fast unique based in the full value
+    # Fast unique based on the full value
     x = a.get_full_value()
     if x is np.ma.masked:
         return np.ma.masked_all((1,), dtype=a.dtype)
