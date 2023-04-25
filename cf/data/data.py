@@ -1567,7 +1567,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def _update_deterministic(self, other):
         """Update the deterministic name status.
 
-        .. versionadded:: 3.15.0
+        .. versionadded:: 3.15.1
 
         .. seealso:: `get_deterministic_name`,
                      `has_deterministic_name`
@@ -3849,7 +3849,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 in-place, but the concatenation process will be
                 faster.
 
-                .. versionadded:: 3.15.0
+                .. versionadded:: 3.15.1
 
         :Returns:
 
@@ -3977,7 +3977,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # Set the new dask array
         data0._set_dask(dx, clear=_ALL ^ cfa)
 
-        # Set the appropriate cached elements
+        # Set appropriate cached elements
         cached_elements = {}
         for i in (0, -1):
             element = processed_data[i]._get_cached_elements().get(i)
@@ -3987,7 +3987,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         if cached_elements:
             data0._set_cached_elements(cached_elements)
 
-        # Set if the concatenated name is deterministic
+        # Set whether or not the concatenated name is deterministic
         deterministic = True
         for d in processed_data:
             if not d.has_deterministic_name():
@@ -6207,7 +6207,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         An exception is raised if there is no determinisitic name.
 
-        .. versionadded:: 3.15.0
+        .. versionadded:: 3.15.1
 
         .. seealso:: `has_deterministic_name`
 
@@ -7938,7 +7938,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # Return False if there are different cached elements. This
         # provides a possible short circuit for that case that two
-        # arrays are not equal, but not in the case that they are.
+        # arrays are not equal (but not in the case that they are).
         cache0 = self._get_cached_elements()
         if cache0:
             cache1 = other._get_cached_elements()
@@ -8535,7 +8535,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         See ``get_deterministic_name` for details.
 
-        .. versionadded:: 3.15.0
+        .. versionadded:: 3.15.1
 
         .. seealso:: `get_deterministic_name`
 
@@ -11324,7 +11324,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
     def todict(self, optimize_graph=True):
         """Return a dictionary of the dask graph key/value pairs.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `to_dask_array`, `tolist`
 
@@ -11701,17 +11701,20 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.ones(shape, dtype=dtype, chunks=chunks)
         return cls(dx, units=units, calendar=calendar)
 
-    @_inplace_enabled(default=True)
-    def optimize_graph(self, inplace=True):
-        """TODO"""
-
-        d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d.to_dask_array()
-        dsk = collections_to_dsk((dx,), optimize_graph=True)
-        dx2 = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        d._set_dask(dx2, clear=_NONE)
-        return d
+    #    def optimize_graph(self):
+    #        """Remove unnecessary tasks from the dask graph in-place.
+    #
+    #        .. versionadded:: 3.15.1
+    #
+    #        .. seealso:: `todict`
+    #
+    #        """
+    #        d = _inplace_enabled_define_and_cleanup(self)
+    #        dx = d.to_dask_array()
+    #        dsk = collections_to_dsk((dx,), optimize_graph=True)
+    #        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
+    #        d._set_dask(dx, clear=_NONE)
+    #        return d
 
     @classmethod
     def zeros(

@@ -2469,12 +2469,6 @@ class PropertiesDataBounds(PropertiesData):
 
         return ok
 
-    def optimize_graph(self):
-        """TODO"""
-        data = self.get_data(None, units=None, _fill_value=None)
-        if data is not None:
-            data.optimize_graph()
-
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     @_inplace_enabled(default=False)
     def override_calendar(self, calendar, inplace=False, i=False):
