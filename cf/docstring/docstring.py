@@ -65,19 +65,19 @@ _docstring_substitution_definitions = {
     "{{regrid Implementation}}": """**Implementation**
 
         The interpolation is carried out using regridding weights
-        calculated by the `ESMF` package, a Python interface to the
-        Earth System Modeling Framework (ESMF) regridding utility:
-        `https://earthsystemmodeling.org/regrid`_. Outside of `ESMF`,
+        calculated by the `esmpy` package, a Python interface to the
+        Earth System Modeling Framework (esmpy) regridding utility:
+        `https://earthsystemmodeling.org/regrid`_. Outside of `esmpy`,
         these weights are then modified for masked cells (if required)
         and the regridded data are created as the dot product of the
-        weights with the source data. (Note that whilst the `ESMF`
+        weights with the source data. (Note that whilst the `esmpy`
         package is able to also create the regridded data from its
         weights, this feature can't be integrated with the `dask`
         framework that underpins the field's data.)""",
     # regrid Logging
     "{{regrid Logging}}": """**Logging**
 
-        Whether `ESMF` logging is enabled or not is determined by
+        Whether `esmpy` logging is enabled or not is determined by
         `cf.regrid_logging`. If it is logging takes place after every
         call. By default logging is disabled.""",
     # ----------------------------------------------------------------
@@ -392,7 +392,7 @@ _docstring_substitution_definitions = {
                 a point) are skipped, not producing a
                 result. Otherwise an error will be produced if
                 degenerate cells are found, that will be present in
-                the ESMF log files.
+                the esmpy log files.
 
                 For all other regridding methods, degenerate cells are
                 always skipped, regardless of the value of
@@ -431,7 +431,7 @@ _docstring_substitution_definitions = {
                 cell in the regridded field is masked.
 
                 The default value has been chosen empirically as the
-                smallest value that produces the same masks as ESMF
+                smallest value that produces the same masks as esmpy
                 for the use cases defined in the cf test suite.
 
                 Define w_ji as the multiplicative weight that defines
