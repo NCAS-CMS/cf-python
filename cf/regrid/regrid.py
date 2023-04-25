@@ -10,6 +10,8 @@ from ..functions import DeprecationError, regrid_logging
 from ..units import Units
 from .regridoperator import RegridOperator
 
+# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
+# either for now for backwards compatibility.
 esmpy_imported = False
 try:
     import ESMF as esmpy
