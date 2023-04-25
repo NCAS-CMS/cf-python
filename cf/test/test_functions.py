@@ -368,6 +368,9 @@ class functionTest(unittest.TestCase):
         x = da.arange(9)
         self.assertEqual(cf.size(x), x.size)
 
+    def test_CFA(self):
+        self.assertEqual(cf.CFA(), cf.__cfa_version__)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

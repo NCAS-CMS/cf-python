@@ -70,6 +70,8 @@ Dask
    ~cf.Data.cull_graph
    ~cf.Data.dask_compressed_array
    ~cf.Data.rechunk
+   ~cf.Data.chunk_indices
+   ~cf.Data.todict
    ~cf.Data.to_dask_array
 
 .. rubric:: Attributes
@@ -644,6 +646,32 @@ Performance
    ~cf.Data.chunks
    ~cf.Data.npartitions
    ~cf.Data.numblocks
+
+
+CFA
+---
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	  
+   ~cf.Data.add_file_location
+   ~cf.Data.cfa_clear_file_substitutions
+   ~cf.Data.cfa_del_aggregated_data
+   ~cf.Data.cfa_del_file_substitution
+   ~cf.Data.cfa_file_substitutions
+   ~cf.Data.cfa_get_aggregated_data
+   ~cf.Data.cfa_get_term
+   ~cf.Data.cfa_get_write
+   ~cf.Data.cfa_has_aggregated_data
+   ~cf.Data.cfa_has_file_substitutions
+   ~cf.Data.cfa_set_aggregated_data
+   ~cf.Data.cfa_set_term
+   ~cf.Data.cfa_set_write
+   ~cf.Data.cfa_update_file_substitutions
+   ~cf.Data.del_file_location
+   ~cf.Data.file_locations
 
 Element-wise arithmetic, bit and comparison operations
 ------------------------------------------------------

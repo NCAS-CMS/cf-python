@@ -1173,6 +1173,14 @@ class DataTest(unittest.TestCase):
         self.assertEqual(f.shape, f_np.shape)
         self.assertTrue((f.array == f_np).all())
 
+        # Check cached elements
+        str(d)
+        str(e)
+        f = cf.Data.concatenate([d, e], axis=1)
+        cached = f._get_cached_elements()
+        self.assertEqual(cached[0], d.first_element())
+        self.assertEqual(cached[-1], e.last_element())
+
         # Check concatenation with one invalid units
         d.override_units(cf.Units("foo"), inplace=1)
         with self.assertRaises(ValueError):
@@ -4393,7 +4401,7 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_filenames(self):
         """Test `Data.get_filenames`."""
-        d = cf.Data.full((5, 8), 1, chunks=4)
+        d = cf.Data.ones((5, 8), float, chunks=4)
         self.assertEqual(d.get_filenames(), set())
 
         f = cf.example_field(0)
@@ -4527,6 +4535,108 @@ class DataTest(unittest.TestCase):
 
         d._set_dask(dx, clear=_ALL)
         self.assertFalse(d._get_cached_elements())
+
+    def test_Data_cfa_aggregated_data(self):
+        """Test `Data` CFA aggregated_data methods"""
+        d = cf.Data(9)
+        aggregated_data = {
+            "location": "cfa_location",
+            "file": "cfa_file",
+            "address": "cfa_address",
+            "format": "cfa_format",
+            "tracking_id": "tracking_id",
+        }
+
+        self.assertFalse(d.cfa_has_aggregated_data())
+        self.assertIsNone(d.cfa_set_aggregated_data(aggregated_data))
+        self.assertTrue(d.cfa_has_aggregated_data())
+        self.assertEqual(d.cfa_get_aggregated_data(), aggregated_data)
+        self.assertEqual(d.cfa_del_aggregated_data(), aggregated_data)
+        self.assertFalse(d.cfa_has_aggregated_data())
+        self.assertEqual(d.cfa_get_aggregated_data(), {})
+        self.assertEqual(d.cfa_del_aggregated_data(), {})
+
+    def test_Data_cfa_file_substitutions(self):
+        """Test `Data` CFA file_substitutions methods"""
+        d = cf.Data(9)
+        self.assertFalse(d.cfa_has_file_substitutions())
+        self.assertIsNone(
+            d.cfa_update_file_substitutions({"base": "file:///data/"})
+        )
+        self.assertTrue(d.cfa_has_file_substitutions())
+        self.assertEqual(
+            d.cfa_file_substitutions(), {"${base}": "file:///data/"}
+        )
+
+        d.cfa_update_file_substitutions({"${base2}": "/home/data/"})
+        self.assertEqual(
+            d.cfa_file_substitutions(),
+            {"${base}": "file:///data/", "${base2}": "/home/data/"},
+        )
+
+        d.cfa_update_file_substitutions({"${base}": "/new/location/"})
+        self.assertEqual(
+            d.cfa_file_substitutions(),
+            {"${base}": "/new/location/", "${base2}": "/home/data/"},
+        )
+        self.assertEqual(
+            d.cfa_del_file_substitution("${base}"),
+            {"${base}": "/new/location/"},
+        )
+        self.assertEqual(
+            d.cfa_clear_file_substitutions(), {"${base2}": "/home/data/"}
+        )
+        self.assertFalse(d.cfa_has_file_substitutions())
+        self.assertEqual(d.cfa_file_substitutions(), {})
+        self.assertEqual(d.cfa_clear_file_substitutions(), {})
+        self.assertEqual(d.cfa_del_file_substitution("base"), {})
+
+    def test_Data_file_location(self):
+        """Test `Data` file location methods"""
+        f = cf.example_field(0)
+
+        self.assertEqual(
+            f.data.add_file_location("/data/model/"), "/data/model"
+        )
+
+        cf.write(f, file_A)
+        d = cf.read(file_A, chunks=4)[0].data
+        self.assertGreater(d.npartitions, 1)
+
+        e = d.copy()
+        location = os.path.dirname(os.path.abspath(file_A))
+
+        self.assertEqual(d.file_locations(), set((location,)))
+        self.assertEqual(d.add_file_location("/data/model/"), "/data/model")
+        self.assertEqual(d.file_locations(), set((location, "/data/model")))
+
+        # Check that we haven't changed 'e'
+        self.assertEqual(e.file_locations(), set((location,)))
+
+        self.assertEqual(d.del_file_location("/data/model/"), "/data/model")
+        self.assertEqual(d.file_locations(), set((location,)))
+        d.del_file_location("/invalid")
+        self.assertEqual(d.file_locations(), set((location,)))
+
+    def test_Data_todict(self):
+        """Test Data.todict"""
+        d = cf.Data([1, 2, 3, 4], chunks=2)
+        key = d.to_dask_array().name
+
+        x = d.todict()
+        self.assertIsInstance(x, dict)
+        self.assertIn((key, 0), x)
+        self.assertIn((key, 1), x)
+
+        e = d[0]
+        x = e.todict()
+        self.assertIn((key, 0), x)
+        self.assertNotIn((key, 1), x)
+
+        x = e.todict(optimize_graph=False)
+        self.assertIsInstance(x, dict)
+        self.assertIn((key, 0), x)
+        self.assertIn((key, 1), x)
 
 
 if __name__ == "__main__":

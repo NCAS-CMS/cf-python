@@ -402,6 +402,24 @@ NetCDF
    ~cf.Count.nc_has_sample_dimension
    ~cf.Count.nc_set_sample_dimension
 
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.add_file_location
+   ~cf.Count.cfa_clear_file_substitutions
+   ~cf.Count.cfa_del_file_substitution
+   ~cf.Count.cfa_file_substitutions
+   ~cf.Count.cfa_update_file_substitutions
+   ~cf.Count.del_file_location
+   ~cf.Count.file_locations
+
 Aliases
 -------
 

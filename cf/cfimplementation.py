@@ -83,13 +83,16 @@ class CFImplementation(cfdm.CFDMImplementation):
     def initialise_CFANetCDFArray(
         self,
         filename=None,
-        ncvar=None,
-        group=None,
+        address=None,
         dtype=None,
         mask=True,
         units=False,
         calendar=False,
         instructions=None,
+        substitutions=None,
+        term=None,
+        x=None,
+        **kwargs,
     ):
         """Return a `CFANetCDFArray` instance.
 
@@ -97,9 +100,7 @@ class CFImplementation(cfdm.CFDMImplementation):
 
             filename: `str`
 
-            ncvar: `str`
-
-            group: `None` or sequence of str`
+            address: (sequence of) `str` or `int`
 
             dytpe: `numpy.dtype`
 
@@ -111,6 +112,15 @@ class CFImplementation(cfdm.CFDMImplementation):
 
             instructions: `str`, optional
 
+            substitutions: `dict`, optional
+
+            term: `str`, optional
+
+            x: `dict`, optional
+
+            kwargs: optional
+                Ignored.
+
         :Returns:
 
             `CFANetCDFArray`
@@ -119,13 +129,15 @@ class CFImplementation(cfdm.CFDMImplementation):
         cls = self.get_class("CFANetCDFArray")
         return cls(
             filename=filename,
-            ncvar=ncvar,
-            group=group,
+            address=address,
             dtype=dtype,
             mask=mask,
             units=units,
             calendar=calendar,
             instructions=instructions,
+            substitutions=substitutions,
+            term=term,
+            x=x,
         )
 
 

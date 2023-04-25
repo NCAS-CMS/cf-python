@@ -111,13 +111,7 @@ class GatheredArray(
             key = f"{subarray_name}-{tokenize(subarray)}"
             dsk[key] = subarray
 
-            dsk[name + chunk_location] = (
-                getter,
-                key,
-                Ellipsis,
-                False,
-                False,
-            )
+            dsk[name + chunk_location] = (getter, key, Ellipsis, False, False)
 
         # Return the dask array
         return da.Array(dsk, name[0], chunks=chunks, dtype=dtype)

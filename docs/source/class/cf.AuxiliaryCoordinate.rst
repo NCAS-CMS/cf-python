@@ -508,6 +508,24 @@ Groups
    ~cf.AuxiliaryCoordinate.nc_set_variable_groups
    ~cf.AuxiliaryCoordinate.nc_clear_variable_groups
   
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.AuxiliaryCoordinate.add_file_location
+   ~cf.AuxiliaryCoordinate.cfa_clear_file_substitutions
+   ~cf.AuxiliaryCoordinate.cfa_del_file_substitution
+   ~cf.AuxiliaryCoordinate.cfa_file_substitutions
+   ~cf.AuxiliaryCoordinate.cfa_update_file_substitutions
+   ~cf.AuxiliaryCoordinate.del_file_location
+   ~cf.AuxiliaryCoordinate.file_locations
+   
 Aliases
 -------
 

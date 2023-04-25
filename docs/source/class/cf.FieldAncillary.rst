@@ -399,6 +399,23 @@ NetCDF
    ~cf.FieldAncillary.nc_has_variable
    ~cf.FieldAncillary.nc_set_variable 
 
+CFA
+---
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.FieldAncillary.add_file_location
+   ~cf.FieldAncillary.cfa_clear_file_substitutions
+   ~cf.FieldAncillary.cfa_del_file_substitution
+   ~cf.FieldAncillary.cfa_file_substitutions
+   ~cf.FieldAncillary.cfa_update_file_substitutions
+   ~cf.FieldAncillary.del_file_location
+   ~cf.FieldAncillary.file_locations
 
 Aliases
 -------

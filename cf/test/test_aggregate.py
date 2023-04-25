@@ -334,6 +334,25 @@ class aggregateTest(unittest.TestCase):
         self.assertEqual(i.Units.__dict__, bad_units.__dict__)
         self.assertTrue((i.array == f.array).all())
 
+    def test_aggregate_field_ancillaries(self):
+        f = cf.example_field(0)
+        self.assertFalse(f.field_ancillaries())
+
+        a = f[:2]
+        b = f[2:]
+        a.set_property("foo", "bar_a")
+        b.set_property("foo", "bar_b")
+
+        c = cf.aggregate([a, b], field_ancillaries="foo")
+        self.assertEqual(len(c), 1)
+        c = c[0]
+        self.assertTrue(len(c.field_ancillaries()), 1)
+
+        anc = c.field_ancillary()
+        self.assertEqual(anc.shape, c.shape)
+        self.assertTrue((anc[:2] == "bar_a").all())
+        self.assertTrue((anc[2:] == "bar_b").all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

@@ -1,15 +1,26 @@
-version 3.14.2
+version 3.15.0
 --------------
 
 **2023-04-??**
 
+* Re-introduction of CFA-netCDF functionality for CFA-0.6
+  (https://github.com/NCAS-CMS/cf-python/issues/451,
+  https://github.com/NCAS-CMS/cf-python/issues/475,
+  https://github.com/NCAS-CMS/cf-python/issues/637)
+* New function: `cf.CFA`
+* New method: `cf.Data.get_cfa_write`
+* New method: `cf.Data.set_cfa_write`
 * Fix excessive memory use arising from `cf.Field.regrids` and
   `cf.Field.regridc`
   (https://github.com/NCAS-CMS/cf-python/issues/623)
 * Fixed bug in `cf.Field.read` when reading UM/PP data that are
   runlength encoded (https://github.com/NCAS-CMS/cf-python/issues/621)
+* Fixed bug in `cf.Field.compute_vertical_coordinates` that retained
+  incorrect bounds properties
+  (https://github.com/NCAS-CMS/cf-python/issues/626)
 * Removed benign UserWarning from `cf.Field.percentile`
   (https://github.com/NCAS-CMS/cf-python/issues/619)
+* Changed dependency: ``1.10.1.0<=cfdm<1.10.2.0``
 
 ----
 
@@ -49,6 +60,8 @@ version 3.14.0
   https://github.com/NCAS-CMS/cf-python/issues/428)
 * Backwards incompatible API changes to facilitate the use of Dask
   (https://github.com/NCAS-CMS/cf-python/issues/579)
+* Removal of CFA-0.4 functionality (CFA-0.6 will introduced at a later
+  version).
 * New method: `cf.Field.get_original_filenames`
   (https://github.com/NCAS-CMS/cf-python/issues/448)
 * New method: `cf.Field.to_dask_array`

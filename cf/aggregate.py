@@ -2,19 +2,19 @@ import logging
 from collections import namedtuple
 from operator import itemgetter
 
+import numpy as np
 from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
-from numpy import argsort as numpy_argsort
-from numpy import dtype as numpy_dtype
-from numpy import sort as numpy_sort
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
-from .data.data import Data
+from .data import Data
+from .data.array import FullArray
 from .decorators import (
     _manage_log_level_via_verbose_attr,
     _manage_log_level_via_verbosity,
     _reset_log_emergence_level,
 )
 from .domainaxis import DomainAxis
+from .fieldancillary import FieldAncillary
 from .fieldlist import FieldList
 from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS, _numpy_allclose
 from .functions import atol as cf_atol
@@ -26,7 +26,7 @@ from .units import Units
 logger = logging.getLogger(__name__)
 
 
-_dtype_float = numpy_dtype(float)
+_dtype_float = np.dtype(float)
 
 # # --------------------------------------------------------------------
 # # Global properties, as defined in Appendix A of the CF conventions.
@@ -134,10 +134,11 @@ class _Meta:
         equal=None,
         exist=None,
         ignore=None,
-        dimension=(),
+        dimension=None,
         relaxed_identities=False,
         ncvar_identities=False,
         field_identity=None,
+        field_ancillaries=(),
         copy=True,
     ):
         """**initialisation**
@@ -206,6 +207,11 @@ class _Meta:
                 to aggregation, a new axis is created with an auxiliary
                 coordinate whose datum is the property's value and the
                 property itself is deleted from that field.
+
+            field_ancillaries: (sequence of) `str`, optional
+                See `cf.aggregate` for details.
+
+                .. versionadded:: TODOCFAVER
 
             copy: `bool` optional
                 If False then do not copy fields prior to aggregation.
@@ -289,41 +295,22 @@ class _Meta:
                     "no identity; consider setting " "relaxed_identities"
                 )
                 return
-        #        elif not self.has_data:
-        #            self.message = "{} has no data".format(f.__class__.__name__)
-        #            return
 
         # ------------------------------------------------------------
         # Promote selected properties to 1-d, size 1 auxiliary
-        # coordinates
+        # coordinates with new independent domain axes
         # ------------------------------------------------------------
-        _copy = copy
-        for prop in dimension:
-            value = f.get_property(prop, None)
-            if value is None:
-                continue
-
-            aux_coord = AuxiliaryCoordinate(
-                properties={"long_name": prop},
-                data=Data([value], units=""),
-                copy=False,
-            )
-            aux_coord.nc_set_variable(prop)
-            aux_coord.id = prop
-
-            if _copy:
-                # Copy the field, as we're about to change it.
-                f = f.copy()
-                self.field = f
-                _copy = False
-
-            axis = f.set_construct(DomainAxis(1))
-            f.set_construct(aux_coord, axes=[axis], copy=False)
-
-            f.del_property(prop)
-
         if dimension:
-            construct_axes = f.constructs.data_axes()
+            f = self.promote_to_auxiliary_coordinate(dimension)
+
+        # ------------------------------------------------------------
+        # Promote selected properties to field ancillaries that span
+        # the same domain axes as the field
+        # ------------------------------------------------------------
+        if field_ancillaries:
+            f = self.promote_to_field_ancillary(field_ancillaries)
+
+        construct_axes = f.constructs.data_axes()
 
         self.units = self.canonical_units(
             f, self.identity, relaxed_units=relaxed_units
@@ -400,7 +387,6 @@ class _Meta:
                         "coordrefs": self.find_coordrefs(axis),
                     }
                 )
-            #                     'size'     : None})
 
             # Find the 1-d auxiliary coordinates which span this axis
             aux_coords = {
@@ -546,10 +532,10 @@ class _Meta:
         # Field ancillaries
         # ------------------------------------------------------------
         self.field_anc = {}
-        field_ancillaries = f.constructs.filter_by_type(
+        field_ancs = f.constructs.filter_by_type(
             "field_ancillary", todict=True
         )
-        for key, field_anc in field_ancillaries.items():
+        for key, field_anc in field_ancs.items():
             # Find this field ancillary's identity
             identity = self.field_ancillary_has_identity_and_data(field_anc)
             if identity is None:
@@ -1395,6 +1381,117 @@ class _Meta:
 
         return tuple(sorted(names))
 
+    def promote_to_auxiliary_coordinate(self, properties):
+        """Promote properties to auxiliary coordinate constructs.
+
+        Each property is converted to a 1-d auxilliary coordinate
+        construct that spans a new independent size 1 domain axis of
+        the field, and the property is deleted.
+
+         ... versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            properties: sequence of `str`
+                The names of the properties to be promoted.
+
+        :Returns:
+
+            `Field` or `Domain`
+                The field or domain with the new auxiliary coordinate
+                constructs.
+
+        """
+        f = self.field
+
+        copy = True
+        for prop in properties:
+            value = f.get_property(prop, None)
+            if value is None:
+                continue
+
+            aux_coord = AuxiliaryCoordinate(
+                properties={"long_name": prop},
+                data=Data([value]),
+                copy=False,
+            )
+            aux_coord.nc_set_variable(prop)
+            aux_coord.id = prop
+
+            if copy:
+                # Copy the field as we're about to change it
+                f = f.copy()
+                copy = False
+
+            axis = f.set_construct(DomainAxis(1))
+            f.set_construct(aux_coord, axes=[axis], copy=False)
+            f.del_property(prop)
+
+        self.field = f
+        return f
+
+    def promote_to_field_ancillary(self, properties):
+        """Promote properties to field ancillary constructs.
+
+        For each input field, each property is converted to a field
+        ancillary construct that spans the entire domain, with the
+        constant value of the property.
+
+        The `Data` of any new field ancillary construct is marked
+        as a CFA term, meaning that it will only be written to disk if
+        the parent field construct is written as a CFA aggregation
+        variable, and in that case the field ancillary is written as a
+        non-standard CFA aggregation instruction variable, rather than
+        a CF-netCDF ancillary variable.
+
+        If a domain construct is being aggregated then it is always
+        returned unchanged.
+
+         ... versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            properties: sequnce of `str`
+                The names of the properties to be promoted.
+
+        :Returns:
+
+            `Field` or `Domain`
+                The field or domain with the new field ancillary
+                constructs.
+
+        """
+        f = self.field
+        if f.construct_type != "field":
+            return f
+
+        copy = True
+        for prop in properties:
+            value = f.get_property(prop, None)
+            if value is None:
+                continue
+
+            data = Data(
+                FullArray(value, shape=f.shape, dtype=np.array(value).dtype)
+            )
+            data._cfa_set_term(True)
+
+            field_anc = FieldAncillary(
+                data=data, properties={"long_name": prop}, copy=False
+            )
+            field_anc.id = prop
+
+            if copy:
+                # Copy the field as we're about to change it
+                f = f.copy()
+                copy = False
+
+            f.set_construct(field_anc, axes=f.get_data_axes(), copy=False)
+            f.del_property(prop)
+
+        self.field = f
+        return f
+
 
 @_manage_log_level_via_verbosity
 def aggregate(
@@ -1423,6 +1520,7 @@ def aggregate(
     no_overlap=False,
     shared_nc_domain=False,
     field_identity=None,
+    field_ancillaries=None,
     info=False,
 ):
     """Aggregate field constructs into as few field constructs as
@@ -1649,6 +1747,16 @@ def aggregate(
             numbers. The default value is set by the
             `cf.rtol` function.
 
+        field_ancillaries: (sequence of) `str`, optional
+            Create new field ancillary constructs for each input field
+            which has one or more of the given properties. For each
+            input field, each property is converted to a field
+            ancillary construct that spans the entire domain, with the
+            constant value of the property, and the property itself is
+            deleted.
+
+            .. versionadded:: TODOCFAVER
+
         no_overlap:
             Use the *overlap* parameter instead.
 
@@ -1705,6 +1813,7 @@ def aggregate(
             "\ninfo=2 maps to verbose=3"
             "\ninfo=3 maps to verbose=-1",
             version="3.5.0",
+            removed_at="4.0.0",
         )  # pragma: no cover
 
     # Initialise the cache for coordinate and cell measure hashes,
@@ -1737,6 +1846,9 @@ def aggregate(
 
     if isinstance(dimension, str):
         dimension = (dimension,)
+
+    if isinstance(field_ancillaries, str):
+        field_ancillaries = (field_ancillaries,)
 
     if exist_all and equal_all:
         raise ValueError(
@@ -1808,6 +1920,7 @@ def aggregate(
             ncvar_identities=ncvar_identities,
             field_identity=field_identity,
             respect_valid=respect_valid,
+            field_ancillaries=field_ancillaries,
             copy=copy,
         )
 
@@ -2220,7 +2333,7 @@ def _create_hash_and_first_values(
                 # ... or which doesn't have a dimension coordinate but
                 # does have one or more 1-d auxiliary coordinates
                 aux = m_axis_identity["keys"][0]
-                sort_indices = numpy_argsort(field.constructs[aux].array)
+                sort_indices = np.argsort(field.constructs[aux].array)
                 m_sort_keys[axis] = aux
                 null_sort = False
 
@@ -2662,8 +2775,8 @@ def _get_hfl(
 
         if create_flb:
             # Record the bounds of the first and last (sorted) cells
-            first = numpy_sort(array[0, ...])
-            last = numpy_sort(array[-1, ...])
+            first = np.sort(array[0, ...])
+            last = np.sort(array[-1, ...])
             hfl_cache.flb[key] = (first, last)
 
     if first_and_last_values or first_and_last_bounds:
