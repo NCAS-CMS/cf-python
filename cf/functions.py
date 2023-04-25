@@ -1158,7 +1158,7 @@ def CFA():
     represented by this release of the cf package, and therefore the
     version can not be changed.
 
-    .. versionadded:: TODOCFAVER
+    .. versionadded:: 3.15.0
 
     .. seealso:: `cf.CF`
 

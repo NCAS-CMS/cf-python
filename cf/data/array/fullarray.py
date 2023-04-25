@@ -93,7 +93,7 @@ class FullArray(Array):
     def __array__(self, *dtype):
         """The numpy array interface.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -115,7 +115,7 @@ class FullArray(Array):
     def __array_function__(self, func, types, args, kwargs):
         """The `numpy` `__array_function__` protocol.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         """
         if func not in _FULLARRAY_HANDLED_FUNCTIONS:
@@ -251,7 +251,7 @@ class FullArray(Array):
 def fullarray_implements(numpy_function):
     """Register an __array_function__ implementation for FullArray objects.
 
-    .. versionadded:: TODOCFAVER
+    .. versionadded:: 3.15.0
 
     """
 
@@ -268,7 +268,7 @@ def unique(
 ):
     """Version of `np.unique` that is optimised for `FullArray` objects.
 
-    .. versionadded:: TODOCFAVER
+    .. versionadded:: 3.15.0
 
     """
     if return_index or return_inverse or return_counts or axis is not None:

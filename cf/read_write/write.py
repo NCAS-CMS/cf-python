@@ -162,11 +162,11 @@ def write(
                                         below)
 
             ``'CFA'`` or ``'CFA4'``     Deprecated at version
-                                        TODOCFAVER.  See the *cfa*
+                                        3.15.0.  See the *cfa*
                                         parameter.
 
             ``'CFA3'``                  Deprecated at version
-                                        TODOCFAVER.  See the *cfa*
+                                        3.15.0.  See the *cfa*
                                         parameter.
             ==========================  ==============================
 
@@ -677,9 +677,9 @@ def write(
               *Example:*
                 ``{'base': 'file:///data/'}``
 
-            .. versionadded:: TODOCFAVER
+            .. versionadded:: 3.15.0
 
-        cfa_options: Deprecated at version TODOCFAVER
+        cfa_options: Deprecated at version 3.15.0
             Use the *cfa* parameter instead.
 
     :Returns:
@@ -706,7 +706,7 @@ def write(
             "fmt",
             fmt,
             "Use the 'cfa' keyword instead.",
-            version="TODOCFAVER",
+            version="3.15.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -715,7 +715,7 @@ def write(
             "cf.write",
             "cfa_options",
             "Use keyword 'cfa' instead.",
-            version="TODOCFAVER",
+            version="3.15.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 

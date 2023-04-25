@@ -141,7 +141,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         All data definitions that reference files are additionally
         referenced from the given location.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `del_file_location`, `file_locations`
 
@@ -174,7 +174,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     ):
         """Remove all of the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -196,7 +196,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     def cfa_file_substitutions(self):
         """Return the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -221,7 +221,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     ):
         """Remove a CFA-netCDF file name substitution.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -249,7 +249,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
     ):
         """Set CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -302,7 +302,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         All data definitions that reference files will have references
         to files in the given location removed from them.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `file_locations`
 
@@ -340,7 +340,7 @@ class Domain(mixin.FieldDomain, mixin.Properties, cfdm.Domain):
         constructs (such as dimension coordinate constructs, cell
         measure constructs, etc.).
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `del_file_location`
 

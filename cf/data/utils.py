@@ -481,7 +481,7 @@ def chunk_shapes(chunks):
 def chunk_locations(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: TODOCFAVER
+    .. versionadded:: 3.15.0
 
     .. seealso:: `chunk_indices`, `chunk_positions`, `chunk_shapes`
 

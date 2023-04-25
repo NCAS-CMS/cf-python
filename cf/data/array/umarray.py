@@ -40,7 +40,7 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
             address: (sequence of) `int`, optional
                 The start position in the file(s) of the header(s).
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
             dtype: `numpy.dtype`
                 The data type of the data array on disk.
@@ -83,14 +83,14 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
                 Deprecated at version 3.14.0.
 
             header_offset: `int`
-                Deprecated at version TODOCFAVER. use the *address*
+                Deprecated at version 3.15.0. use the *address*
                 parameter instead.
 
             data_offset: `int`, optional
-                Deprecated at version TODOCFAVER.
+                Deprecated at version 3.15.0.
 
             disk_length: `int`, optional
-                Deprecated at version TODOCFAVER.
+                Deprecated at version 3.15.0.
 
         """
         super().__init__(source=source, copy=copy)
@@ -473,7 +473,7 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
             self,
             "header_offset",
             "Use method 'get_address' instead.",
-            version="TODOCFAVER",
+            version="3.15.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -489,7 +489,7 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "data_offset",
-            version="TODOCFAVER",
+            version="3.15.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -505,7 +505,7 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
         _DEPRECATION_ERROR_ATTRIBUTE(
             self,
             "disk_length",
-            version="TODOCFAVER",
+            version="3.15.0",
             removed_at="5.0.0",
         )  # pragma: no cover
 
@@ -630,7 +630,7 @@ class UMArray(FileArrayMixin, cfdm.data.mixin.FileArrayMixin, Array):
     def get_format(self):
         """The format of the files.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `get_address`, `get_filename`, `get_formats`
 
