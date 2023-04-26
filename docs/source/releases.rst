@@ -16,7 +16,8 @@ Documentation for all versions of cf.
 **CF-1.10**
 -----------
 
-* `Version 3.14.1 <https://ncas-cms.github.io/cf-python/3.14.1>`_ (2023-10-03)
+* `Version 3.15.0 <https://ncas-cms.github.io/cf-python/3.15.0>`_ (2023-04-26)
+* `Version 3.14.1 <https://ncas-cms.github.io/cf-python/3.14.1>`_ (2023-03-10)
 * `Version 3.14.0 <https://ncas-cms.github.io/cf-python/3.14.0>`_ (2023-01-31 *first Dask release*)
 
 ----
