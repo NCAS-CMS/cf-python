@@ -363,12 +363,15 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 # str object, so convert it to a numpy array.
                 array = np.array(array, dtype=f"U{len(array)}")
 
-            if not array.ndim:
+            if not variable.ndim:
+                # NetCDF4 has a thing for making scalar size 1
+                # variables into 1d arrays
                 array = array.squeeze()
 
             if not string_type:
-                # A netCDF string type N-d (N>=1) variable comes out as a
-                # numpy object array, so convert it to numpy string array.
+                # A N-d (N>=1) netCDF string type variable comes out
+                # as a numpy object array, so convert it to numpy
+                # string array.
                 array = array.astype("U", copy=False)
                 # NetCDF4 doesn't auto-mask VLEN variables
                 array = np.ma.where(array == "", np.ma.masked, array)
@@ -453,7 +456,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         Updates *data* in-place to store its first, second,
         penultimate, and last element values (as appropriate).
 
-        These values are used by `cf.aggregate` and for inspection.
+        These values are used by, amongst other things,
+        `cf.Data.equals`, `cf.aggregate` and for inspection.
 
         Doing this here is quite cheap because only the individual
         elements are read from the already-open file, as opposed to
@@ -466,7 +470,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         doesn't scale well with array size (i.e. it takes
         disproportionally longer for larger arrays). Such arrays are
         usually in field constructs, for which `cf.aggregate` does not
-        need to know any array values, so it should be be consdidered
+        need to know any array values, so it should be be considered
         to not call this method for field constructs.
 
         .. versionadded:: 3.14.0
@@ -513,13 +517,12 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 # with a trailing dimension that needs to be collapsed
                 char = True
 
-        indices = (0, -1)
-
         if ndim == 1:
             # Also cache the second element for 1-d data, on the
             # assumption that they may well be dimension coordinate
             # data.
             if size == 1:
+                indices = (0, -1)
                 value = variable[...]
                 values = (value, value)
             elif size == 2:
@@ -548,6 +551,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
                 )
         elif size == 1:
+            indices = (0, -1)
             value = variable[...]
             values = (value, value)
         elif size == 3:
@@ -557,6 +561,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             else:
                 values = variable[...].flatten()
         else:
+            indices = (0, -1)
             values = (
                 variable[(slice(0, 1),) * ndim],
                 variable[(slice(-1, None, 1),) * ndim],
@@ -566,7 +571,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         elements = {}
         for index, value in zip(indices, values):
             if char:
-                # Variable is a netCDF classic style char array so
+                # Variable is a netCDF classic style char array, so
                 # collapse (by concatenation) the outermost (fastest
                 # varying) dimension. E.g. [['a','b','c']] becomes
                 # ['abc']

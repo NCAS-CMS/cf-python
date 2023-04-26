@@ -4,10 +4,9 @@ from dataclasses import dataclass
 from dataclasses import field as dataclasses_field
 from operator import itemgetter
 
-import dask.array as da
 import numpy as np
 from cfdm import is_log_level_debug, is_log_level_detail, is_log_level_info
-from dask.base import collections_to_dsk, tokenize
+from dask.base import tokenize
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .data import Data
