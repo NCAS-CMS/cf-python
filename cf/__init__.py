@@ -181,7 +181,7 @@ if Version(numpy.__version__) < Version(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = "3.3.4"
+_minimum_vn = "3.3.6"
 if Version(cfunits.__version__) < Version(_minimum_vn):
     raise RuntimeError(
         f"Bad cfunits version: cf requires cfunits>={_minimum_vn}. "
