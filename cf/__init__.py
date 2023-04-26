@@ -103,7 +103,11 @@ from packaging.version import Version
 import importlib.util
 import platform
 
-_found_ESMF = bool(importlib.util.find_spec("ESMF"))
+# ESMF renamed its Python module to `esmpy` at ESMF version 8.4.0. Allow
+# either for now for backwards compatibility.
+_found_esmpy = bool(
+    importlib.util.find_spec("esmpy") or importlib.util.find_spec("ESMF")
+)
 
 try:
     import netCDF4

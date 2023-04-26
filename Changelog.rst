@@ -20,7 +20,10 @@ version 3.15.0
   (https://github.com/NCAS-CMS/cf-python/issues/626)
 * Removed benign UserWarning from `cf.Field.percentile`
   (https://github.com/NCAS-CMS/cf-python/issues/619)
+* Handled the renaming of the ESMF Python interface from `ESMF` to
+  `esmpy` at version 8.4.0. Both module names are accepted for now.
 * Changed dependency: ``1.10.1.0<=cfdm<1.10.2.0``
+* Changed dependency: ``8.0.0<=esmpy``
 
 ----
 
