@@ -2986,13 +2986,14 @@ def _get_module_info(module, alternative_name=False, try_except=False):
             importlib.import_module(module)
             module_name = module
         except ImportError:
-            pass  # to avoid a nested try/except which is less clean
-        if alternative_name:  # where a module has a different (e.g. old) name
-            try:
-                importlib.import_module(alternative_name)
-                module_name = alternative_name
-            except ImportError:
-                pass
+            if (
+                alternative_name
+            ):  # where a module has a different (e.g. old) name
+                try:
+                    importlib.import_module(alternative_name)
+                    module_name = alternative_name
+                except ImportError:
+                    pass
 
         if not module_name:
             return ("not available", "")

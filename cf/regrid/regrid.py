@@ -14,22 +14,17 @@ from .regridoperator import RegridOperator
 # either for now for backwards compatibility.
 esmpy_imported = False
 try:
-    # Take the new name to use.
-    import ESMF as esmpy
+    import esmpy
 
     esmpy_imported = True
 except ImportError:
-    pass  # avoid nested try/except...
-try:
-    # Ignore flake8 error about redefining the esmpy variable since that's
-    # deliberate and besides both modules won't be installed at once, but
-    # if so somehow then take the newer one (by nature of the name), esmpy.
-    import esmpy  # noqa: F811
+    try:
+        # Take the new name to use in preference to the old one.
+        import ESMF as esmpy
 
-    esmpy_imported = True
-except ImportError:
-    pass
-
+        esmpy_imported = True
+    except ImportError:
+        pass
 
 logger = logging.getLogger(__name__)
 
