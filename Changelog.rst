@@ -1,7 +1,7 @@
 version 3.15.0
 --------------
 
-**2023-04-??**
+**2023-04-26**
 
 * Re-introduction of CFA-netCDF functionality for CFA-0.6
   (https://github.com/NCAS-CMS/cf-python/issues/451,
