@@ -140,8 +140,7 @@ class RegridTest(unittest.TestCase):
     dst = dst_src[0]
     src = dst_src[1]
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
-    # @unittest.skipUnless(False, "Requires esmpy package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrid_2d_field(self):
         """2-d regridding with Field destination grid."""
         self.assertFalse(cf.regrid_logging())
@@ -292,7 +291,7 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regrids(dst, method=method).array
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_coords(self):
         """Spherical regridding with coords destination grid."""
         dst = self.dst.copy()
@@ -360,7 +359,7 @@ class RegridTest(unittest.TestCase):
         d1 = src.regrids(r)
         self.assertTrue(d1.data.equals(d0.data, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_2d_coords(self):
         """2-d Cartesian regridding with coords destination grid."""
         dst = self.dst.copy()
@@ -400,7 +399,7 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.src.regrids("foobar", method="conservative")
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_domain(self):
         """Spherical regridding with Domain destination grid."""
         dst = self.dst
@@ -422,7 +421,7 @@ class RegridTest(unittest.TestCase):
         d1 = src.regrids(r)
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_domain(self):
         """Spherical regridding with Domain destination grid."""
         dst = self.dst
@@ -446,7 +445,7 @@ class RegridTest(unittest.TestCase):
         d1 = src.regridc(r)
         self.assertTrue(d1.equals(d0, atol=atol, rtol=rtol))
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_field_operator(self):
         """Spherical regridding with operator destination grid."""
         dst = self.dst
@@ -482,7 +481,7 @@ class RegridTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             dst.regrids(r)
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regrids_non_coordinates(self):
         """Check setting of non-coordinate metadata."""
         dst = cf.example_field(1)
@@ -529,7 +528,7 @@ class RegridTest(unittest.TestCase):
         # Cell measures
         self.assertFalse(d1.cell_measures())
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_3d_field(self):
         """3-d Cartesian regridding with Field destination grid."""
         methods = list(all_methods)
@@ -630,7 +629,7 @@ class RegridTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 src.regridc(dst, method=method, axes=axes)
 
-    @unittest.skipUnless(esmpy_imported, "Requires esmpy package.")
+    @unittest.skipUnless(esmpy_imported, "Requires esmpy/ESMF package.")
     def test_Field_regridc_1d_field(self):
         """1-d Cartesian regridding with Field destination grid."""
         methods = list(all_methods)
