@@ -66,7 +66,7 @@ _docstring_substitution_definitions = {
 
         The interpolation is carried out using regridding weights
         calculated by the `esmpy` package, a Python interface to the
-        Earth System Modeling Framework (esmpy) regridding utility:
+        Earth System Modeling Framework (ESMF) regridding utility:
         `https://earthsystemmodeling.org/regrid`_. Outside of `esmpy`,
         these weights are then modified for masked cells (if required)
         and the regridded data are created as the dot product of the

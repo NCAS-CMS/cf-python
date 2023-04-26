@@ -3034,7 +3034,7 @@ def environment(display=True, paths=True):
     HDF5 library: 1.10.6
     netcdf library: 4.8.0
     udunits2 library: /home/username/anaconda3/envs/cf-env/lib/libudunits2.so.0
-    esmpy: 8.1.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/esmpy/__init__.py
+    esmpy/ESMF: 8.4.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/esmpy/__init__.py
     Python: 3.8.10 /home/username/anaconda3/envs/cf-env/bin/python
     dask: 2022.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/dask/__init__.py
     netCDF4: 1.5.6 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/netCDF4/__init__.py
@@ -3054,7 +3054,7 @@ def environment(display=True, paths=True):
     HDF5 library: 1.10.6
     netcdf library: 4.8.0
     udunits2 library: libudunits2.so.0
-    esmpy: 8.1.1
+    esmpy/ESMF: 8.4.1
     Python: 3.8.10
     dask: 2022.6.0
     netCDF4: 1.5.6
