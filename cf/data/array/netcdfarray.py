@@ -14,7 +14,7 @@ class NetCDFArray(FileArrayMixin, ArrayMixin, Container, cfdm.NetCDFArray):
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         """
         return super().__dask_tokenize__() + (self.get_mask(),)

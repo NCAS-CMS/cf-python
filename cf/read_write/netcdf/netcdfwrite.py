@@ -35,12 +35,12 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 The construct type of the *cfvar*, or its parent if
                 *cfvar* is not a construct.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
             domain_axes: `None`, or `tuple` of `str`
                 The domain axis construct identifiers for *cfvar*.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -103,12 +103,12 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 The construct type of the *cfvar*, or its parent if
                 *cfvar* is not a construct.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
             domain_axes: `None`, or `tuple` of `str`
                 The domain axis construct identifiers for *cfvar*.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
             kwargs: `dict`
 
@@ -158,7 +158,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             domain_axes: `None`, or `tuple` of `str`
                 The domain axis construct identifiers for *cfvar*.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
             unset_values: sequence of numbers
 
@@ -170,7 +170,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 The construct type of the *cfvar*, or its parent if
                 *cfvar* is not a construct.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -648,7 +648,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         If an equal field ancillary has already been written to the file
         then it is not re-written.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -679,7 +679,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     ):
         """Write a CFA aggregation instruction term variable
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -723,7 +723,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         Writes non-standard CFA terms stored as field ancillaries.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -800,7 +800,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         If there are multiple unique vales then missing data is
         returned.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -828,7 +828,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _cfa_aggregation_instructions(self, data, cfvar):
         """Convert data to standardised CFA aggregation instruction terms.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -989,7 +989,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _customise_write_vars(self):
         """Customise the write parameters.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         """
         g = self.write_vars
@@ -1005,7 +1005,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _cfa_get_file_details(self, data):
         """Get the details of all files referenced by the data.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 

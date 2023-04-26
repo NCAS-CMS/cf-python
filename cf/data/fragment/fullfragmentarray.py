@@ -5,7 +5,7 @@ from .mixin import FragmentArrayMixin
 class FullFragmentArray(FragmentArrayMixin, FullArray):
     """A CFA fragment array that is filled with a value.
 
-    .. versionadded:: TODOCFAVER
+    .. versionadded:: 3.15.0
 
     """
 

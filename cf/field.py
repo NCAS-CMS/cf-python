@@ -3684,7 +3684,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Remove all of the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -3711,7 +3711,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Remove a CFA-netCDF file name substitution.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -3740,7 +3740,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     def cfa_file_substitutions(self, constructs=True):
         """Return the CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -3771,7 +3771,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         All data definitions that reference files will have references
         to files in the given location removed from them.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `file_locations`
 
@@ -3812,7 +3812,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
     ):
         """Set CFA-netCDF file name substitutions.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -11698,7 +11698,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         Returns the locations of any files that may be required to
         deliver the computed data array.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `add_file_location`, `del_file_location`
 
@@ -14130,7 +14130,7 @@ class Field(mixin.FieldDomain, mixin.PropertiesData, cfdm.Field):
         All data definitions that reference files are additionally
         referenced from the given location.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `del_file_location`, `file_locations`
 

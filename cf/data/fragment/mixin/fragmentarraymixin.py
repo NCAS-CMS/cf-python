@@ -8,7 +8,7 @@ from ....units import Units
 class FragmentArrayMixin:
     """Mixin class for a CFA fragment array.
 
-    .. versionadded:: TODOCFAVER
+    .. versionadded:: 3.15.0
 
     """
 
@@ -29,7 +29,7 @@ class FragmentArrayMixin:
             dimension (similar to the way vector subscripts work in
             Fortran).
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         """
         # TODOACTIVE: modify this for the case when
@@ -82,7 +82,7 @@ class FragmentArrayMixin:
     def _conform_to_aggregated_units(self, array):
         """Conform the array to have the aggregated units.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -135,7 +135,7 @@ class FragmentArrayMixin:
         instances, and rank-reducing indices (such as an integer or
         scalar array) are disallowed.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -212,7 +212,7 @@ class FragmentArrayMixin:
     def _size_1_axis(self, indices):
         """Find the position of a unique size 1 index.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `_parse_indices`, `__getitem__`
 
@@ -276,7 +276,7 @@ class FragmentArrayMixin:
     def aggregated_Units(self):
         """The units of the aggregated data.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Returns:
 
@@ -294,7 +294,7 @@ class FragmentArrayMixin:
         If the calendar is `None` then the CF default calendar is
         assumed, if applicable.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         :Parameters:
 
@@ -328,7 +328,7 @@ class FragmentArrayMixin:
         If the units are `None` then the aggregated array has no
         defined units.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 3.15.0
 
         .. seealso:: `get_aggregated_calendar`
 
