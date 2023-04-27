@@ -45,7 +45,7 @@
   ```
 
 * **Follow all of the steps outlined externally in `DOCUMENTATION.md`**,
-  notably so that the correct Sphinx-rekated environment is prepared for
+  notably so that the correct Sphinx-related environment is prepared for
   documentation building.
 
 * Build a development copy of the documentation using to check API
