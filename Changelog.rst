@@ -23,7 +23,8 @@ version 3.15.0
 * Handled the renaming of the ESMF Python interface from `ESMF` to
   `esmpy` at version 8.4.0. Both module names are accepted for now.
 * Changed dependency: ``1.10.1.0<=cfdm<1.10.2.0``
-* Changed dependency: ``8.0.0<=esmpy``
+* Changed (optional) dependency: ``8.0.0<=esmpy``
+* Changed (optional) dependency: ``1.10.0<=scipy``
 
 ----
 
