@@ -534,9 +534,9 @@ class log_level(ConstantAccess, cfdm.log_level):
 
 
 class regrid_logging(ConstantAccess):
-    """Whether or not to enable `ESMF` regridding logging.
+    """Whether or not to enable `esmpy` regridding logging.
 
-    If it is logging is performed after every call to `ESMF`.
+    If it is logging is performed after every call to `esmpy`.
 
     :Parameters:
 
@@ -2961,17 +2961,31 @@ def _section(x, axes=None, stop=None, chunks=False, min_step=1):
     return out
 
 
-def _get_module_info(module, try_except=False):
+def _get_module_info(module, alternative_name=False, try_except=False):
     """Helper function for processing modules for cf.environment."""
     if try_except:
+        module_name = None
         try:
             importlib.import_module(module)
+            module_name = module
         except ImportError:
+            if (
+                alternative_name
+            ):  # where a module has a different (e.g. old) name
+                try:
+                    importlib.import_module(alternative_name)
+                    module_name = alternative_name
+                except ImportError:
+                    pass
+
+        if not module_name:
             return ("not available", "")
+    else:
+        module_name = module
 
     return (
-        importlib.import_module(module).__version__,
-        importlib.util.find_spec(module).origin,
+        importlib.import_module(module_name).__version__,
+        importlib.util.find_spec(module_name).origin,
     )
 
 
@@ -3004,7 +3018,7 @@ def environment(display=True, paths=True):
     HDF5 library: 1.10.6
     netcdf library: 4.8.0
     udunits2 library: /home/username/anaconda3/envs/cf-env/lib/libudunits2.so.0
-    ESMF: 8.1.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/ESMF/__init__.py
+    esmpy/ESMF: 8.4.1 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/esmpy/__init__.py
     Python: 3.8.10 /home/username/anaconda3/envs/cf-env/bin/python
     dask: 2022.6.0 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/dask/__init__.py
     netCDF4: 1.5.6 /home/username/anaconda3/envs/cf-env/lib/python3.8/site-packages/netCDF4/__init__.py
@@ -3024,7 +3038,7 @@ def environment(display=True, paths=True):
     HDF5 library: 1.10.6
     netcdf library: 4.8.0
     udunits2 library: libudunits2.so.0
-    ESMF: 8.1.1
+    esmpy/ESMF: 8.4.1
     Python: 3.8.10
     dask: 2022.6.0
     netCDF4: 1.5.6
@@ -3047,7 +3061,9 @@ def environment(display=True, paths=True):
         "HDF5 library": (netCDF4.__hdf5libversion__, ""),
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
         "udunits2 library": (ctypes.util.find_library("udunits2"), ""),
-        "ESMF": _get_module_info("ESMF", try_except=True),
+        "esmpy/ESMF": (
+            _get_module_info("esmpy", alternative_name="ESMF", try_except=True)
+        ),
         # Now Python itself
         "Python": (platform.python_version(), sys.executable),
         # Then Dask (cover first from below as it's important under-the-hood)
