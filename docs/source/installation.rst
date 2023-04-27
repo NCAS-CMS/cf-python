@@ -255,7 +255,7 @@ environments for which these features are not required.
 
 .. rubric:: Convolution filters, derivatives and relative vorticity
 
-* `scipy <https://pypi.org/project/scipy>`_, version 1.1.0 or newer.
+* `scipy <https://pypi.org/project/scipy>`_, version 1.10.0 or newer.
 
 .. rubric:: Subspacing based on N-dimensional construct cells (N > 1)
             containing a given value
