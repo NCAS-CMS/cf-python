@@ -18,7 +18,7 @@ version 3.15.0
 * Fixed bug in `cf.Field.compute_vertical_coordinates` that retained
   incorrect bounds properties
   (https://github.com/NCAS-CMS/cf-python/issues/626)
-* Fixed bug in when reading single level (e.g. surface) UM files
+* Fixed bug when reading single level (e.g. surface) UM files
   (https://github.com/NCAS-CMS/cf-python/issues/641)
 * Removed benign UserWarning from `cf.Field.percentile`
   (https://github.com/NCAS-CMS/cf-python/issues/619)
