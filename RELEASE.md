@@ -4,7 +4,7 @@
 * Ensure that the requirements on dependencies & their versions are
   up-to-date and consistent in both the `requirements.txt` and in
   `docs/source/installation.rst`; and in the `_requires` list and
-  `LooseVersion` checks in `cf/__init__.py`.
+  `Version` checks in `cf/__init__.py`.
 
 * Make sure that `README.md` is up to date.
 
@@ -43,6 +43,10 @@
   export PYTHONPATH=$PWD:$PYTHONPATH
   ./test_tutorial_code
   ```
+
+* **Follow all of the steps outlined externally in `DOCUMENTATION.md`**,
+  notably so that the correct Sphinx-rekated environment is prepared for
+  documentation building.
 
 * Build a development copy of the documentation using to check API
   pages for any new methods are present & correct, & that the overall
