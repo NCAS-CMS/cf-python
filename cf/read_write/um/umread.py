@@ -1970,7 +1970,7 @@ class UMField:
                 # ----------------------------------------------------
                 # 1-d partition matrix
                 # ----------------------------------------------------
-                z_axis = _axis[self.z_axis]
+                z_axis = _axis.get(self.z_axis)
                 if nz > 1:
                     pmaxes = [z_axis]
                     data_shape = (nz, LBROW, LBNPT)
