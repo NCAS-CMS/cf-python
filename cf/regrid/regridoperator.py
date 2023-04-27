@@ -507,7 +507,7 @@ class RegridOperator(mixin_Container, Container):
         modification of the weights to account for missing values in
         the source grid will always involve row-slicing.
 
-        The `dst_mask` attribute is updated to `True` for desitnation
+        The `dst_mask` attribute is updated to `True` for destination
         grid points for which the weights are all zero.
 
         :Returns:
