@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -130,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.aggregate<a class="headerlink" href="#cf-aggregate" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.aggregate">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">shared_nc_domain=False</em>, <em class="sig-param">field_identity=None</em>, <em class="sig-param">info=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/aggregate.py#L1399-L2127"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">shared_nc_domain=False</em>, <em class="sig-param">field_identity=None</em>, <em class="sig-param">field_ancillaries=None</em>, <em class="sig-param">info=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/aggregate.py#L1496-L2240"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aggregate field constructs into as few field constructs as
 possible.</p>
 <p>Aggregation is the combination of field constructs to create a new
@@ -353,6 +353,16 @@ numbers. The default value is set by the
 numbers. The default value is set by the
 <a class="reference internal" href="cf.rtol.html#cf.rtol" title="cf.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.rtol</span></code></a> function.</p>
 </dd>
+<dt>field_ancillaries: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create new field ancillary constructs for each input field
+which has one or more of the given properties. For each
+input field, each property is converted to a field
+ancillary construct that spans the entire domain, with the
+constant value of the property, and the property itself is
+deleted.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.15.0.</span></p>
+</div>
+</dd>
 <dt>no_overlap:</dt><dd><p>Use the <em>overlap</em> parameter instead.</p>
 </dd>
 <dt>shared_nc_domain: deprecated at version 3.0.0</dt><dd><p>No longer required due to updated CF data model.</p>
@@ -401,11 +411,11 @@ and for three different atmospheric heights for each time:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

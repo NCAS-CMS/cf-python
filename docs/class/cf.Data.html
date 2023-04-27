@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -130,8 +130,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data<a class="headerlink" href="#cf-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cf.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunks='auto'</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">to_memory=False</em>, <em class="sig-param">init_options=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/data/data.py#L99-L12242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.mixin.deprecations.DataClassDeprecationsMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin_container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">hardmask=True</em>, <em class="sig-param">chunks='auto'</em>, <em class="sig-param">dt=False</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">to_memory=False</em>, <em class="sig-param">init_options=None</em>, <em class="sig-param">_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/data/data.py#L102-L12641"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.mixin.deprecations.DataClassDeprecationsMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin2.cfanetcdf.CFANetCDF</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin2.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
 <li><p>Contains an N-dimensional, indexable and broadcastable array with
@@ -410,10 +410,10 @@ performance.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.nbytes.html#cf.Data.nbytes" title="cf.Data.nbytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nbytes</span></code></a></p></td>
 <td><p>Total number of bytes consumed by the elements of the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.dump.html#cf.Data.dump" title="cf.Data.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.dump.html#cf.Data.dump" title="cf.Data.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></p></td>
 <td><p>Return a string containing a full description of the instance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Data.inspect.html#cf.Data.inspect" title="cf.Data.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.inspect.html#cf.Data.inspect" title="cf.Data.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></p></td>
 <td><p>Inspect the object for debugging.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Data.isscalar.html#cf.Data.isscalar" title="cf.Data.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></p></td>
@@ -494,6 +494,12 @@ performance.</p></li>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.rechunk.html#cf.Data.rechunk" title="cf.Data.rechunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rechunk</span></code></a></p></td>
 <td><p>Change the chunk structure of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.chunk_indices.html#cf.Data.chunk_indices" title="cf.Data.chunk_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk_indices</span></code></a></p></td>
+<td><p>Return indices that define each dask compute chunk.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.todict.html#cf.Data.todict" title="cf.Data.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a></p></td>
+<td><p>Return a dictionary of the dask graph key/value pairs.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.to_dask_array.html#cf.Data.to_dask_array" title="cf.Data.to_dask_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dask_array</span></code></a></p></td>
 <td><p>Convert the data to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">dask</span></code> array.</p></td>
@@ -1494,6 +1500,65 @@ performance.</p></li>
 </tbody>
 </table>
 </section>
+<section id="cfa">
+<h2>CFA<a class="headerlink" href="#cfa" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.add_file_location.html#cf.Data.add_file_location" title="cf.Data.add_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_file_location</span></code></a></p></td>
+<td><p>Add a new file location in-place.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_clear_file_substitutions.html#cf.Data.cfa_clear_file_substitutions" title="cf.Data.cfa_clear_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_clear_file_substitutions</span></code></a></p></td>
+<td><p>Remove all of the CFA-netCDF file name substitutions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_del_aggregated_data.html#cf.Data.cfa_del_aggregated_data" title="cf.Data.cfa_del_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_aggregated_data</span></code></a></p></td>
+<td><p>Remove the CFA-netCDF aggregation instruction terms.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_del_file_substitution.html#cf.Data.cfa_del_file_substitution" title="cf.Data.cfa_del_file_substitution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_del_file_substitution</span></code></a></p></td>
+<td><p>Remove a CFA-netCDF file name substitution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_file_substitutions.html#cf.Data.cfa_file_substitutions" title="cf.Data.cfa_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_file_substitutions</span></code></a></p></td>
+<td><p>Return the CFA-netCDF file name substitutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_get_aggregated_data.html#cf.Data.cfa_get_aggregated_data" title="cf.Data.cfa_get_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_get_aggregated_data</span></code></a></p></td>
+<td><p>Return the CFA-netCDF aggregation instruction terms.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_get_term.html#cf.Data.cfa_get_term" title="cf.Data.cfa_get_term"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_get_term</span></code></a></p></td>
+<td><p>The CFA aggregation instruction term status.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_get_write.html#cf.Data.cfa_get_write" title="cf.Data.cfa_get_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_get_write</span></code></a></p></td>
+<td><p>The CFA write status of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_has_aggregated_data.html#cf.Data.cfa_has_aggregated_data" title="cf.Data.cfa_has_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_has_aggregated_data</span></code></a></p></td>
+<td><p>Whether any CFA-netCDF aggregation instruction terms have been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_has_file_substitutions.html#cf.Data.cfa_has_file_substitutions" title="cf.Data.cfa_has_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_has_file_substitutions</span></code></a></p></td>
+<td><p>Whether any CFA-netCDF file name substitutions have been set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_set_aggregated_data.html#cf.Data.cfa_set_aggregated_data" title="cf.Data.cfa_set_aggregated_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_set_aggregated_data</span></code></a></p></td>
+<td><p>Set the CFA-netCDF aggregation instruction terms.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_set_term.html#cf.Data.cfa_set_term" title="cf.Data.cfa_set_term"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_set_term</span></code></a></p></td>
+<td><p>Set the CFA aggregation instruction term status.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.cfa_set_write.html#cf.Data.cfa_set_write" title="cf.Data.cfa_set_write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_set_write</span></code></a></p></td>
+<td><p>Set the CFA write status of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.cfa_update_file_substitutions.html#cf.Data.cfa_update_file_substitutions" title="cf.Data.cfa_update_file_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfa_update_file_substitutions</span></code></a></p></td>
+<td><p>Set CFA-netCDF file name substitutions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Data.del_file_location.html#cf.Data.del_file_location" title="cf.Data.del_file_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_file_location</span></code></a></p></td>
+<td><p>Remove a file location in-place.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Data.file_locations.html#cf.Data.file_locations" title="cf.Data.file_locations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_locations</span></code></a></p></td>
+<td><p>The locations of files containing parts of the data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="element-wise-arithmetic-bit-and-comparison-operations">
 <h2>Element-wise arithmetic, bit and comparison operations<a class="headerlink" href="#element-wise-arithmetic-bit-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
 <p>Arithmetic, bit and comparison operations are defined as element-wise
@@ -1884,11 +1949,11 @@ augmented assignments, modify the data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

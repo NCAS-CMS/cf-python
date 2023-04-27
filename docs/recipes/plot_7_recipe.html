@@ -26,7 +26,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tutorial" href="../tutorial.html" />
+    <link rel="next" title="Plotting statistically significant temperature trends with stippling" href="plot_8_recipe.html" />
     <link rel="prev" title="Converting from rotated latitude-longitude to regular latitude-longitude" href="plot_6_recipe.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -91,7 +91,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html"><strong>Recipes using cf</strong></a><ul>
       <li>Previous: <a href="plot_6_recipe.html" title="previous chapter">Converting from rotated latitude-longitude to regular latitude-longitude</a></li>
-      <li>Next: <a href="../tutorial.html" title="next chapter"><strong>Tutorial</strong></a></li>
+      <li>Next: <a href="plot_8_recipe.html" title="next chapter">Plotting statistically significant temperature trends with stippling</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -155,7 +155,7 @@ to download the full example code</p>
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
-<li><p>The desciption of one of the fields from the list shows <code class="docutils literal notranslate"><span class="pre">'realization'</span></code> as a property by which the members of the model ensemble are labelled:</p></li>
+<li><p>The description of one of the fields from the list shows <code class="docutils literal notranslate"><span class="pre">'realization'</span></code> as a property by which the members of the model ensemble are labelled:</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a href="../class/cf.FieldList.html#cf.FieldList" title="cf.FieldList" class="sphx-glr-backref-module-cf sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">f</span></a><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
 </pre></div>
@@ -173,20 +173,20 @@ ensemble_members = 10
 experiment = &#39;451 = SODAsi.3 pentad 8 member SSTs climatologically adjusted to
               HadISST2.3 1981 to 2010 climatology&#39;
 forecast_init_type = 3
-history = &#39;Mon Apr 15 00:59:30 2019: cdo -v -f nc4 -r
+history = &#39;Mon Apr 15 00:59:16 2019: cdo -v -f nc4 -r
            setpartabn,/global/homes/l/lslivins/convert_grb2_netcdf/cdo_table
-           -copy -setreftime,1800-01-01,00:00:00,3hours PRMSL.1941_001.grb
-           PRMSL.1941_mem001.nc&#39;
+           -copy -setreftime,1800-01-01,00:00:00,3hours PRMSL.1941_004.grb
+           PRMSL.1941_mem004.nc&#39;
 institution = &#39;NOAA ESRL Physical Sciences Division &amp; CU/CIRES \n&#39;
 long_name = &#39;Pressure reduced to MSL&#39;
 observations = &#39;International Surface Pressure Databank version 4.7&#39;
 original_name = &#39;prmsl&#39;
 param = &#39;1.3.0&#39;
 platform = &#39;Model&#39;
-realization = 1
+realization = 4
 units = &#39;Pa&#39;
 
-Data(time(2920), latitude(256), longitude(512)) = [[[100489.0, ..., 101519.0]]] Pa
+Data(time(2920), latitude(256), longitude(512)) = [[[101351.0, ..., 100562.0]]] Pa
 
 Domain Axis: latitude(256)
 Domain Axis: longitude(512)
@@ -275,7 +275,7 @@ A moving average of the ensemble along the time axis, with a window size of 90 (
 <a href="https://ajheaps.github.io/cf-plot/gclose.html#cfplot.gclose" title="cfplot.gclose" class="sphx-glr-backref-module-cfplot sphx-glr-backref-type-py-function"><span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_plot_7_recipe_001.png" srcset="../_images/sphx_glr_plot_7_recipe_001.png" alt="Model Ensemble Pressure" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  19.808 seconds)</p>
+<img src="../_images/sphx_glr_plot_7_recipe_001.png" srcset="../_images/sphx_glr_plot_7_recipe_001.png" alt="Model Ensemble Pressure" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  35.758 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-recipes-plot-7-recipe-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/plot_7_recipe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_7_recipe.py</span></code></a></p>
@@ -295,11 +295,11 @@ A moving average of the ensemble along the time axis, with a window size of 90 (
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-14.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -26,7 +26,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Data.to_dask_array" href="cf.Data.to_dask_array.html" />
+    <link rel="next" title="cf.Data.chunk_indices" href="cf.Data.chunk_indices.html" />
     <link rel="prev" title="cf.Data.dask_compressed_array" href="cf.Data.dask_compressed_array.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -93,7 +93,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.Data.html">cf.Data</a><ul>
       <li>Previous: <a href="cf.Data.dask_compressed_array.html" title="previous chapter">cf.Data.dask_compressed_array</a></li>
-      <li>Next: <a href="cf.Data.to_dask_array.html" title="next chapter">cf.Data.to_dask_array</a></li>
+      <li>Next: <a href="cf.Data.chunk_indices.html" title="next chapter">cf.Data.chunk_indices</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -132,7 +132,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.Data.rechunk<a class="headerlink" href="#cf-data-rechunk" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.rechunk">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">rechunk</code><span class="sig-paren">(</span><em class="sig-param">chunks='auto'</em>, <em class="sig-param">threshold=None</em>, <em class="sig-param">block_size_limit=None</em>, <em class="sig-param">balance=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/data/data.py#L2738-L2813"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.rechunk" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">rechunk</code><span class="sig-paren">(</span><em class="sig-param">chunks='auto'</em>, <em class="sig-param">threshold=None</em>, <em class="sig-param">block_size_limit=None</em>, <em class="sig-param">balance=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/data/data.py#L2903-L2978"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.rechunk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change the chunk structure of the data.</p>
 <p><strong>Performance</strong></p>
 <p>Rechunking can sometimes be expensive and incur a lot of
@@ -244,11 +244,11 @@ the <code class="docutils literal notranslate"><span class="pre">balance=True</s
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
