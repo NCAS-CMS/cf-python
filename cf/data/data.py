@@ -1756,7 +1756,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          [ 4  5  6  7]
          [ 8  9 10 11]]
 
-        Equivalant ways to create indices for the four bins ``[-inf, 2),
+        Equivalent ways to create indices for the four bins ``[-inf, 2),
         [2, 6), [6, 10), [10, inf)``
 
         >>> e = d.digitize([2, 6, 10])
@@ -1766,7 +1766,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          [1 1 2 2]
          [2 2 3 3]]
 
-        Equivalant ways to create indices for the two bins ``(2, 6], (6, 10]``
+        Equivalent ways to create indices for the two bins ``(2, 6], (6, 10]``
 
         >>> e = d.digitize([2, 6, 10], upper=True, open_ends=False)
         >>> e = d.digitize([[2, 6], [6, 10]], upper=True, open_ends=False)

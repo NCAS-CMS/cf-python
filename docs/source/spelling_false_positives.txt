@@ -151,7 +151,6 @@ durations
 El
 endian
 eq
-Equivalant
 esmpy
 et
 etc
