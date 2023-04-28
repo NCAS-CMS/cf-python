@@ -82,6 +82,21 @@ class MathTest(unittest.TestCase):
 
                 self.assertTrue(d.equals(d0, rtol=1e-10))
 
+        # Test case when spherical dimension coordinates have units
+        # but no standard names
+        f = cf.example_field(0)
+        x, y = f.grad_xy(radius="earth")
+        del x.dim("X").standard_name
+        del x.dim("Y").standard_name
+        del y.dim("X").standard_name
+        del y.dim("Y").standard_name
+        c = cf.curl_xy(x, y, radius="earth")
+        self.assertEqual(c.shape, f.shape)
+        self.assertEqual(c.dimension_coordinate("Y").standard_name, "latitude")
+        self.assertEqual(
+            c.dimension_coordinate("X").standard_name, "longitude"
+        )
+
     def test_div_xy(self):
         f = cf.example_field(0)
 
@@ -154,6 +169,21 @@ class MathTest(unittest.TestCase):
                 del d.long_name
                 del d0.long_name
                 self.assertTrue(d.equals(d0, rtol=1e-10))
+
+        # Test case when spherical dimension coordinates have units
+        # but no standard names
+        f = cf.example_field(0)
+        x, y = f.grad_xy(radius="earth")
+        del x.dim("X").standard_name
+        del x.dim("Y").standard_name
+        del y.dim("X").standard_name
+        del y.dim("Y").standard_name
+        d = cf.div_xy(x, y, radius="earth")
+        self.assertEqual(d.shape, f.shape)
+        self.assertEqual(d.dimension_coordinate("Y").standard_name, "latitude")
+        self.assertEqual(
+            d.dimension_coordinate("X").standard_name, "longitude"
+        )
 
     def test_differential_operators(self):
         f = cf.example_field(0)
