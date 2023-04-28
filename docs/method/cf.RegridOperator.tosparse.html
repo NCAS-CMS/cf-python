@@ -27,7 +27,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.RegridOperator.col" href="../attribute/cf.RegridOperator.col.html" />
-    <link rel="prev" title="cf.RegridOperator.todense" href="cf.RegridOperator.todense.html" />
+    <link rel="prev" title="cf.RegridOperator.parameters" href="cf.RegridOperator.parameters.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -92,7 +92,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../class/cf.RegridOperator.html">cf.RegridOperator</a><ul>
-      <li>Previous: <a href="cf.RegridOperator.todense.html" title="previous chapter">cf.RegridOperator.todense</a></li>
+      <li>Previous: <a href="cf.RegridOperator.parameters.html" title="previous chapter">cf.RegridOperator.parameters</a></li>
       <li>Next: <a href="../attribute/cf.RegridOperator.col.html" title="next chapter">cf.RegridOperator.col</a></li>
   </ul></li>
   </ul></li>
@@ -132,23 +132,20 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.RegridOperator.tosparse<a class="headerlink" href="#cf-regridoperator-tosparse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.RegridOperator.tosparse">
-<code class="sig-prename descclassname">RegridOperator.</code><code class="sig-name descname">tosparse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/regrid/regridoperator.py#L516-L548"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RegridOperator.tosparse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the weights in sparse COOrdinate format.</p>
-<p>See <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.coo_array.html#scipy.sparse.coo_array" title="(in SciPy v1.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse._arrays.coo_array</span></code></a> for sparse format
-details.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 3.14.0.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.RegridOperator.todense.html#cf.RegridOperator.todense" title="cf.RegridOperator.todense"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todense</span></code></a></p>
-</div>
+<code class="sig-prename descclassname">RegridOperator.</code><code class="sig-name descname">tosparse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/regrid/regridoperator.py#L499-L571"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RegridOperator.tosparse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the weights to <a class="reference external" href="https://docs.scipy.org/doc/scipy/index.html#module-scipy" title="(in SciPy v1.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> sparse array format in-place.</p>
+<p>The weights are converted to Compressed Sparse Row(CSR) array
+format, i.e. the <a class="reference internal" href="../attribute/cf.RegridOperator.weights.html#cf.RegridOperator.weights" title="cf.RegridOperator.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> attribute becomes a
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_array.html#scipy.sparse.csr_array" title="(in SciPy v1.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse._arrays.csr_array</span></code></a> object. A CSR array used as
+the most efficient sparse array type given that we expect no
+changes to the sparsity structure, and any further
+modification of the weights to account for missing values in
+the source grid will always involve row-slicing.</p>
+<p>The <a class="reference internal" href="../attribute/cf.RegridOperator.dst_mask.html#cf.RegridOperator.dst_mask" title="cf.RegridOperator.dst_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dst_mask</span></code></a> attribute is updated to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> for destination
+grid points for which the weights are all zero.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.coo_array.html#scipy.sparse.coo_array" title="(in SciPy v1.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.sparse._arrays.coo_array</span></code></a></dt><dd><p>The sparse array of weights.</p>
-</dd>
-</dl>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -163,11 +160,11 @@ details.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

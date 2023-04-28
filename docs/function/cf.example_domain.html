@@ -42,7 +42,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.14.1</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.15.0</a></h1>
 
 
 
@@ -130,7 +130,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cf.example_domain<a class="headerlink" href="#cf-example-domain" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.example_domain">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_domain</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.14.1/cf/examplefield.py#L28-L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_domain" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">example_domain</code><span class="sig-paren">(</span><em class="sig-param">n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.15.0/cf/examplefield.py#L28-L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an example domain construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
@@ -220,7 +220,7 @@ the domain construct is derived.</p>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
 <span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
-<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b&#39;kappa&#39;]</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]</span>
 <span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
 <span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
 <span class="go">                : standard_name:atmosphere_hybrid_height_coordinate</span>
@@ -243,7 +243,7 @@ the domain construct is derived.</p>
 <span class="go">                : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north</span>
 <span class="go">                : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east</span>
 <span class="go">                : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m</span>
-<span class="go">                : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b&#39;station1&#39;, ..., b&#39;station4&#39;]</span>
+<span class="go">                : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [station1, ..., station4]</span>
 <span class="go">                : long_name=station information(cf_role=timeseries_id(4)) = [-10, ..., -7]</span>
 </pre></div>
 </div>
@@ -254,7 +254,7 @@ the domain construct is derived.</p>
 <span class="go">                : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east</span>
 <span class="go">                : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m</span>
 <span class="go">                : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km</span>
-<span class="go">                : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b&#39;station1&#39;, b&#39;station2&#39;, b&#39;station3&#39;]</span>
+<span class="go">                : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [station1, station2, station3]</span>
 <span class="go">                : long_name=station information(cf_role=timeseries_id(3)) = [-10, -9, -8]</span>
 <span class="go">                : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]</span>
 </pre></div>
@@ -272,7 +272,7 @@ the domain construct is derived.</p>
 <span class="go">Dimension coords: time(4) = [2000-01-16 12:00:00, ..., 2000-04-15 00:00:00]</span>
 <span class="go">Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north</span>
 <span class="go">                : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east</span>
-<span class="go">                : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b&#39;x1&#39;, b&#39;y2&#39;]</span>
+<span class="go">                : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [x1, y2]</span>
 <span class="go">                : ncvar%z(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m</span>
 <span class="go">Coord references: grid_mapping_name:latitude_longitude</span>
 </pre></div>
@@ -300,11 +300,11 @@ the domain construct is derived.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-27.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

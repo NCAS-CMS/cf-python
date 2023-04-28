@@ -1237,9 +1237,9 @@ The field construct has two regridding methods: `~Field.regrids` for
 regridding data between domains with spherical coordinate systems; and
 `~Field.regridc` for regridding data between domains with Cartesian
 coordinate systems. The interpolation is carried by out using the
-`ESMF <https://earthsystemmodeling.org/esmpy/>`_ package, a
-Python interface to the Earth System Modeling Framework regridding
-utility.
+`esmpy <https://earthsystemmodeling.org/esmpy/>`_ package (formerly
+called `ESMF`), a Python interface to the Earth System Modeling
+Framework regridding utility.
 
 As with :ref:`statistical collapses <Statistical-collapses>`,
 regridding may be applied over a subset of the domain axes, and the

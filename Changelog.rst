@@ -1,7 +1,7 @@
 version 3.15.0
 --------------
 
-**2023-04-??**
+**2023-04-27**
 
 * Re-introduction of CFA-netCDF functionality for CFA-0.6
   (https://github.com/NCAS-CMS/cf-python/issues/451,
@@ -14,7 +14,8 @@ version 3.15.0
   `cf.Field.regridc`
   (https://github.com/NCAS-CMS/cf-python/issues/623)
 * Fixed bug in `cf.Field.read` when reading UM/PP data that are
-  runlength encoded (https://github.com/NCAS-CMS/cf-python/issues/621)
+  run-length encoded
+  (https://github.com/NCAS-CMS/cf-python/issues/621)
 * Fixed bug in `cf.Field.compute_vertical_coordinates` that retained
   incorrect bounds properties
   (https://github.com/NCAS-CMS/cf-python/issues/626)
@@ -23,7 +24,8 @@ version 3.15.0
 * Handled the renaming of the ESMF Python interface from `ESMF` to
   `esmpy` at version 8.4.0. Both module names are accepted for now.
 * Changed dependency: ``1.10.1.0<=cfdm<1.10.2.0``
-* Changed dependency: ``8.0.0<=esmpy``
+* Changed (optional) dependency: ``8.0.0<=esmpy``
+* Changed (optional) dependency: ``1.10.0<=scipy``
 
 ----
 
