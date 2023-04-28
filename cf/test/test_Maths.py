@@ -86,10 +86,10 @@ class MathTest(unittest.TestCase):
         # but no standard names
         f = cf.example_field(0)
         x, y = f.grad_xy(radius="earth")
-        del x.dim("X").standard_name
-        del x.dim("Y").standard_name
-        del y.dim("X").standard_name
-        del y.dim("Y").standard_name
+        del x.dimension_coordinate("X").standard_name
+        del x.dimension_coordinate("Y").standard_name
+        del y.dimension_coordinate("X").standard_name
+        del y.dimension_coordinate("Y").standard_name
         c = cf.curl_xy(x, y, radius="earth")
         self.assertEqual(c.shape, f.shape)
         self.assertEqual(c.dimension_coordinate("Y").standard_name, "latitude")
@@ -174,10 +174,10 @@ class MathTest(unittest.TestCase):
         # but no standard names
         f = cf.example_field(0)
         x, y = f.grad_xy(radius="earth")
-        del x.dim("X").standard_name
-        del x.dim("Y").standard_name
-        del y.dim("X").standard_name
-        del y.dim("Y").standard_name
+        del x.dimension_coordinate("X").standard_name
+        del x.dimension_coordinate("Y").standard_name
+        del y.dimension_coordinate("X").standard_name
+        del y.dimension_coordinate("Y").standard_name
         d = cf.div_xy(x, y, radius="earth")
         self.assertEqual(d.shape, f.shape)
         self.assertEqual(d.dimension_coordinate("Y").standard_name, "latitude")
