@@ -2382,6 +2382,23 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue(x.equals(x0, rtol=1e-10))
                 self.assertTrue(y.equals(y0, rtol=1e-10))
 
+        # Test case when spherical dimension coordinates have units
+        # but no standard names
+        f = cf.example_field(0)
+        del f.dimension_coordinate("X").standard_name
+        del f.dimension_coordinate("Y").standard_name
+        x, y = f.grad_xy(radius="earth")
+        self.assertEqual(x.shape, f.shape)
+        self.assertEqual(y.shape, f.shape)
+        self.assertEqual(x.dimension_coordinate("Y").standard_name, "latitude")
+        self.assertEqual(
+            x.dimension_coordinate("X").standard_name, "longitude"
+        )
+        self.assertEqual(y.dimension_coordinate("Y").standard_name, "latitude")
+        self.assertEqual(
+            y.dimension_coordinate("X").standard_name, "longitude"
+        )
+
     def test_Field_laplacian_xy(self):
         f = cf.example_field(0)
 
@@ -2438,6 +2455,18 @@ class FieldTest(unittest.TestCase):
                 del lp.long_name
                 del lp0.long_name
                 self.assertTrue(lp.equals(lp0, rtol=1e-10))
+
+        # Test case when spherical dimension coordinates have units
+        # but no standard names
+        f = cf.example_field(0)
+        del f.dimension_coordinate("X").standard_name
+        del f.dimension_coordinate("Y").standard_name
+        g = f.laplacian_xy(radius="earth")
+        self.assertEqual(g.shape, f.shape)
+        self.assertEqual(g.dimension_coordinate("Y").standard_name, "latitude")
+        self.assertEqual(
+            g.dimension_coordinate("X").standard_name, "longitude"
+        )
 
     def test_Field_to_dask_array(self):
         f = self.f0.copy()

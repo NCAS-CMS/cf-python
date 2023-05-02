@@ -2520,6 +2520,9 @@ from orthogonal vector component fields which have dimension
 coordinates of X and Y, in either Cartesian (e.g. plane projection) or
 spherical polar coordinate systems.
 
+Note that the curl of the horizontal wind field is the relative
+vorticity.
+
 The horizontal curl of the :math:`(f_x, f_y)` vector in Cartesian
 coordinates is given by:
 
@@ -2544,75 +2547,6 @@ polar angle with respect to polar axis, and :math:`\phi` is the
 azimuthal angle.
 
 See `cf.curl_xy` for details and examples.
-
-
-Relative vorticity
-^^^^^^^^^^^^^^^^^^
-
-The relative vorticity of the wind may be calculated on a global or
-limited area domain, and in Cartesian or spherical polar coordinate
-systems.
-
-The relative vorticity of wind defined on a Cartesian domain (such as
-a `Plane projection`_) is defined as
-
-.. math:: \zeta _{cartesian} = \frac{\delta v}{\delta x} -
-          \frac{\delta u}{\delta y}
-
-where :math:`x` and :math:`y` are points on along the 'X' and 'Y'
-Cartesian dimensions respectively; and :math:`u` and :math:`v` denote
-the 'X' and 'Y' components of the horizontal winds.
-
-If the wind field is defined on a spherical latitude-longitude
-domain then a correction factor is included:
-
-.. math:: \zeta _{spherical} = \frac{\delta v}{\delta x} -
-          \frac{\delta u}{\delta y} + \frac{u}{r}tan(\phi)
-
-where :math:`u` and :math:`v` denote the longitudinal and latitudinal
-components of the horizontal wind field; :math:`r` is the radius of
-the Earth; and :math:`\phi` is the latitude at each point.
-
-The `cf.relative_vorticity` function creates a relative vorticity
-field construct from field constructs containing the wind components
-using finite differences to approximate the derivatives. Dimensions
-other than 'X' and 'Y' remain unchanged by the operation.
-
-.. code-block:: python
-   :caption: *Generate a relative vorticity field construct from wind
-             component field constructs, then round the field's data to
-             8 decimal places.*
-   
-   >>> u, v = cf.read('wind_components.nc')
-   >>> zeta = cf.relative_vorticity(u, v)
-   >>> print(zeta)
-   Field: atmosphere_relative_vorticity (ncvar%va)
-   -----------------------------------------------
-   Data            : atmosphere_relative_vorticity(time(1), atmosphere_hybrid_height_coordinate(1), latitude(9), longitude(8)) s-1
-   Dimension coords: time(1) = [1978-09-01 06:00:00] 360_day
-                   : atmosphere_hybrid_height_coordinate(1) = [9.9982] m
-                   : latitude(9) = [-90, ..., 70] degrees_north
-                   : longitude(8) = [0, ..., 315] degrees_east
-   Coord references: standard_name:atmosphere_hybrid_height_coordinate
-   Domain ancils   : atmosphere_hybrid_height_coordinate(atmosphere_hybrid_height_coordinate(1)) = [9.9982] m
-                   : long_name=vertical coordinate formula term: b(k)(atmosphere_hybrid_height_coordinate(1)) = [0.9989]
-                   : surface_altitude(latitude(9), longitude(8)) = [[2816.25, ..., 2325.98]] m
-   >>> print(zeta.array.round(8))
-   [[[[--        --        --        --        --        --        --        --       ]
-      [-2.04e-06  1.58e-06  5.19e-06  4.74e-06 -4.76e-06 -2.27e-06  9.55e-06 -3.64e-06]
-      [-8.4e-07  -4.37e-06 -3.55e-06 -2.31e-06 -3.6e-07  -8.58e-06 -2.45e-06  6.5e-07 ]
-      [ 4.08e-06  4.55e-06  2.75e-06  4.15e-06  5.16e-06  4.17e-06  4.67e-06 -7e-07   ]
-      [-1.4e-07  -3.5e-07  -1.27e-06 -1.29e-06  2.01e-06  4.4e-07  -2.5e-06   2.05e-06]
-      [-7.3e-07  -1.59e-06 -1.77e-06 -3.13e-06 -7.9e-07  -5.1e-07  -2.79e-06  1.12e-06]
-      [-3.7e-07   7.1e-07   1.52e-06  6.5e-07  -2.75e-06 -4.3e-07   1.62e-06 -6.6e-07 ]
-      [ 9.5e-07  -8e-07     6.6e-07   7.2e-07  -2.13e-06 -4.5e-07  -7.5e-07  -1.11e-06]
-      [--        --        --        --        --        --        --        --       ]]]]
-
-For axes that are not :ref:`cyclic <Cyclic-domain-axes>`, missing data
-is inserted at the edges by default; otherwise it may be forced to
-wrap around, or a one-sided difference is calculated at the edges. If
-the longitudinal axis is :ref:`cyclic <Cyclic-domain-axes>` then the
-derivative wraps around by default.
   
 ----
 
